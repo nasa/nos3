@@ -1,0 +1,564 @@
+/**
+  \mainpage
+  <UL>
+    <LI> \subpage cfsmmrevhist
+    <LI> \subpage cfsmmintro
+    <LI> \subpage cfsmmovr
+    <LI> \subpage cfsmmopr
+    <LI> \subpage cfsmmreq
+    <LI> \subpage cfsmmdg
+    <LI> \subpage cfsmmcmds
+    <LI> \subpage cfsmmtlm
+    <LI> \subpage cfsmmtbl
+    <LI> \subpage cfsmmcfg
+    <LI> \subpage cfsmmcons
+    <LI> \subpage cfsmmfaqs
+    <LI> \subpage mm_events.h "CFS Memory Manager Event Message Reference" <BR>
+  </UL>
+**/
+
+/**
+  \page cfsmmrevhist CFS Memory Manager User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_mm.dox  $
+  Revision 1.6 2011/11/30 15:54:28EST jmdagost 
+  Update documentation to include descriptions and usage of the default CRC algorithm definitions.
+  Revision 1.5 2010/12/03 13:36:03EST jmdagost 
+  Added new content and made some minor corrections.
+  Revision 1.4 2009/06/12 14:37:30EDT rmcgraw 
+  DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+  Revision 1.3 2009/04/18 15:27:38EDT dkobe 
+  Corrected reference to FAQs page
+  Revision 1.2 2009/04/18 15:26:17EDT dkobe 
+  Made to conform to standard format
+  Revision 1.1 2009/04/16 21:11:57EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/mm/docs/dox_src/users_guide/project.pj
+  \endverbatim
+  
+**/
+
+/**
+	\page cfsmmintro CFS Memory Manager Introduction
+	
+  <H2> Scope </H2>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the CFS Memory Manager (MM) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personnel).  
+  The last section of the document, the deployment guide section, is intended for mission 
+  developers when deploying and configuring the MM application software for a mission 
+  flight software build environment. 
+
+  <H2> Applicable Documents </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Manager Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Manager Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Manager Design Document </TD>
+  </TABLE>
+
+
+  <H2> Acronyms </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> DS    </TD> <TD WIDTH="40%"> CFS Data Storage                                  </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFDP    </TD> <TD WIDTH="40%"> CCSDS File Delivery Protocol                    </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> PSP     </TD> <TD WIDTH="40%"> Platform Support Package                        </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands Application                     </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TDM     </TD> <TD WIDTH="40%"> Time Data Multiplex                             </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Prev: \ref cfsmmrevhist <BR>
+  Next: \ref cfsmmovr
+**/
+
+/**
+  \page cfsmmovr CFS Memory Manager Overview
+
+  The Memory Manager (MM) component of the Core Flight System (CFS) is responsible for the loading 
+  and dumping of flight system memory. MM is basically the operator interface for the PSP (Platform Support 
+  Package) and OSAL (Operating System Abstraction Layer) memory manipulation functions. Memory Manager provides
+  the ability to load and dump memory via commands as well as from files. If the operating system supports
+  symbolic addressing, Memory Manager allows specifying the memory address using a symbolic address.
+
+  Since MM makes use of the PSP and OSAL when interfacing to memory, it relies on PSP and OSAL routines
+  to access processor memory as well as memory that is not directly accessible (i.e. requires address 
+  translation). MM does no memory manipulation that bypasses the OSAL. Address checking is performed 
+  using the PSP and any addresses specified outside of defined legal address ranges will be considered 
+  invalid and an error event will be issued.
+
+  MM performs data transfers between memory and files, but does not handle file transfers to (or 
+  from) the ground. That function must be done with a file transfer application such as the CFS CFDP 
+  application. MM also does not have responsibility for file management operations or directory 
+  manipulations. That function is allocated to the CFS FM (File Manager) application.  
+
+  MM is a command driven, single threaded application. It will pend indefinitely on the software bus
+  message queue until commands are recieved and then process them sequentially in the order they 
+  arrived. Memory Manager segments loads and dumps in order to prevent CPU hogging. Despite this, 
+  careful consideration should be made when loading and dumping large amounts of memory. See
+  \ref cfsmmdg.
+
+  For additional details see the following sections:
+
+  <UL>
+  <LI> \subpage cfsmmugmemtypes
+  <LI> \subpage cfsmmugfileformat
+  <LI> \subpage cfsmmugsymbols
+  </UL>
+  <BR><BR>
+  Prev: \ref cfsmmintro <BR>
+  Next: \ref cfsmmopr
+**/
+
+/**
+  \page cfsmmugmemtypes Memory Types
+
+  There are five different memory types that can be specified in MM commands. These are:
+
+  MM_RAM  
+  Generic term for RAM including DRAM, and SRAM. Memory mapped I/O that is byte addressable and 
+  requires no special code to support is accessed with this memory type. 
+
+  MM_EEPROM 
+  Generic term used for non-volatile memory including EEPROM, Flash, PROM, etc.
+  MM places no address or data alignment restrictions on this memory type. Any special alignment
+  requirements imposed by the hardware are handled in the OSAL code for the target platform in question.
+  MM provides commands to enable and disable EEPROM write protection via a PSP interface.
+
+  MM_MEM32 
+  Addressable memory that must be read from and written to in 32 bit double words. Inclusion 
+  of this type is controlled by a conditional compile switch. For this memory type, MM will use
+  the #CFE_PSP_MemRead32 and #CFE_PSP_MemWrite32 functions instead of the more generic #CFE_PSP_MemCpy. 
+  Address and data size parameters for this memory type must be 32 bit aligned or an error event will be
+  issued and the current operation aborted.
+
+  MM_MEM16
+  Addressable memory that must be read from and written to in 16 bit words. Inclusion of this type is 
+  controlled by a conditional compile switch. For this memory type, MM will use the #CFE_PSP_MemRead16 and 
+  #CFE_PSP_MemWrite16 OSAL functions instead of the more generic #CFE_PSP_MemCpy. Address and data size 
+  parameters for this memory type must be 16 bit aligned or an error event will be issued and the current 
+  operation aborted.
+
+  MM_MEM8
+  Addressable memory that must be read from and written to in 8 bit bytes. Inclusion of this type is 
+  controlled by a conditional compile switch. For this memory type, MM will use the #CFE_PSP_MemRead8 and 
+  #CFE_PSP_MemWrite8 OSAL functions instead of the more generic #CFE_PSP_MemCpy. 
+  
+  Next: \ref cfsmmugfileformat <BR>
+  Up To: \ref cfsmmovr
+**/
+
+/**
+  \page cfsmmugfileformat File Format
+
+  The MM application uses the same format for both load and dump files and does not distinquish between
+  the two. This allows the contents of a memory dump file to be loaded back to the same location in 
+  memory if desired, providing a memory save and restore capability to the ground operators.
+  
+  Each dump (and load) file has three parts:
+  
+  A file primary header. This is the standard cFE file header whose structure is defined by the
+  #CFE_FS_Header_t data type.
+  
+  The MM secondary header defined by the #MM_LoadDumpFileHeader_t data type.
+  
+  A variable size block of binary data that holds the memory contents dumped or the data to be loaded.
+  
+  Next: \ref cfsmmugsymbols <BR>
+  Prev: \ref cfsmmugmemtypes <BR>
+  Up To: \ref cfsmmovr
+**/
+
+/**
+  \page cfsmmugsymbols Symbolic Address Arguments
+
+  The MM application supports the use of symbolic names instead of absolute memory addresses. This is 
+  especially useful in environments where dynamic loading is used. Addresses are specified in two parts, 
+  a character string that holds the symbol name, and an optional numerical offset as defined in the 
+  #CFS_SymAddr_t data type.
+
+  This data structure is used for all address arguments in ground commands and load files even if symbol 
+  table operations are not implemented on the target platform. This makes command and file formats 
+  consistent across missions and enhances the portability of ground system scripts and database
+  definitions.
+  
+  Symbol processing is as follows:
+  
+  If the symbol name string is not a NUL (empty, or zero length) string, an attempt is made to resolve
+  the name to a physical hardware address through the OSAL. If the resolution succeeds, the offset 
+  argument is added to the address and the resulting fully resolved address is used for the memory 
+  operation requested. If the symbol name cannot be resolved by the OSAL (either the symbol name is 
+  invalid or no symbol table is available), MM will issue an error event and abort the current operation. 
+  
+  If the symbol name string is a NUL string, no resolution through the OSAL takes place and the offset 
+  is treated as an absolute address. This is how address arguments would be specified when there is
+  no symbol support on the target platform.
+  
+  It should be noted that all addresses reported by MM in housekeeping telemetry and dump file headers
+  are always the fully resolved addresses, even if a symbol or combination symbol/offset were used
+  as specifiers when a memory operation was initiated.
+
+  <H2> Dumping the Symbol Table </H2>
+  
+  A ground command is available in the MM app that allows the user to dump the OS Symbol Table to a file.  The
+  MM app calls the OSAL symbol table dump utility, which performs the operation.  The dump file name is specified
+  in the ground command and is limited to #OS_MAX_PATH_LEN - 1 characters in size.  Once the dump is completed,
+  the file may be downloaded.
+  
+  Prev: \ref cfsmmugfileformat <BR>
+  Up To: \ref cfsmmovr
+**/
+
+/**
+  \page cfsmmopr CFS Memory Manager Operation
+  
+  <H2> Initialization </H2>
+  
+  Because MM is bascially an interface to the PSP and OSAL memory utilities, the app only performs basic 
+  initialization steps (e.g., registering the app, subscribing to housekeeping and ground commands, initializing counters
+  and housekeeping data). MM does not maintain any tables or critical data storage (CDS) areas, so no actions are 
+  taken during initialization.
+  
+  Once initialization is complete, MM will pend indefinitely for a command (either ground or housekeeping) and wake up
+  to process the received command.
+
+  Next: \ref cfsmmreq <BR>
+  Prev: \ref cfsmmovr
+**/
+
+/**
+  \page cfsmmreq CFS Memory Manager Requirements
+
+  For detailed MM requirements, please see the "Core Flight System (CFS) Memory Manager Application 
+  Requirements" Document number: 582-2007-031.
+   
+  Next: \ref cfsmmdg <BR>
+  Prev: \ref cfsmmopr
+**/
+
+/**
+  \page cfsmmdg CFS Memory Manager Deployment Guide
+
+  To integrate the MM application into the cFE, follow the CFS Deployment Guide.
+  
+  Follow the general guidelines below for platform deployment of the Memory Manager Application.
+
+  Since the MM application uses files for dumps and loads, directories and file volumes need to
+  be setup and initialized correctly through the cFE for these operations to work properly. MM 
+  will use the full path specified in a command message (up to the max specified by #OS_MAX_PATH_LEN)
+  without modification for file operations.
+  
+  MM relies on the OSAL for validation of address arguments. It uses the function 
+  #CFE_PSP_MemValidateRange to check address and data size parameters for dump and load operations.
+  The memory map used by #CFE_PSP_MemValidateRange needs to be setup correctly for the platform, otherwise
+  these parameter checks may fail unexpectedly.
+    
+  Code to support the MM_MEM32, MM_MEM16, and MM_MEM8 memory types (see \ref cfsmmugmemtypes) is
+  conditionally compiled based upon configuration parameter settings (see \ref cfsmmcfg). If
+  support for these types is not needed, excluding them can reduce the MM code footprint.
+  
+  The maximum amount of data that can be dumped to (or loaded from) a file can also be changed by
+  adjusting configuration parameter settings (see \ref cfsmmcfg). Since MM processes commands
+  and housekeeping requests serially from a single command pipe, setting these limits to large values 
+  may cause late responses to housekeeping requests. If a mission requires large dumps or loads, it
+  may be better to split the operation so it uses several smaller files instead of one very large 
+  one. 
+
+  Only one message ID must be included in the CFE Scheduler Table:
+  #MM_SEND_HK_MID is sent out at the housekeeping request interval.
+  
+  The Memory Manager app generates telemetry when it receives the housekeeping request.  Its telemetry
+  message ID is #MM_HK_TLM_MID.
+  
+  The cFE ES app uses five performance IDs to keep track of the performance of the MM app:
+  #MM_APPMAIN_PERF_ID is used to track overall app performance.<br>        
+  #MM_SEGBREAK_PERF_ID is used to track performance during segment breaks, which prevent CPU hogging
+  during load-from-file, dump-to-file, or fill operations.<br>
+  #MM_EEPROM_POKE_PERF_ID is used to track performance during poke operations.<br>
+  #MM_EEPROM_FILELOAD_PERF_ID is used to track performance during file load operations.<br>
+  #MM_EEPROM_FILL_PERF_ID is used to track performance during fill operations.<br>
+
+  The mission configuration file mm_mission_cfg.h contains parameters that are used across all platforms
+  on a mission.  The defined parameters and their default values are:
+  
+  #MM_LOAD_WID_CRC_TYPE specifies the CRC algorithm that MM will request when calling the Executive Services
+  CRC utility during a "memory load with interrupts disabled" (#MM_LOAD_MEM_WID_CC) command.  The default 
+  value is the ES default #CFE_ES_DEFAULT_CRC.
+  \note
+  Only the default ES CRC algorithm (16-bit CRC) is currently available in the ES CRC utility.  Although other
+  definitions (8-bit and 32-bit) exist, those algorithms have not been implemented, and setting the MM type
+  to those values (or to other, undefined values) could lead to unpredictable results.
+  
+  #MM_LOAD_FILE_CRC_TYPE specifies the CRC algorithm that MM will request when calling the Executive Services
+  CRC utility during a memory load from file.  The default value is the ES default #CFE_ES_DEFAULT_CRC.
+  \note
+  Only the default ES CRC algorithm (16-bit CRC) is currently available in the ES CRC utility.  Although other
+  definitions (8-bit and 32-bit) exist, those algorithms have not been implemented, and setting the MM type
+  to those values (or to other, undefined values) could lead to unpredictable results.
+  
+  #MM_DUMP_FILE_CRC_TYPE specifies the CRC algorithm that MM will request when calling the Executive Services
+  CRC utility during a memory dump to file.  The default value is the ES default #CFE_ES_DEFAULT_CRC.
+  \note
+  Only the default ES CRC algorithm (16-bit CRC) is currently available in the ES CRC utility.  Although other
+  definitions (8-bit and 32-bit) exist, those algorithms have not been implemented, and setting the MM type
+  to those values (or to other, undefined values) could lead to unpredictable results.
+  
+  
+  The platform configuration file mm_platform_cfg.h contains parameters that can be adjusted to 
+  specific platforms.  The defined parameters (and their default values) are:
+  
+  #MM_MAX_LOAD_FILE_DATA_RAM defines the maximum number of bytes that can be loaded into RAM from
+  a single load file.  The default value is 1048576.  This value should not be set so large that it
+  prevents MM from responding to housekeeping requests during a load.   
+  
+  #MM_MAX_LOAD_FILE_DATA_EEPROM defines the maximum number of bytes that can be loaded into EEPROM from
+  a single load file.  The default value is 1048576.  This value should not be set so large that it
+  prevents MM from responding to housekeeping requests during a load.
+  
+  #MM_MAX_UNINTERRUPTABLE_DATA defines the maximum number of bytes that can be loaded when interrupts
+  are disable (see #MM_LOAD_MEM_WID_CC).  The default value is 200.  This value should not be set so 
+  large that interrupts are disabled for an unacceptable amount of time, and it should also be small
+  enough to avoid packet segmentation for the command protocol being used.. 
+  
+  #MM_MAX_LOAD_DATA_SEG defines the number of bytes MM can load per cycle to prevent CPU hogging.  The 
+  default value is 200.  Setting this value too high will increase MM CPU utilization during loads and
+  will decrease the amount of execution time available for other tasks.        
+  
+  #MM_MAX_DUMP_FILE_DATA_RAM defines the maximum number of bytes that can be dumped from RAM into
+  a single dump file.  The default value is 1048576.  This value should not be set so large that it
+  prevents MM from responding to housekeeping requests during a dump.   
+  
+  #MM_MAX_DUMP_FILE_DATA_EEPROM defines the maximum number of bytes that can be dumped from EEPROM into
+  a single dump file.  The default value is 1048576.  This value should not be set so large that it
+  prevents MM from responding to housekeeping requests during a dump.
+  
+  #MM_MAX_DUMP_FILE_DATA_SYMTBL defines the maximum number of bytes that can be dumped from the symbol
+  table into a single dump file.  The default value is 131072.  This value is passed to the OSAL for 
+  dump processing, and should not be set so large that OSAL rejects the dump request.
+  
+  #MM_MAX_DUMP_DATA_SEG defines the number of bytes MM can dump per cycle to prevent CPU hogging.  The
+  default value is 200.  Setting this value too high will increase MM CPU utilization during dumps and
+  will decrease the amount of execution time available for other tasks.        
+  
+  #MM_MAX_FILL_DATA_RAM defines the number of bytes that can be loaded into RAM with a single memory fill 
+  command.  The default value is 1048576.  This value should not be set so large that it prevents MM from 
+  responding to housekeeping requests during a memory fill.
+  
+  #MM_MAX_FILL_DATA_EEPROM defines the number of bytes that can be loaded into EEPROM with a single memory fill 
+  command.  The default value is 131072.  This value should not be set so large that it prevents MM from 
+  responding to housekeeping requests during a memory fill.
+  
+  #MM_MAX_FILL_DATA_SEG defines the number of bytes MM can fill per cycle to prevent CPU hogging.  The
+  default value is 200.  Setting this value too high will increase MM CPU utilization during memory fills
+  and will decrease the amount of execution time available for other tasks.        
+  
+  #MM_OPT_CODE_MEM32_MEMTYPE defines whether code for #MM_MEM32 memory operations should be included in the
+  MM app.  The default value is TRUE, which includes the code.  The value must be either TRUE or FALSE.
+  
+  #MM_MAX_LOAD_FILE_DATA_MEM32 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM32 memory type from a single load file.  The default value is 1048576.  This value must be longword
+  aligned, and should not be set so large that it prevents MM from responding to housekeeping requests 
+  during a load.  
+  
+  #MM_MAX_DUMP_FILE_DATA_MEM32 defines the maximum number of bytes that can be dumped from the optional
+  #MM_MEM32 memory type into a single load file.  The default value is 1048576.  This value must be longword
+  aligned, and should not be set so large that it prevents MM from responding to housekeeping requests 
+  during a load. 
+  
+  #MM_MAX_FILL_DATA_MEM32 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM32 memory type from a single memory fill command.  The default value is 1048576.  This value must 
+  be longword aligned, and should not be set so large that it prevents MM from responding to housekeeping
+  requests during a memory fill.      
+  
+  #MM_OPT_CODE_MEM16_MEMTYPE defines whether code for #MM_MEM16 memory operations should be included in the
+  MM app.  The default value is TRUE, which includes the code.  The value must be either TRUE or FALSE.
+  
+  #MM_MAX_LOAD_FILE_DATA_MEM16 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM16 memory type from a single load file.  The default value is 1048576.  This value must be word
+  aligned, and should not be set so large that it prevents MM from responding to housekeeping requests 
+  during a load. 
+  
+  #MM_MAX_DUMP_FILE_DATA_MEM16 defines the maximum number of bytes that can be dumped from the optional
+  #MM_MEM16 memory type into a single load file.  The default value is 1048576.  This value must be word
+  aligned, and should not be set so large that it prevents MM from responding to housekeeping requests 
+  during a load. 
+  
+  #MM_MAX_FILL_DATA_MEM16 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM16 memory type from a single memory fill command.  The default value is 1048576.  This value must 
+  be word aligned, and should not be set so large that it prevents MM from responding to housekeeping
+  requests during a memory fill.      
+  
+  #MM_OPT_CODE_MEM8_MEMTYPE defines whether code for #MM_MEM8 memory operations should be included in the
+  MM app.  The default value is TRUE, which includes the code.  The value must be either TRUE or FALSE.
+  
+  #MM_MAX_LOAD_FILE_DATA_MEM8 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM8 memory type from a single load file.  The default value is 1048576.  This value should not be 
+  set so large that it prevents MM from responding to housekeeping requests during a load.  
+  
+  #MM_MAX_DUMP_FILE_DATA_MEM8 defines the maximum number of bytes that can be dumped from the optional
+  #MM_MEM8 memory type into a single load file.  The default value is 1048576.  This value should not be 
+  set so large that it prevents MM from responding to housekeeping requests during a load.  
+  
+  #MM_MAX_FILL_DATA_MEM8 defines the maximum number of bytes that can be loaded into the optional
+  #MM_MEM8 memory type from a single memory fill command.  The default value is 1048576.  This value should
+  not be set so large that it prevents MM from responding to housekeeping requests during a memory fill.       
+  
+  #MM_PROCESSOR_CYCLE defines the number of milliseconds MM should delay between segments for dump, load 
+  and fill operations.  The default value is 0, which means that MM will give up what's left of the current
+  timeslice.  The value should not be set so large that it prevents MM from responding to housekeeping
+  requests.  Additionally, it should not be set so small (non-zero) that it prevents other applications from
+  running.
+  
+  #MM_MISSION_REV defines the mission-level revision number.  The default value is 0.  This value is appended
+  to the major version, minor version, and revision numbers.  It should be an integer value greater than 
+  or equal to 0.
+  
+**/
+
+/**
+  \page cfsmmcmds CFS Memory Manager Commands
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcfg</B></TD>
+  </TABLE>
+
+  The following is a list of commands that are processed by the CFS Memory Manager Application. 
+**/
+
+/**
+  \page cfsmmtlm CFS Memory Manager Telemetry
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcfg</B></TD>
+  </TABLE>
+  
+  The following are telemetry packets generated by the CFS Memory Manager Application.
+**/
+
+/**
+  \page cfsmmtbl CFS Memory Manager Table Definitions
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcfg</B></TD>
+  </TABLE>
+  
+  The CFS Memory Manager application does not utilize or manage any software tables.
+**/
+
+/**
+  \page cfsmmcfg CFS Memory Manager Configuration Parameters
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmmtbl</B></TD>
+  </TABLE>
+
+  The following are configuration parameters used to configure the CFS Memory Manager Application
+  either for each platform or for a mission as a whole.
+**/
+
+/**
+  \page cfsmmcons CFS Memory Manager Operational Constraints
+
+  No unique operational constraints have been identified for the MM application.
+  
+  Next: \ref cfsmmfaqs <BR>
+  Prev: \ref cfsmmtbl
+**/
+
+/**
+  \page cfsmmfaqs CFS Memory Manager Frequently Asked Questions
+
+  <B> (Q)
+     How can I tell if a bank of EEPROM is write-enabled or write-disabled?
+  </B> <BR> <BR> <I>
+     Currently, the write enable/disable status is maintained internally by the PSP.  There is no PSP utility available
+     to return the write status of a bank of EEPROM.  The only way to know if a bank of EEPROM is disabled is if the 
+     PSP returns an error status back to MM during a write operation.<br>
+     Future releases of MM will include a ground command to return the write enable status of a selected bank.
+  </I>
+  
+  <B> (Q)
+     Can I write to the same area of memory that is currently being dumped?
+  </B> <BR> <BR> <I>
+     Yes.  The PSP does not prevent an area of memory that is being dumped from being written to at the same.  The only
+     constraint is that the two actions cannot access the same file (if the load-from-file and dump-to-file actions
+     are being used).  You should be careful to make sure that any memory writes are completed before dumping the same
+     area of memory, and vice versa. 
+  </I>
+
+  <B> (Q)
+     What's the difference between the default #MM_RAM memory type and the #MM_MEM8 memory type?  If I need to read or
+     write an odd number of bytes why couldn't I use the default commands?
+  </B> <BR> <BR> <I>
+     The load and dump operations on #MM_RAM can read/write an odd number of bytes, but the low-level implementation (the
+     utilities called by the operations) differs from those used on #MM_MEM8 memory type operations.  #MM_MEM8 load/dump 
+     operations use the #CFE_PSP_MemRead8 and #CFE_PSP_MemWrite8 utilities, which do byte-by-byte reads and writes.  The
+     #MM_RAM load/dump operations use the C-library memcpy function, which can be dependent on the compiler you use
+     for your mission.  This may be acceptable, but #MM_MEM8 is available to guarantee byte-by-byte reads and writes. 
+  </I>
+  
+  <B> (Q)
+     I don't need a special 32-bit/16-bit/8-bit load and dump capability for my mission.  Do I have to leave
+     this code in the application?
+  </B> <BR> <BR> <I>
+     No.  #MM_MEM8, #MM_MEM16, and #MM_MEM32 memory types are conditionally compiled in the application through the switches
+     #MM_OPT_CODE_MEM8_MEMTYPE, #MM_OPT_CODE_MEM16_MEMTYPE, and #MM_OPT_CODE_MEM32_MEMTYPE, respectively.  Setting
+     any of these switches to FALSE in the mm_platform_cfg.h configuration file will exclude that code from your
+     application.<br>
+     If your ground system includes commands for these operations, MM will return an "invalid ground command" error when
+     you send a command that uses the excluded code.  Those commands should be removed from your operational ground system
+     to avoid inadvertant transmission.
+  </I>
+  
+  Prev: \ref cfsmmcons
+**/

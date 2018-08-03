@@ -1,0 +1,221 @@
+!                Originator:     C. Dent         66801
+!                Responsible SC: C. Dent         66801
+!                Responsible CSE: name           phone
+!                Rev: B     Last Change:  02DEC99
+!
+!                 MAP Telemetry TYPES for MAC processor
+!                 ===========================
+!
+!       REFERENCES:
+!
+!       NOTES:  Types created for proper swapping of MAC long integers
+!
+!       HISTORY:
+!
+!       Originator:     C. Dent                                 iii ddmmmyy
+!
+!	Rev             Description of Change                   SC & Date
+!        A              Defined MSFP and MDFP types             CPD 29MAY97
+!        B              CORRECT WARP CONVERSION DBCR #156       EJB 02DEC99
+!
+TYPES
+! Defines swap order for MAC unsigned and signed long integers
+INTEGER   MULI  REPRESENTATION=UNSIGNED, ORDER=(1,2,3,4), SIZE=4
+INTEGER   MSLI  REPRESENTATION=TWOS_COMPLEMENT, ORDER=(1,2,3,4), SIZE=4
+!Defines swap order for MAC floating point types
+FLOAT     MSFP  REPRESENTATION=IEEE, ORDER=(1,2,3,4), SIZE=4       !CPD 29MAY97
+FLOAT     MDFP  REPRESENTATION=IEEE, ORDER=(1,2,3,4,5,6,7,8), SIZE=8 !CPD 29MAY97
+!Defines record type for TO Filter tables
+!
+RECORD FLTRTBL              
+  UI RATE    DESC = "RATE"  
+  UI OFFST   DESC = "OFFSET"
+  UI RNGE    DESC = "RANGE" 
+END
+!
+!
+RECORD CBBUFFER                                               !JKH 01 DEC97
+  UI HWSTAT1    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA1      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT2    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA2      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT3    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA3      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT4    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA4      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT5    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA5      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT6    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA6      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTAT7    DESC = "HW STATUS"                            !JKH 01 DEC97
+  UI DATA7      DESC = "CODE BLOCK DATA"                      !JKH 01 DEC97
+  UI HWSTATP    DESC = "HW STATUS PARITY WORD"                !JKH 01 DEC97
+  UI CBPRTY     DESC = "CODE BLOCK PARITY"                    !JKH 01 DEC97
+END     
+!
+ record sm_tot_entry_fmt                                            
+  ub   valid_table    DESC="VLD=1, INVLD=0",                        
+                      DISCRETE, DRANGE=(0,1),                       
+                      DLABEL=("VLD","INVLD")                        
+  ub   write_locked   DESC="WR_LCKD=1, WR_ENBL=0",                  
+                      DISCRETE, DRANGE=(0,1),                       
+                      DLABEL=("WR_LCKD","WR_ENBL")                  
+  ub   checksummed    DESC="CS_ENBL=1, CS_DSBL=0",                  
+                      DISCRETE, DRANGE=(0,1),                       
+                      DLABEL=("CS_ENBL","CS_DSBL")                  
+  ub   jam_loadable   DESC="JAM=1, NO_JAM=0",                       
+                      DISCRETE, DRANGE=(0,1),                       
+                      DLABEL=("JAM","NO_JAM")                       
+  ui   os_copy        DESC="WARM=1, COLD=2, NO_COPY=3, WARM_COLD=4",
+                      DISCRETE, DRANGE=(1,2,3,4),                       
+                      DLABEL=("WARM","COLD","NO_COPY","WARM_COLD")  
+  ui   scp_type       DESC="SYS=0, RTS=1, ATS=2",                   
+                      DISCRETE, DRANGE=(0,1,2),                       
+                      DLABEL=("SYS","RTS","ATS")                    
+  muli ram_address    DESC="Location of table in RAM"               
+  ui   table_wsize    DESC="Table size in words"                    
+  muli eeprom_address DESC="Location of table in EEPROM"            
+  ui   owner_apid     DESC="Owner apid for commit requests"         
+  ui   spare          DESC="Spare"                                  
+ END                                                                
+!
+ record WSBpipeline  DESC="SBpipeline_descriptor defined within SB software"
+  ui   queue_id
+  char queue_name[24]
+  ui   task_id
+  ui   queue_depth
+  ui   valid_pipeline
+  ui   auto_active
+  ui   active
+  ui   deallocation_required
+  muli spare
+  muli current_buff DESC="Pointer to current buffer"
+  ui   current_status
+  muli MSG_Q_ID
+ END
+!
+ record WSBstream  DESC="SBstream_record defined within SB software"  
+   ui   stream_id DESC="Stream APID, includes pkt version, type, 2nd hdr flag"
+                                                                     
+   char stream_name[16] DESC="Stream name"                           
+   ui   buffer_size DESC="Size in bytes of a single buffer for this stream"
+                                                                     
+   ui   total_buffers DESC="Number of buffers availabe for this stream"
+                                                                     
+   ui   total_destinations DESC="Number of destinations stream is to be sent to"
+                                                                     
+   muli valid_senders DESC="Bit mask containing valid sender IDs"    
+   muli dest_list DESC="Pointer to stream's destination list"        
+   ui   share     DESC="Flag indicating if shared buffers are used", 
+                  DISCRETE, DRANGE=(%xFFFE,%xFFFF),                  
+                  DLABEL=("SHARE","NO_SHARE")                        
+   ui   buffer_pool DESC="Identifies buffer pool used for this stream"
+                                                                     
+   muli free_buffer_list DESC="Pointer to free_buffer_list"          
+   muli scb_hash  DESC="Pointer to scb_hash"                         
+ END
+!
+   ui  wpaction desc="Health and Safety Action",
+                discrete,
+                drange=(0,1),
+                dlabel=( "COLD INIT", "WARM INIT")
+!
+  record WCRTASK
+  ui    WCRTASKAPID  desc="WARP M5 Task"
+  ub    WCRTASKCRIT  desc="Critical",
+                     discrete,
+                     drange=(0, 1),
+                     dlabel=("FALSE", "TRUE")
+  ub    WCRTASKRCVD  desc="Received",
+                     discrete,  
+                     drange=( 0, 1 ), 
+                     dlabel=("FALSE", "TRUE")
+  end
+!
+   record WRANGE
+   muli   WPMSTART
+   muli   WPMEND
+   end
+!
+   record WFILEDIR                                                           !CPX16MAY1998
+   ui  WRMFILEID  desc="WARP RM:  File ID for the directory entry"           !CPX16MAY1998
+   ui  WRMFLTYPE  desc="WARP RM:  Type of data contained in file",discrete,  !CPX16MAY1998
+                  drange=(0, 1, 2, 3, 4, 5, 6, 7, %xffff ),                  !CPX16MAY1998
+                  dlabel=( "WIS/SWIR",
+                           "WIS/VNIR",
+                           "HSI/SWIR",                                       !DSM23OCT1998
+                           "HSI/VNIR",                                       !DSM23OCT1998
+                           "MS/PAN",
+                           "LAC",
+                           "S/C HK",
+                           "FILL",                                           !CPX16MAY1998
+                           "UNUSED" )                                        !CPX16MAY1998
+   ui  WRMFLSIZE  desc="WARP RM:  File Size in logical blocks"
+   ui  WRMLOCKED  desc="WARP RM:  File locked",discrete,drange=(0,1),dlabel=("FALSE","TRUE")
+   met WRMCRTIME  desc="WARP RM: Spacecraft time of file creation"
+   ui  WRMFRSTBK  desc="WARP RM: First logical block index in file"
+   ui  WRMLASTBK  desc="WARP RM: Last logical block index in file"
+   END
+
+   record WLOGENTRY                                                        !CPX 15MAY1998
+   union WRMADDERROR
+   muli   WRMADRS     desc="WARP RM:  Address where the error occurred"    ! CPX 15MAY1998
+   muli   WRMPOINTER  desc="WARP RM:  Pointer to Memory address of error", mask=%xE0000000
+   muli   WRMROW      desc="WARP RM:  Row Address of error",               mask=%x1FFE0000
+   muli   WRMCOLUMN   desc="WARP RM:  Column Address of error",            mask=%x0001FC00
+   muli   WRMDIEROW   desc="WARP RM:  Die Row of error",                   mask=%x000003F8
+   muli   WRMBOARD    desc="WARP RM:  Board Number of error",              mask=%x00000007
+   END
+
+   union WEDACMASK
+  muli  WRMMSK       desc="WARP RM:  EDAC Error Status Word"               !CPX 15MAY1998
+  muli  WRMRS7CN     desc="WARP RM:  RS7 Correct/Not Correct",            mask=%x80000000
+  muli  WRMRS7NUM    desc="WARP RM:  RS7 Number of corrected errors",     mask=%x70000000
+  muli  WRMRS6CN     desc="WARP RM:  RS6 Correct/Not Correct",            mask=%x08000000
+  muli  WRMRS6NUM    desc="WARP RM:  RS6 Number of corrected errors",     mask=%x07000000
+  muli  WRMRS5CN     desc="WARP RM:  RS5 Correct/Not Correct",            mask=%x00800000
+  muli  WRMRS5NUM    desc="WARP RM:  RS5 Number of corrected errors",     mask=%x00700000
+  muli  WRMRS4CN     desc="WARP RM:  RS4 Correct/Not Correct",            mask=%x00080000
+  muli  WRMRS4NUM    desc="WARP RM:  RS4 Number of corrected errors",     mask=%x00070000
+  muli  WRMRS3CN     desc="WARP RM:  RS3 Correct/Not Correct",            mask=%x00008000
+  muli  WRMRS3NUM    desc="WARP RM:  RS3 Number of corrected errors",     mask=%x00007000
+  muli  WRMRS2CN     desc="WARP RM:  RS2 Correct/Not Correct",            mask=%x00000800
+  muli  WRMRS2NUM    desc="WARP RM:  RS2 Number of corrected errors",     mask=%x00000700
+  muli  WRMRS1CN     desc="WARP RM:  RS1 Correct/Not Correct",            mask=%x00000080
+  muli  WRMRS1NUM    desc="WARP RM:  RS1 Number of corrected errors",     mask=%x00000070
+  muli  WRMRS0CN     desc="WARP RM:  RS0 Correct/Not Correct",            mask=%x00000008
+  muli  WRMRS0NUM    desc="WARP RM:  RS0 Number of corrected errors",     mask=%x00000007
+  END   !WRMEDACMASK
+  END   !WLOGENTRY
+!
+  ui WARPTHERM desc = "WARP Thermister",
+         catmull = (( 2270,  95.04 ), 
+                    ( 2310,  85.54 ),
+                    ( 2350,  78.08 ), 
+                    ( 2390,  71.79 ), 
+                    ( 2430,  66.25 ),
+                    ( 2470,  61.21 ), 
+                    ( 2510,  56.50 ), 
+                    ( 2550,  52.01 ), 
+                    ( 2590,  47.66 ),
+                    ( 2630,  43.38 ), 
+                    ( 2670,  39.09 ), 
+                    ( 2710,  34.73 ), 
+                    ( 2750,  30.23 ),
+                    ( 2790,  25.50 ), 
+                    ( 2830,  20.42 ), 
+                    ( 2870,  14.83 ), 
+                    ( 2910,   8.48 ),
+                    ( 2950,   0.91 ), 
+                    ( 2990,  -8.78 ), 
+                    ( 3030, -22.98 )),
+         units = degrees 
+
+END_TYPES
+!
+! END MAC TYPES
+!
+!
+ 
+
+

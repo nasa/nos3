@@ -1,0 +1,655 @@
+/**
+  \page cfesbovr cFE Software Bus Overview
+
+  The Software Bus (SB) handles communication between software tasks on a processor.
+  All tasks communicate with each other, with hardware devices, and with the ground
+  by sending command and telemetry messages.  The software bus provides an application
+  programming interface (API) to other tasks for sending and receiving messages.
+  This API is independent of the underlying operating system so that tasks can use
+  the same interface regardless of which processor they reside on.  Refer to the
+  \ref cfeapi for detailed information about the API functions.
+
+  The software bus is used internally by the flight software, and normally does not
+  require attention from the ground.  However, because of the scalability and the
+  dynamic nature of the software bus, it is strongly recommended that each project
+  carefully review the SB statistics and SB memory pool to be sure adequate margin is
+  met on the configurable items.
+
+  The cFE software bus differs from earlier versions of the software bus in that it
+  uses a dynamic protocol and builds its routing table at run-time through the SB
+  subscribe API's. Also the cFE software bus pipes are created at run-time through
+  the #CFE_SB_CreatePipe API. Because the routing is established, and pipes are created
+  at run-time, it is necessary to have a clear view of the routing details on command.
+  The cFE software bus allows the user to dump the routing table, the pipe table, the
+  message map and the statistics packet. Each of these items are described in detail
+  in the corresponding section of this document.
+
+  <UL>
+    <LI> \subpage cfesbugterms <BR>
+    <UL>
+       <LI> \subpage cfesbugmsgs <BR>
+       <LI> \subpage cfesbugpipes <BR>
+       <LI> \subpage cfesbugsubs <BR>
+       <LI> \subpage cfesbugmem <BR>
+    </UL>
+    <LI> \subpage cfesbugauto <BR>
+    <LI> \subpage cfesbugops <BR>
+    <UL>
+       <LI> \subpage cfesbuginit <BR>
+       <LI> \subpage cfesbugreset <BR>
+       <LI> \subpage cfesbugrouting <BR>
+       <LI> \subpage cfesbugpktseqvals <BR>
+       <LI> \subpage cfesbugmsgpipeerr <BR>
+       <LI> \subpage cfesbugovererr <BR>
+       <LI> \subpage cfesbugeventfilt <BR>
+       <LI> \subpage cfesbugdiagdata <BR>
+       <LI> \subpage cfesbugroutcntrl <BR>
+       <LI> \subpage cfesbugqos <BR>
+       <LI> \subpage cfesbugknwnprob <BR>
+    </UL>
+    <LI> \subpage cfesbugfaq <BR>
+  </UL>
+
+  \subpage cfesbrevhist <BR>
+
+**/
+
+/**
+  \page cfesbugterms Software Bus Terminology
+
+  In order to fully understand the Software Bus, it is imperative that the basic terms
+  used to describe its features are also understood.  Below are the critical terms that
+  help identify what the Software Bus accomplishes for each Application:
+
+  <UL>
+     <LI> \subpage cfesbugmsgs <BR>
+     <LI> \subpage cfesbugpipes <BR>
+     <LI> \subpage cfesbugsubs <BR>
+     <LI> \subpage cfesbugmem <BR>
+  </UL>
+
+
+  Next: \ref cfesbugmsgs <BR>
+  Up To: \ref cfesbovr
+**/
+
+/**
+  \page cfesbugmsgs Messages
+
+  The sole purpose of the software bus is to provide applications a way to send
+  messages to each other. The term message and the term packet are used
+  interchangeably throughout this document. A message is a combined set of bytes
+  with a predefined format that is used as the basis of communication on a spacecraft.
+  All commands, telemetry, and other data that are passed between the ground and
+  the spacecraft, and between subsystems of the spacecraft, are considered to be
+  messages. The most common message format is CCSDS (Consultative Committee for
+  Space Data Systems).
+
+  The cFE software bus was designed with 'hooks' to allow message formats other
+  than CCSDS to be used. The APIs that are used to set and get message header
+  fields are intentionally designed to be decoupled from CCSDS.
+
+  There are two general types of messages - commands (or command packets) and
+  telemetry (or telemetry packets).  Command packets are sent to a particular
+  software task from the ground (or another task).  Telemetry packets are sent
+  from a particular software task to the ground (or other tasks).
+
+  Each packet begins with a header that includes the message identifier, often
+  abbreviated as MsgId or message ID. The MsgId for CCSDS messages is the first
+  16 bits of the packet. The message 'type' indicator (command or telemetry) is
+  embedded in the Message ID. The header also contains a packet length field and a
+  packet sequence field. The packet sequence field is incremented by the software
+  bus for telemetry packets each time a packet is sent. The software bus does not
+  increment the sequence field for command packets. See the section named 'Packet
+  Sequence Values' for more detail.
+
+  Telemetry packets typically contain a timestamp that indicates when the packet
+  was produced.  Command packets typically contain a command code that identifies
+  the particular type of command.
+
+  The software bus provides APIs for 'setting' and 'getting' the fields in the
+  header of the message.
+
+  Following the header is the user defined message data.
+
+  Next: \ref cfesbugpipes <BR>
+  Up To: \ref cfesbugterms
+**/
+
+/**
+  \page cfesbugpipes Pipes
+
+  The destinations to which messages are sent are called pipes.  These are queues
+  that can hold messages  until they are read out and processed by a task.  Each
+  pipe is created at run-time through the #CFE_SB_CreatePipe API.  The pipe name
+  and the pipe depth are given as arguments in the API. The pipe identifier (or
+  PipeId) is given back to the caller after the API is executed. Each pipe can be
+  read by only one task, but a task may read more than one pipe. Only the pipe
+  owner is allowed to subscribe to messages on the pipe.
+
+  The Pipe IDs are specific to a particular processor (that is, the same ID number
+  may refer to a different pipe on each processor).  The pipe information for all
+  pipes that have been created, may be requested at anytime by sending the
+  \link #CFE_SB_SEND_PIPE_INFO_CC 'Send Pipe Info' SB command \endlink. The software
+  bus also provides a set of figures regarding capacity, current utilization and high
+  water marks relevant to pipes. This information may be requested by sending the
+  command to \link #CFE_SB_SEND_SB_STATS_CC dump the SB statistics packet \endlink.
+
+  Next: \ref cfesbugsubs <BR>
+  Prev: \ref cfesbugmsgs <BR>
+  Up To: \ref cfesbugterms
+**/
+
+/**
+  \page cfesbugsubs Subscriptions
+
+  A subscription is a run-time request for a particular message to be sent to a
+  particular pipe. If the caller of the subscribe API is not the owner of the
+  pipe, the request is rejected and an error event is sent. The application
+  that creates the pipe is considered the owner of the pipe. The pipe specified
+  in the subscription is sometimes referred to as the destination of the message.
+  There are a maximum number of destinations for a particular message. This
+  value is specified by the platform configuration parameter
+  #CFE_SB_MAX_DEST_PER_PKT.
+
+  As subscriptions are received, the destinations are added to the head of a
+  linked list. During the sending of a message, the list is traversed beginning
+  at the head of the list. Therefore the message will first be sent to the last
+  subscriber. If an application has timing constraints and needs to receive a
+  message in the shortest possible time, the developer may consider holding off
+  its subscription until other applications have subscribed to the message.
+
+  The message limit specifies the maximum number of messages (with the specified
+  Message ID) that are allowed on the specified pipe at any time. This limit is
+  specified by the application at the time of the subscription. If the application
+  uses the #CFE_SB_Subscribe API, a message limit default value of four is used.
+  If this default value is not sufficient, the caller would use the
+  #CFE_SB_SubscribeEx API that allows the message limit to be specified.
+
+  The software bus also provides the user with an option to unsubscribe to a
+  message. The \link #CFE_SB_Unsubscribe unsubscribe API \endlink takes two
+  parameters, Message ID and Pipe ID. Only the owner of a pipe may unsubscribe
+  to messages on that pipe.
+
+  Next: \ref cfesbugmem <BR>
+  Prev: \ref cfesbugpipes <BR>
+  Up To: \ref cfesbugterms
+**/
+
+/**
+  \page cfesbugmem Memory
+
+  The software bus statically allocates a block of memory for message buffers and
+  subscription blocks. The size of this memory block is defined by the platform configuration
+  parameter #CFE_SB_BUF_MEMORY_BYTES. The memory is managed by the cFE ES memory
+  pool and is used only by the software bus. The ES memory pool allows an application to define
+  the block sizes for the pool at compile time. These sizes are defined by the platform
+  configuration parameters prefixed with CFE_SB_MEM_BLOCK_SIZE (for example, #CFE_SB_MEM_BLOCK_SIZE_01).
+  It is recommended that a project tailor these values for the mission, based on the software
+  bus packet sizes.
+
+  At the time a message is sent, two buffers are allocated from the pool. One for a
+  buffer descriptor (#CFE_SB_BufferD_t) and one for the size of the packet. Both buffers
+  are returned to the pool when the message has been received by all recipients. More
+  precisely, if there is one recipient for a message, the message buffers will be released
+  on the following call to cFE_SB_RcvMsg for the pipe that received the message.
+
+  Also when subscriptions are received through the subscribe API's, the software bus
+  allocates a subscription block (#CFE_SB_DestinationD_t) from the pool. The subscription
+  blocks are returned to the pool if and when the subscription is nullified through a
+  #CFE_SB_Unsubscribe call.
+
+  The software bus provides a set of figures regarding memory capacity, current memory
+  utilization and high water marks relevant to the SB memory pool. This information may be
+  requested by sending the command to dump the SB statistics packet. In addition, the
+  current memory utilization value and the 'unmarked memory' value (#CFE_SB_BUF_MEMORY_BYTES
+  - peak memory in use)  are sent in software bus housekeeping telemetry. The unmarked
+  memory value  should be monitored regularly to ensure that the value (in bytes) does not
+  continue to decline or approach zero. If this value were to approach zero, there is a
+  possibility that memory requests would fail which may inhibit the sending of a message.
+  The current memory utilization value should also be monitored to ensure the system
+  contains no memory leaks. The value (in bytes) should remain stable under nominal
+  conditions.
+  Refer to the ES users guide for more information regarding the ES Memory Pool.
+
+  Next: \ref cfesbugauto <BR>
+  Prev: \ref cfesbugsubs <BR>
+  Up To: \ref cfesbugterms
+**/
+
+/**
+  \page cfesbugauto Autonomous Actions
+
+  The software bus is primarily a set of library routines that are called by other software
+  tasks to send and receive packets.  The software bus does not perform any operations
+  autonomously, except for sending event messages if errors are detected during the transfer
+  of packets.
+
+  As do other tasks, the SB task sends out housekeeping telemetry when requested through the
+  'Send Housekeeping Data' command.
+
+  Next: \ref cfesbugops <BR>
+  Prev: \ref cfesbugterms <BR>
+  Up To: \ref cfesbovr
+**/
+
+/**
+  \page cfesbugops Operation of the SB Software
+
+  <UL>
+     <LI> \subpage cfesbuginit <BR>
+     <LI> \subpage cfesbugreset <BR>
+     <LI> \subpage cfesbugrouting <BR>
+     <LI> \subpage cfesbugpktseqvals <BR>
+     <LI> \subpage cfesbugmsgpipeerr <BR>
+     <LI> \subpage cfesbugovererr <BR>
+     <LI> \subpage cfesbugeventfilt <BR>
+     <LI> \subpage cfesbugdiagdata <BR>
+     <LI> \subpage cfesbugroutcntrl <BR>
+     <LI> \subpage cfesbugqos <BR>
+     <LI> \subpage cfesbugknwnprob <BR>
+  </UL>
+
+  Next: \ref cfesbuginit <BR>
+  Prev: \ref cfesbugauto <BR>
+  Up To: \ref cfesbovr
+**/
+
+/**
+  \page cfesbuginit Initialization
+
+  No action is required by the ground to initialize the software bus. The software bus initializes
+  internal data structures and tables the same way regardless of the type of reset.
+
+  Next: \ref cfesbugreset <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugreset All Resets
+
+  The software bus does not preserve any information across a reset of any kind. The software bus
+  initializes internal data structures and tables the same way regardless of the type of reset.
+  The routing is reestablished as the system initializes. It is normal procedure for each task
+  of the system to create the pipe or pipes it needs and do all of its subscriptions during
+  task initialization.
+
+  After any reset the following statements are true:
+
+  <UL>
+     <LI> The routing table is cleared and does not contain any routes. <BR>
+     <LI> All subscriptions are lost and must be regenerated. <BR>
+     <LI> The pipe table contains no data, all pipes must be recreated. <BR>
+     <LI> Any packets in transit at the time of the reset are lost. <BR>
+     <LI> The sequence counters for telemetry packets will begin again with a value of one. <BR>
+  </UL>
+
+  Next: \ref cfesbugrouting <BR>
+  Prev: \ref cfesbuginit <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugrouting Message Routing
+
+  In the software bus, all messages are processed in a similar way. The software bus uses the
+  Message ID and the packet length fields (contained in the header) for routing the message
+  to the destination pipe. If either of these two fields do not pass validation, the software
+  bus generates an error event and aborts the delivery process. The software bus performs some
+  validation checks by simply checking message header values against mission or platform
+  configuration parameters. Messages originating from various tasks or instruments are routed
+  to one or more pipes, where they wait until read by a task.  The routing configuration for
+  each message is established when applications call one of the SB subscribe APIs. The subscribe
+  APIs take a Message ID and a Pipe ID as parameters. The routing for each packet is stored in
+  SB memory and may be requested at any time by sending the 'Send Routing Info' command. The
+  software bus also provides a set of figures regarding capacity, current utilization and high
+  water marks relevant to the routing. This information may be requested by sending the command
+  to dump the SB statistics packet.
+
+  Next: \ref cfesbugpktseqvals <BR>
+  Prev: \ref cfesbugreset <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugpktseqvals Packet Sequence Values
+
+  The software bus populates the packet sequence header field for all telemetry messages that
+  contain a current subscription. The first time a telemetry message with a new Message ID is
+  sent, the sequence counter field in the header is set to a value of one. For subsequent
+  sends of a message, the sequence counter is incremented by one regardless of the number of
+  destinations for the packet. After a rollover condition the sequence counter will be a
+  value of zero for one instance. The sequence counter is incremented in the #CFE_SB_SendMsg
+  API after all the checks have passed prior to the actual sending of the message. This
+  includes the parameter checks, the 'no subscribers' check and the memory allocation check.
+  Note: After passing all checks, the count is incremented regardless of whether the
+  destinations are enabled or disabled.
+
+  Alternatively, the #CFE_SB_PassMsg API can be used to pass a message without altering the
+  sequence counter provided in the message. This will also not increment the sequence counter
+  stored by the software bus. This method of message delivery is recommended for situations
+  where the sender did not generate the packet, such as a network interface application
+  passing a packet from a remote system to the local software bus.
+
+  The sequence counter for command messages is not altered by the software bus.
+
+  Next: \ref cfesbugmsgpipeerr <BR>
+  Prev: \ref cfesbugrouting <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugmsgpipeerr Message Limit Error
+
+  Before placing a message on a pipe, the software bus checks the message limit to
+  ensure the maximum number of packets in transit to the destination is not exceeded.
+  If placing the message on the pipe would exceed the message limit, then the action
+  of sending to that pipe is aborted and the 'Message Limit Error' event is
+  sent. This condition will typically occur when an application that receives the
+  packets does not respond quickly enough, or if the sender of the packets produces
+  them too quickly.
+
+  This condition occurs often during development and during integration, for example
+  when a remote processor gets reset or a 1553 cable becomes disconnected.  Because
+  of the common occurrences, the event may have filtering associated with it. Any
+  filtering for this event would be performed by the cFE Event Services (EVS). Filtering
+  for SB events may be specified in the cFE platform configuration file or may be
+  commanded after the system initializes.
+
+  If this error occurs during nominal conditions, it could be an indication that the
+  'message limit' is not set correctly. The message limit is given at the time of the
+  subscription and given as a parameter in the subscribe API. With the #CFE_SB_Subscribe
+  API, the SB uses a default message limit value specified by #CFE_SB_DEFAULT_MSG_LIMIT.
+  This constant is currently set to a value of four. If the default value is insufficient,
+  the message limit value can be specified in the #CFE_SB_SubscribeEx API.
+
+  A related failure is the pipe overflow condition, which can occur if the total number
+  of packets (of all kinds) sent to a particular pipe is too large.
+
+  Next: \ref cfesbugovererr <BR>
+  Prev: \ref cfesbugpktseqvals <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugovererr Pipe Overflow Error
+
+  Another common error that occurs during the send process is the pipe overflow error.
+  This condition occurs if the total number of packets (of all kinds) sent to a particular
+  pipe is too large.  If this error occurs too frequently, it may be an indication that
+  the pipe depth is not set correctly. The pipe depth is given at the time the pipe is
+  created as a parameter in the #CFE_SB_CreatePipe API.
+
+  Next: \ref cfesbugeventfilt <BR>
+  Prev: \ref cfesbugmsgpipeerr <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugeventfilt SB Event Filtering
+
+  Most filtering for SB events is performed by the cFE Event Services (EVS). Filtering for
+  SB events may be specified in the cFE platform configuration file or may be commanded
+  after the system initializes. There is no SB event log that limits the number of events
+  based on the capacity of the log, as in the heritage software bus.
+
+  There is one case in which events are filtered by the software bus instead of event services.
+  This occurs when the software bus needs to suppress events so that a fatal recursive event
+  condition does not transpire. Because the #CFE_SB_SendMsg API is a library function that
+  calls #CFE_EVS_SendEvent, and #CFE_EVS_SendEvent is a library function that calls #CFE_SB_SendMsg,
+  a calling sequence could cause a stack overflow if the recursion is not properly terminated.
+  The cFE software bus detects this condition and properly terminates the recursion. This is
+  done by using a set of flags (one flag per event in the Send API) which determine whether
+  an API has relinquished its stack. If the #CFE_SB_SendMsg needs to send an event that may
+  cause recursion, the flag is set and the event is sent. #CFE_EVS_SendEvent then calls #CFE_SB_SendMsg
+  in the same thread. If the second call to #CFE_SB_SendMsg needs to send that same event again,
+  it finds that the flag is set and the #CFE_EVS_SendEvent call is bypassed, terminating the
+  recursion. The result is that the user will see only one event instead of the many events
+  that would normally occur without the protection. The heritage software bus did not have
+  this condition because it stored events in the software bus event log and another thread
+  would read them out at a later time.
+
+  Next: \ref cfesbugdiagdata <BR>
+  Prev: \ref cfesbugovererr <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugdiagdata Diagnostic Data
+
+  The cFE software bus provides a set of commands to dump SB diagnostic data to help
+  troubleshoot problems or check configuration settings. These commands allow the
+  user to view the routing table, the pipe table or the message map. The message map
+  is a lookup table used during a send operation to give fast access to the routing
+  table index that corresponds to the message being sent.
+
+  The software bus also provides a statistics packet that can be used to tune the
+  configuration parameters. This information is sent to the ground in the form of
+  an SB packet when the corresponding command is received. The cFE limits the number
+  of system pipes, unique Message IDs, buffer memory, messages on a pipe and
+  subscriptions per Message ID. These limits are configurable through cFE platform
+  and mission configuration parameters. The statistics packet was designed to let
+  the project verify that these user settings provide the necessary margin to meet
+  requirements.
+
+  The SB statistics information shows 'Currently In Use' figures, 'High Water Mark'
+  figures and 'Max Allowed' figures for the following: buffer memory, messages on
+  each pipe (pipe depth stats), System Pipes, Unique Message IDs and total subscriptions.
+
+  Depending on the task-scheduling implementation details of the operating system, it is
+  possible to see the peak messages on a pipe occasionally exceed the depth of the pipe.
+  The "Peak Messages In Use" parameter is included in the SB statistics packet under the
+  pipe depth stats.
+
+  Next: \ref cfesbugroutcntrl <BR>
+  Prev: \ref cfesbugeventfilt <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugroutcntrl Control of Packet Routing
+
+  The software bus allows the ground to disable and enable the sending of packets of a
+  specified Message ID to a specified pipe.  All destinations that are needed for normal
+  operation are enabled by default.  Modifying the routing of packets may be required
+  for the following reasons:
+
+  <UL>
+     <LI> In flight, one can enable diagnostic packets to see them on the ground. <BR>
+     <LI> During testing, one can disable a destination to simulate an anomaly.<BR>
+  </UL>
+
+  Next: \ref cfesbugqos <BR>
+  Prev: \ref cfesbugdiagdata <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugqos Quality of Service
+
+  The software bus has a parameter in the #CFE_SB_SubscribeEx API named Quality, which means
+  Quality of Service (QOS) for off-board routing and is of the type #CFE_SB_Qos_t. This structure
+  has two members named priority and reliability. The Quality parameter is currently unused by
+  the software bus. It is a placeholder to be used with the future software bus capability of
+  inter-processor communication. Although currently the software bus does not read the Quality
+  values, it would be best to set this parameter to the value defined as #CFE_SB_Default_Qos.
+  This value is set internally by the software bus with values of zero for priority and
+  reliability. The values of zero will correspond to low priority and low reliability. Setting
+  the QOS value to the #CFE_SB_Default_Qos will ensure seamless integration when the software
+  bus is expanded to support inter-processor communication.
+
+  Next: \ref cfesbugknwnprob <BR>
+  Prev: \ref cfesbugroutcntrl <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugknwnprob Known Problem
+
+  The software bus may perform unexpectedly under an unlikely corner-case scenario. This
+  scenario was revealed in a stress test. The stress test was designed to deplete the Software
+  Bus memory pool by having a high priority application continuously send 1000 byte packets
+  to a lower priority application until the memory pool code returned an error code and sent
+  the following event. "CFE_ES:getPoolBuf err:Request won't fit in remaining memory" At this
+  point the higher priority sending application would stop executing. This would allow the
+  lower priority receiving application to begin receiving the 1000 byte packets. After the
+  receiving app processed all of the packets, the memory was restored to the memory pool as
+  expected. The SB memory-in-use telemetry was zero because there were no software bus
+  packets in transit. At this point any attempt to send a new-sized packet on the software
+  bus was be rejected. The ES memory pool stated that the “…Request won't fit in remaining
+  memory” even though there was currently no memory in use.
+
+  The simplest way to prevent this behavior is to ensure that there is margin when sizing the
+  SB memory pool. To check the margin, monitor the "Peak Memory in Use" vs. the configuration
+  parameter #CFE_SB_BUF_MEMORY_BYTES which indicates the amount allocated.
+
+  Next: \ref cfesbugfaq <BR>
+  Prev: \ref cfesbugqos <BR>
+  Up To: \ref cfesbugops
+**/
+
+/**
+  \page cfesbugfaq Frequently Asked Questions about Software Bus
+
+    <TABLE BORDER="0" CELLPADDING="2" WIDTH="100%">
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           How is the memory pool handle (sent in SB housekeeping telemetry) intended to be used?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The memory pool handle is used to analyze the SB memory pool statistics. The cFE ES
+           command (#CFE_ES_TLM_POOL_STATS_CC) to dump the memory pool statistics takes the pool handle
+           as a parameter. These statistics tell how the SB memory pool is configured and gives details
+           on margin. An improperly configured SB memory pool may inhibit communication. This may occur
+           if there is not enough margin to create a block of the size needed for a transfer. Refer to
+           the ES memory pool users guide for more details. \ref cfeesugmempoolsrv <BR>
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           When sending a message, what message header
+           fields are critical for routing the message?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           To route the message properly, the software bus uses only the Message ID and
+           packet length fields from the header of the message. If the packet length field
+           is incorrect, then the buffer allocation for the message will also be incorrect.
+           This may appear to the receiver as a truncated message or a message with unknown
+           data added to the end of the message.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           How many copies of the message are performed in a typical message delivery?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           There is a single copy of the message performed during a typical delivery.
+           During the #CFE_SB_SendMsg API, the software bus copies the message from the
+           callers memory space to the software bus memory space. The #CFE_SB_RcvMsg API
+           gives the user a pointer to the message in the software bus memory space. This
+           is equivalent to the copy mode send and pointer mode receive in the heritage
+           software bus used on WMAP, ST5, SDO etc.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           When does the software bus free the message buffer during a typical message
+           delivery process? Or how long is the message, and the pointer to the message
+           in the #CFE_SB_RcvMsg valid?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           After receiving a message by calling #CFE_SB_RcvMsg, the message received stays
+           in the software bus memory until the next call to #CFE_SB_RcvMsg with the same
+           Pipe Id. This means that the message pointer given by the software bus to the
+           caller of #CFE_SB_RcvMsg is valid until the next call to #CFE_SB_RcvMsg with the
+           same pipe id. If the caller needs the message longer than the next call to
+           #CFE_SB_RcvMsg, the caller must copy the message to its memory space.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           The first parameter in the #CFE_SB_RcvMsg API is a pointer to a pointer which
+           can get confusing. How can I be sure that the correct address is given for this
+           parameter.
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           Typically a caller declares a ptr of type #CFE_SB_Msg_t  (i.e. CFE_SB_Msg_t *Ptr)
+           then gives the address of that pointer (&Ptr) as this parameter. After a successful
+           call to #CFE_SB_RcvMsg, Ptr will point to the first byte of the software bus message
+           header. This should be used as a read-only pointer. In systems with an MMU, writes
+           to this pointer may cause a memory protection fault.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           Why am I not seeing expected Message Limit error events or Pipe Overflow events?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           It is possible the events are being filtered by cFE Event Services. The filtering
+           for this event may be specified in the platform configuration file or it may have
+           been commanded after the system initializes.<BR>
+           There is a corresponding counter for each of these conditions. First verify that
+           the condition is happening by viewing the counter in SB HK telemetry. If the
+           condition is happening, you can view the SB filter information through the EVS
+           App Data Main page by clicking the 'go to' button for SB. The event Id for these
+           events can be learned through a previous event or from the cfe_sb_events.h file.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           Why does the SB provide event filtering through the platform configuration file?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           To give the user the ability to filter events before an EVS command can be sent.
+           During system initialization, there are many conditions occurring that can cause
+           a flood of SB events such as No Subscribers, Pipe Overflow and MsgId to Pipe errors.
+           This gives the user a way to limit these events.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           Why does SB have so many debug event messages?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The SB debug messages are positive acknowledgments that an action (like receiving a
+           cmd, creating a pipe or subscribing to a message) has occurred. They are intended to
+           help isolate system problems. For instance, if an expected response to a command is
+           not happening, it may be possible to repeat the scenario with the debug event turned
+           on to verify that the command was successfully received.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           How is the QOS parameter in the #CFE_SB_SubscribeEx used by the software bus?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The QOS parameter is currently unused by the software bus. It is a placeholder to be
+           used with the future software bus capability of inter-processor communication. Setting
+           the QOS value to the SB defined #CFE_SB_Default_Qos (QOS.Priority=0,QOS.Reliability=0)
+           will ensure seamless integration when the software bus is expanded to support
+           inter-processor communication.
+    </TABLE>
+
+
+  Prev: \ref cfesbugops <BR>
+  Up To: \ref cfesbovr
+**/
+
+/**
+**  \page cfesbcmds cFE Software Bus Commands
+**
+**  The following is a list of commands that are processed by the cFE Software Bus Task.
+**/
+
+/**
+**  \page cfesbtlm  cFE Software Bus Telemetry
+**
+**  The following are telemetry packets generated by the cFE Software Bus Task.
+**/
+
+/**
+**  \page cfesbcfg  cFE Software Bus Configuration Parameters
+**
+**  The following are configuration parameters used to configure the cFE Software Bus
+**  either for each platform or for a mission as a whole.
+**/
+
+
+/**
+  \page cfesbrevhist cFE Software Bus Documentation Revision History
+
+  \verbatim
+  $Log: cfe_sb.dox  $
+  Revision 1.11 2014/09/09 12:04:36GMT-05:00 rmcgraw 
+  DCR21231:1 Updated section cfesbugdiagdata to describe peak msgs exceeding pipe depth
+  Revision 1.10 2014/09/09 12:49:06EDT rmcgraw
+  DCR7095:1 Added section cfesbugknwnprob to describe how SB may inhibit a transaction
+  Revision 1.9 2014/08/23 20:58:47EDT sstrege
+  Replaced reference to the doxygen application developers guide with reference to cFE API
+  Revision 1.8 2011/12/20 10:24:20EST rmcgraw
+  Changed MsgId-to-Pipe phrase to Msg Limit
+  Revision 1.7 2011/11/30 14:30:39EST jmdagost
+  Corrected text to remove invalid reference.
+  Revision 1.6 2009/07/20 18:14:18EDT aschoeni
+  Updated users guide to include reference to PassMsg API for packet sequence counting.
+  Revision 1.5 2009/04/01 15:24:55EDT rmcgraw
+  DCR6296:4 Changed wording to reflect new tlm point
+  Revision 1.4 2009/02/26 18:14:01EST rmcgraw
+  DCR6805:2 Updates to reflect changes intended for cFE5.3.0
+  Revision 1.3 2008/12/08 12:07:05EST dkobe
+  Updates to correct doxygen errors
+  Revision 1.2 2008/12/06 15:34:34EST dkobe
+  Corrected formatting of revision history
+  Revision 1.1 2008/12/06 10:19:50EST dkobe
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
+  \endverbatim
+
+  Up To: \ref cfesbovr
+**/

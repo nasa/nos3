@@ -1,0 +1,22 @@
+TELEMETRY MISSION CFE_EVS_TLMPKT LITTLE_ENDIAN "Event Services Housekeeping Telemetry Packet"
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0801 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE 16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH 16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS 32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS 16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM COMMANDCOUNTER 8 UINT "EVS Command Counter."
+  APPEND_ITEM COMMANDERRCOUNTER 8 UINT "EVS Command Error Counter."
+  APPEND_ITEM MESSAGEFORMATMODE 8 UINT "Event message format mode (short/long)."
+  APPEND_ITEM MESSAGETRUNCCOUNTER 8 UINT "Event message truncation counter."
+  APPEND_ITEM UNREGISTEREDAPPCOUNTER 8 UINT "Unregistered application message send counter."
+  APPEND_ITEM OUTPUTPORT 8 UINT "Output port mask."
+  APPEND_ITEM LOGFULLFLAG 8 UINT "Local event log full flag."
+  APPEND_ITEM LOGMODE 8 UINT "Local event logging mode (overwrite/discard)."
+  APPEND_ITEM MESSAGESENDCOUNTER 16 UINT "Event message send counter."
+  APPEND_ITEM LOGOVERFLOWCOUNTER 16 UINT "Local event log overflow counter."
+  APPEND_ITEM LOGENABLED 8 UINT "Current event log enable/disable state."
+  APPEND_ITEM SPARE1 8 UINT "Padding for 32 bit boundary."
+  APPEND_ITEM SPARE2 8 UINT "Padding for 32 bit boundary."
+  APPEND_ITEM SPARE3 8 UINT "Padding for 32 bit boundary."
+  APPEND_ARRAY_ITEM APPDATA 64 UINT 2048 "Array of registered application table data."
+

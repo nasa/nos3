@@ -1,0 +1,82 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 14, 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TBL Registry File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/11/14  SMA            : Initial
+!  2005/11/15  SMA            : Mods per D. Kobe
+!  2006/06/08  WFM            : Updates for cFE 3.3
+!  2007/07/06  WFM            : Added Critical Flag
+!  2010/11/16  WFM            : Added CRC field after FileCreateSubseconds
+!  2014/08/27  WFM	      : Removed TBL_NAME_LEN #define and added comments
+!                                                             
+!==============================================================================
+!
+!! OS_MAX_PATH_LEN and OS_MAX_API_NAME are defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_types.rdl file
+
+TYPES
+   RECORD $sc_$cpu_TBL_RegistryFile        DESC="TBL Registry File"
+     ULI  $sc_$cpu_TBL_Size                DESC="$sc $cpu TBL Size (bytes)", UNITS=Bytes
+     RECORD  $sc_$cpu_TBL_SysTime          DESC="$sc $cpu TBL System Time"
+          ULI  $sc_$cpu_TBL_ST_Seconds     DESC="$sc $cpu TBL Seconds"
+          ULI  $sc_$cpu_TBL_ST_Subseconds  DESC="$sc $cpu TBL Subseconds"
+     END
+     ULI  $sc_$cpu_TBL_NumUsers            DESC="$sc $cpu Number of users accessing table"
+     SLI  $sc_$cpu_TBL_LoadBufferID        DESC="$sc $cpu TBL ID of the Buffer into which the table has been loaded",
+					DISCRETE, DRANGE=(-3,-2,-1,0,1,2,3),
+					DLABEL=("DblBuff0","DblBuff1","NONE",
+						"SharedBuff0","SharedBuff1",
+						"SharedBuff2","SharedBuff3")
+     ULI  $sc_$cpu_TBL_FileCreateSeconds     DESC="$sc $cpu TBL File Create Seconds"
+     ULI  $sc_$cpu_TBL_FileCreateSubseconds  DESC="$sc $cpu TBL Subseconds"
+     ULI  $sc_$cpu_TBL_RegCRC		DESC="$sc $cpu TBL CRC"
+     UB   $sc_$cpu_TBL_ValFuncPresent   DESC="$sc $cpu TBL Validation Func Present Flag",
+					DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     UB   $sc_$cpu_TBL_LoadedOnce       DESC="$sc $cpu TBL Loaded at least Once Flag",
+					DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     UB   $sc_$cpu_TBL_UpdatePndng      DESC="$sc $cpu TBL Activated but Not Yet Updated Flag",
+					DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     UB   $sc_$cpu_TBL_DumpOnly         DESC="$sc $cpu TBL Dump Only Flag",
+					DISCRETE, 
+                                        DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     UB   $sc_$cpu_TBL_DblBuffered      DESC="$sc $cpu TBL Double Buffered Flag",
+					DISCRETE, 
+                                        DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     CHAR $sc_$cpu_TBL_Name[TBL_NAME_LEN] DESC="$sc $cpu Table Name"
+     CHAR $sc_$cpu_TBL_LastFileUpd[OS_MAX_PATH_LEN] DESC="$sc $cpu TBL Filename of the Last File updated"
+     CHAR $sc_$cpu_TBL_OwnerAppName[OS_MAX_API_NAME] DESC="$sc $cpu TBL Processor Specific Table Owner Application Name"
+     UB   $sc_$cpu_TBL_Critical		DESC="$sc $cpu Critical TBL Flag",
+					DISCRETE, DRANGE=(0,1),
+					DLABEL=("FALSE","TRUE")
+     UI   $sc_$cpu_TBL_Spare		DESC="$sc $cpu spare for alignement"
+END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TBL Registry File", VARYING
+!
+#include "cfe_file_header.rdl"
+
+$sc_$cpu_TBL_RegistryFile   $sc_$cpu_RF[CFE_TBL_MAX_NUM_TABLES] DESC="$sc $cpu TBL Registry File"
+
+!
+!
+!
+END

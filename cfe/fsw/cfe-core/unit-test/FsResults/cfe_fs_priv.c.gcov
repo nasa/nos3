@@ -1,0 +1,156 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_priv.c
+        -:    0:Graph:cfe_fs_priv.gcno
+        -:    0:Data:cfe_fs_priv.gcda
+        -:    0:Runs:1
+        -:    0:Programs:3
+        -:    1:/*
+        -:    2:** $Id: cfe_fs_priv.c 1.6 2012/01/13 12:11:29GMT-05:00 acudmore Exp  $
+        -:    3:**
+        -:    4:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    5:**      administrator of the National Aeronautics Space Administration.  
+        -:    6:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:    7:**      Space Flight Center pursuant to government contracts.
+        -:    8:**
+        -:    9:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   10:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   11:** 
+        -:   12:** Purpose:  cFE File Services (FS) library API Initialization 
+        -:   13:**
+        -:   14:** Author:  Alan Cudmore/NASA GSFC 
+        -:   15:**
+        -:   16:** Notes:
+        -:   17:**
+        -:   18:** $Log: cfe_fs_priv.c  $
+        -:   19:** Revision 1.6 2012/01/13 12:11:29GMT-05:00 acudmore 
+        -:   20:** Changed license text to reflect open source
+        -:   21:** Revision 1.5 2011/09/02 14:59:15EDT jmdagost 
+        -:   22:** Added new-line characters where missing in syslog calls.
+        -:   23:** Revision 1.4 2010/11/03 15:09:10EDT jmdagost 
+        -:   24:** Added cfe.h include file.
+        -:   25:** Revision 1.3 2009/06/10 09:13:52EDT acudmore 
+        -:   26:** Converted OS_Mem* and OS_BSP* calls to CFE_PSP_*
+        -:   27:** Revision 1.2 2008/07/08 15:40:40EDT apcudmore 
+        -:   28:** Added CFE_FS global data, lock/unlock functions, log messages for decompress API.
+        -:   29:** Revision 1.1 2008/07/08 13:37:12EDT apcudmore 
+        -:   30:** Initial revision
+        -:   31:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/fs/project.pj
+        -:   32:** Revision 1.2 2008/07/08 13:32:06EDT apcudmore 
+        -:   33:** Added Mutex Lock/Unlock functions
+        -:   34:** Revision 1.1 2008/07/08 12:50:15EDT apcudmore 
+        -:   35:** Initial revision
+        -:   36:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/fs/project.pj
+        -:   37:**
+        -:   38:*/
+        -:   39:
+        -:   40:
+        -:   41:/*
+        -:   42:** Required header files
+        -:   43:*/
+        -:   44:#include "osapi.h"
+        -:   45:#include "private/cfe_private.h"
+        -:   46:#include "cfe_es.h"
+        -:   47:#include "cfe_fs.h"
+        -:   48:#include "cfe_fs_priv.h"
+        -:   49:
+        -:   50:#include <string.h>
+        -:   51:
+        -:   52:/*
+        -:   53:** Global data
+        -:   54:** 
+        -:   55:*/
+        -:   56:CFE_FS_t CFE_FS;
+        -:   57:
+        -:   58:/******************************************************************************
+        -:   59:**  Function:  CFE_FS_EarlyInit()
+        -:   60:**
+        -:   61:**  Purpose:
+        -:   62:**    Initialize the FS data structures before the cFE runs.
+        -:   63:**
+        -:   64:**  Arguments:
+        -:   65:**
+        -:   66:**  Notes:
+        -:   67:**    This function MUST be called before any FS API's are called.
+        -:   68:**
+        -:   69:**  Return:
+        -:   70:**    CFE_SUCCESS
+        -:   71:*/
+        -:   72:int32 CFE_FS_EarlyInit (void) 
+        2:   73:{
+        2:   74:    int32 Stat = CFE_SUCCESS;
+        -:   75:
+        2:   76:    Stat = OS_MutSemCreate(&CFE_FS.SharedDataMutexId, "CFE_FS_SharedMutex", 0);
+        2:   77:    if( Stat != OS_SUCCESS )
+        -:   78:    {
+        1:   79:      CFE_ES_WriteToSysLog("FS Shared Data Mutex creation failed! RC=0x%08x\n",(unsigned int)Stat);
+        1:   80:      return Stat;
+        -:   81:    }/* end if */
+        -:   82:
+        1:   83:    return Stat;
+        -:   84:
+        -:   85:}/* end CFE_FS_EarlyInit */
+        -:   86:
+        -:   87:/******************************************************************************
+        -:   88:**  Function:  CFE_FS_LockSharedData()
+        -:   89:**
+        -:   90:**  Purpose:
+        -:   91:**    FS internal function to handle a semaphore take failure for the FS 
+        -:   92:**    Data Mutex
+        -:   93:**
+        -:   94:**  Arguments:
+        -:   95:**    FunctionName   - the Function Name of the code that generated the error.
+        -:   96:**
+        -:   97:**  Return:
+        -:   98:**    None
+        -:   99:*/
+        -:  100:void CFE_FS_LockSharedData(const char *FunctionName)
+        3:  101:{
+        -:  102:    int32   Status;
+        3:  103:    uint32  AppId = 0;
+        -:  104:
+        3:  105:    Status = OS_MutSemTake(CFE_FS.SharedDataMutexId);
+        3:  106:    if (Status != OS_SUCCESS) 
+        -:  107:    {
+        1:  108:        CFE_ES_GetAppID(&AppId);
+        -:  109:
+        1:  110:        CFE_ES_WriteToSysLog("FS SharedData Mutex Take Err Stat=0x%x,App=%d,Function=%s\n",
+        -:  111:                (unsigned int)Status,(int)AppId,FunctionName);
+        -:  112:
+        -:  113:    }/* end if */
+        -:  114:
+        -:  115:    return;
+        -:  116:
+        -:  117:}/* end CFE_FS_LockSharedData */
+        -:  118:
+        -:  119:/******************************************************************************
+        -:  120:**  Function:  CFE_FS_UnlockSharedData()
+        -:  121:**
+        -:  122:**  Purpose:
+        -:  123:**    FS internal function to handle a semaphore give failure for the Shared
+        -:  124:**    Data Mutex
+        -:  125:**
+        -:  126:**  Arguments:
+        -:  127:**    FunctionName - the Function containing the code that generated the error.
+        -:  128:**
+        -:  129:**  Return:
+        -:  130:**    None
+        -:  131:*/
+        -:  132:void CFE_FS_UnlockSharedData(const char *FunctionName)
+        3:  133:{
+        -:  134:   int32   Status;
+        3:  135:   uint32  AppId = 0;
+        -:  136:
+        3:  137:   Status = OS_MutSemGive(CFE_FS.SharedDataMutexId);
+        3:  138:   if (Status != OS_SUCCESS) 
+        -:  139:   {
+        1:  140:       CFE_ES_GetAppID(&AppId);
+        1:  141:       CFE_ES_WriteToSysLog("FS SharedData Mutex Give Err Stat=0x%x,App=%d,Function=%s\n",
+        -:  142:               (unsigned int)Status,(int)AppId,FunctionName);
+        -:  143:
+        -:  144:   }/* end if */
+        -:  145:   return;
+        -:  146:
+        -:  147:}/* end CFE_FS_UnlockSharedData */
+        -:  148:
+        -:  149:/************************/
+        -:  150:/*  End of File Comment */
+        -:  151:/************************/

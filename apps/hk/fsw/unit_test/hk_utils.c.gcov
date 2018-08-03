@@ -1,0 +1,742 @@
+        -:    0:Source:/home/aschoening/pwned/apps/hk/fsw/src/hk_utils.c
+        -:    0:Graph:hk_utils.gcno
+        -:    0:Data:hk_utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: hk_utils.c.gcov 1.7 2012/08/23 17:11:15EDT aschoeni Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**  The CFS Housekeeping (HK) Application file containing the functions
+        -:    7:**  used combine the input messages into output messages.
+        -:    8:**
+        -:    9:** Notes:
+        -:   10:**
+        -:   11:** $Log: hk_utils.c.gcov  $
+        -:   11:** Revision 1.7 2012/08/23 17:11:15EDT aschoeni 
+        -:   11:** Updated unit tests for 2.4.0.0
+        -:   12:** Revision 1.7 2012/08/15 18:33:03EDT aschoeni 
+        -:   13:** Added ability to discard incomplete combo packets
+        -:   14:** Revision 1.6 2012/03/23 17:29:26EDT lwalling 
+        -:   15:** Limit error events to one per HK input packet
+        -:   16:** Revision 1.5 2009/12/03 15:34:55EST jmdagost 
+        -:   17:** Uncommented proper code to check the dump pending status of a table.  Commented out the old code (instead of deleting it) for reference.
+        -:   18:** Revision 1.4 2009/06/12 14:16:58EDT rmcgraw 
+        -:   19:** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   20:** Revision 1.3 2008/09/11 10:19:45EDT rjmcgraw 
+        -:   21:** DCR4040:1 Removed tabs and removed #include osapi-hw-core.h
+        -:   22:** Revision 1.2 2008/06/19 13:24:49EDT rjmcgraw 
+        -:   23:** DCR3052:1 Changed Table check logic to call getstatus before processing new copy table
+        -:   24:** Revision 1.1 2008/04/09 16:42:24EDT rjmcgraw 
+        -:   25:** Initial revision
+        -:   26:** Member added to CFS project
+        -:   27:**
+        -:   28:*************************************************************************/
+        -:   29:
+        -:   30:/************************************************************************
+        -:   31:** Includes
+        -:   32:*************************************************************************/
+        -:   33:
+        -:   34:#include "cfe.h"
+        -:   35:#include "hk_utils.h"
+        -:   36:#include "hk_app.h"
+        -:   37:#include "hk_events.h"
+        -:   38:#include <string.h>
+        -:   39:                             
+        -:   40:
+        -:   41:/*************************************************************************
+        -:   42:** Function definitions
+        -:   43:**************************************************************************/
+        -:   44:
+        -:   45:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   46:/*                                                                 */
+        -:   47:/* HK process incoming housekeeping data                           */
+        -:   48:/*                                                                 */
+        -:   49:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   50:void HK_ProcessIncomingHkData (CFE_SB_MsgPtr_t MessagePtr)
+function HK_ProcessIncomingHkData called 7 returned 100% blocks executed 100%
+        7:   51:{
+        -:   52:    hk_copy_table_entry_t         * StartOfCopyTable;
+        -:   53:    hk_copy_table_entry_t         * CpyTblEntry;
+        -:   54:    hk_runtime_tbl_entry_t        * StartOfRtTable;
+        -:   55:    hk_runtime_tbl_entry_t        * RtTblEntry;
+        -:   56:    uint16                          Loop;
+        -:   57:    CFE_SB_MsgId_t                  MessageID;
+        -:   58:    uint8                         * DestPtr;
+        -:   59:    uint8                         * SrcPtr;
+        -:   60:    int32                           MessageLength;
+        -:   61:    int32                           MessageErrors;
+        -:   62:    int32                           LastByteAccessed;
+        -:   63:
+        -:   64:
+        7:   65:    StartOfCopyTable = (hk_copy_table_entry_t *)  HK_AppData.CopyTablePtr;
+        7:   66:    StartOfRtTable   = (hk_runtime_tbl_entry_t *) HK_AppData.RuntimeTablePtr;
+        7:   67:    MessageID        = CFE_SB_GetMsgId (MessagePtr);
+call    0 returned 100%
+        7:   68:    MessageErrors    = 0;
+        -:   69:    
+        -:   70:    /* Spin thru the entire table looking for matches */
+      903:   71:    for (Loop=0; Loop < HK_COPY_TABLE_ENTRIES; Loop++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:   72:    {
+      896:   73:        CpyTblEntry = & StartOfCopyTable [Loop];
+      896:   74:        RtTblEntry  = & StartOfRtTable [Loop];
+        -:   75:        
+        -:   76:        /* Does the inputMID for this table entry match what we're looking for */       
+      896:   77:        if (MessageID == CpyTblEntry->InputMid)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        -:   78:        {
+        -:   79:            /* Ensure that we don't reference past the end of the input packet */
+        6:   80:            MessageLength    = CFE_SB_GetTotalMsgLength(MessagePtr);
+call    0 returned 100%
+        6:   81:            LastByteAccessed = CpyTblEntry->InputOffset + CpyTblEntry->NumBytes;
+        6:   82:            if (MessageLength >= LastByteAccessed)
+branch  0 taken 83% (fallthrough)
+branch  1 taken 17%
+        -:   83:            {
+        -:   84:                /* We have a match.  Build the Source and Destination addresses
+        -:   85:                   and move the data */
+        5:   86:                DestPtr = ( (uint8 *) RtTblEntry->OutputPktAddr) + CpyTblEntry->OutputOffset;
+        5:   87:                SrcPtr  = ( (uint8 *) MessagePtr) + CpyTblEntry->InputOffset;
+        -:   88:
+        5:   89:                CFE_PSP_MemCpy (DestPtr, SrcPtr, CpyTblEntry->NumBytes);
+call    0 returned 100%
+        -:   90:                
+        -:   91:                /* Set the data present field to indicate the data is there */
+        5:   92:                RtTblEntry->DataPresent = HK_DATA_PRESENT;
+        -:   93:
+        -:   94:            }
+        -:   95:            else
+        -:   96:            {
+        -:   97:                /* Error: copy data is past the end of the input packet */
+        1:   98:                MessageErrors++;
+        -:   99:            }
+        -:  100:        }
+        -:  101:    }
+        -:  102:
+        -:  103:    /* Send, at most, one error event per input packet */
+        7:  104:    if (MessageErrors != 0)
+branch  0 taken 14% (fallthrough)
+branch  1 taken 86%
+        -:  105:    {
+        1:  106:        CFE_EVS_SendEvent (HK_ACCESSING_PAST_PACKET_END_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  107:                           "HK table definition exceeds packet length. MID:0x%04X, Length:%d, Count:%d",
+        -:  108:                           MessageID, MessageLength, MessageErrors);
+        -:  109:    }
+        -:  110:
+        -:  111:    return;
+        -:  112:
+        -:  113:}   /* end HK_ProcessIncomingHkData */
+        -:  114:
+        -:  115:
+        -:  116:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  117:/*                                                                 */
+        -:  118:/* HK validate the copy table contents                             */
+        -:  119:/*                                                                 */
+        -:  120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  121:int32 HK_ValidateHkCopyTable (void * TblPtr)
+function HK_ValidateHkCopyTable called 7 returned 100% blocks executed 100%
+        7:  122:{
+        7:  123:    return HK_SUCCESS;
+        -:  124:
+        -:  125:}   /* end HK_ValidateHkCopyTable */
+        -:  126:
+        -:  127:
+        -:  128:
+        -:  129:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  130:/*                                                                 */
+        -:  131:/* HK process new copy table                                       */
+        -:  132:/*                                                                 */
+        -:  133:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  134:void HK_ProcessNewCopyTable (hk_copy_table_entry_t * CpyTblPtr, 
+        -:  135:                             hk_runtime_tbl_entry_t * RtTblPtr)
+function HK_ProcessNewCopyTable called 5 returned 100% blocks executed 100%
+        5:  136:{
+        -:  137:    hk_copy_table_entry_t         * StartOfCopyTable;
+        -:  138:    hk_copy_table_entry_t         * OuterCpyEntry;
+        -:  139:    hk_copy_table_entry_t         * InnerDefEntry;
+        -:  140:    hk_runtime_tbl_entry_t        * StartOfRtTable;
+        -:  141:    hk_runtime_tbl_entry_t        * OuterRtEntry;
+        -:  142:    hk_runtime_tbl_entry_t        * InnerRtEntry;
+        -:  143:    int32                           Loop1;
+        -:  144:    int32                           Loop2;
+        -:  145:    CFE_SB_MsgId_t                  MidOfThisPacket;
+        -:  146:    int32                           SizeOfThisPacket;
+        -:  147:    int32                           FurthestByteFromThisEntry;
+        -:  148:    CFE_SB_MsgPtr_t                 NewPacketAddr;
+        5:  149:    int32                           Result = CFE_SUCCESS;
+        -:  150:     
+        5:  151:    StartOfCopyTable = CpyTblPtr;
+        5:  152:    StartOfRtTable  = RtTblPtr;
+        -:  153:    
+        -:  154:    /* Loop thru the RunTime table initializing the fields */
+      645:  155:    for (Loop1 = 0; Loop1 < HK_COPY_TABLE_ENTRIES; Loop1++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  156:    {
+      640:  157:        OuterRtEntry  = & StartOfRtTable [Loop1];
+        -:  158:
+      640:  159:        OuterRtEntry->OutputPktAddr      = NULL;
+      640:  160:        OuterRtEntry->InputMidSubscribed = HK_INPUTMID_NOT_SUBSCRIBED;
+      640:  161:        OuterRtEntry->DataPresent        = HK_DATA_NOT_PRESENT;
+        -:  162:        
+        -:  163:    }
+        -:  164:
+        -:  165:    /* Loop thru the table looking for all of the SB packets that need to be built */
+      645:  166:    for (Loop1 = 0; Loop1 < HK_COPY_TABLE_ENTRIES; Loop1++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  167:    {
+      640:  168:        OuterCpyEntry = & StartOfCopyTable [Loop1];
+      640:  169:        OuterRtEntry  = & StartOfRtTable [Loop1];
+        -:  170:
+        -:  171:        /* If the both MIDs exists but the Packet Address has yet to be assigned, 
+        -:  172:           we need to build an SB packet, so compute the size */
+      640:  173:        if ( (OuterCpyEntry->OutputMid     != HK_UNDEFINED_ENTRY) && 
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 36% (fallthrough)
+branch  5 taken 64%
+        -:  174:             (OuterCpyEntry->InputMid      != HK_UNDEFINED_ENTRY) &&
+        -:  175:             (OuterRtEntry->OutputPktAddr  == NULL) )
+        -:  176:        {
+        -:  177:            /* We have a table entry that needs a SB message to be built */        
+        9:  178:            MidOfThisPacket  = OuterCpyEntry->OutputMid;
+        9:  179:            SizeOfThisPacket = 0;
+        -:  180:
+        -:  181:            /* Spin thru entire table looking for duplicate OutputMid's.  This will let 
+        -:  182:               us find the byte offset furthest from the beginning of the packet */
+     1161:  183:            for (Loop2=0; Loop2 < HK_COPY_TABLE_ENTRIES; Loop2++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  184:            {
+     1152:  185:                InnerDefEntry = & StartOfCopyTable [Loop2];
+        -:  186:                
+        -:  187:                /* If this entry's MID matches the one we're looking for */
+     1152:  188:                if (InnerDefEntry->OutputMid == MidOfThisPacket)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        -:  189:                {
+        -:  190:                    /* The byte furthest away from the section described by this entry */
+       45:  191:                    FurthestByteFromThisEntry = InnerDefEntry->OutputOffset +
+        -:  192:                                                InnerDefEntry->NumBytes;
+        -:  193:
+        -:  194:                    /* Save the byte offset of the byte furthest from the packet start */
+       45:  195:                    if (FurthestByteFromThisEntry > SizeOfThisPacket)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  196:                    {
+       45:  197:                        SizeOfThisPacket = FurthestByteFromThisEntry;
+        -:  198:                                               
+        -:  199:                    }
+        -:  200:                }
+        -:  201:            }
+        -:  202:
+        -:  203:            /* Build the packet with the size computed above */
+        9:  204:            NewPacketAddr = NULL;
+        9:  205:            if (SizeOfThisPacket > 0)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  206:            {
+        9:  207:                Result = CFE_ES_GetPoolBuf ((uint32 **) & NewPacketAddr,
+call    0 returned 100%
+        -:  208:                                            HK_AppData.MemPoolHandle,
+        -:  209:                                            SizeOfThisPacket);
+        -:  210:                
+        9:  211:                if (Result >= CFE_SUCCESS)
+branch  0 taken 44% (fallthrough)
+branch  1 taken 56%
+        -:  212:                {
+        -:  213:                   /* Spin thru entire table (again) looking for duplicate OutputMid's.  
+        -:  214:                       This will let us assign the packet created above to all 
+        -:  215:                       of the table entries that need to use it */
+      516:  216:                    for (Loop2=0; Loop2 < HK_COPY_TABLE_ENTRIES; Loop2++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  217:                    {
+      512:  218:                        InnerDefEntry = & StartOfCopyTable [Loop2];
+      512:  219:                        InnerRtEntry  = & StartOfRtTable [Loop2];
+        -:  220:                
+        -:  221:                        /* If this entry's MID matches the one we're looking for */
+      512:  222:                        if (InnerDefEntry->OutputMid == MidOfThisPacket)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        -:  223:                        {
+       20:  224:                            InnerRtEntry->OutputPktAddr = NewPacketAddr;
+        -:  225:                        }
+        -:  226:                    }
+        -:  227:
+        -:  228:                    /* Init the SB Packet only once regardless of how many times its in the table */
+        4:  229:                    CFE_SB_InitMsg (NewPacketAddr, MidOfThisPacket, SizeOfThisPacket, TRUE);                    
+call    0 returned 100%
+        -:  230:                    
+        -:  231:                }
+        -:  232:                else
+        -:  233:                {
+        5:  234:                    CFE_EVS_SendEvent (HK_MEM_POOL_MALLOC_FAILED_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  235:                                       "HK Processing New Table: ES_GetPoolBuf for size %d returned 0x%04X",
+        -:  236:                                       SizeOfThisPacket, Result);
+        -:  237:                }
+        -:  238:            }
+        -:  239:        }
+        -:  240:
+        -:  241:        /* If HK needs to subscribe to this Input packet... */
+      640:  242:        if ( (OuterRtEntry->InputMidSubscribed == HK_INPUTMID_NOT_SUBSCRIBED) &&
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 4% (fallthrough)
+branch  3 taken 96%
+        -:  243:             (OuterCpyEntry->InputMid          != HK_UNDEFINED_ENTRY) )
+        -:  244:        {
+       25:  245:            Result = CFE_SB_Subscribe (OuterCpyEntry->InputMid, HK_AppData.CmdPipe);
+call    0 returned 100%
+        -:  246:            
+       25:  247:            if (Result == CFE_SUCCESS)
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+        -:  248:            {
+        -:  249:                /* Spin thru entire table (again) looking for duplicate InputMid's.  
+        -:  250:                   This will let us mark each duplicate as already having been subscribed */
+     3096:  251:                for (Loop2=0; Loop2 < HK_COPY_TABLE_ENTRIES; Loop2++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  252:                {
+     3072:  253:                    InnerDefEntry = & StartOfCopyTable [Loop2];
+     3072:  254:                    InnerRtEntry  = & StartOfRtTable [Loop2];
+        -:  255:            
+        -:  256:                    /* If this entry's MID matches the one we're looking for */
+     3072:  257:                    if (OuterCpyEntry->InputMid == InnerDefEntry->InputMid)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        -:  258:                    {
+       24:  259:                        InnerRtEntry->InputMidSubscribed = HK_INPUTMID_SUBSCRIBED;
+        -:  260:                    }
+        -:  261:                }
+        -:  262:            }
+        -:  263:            else
+        -:  264:            {
+        1:  265:                CFE_EVS_SendEvent (HK_CANT_SUBSCRIBE_TO_SB_PKT_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  266:                                   "HK Processing New Table:SB_Subscribe for Mid 0x%04X returned 0x%04X",
+        -:  267:                                   OuterCpyEntry->InputMid, Result);
+        -:  268:            }
+        -:  269:        }
+        -:  270:    }
+        -:  271:
+        5:  272:}   /* end HK_ProcessNewCopyTable */
+        -:  273:
+        -:  274:
+        -:  275:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  276:/*                                                                 */
+        -:  277:/* HK Tear down old copy table                                     */
+        -:  278:/*                                                                 */
+        -:  279:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  280:void HK_TearDownOldCopyTable (hk_copy_table_entry_t * CpyTblPtr, 
+        -:  281:                              hk_runtime_tbl_entry_t * RtTblPtr)
+function HK_TearDownOldCopyTable called 3 returned 100% blocks executed 100%
+        3:  282:{
+        -:  283:    hk_copy_table_entry_t             * StartOfCopyTable;
+        -:  284:    hk_copy_table_entry_t             * OuterCpyEntry;
+        -:  285:    hk_copy_table_entry_t             * InnerDefEntry;
+        -:  286:    hk_runtime_tbl_entry_t            * StartOfRtTable;
+        -:  287:    hk_runtime_tbl_entry_t            * OuterRtEntry;
+        -:  288:    hk_runtime_tbl_entry_t            * InnerRtEntry;
+        -:  289:    int32                               Loop1;
+        -:  290:    int32                               Loop2;
+        -:  291:    CFE_SB_MsgId_t                      MidOfThisPacket;
+        -:  292:    void                              * OutputPktAddr;
+        -:  293:    void                              * SavedPktAddr;
+        3:  294:    int32                               Result = CFE_SUCCESS;
+        -:  295:
+        3:  296:    StartOfCopyTable = CpyTblPtr;
+        3:  297:    StartOfRtTable  = RtTblPtr;
+        -:  298:   
+        -:  299:    /* Loop thru the table looking for all of the SB packets that need to be freed */
+      387:  300:    for (Loop1 = 0; Loop1 < HK_COPY_TABLE_ENTRIES; Loop1++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  301:    {
+      384:  302:        OuterCpyEntry = & StartOfCopyTable [Loop1];
+      384:  303:        OuterRtEntry  = & StartOfRtTable  [Loop1];
+        -:  304:
+        -:  305:        /* If a Packet Address has been assigned, it needs to get deleted */
+      384:  306:        if (OuterRtEntry->OutputPktAddr != NULL)
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+        -:  307:        {
+        7:  308:            OutputPktAddr   = OuterRtEntry->OutputPktAddr;
+        7:  309:            MidOfThisPacket = OuterCpyEntry->OutputMid;
+        -:  310:
+        7:  311:            SavedPktAddr = OutputPktAddr;
+        7:  312:            Result = CFE_ES_PutPoolBuf (HK_AppData.MemPoolHandle, (uint32 *) OutputPktAddr);
+call    0 returned 100%
+        7:  313:            if (Result >= CFE_SUCCESS)
+branch  0 taken 29% (fallthrough)
+branch  1 taken 71%
+        -:  314:            {               
+        -:  315:                /* Spin thru the entire table looking for entries that used the same SB packets */
+      258:  316:                for (Loop2=0; Loop2 < HK_COPY_TABLE_ENTRIES; Loop2++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  317:                {
+      256:  318:                    InnerDefEntry = & StartOfCopyTable [Loop2];
+      256:  319:                    InnerRtEntry  = & StartOfRtTable [Loop2];
+        -:  320:                    
+      256:  321:                    if ( (InnerDefEntry->OutputMid    == MidOfThisPacket) &&
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        -:  322:                         (InnerRtEntry->OutputPktAddr == SavedPktAddr) )
+        -:  323:                    {
+        -:  324:                        /* NULL out the table entry whose packet was freed above */
+       10:  325:                        InnerRtEntry->OutputPktAddr = (CFE_SB_MsgPtr_t) NULL;
+        -:  326:                    }
+        -:  327:                }
+        -:  328:            }
+        -:  329:            else
+        -:  330:            {
+        5:  331:                CFE_EVS_SendEvent (HK_MEM_POOL_FREE_FAILED_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  332:                                   "HK TearDown: ES_putPoolBuf Err pkt:0x%08X ret 0x%04X, hdl 0x%08x",
+        -:  333:                                   SavedPktAddr, Result,HK_AppData.MemPoolHandle);
+        -:  334:            }
+        -:  335:        }
+        -:  336:
+        -:  337:        /* If the InputMid for this Table Entry has been subscribed, it needs to
+        -:  338:           get Unsubscribed as do any other identical InputMids throughout the table.
+        -:  339:           We don't have to worry about leaving any Mid's subscribed since the entire table
+        -:  340:           is getting clobbered. */
+      384:  341:        if (OuterRtEntry->InputMidSubscribed == HK_INPUTMID_SUBSCRIBED)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        -:  342:        {
+       15:  343:            CFE_SB_Unsubscribe (OuterCpyEntry->InputMid, HK_AppData.CmdPipe);
+call    0 returned 100%
+        -:  344:                        
+        -:  345:            /* Spin thru the entire table looking for entries that used the same SB packets */
+     1935:  346:            for (Loop2=0; Loop2 < HK_COPY_TABLE_ENTRIES; Loop2++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  347:            {
+     1920:  348:                InnerDefEntry = & StartOfCopyTable [Loop2];
+     1920:  349:                InnerRtEntry  = & StartOfRtTable [Loop2];
+        -:  350:                
+     1920:  351:                if (InnerDefEntry->InputMid == OuterCpyEntry->InputMid)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        -:  352:                {
+       15:  353:                    InnerRtEntry->InputMidSubscribed = HK_INPUTMID_NOT_SUBSCRIBED;
+        -:  354:                }
+        -:  355:            }
+        -:  356:        }
+        -:  357:
+        -:  358:    }
+        -:  359:
+        3:  360:}   /* end HK_TearDownOldCopyTable */
+        -:  361:
+        -:  362:
+        -:  363:
+        -:  364:
+        -:  365:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  366:/*                                                                 */
+        -:  367:/* HK Send combined output message                                 */
+        -:  368:/*                                                                 */
+        -:  369:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  370:void HK_SendCombinedHkPacket (CFE_SB_MsgId_t WhichMidToSend)
+function HK_SendCombinedHkPacket called 3 returned 100% blocks executed 100%
+        3:  371:{
+        3:  372:    boolean                         PacketFound = FALSE;
+        -:  373:    hk_copy_table_entry_t         * StartOfCopyTable;
+        -:  374:    hk_copy_table_entry_t         * CpyTblEntry;
+        -:  375:    hk_runtime_tbl_entry_t        * StartOfRtTable;
+        -:  376:    hk_runtime_tbl_entry_t        * RtTblEntry;
+        -:  377:    int32                           Loop;
+        -:  378:    CFE_SB_MsgId_t                  ThisEntrysOutMid;
+        -:  379:    CFE_SB_MsgId_t                  InputMidMissing;
+        -:  380:
+        3:  381:    StartOfCopyTable = (hk_copy_table_entry_t *) HK_AppData.CopyTablePtr;
+        3:  382:    StartOfRtTable  = (hk_runtime_tbl_entry_t *)  HK_AppData.RuntimeTablePtr;
+        -:  383:
+        -:  384:    /* Look thru each item in this Table, but only send this packet once, at most */
+      133:  385:    for (Loop = 0; ( (Loop < HK_COPY_TABLE_ENTRIES) && (PacketFound == FALSE) ); Loop++)
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 98%
+branch  3 taken 2% (fallthrough)
+        -:  386:    {
+      130:  387:        CpyTblEntry = & StartOfCopyTable [Loop];
+      130:  388:        RtTblEntry  = & StartOfRtTable [Loop];
+        -:  389:
+        -:  390:        /* Empty table entries are defined by NULL's in this field */
+      130:  391:        if (RtTblEntry->OutputPktAddr != NULL)
+branch  0 taken 5% (fallthrough)
+branch  1 taken 95%
+        -:  392:        {
+        7:  393:            ThisEntrysOutMid = CFE_SB_GetMsgId (RtTblEntry->OutputPktAddr);
+call    0 returned 100%
+        7:  394:            if (ThisEntrysOutMid == WhichMidToSend)
+branch  0 taken 29% (fallthrough)
+branch  1 taken 71%
+        -:  395:            {
+        2:  396:                if(HK_CheckForMissingData(ThisEntrysOutMid,&InputMidMissing)==HK_MISSING_DATA_DETECTED)
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -:  397:                {
+        1:  398:                    HK_AppData.MissingDataCtr++;
+        -:  399:                    
+        1:  400:                    CFE_EVS_SendEvent (HK_OUTPKT_MISSING_DATA_EID, CFE_EVS_DEBUG,
+call    0 returned 100%
+        -:  401:                       "Combined Packet 0x%04X missing data from Input Pkt 0x%04X", 
+        -:  402:                       ThisEntrysOutMid,InputMidMissing);
+        -:  403:                    
+        -:  404:                }
+        -:  405:#if HK_DISCARD_INCOMPLETE_COMBO == 1
+        -:  406:                else /* This clause is only exclusive if discarding incomplete packets */
+        -:  407:#endif
+        -:  408:                { 
+        -:  409:                    /* Send the combined housekeeping telemetry packet...        */
+        1:  410:                    CFE_SB_TimeStampMsg ( (CFE_SB_Msg_t *) RtTblEntry->OutputPktAddr);
+call    0 returned 100%
+        1:  411:                    CFE_SB_SendMsg      ( (CFE_SB_Msg_t *) RtTblEntry->OutputPktAddr);
+call    0 returned 100%
+        -:  412:                
+        1:  413:                    HK_AppData.CombinedPacketsSent ++ ;
+        -:  414:                }
+        -:  415:
+        2:  416:                HK_SetFlagsToNotPresent(ThisEntrysOutMid);               
+call    0 returned 100%
+        -:  417:                
+        2:  418:                PacketFound = TRUE;
+        -:  419:                
+        -:  420:            }
+        -:  421:        }
+        -:  422:    }
+        -:  423:
+        3:  424:    if (PacketFound == FALSE)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  425:    {
+        1:  426:        CFE_EVS_SendEvent (HK_UNKNOWN_COMBINED_PACKET_EID, CFE_EVS_INFORMATION,
+call    0 returned 100%
+        -:  427:                         "Combined HK Packet 0x%04X is not found in current HK Copy Table", 
+        -:  428:                         WhichMidToSend);
+        -:  429:    }
+        -:  430:
+        3:  431:}   /* end HK_SendCombinedHkPacket */
+        -:  432:
+        -:  433:
+        -:  434:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  435:/*                                                                 */
+        -:  436:/* Check the status of HK tables and perform any necessary action. */
+        -:  437:/*                                                                 */
+        -:  438:/*                                                                 */
+        -:  439:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  440:void HK_CheckStatusOfTables (void)
+function HK_CheckStatusOfTables called 9 returned 100% blocks executed 94%
+        9:  441:{
+        -:  442:
+        9:  443:    int32   Status = CFE_SUCCESS;
+        -:  444:
+        -:  445:    /* Determine if the copy table has a validation or update that needs to be performed */
+        9:  446:    Status = CFE_TBL_GetStatus(HK_AppData.CopyTableHandle);
+call    0 returned 100%
+        -:  447:
+        9:  448:    if (Status == CFE_TBL_INFO_VALIDATION_PENDING)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  449:    {
+        -:  450:        /* Validate the specified Table */
+        3:  451:        CFE_TBL_Validate(HK_AppData.CopyTableHandle);
+call    0 returned 100%
+        -:  452:
+        -:  453:    }
+        6:  454:    else if (Status == CFE_TBL_INFO_UPDATE_PENDING)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  455:    {
+        -:  456:        /* Unsubscribe to input msgs and free out pkt buffers */
+        3:  457:        HK_TearDownOldCopyTable (HK_AppData.CopyTablePtr, HK_AppData.RuntimeTablePtr);
+call    0 returned 100%
+        -:  458:            
+        -:  459:        /* release address must be called for update to take */
+        3:  460:        CFE_TBL_ReleaseAddress (HK_AppData.CopyTableHandle);
+call    0 returned 100%
+        -:  461:
+        -:  462:        /* Update the copy table */
+        3:  463:        CFE_TBL_Update(HK_AppData.CopyTableHandle);
+call    0 returned 100%
+        -:  464:
+        -:  465:        /* Get address of the newly updated copy table */
+        3:  466:        CFE_TBL_GetAddress((void *)(&HK_AppData.CopyTablePtr),
+call    0 returned 100%
+        -:  467:                                     HK_AppData.CopyTableHandle);
+        -:  468:                   
+        3:  469:        HK_ProcessNewCopyTable(HK_AppData.CopyTablePtr, HK_AppData.RuntimeTablePtr);
+call    0 returned 100%
+        -:  470:            
+        -:  471:    }
+        3:  472:    else if(Status != CFE_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  473:    {
+        -:  474:            
+        1:  475:        CFE_EVS_SendEvent (HK_UNEXPECTED_GETSTAT_RET_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  476:               "Unexpected CFE_TBL_GetStatus return (0x%08X) for Copy Table", 
+        -:  477:               Status);
+        -:  478:    }
+        -:  479: 
+        -:  480:#if 0
+        -:  481:    /* NOTE: The procedure for dumping tables is different for load-dump  and
+        -:  482:     * dump-only tables. CFE_TBL_DumpToBuffer needs to be called by the owner
+        -:  483:     * app for dump-only tables. For load-dump tables, CFE_TBL_DumpToBuffer is
+        -:  484:     * called by Table Services when a dump cmd is received. Therefore,the owner
+        -:  485:     * app should not call CFE_TBL_DumpToBuffer for load-dump tables. */
+        -:  486:    
+        -:  487:    /* Determine if the runtime table has a dump pending */
+        -:  488:    CFE_TBL_Manage(HK_AppData.RuntimeTableHandle);      
+        -:  489:#endif
+        -:  490:
+        -:  491:    /* Below is the preferred way of checking for dump pending of the runtime 
+        -:  492:     * table. But CFE_TBL_DumpToBuffer is a private function (in cFE 5.1.0 and 
+        -:  493:     * earlier) and cannot be called by HK. The CFE_TBL_Manage api (used above) 
+        -:  494:     * calls  CFE_TBL_DumpToBuffer but also makes unnecessary calls for 
+        -:  495:     * dump-only tables. Until DumpToBuffer is made public, (see CFE FSW 
+        -:  496:     * DCR3051) the CFE_TBL_Manage api call must be used. CFE_TBL_DumpToBuffer 
+        -:  497:     * was made public in cFE version 5.2.0
+        -:  498:     */
+        -:  499:
+        -:  500:    /* Determine if the runtime table has a dump pending */   
+        9:  501:    Status = CFE_TBL_GetStatus(HK_AppData.RuntimeTableHandle);
+call    0 returned 100%
+        -:  502:    
+        9:  503:    if (Status == CFE_TBL_INFO_DUMP_PENDING)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -:  504:    {
+        -:  505:        /* Dump the specified Table, cfe tbl manager makes copy */
+    #####:  506:        CFE_TBL_DumpToBuffer(HK_AppData.RuntimeTableHandle);       
+call    0 never executed
+        -:  507:
+        -:  508:    }
+        9:  509:    else if(Status != CFE_SUCCESS)
+branch  0 taken 11% (fallthrough)
+branch  1 taken 89%
+        -:  510:    {
+        -:  511:        
+        1:  512:        CFE_EVS_SendEvent (HK_UNEXPECTED_GETSTAT2_RET_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  513:               "Unexpected CFE_TBL_GetStatus return (0x%08X) for Runtime Table", 
+        -:  514:               Status);
+        -:  515:    }
+        -:  516:    
+        -:  517:    return;
+        -:  518:
+        -:  519:}   /* end HK_CheckStatusOfTables */
+        -:  520:
+        -:  521:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  522:/*                                                                 */
+        -:  523:/* HK Check for missing combined output message data               */
+        -:  524:/*                                                                 */
+        -:  525:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  526:int32 HK_CheckForMissingData(CFE_SB_MsgId_t OutPktToCheck, CFE_SB_MsgId_t *MissingInputMid)
+function HK_CheckForMissingData called 2 returned 100% blocks executed 100%
+        2:  527:{
+        2:  528:    int32                         Loop = 0;
+        2:  529:    int32                         Status = HK_NO_MISSING_DATA;
+        -:  530:    hk_copy_table_entry_t       * StartOfCopyTable;
+        -:  531:    hk_copy_table_entry_t       * CpyTblEntry;
+        -:  532:    hk_runtime_tbl_entry_t      * StartOfRtTable;
+        -:  533:    hk_runtime_tbl_entry_t      * RtTblEntry;
+        -:  534:
+        2:  535:    StartOfCopyTable = (hk_copy_table_entry_t *) HK_AppData.CopyTablePtr;
+        2:  536:    StartOfRtTable  = (hk_runtime_tbl_entry_t *)  HK_AppData.RuntimeTablePtr;
+        -:  537:
+        -:  538:    /* Loop thru each item in the runtime table until end is reached or 
+        -:  539:     * data-not-present detected */
+        -:  540:    do
+        -:  541:    {
+      129:  542:        CpyTblEntry = &StartOfCopyTable[Loop];
+      129:  543:        RtTblEntry  = &StartOfRtTable[Loop];
+        -:  544:
+        -:  545:        /* Empty table entries are defined by NULL's in this field */
+      129:  546:        if ((RtTblEntry->OutputPktAddr != NULL)&&
+branch  0 taken 5% (fallthrough)
+branch  1 taken 95%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 17% (fallthrough)
+branch  5 taken 83%
+        -:  547:           (CpyTblEntry->OutputMid==OutPktToCheck)&&
+        -:  548:           (RtTblEntry->DataPresent==HK_DATA_NOT_PRESENT))           
+        -:  549:        {           
+        1:  550:            *MissingInputMid = CpyTblEntry->InputMid;
+        1:  551:            Status = HK_MISSING_DATA_DETECTED;          
+        -:  552:        }
+        -:  553:        
+      129:  554:        Loop++;
+        -:  555:        
+      129:  556:    }while((Loop < HK_COPY_TABLE_ENTRIES)&&(Status == HK_NO_MISSING_DATA));
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 99%
+branch  3 taken 1% (fallthrough)
+        -:  557:    
+        2:  558:    return Status;
+        -:  559:    
+        -:  560:}/* end HK_CheckForMissingData */
+        -:  561:
+        -:  562:
+        -:  563:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  564:/*                                                                 */
+        -:  565:/* HK Set data present flags to 'data-not-present'                 */
+        -:  566:/*                                                                 */
+        -:  567:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  568:void HK_SetFlagsToNotPresent(CFE_SB_MsgId_t OutPkt)
+function HK_SetFlagsToNotPresent called 2 returned 100% blocks executed 100%
+        2:  569:{
+        -:  570:    int32                           Loop;
+        -:  571:    hk_copy_table_entry_t         * StartOfCopyTable;
+        -:  572:    hk_copy_table_entry_t         * CpyTblEntry;
+        -:  573:    hk_runtime_tbl_entry_t        * StartOfRtTable;
+        -:  574:    hk_runtime_tbl_entry_t        * RtTblEntry;
+        -:  575:
+        2:  576:    StartOfCopyTable = (hk_copy_table_entry_t *) HK_AppData.CopyTablePtr;
+        2:  577:    StartOfRtTable  = (hk_runtime_tbl_entry_t *)  HK_AppData.RuntimeTablePtr;
+        -:  578:
+        -:  579:    /* Look thru each item in the runtime table until end is reached */ 
+      258:  580:    for(Loop = 0;Loop < HK_COPY_TABLE_ENTRIES; Loop++)
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+        -:  581:    {
+      256:  582:        CpyTblEntry = &StartOfCopyTable[Loop];
+      256:  583:        RtTblEntry  = &StartOfRtTable[Loop];
+        -:  584:
+        -:  585:        /* Empty table entries are defined by NULL's in this field */
+      256:  586:        if ((RtTblEntry->OutputPktAddr != NULL)&&
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        -:  587:           (CpyTblEntry->OutputMid==OutPkt))           
+        -:  588:        {           
+       10:  589:            RtTblEntry->DataPresent = HK_DATA_NOT_PRESENT;          
+        -:  590:        }
+        -:  591:                
+        -:  592:    }
+        -:  593:        
+        2:  594:}/* end HK_SetFlagsToNotPresent */
+        -:  595:
+        -:  596:
+        -:  597:/************************/
+        -:  598:/*  End of File Comment */
+        -:  599:/************************/

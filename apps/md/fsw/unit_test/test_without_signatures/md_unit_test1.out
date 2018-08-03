@@ -1,0 +1,568 @@
+
+***Initialize UTF ***
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Run Early Exit Cases
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #1: CFE_ES_RegisterApp returns error
+Expected Output: 1) Specific SysLog error 2) App exit
+UTF Info: Return value for CFE ES Api #1 set to fffffff0
+SysLog:1980-001-00:00:01.50000 MD_APP: Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFF0
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+UTF Info: Return code for CFE ES Api #1 returned to default
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #2: CFE_EVS_Register returns error
+Expected Output: 1) Specific SysLog error 2) App exit
+UTF Info: Return value for CFE EVS Api #0 set to c2000001
+SysLog:1980-001-00:00:01.50000 MD_APP:Call to CFE_EVS_Register Failed:RC=0xC2000001
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xC2000001
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+UTF Info: Return code for CFE EVS Api #0 returned to default
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #3: CFE_SB_CreatePipe returns error
+Expected Output: 1) Specific case SysLog error 2) SysLog that init failed 3) App exit
+UTF Info: Return value for CFE SB Api #0 set to ca000005
+SysLog:1980-001-00:00:01.50000 MD_APP: Error creating cmd pipe:RC=0xCA000005
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCA000005
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #4: CFE_SB_Subscribe returns error
+Expected Output: 1) Specific case SysLog error 2) SysLog that init failed 3) App exit
+UTF Info: Return value for CFE SB Api #2 set to ca00000a
+SysLog:1980-001-00:00:01.50000 MD_APP: Error subscribing to HK Request:RC=0xCA00000A
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCA00000A
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+UTF Info: Return code for CFE SB Api #2 returned to default
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #5: 1st CFE_SB_Subscribe is success; 2nd is error
+Expected Output: 1) Specific case SysLog error 2) SysLog that init failed 3) App exit
+SysLog:1980-001-00:00:01.50000 MD_APP:Error subscribing to gnd cmds:RC=0xCA000009
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCA000009
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #6: first two CFE_SB_Subscribe calls are successful; 3rd is error.
+Expected Output: 1) Specific case SysLog error 2) SysLog that init failed 3) App exit
+SysLog:1980-001-00:00:01.50000 MD_APP:Error subscribing to wakeup message:RC=0xCA000009
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCA000009
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #7: CFE_TBL_ERR_INVALID_SIZE return from CFE_TBL_Register.
+Expected Results: 1) Critical event: too large table couldn't be registered 2) SysLog Msg: task failed to initialize 3) App exit
+UTF Info: Return value for CFE TBL Api #0 set to cc000003
+AppId 0 is not in App Tbl.
+CRITICAL EVENT ID=5 Dwell Table(s) are too large to register: 1804 > 16384 bytes, 25 > 227 entries
+AppId 0 is not in App Tbl.
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCC000003
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+UTF Info: Return code for CFE TBL Api #0 returned to default
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #8: CFE_ES_ERR_BUFFER return from CFE_TBL_Load.
+Expected Results: 1) SysLog Msg:  'Error 0x_ received loading tbl#_'
+                  2) SysLog Msg: 'MD:Application Init Failed,RC=________X'
+                  3) App exit
+UTF Info: Return value for CFE TBL Api #3 set to c4000003
+AppId 0 is not in App Tbl.
+UTF INFO: CFE_TBL_Register called for new table .DWELL_TABLE1.
+SysLog:1980-001-00:00:01.50000 MD_APP: Error 0xC4000003 received loading tbl#1
+AppId 0 is not in App Tbl.
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xC4000003
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp
+UTF Info: Return code for CFE TBL Api #3 returned to default
+
+***Add tasks to ES list of tasks ***
+UTF Info: Task <MD_APP> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: MD_APP loaded and created
+UTF Info: App <MD_APP> added to App Tbl.
+AppTable[0]:
+       Name    = MD_APP
+    ChildTasks = 0
+    State = Running
+
+* * * * * * * * * * * * * * * * * * * * * * 
+Early Exit Case #9: General error return from CFE_TBL_Register.
+Expected Results: 1) Critical event 2) SysLog Msg: task failed to initialize 3) App exit
+UTF Info: Return value for CFE TBL Api #0 set to cc00000d
+CRITICAL EVENT ID=6 CFE_TBL_Register error 0xCC00000D received for tbl#1
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 0
+SysLog:1980-001-00:00:01.50000 MD:Application Init Failed,RC=0xCC00000D
+SysLog:1980-001-00:00:01.50000 Application MD_APP called CFE_ES_ExitApp
+UTF Info: Return code for CFE TBL Api #0 returned to default
+UTF Info: Overwriting ES Task Table Record[0]
+SysLog:1980-001-00:00:01.50000 ES Startup: MD_APP loaded and created
+UTF Info: App <MD_APP> added to App Tbl.
+AppTable[0]:
+       Name    = MD_APP
+    ChildTasks = 0
+    State = Running
+
+*** Start Memory Dwell Main Task ***
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE1.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE1'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE1'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE2.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE2'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE2'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE3.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE3'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE3'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE4.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE4'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE4'
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 0.0.0.0
+ * * * * * * * * * * * * * * * * * * * *
+ Command Input File md_unit_test1.in opened for reading *
+ * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * *
+ Execute nominal Noop and Reset Commands *
+ * * * * * * * * * * * * * * * * * * * *
+
+ * * ->  Noop command
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:8 FC:0 PKT:1890 c000 0001 0000 
+INFO EVENT ID=10 No-op command, Version 0.0.0.0
+
+ * * ->  Reset command
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:8 FC:1 PKT:1890 c000 0001 0100 
+DEBUG EVENT ID=11 Reset Counters Cmd Received
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Execute nominal and error Start and Stop Commands *
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * ->   Start Table #1
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0001 
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Table 1 is enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0100 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Display Table Enabled Fields from Table Services Buffer
+ * * Expected output:  Table 1 is enabled.
+Table #1 Enabled = 1
+Table #2 Enabled = 0
+Table #3 Enabled = 0
+Table #4 Enabled = 0
+
+ * * ->  Start Tables #2 and #3
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0006 
+INFO EVENT ID=51 Dwell Table 2 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=51 Dwell Table 3 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0006
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  1, 2, and 3 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0200 0007 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Display Table Enabled Fields from Table Services Buffer
+ * * Expected output:  Tables  1, 2, and 3 are enabled.
+Table #1 Enabled = 1
+Table #2 Enabled = 1
+Table #3 Enabled = 1
+Table #4 Enabled = 0
+
+ * * ->  Start Tables #0
+ * * Expected output: error event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0000 
+ERROR EVENT ID=14 Start Dwell command rejected because no tables were specified in table mask (0x0000)
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  1, 2, and 3 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0201 0007 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * ->   Stop Table #1
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:3 PKT:1890 c000 0003 0300 0001 
+INFO EVENT ID=13 Stop Dwell Table command processed successfully for table mask 0x0001
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  2 and 3 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0301 0006 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 
+
+ * * -> Display Table Enabled Fields from Table Services Buffer
+ * * Expected output:  Tables  2 and 3 are enabled.
+Table #1 Enabled = 0
+Table #2 Enabled = 1
+Table #3 Enabled = 1
+Table #4 Enabled = 0
+
+ * * ->   Stop Table #0
+ * * Expected output: error event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:3 PKT:1890 c000 0003 0300 0000 
+ERROR EVENT ID=14 Stop Dwell command rejected because no tables were specified in table mask (0x0000)
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  2 and 3 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0302 0006 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 
+
+ * * ->   Start Table #1
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0001 
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables 1, 2, and 3 enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0402 0007 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Display Table Enabled Fields from Table Services Buffer
+ * * Expected output:  Tables 1, 2, and 3 enabled.
+Table #1 Enabled = 1
+Table #2 Enabled = 1
+Table #3 Enabled = 1
+Table #4 Enabled = 0
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Execute nominal and error 'Set Signature' Commands *
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send 'Set Signature' command to set signature of table #1 to 'abc'
+ * * Expected output:  Event message
+< CMD: APID:0090 SEQ:0 LEN:44 FC:5 PKT:1890 c000 0025 0500 0001 0000 6261 0063 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=16 Command Code 5 not found in MD_CmdHandlerTbl structure
+
+ * * -> Display signature for table #1
+ * * Expected output: Signature = 'abc'
+Signature option is disabled
+
+ * * -> Send 'Set Signature' command with signature 'abcabc...' that is _not_ null terminated
+ * * Expected output:  Memory Dwell rejects signature as it is too long
+< CMD: APID:0090 SEQ:0 LEN:44 FC:5 PKT:1890 c000 0025 0500 0001 0000 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261 
+ERROR EVENT ID=16 Command Code 5 not found in MD_CmdHandlerTbl structure
+
+ * * -> Display signature for table #1
+ * * Expected output: Signature = 'abc'
+Signature option is disabled
+
+ * * -> Send 'Set Signature' command to set signature of table #7 to 'abc'
+ * * Expected output:  Error event message for invalid table designation
+< CMD: APID:0090 SEQ:0 LEN:44 FC:5 PKT:1890 c000 0025 0500 0007 0000 6261 0063 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=16 Command Code 5 not found in MD_CmdHandlerTbl structure
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Send command with incorrect length                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send (noop) command with incorrect length (extra bytes at the end)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:0 PKT:1890 c000 0003 0000 1234 
+ERROR EVENT ID=21 Cmd Msg with Bad length Rcvd: ID = 0x1890, CC = 0, Exp Len = 8, Len = 10
+
+ * * -> Send Wakeup Message with incorrect length
+ * * Expected output:  error event message
+< CMD: APID:0092 SEQ:0 LEN:10 FC:0 PKT:1892 c000 0003 0000 eeee 
+ERROR EVENT ID=22 Msg with Bad length Rcvd: ID = 0x1892, Exp Len = 8, Len = 10
+
+ * * -> Send Housekeeping Request with incorrect length
+ * * Expected output:  error event message
+< CMD: APID:0091 SEQ:0 LEN:12 FC:0 PKT:1891 c000 0005 0000 eeff 1234 
+ERROR EVENT ID=22 Msg with Bad length Rcvd: ID = 0x1891, Exp Len = 8, Len = 12
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Test sending of command with invalid command code (9)             *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Housekeeping packet
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0406 0007 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Send command with invalid command code (9)
+< CMD: APID:0090 SEQ:0 LEN:10 FC:9 PKT:1890 c000 0003 0900 eeff 
+ERROR EVENT ID=16 Command Code 9 not found in MD_CmdHandlerTbl structure
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Error count has incremented.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0407 0007 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Jam some 4-byte addresses into table #1 and generate a dwell packet *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Allocated simulated memory
+
+ * * -> Send Jam Command (table #1, entry #1, length=4, delay=0, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0001 0004 0000 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#1 Entry #1
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+
+ * * -> Send Jam Command (table #1, entry #1, length=4, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0001 0004 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#1 Entry #1
+
+ * * -> Display buffer entry for table #1, entry #1
+ * * Expected output: length=4, delay=1, address 0x004610A0
+Contents of Table #1 Entry #1
+	Length = 4
+	Delay = 1
+	DwellAddress.Offset = 0x004610A0
+	DwellAddress.SymName = ''
+
+ * * -> Send Jam Command (table #1, entry #2, length=4, delay=1, address 0x004610A4)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0002 0004 0001 10a4 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#1 Entry #2
+
+ * * -> Display buffer entry for table #1, entry #2
+ * * Expected output: length=4, delay=1, address 0x004610A4
+Contents of Table #1 Entry #2
+	Length = 4
+	Delay = 1
+	DwellAddress.Offset = 0x004610A4
+	DwellAddress.SymName = ''
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #1.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0707 0007 0002 0000 0000 0000 0002 0000 0000 0000 0008 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Send two Wakeup Messages
+ * * Expected output:  dwell packet
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0091 SEQ:0 LEN:28 TIME:00000001 80000000 PKT:0891 c000 0015 0001 0000 8000 0201 0008 0002 0000 aa33 ccbb daba abba 
+ * * * * * * * * * * * * * * * * * * * * * * * * 
+ Jam 1-byte and 2-byte addresses into table #4 *
+ * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Jam Command (table #4, entry #1, length=1, delay=0, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0004 0001 0001 0000 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#4 Entry #1
+
+ * * -> Display buffer entry for table #4, entry #1
+ * * Expected output: length=1, delay=0, address 0x004610A0
+Contents of Table #4 Entry #1
+	Length = 1
+	Delay = 0
+	DwellAddress.Offset = 0x004610A0
+	DwellAddress.SymName = ''
+
+ * * -> Send Jam Command (table #4, entry #2, length=2, delay=1, address 0x004610A4)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0004 0002 0002 0001 10a4 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#4 Entry #2
+
+ * * ->   Start Table #4 (corresponds to table mask 0x08)
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0008 
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0008
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #4.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0a07 000f 0002 0000 0000 0002 0002 0000 0000 0001 0008 0000 0000 0003 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+ * * -> Send a Wakeup Message
+ * * Expected output:  dwell packet with a 1-byte and 2-byte reads.
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0094 SEQ:0 LEN:23 TIME:00000001 80000000 PKT:0894 c000 0010 0001 0000 8000 0204 0003 0001 0000 ba33 00da 
+
+ * * ->   Stop all Tables 
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:3 PKT:1890 c000 0003 0300 000f 
+INFO EVENT ID=13 Stop Dwell Table command processed successfully for table mask 0x000F
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Jam 1-byte, 2-byte, and 4-byte addresses into table #2         *
+ Use memory addresses which haven't been added to simulation to *
+ force error from OS Read calls.                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Jam Command (table #2, entry #1, length=1, delay=0, address 0x005610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0002 0001 0001 0000 10a0 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#2 Entry #1
+
+ * * -> Send Jam Command (table #2, entry #2, length=2, delay=0, address 0x005610A4)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0002 0002 0002 0000 10a4 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#2 Entry #2
+
+ * * -> Send Jam Command (table #2, entry #3, length=4, delay=1, address 0x005610A4)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0002 0003 0004 0001 10a4 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#2 Entry #3
+
+ * * ->   Start Table #2 (corresponds to table mask 0x02)
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0002 
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0002
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Expect to see 3 dwell addresses present for dwell stream #2,
+ * * 7 bytes dwelled on, dwell steam #2 enabled (enable mask=0x02).
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0f07 0002 0002 0003 0000 0002 0002 0001 0000 0001 0008 0007 0000 0003 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0000 0000 
+ * * -> Send a Wakeup Message
+ * * Expected output:  dwell packet with a 1-byte, 2-byte, and 4-byte reads.
+ * * These reads will cause error returns from MemRead utilities, so MemCpy is not
+ * * performed into dwell packet and packet contents will not change.
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Sim Mem Memory Address Not Found 0x  5610a0
+Sim Mem Memory Address Not Found 0x  5610a4
+Sim Mem Memory Address Not Found 0x  5610a4
+> TLM: APID:0092 SEQ:0 LEN:27 TIME:00000001 80000000 PKT:0892 c000 0014 0001 0000 8000 0302 0007 0001 0000 0000 0000 0000 0000 
+
+ * * ->   Stop all Tables 
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:3 PKT:1890 c000 0003 0300 000f 
+INFO EVENT ID=13 Stop Dwell Table command processed successfully for table mask 0x000F
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Jam some addresses, perform dwell reads, then insert null entry so that pkt now completes  *
+ _before_ completed reads.                                                                  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Jam Command (table #3, entry #1, length=1, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0001 0001 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#3 Entry #1
+
+ * * -> Send Jam Command (table #3, entry #2, length=1, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0002 0001 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#3 Entry #2
+
+ * * -> Send Jam Command (table #3, entry #3, length=1, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0003 0001 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#3 Entry #3
+
+ * * -> Send Jam Command (table #3, entry #4, length=1, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0004 0001 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#3 Entry #4
+
+ * * -> Send Jam Command (table #3, entry #5, length=1, delay=1, address 0x004610A0)
+ * * Expected output: Event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0005 0001 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#3 Entry #5
+
+ * * ->   Start Table #3 (corresponds to table mask 0x04)
+ * * Expected output: event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0004 
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0004
+ * * -> Send Housekeeping packet
+ * * Expected output:  Expect to see 5 dwell addresses present for dwell stream #3.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 1607 0004 0002 0003 0005 0002 0002 0001 0005 0001 0008 0007 0005 0003 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0000 
+ * * -> Send 4 Wakeup Messages
+ * * Expected output:  
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+
+ * * -> Send Jam Command to set null entry (table #3, entry #3, length=0, delay=0, address 0x00000000)
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0003 0003 0000 0000 10a8 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=31 Successful Jam of a Null Dwell Entry to Dwell Tbl#3 Entry #3
+
+ * * -> Display buffer entry for table #3, entry #3
+ * * Expected output: length=0, delay=0, address 0x00000000
+Contents of Table #3 Entry #3
+	Length = 0
+	Delay = 0
+	DwellAddress.Offset = 0x00000000
+	DwellAddress.SymName = ''
+ * * -> Send Housekeeping packet
+ * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #3.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 1707 0004 0002 0003 0002 0002 0002 0001 0002 0001 0008 0007 0002 0003 0000 0000 0004 0000 0000 0000 0004 0000 0000 0000 0001 0000 
+ * * -> Send one Wakeup Message.
+ * * Expected output:  Dwell packet.
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0093 SEQ:0 LEN:22 TIME:00000001 80000000 PKT:0893 c000 000f 0001 0000 8000 0203 0002 0002 0000 3333 
+ * * * * * * * * * * * * * * * * * 
+ Issue some invalid Jam commands *
+ * * * * * * * * * * * * * * * * *
+
+ * * -> Send Jam Command with invalid length (table #1, entry #1, length=3, delay=1, address 0x004610A0)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0001 0003 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=34 Jam Cmd rejected due to invalid Field Length arg = 3 (Expect 0,1,2,or 4)
+
+ * * -> Send Jam Command with invalid table # (table #0, entry #1, length=4, delay=1, address 0x004610A0)
+ * Expected Output: error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0000 0001 0004 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=32 Jam Cmd rejected due to invalid Tbl Id arg = 0 (Expect 1.. 4)
+
+ * * -> Send Jam Command with invalid entry # (table #1, entry #0, length=4, delay=1, address 0x004610A0)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0000 0004 0001 10a0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=33 Jam Cmd rejected due to invalid Entry Id arg = 0 (Expect 1.. 25)
+
+ * * -> Send Jam Command with a symbol name 'abab' which will be found to be invalid
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0001 0004 0001 10a0 0046 6162 6162 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+OSAL: Error, cannot locate symbol 'baba'
+ERROR EVENT ID=35 Jam Cmd rejected because symbolic address 'baba' couldn't be resolved
+
+ * * -> Set up simulator so that mem range checks will return false
+UTF Info: Return value for cFE PSP Api #2 set to ffffffff
+
+ * * -> Send Jam Command (table #1, entry #3, length=4, delay=1, address 0x004610A8)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0003 0004 0001 10a8 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=36 Jam Cmd rejected because address 0x004610A8 is not in a valid range
+
+ * * -> Set up simulator so that mem range checks will return valid
+UTF Info: Return value for cFE PSP Api #2 set to 0
+
+ * * -> Send Jam Command with improper 32 bit alignment (table #1, entry #3, length=4, delay=1, address 0x004610AA)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0003 0004 0001 10aa 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+INFO EVENT ID=30 Successful Jam to Dwell Tbl#1 Entry #3
+
+ * * -> Send Jam Command with improper alignment (table #1, entry #3, length=4, delay=1, address 0x004610A9)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0003 0004 0001 10a9 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=38 Jam Cmd rejected because address 0x004610A9 is not 16-bit aligned
+
+ * * -> Send Jam Command with improper alignment (table #1, entry #3, length=2, delay=1, address 0x004610A9)
+ * * Expected output:  error event message
+< CMD: APID:0090 SEQ:0 LEN:84 FC:4 PKT:1890 c000 004d 0400 0001 0003 0002 0001 10a9 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ERROR EVENT ID=38 Jam Cmd rejected because address 0x004610A9 is not 16-bit aligned
+
+ * * -> Display list of tables registered with Table Services
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0            .DWELL_TABLE1     1804   0 
+   1      MD_APP.DWELL_TABLE1     1804   0 (*)(*)(*)(*)(*)(*)(*)(*)(*)
+   2      MD_APP.DWELL_TABLE2     1804   0 (*)(*)(*)(*)(*)(*)(*)
+   3      MD_APP.DWELL_TABLE3     1804   0 (*)(*)(*)(*)(*)(*)(*)(*)(*)(*)
+   4      MD_APP.DWELL_TABLE4     1804   0 (*)(*)(*)(*)(*)
+(*) indicates the Table was updated via CFE_TBL_Modified API
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Special Case: Set CFE_TBL_GetStatus to return error code,
+ then send a command to trigger this error.
+ * * -> Configure CFE_TBL_GetStatus stub to return CFE_TBL_ERR_NO_ACCESS error event.
+UTF Info: Return value for CFE TBL Api #11 set to cc000008
+ * * -> Send Wakeup Message
+ * * -> Expected output: MD_TBL_STATUS_ERR_EID "Received unexpected error..."
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+ERROR EVENT ID=20 Received unexpected error 0xCC000008 from CFE_TBL_GetStatus for tbl #1
+ERROR EVENT ID=20 Received unexpected error 0xCC000008 from CFE_TBL_GetStatus for tbl #2
+ERROR EVENT ID=20 Received unexpected error 0xCC000008 from CFE_TBL_GetStatus for tbl #3
+ERROR EVENT ID=20 Received unexpected error 0xCC000008 from CFE_TBL_GetStatus for tbl #4
+ * * -> Return CFE_TBL_GetStatus to default behavior
+UTF Info: Return code for CFE TBL Api #11 returned to default

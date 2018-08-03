@@ -1,0 +1,1971 @@
+Compiling evs tests using Baseline cFE version with following flags: -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE
+
+>>> [CLEAN] - REMOVE <CFS_MISSION_INC> HEADER FILES <<<
+
+rm -f /home/sstrege/cFE650/build/mission_inc/*
+
+>>> [CLEAN] REMOVE BUILD/INC HEADER FILES <<<
+
+rm -f ./inc/*
+make -C cfe/unit-test/evs clean
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'
+rm -f cfe_evs.o cfe_evs_task.o cfe_evs_log.o cfe_evs_utils.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_tbl_stubs.o ut_time_stubs.o evs_UT.o evs_UT
+rm -f *.lis
+rm -f *.g*
+rm -f *.d
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'
+
+>>> [PRE-BUILD] CONFIGURING OSAL <<<
+
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/osal/build'
+test -d inc || mkdir inc
+cp -f ../src/bsp/pc-linux/config/osconfig.h inc/osconfig.h
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/osal/build'
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_MISSION> CORE <<<
+
+Copying <CFE_FSW>/mission_inc/*.h to <CFS_MISSION_INC>
+Copying <CFE_FSW>/platform_inc/<CFE_CORE_PLATFORM_INC_SRC>/cfe_platform_cfg.h to ./inc
+Copying <OSAL>/build/inc/osconfig.h to ./inc
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_APP_SRC>/INC <<<
+
+Copying <CFS_APP_SRC>/inc/*.h to <CFS_MISSION_INC>
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PUBLIC_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_lib/fsw/public_inc/sample_lib.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/MISSION_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/mission_inc/sample_app_perfids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/mission_inc/ci_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/mission_inc/to_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/mission_inc/sch_lab_perfids.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PLATFORM_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/platform_inc/sample_app_msgids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/platform_inc/ci_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_sub_table.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/platform_inc/sch_lab_sched_tab.h
+
+>>> [PRE-BUILD] CREATING <APP> BUILD DIRECTORY <<<
+
+
+>>> [PRE-BUILD] COPYING MAKEFILES FROM <APP>/FOR_BUILD <<<
+
+Copying <CFS_APP_SRC>/sample_lib/fsw/for_build/* to ./sample_lib
+Copying <CFS_APP_SRC>/sample_app/fsw/for_build/* to ./sample_app
+Copying <CFS_APP_SRC>/ci_lab/fsw/for_build/* to ./ci_lab
+Copying <CFS_APP_SRC>/to_lab/fsw/for_build/* to ./to_lab
+Copying <CFS_APP_SRC>/sch_lab/fsw/for_build/* to ./sch_lab
+make -C cfe/unit-test/evs
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_evs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_evs_task.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_task.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_evs_log.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_log.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_evs_utils.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_utils.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_bsp_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_bsp_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_osprintf_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_osprintf_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_es_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_es_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_sb_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_sb_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_fs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_fs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_tbl_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_tbl_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_time_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_time_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o evs_UT.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/evs_UT.c
+gcc -o evs_UT cfe_evs.o cfe_evs_task.o cfe_evs_log.o cfe_evs_utils.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_tbl_stubs.o ut_time_stubs.o evs_UT.o -pg -fprofile-arcs -ftest-coverage -m32 ../libut_osapi_stubs/libut_osapi_stubs.a ../libut_bsp/libut_bsp.a ../libut_assert/libut_assert.a
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'
+make -C cfe/unit-test/evs gcov
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'
+
+Running unit test: gcov
+
+./evs_UT
+
+[BEGIN] PC-LINUX UNIT TEST
+Making directories: ram0, ram1, eeprom1 for OSAL mount points
+[ INFO] cFE EVS Unit Test Output File
+
+
+
+
+[BEGIN] 01 Test_Init
+[ INFO] Begin Test Init
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Event Log cleared following power-on reset
+
+
+[ PASS] 01.001 evs_UT.c:95 - CFE_EVS_EarlyInit - Early initialization successful
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_SubscribeEx called: subscribed to msg 6145
+
+[ INFO]   CFE_SB_SubscribeEx called: subscribed to msg 6153
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 1:cFE EVS Initialized. cFE Version 6.4.2.0
+
+[ INFO] EVS Port1 0/0/ut_cfe_evs 1: cFE EVS Initialized. cFE Version 6.4.2.0
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 5:Invalid command packet, Message ID = 0x00000000
+
+[ INFO] EVS Port1 0/0/ut_cfe_evs 5: Invalid command packet, Message ID = 0x00000000
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   EVS:Error reading cmd pipe,RC=0xCA000001
+
+
+[ PASS] 01.002 evs_UT.c:106 - CFE_EVS_TaskMain - Error reading command pipe
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   EVS:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   EVS:Application Init Failed,RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 01.003 evs_UT.c:116 - CFE_EVS_TaskMain - Application initialization failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   EVS call to CFE_PSP_GetResetArea failed, RC=0xffffffff
+
+
+[ PASS] 01.004 evs_UT.c:128 - CFE_EVS_EarlyInit - CFE_PSP_GetResetArea call failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Event Log restored, n=2, c=2, f=0, m=1, o=0
+
+
+[ PASS] 01.005 evs_UT.c:137 - CFE_EVS_EarlyInit - Event log restored
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Event Log cleared, n=19, c=2, f=0, m=2, o=0
+
+
+[ PASS] 01.006 evs_UT.c:151 - CFE_EVS_EarlyInit - Event log cleared (log mode path)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Event Log cleared, n=19, c=0, f=2, m=1, o=0
+
+
+[ PASS] 01.007 evs_UT.c:163 - CFE_EVS_EarlyInit - Event log cleared (log full path)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Event Log cleared, n=20, c=0, f=1, m=0, o=0
+
+
+[ PASS] 01.008 evs_UT.c:175 - CFE_EVS_EarlyInit - Event log cleared (next log path)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   EVS call to OS_MutSemCreate failed, RC=0xffffffff
+
+
+[ PASS] 01.009 evs_UT.c:184 - CFE_EVS_EarlyInit - Mutex create failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2049
+
+[ INFO]   Unexpected size from CFE_PSP_GetResetArea: expected = 0x0001FF24, actual = 0x00000000
+
+
+[ PASS] 01.010 evs_UT.c:195 - CFE_EVS_EarlyInit - Unexpected size returned by CFE_PSP_GetResetArea
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   EVS:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.011 evs_UT.c:204 - CFE_EVS_TaskInit - Call to CFE_ES_RegisterApp failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_CreatePipe called: -1
+
+[ INFO]   EVS:Call to CFE_SB_CreatePipe Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.012 evs_UT.c:213 - CFE_EVS_TaskInit - Call to CFE_SB_CreatePipe failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_SubscribeEx called: -1
+
+[ INFO]   EVS:Subscribing to Cmds Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.013 evs_UT.c:222 - CFE_EVS_TaskInit - Subscribing to commands failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_SubscribeEx called: subscribed to msg 6145
+
+[ INFO]   CFE_SB_SubscribeEx called: -1
+
+[ INFO]   EVS:Subscribing to HK Request Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.014 evs_UT.c:231 - CFE_EVS_TaskInit - Subscribing to HK request failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   EVS:Call to CFE_ES_GetAppID Failed:RC=0xC2000003
+
+
+[ PASS] 01.015 evs_UT.c:240 - CFE_EVS_TaskInit - Call to CFE_ES_GetAppID Failed
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_SubscribeEx called: subscribed to msg 6145
+
+[ INFO]   CFE_SB_SubscribeEx called: subscribed to msg 6153
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 1:cFE EVS Initialized. cFE Version 6.4.2.0
+
+[ INFO] EVS Port1 0/0/ut_cfe_evs 1: cFE EVS Initialized. cFE Version 6.4.2.0
+
+
+[ PASS] 01.016 evs_UT.c:249 - CFE_EVS_TaskInit - Normal init (WARM)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ INFO] EVS Port1 0/0/ut_cfe_evs 23: Enable App Event Type Command Received with AppName = ut_cfe_evs, EventType Bit Mask = 0x0f
+
+
+[ PASS] 01.017 evs_UT.c:261 - CFE_EVS_EnableAppEventTypesCmd - Enable debug message output
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 19:Disable Ports Command Received with Port Bit Mask = 0x0
+[ PASS] 01.018 evs_UT.c:273 - CFE_EVS_DisablePortsCmd - Disable ports
+[  END] 01 Test_Init            TOTAL::18    PASS::18    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 02 Test_IllegalAppID
+[ INFO] Begin Test Illegal App ID
+
+
+[ PASS] 02.001 evs_UT.c:296 - CFE_EVS_Register - Illegal app ID
+[ PASS] 02.002 evs_UT.c:303 - CFE_EVS_Unregister - Illegal app ID
+[ PASS] 02.003 evs_UT.c:310 - CFE_EVS_SendEvent - Illegal app ID
+[ PASS] 02.004 evs_UT.c:319 - EVS_SendEvent - Illegal app ID
+[ PASS] 02.005 evs_UT.c:327 - CFE_EVS_SendTimedEvent - Illegal app ID
+[ PASS] 02.006 evs_UT.c:337 - CFE_EVS_SendEventWithAppID - Illegal app ID
+[ PASS] 02.007 evs_UT.c:347 - CFE_EVS_ResetFilter - Illegal app ID
+[ PASS] 02.008 evs_UT.c:354 - CFE_EVS_ResetAllFilters - Illegal app ID
+[ PASS] 02.009 evs_UT.c:361 - CFE_EVS_CleanUpApp - Illegal app ID
+[  END] 02 Test_IllegalAppID    TOTAL::9     PASS::9     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 03 Test_UnregisteredApp
+[ INFO] Begin Test Unregistered App
+
+
+[ PASS] 03.001 evs_UT.c:388 - CFE_EVS_Unregister - App not registered
+[ INFO]   App ut_cfe_evs not registered with Event Services. Unable to send event.
+
+
+[ PASS] 03.002 evs_UT.c:394 - CFE_EVS_SendEvent - App not registered
+[ PASS] 03.003 evs_UT.c:401 - CFE_EVS_ResetFilter - App not registered
+[ PASS] 03.004 evs_UT.c:408 - CFE_EVS_ResetAllFilters - App not registered
+[ PASS] 03.005 evs_UT.c:415 - CFE_EVS_SendEventWithAppID - App not registered
+[ PASS] 03.006 evs_UT.c:425 - CFE_EVS_SendTimedEvent - App not registered
+[ PASS] 03.007 evs_UT.c:435 - CFE_EVS_CleanUpApp - App not registered
+[ PASS] 03.008 evs_UT.c:442 - CFE_EVS_Register - Register app - successful
+[  END] 03 Test_UnregisteredApp TOTAL::8     PASS::8     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 04 Test_FilterRegistration
+[ INFO] Begin Test Filter Registration
+
+
+[ PASS] 04.001 evs_UT.c:466 - CFE_EVS_Register - Illegal filter option
+[ PASS] 04.002 evs_UT.c:475 - CFE_EVS_Register - Valid w/ no filters
+[ PASS] 04.003 evs_UT.c:484 - CFE_EVS_Unregister - Unregistration with failed ES_putPool
+[ PASS] 04.004 evs_UT.c:491 - CFE_EVS_Register - Valid with no filters (re-registration)
+[ PASS] 04.005 evs_UT.c:498 - CFE_EVS_Unregister - Valid unregistration
+[ PASS] 04.006 evs_UT.c:507 - CFE_EVS_Register - Valid w/ filter
+[ PASS] 04.007 evs_UT.c:523 - CFE_EVS_Register - Valid over max filters
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:OK
+
+[ PASS] 04.008 evs_UT.c:531 - CFE_EVS_SendEvent - 1st info message should go through
+[ PASS] 04.009 evs_UT.c:538 - CFE_EVS_SendEvent - 2nd info message should be filtered
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 42:Max filter count reached, AppName = ut_cfe_evs, EventID
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:OK
+
+[ PASS] 04.010 evs_UT.c:551 - CFE_EVS_SendEvent - Last info message should go through
+[ PASS] 04.011 evs_UT.c:560 - CFE_EVS_SendEvent - Locked info message should be filtered
+[ PASS] 04.012 evs_UT.c:569 - CFE_EVS_SendEvent - Locked info message should still be filtered
+[ PASS] 04.013 evs_UT.c:578 - FE_EVS_Register - Re-register application
+[ PASS] 04.014 evs_UT.c:589 - CFE_EVS_SendEventWithAppID - Application registered and filtered
+[ PASS] 04.015 evs_UT.c:601 - CFE_EVS_SendTimedEvent - Application registered and filtered
+[  END] 04 Test_FilterRegistration TOTAL::15    PASS::15    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 05 Test_FilterReset
+[ INFO] Begin Test Filter Reset
+
+
+[ PASS] 05.001 evs_UT.c:625 - CFE_EVS_Register - Register filter - successful
+[ PASS] 05.002 evs_UT.c:634 - CFE_EVS_ResetFilter - Invalid event ID
+[ PASS] 05.003 evs_UT.c:642 - CFE_EVS_ResetFilter - Unregistered event ID
+[ PASS] 05.004 evs_UT.c:649 - CFE_EVS_ResetFilter - Valid reset filter
+[ PASS] 05.005 evs_UT.c:656 - CFE_EVS_ResetAllFilters - Valid reset all filters
+[ PASS] 05.006 evs_UT.c:663 - CFE_EVS_Register - Re-register app
+[  END] 05 Test_FilterReset     TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 06 Test_Format
+[ INFO] Begin Test Format
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ PASS] 06.001 evs_UT.c:697 - CFE_EVS_EnableAppEventTypesCmd - Enable debug message output
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 10:Set Event Format Mode Command: Invalid Event Format Mod
+[ PASS] 06.002 evs_UT.c:708 - CFE_EVS_SetEventFormatModeCmd - Set event format mode command: invalid event format mode = 0xff
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 22:
+
+[ PASS] 06.003 evs_UT.c:720 - CFE_EVS_SetEventFormatModeCmd - Set event format mode command: short format
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:
+
+[ PASS] 06.004 evs_UT.c:728 - CFE_EVS_SetEventFormatModeCmd - Short event format mode verification
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 22:Set Event Format Mode Command Received with Mode = 0x01
+[ PASS] 06.005 evs_UT.c:740 - CFE_EVS_SetEventFormatModeCmd - Set event format mode command: long format
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Long format check (SendEvent)
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Long format check (SendTimedEvent)
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Long format check (SendEventWithAppID)
+
+[ PASS] 06.006 evs_UT.c:758 - CFE_EVS_SetEventFormatModeCmd - Long event format mode verification
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:01234567890123456789012345678901234567890123456789012345
+[ PASS] 06.007 evs_UT.c:775 - CFE_EVS_SendEvent - Sent info message with > maximum string length
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:01234567890123456789012345678901234567890123456789012345
+[ PASS] 06.008 evs_UT.c:785 - CFE_EVS_SendEventWithAppID - Sent info message with > maximum string length
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:01234567890123456789012345678901234567890123456789012345
+[ PASS] 06.009 evs_UT.c:796 - CFE_EVS_SendTimedEvent - Sent info message with > maximum string length
+[  END] 06 Test_Format          TOTAL::9     PASS::9     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 07 Test_Ports
+[ INFO] Begin Test Ports
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 18:Enable Ports Command Received with Port Bit Mask = 0x0f
+[ INFO] EVS Port1 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0f
+
+
+[ INFO] EVS Port2 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0f
+
+
+[ INFO] EVS Port3 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0f
+
+
+[ INFO] EVS Port4 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0f
+
+
+[ PASS] 07.001 evs_UT.c:824 - CFE_EVS_EnablePortsCmd - Enable ports command received with port bit mask = 0x0f
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Test ports message
+
+[ INFO] EVS Port1 0/0/ut_cfe_evs 0: Test ports message
+
+
+[ INFO] EVS Port2 0/0/ut_cfe_evs 0: Test ports message
+
+
+[ INFO] EVS Port3 0/0/ut_cfe_evs 0: Test ports message
+
+
+[ INFO] EVS Port4 0/0/ut_cfe_evs 0: Test ports message
+
+
+[ PASS] 07.002 evs_UT.c:835 - CFE_EVS_EnablePortsCmd - Test ports output
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 19:Disable Ports Command Received with Port Bit Mask = 0x0
+[ PASS] 07.003 evs_UT.c:848 - CFE_EVS_DisablePortsCmd - Disable ports command received with port bit mask = 0x0f
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 11
+
+[ PASS] 07.004 evs_UT.c:858 - CFE_EVS_EnablePortsCmd - Bit mask out of range (high)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 12
+
+[ PASS] 07.005 evs_UT.c:867 - CFE_EVS_DisablePortsCmd - Bit mask = 0x000000ff out of range: CC = 12
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 11
+
+[ PASS] 07.006 evs_UT.c:877 - CFE_EVS_EnablePortsCmd - Bit mask out of range (low)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 18:Enable Ports Command Received with Port Bit Mask = 0x03
+[ INFO] EVS Port1 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x03
+
+
+[ INFO] EVS Port2 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x03
+
+
+[ PASS] 07.007 evs_UT.c:887 - CFE_EVS_EnablePortsCmd - Enable ports 1 and 2; disable ports 3 and 4
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 18:Enable Ports Command Received with Port Bit Mask = 0x0c
+[ INFO] EVS Port1 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0c
+
+
+[ INFO] EVS Port2 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0c
+
+
+[ INFO] EVS Port3 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0c
+
+
+[ INFO] EVS Port4 0/0/ut_cfe_evs 18: Enable Ports Command Received with Port Bit Mask = 0x0c
+
+
+[ PASS] 07.008 evs_UT.c:897 - CFE_EVS_EnablePortsCmd - Enable ports 3 and 4; disable ports 1 and 2
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 12
+
+[ INFO] EVS Port1 0/0/ut_cfe_evs 40: Bit Mask = 0x00000000 out of range: CC = 12
+
+
+[ INFO] EVS Port2 0/0/ut_cfe_evs 40: Bit Mask = 0x00000000 out of range: CC = 12
+
+
+[ INFO] EVS Port3 0/0/ut_cfe_evs 40: Bit Mask = 0x00000000 out of range: CC = 12
+
+
+[ INFO] EVS Port4 0/0/ut_cfe_evs 40: Bit Mask = 0x00000000 out of range: CC = 12
+
+
+[ PASS] 07.009 evs_UT.c:907 - CFE_EVS_DisablePortsCmd - Bit mask out of range (low)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 19:Disable Ports Command Received with Port Bit Mask = 0x0
+[ INFO] EVS Port3 0/0/ut_cfe_evs 19: Disable Ports Command Received with Port Bit Mask = 0x03
+
+
+[ INFO] EVS Port4 0/0/ut_cfe_evs 19: Disable Ports Command Received with Port Bit Mask = 0x03
+
+
+[ PASS] 07.010 evs_UT.c:917 - CFE_EVS_DisablePortsCmd - Enable ports 1 and 2; disable ports 3 and 4
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 19:Disable Ports Command Received with Port Bit Mask = 0x0
+[ PASS] 07.011 evs_UT.c:927 - CFE_EVS_DisablePortsCmd - Enable ports 3 and 4; disable ports 1 and 2
+[  END] 07 Test_Ports           TOTAL::11    PASS::11    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 08 Test_Logging
+[ INFO] Begin Test Logging
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 34:Set Log Mode Command: Event Log is Disabled
+
+[ PASS] 08.001 evs_UT.c:957 - CFE_EVS_SetLoggingModeCmd - Set log mode command: event log disabled
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 39:Set Log Mode Command Error: Log Mode = 255
+
+[ PASS] 08.002 evs_UT.c:977 - CFE_EVS_SetLoggingModeCmd - Set log mode to an invalid mode
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 38:Set Log Mode Command: Log Mode = 1
+
+[ PASS] 08.003 evs_UT.c:987 - CFE_EVS_SetLoggingModeCmd - Set log mode to discard mode
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 0
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 1
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 2
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 3
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 4
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 5
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 6
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 7
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 8
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 9
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 10
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 11
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 12
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 13
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 14
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 15
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 16
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 17
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 18
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log fill event 19
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log overfill event discard
+
+[ PASS] 08.004 evs_UT.c:1005 - CFE_EVS_SendEvent - Log overfill event (discard mode)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 38:Set Log Mode Command: Log Mode = 0
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Log overfill event overwrite
+
+[ PASS] 08.005 evs_UT.c:1017 - CFE_EVS_SetLoggingModeCmd - Log overfill event (overwrite mode)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 36:Write Log Command: Event Log is Disabled
+
+[ PASS] 08.006 evs_UT.c:1029 - CFE_EVS_WriteLogFileCmd - Write log command with event log disabled
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 35:Clear Log Command: Event Log is Disabled
+
+[ PASS] 08.007 evs_UT.c:1039 - EVS_ClearLog - Clear log command with event log disabled
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:No-op command. cFE Version 6.4.2.0
+
+[ PASS] 08.008 evs_UT.c:1049 - CFE_EVS_ProcessGroundCommand - No-op command
+[ PASS] 08.009 evs_UT.c:1061 - EVS_ClearLog - Clear log
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 38:Set Log Mode Command: Log Mode = 0
+
+[ PASS] 08.010 evs_UT.c:1075 - CFE_EVS_SetLoggingModeCmd - Set log mode to overwrite mode
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 33:Write Log File Command: 1 event log entries written to 
+[ PASS] 08.011 evs_UT.c:1086 - CFE_EVS_WriteLogFileCmd - Write single event log entry - successful (default log name)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 3:Write Log File Command Error: OS_creat = 0xFFFFFFFF, fil
+[ PASS] 08.012 evs_UT.c:1095 - CFE_EVS_WriteLogFileCmd - OS create fail
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 33:Write Log File Command: 20 event log entries written to
+[ PASS] 08.013 evs_UT.c:1104 - CFE_EVS_WriteLogFileCmd - Write all event log entries
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 2:Write Log File Command Error: OS_write = 0xFFFFFFFF, fil
+[ PASS] 08.014 evs_UT.c:1114 - CFE_EVS_WriteLogFileCmd - OS write fail
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 33:Write Log File Command: 20 event log entries written to
+[ PASS] 08.015 evs_UT.c:1126 - CFE_EVS_WriteLogFileCmd - Write single event log entry - successful (log name specified)
+[ PASS] 08.016 evs_UT.c:1137 - CFE_EVS_WriteLogFileCmd - Write single event log entry - write header failed
+[  END] 08 Test_Logging         TOTAL::16    PASS::16    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 09 Test_WriteApp
+[ INFO] Begin Test Write App
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ PASS] 09.001 evs_UT.c:1164 - CFE_EVS_EnableAppEventTypesCmd - Enable debug message output
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 16:Reset Counters Command Received
+
+[ PASS] 09.002 evs_UT.c:1174 - CFE_EVS_ResetCountersCmd - Reset counters - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 13:Write App Data Command Error: OS_creat = 0xFFFFFFFF, fi
+[ PASS] 09.003 evs_UT.c:1189 - CFE_EVS_WriteAppDataCmd - OS create fail (default file name)
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 12:Write App Data Command Error: OS_write = 0xFFFFFFFF, fi
+[ PASS] 09.004 evs_UT.c:1199 - CFE_EVS_WriteAppDataCmd - OS write fail
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 32:Write App Data Command: 1 application data entries writ
+[ PASS] 09.005 evs_UT.c:1208 - CFE_EVS_WriteAppDataCmd - Write application data - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 13:Write App Data Command Error: OS_creat = 0xFFFFFFFF, fi
+[ PASS] 09.006 evs_UT.c:1223 - CFE_EVS_WriteAppDataCmd - OS create fail (specified file name)
+[ PASS] 09.007 evs_UT.c:1232 - CFE_EVS_WriteAppDataCmd - Write application data - write header failed
+[  END] 09 Test_WriteApp        TOTAL::7     PASS::7     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 10 Test_BadAppCmd
+[ INFO] Begin Test Bad App Command
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.001 evs_UT.c:1273 - CFE_EVS_DisableAppEventTypesCmd - Unable to retrieve application ID while disabling event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.002 evs_UT.c:1282 - CFE_EVS_EnableAppEventTypesCmd - Unable to retrieve application ID while enabling event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Disable App Events Command: Unable to retrieve applicati
+[ PASS] 10.003 evs_UT.c:1292 - CFE_EVS_DisableAppEventsCmd - Unable to retrieve application ID while disabling events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.004 evs_UT.c:1301 - CFE_EVS_EnableAppEventsCmd - Unable to retrieve application ID while enabling events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Reset Event Counter Command: Unable to retrieve applicat
+[ PASS] 10.005 evs_UT.c:1312 - CFE_EVS_ResetAppEventCounterCmd - Unable to retrieve application ID while resetting events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.006 evs_UT.c:1322 - CFE_EVS_AddEventFilterCmd - Unable to retrieve application ID while modifying event filters
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.007 evs_UT.c:1333 - CFE_EVS_DeleteEventFilterCmd - Unable to retrieve application ID while deleting event filters
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.008 evs_UT.c:1344 - CFE_EVS_SetFilterMaskCmd - Unable to retrieve application ID while setting the event filter mask
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.009 evs_UT.c:1355 - CFE_EVS_ResetFilterCmd - Unable to retrieve application ID while resetting the filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 9:Unable to retrieve application ID for unknown_name: CC =
+[ PASS] 10.010 evs_UT.c:1365 - CFE_EVS_ResetAllFiltersCmd - Unable to retrieve application ID while resetting all filters
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.011 evs_UT.c:1384 - CFE_EVS_DisableAppEventTypesCmd - Illegal application ID while disabling application event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.012 evs_UT.c:1394 - CFE_EVS_EnableAppEventTypesCmd - Illegal application ID while enabling application event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.013 evs_UT.c:1404 - CFE_EVS_DisableAppEventsCmd - Illegal application ID while disabling application events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.014 evs_UT.c:1413 - CFE_EVS_EnableAppEventsCmd - Illegal application ID while enabling application events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.015 evs_UT.c:1424 - CFE_EVS_ResetAppEventCounterCmd - Illegal application ID while resetting the application event counter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.016 evs_UT.c:1435 - CFE_EVS_AddEventFilterCmd - Illegal application ID while adding the event filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.017 evs_UT.c:1445 - CFE_EVS_DeleteEventFilterCmd - Illegal application ID while deleting the event filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.018 evs_UT.c:1455 - CFE_EVS_SetFilterMaskCmd - Illegal application ID while setting the filter mask
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.019 evs_UT.c:1465 - CFE_EVS_ResetFilterCmd - Illegal application ID while resetting the filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 8:Illegal application ID 33 retrieved for illegal_id: CC =
+[ PASS] 10.020 evs_UT.c:1475 - CFE_EVS_ResetAllFiltersCmd - Illegal application ID while resetting all filters
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS,: CC = 6
+
+[ PASS] 10.021 evs_UT.c:1495 - CFE_EVS_DisableAppEventTypesCmd - Application not registered while disabling application event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 5
+
+[ PASS] 10.022 evs_UT.c:1507 - CFE_EVS_EnableAppEventTypesCmd - Application not registered while enabling application event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 8
+
+[ PASS] 10.023 evs_UT.c:1518 - CFE_EVS_DisableAppEventsCmd - Application not registered while disabling application events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 7
+
+[ PASS] 10.024 evs_UT.c:1527 - CFE_EVS_EnableAppEventsCmd - Application not registered while enabling application events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 9
+
+[ PASS] 10.025 evs_UT.c:1538 - CFE_EVS_ResetAppEventCounterCmd - Application not registered while resetting the application event count
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 15
+
+[ PASS] 10.026 evs_UT.c:1549 - CFE_EVS_AddEventFilterCmd - Application not registered while adding the event filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 16
+
+[ PASS] 10.027 evs_UT.c:1559 - CFE_EVS_DeleteEventFilterCmd - Application not registered while deleting the event filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 10
+
+[ PASS] 10.028 evs_UT.c:1569 - CFE_EVS_SetFilterMaskCmd - Application not registered while setting the filter mask
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 13
+
+[ PASS] 10.029 evs_UT.c:1579 - CFE_EVS_ResetFilterCmd - Application not registered while resetting the filter
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 7:unregistered_app not registered with EVS: CC = 14
+
+[ PASS] 10.030 evs_UT.c:1589 - CFE_EVS_ResetAllFiltersCmd - Application not registered while resetting all filters
+[  END] 10 Test_BadAppCmd       TOTAL::30    PASS::30    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 11 Test_EventCmd
+[ INFO] Begin Test Event Command
+
+
+[ PASS] 11.001 evs_UT.c:1635 - CFE_EVS_SendEvent - Disable all events
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Debug message enabled
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Info message enabled
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Error message enabled
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:Critical message enabled
+
+[ PASS] 11.002 evs_UT.c:1658 - CFE_EVS_SendEvent - Enable all event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 6
+
+[ PASS] 11.003 evs_UT.c:1671 - CFE_EVS_DisableAppEventTypesCmd - Disable events using an illegal event type
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 5
+
+[ PASS] 11.004 evs_UT.c:1680 - CFE_EVS_EnableAppEventTypesCmd - Enable events using an illegal event type
+[ PASS] 11.005 evs_UT.c:1690 - CFE_EVS_DisableAppEventsCmd - Disable application events - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 25:Enable App Events Command Received with AppName = ut_cf
+[ PASS] 11.006 evs_UT.c:1699 - CFE_EVS_EnableAppEventsCmd - Enable application events - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 21:Disable Event Type Command Received with Event Type Bit
+[ PASS] 11.007 evs_UT.c:1711 - CFE_EVS_DisableEventTypesCmd - Disable event types except debug
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 20:Enable Event Type Command Received with Event Type Bit 
+[ PASS] 11.008 evs_UT.c:1720 - CFE_EVS_EnableEventTypesCmd - Enable all event types
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 27:Reset Event Counter Command Received with AppName = ut_
+[ PASS] 11.009 evs_UT.c:1730 - CFE_EVS_ResetAppEventCounterCmd - Reset event application counter - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 3
+
+[ PASS] 11.010 evs_UT.c:1741 - CFE_EVS_DisableEventTypesCmd - Disable event types - bit mask out of range (high)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 2
+
+[ PASS] 11.011 evs_UT.c:1752 - CFE_EVS_EnableEventTypesCmd - Enable event types - bit mask out of range (high)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 6
+
+[ PASS] 11.012 evs_UT.c:1765 - CFE_EVS_DisableAppEventTypesCmd - Disable application event types - bit mask out of range (high)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x000000ff out of range: CC = 5
+
+[ PASS] 11.013 evs_UT.c:1779 - CFE_EVS_EnableAppEventTypesCmd - Enable application event types - bit mask out of range (high)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 3
+
+[ PASS] 11.014 evs_UT.c:1790 - CFE_EVS_DisableEventTypesCmd - Disable event types - bit mask out of range (low)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 2
+
+[ PASS] 11.015 evs_UT.c:1801 - CFE_EVS_EnableEventTypesCmd - Enable event types - bit mask out of range (low)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 6
+
+[ PASS] 11.016 evs_UT.c:1814 - CFE_EVS_DisableAppEventTypesCmd - Disable application event types - bit mask out of range (low)
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 40:Bit Mask = 0x00000000 out of range: CC = 5
+
+[ PASS] 11.017 evs_UT.c:1826 - CFE_EVS_EnableAppEventTypesCmd - Enable application event types - bit mask out of range (low)
+[  END] 11 Test_EventCmd        TOTAL::17    PASS::17    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 12 Test_FilterCmd
+[ INFO] Begin Test Filter Command
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ PASS] 12.001 evs_UT.c:1870 - CFE_EVS_EnableAppEventTypesCmd - Enable all application event types - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 6:ut_cfe_evs Event ID 0 not registered for filtering: CC =
+[ PASS] 12.002 evs_UT.c:1880 - CFE_EVS_DeleteEventFilterCmd - Delete event filter - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 6:ut_cfe_evs Event ID 0 not registered for filtering: CC =
+[ PASS] 12.003 evs_UT.c:1892 - CFE_EVS_SetFilterMaskCmd - Set filter - application is not registered for filtering
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 6:ut_cfe_evs Event ID 0 not registered for filtering: CC =
+[ PASS] 12.004 evs_UT.c:1904 - CFE_EVS_ResetFilterCmd - Reset filter - application is not registered for filtering
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 29:Reset All Filters Command Received with AppName = ut_cf
+[ PASS] 12.005 evs_UT.c:1915 - CFE_EVS_ResetAllFiltersCmd - Reset all filters - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ PASS] 12.006 evs_UT.c:1925 - CFE_EVS_AddEventFilterCmd - Add event filter - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 37:Add Filter Command:AppName = ut_cfe_evs, EventID = 0x00
+[ PASS] 12.007 evs_UT.c:1936 - CFE_EVS_AddEventFilterCmd - Add event filter - event already registered for filtering
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 17:Set Filter Mask Command Received with AppName=ut_cfe_ev
+[ PASS] 12.008 evs_UT.c:1945 - CFE_EVS_SetFilterMaskCmd - Set filter mask - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 28:Reset Filter Command Received with AppName = ut_cfe_evs
+[ PASS] 12.009 evs_UT.c:1955 - CFE_EVS_ResetFilterCmd - Reset filter mask - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 29:Reset All Filters Command Received with AppName = ut_cf
+[ PASS] 12.010 evs_UT.c:1965 - CFE_EVS_ResetAllFiltersCmd - Reset all filters  - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 31:Delete Filter Command Received with AppName = ut_cfe_ev
+[ PASS] 12.011 evs_UT.c:1975 - CFE_EVS_DeleteEventFilterCmd - Delete event filter - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ PASS] 12.012 evs_UT.c:1991 - CFE_EVS_AddEventFilterCmd - Maximum event filters added
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 11:Add Filter Command: number of registered filters has re
+[ PASS] 12.013 evs_UT.c:2001 - CFE_EVS_AddEventFilterCmd - Maximum event filters exceeded
+[ PASS] 12.014 evs_UT.c:2009 - CFE_EVS_Register - Register application - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 23:Enable App Event Type Command Received with AppName = u
+[ PASS] 12.015 evs_UT.c:2021 - CFE_EVS_EnableAppEventTypesCmd - Enable all application event message output
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 30:Add Filter Command Received with AppName = ut_cfe_evs, 
+[ PASS] 12.016 evs_UT.c:2031 - CFE_EVS_AddEventFilterCmd - Add event filter - successful
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 37:Add Filter Command:AppName = ut_cfe_evs, EventID = 0x00
+[ PASS] 12.017 evs_UT.c:2040 - CFE_EVS_AddEventFilterCmd - Add event filter - event is already registered for filtering
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 31:Delete Filter Command Received with AppName = ut_cfe_ev
+[ PASS] 12.018 evs_UT.c:2050 - CFE_EVS_DeleteEventFilterCmd - Delete filter - successful
+[ PASS] 12.019 evs_UT.c:2057 - CFE_EVS_Register - Register application - successful
+[  END] 12 Test_FilterCmd       TOTAL::19    PASS::19    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 13 Test_InvalidCmd
+[ INFO] Begin Test Invalid Command
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 5:Invalid command packet, Message ID = 0x0000FFFF
+
+[ PASS] 13.001 evs_UT.c:2080 - CFE_EVS_ProcessGroundCommand - Invalid command packet
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 15:Invalid command code -- ID = 0x00001801, CC = 127
+
+[ PASS] 13.002 evs_UT.c:2090 - CFE_EVS_ProcessGroundCommand - Invalid command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 0, Exp Len = 8, L
+[ PASS] 13.003 evs_UT.c:2101 - CFE_EVS_VerifyCmdLength - Invalid command length with no op command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 1, Exp Len = 8, L
+[ PASS] 13.004 evs_UT.c:2111 - CFE_EVS_VerifyCmdLength - Invalid command length with reset counters command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 2, Exp Len = 10, 
+[ PASS] 13.005 evs_UT.c:2121 - CFE_EVS_VerifyCmdLength - Invalid command length with enable event type command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 3, Exp Len = 10, 
+[ PASS] 13.006 evs_UT.c:2131 - CFE_EVS_VerifyCmdLength - Invalid command length with disable event type command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 4, Exp Len = 10, 
+[ PASS] 13.007 evs_UT.c:2141 - CFE_EVS_VerifyCmdLength - Invalid command length with set event format mode command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 5, Exp Len = 30, 
+[ PASS] 13.008 evs_UT.c:2153 - CFE_EVS_VerifyCmdLength - Invalid command length with enable application event type command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 6, Exp Len = 30, 
+[ PASS] 13.009 evs_UT.c:2166 - CFE_EVS_VerifyCmdLength - Invalid command length with disable application event type command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 7, Exp Len = 28, 
+[ PASS] 13.010 evs_UT.c:2177 - CFE_EVS_VerifyCmdLength - Invalid command length with enable application events command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 8, Exp Len = 28, 
+[ PASS] 13.011 evs_UT.c:2187 - CFE_EVS_VerifyCmdLength - Invalid command length with disable application events command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 9, Exp Len = 28, 
+[ PASS] 13.012 evs_UT.c:2197 - CFE_EVS_VerifyCmdLength - Invalid command length with reset application counter command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 10, Exp Len = 32,
+[ PASS] 13.013 evs_UT.c:2207 - CFE_EVS_VerifyCmdLength - Invalid command length with set filter command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 11, Exp Len = 10,
+[ PASS] 13.014 evs_UT.c:2217 - CFE_EVS_VerifyCmdLength - Invalid command length with enable ports command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 12, Exp Len = 10,
+[ PASS] 13.015 evs_UT.c:2227 - CFE_EVS_VerifyCmdLength - Invalid command length with disable ports command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 13, Exp Len = 30,
+[ PASS] 13.016 evs_UT.c:2237 - CFE_EVS_VerifyCmdLength - Invalid command length with reset filter command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 14, Exp Len = 28,
+[ PASS] 13.017 evs_UT.c:2247 - CFE_EVS_VerifyCmdLength - Invalid command length with reset all filters command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 15, Exp Len = 32,
+[ PASS] 13.018 evs_UT.c:2257 - CFE_EVS_VerifyCmdLength - Invalid command length with add event filter command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 16, Exp Len = 30,
+[ PASS] 13.019 evs_UT.c:2267 - CFE_EVS_VerifyCmdLength - Invalid command length with delete event filter command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 17, Exp Len = 72,
+[ PASS] 13.020 evs_UT.c:2277 - CFE_EVS_VerifyCmdLength - Invalid command length with write application data command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 18, Exp Len = 72,
+[ PASS] 13.021 evs_UT.c:2288 - CFE_EVS_VerifyCmdLength - Invalid command length with write log data command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 19, Exp Len = 10,
+[ PASS] 13.022 evs_UT.c:2298 - CFE_EVS_VerifyCmdLength - Invalid command length with set log mode command
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 43:Invalid cmd length: ID = 0x1801, CC = 20, Exp Len = 8, 
+[ PASS] 13.023 evs_UT.c:2308 - CFE_EVS_VerifyCmdLength - Invalid command length with clear log command
+[  END] 13 Test_InvalidCmd      TOTAL::23    PASS::23    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 14 Test_Misc
+[ INFO] Begin Test Miscellaneous
+
+
+[ PASS] 14.001 evs_UT.c:2335 - EVS_GetApplicationInfo - Get application info with null application ID
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ PASS] 14.002 evs_UT.c:2346 - CFE_EVS_WriteLogFileCmd - Write log data - successful
+[ PASS] 14.003 evs_UT.c:2357 - CFE_EVS_SetLoggingModeCmd - Set logging mode - successful
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_SB_SendMsg: type CFE_EVS_HK_TLM_MID
+   CommandCounter = 28
+   CommandErrCounter = 72
+   MessageFormatMode = 1
+   MessageS
+[ INFO]    AppID = 0
+    AppEnableStatus = 1
+    AppMessageSentCounter = 23
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ PASS] 14.004 evs_UT.c:2366 - CFE_EVS_ReportHousekeepingCmd - Housekeeping report - successful (log enabled)
+[ PASS] 14.005 evs_UT.c:2373 - CFE_EVS_CleanUpApp - Application cleanup - successful
+[ PASS] 14.006 evs_UT.c:2380 - CFE_EVS_Register - Register application with invalid arguments
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_SB_SendMsg: type CFE_EVS_HK_TLM_MID
+   CommandCounter = 28
+   CommandErrCounter = 72
+   MessageFormatMode = 1
+   MessageS
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ INFO]    AppID = 0
+    AppEnableStatus = 0
+    AppMessageSentCounter = 0
+
+[ PASS] 14.007 evs_UT.c:2389 - CFE_EVS_ReportHousekeepingCmd - Housekeeping report - successful (log disabled)
+[ PASS] 14.008 evs_UT.c:2396 - EVS_GetApplicationInfo - Get application info with null application name
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ PASS] 14.009 evs_UT.c:2409 - EVS_SendPacket - Maximum message count and event count
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2056
+
+[ INFO]   CFE_SB_SetMsgTime called
+
+[ INFO]   CFE_SB_SendMsg called: type CFE_EVS_EVENT_MSG_MID
+  0/0/ut_cfe_evs 0:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+[ PASS] 14.010 evs_UT.c:2433 - EVS_SendEvent - Maximum message length exceeded
+[  END] 14 Test_Misc            TOTAL::10    PASS::10    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+[  END] 14 SUMMARY              TOTAL::198   PASS::198   FAIL::0      MIR::0      TSF::0      N/A::0   
+
+COMPLETE: 14 tests Segment(s) executed
+
+
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs.c' 100.00%  119
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_log.c' 100.00%  63
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_task.c' 99.61%  517
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs_utils.c' 100.00%  123
+
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/evs'

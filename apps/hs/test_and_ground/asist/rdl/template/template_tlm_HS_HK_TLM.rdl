@@ -1,0 +1,78 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: June 15, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu HS Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "hs_platform_cfg.h"
+
+#define APP_STATUS_SIZE (((HS_MAX_CRITICAL_APPS - 1)/32) + 1)
+
+PACKET Pxxxx APID=nnnn, DESC="HS Telemetry Data Packet", STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_HS_CMDPC                DESC="Command Processed Counter",
+                                        UNITS=Counts
+!
+  UB   $sc_$cpu_HS_CMDEC                DESC="Command Error Counter",
+                                        UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_HS_AppMonState		DESC="HS Application Monitoring State",
+					DISCRETE, DRANGE=(0,1),
+					DLABEL=("Disabled", "Enabled")
+!
+  UB   $sc_$cpu_HS_EvtMonState		DESC="Event Monitoring State",
+					DISCRETE, DRANGE=(0,1),
+					DLABEL=("Disabled", "Enabled")
+!
+  UB   $sc_$cpu_HS_CPUAliveState	DESC="CPU Aliveness State",
+					DISCRETE, DRANGE=(0,1),
+					DLABEL=("Disabled", "Enabled")
+!
+  UB   $sc_$cpu_HS_CPUHogState		DESC="CPU Hogging State",
+					DISCRETE, DRANGE=(0,1),
+					DLABEL=("Disabled", "Enabled")
+!
+  UB   $sc_$cpu_HS_StatusFlags		DESC="Internal Status"
+!
+  UB   $sc_$cpu_HS_Spare		DESC="Spare for alignment"
+!
+  UI   $sc_$cpu_HS_PRResetCtr		DESC="Processor Reset Counter"
+!
+  UI   $sc_$cpu_HS_MaxResetCnt		DESC="Maximum Processor Reset Count"
+!
+  ULI  $sc_$cpu_HS_EVTMonCnt		DESC="Total Event Message Monitored Count"
+!
+  ULI  $sc_$cpu_HS_InvalidEVTAppCnt	DESC="Total number of applications not found while monitoring events"
+!
+  ULI  $sc_$cpu_HS_AppStatus[APP_STATUS_SIZE] DESC="Enable States of Applications defined in the table"
+!
+  ULI  $sc_$cpu_HS_MsgActCnt	DESC="The total number of SB Message Actions executed"
+!
+  ULI  $sc_$cpu_HS_CPUUtilAve	DESC="The current CPU utilization average"
+!
+  ULI  $sc_$cpu_HS_CPUUtilPeak	DESC="The CPU utilization peak"
+!
+  ULI  $sc_$cpu_HS_ExecutionCtr[HS_MAX_EXEC_CNT_SLOTS] DESC="Execution counters for the apps defined in the table"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

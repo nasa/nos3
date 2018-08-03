@@ -1,0 +1,51 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Sept 24 2007  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES App Log File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2007/09/24  WFM      : Initial implementation
+!  2008/08/29  WFM      : Added Execution Counter
+!  2009/12/09  WFM	: Modified the TL[64] to use the configuration
+!			: parameter OS_MAX_TASKS 
+!                                                             
+!==============================================================================
+!
+#include "osconfig.h"
+
+TYPES
+   RECORD $sc_$cpu_ES_TaskLog       DESC="ES Task Info Log"
+    ULI   TaskId                    DESC="Task Id"
+    ULI   ExecutionCtr              DESC="Task Id"
+    CHAR  TaskName[OS_MAX_API_NAME] DESC="Task Name"
+    ULI   AppId                     DESC="Application Id"
+    CHAR  AppName[OS_MAX_API_NAME]  DESC="Application Name"
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES Task Log File", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_ES_TaskLog $sc_$cpu_ES_TL[OS_MAX_TASKS] DESC="$sc $cpu ES Task Log Entry"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+
+ 

@@ -1,0 +1,492 @@
+/**
+  \page cfetblovr cFE Table Services Overview
+
+  Applications typically organize sets of their parameters into logical units called tables.  These are typically
+  constant parameters that can change the behavior of a flight software algorithm and are only intended
+  to be modified by operations personnel.  Examples of this would be attitude control gains, sensor
+  scalefactors, telemetry filter settings, etc.  None of the cFE core applications (EVS, SB, ES, TIME
+  or TBL) use tables.  
+
+  Table Services (TBL) provides a centralized control of flight software tables. Operations personnel would
+  interact with TBL in order to dump the contents of current tables, load new table images, verify the contents
+  of a table image and manage Critical tables.
+
+  For additional detail on Tables and how to manage them, see the following sections:
+
+  <UL>
+    <LI> \subpage cfetblugdecouple <BR>
+    <LI> \subpage cfetblugmanage <BR>
+    <LI> \subpage cfetblugtypes <BR>
+    <UL>
+       <LI> \subpage cfetblugsnglbuff <BR>
+       <LI> \subpage cfetblugdblbuff <BR>
+       <LI> \subpage cfetblugcritical <BR>
+    </UL>
+    <LI> \subpage cfetblugregistry <BR>
+    <LI> \subpage cfetblugtelemetry <BR>
+    <LI> \subpage cfetblugprocreset <BR>
+    <LI> \subpage cfetblugfaq <BR> 
+  </UL>
+
+  \subpage cfetblrevhist <BR>
+    
+**/
+
+/**
+  \page cfetblugdecouple How To Remove cFE Table Services
+
+  It is possible to build the CFE without including Table Services.  This is only applicable if
+  the mission does not intend to use any CFS applications that require CFE type table services, or
+  if the mission intends to provide custom table services. If CFE Table Services are removed, the
+  CFE makefile will no longer try to make the Table Services application and the link makefile will
+  no longer include the Table Services object module in the CFE-CORE. Even if excluded from the build,
+  the Table Services source and header files will remain in the CFE source tree.
+
+  The variable EXCLUDE_CFE_TBL in the setvars.sh file controls whether, or not, CFE Table Services
+  application is included in the CFE-CORE. The value of EXCLUDE_CFE_TBL must be set equal to TRUE
+  to cause Table Services to be excluded from the CFE-CORE.  Any definition of EXCLUDE_CFE_TBL that
+  does not set the value equal to TRUE (or no definition at all) will result in the inclusion of cFE
+  Table Services. The default setvars.sh file contains the line "# EXCLUDE_CFE_TBL=TRUE", but note
+  that the "#" symbol marks this line as a comment. Remove the "#" symbol to enable the definition
+  that excludes CFE Table Services.
+
+  Removing Table Services reduces the size of the CFE-CORE load file and also reduces the amount
+  of RAM memory required to load the cFE. Each development environment will have unique savings.
+  The numbers from a test performed using a MCP-750 platform with a GCC compiler are provided for
+  reference:
+
+      Size of cFE binary load file with Table Services: 830,969
+      Size of cFE binary load file w/o Table services:  721,466
+
+      Amount of available RAM after loading cFE with Table Services: 76,513,488
+      Amount of available RAM after loading cFE w/o Table Services:  77,151,984
+
+  Next: \ref cfetblugmanage <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugmanage Managing Tables
+    
+  In order to effectively manage tables, an operator needs to understand how cFE Applications
+  manage tables from their end.  There are a number of methods that cFE Applications typically
+  use to manage their tables.  Each method is appropriate based upon the nature of the contents
+  of the table.
+
+  cFE Applications are required to periodically check to see if their table is to be validated,
+  updated (or in the case of dump-only tables, dumped).  Most Applications perform this periodic
+  management at the same time as housekeeping requests are processed.  This table management is
+  performed by the cFE Application that "owns" a table (ie - the cFE Application that registered 
+  the table with cFE Table Services).  It is possible for cFE Applications to "share" a table with 
+  other cFE Applications.  An Application that shares a table does not typically perform any of the
+  management duties associated with that table.
+
+  A table can have one of two different types and a number of different options.  These are
+  discussed further in later sections.  An operator should understand the chosen type and
+  selected options for a particular table before attempting to modify a table's contents.
+
+  To understand the methods of maintaining a table, it is important that the terminology be clear.
+  A table has two images: "Active" and "Inactive".  The Active table is the one that a cFE Application
+  is currently accessing when it executes.  The Inactive table is a copy of the Active table that
+  an operator (or on-board process such as a stored command processor) can manipulate and change
+  to have a newly desired set of data.
+
+  To create an Inactive table image on board, the operator would be required to perform a "Load" to the
+  table.  Loads are table images stored in on-board files.  The Load can contain either a complete
+  table image or just a part of a table image.  If the Load contains just a portion, the Inactive
+  image is first initialized with the contents of the Active image and then the portion identified
+  in the Load file is written on top of the Active image.  After the initial Load, an operator can
+  continue to manipulate the Inactive table image with additional partial table load images.  This
+  allows the operator to reconfigure the contents of multiple portions of the table before deciding
+  to "Validate" and/or "Activate" it.
+
+  Some cFE Applications provide special functions that will examine a table image to determine if
+  the contents are logically sound.  This function is referred to as the "Validation Function."  When
+  a cFE Application assigns a Validation Function to a table during the table registration process,
+  it is then requiring that a Validation be performed before the table can be Activated.  When an
+  operator requests a Validation of a table image, they are sending a request to the owning Application
+  to execute the associated Validation Function on that image.  The results of this function are then
+  reported in telemetry.  If the Validation is successful, the operator is free to perform a table
+  Activation.  If the Validation fails, the operator would be required to make additional changes
+  to the Inactive table image and attempt another Validation before commanding an Activation.
+
+  To change an Inactive table image into the Active table image, an operator must Activate a table.
+  When an operator sends the table Activation command, they are notifying the table's owning Application
+  that a new table image is available.  It is then up to the Application to determine when is the best
+  time to perform the "Update" of the table.  When an Application performs an Update, the contents of
+  the Inactive table image become the Active table image.
+
+  Next: \ref cfetblugtypes <BR>
+  Prev: \ref cfetblugdecouple <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugtypes cFE Table Types and Table Options
+
+  A cFE Application Developer has several choices when creating a cFE Application.  There are
+  two basic types of tables: single buffered and double buffered.  In addition to these two basic types
+  there are a small variety of options possible with each table.  These options control special
+  characteristics of the table such as whether it is dump-only, critical or whether it has an
+  application defined location in memory.
+
+  Each choice has its advantages and disadvantages.  The developer chooses the appropriate type
+  based upon the requirements of the application.  Anyone operating a particular cFE Application
+  must understand the nature of the type and options selected for a particular table before they
+  can successfully understand how to perform updates, validations, etc.
+
+  For more information on the different types of tables available, see the following sections:
+
+  <UL>
+    <LI> Table Types <BR>
+    <UL>
+       <LI> \subpage cfetblugsnglbuff <BR>
+       <LI> \subpage cfetblugdblbuff <BR>
+    </UL>
+    <LI> Table Options <BR>
+    <UL>
+       <LI> \subpage cfetblugvalfunc <BR>
+       <LI> \subpage cfetblugcritical <BR>
+       <LI> \subpage cfetbluguserdef <BR>
+       <LI> \subpage cfetblugdumponly <BR>
+    </UL>
+  </UL>
+    
+  Next: \ref cfetblugsnglbuff <BR>
+  Prev: \ref cfetblugmanage <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugsnglbuff Single Buffered Tables
+
+  The default table type for a cFE Application to use is a single buffered table.  The principle
+  advantage of a single buffered table is that it can share one of several shared table buffers
+  for uploaded and pending table images.  Since many cFE Applications have relatively small tables
+  that are not changed at time critical moments or are not changed very often during a mission,
+  single buffered tables represent the most memory resource efficient method of being managed.
+
+  The number of single buffered tables that can have inactive table images being manipulated at one
+  time is specified by a TBL Services configuration parameter (#CFE_TBL_MAX_SIMULTANEOUS_LOADS) found
+  in the cfe_platform_cfg.h file associated with the processor in question.  This parameter identifies
+  the number of shared table buffers that are available.
+
+  Since inactive single buffered table images share a common resource, it may not be prudent for an
+  operator to load an image and then delay on the image's activation for an extended period of time.
+  
+  Single buffered tables are allowed to be critical (see \ref cfetblugcritical), dump-only 
+  (see \ref cfetblugdumponly) and/or have a user-defined address (see \ref cfetbluguserdef).
+    
+  Next: \ref cfetblugdblbuff <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetblugdblbuff Double Buffered Tables
+
+  Under certain conditions, a cFE Application Developer may choose to use a double buffered table
+  type within their application.  Double buffered tables retain a dedicated inactive image of the
+  table data.  With a dedicated inactive table image available, double buffered tables are then
+  capable of efficiently swapping table contents and/or delaying the activation of a table's contents
+  for an indeterminate amount of time.
+  
+  Some cFE Applications prefer to delay the Activation of a table until a specified time (e.g. - a
+  Spacecraft Ephemeris).  These tables are typically defined as double buffered tables so that the
+  Inactive image can be left sitting untouched for an extended period of time without interfering
+  with shared resources for other tables.  Then the Application can perform the Update when the time
+  is right.
+  
+  Applications which have unusually large tables may decide to conserve memory resources by making
+  them double buffered.  This is because the shared buffers used by single buffered tables must be
+  sized to match the largest table.  If there is one table that is unusually large, there is little
+  reason to allocate up to #CFE_TBL_MAX_SIMULTANEOUS_LOADS number of buffers that size.  A double
+  buffered table will only allocate ONE extra buffer of that size.
+  
+  Performance minded Applications that are required to perform processing with tight timing deadlines
+  may choose to use double buffered tables because the Update for a double buffered table is deterministic
+  and quick.
+  
+  Next: \ref cfetblugvalfunc <BR>
+  Prev: \ref cfetblugsnglbuff <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetblugvalfunc Tables with Validation Functions
+  
+  Applications that associate Validation Functions with their tables when the tables are registered are
+  effectively requiring that the contents of a table be logically Validated before it is Activated. The
+  cFE will refuse to let a table with an associated Validation Function be Activated until a successful
+  Validation on the Inactive table image has occurred.
+  
+  Tables that are NOT assigned a Validation Function are assumed to be valid regardless of the contents
+  of the table image. These tables do not require a Validation Command prior to Activation.
+   
+  Next: \ref cfetblugcritical <BR>
+  Prev: \ref cfetblugdblbuff <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetblugcritical Critical Tables
+  
+  Applications that must be able to recover quickly from a Processor Reset may select the "Critical" table
+  option when registering their table.  Table Services automatically creates a Critical Data Store for the
+  table and ensures that the contents of the Critical Data Store are updated whenever a Table Activation
+  occurs.
+  
+  If a Processor Reset happens, when the Application attempts to Register the table again, Table Services
+  automatically locates the associated Critical Data Store and initializes the Table with the saved contents.
+  
+  Next: \ref cfetbluguserdef <BR>
+  Prev: \ref cfetblugvalfunc <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetbluguserdef User Defined Address Tables
+  
+  In order to provide a mechanism for Flight Software Maintenance teams to quickly create a table image
+  for dumping contents of memory that isn't normally loaded by the ground, there is an option to create
+  User-Defined Address tables.  These tables, when they are first registered, provide a memory address
+  where the Active image of the table is to be maintained.  Normally, the address is specified by Table
+  Services from its memory pool.
+  
+  By specifying the address, the Flight Software Maintenance team can create a Dump-Only table that contains
+  the contents of a data structure that is not normally accessible via telemetry or table dumps. Then, on
+  command, the Flight Software Maintenance team can periodically dump the data structure's contents to an
+  on-board file(s) that can then be transferred to the ground for later analysis.
+  
+  Next: \ref cfetblugdumponly <BR>
+  Prev: \ref cfetblugcritical <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetblugdumponly Dump Only Tables
+  
+  On occasion, cFE Applications require a segment of memory in which the Application writes data.  The typical
+  cFE Table is not normally modified directly by an Application but only via Load and Activate commands from
+  either the Ground or Stored Command Processor.  However, for those situations where an Application wishes to
+  modify the contents of a data structure and the Application is limited in its telemtry bandwidth so that the
+  modified data cannot be telemetered, the Application can create a Dump-Only table.
+  
+  Dump-Only tables are not allowed to be modified via the Load/Validate/Activate process most other tables are.
+  They are only supposed to be modified by onboard Applications.  The Operator can still command a Dump which will
+  be processed by the table's owning Application when it manages its tables.  By letting the Application perform
+  the dump, the Operator can feel confident that the table contents are a complete snapshot in time and not
+  corrupted by taking a snapshot while the Application was in the process of modifying its contents.
+    
+  Next: \ref cfetblugregistry <BR>
+  Prev: \ref cfetbluguserdef <BR>
+  Up To: \ref cfetblugtypes
+**/
+
+/**
+  \page cfetblugregistry Table Registry
+  
+  When Applications register tables, Table Services retains pertinent information on the table in the Table Registry.
+  The following information (along with other information that is less important for an operator) is kept for each table:
+  
+  <UL>
+    <LI> The Application ID of the Application that Registered the table
+    <LI> The full name of the table
+    <LI> The size, in bytes, of the table
+    <LI> Pointers to the start addresses of the Table's image buffers, Active and Inactive (if appropriate)
+    <LI> A pointer to the start address of a Validation Function
+    <LI> A flag indicating whether a table image has been loaded into an Inactive buffer
+    <LI> A flag indicating whether the table is Critical and its associated CDS Handle if it is
+    <LI> A flag indicating whether the table has ever been loaded (initialized)
+    <LI> A flag indicating whether the table is Dump Only
+    <LI> A flag indicating whether the table has an Update Pending
+    <LI> A flag indicating whether the table is double buffered or not
+    <LI> The System Time when the Table was last Updated
+    <LI> The filename of the last file loaded into the table
+    <LI> The File Creation Time for the last file used to load the contents of the table
+  </UL>
+  
+  This information can be obtained by either sending the Dump Registry command which will put all of the
+  information from the Table Registry into an onboard file for later downlink or the operator can send a
+  command to Telemeter the Registry Entry for a single table.  This will cause the pertinent registry entry
+  for a single table to be sent via a telemetry packet.
+
+  The API function CFE_TBL_Register() returns either CFE_SUCCESS or CFE_TBL_INFO_RECOVERED_TBL to indicate
+  that the table was successfully registered. The difference is whether the table data was recovered from
+  CDS as part of the registration. There are several error return values that describe why the function
+  failed to register the table but nothing related to why the restoration from CDS might have failed. There
+  is, however, a message written to the System Error Log by Table Services that can be dumped by the ground
+  to get this information. Note that failure to restore a table from CDS is not an expected error and
+  requires some sort of data corruption to occur.    
+
+  Next: \ref cfetblugtelemetry <BR>
+  Prev: \ref cfetblugtypes <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugtelemetry Table Services Telemetry
+  
+  Table Services produces two different telemetry packets.  The first packet, referred to as the Table
+  Services Housekeeping Packet, is routinely produced by Table Services upon receipt of the Housekeeping
+  Request message that is typically sent to all Applications by an on board scheduler.  The contents and
+  format of this packet are described in detail at #CFE_TBL_HkPacket_t.
+    
+  Next: \ref cfetblugprocreset <BR>
+  Prev: \ref cfetblugregistry <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugprocreset Effects of Processor Reset on Tables
+  
+  When a processor resets, the Table Registry is re-initialized.  All Applications must, therefore, re-register
+  and re-initialize their tables.  The one exception, however, is if the Application has previously tagged a
+  table as "Critical" during Table Registration, then Table Services will attempt to locate a table image for
+  that table stored in the Critical Data Store.  Table Services also attempts to locate the Critical Table
+  Registry which is also maintained in the Critical Data Store.
+  
+  If Table Services is able to find a valid table image for a Critical table in the Critical Data Store, the
+  contents of the table are automatically loaded into the table and the Application is notified that the
+  table does not require additional initialization.
+    
+  Next: \ref cfetblugfaq <BR>
+  Prev: \ref cfetblugtelemetry <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**
+  \page cfetblugfaq Frequently Asked Questions about Table Services
+  
+    <TABLE BORDER="0" CELLPADDING="2" WIDTH="100%">
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           Is it an error to load a table image that is smaller than the registered size?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           Table images that are smaller than the declared size of a table fall into one of two categories.
+           
+           If the starting offset of the table image (as specified in the Table Image secondary file header) is
+           not equal to zero, then the table image is considered to be a "partial" table load.  Partial loads
+           are valid as long as a table has been previously loaded with a non-"partial" table image.
+           
+           If the starting offset of the table image is zero and the size is less than the declared size
+           of the table, the image is considered "short" but valid.  This feature allows application developers
+           to use variable length tables.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           I tried to validate a table and received the following event message that said the event failed:<BR>
+           <center><tt>"MyApp validation failed for Inactive 'MyApp.MyTable', Status=0x####"</tt></center><BR>
+           What happened?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The event message indicates the application who owns the table has discovered a problem with the
+           contents of the image.  The code number following the 'Status' keyword is defined by the Application.
+           The documentation for the specified Application should be referred to in order to identify the exact
+           nature of the problem.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           What commands do I use to load a table with a new image?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           There are a number of steps required to load a table.  
+           -# The operator needs to create a cFE Table Services compatible table image file with the 
+              desired data contained in it.  This can be accomplished by creating a 'C' source file, compiling
+              it with the appropriate cross compiler for the onboard platform and then running the <tt>elf2cfetbl</tt>
+              utility on the resultant object file.
+           -# The file needs to be loaded into the onboard processor's filesystem using whichever file transfer
+              protocol is used for that mission.
+           -# The \link #CFE_TBL_LOAD_CC Load Command \endlink is sent next to tell Table Services to load the
+              table image file into the Inactive Table Image Buffer for the table identified in the file.
+           -# The \link #CFE_TBL_VALIDATE_CC Validate Command \endlink is then sent to validate the contents of
+              the inactive table image.  This will ensure the file was not corrupted or improperly defined.  The
+              results of the validation are reported in Table Services Housekeeping Telemetry.  If a table does
+              not have a validation function associated with it, the operator may wish to compare the computed
+              CRC to verify the table contents match what was intended.
+           -# Upon successful validation, the operator then sends the 
+              \link #CFE_TBL_ACTIVATE_CC Activate Command. \endlink  The application owning the table should, within
+              a reasonable amount of time, perform a table update and send an event message.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           What causes cFE Table Services to generate the following sys log message:
+           
+           <i> “CFE_TBL:GetAddressInternal-App(\%d) attempt to access unowned Tbl Handle=\%d” </i>
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           When an application sharing its table(s) with one or more applications is reloaded, the reloaded application’s 
+           table handle(s) are released.  cFE Table Services sees that the table(s) are shared and keeps a ‘shadow’ version 
+           of the table in the Table Services registry.  The registry will show the released, shared tables with no name.  
+           When the applications sharing the table attempt to access the table via the ‘old’, released handle, Table Services 
+           will return an error code to the applications and generate the sys log message.  The applications may then unregister 
+           the ‘old’ handle(s) in order to remove the released, shared table(s) from the Table Services registry and share the 
+           newly loaded application table(s).
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           When does the Table Services Abort Table Load command need to be issued?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The Abort command should be used whenever a table image has been loaded but the application has not yet activated it and 
+           the operator no longer wants the table to be loaded.
+           
+           The purpose of the Abort command is to free a previously allocated table buffer.  It should be noted, however, that multiple 
+           table loads to the SAME table without an intervening activation or abort, will simply OVERWRITE the previous table load using 
+           the SAME buffer.
+           
+           Therefore, the most likely scenarios that would lead to a needed abort are as follows:
+           
+           <ol>
+           <li> Operator loads a table and realizes immediately that the load is not wanted. </li>
+           
+           <li> Operator loads a table and performs a validation on it. Regardless of whether 
+                the table passes or fails the validation, if the operator no longer wants to 
+                activate the table, the abort command should be issued. 
+                
+                It should be noted that a table image that fails activation is retained in the 
+                inactive buffer for diagnosis, if necessary.  It is NOT released until it is 
+                aborted or overwritten and successfully validated and activated. </li>
+                
+           <li> A table image was loaded; the image was successfully validated; the command for 
+                activation was sent; but the application fails to perform the activation.  
+                
+                The Abort command will free the table buffer and clear the activation request.  
+                
+                This situation can occur when either the application is improperly designed and 
+                fails to adequately manage its tables (sometimes seen in the lab during development) 
+                or the application is "hung" and not performing as it should.</li>
+           </ol>
+
+    </TABLE>
+    
+  Prev: \ref cfetblugprocreset <BR>
+  Up To: \ref cfetblovr
+**/
+
+/**  
+**  \page cfetblcmds cFE Table Services Commands
+**
+**  The following is a list of commands that are processed by the cFE Table Services Task. 
+**/
+
+/**
+**  \page cfetbltlm  cFE Table Services Telemetry
+**
+**  The following are telemetry packets generated by the cFE Table Services Task.
+**/
+
+/**
+**  \page cfetblcfg  cFE Table Services Configuration Parameters
+**
+**  The following are configuration parameters used to configure the cFE Table Services
+**  either for each platform or for a mission as a whole.
+**/
+
+
+/**
+  \page cfetblrevhist cFE Table Services Documentation Revision History
+  
+  \verbatim
+  $Log: cfe_tbl.dox  $
+  Revision 1.5 2014/09/09 13:06:07GMT-05:00 lwalling 
+  Describe how to decouple CFE_TBL from cFE
+  Revision 1.4 2014/05/15 14:45:02EDT sstrege 
+  Added two Table Services FAQs
+  Revision 1.3 2012/06/19 18:02:54EDT lwalling 
+  Describe table registry with CDS restore errors
+  Revision 1.2 2008/12/06 12:34:28PST dkobe 
+  Corrected formatting of revision history
+  Revision 1.1 2008/12/06 10:19:51EST dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
+  \endverbatim
+
+  Up To: \ref cfetblovr
+**/

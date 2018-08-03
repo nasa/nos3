@@ -1,0 +1,118 @@
+#!/usr/bin/perl -X
+
+foreach $arg (@ARGV)
+{
+    $arg_cnt++;
+}
+if ($arg_cnt != 3)
+{
+    print "Incorrect number of arguments: $arg_cnt\n";
+    die "Please enter <template file> <spacecraft> <processor>.\nUse \"\" in place of the spacecraft or processor if you want them omitted.\n\n";
+}
+
+$inputfilename = $ARGV[0];
+$spacecraft = $ARGV[1];
+$processor = $ARGV[2];
+
+
+# Make the spacecraft and processor all lowercase.
+
+$spacecraft =~tr/A-Z/a-z/;
+if (length($spacecraft) == 0) {
+    # If the spacecraft has been ommited, we want to make sure there are no floating underscores.
+    $spacecraft_ = "";
+} else {
+    $spacecraft_ = $spacecraft."_";
+}
+$processor =~tr/A-Z/a-z/;
+if (length($processor) == 0) {
+    # If the processor has been ommited, we want to make sure there are no floating underscores.
+    $processor_ = "";
+} else {
+    $processor_ = $processor."_";
+}
+
+# Make uppercase versions
+
+$spacecraft_uc = $spacecraft;
+$processor_uc = $processor;
+$spacecraft_uc =~tr/a-z/A-Z/;
+$processor_uc =~tr/a-z/A-Z/;
+$spacecraft_uc_ = $spacecraft_;
+$processor_uc_ = $processor_;
+$spacecraft_uc_ =~tr/a-z/A-Z/;
+$processor_uc_ =~tr/a-z/A-Z/;
+
+$procname = substr($inputfilename, index($inputfilename, "_")+1);
+# $procname = substr($procname, 0, index($procname, "."));
+
+$subsystem = substr($procname, 0, index($procname, "_"));
+$subsystem =~tr/a-z/A-Z/;
+
+# Changed index to rindex to support template file name with two "_"
+
+$outputfilename = $spacecraft_.$processor_.$procname;
+
+$hasrawcommand = 0;
+open(INPUT, "<$inputfilename");
+open (OUTPUT, ">$outputfilename"); 
+$addhistory = 0;
+while (<INPUT>) {
+    chomp;
+    $line = $_;
+    if (index($line, "\$sc") >= 0) {
+        $line =~ s/\$sc_/$spacecraft_/g;
+        $line =~ s/\$sc/$spacecraft/g;
+    }
+    if (index($line, "\$SC") >= 0) {
+        $line =~ s/\$SC_/$spacecraft_uc_/g;
+        $line =~ s/\$SC/$spacecraft_uc/g;
+    }
+    if (index($line, "\$cpu") >= 0) {
+        $line =~ s/\$cpu_/$processor_/g;
+        $line =~ s/\$cpu/$processor/g;
+    }
+    if (index($line, "\$CPU") >= 0) {
+        $line =~ s/\$CPU_/$processor_uc_/g;
+        $line =~ s/\$CPU/$processor_uc/g;
+    }
+    if ($line =~ "180.C000") {
+        $replaceString = "18\"&%hex(".$processor_uc_."CMDAPID_BASE + ".$subsystem."_CMDAPID_OFF, 2)&\"C000";
+    #   print STDOUT $replaceString, "\n";
+    #   print STDOUT $line, "\n";
+        $line =~ s/180.C000/$replaceString/;
+    #    print STDOUT $line, "\n";
+        $hasrawcommand = 1;
+    }
+
+    # Add support for SB test telemetry packets
+
+    if ($line =~ /0F.0C000/) {
+        $replaceString = "0F\" & %hex(".$processor_uc_."CMDAPID_BASE + 16, 2) & \"C000";
+        $line =~ s/0F.0C000/$replaceString/;
+    }
+    
+    # End SB test telemetry packet support
+ 
+    if (index($line, "Last Change:") >= 0) {
+        $line = substr($line, 0, index($line, "Last Change:")+12)." ".`date '+%b %d %Y'`;
+    }
+    if (index($line, "HISTORY:") >= 0) {
+        $addhistory = 1;
+    }
+    if ((index($line,  "!==============") >= 0) && ($addhistory == 1)) {
+        $date = `date +%Y/%m/%d`;
+        chomp($date);
+        print OUTPUT "!\t$date\t: Created from template '$inputfilename'\n!\twith parameters spacecraft='$spacecraft' and processor='$processor'.\n";
+        $addhistory = 0;
+    }
+    print OUTPUT "$line\n";
+}
+
+system("mv $outputfilename ../.");
+
+print "File $outputfilename created and moved up one directory.\n";
+
+if ($hasrawcommand) {
+    print "WARNING: Your proc contains a raw command.\nIf you have not followed the template naming convention, $outputfilename will not work correctly.\nPlease check that you have followed the convention of:\n\"template_\"<your subsystem>\"_\"<your descriptive text>\".prc\"\n";
+}

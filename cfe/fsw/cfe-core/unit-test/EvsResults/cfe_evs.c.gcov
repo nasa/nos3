@@ -1,0 +1,474 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs/cfe_evs.c
+        -:    0:Graph:cfe_evs.gcno
+        -:    0:Data:cfe_evs.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:**
+        -:    3:**  File Name: cfe_evs.c
+        -:    4:**  $Id: cfe_evs.c 1.8 2014/05/30 13:26:02GMT-05:00 lwalling Exp  $
+        -:    5:**
+        -:    6:**
+        -:    7:**
+        -:    8:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    9:**      administrator of the National Aeronautics Space Administration.  
+        -:   10:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:   11:**      Space Flight Center pursuant to government contracts.
+        -:   12:**
+        -:   13:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   14:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   15:** 
+        -:   16:**
+        -:   17:**
+        -:   18:**
+        -:   19:**  Title: Event Services API library
+        -:   20:**
+        -:   21:**  Purpose: This module defines the library functions of the
+        -:   22:**           Event Services API
+        -:   23:**
+        -:   24:**  $Date: 2014/05/30 13:26:02GMT-05:00 $
+        -:   25:**  $Revision: 1.8 $
+        -:   26:**  $Log: cfe_evs.c  $
+        -:   27:**  Revision 1.8 2014/05/30 13:26:02GMT-05:00 lwalling 
+        -:   28:**  Added CFE_EVS_EVT_NOT_REGISTERED error condition to CFE_EVS_ResetFilter()
+        -:   29:**  Revision 1.7 2012/09/28 19:14:22EDT aschoeni 
+        -:   30:**  Removed bad check on EventID limit when resetting filter
+        -:   31:**  Revision 1.6 2012/01/13 12:00:56EST acudmore 
+        -:   32:**  Changed license text to reflect open source
+        -:   33:**  Revision 1.5 2011/04/05 16:33:57EDT lwalling 
+        -:   34:**  Optimize EVS use of string functions, plus other performance improvements
+        -:   35:**  Revision 1.4 2010/10/26 17:01:42EDT jmdagost 
+        -:   36:**  Made CFE_EVS_ResetFilter() argument a signed int and added test for positive.
+        -:   37:**  Revision 1.3 2010/10/25 15:01:44EDT jmdagost 
+        -:   38:**  Corrected bad apostrophe in prologue.
+        -:   39:**  Revision 1.2 2010/10/04 15:27:15EDT jmdagost 
+        -:   40:**  Cleaned up copyright symbol.
+        -:   41:**  Revision 1.1 2008/04/17 08:05:12EDT ruperera 
+        -:   42:**  Initial revision
+        -:   43:**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/evs/project.pj
+        -:   44:**  Revision 1.35 2007/08/07 12:52:41EDT David Kobe (dlkobe) 
+        -:   45:**  Modified CFE_ES_GetPoolBuf API's first parameter to be of type uint32**
+        -:   46:**  Revision 1.34 2007/07/18 11:59:00EDT dlkobe 
+        -:   47:**  Replaced memory address reference with CFE_EVS_GlobalData.EVS_TableHdl.
+        -:   48:**  Revision 1.33 2007/03/21 14:35:21EST njyanchik 
+        -:   49:**  I didn't previously fix this DCR for these two other Send Event APIs.
+        -:   50:**  Revision 1.32 2007/02/06 14:42:37EST njyanchik 
+        -:   51:**  this CP checks in the changes to fix the broken message truncation counter
+        -:   52:**  Revision 1.31 2006/07/31 12:38:49GMT-05:00 njyanchik 
+        -:   53:**  LDRA complained about passing an uninitialized variable into a function (even
+        -:   54:**  when the function itself initializes the variable).
+        -:   55:**  
+        -:   56:**  In a structure definition, there was a uint16 AppID variable. It should be uint32.
+        -:   57:**  Revision 1.30 2006/06/09 16:27:25EDT rjmcgraw 
+        -:   58:**  Swapped parameters for memory pool API's
+        -:   59:**  Revision 1.29 2006/06/09 19:28:15GMT kkaudra 
+        -:   60:**  Changed size of BigBuf, removed static declaration from BigBuf, replaced vsprintf with vsnprintf
+        -:   61:**  Revision 1.28 2006/06/08 14:14:54EDT njyanchik 
+        -:   62:**  I added the appropriate legal headers to all of the evs files
+        -:   63:**
+        -:   64:*/
+        -:   65:
+        -:   66:/* Include Files */
+        -:   67:#include "cfe_evs.h"         /* EVS library function definitions */
+        -:   68:#include "cfe_evs_task.h"    /* EVS internal definitions */
+        -:   69:#include "cfe_evs_utils.h"   /* EVS utility function definitions */
+        -:   70:#include "common_types.h"    /* Basic data types */
+        -:   71:#include "cfe_es.h"          /* Executive Service definitions */
+        -:   72:#include "cfe_error.h"       /* cFE error code definitions */
+        -:   73:
+        -:   74:#include <stdarg.h>
+        -:   75:#include <string.h>
+        -:   76:
+        -:   77:/* External Data */
+        -:   78:
+        -:   79:/* Local Function Prototypes */
+        -:   80:
+        -:   81:
+        -:   82:/* Function Definitions */
+        -:   83:
+        -:   84:/*
+        -:   85:**             Function Prologue
+        -:   86:**
+        -:   87:** Function Name:      CFE_EVS_Register
+        -:   88:**
+        -:   89:** Purpose:  This routine registers an application for receiving event services.
+        -:   90:**
+        -:   91:** Assumptions and Notes:
+        -:   92:**
+        -:   93:*/
+        -:   94:int32 CFE_EVS_Register (void *Filters, uint16 NumEventFilters, uint16 FilterScheme)
+       18:   95:{
+        -:   96:   uint16 FilterLimit;
+        -:   97:   uint16 i;
+       18:   98:   int32  Status = CFE_SUCCESS;
+       18:   99:   uint32 AppID = CFE_EVS_UNDEF_APPID;
+        -:  100:   CFE_EVS_BinFilter_t   *AppFilters;
+        -:  101:   EVS_AppData_t         *AppDataPtr;
+        -:  102:
+        -:  103:   /* Query and verify the caller's AppID */
+       18:  104:   Status = EVS_GetAppID(&AppID);
+        -:  105:
+       18:  106:   if (Status == CFE_SUCCESS)
+        -:  107:   {
+        -:  108:      /* Cleanup if already registered */
+       17:  109:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == TRUE)
+        -:  110:      {
+       11:  111:         CFE_PSP_MemSet(&CFE_EVS_GlobalData.AppData[AppID], 0, sizeof(EVS_AppData_t));
+        -:  112:      }
+        -:  113:
+        -:  114:      /* Verify filter arguments */
+       17:  115:      if (FilterScheme != CFE_EVS_BINARY_FILTER)
+        -:  116:      {
+        1:  117:         Status = CFE_EVS_UNKNOWN_FILTER;
+        -:  118:      }
+       17:  119:      else if ((NumEventFilters != 0) && (Filters == NULL))
+        -:  120:      {
+        1:  121:         Status = CFE_ES_ERR_BUFFER;
+        -:  122:      }
+        -:  123:      else
+        -:  124:      {
+        -:  125:         /* Initialize application event data */
+       15:  126:         AppDataPtr = &CFE_EVS_GlobalData.AppData[AppID];
+       15:  127:         AppDataPtr->RegisterFlag = TRUE;
+       15:  128:         AppDataPtr->ActiveFlag   = TRUE;
+       15:  129:         AppDataPtr->EventCount   = 0;
+       15:  130:         AppDataPtr->EventTypesActiveFlag = CFE_EVS_DEFAULT_TYPE_FLAG;
+        -:  131:
+        -:  132:         /* Set limit for number of provided filters */
+       15:  133:         if (NumEventFilters < CFE_EVS_MAX_EVENT_FILTERS)
+        -:  134:         {
+       14:  135:            FilterLimit = NumEventFilters;
+        -:  136:         }
+        -:  137:         else
+        -:  138:         {
+        1:  139:            FilterLimit = CFE_EVS_MAX_EVENT_FILTERS;
+        -:  140:         }
+        -:  141:
+       15:  142:         if (Filters != NULL)
+        -:  143:         {
+        3:  144:            AppFilters = (CFE_EVS_BinFilter_t *) Filters;
+        -:  145:
+        -:  146:            /* Copy provided filters */
+       13:  147:            for (i = 0; i < FilterLimit; i++)
+        -:  148:            {
+       10:  149:               AppDataPtr->BinFilters[i].EventID = AppFilters[i].EventID;
+       10:  150:               AppDataPtr->BinFilters[i].Mask    = AppFilters[i].Mask;
+       10:  151:               AppDataPtr->BinFilters[i].Count   = 0;
+        -:  152:            }
+        -:  153:         }
+        -:  154:
+        -:  155:         /* Initialize remainder of filters as unused */
+      125:  156:         for (i = FilterLimit; i < CFE_EVS_MAX_EVENT_FILTERS; i++)
+        -:  157:         {
+      110:  158:            AppDataPtr->BinFilters[i].EventID = CFE_EVS_FREE_SLOT;
+      110:  159:            AppDataPtr->BinFilters[i].Mask    = 0;
+      110:  160:            AppDataPtr->BinFilters[i].Count   = 0;
+        -:  161:         }
+        -:  162:      }
+        -:  163:   }
+        -:  164:
+       18:  165:   return(Status);
+        -:  166:
+        -:  167:} /* End CFE_EVS_Register */
+        -:  168:
+        -:  169:
+        -:  170:/*
+        -:  171:**             Function Prologue
+        -:  172:**
+        -:  173:** Function Name:      CFE_EVS_Unregister
+        -:  174:**
+        -:  175:** Purpose:  This routine unregisters an application for receiving event services.
+        -:  176:**
+        -:  177:** Assumptions and Notes:
+        -:  178:**
+        -:  179:*/
+        -:  180:int32 CFE_EVS_Unregister(void)
+        5:  181:{
+        5:  182:   int32 Status = CFE_SUCCESS;
+        5:  183:   uint32 AppID = CFE_EVS_UNDEF_APPID;
+        -:  184:
+        -:  185:   /* Query and verify the caller's AppID */
+        5:  186:   Status = EVS_GetAppID(&AppID);
+        -:  187:
+        5:  188:   if (Status == CFE_SUCCESS)
+        -:  189:   {
+        -:  190:      /* Cleanup if already registered */
+        3:  191:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == TRUE)
+        -:  192:      {
+        2:  193:         CFE_PSP_MemSet(&CFE_EVS_GlobalData.AppData[AppID], 0, sizeof(EVS_AppData_t));
+        -:  194:      }
+        -:  195:   }
+        -:  196:
+        5:  197:   return(Status);
+        -:  198:
+        -:  199:} /* End CFE_EVS_Unregister */
+        -:  200:
+        -:  201:
+        -:  202:/*
+        -:  203:**             Function Prologue
+        -:  204:**
+        -:  205:** Function Name:      CFE_EVS_SendEvent
+        -:  206:**
+        -:  207:** Purpose:  This routine sends an event message, with message ID containing the current
+        -:  208:**           processor/box and task ID as well as the eventID.
+        -:  209:**
+        -:  210:** Assumptions and Notes:
+        -:  211:*/
+        -:  212:int32 CFE_EVS_SendEvent (uint16 EventID, uint16 EventType, const char *Spec, ... )
+       42:  213:{
+        -:  214:   CFE_EVS_Packet_t   EVS_Packet;
+        -:  215:   int32              ExpandedLength;
+       42:  216:   int32              Status = CFE_SUCCESS;
+       42:  217:   uint32             AppID = CFE_EVS_UNDEF_APPID;
+        -:  218:   CFE_TIME_SysTime_t Time;
+        -:  219:   va_list            Ptr;
+        -:  220:
+        -:  221:   /* Query and verify the caller's AppID */
+       42:  222:   Status = EVS_GetAppID(&AppID);
+        -:  223:
+       42:  224:   if (Status == CFE_SUCCESS)
+        -:  225:   {
+       41:  226:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == FALSE)
+        -:  227:      {
+        -:  228:         /* Handler for events from apps not registered with EVS */
+        1:  229:         Status = EVS_NotRegistered(AppID);
+        -:  230:      }
+       40:  231:      else if (EVS_IsFiltered(AppID, EventID, EventType) == FALSE)
+        -:  232:      {
+        -:  233:         /* Initialize EVS event packet */
+       32:  234:         CFE_SB_InitMsg(&EVS_Packet, CFE_EVS_EVENT_MSG_MID, sizeof(CFE_EVS_Packet_t), TRUE);
+       32:  235:         EVS_Packet.Payload.PacketID.EventID   = EventID;
+       32:  236:         EVS_Packet.Payload.PacketID.EventType = EventType;
+        -:  237:
+        -:  238:         /* vsnprintf() returns the total expanded length of the formatted string */
+        -:  239:         /* vsnprintf() copies and zero terminates portion that fits in the buffer */
+       32:  240:         va_start(Ptr, Spec);
+       32:  241:         ExpandedLength = vsnprintf((char *)EVS_Packet.Payload.Message, sizeof(EVS_Packet.Payload.Message), Spec, Ptr);
+       32:  242:         va_end(Ptr);
+        -:  243:
+        -:  244:         /* Were any characters truncated in the buffer? */
+       32:  245:         if (ExpandedLength >= sizeof(EVS_Packet.Payload.Message))
+        -:  246:         {
+        -:  247:            /* Mark character before zero terminator to indicate truncation */
+        1:  248:            EVS_Packet.Payload.Message[sizeof(EVS_Packet.Payload.Message) - 2] = CFE_EVS_MSG_TRUNCATED;
+        1:  249:            CFE_EVS_GlobalData.EVS_TlmPkt.Payload.MessageTruncCounter++;
+        -:  250:         }
+        -:  251:
+        -:  252:         /* Get current spacecraft time */
+       32:  253:         Time = CFE_TIME_GetTime();
+        -:  254:
+        -:  255:         /* Send the event packet */
+       32:  256:         EVS_SendPacket(AppID, Time, &EVS_Packet);
+        -:  257:      }
+        -:  258:   }
+        -:  259:
+       42:  260:   return(Status);
+        -:  261:
+        -:  262:} /* End CFE_EVS_SendEvent */
+        -:  263:
+        -:  264:
+        -:  265:/*
+        -:  266:**             Function Prologue
+        -:  267:**
+        -:  268:** Function Name:      CFE_EVS_SendEventWithAppID
+        -:  269:**
+        -:  270:** Purpose:  This routine sends an event message, with message ID containing the current
+        -:  271:**           processor/box and task ID as well as the eventID. Also forces the user to
+        -:  272:**           supply an AppID to be sent with the message.
+        -:  273:**
+        -:  274:** Assumptions and Notes:
+        -:  275:*/
+        -:  276:int32 CFE_EVS_SendEventWithAppID (uint16 EventID, uint16 EventType, uint32 AppID, const char *Spec, ... )
+        5:  277:{
+        -:  278:   CFE_EVS_Packet_t   EVS_Packet;
+        -:  279:   int32              ExpandedLength;
+        5:  280:   int32              Status = CFE_SUCCESS;
+        -:  281:   CFE_TIME_SysTime_t Time;
+        -:  282:   va_list            Ptr;
+        -:  283:
+        5:  284:   if (AppID >= CFE_ES_MAX_APPLICATIONS)
+        -:  285:   {
+        1:  286:      Status = CFE_EVS_APP_ILLEGAL_APP_ID;
+        -:  287:   }
+        4:  288:   else if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == FALSE)
+        -:  289:   {
+        -:  290:      /* Handler for events from apps not registered with EVS */
+        1:  291:      Status = EVS_NotRegistered(AppID);
+        -:  292:   }
+        3:  293:   else if (EVS_IsFiltered(AppID, EventID, EventType) == FALSE)
+        -:  294:   {
+        -:  295:      /* Initialize EVS event packet */
+        2:  296:      CFE_SB_InitMsg(&EVS_Packet, CFE_EVS_EVENT_MSG_MID, sizeof(CFE_EVS_Packet_t), TRUE);
+        2:  297:      EVS_Packet.Payload.PacketID.EventID   = EventID;
+        2:  298:      EVS_Packet.Payload.PacketID.EventType = EventType;
+        -:  299:
+        -:  300:      /* vsnprintf() returns the total expanded length of the formatted string */
+        -:  301:      /* vsnprintf() copies and zero terminates portion that fits in the buffer */
+        2:  302:      va_start(Ptr, Spec);
+        2:  303:      ExpandedLength = vsnprintf((char *)EVS_Packet.Payload.Message, sizeof(EVS_Packet.Payload.Message), Spec, Ptr);
+        2:  304:      va_end(Ptr);
+        -:  305:
+        -:  306:      /* Were any characters truncated in the buffer? */
+        2:  307:      if (ExpandedLength >= sizeof(EVS_Packet.Payload.Message))
+        -:  308:      {
+        -:  309:         /* Mark character before zero terminator to indicate truncation */
+        1:  310:         EVS_Packet.Payload.Message[sizeof(EVS_Packet.Payload.Message) - 2] = CFE_EVS_MSG_TRUNCATED;
+        1:  311:         CFE_EVS_GlobalData.EVS_TlmPkt.Payload.MessageTruncCounter++;
+        -:  312:      }
+        -:  313:
+        -:  314:      /* Get current spacecraft time */
+        2:  315:      Time = CFE_TIME_GetTime();
+        -:  316:
+        -:  317:      /* Send the event packet */
+        2:  318:      EVS_SendPacket(AppID, Time, &EVS_Packet);
+        -:  319:   }
+        -:  320:
+        5:  321:   return Status;
+        -:  322:
+        -:  323:} /* End CFE_EVS_SendEventWithAppID */
+        -:  324:
+        -:  325:
+        -:  326:/*
+        -:  327:**             Function Prologue
+        -:  328:**
+        -:  329:** Function Name:      CFE_EVS_SendTimedEvent
+        -:  330:**
+        -:  331:** Purpose:  This routine sends a timed event message, with message ID containing the
+        -:  332:**           current processor/box and task ID as well as the eventID.
+        -:  333:**
+        -:  334:** Assumptions and Notes:
+        -:  335:*/
+        -:  336:int32 CFE_EVS_SendTimedEvent (CFE_TIME_SysTime_t Time, uint16 EventID, uint16 EventType, const char *Spec, ... )
+        5:  337:{
+        -:  338:   CFE_EVS_Packet_t   EVS_Packet;
+        -:  339:   int32              ExpandedLength;
+        5:  340:   int32              Status = CFE_SUCCESS;
+        5:  341:   uint32             AppID = CFE_EVS_UNDEF_APPID;
+        -:  342:   va_list            Ptr;
+        -:  343:
+        -:  344:   /* Query and verify the caller's AppID */
+        5:  345:   Status = EVS_GetAppID(&AppID);
+        -:  346:
+        5:  347:   if (Status == CFE_SUCCESS)
+        -:  348:   {
+        4:  349:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == FALSE)
+        -:  350:      {
+        -:  351:         /* Handler for events from apps not registered with EVS */
+        1:  352:         Status = EVS_NotRegistered(AppID);
+        -:  353:      }
+        3:  354:      else if (EVS_IsFiltered(AppID, EventID, EventType) == FALSE)
+        -:  355:      {
+        -:  356:         /* Initialize EVS event packet */
+        2:  357:         CFE_SB_InitMsg(&EVS_Packet, CFE_EVS_EVENT_MSG_MID, sizeof(CFE_EVS_Packet_t), TRUE);
+        2:  358:         EVS_Packet.Payload.PacketID.EventID   = EventID;
+        2:  359:         EVS_Packet.Payload.PacketID.EventType = EventType;
+        -:  360:
+        -:  361:         /* vsnprintf() returns the total expanded length of the formatted string */
+        -:  362:         /* vsnprintf() copies and zero terminates portion that fits in the buffer */
+        2:  363:         va_start(Ptr, Spec);
+        2:  364:         ExpandedLength = vsnprintf((char *)EVS_Packet.Payload.Message, sizeof(EVS_Packet.Payload.Message), Spec, Ptr);
+        2:  365:         va_end(Ptr);
+        -:  366:
+        -:  367:         /* Were any characters truncated in the buffer? */
+        2:  368:         if (ExpandedLength >= sizeof(EVS_Packet.Payload.Message))
+        -:  369:         {
+        -:  370:            /* Mark character before zero terminator to indicate truncation */
+        1:  371:            EVS_Packet.Payload.Message[sizeof(EVS_Packet.Payload.Message) - 2] = CFE_EVS_MSG_TRUNCATED;
+        1:  372:            CFE_EVS_GlobalData.EVS_TlmPkt.Payload.MessageTruncCounter++;
+        -:  373:         }
+        -:  374:
+        -:  375:         /* Send the event packet */
+        2:  376:         EVS_SendPacket(AppID, Time, &EVS_Packet);
+        -:  377:      }
+        -:  378:   }
+        -:  379:
+        5:  380:   return(Status);
+        -:  381:
+        -:  382:} /* End CFE_EVS_SendTimedEvent */
+        -:  383:
+        -:  384:
+        -:  385:/*
+        -:  386:**             Function Prologue
+        -:  387:**
+        -:  388:** Function Name:      CFE_EVS_ResetFilter
+        -:  389:**
+        -:  390:** Purpose:  This routine clears the filter counter for the calling application's given event_id.
+        -:  391:**
+        -:  392:** Assumptions and Notes:
+        -:  393:**
+        -:  394:*/
+        -:  395:int32 CFE_EVS_ResetFilter (int16 EventID)
+        5:  396:{
+        5:  397:   int32            Status = CFE_SUCCESS;
+        5:  398:   EVS_BinFilter_t *FilterPtr = NULL;
+        5:  399:   uint32           AppID = CFE_EVS_UNDEF_APPID;
+        -:  400:
+        -:  401:   /* Query and verify the caller's AppID */
+        5:  402:   Status = EVS_GetAppID(&AppID);
+        -:  403:
+        5:  404:   if (Status == CFE_SUCCESS)
+        -:  405:   {
+        4:  406:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == FALSE)
+        -:  407:      {
+        1:  408:         Status = CFE_EVS_APP_NOT_REGISTERED;
+        -:  409:      }
+        -:  410:      else
+        -:  411:      {
+        3:  412:         FilterPtr = EVS_FindEventID(EventID, CFE_EVS_GlobalData.AppData[AppID].BinFilters);
+        -:  413:
+        3:  414:         if (FilterPtr != NULL)
+        -:  415:         {
+        2:  416:            FilterPtr->Count = 0;
+        -:  417:         }
+        -:  418:         else
+        -:  419:         {
+        1:  420:            Status = CFE_EVS_EVT_NOT_REGISTERED;
+        -:  421:         }
+        -:  422:      }
+        -:  423:   }
+        -:  424:
+        5:  425:   return(Status);
+        -:  426:
+        -:  427:} /* End CFE_EVS_ResetFilter */
+        -:  428:
+        -:  429:
+        -:  430:/*
+        -:  431:**             Function Prologue
+        -:  432:**
+        -:  433:** Function Name:      CFE_EVS_ResetAllFilters
+        -:  434:**
+        -:  435:** Purpose:  This routine clears all filter counters for the calling application
+        -:  436:**
+        -:  437:** Assumptions and Notes:
+        -:  438:**
+        -:  439:*/
+        -:  440:int32 CFE_EVS_ResetAllFilters ( void )
+        3:  441:{
+        3:  442:   int32    Status = CFE_SUCCESS;
+        3:  443:   uint32   AppID = CFE_EVS_UNDEF_APPID;
+        -:  444:   uint32   i;
+        -:  445:
+        -:  446:   /* Get and verify caller's AppID */
+        3:  447:   Status = EVS_GetAppID(&AppID);
+        -:  448:
+        3:  449:   if (Status == CFE_SUCCESS)
+        -:  450:   {
+        2:  451:      if (CFE_EVS_GlobalData.AppData[AppID].RegisterFlag == FALSE)
+        -:  452:      {
+        1:  453:         Status = CFE_EVS_APP_NOT_REGISTERED;
+        -:  454:      }
+        -:  455:      else
+        -:  456:      {
+        9:  457:         for (i = 0; i < CFE_EVS_MAX_EVENT_FILTERS; i++)
+        -:  458:         {
+        8:  459:            CFE_EVS_GlobalData.AppData[AppID].BinFilters[i].Count = 0;
+        -:  460:         }
+        -:  461:      }
+        -:  462:   }
+        -:  463:
+        3:  464:   return(Status);
+        -:  465:
+        -:  466:} /* End CFE_EVS_ResetAllFilters */
+        -:  467:
+        -:  468:
+        -:  469:/* End CFE_EVS.C */

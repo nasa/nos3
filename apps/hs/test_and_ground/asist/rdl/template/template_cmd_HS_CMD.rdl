@@ -1,0 +1,66 @@
+!==============================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  June 15, 2009
+!
+!                  $sc $cpu HS Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Health and Safety App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  15NOV08     BBM           : Initial
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "hs_platform_cfg.h"
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Health and Safety App Commands"
+!
+  CMD  $sc_$cpu_HS_NOOP        	   FCTN=0, DESC="$sc $cpu HS no-op command code"
+!
+  CMD  $sc_$cpu_HS_RESETCTRS       FCTN=1, DESC="$sc $cpu HS reset counters command code"
+!
+  CMD  $sc_$cpu_HS_EnableAppMon    FCTN=2, DESC="$sc $cpu HS Enable Application Monitoring"
+!
+  CMD  $sc_$cpu_HS_DisableAppMon   FCTN=3, DESC="$sc $cpu HS Disable Application Monitoring"
+!
+  CMD  $sc_$cpu_HS_EnableEvtMon    FCTN=4, DESC="$sc $cpu HS Enable Event Monitoring"
+!
+  CMD  $sc_$cpu_HS_DisableEvtMon   FCTN=5, DESC="$sc $cpu HS Disable Event Monitoring"
+!
+  CMD  $sc_$cpu_HS_EnableCPUAlive  FCTN=6, DESC="$sc $cpu HS Enable CPU Aliveness Indication"
+!
+  CMD  $sc_$cpu_HS_DisableCPUAlive FCTN=7, DESC="$sc $cpu HS Disable CPU Aliveness Indication"
+!
+  CMD  $sc_$cpu_HS_ResetPRCtr      FCTN=8, DESC="$sc $cpu HS Reset Processor Reset Counter command"
+!
+  CMDS  $sc_$cpu_HS_SetMaxResetCnt   FCTN=9, DESC="$sc $cpu HS Set maximum reset count command"
+        UI NewCount        DESC="New Maximum Reset Count"
+  END
+!
+  CMD  $sc_$cpu_HS_EnableCPUHog  FCTN=10, DESC="$sc $cpu HS Enable CPU Hogging Indicator"
+!
+  CMD  $sc_$cpu_HS_DisableCPUHog FCTN=11, DESC="$sc $cpu HS Disable CPU Hogging Indicator"
+!
+  CMD  $sc_$cpu_HS_ReportDiag	FCTN=12, DESC="$sc $cpu HS Report Diagnostics command"
+!
+  CMDS $sc_$cpu_HS_SetUtilParams FCTN=13, DESC="$sc $cpu HS Set CPU Utilization parameters"
+        SLI Factor1	DESC="First Utilization factor"
+        SLI Divisor	DESC="Divisor for Utilization calculation"
+        SLI Factor2	DESC="Second Utilization factor"
+  END
+!
+  CMDS $sc_$cpu_HS_SetUtilMask	FCTN=14, DESC="$sc $cpu HS CPU Utilization Mask"
+        ULI UtilMask	DESC="The Mask value to set"
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

@@ -1,0 +1,18 @@
+TYPES
+!
+INTEGER   MULI  REPRESENTATION=UNSIGNED, ORDER=(1,2,3,4), SIZE=4
+!
+END_TYPES
+
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+
+#define CDS_NAME_LEN (OS_MAX_API_NAME + CFE_ES_CDS_MAX_NAME_LENGTH + 2)
+
+! The defines below determine the size of the Table Name field used for many
+! rdls. This size is used by the cFE fsw and duplicated here for use by the
+! ASIST database. The fsw defines these in cfe_tbl.h. Please refer to that
+! file for further comments.
+#define TBL_NAME_LEN_SIZE (OS_MAX_API_NAME + CFE_TBL_MAX_NAME_LENGTH + 2)
+#define TBL_NAME_LEN (((TBL_NAME_LEN_SIZE + 3)/4)*4)
+

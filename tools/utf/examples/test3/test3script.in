@@ -1,0 +1,58 @@
+; File uuscript.in
+; Created on 10/26/05
+* Input file for cfe_utf_4.1.0/Test3
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Simulate Empty Pipe to Trigger Procedure Calls *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+!
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Send Housekeeping Request                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+180e cccc 0001 b7cc ; Housekeeping Request 
+
+* * * * * * * * * * * * * * * * * * * * *
+* * Set return code for invalid proc id  *
+* * * * * * * * * * * * * * * * * * * * *
+@ SET_EVS_RETURN_CODE 8 0x11335577 
+*
+* * * * * * * * * * * * * * * * * * * * *
+* * Set Return Codes for API Procedures *
+* * * * * * * * * * * * * * * * * * * * *
+@ SET_ES_RETURN_CODE  0 0xc4000002L
+@ SET_ES_RETURN_CODE  1 0xc4000001
+@ SET_ES_RETURN_CODE  2 0xc400ffffL
+@ SET_EVS_RETURN_CODE 2 0xefefefef 
+* @ SET_FS_RETURN_CODE  0 0xfaceface 
+@ SET_SB_RETURN_CODE  0 0x357a357a
+@ SET_SB_RETURN_CODE 11 0xabadabba
+@ SET_TBL_RETURN_CODE 5 0xbeadbabe
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Send Housekeeping Request                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+180e cccc 0001 b7cc ; Housekeeping Request 
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Simulate Empty Pipe to Trigger Procedure Calls *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+!
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Restore API Procedures to default return codes *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+@ SET_ES_TO_DEFAULT_RETURN_CODE  0
+@ SET_ES_TO_DEFAULT_RETURN_CODE  1
+@ SET_ES_TO_DEFAULT_RETURN_CODE  2
+@ SET_EVS_TO_DEFAULT_RETURN_CODE 2 
+* @ SET_FS_TO_DEFAULT_RETURN_CODE 0
+@ SET_SB_TO_DEFAULT_RETURN_CODE 0
+@ SET_SB_TO_DEFAULT_RETURN_CODE 11
+@ SET_TBL_TO_DEFAULT_RETURN_CODE 5
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Simulate Empty Pipe to Trigger Procedure Calls *
+* * * * * * * * * * * * * * * * * * * * * * * * * *
+!
+

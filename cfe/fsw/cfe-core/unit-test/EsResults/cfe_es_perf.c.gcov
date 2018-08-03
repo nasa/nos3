@@ -1,0 +1,572 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_perf.c
+        -:    0:Graph:cfe_es_perf.gcno
+        -:    0:Data:cfe_es_perf.gcda
+        -:    0:Runs:1
+        -:    0:Programs:8
+        -:    1:/*
+        -:    2:** File: cfe_es_perf.c
+        -:    3:**
+        -:    4:**      Copyright (c) 2004-2012, United States government as represented by the
+        -:    5:**      administrator of the National Aeronautics Space Administration.
+        -:    6:**      All rights reserved. This software(cFE) was created at NASA's Goddard
+        -:    7:**      Space Flight Center pursuant to government contracts.
+        -:    8:**
+        -:    9:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   10:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   11:**
+        -:   12:** Purpose: This file contains the functions that implement the software timing
+        -:   13:**  performance markers.
+        -:   14:**
+        -:   15:** $Log: cfe_es_perf.c.gcov  $
+        -:   15:** Revision 1.6 2015/06/24 12:19:48EDT wmoleski 
+        -:   15:** Checking in the unit-test results for cFE 6.4.2.0
+        -:   16:** Revision 1.8 2012/01/13 11:50:03GMT-05:00 acudmore 
+        -:   17:** Changed license text to reflect open source
+        -:   18:** Revision 1.7 2010/11/05 12:07:55EDT acudmore 
+        -:   19:** When the write of a performance log to a file fails, reset the DataToWrite variable so a new dump can be done later.
+        -:   20:** Revision 1.6 2010/11/04 17:19:17EDT jmdagost 
+        -:   21:** Updated Performance Analyzer cmd to use Trigger Mode parameter.
+        -:   22:** Revision 1.5 2010/11/04 14:11:56EDT acudmore 
+        -:   23:** Swapped arguments to CFE_PSP_Get_Timebase - They were wrong.
+        -:   24:** Revision 1.4 2010/09/21 16:09:40EDT jmdagost 
+        -:   25:** Added cfe_es_start.h.
+        -:   26:** Revision 1.3 2009/07/28 17:17:41EDT jmdagost 
+        -:   27:** Changed initial trigger mask and filter mask entries to use definitions instead of hard-coded values
+        -:   28:** Revision 1.2 2009/06/10 09:08:58EDT acudmore 
+        -:   29:** Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   30:** Revision 1.1 2008/04/17 08:05:07EDT ruperera 
+        -:   31:** Initial revision
+        -:   32:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   33:** Revision 1.24.1.4 2008/01/24 11:08:15EST njyanchik 
+        -:   34:** I changed the creation of the file to the main task, so if it fails being created and opened, the error
+        -:   35:** is reported from the main task and the correct counter can be incremented. The file desciptor is
+        -:   36:** passed to the child task in the same structure as the file name.
+        -:   37:** Revision 1.24.1.3 2007/09/21 15:40:21EDT David Kobe (dlkobe) 
+        -:   38:** Modified pointer type definitions to eliminate Linux gcc compile warnings
+        -:   39:** Revision 1.24.1.2 2007/09/21 13:33:17EDT rjmcgraw 
+        -:   40:** DCR5037 Replace hardcoded numbers with new BSP function calls in PerfLogAdd
+        -:   41:** Revision 1.24.1.1 2007/09/17 15:08:45EDT rjmcgraw
+        -:   42:** DCR4900:3 Fixed trigger mask cmd, was incrementing cmd counter by two
+        -:   43:** Revision 1.24 2007/08/31 10:57:21EDT rjmcgraw
+        -:   44:** Changes to eliminate perl script
+        -:   45:** Revision 1.23 2007/06/05 14:13:21EDT rjmcgraw
+        -:   46:** Fixed file write parameter in the meta data write step
+        -:   47:** Revision 1.22 2007/05/11 09:36:17EDT rjmcgraw
+        -:   48:** Added 'in progress' checks to start and stop cmd
+        -:   49:** Revision 1.21 2007/04/20 14:23:28EDT rjmcgraw
+        -:   50:** Renamed performance structs for consistency
+        -:   51:** Revision 1.20 2007/04/19 13:51:02EDT rjmcgraw
+        -:   52:** Fixed Datafile pointer problem
+        -:   53:** Revision 1.19 2007/04/17 10:57:59EDT rjmcgraw
+        -:   54:** Added child task to do small block writes of performance data
+        -:   55:** Revision 1.18 2007/04/11 16:42:33EDT rjmcgraw
+        -:   56:** Added function CFE_ES_InvalidMarkerReported
+        -:   57:** Revision 1.17 2007/04/10 13:56:01EDT rjmcgraw
+        -:   58:** Removed Entry and Exit function definitions
+        -:   59:** Revision 1.16 2007/04/06 14:50:10EDT rjmcgraw
+        -:   60:** Event id name changes
+        -:   61:** Revision 1.15 2007/04/04 08:14:53EDT njyanchik
+        -:   62:** In DCR 3190, two API's were changed in the OSAL for locking out interrupts.
+        -:   63:** This change package changes TIME's and ES's use of those APIs
+        -:   64:** Revision 1.14 2007/04/03 11:46:38EDT apcudmore
+        -:   65:** Added unique envent IDs and updated event calls.
+        -:   66:**
+        -:   67:*/
+        -:   68:
+        -:   69:/*
+        -:   70:** Include Section
+        -:   71:*/
+        -:   72:
+        -:   73:#include "osapi.h"
+        -:   74:#include "cfe_es_perf.h"
+        -:   75:#include "cfe_es_log.h"
+        -:   76:#include "cfe_es_global.h"
+        -:   77:#include "cfe_es_start.h"
+        -:   78:#include "cfe_es_events.h"
+        -:   79:#include "cfe_es_task.h"
+        -:   80:#include "cfe_fs.h"
+        -:   81:#include "cfe.h"
+        -:   82:#include "cfe_psp.h"
+        -:   83:#include <string.h>
+        -:   84:
+        -:   85:
+        -:   86:/*
+        -:   87:** Executive Services (ES) task global data.
+        -:   88:*/
+        -:   89:extern CFE_ES_TaskData_t CFE_ES_TaskData;
+        -:   90:
+        -:   91:/*
+        -:   92:** Pointer to performance log in the reset area
+        -:   93:*/
+        -:   94:CFE_ES_PerfData_t      *Perf;
+        -:   95:CFE_ES_PerfLogDump_t    CFE_ES_PerfLogDumpStatus;
+        -:   96:
+        -:   97:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   98:/* Name: CFE_ES_SetupPerfVariables                                               */
+        -:   99:/*                                                                               */
+        -:  100:/* Purpose:This function initializes filter mask,trigger mask, data & state vals */
+        -:  101:/*                                                                               */
+        -:  102:/* Assumptions and Notes: This gets called from CFE_ES_Main() at startup         */
+        -:  103:/* This code must be called before any other task or code that would use         */
+        -:  104:/* CFE_ES_PerfLogEntry() / CFE_ES_PerfLogExit() functions                        */
+        -:  105:/*                                                                               */
+        -:  106:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  107:void CFE_ES_SetupPerfVariables(uint32 ResetType)
+        6:  108:{
+        -:  109:
+        -:  110:    uint32      i;
+        -:  111:
+        -:  112:    /*
+        -:  113:    ** Set the pointer to the data area
+        -:  114:    */
+        6:  115:    Perf = (CFE_ES_PerfData_t *)&(CFE_ES_ResetDataPtr->Perf);
+        -:  116:
+        6:  117:    if ( ResetType == CFE_ES_PROCESSOR_RESET )
+        -:  118:    {
+        -:  119:       /*
+        -:  120:       ** On a processor reset, just IDLE the data
+        -:  121:       ** collection so the ground can dump the data
+        -:  122:       */
+        1:  123:       Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        -:  124:    }
+        -:  125:    else
+        -:  126:    {
+        -:  127:
+        5:  128:       Perf->MetaData.Version = 1;
+        -:  129:#ifdef SOFTWARE_BIG_BIT_ORDER
+        -:  130:       Perf->MetaData.Endian = 1;
+        -:  131:#else
+        5:  132:       Perf->MetaData.Endian = 0;
+        -:  133:#endif
+        5:  134:       Perf->MetaData.TimerTicksPerSecond = CFE_PSP_GetTimerTicksPerSecond();
+        5:  135:       Perf->MetaData.TimerLow32Rollover = CFE_PSP_GetTimerLow32Rollover();
+        -:  136:
+        -:  137:       /* set data collection state to waiting for command state */
+        5:  138:       Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        5:  139:       Perf->MetaData.Mode = CFE_ES_PERF_TRIGGER_START;
+        5:  140:       Perf->MetaData.TriggerCount = 0;
+        5:  141:       Perf->MetaData.DataStart = 0;
+        5:  142:       Perf->MetaData.DataEnd = 0;
+        5:  143:       Perf->MetaData.DataCount = 0;
+        5:  144:       Perf->MetaData.InvalidMarkerReported = FALSE;
+        5:  145:       Perf->MetaData.FilterTriggerMaskSize = CFE_ES_PERF_32BIT_WORDS_IN_MASK;
+        -:  146:
+       25:  147:       for (i=0; i < CFE_ES_PERF_32BIT_WORDS_IN_MASK; i++)
+        -:  148:       {
+       20:  149:          Perf->MetaData.FilterMask[i]  = CFE_ES_PERF_FILTMASK_INIT;
+       20:  150:          Perf->MetaData.TriggerMask[i] = CFE_ES_PERF_TRIGMASK_INIT;
+        -:  151:       }
+        -:  152:
+        -:  153:    }
+        -:  154:
+        6:  155:    CFE_ES_PerfLogDumpStatus.DataToWrite = 0;
+        6:  156:    CFE_ES_PerfLogDumpStatus.ChildID = 0;
+        6:  157:    CFE_ES_PerfLogDumpStatus.DataFileName[0] = '\0';
+        6:  158:}
+        -:  159:
+        -:  160:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  161:/*                                                                               */
+        -:  162:/* CFE_ES_PerfStartDataCmd() --                                                  */
+        -:  163:/*                                                                               */
+        -:  164:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        7:  165:void CFE_ES_PerfStartDataCmd(CFE_SB_MsgPtr_t msg){
+        -:  166:
+        7:  167:   uint16 ExpectedLength = sizeof(CFE_ES_PerfStartCmd_t);
+        7:  168:   CFE_ES_PerfStartCmd_t *CmdPtr = (CFE_ES_PerfStartCmd_t *)msg;
+        -:  169:
+        -:  170:   /*
+        -:  171:    ** Verify command packet length.
+        -:  172:    */
+        7:  173:    if (CFE_ES_VerifyCmdLength(msg, ExpectedLength))
+        -:  174:    {
+        -:  175:      /* Ensure there is no file write in progress before proceeding */
+        7:  176:      if(CFE_ES_PerfLogDumpStatus.DataToWrite == 0)
+        -:  177:      {
+        -:  178:          /* Make sure Trigger Mode is valid */
+        6:  179:          if ((CmdPtr->TriggerMode >= CFE_ES_PERF_TRIGGER_START) && (CmdPtr->TriggerMode < CFE_ES_PERF_MAX_MODES))
+        -:  180:          {
+        -:  181:
+        4:  182:             CFE_ES_TaskData.CmdCounter++;
+        -:  183:
+        4:  184:             Perf->MetaData.Mode = CmdPtr->TriggerMode;
+        4:  185:             Perf->MetaData.TriggerCount = 0;
+        4:  186:             Perf->MetaData.DataStart = 0;
+        4:  187:             Perf->MetaData.DataEnd = 0;
+        4:  188:             Perf->MetaData.DataCount = 0;
+        4:  189:             Perf->MetaData.InvalidMarkerReported = FALSE;
+        4:  190:             Perf->MetaData.State = CFE_ES_PERF_WAITING_FOR_TRIGGER; /* this must be done last */
+        -:  191:
+        4:  192:             CFE_EVS_SendEvent(CFE_ES_PERF_STARTCMD_EID, CFE_EVS_DEBUG,
+        -:  193:                                 "Start collecting performance data cmd received, trigger mode = %d", 
+        -:  194:                                 CmdPtr->TriggerMode);
+        -:  195:          }
+        -:  196:          else
+        -:  197:          {
+        2:  198:             CFE_ES_TaskData.ErrCounter++;
+        2:  199:             CFE_EVS_SendEvent(CFE_ES_PERF_STARTCMD_TRIG_ERR_EID, CFE_EVS_ERROR,
+        -:  200:                  "Cannot start collecting performance data, trigger mode (%d) out of range (%d to %d)", 
+        -:  201:                  CmdPtr->TriggerMode, CFE_ES_PERF_TRIGGER_START, CFE_ES_PERF_TRIGGER_END);
+        -:  202:          }/* end if */
+        -:  203:       }
+        -:  204:       else
+        -:  205:       {
+        1:  206:          CFE_ES_TaskData.ErrCounter++;
+        1:  207:          CFE_EVS_SendEvent(CFE_ES_PERF_STARTCMD_ERR_EID, CFE_EVS_ERROR,
+        -:  208:               "Cannot start collecting performance data,perf data write in progress");
+        -:  209:       } /* end if */
+        -:  210:    }/* end if */
+        -:  211:
+        7:  212:} /* End of CFE_ES_PerfStartDataCmd() */
+        -:  213:
+        -:  214:
+        -:  215:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  216:/*                                                                               */
+        -:  217:/* CFE_ES_PerfStopDataCmd() --                                                   */
+        -:  218:/*                                                                               */
+        -:  219:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  220:void CFE_ES_PerfStopDataCmd(CFE_SB_MsgPtr_t Msg){
+        -:  221:
+        5:  222:    CFE_ES_PerfStopCmd_t  *CmdPtr = (CFE_ES_PerfStopCmd_t *)Msg;
+        5:  223:    uint16 ExpectedLength = sizeof(CFE_ES_PerfStopCmd_t);
+        -:  224:    int32 Stat;
+        -:  225:    
+        -:  226:    /*
+        -:  227:    ** Verify command packet length.
+        -:  228:    */
+        5:  229:    if (CFE_ES_VerifyCmdLength(Msg, ExpectedLength))
+        -:  230:    {
+        -:  231:
+        -:  232:      /* Ensure there is no file write in progress before proceeding */
+        5:  233:      if(CFE_ES_PerfLogDumpStatus.DataToWrite == 0)
+        -:  234:      {
+        4:  235:          Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        -:  236:
+        4:  237:          if(CmdPtr->DataFileName[0]=='\0')
+        -:  238:          {
+        3:  239:              strncpy(&CFE_ES_PerfLogDumpStatus.DataFileName[0],
+        -:  240:                      CFE_ES_DEFAULT_PERF_DUMP_FILENAME,OS_MAX_PATH_LEN);
+        -:  241:          }
+        -:  242:          else
+        -:  243:          {
+        1:  244:              CmdPtr->DataFileName[OS_MAX_PATH_LEN - 1] = '\0';
+        1:  245:              strncpy(&CFE_ES_PerfLogDumpStatus.DataFileName[0], &CmdPtr->DataFileName[0],OS_MAX_PATH_LEN);
+        -:  246:          }/* end if */
+        -:  247:          
+        -:  248:          
+        -:  249:          
+        -:  250:          /* Create the file to dump to */
+        4:  251:          CFE_ES_PerfLogDumpStatus.DataFileDescriptor = OS_creat(&CFE_ES_PerfLogDumpStatus.DataFileName[0], OS_WRITE_ONLY);
+        -:  252:          
+        -:  253:          
+        4:  254:          if(CFE_ES_PerfLogDumpStatus.DataFileDescriptor < 0)
+        -:  255:          {
+        1:  256:              CFE_ES_TaskData.ErrCounter++;
+        1:  257:              CFE_EVS_SendEvent(CFE_ES_PERF_LOG_ERR_EID,CFE_EVS_ERROR,
+        -:  258:                                "Error creating file %s, RC = 0x%08X",
+        -:  259:                                &CFE_ES_PerfLogDumpStatus.DataFileName[0], CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        -:  260:          }
+        -:  261:          else
+        -:  262:          {
+        -:  263:          
+        -:  264:              /* Spawn a task to write the performance data to a file */
+        3:  265:              Stat = CFE_ES_CreateChildTask(&CFE_ES_PerfLogDumpStatus.ChildID,
+        -:  266:                                            CFE_ES_PERF_CHILD_NAME,
+        -:  267:                                            CFE_ES_PerfLogDump,
+        -:  268:                                            CFE_ES_PERF_CHILD_STACK_PTR,
+        -:  269:                                            CFE_ES_PERF_CHILD_STACK_SIZE,
+        -:  270:                                            CFE_ES_PERF_CHILD_PRIORITY,
+        -:  271:                                            CFE_ES_PERF_CHILD_FLAGS);
+        -:  272:
+        3:  273:              if(Stat == CFE_SUCCESS)
+        -:  274:              {
+        -:  275:                  /* Note: the file gets closed in the child task */
+        2:  276:                  CFE_ES_TaskData.CmdCounter++;
+        2:  277:                  CFE_EVS_SendEvent(CFE_ES_PERF_STOPCMD_EID,CFE_EVS_DEBUG,
+        -:  278:                                    "Perf Stop Cmd Rcvd,%s will write %d entries.%dmS dly every %d entries",
+        -:  279:                                    CFE_ES_PERF_CHILD_NAME,Perf->MetaData.DataCount,
+        -:  280:                                    CFE_ES_PERF_CHILD_MS_DELAY,CFE_ES_PERF_ENTRIES_BTWN_DLYS);
+        -:  281:              }
+        -:  282:              else
+        -:  283:              {
+        -:  284:                  /* close the fd */
+        1:  285:                  OS_close( CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        1:  286:                  CFE_ES_TaskData.ErrCounter++;
+        1:  287:                  CFE_EVS_SendEvent(CFE_ES_PERF_STOPCMD_ERR1_EID, CFE_EVS_ERROR,
+        -:  288:                                    "Stop performance data cmd,Error creating child task RC=0x%08X",Stat);
+        -:  289:              }/* end if */
+        -:  290:
+        -:  291:          }/* end if fd < 0 */
+        -:  292:          
+        -:  293:      }/* if data to write == 0 */
+        -:  294:      else
+        -:  295:      {
+        -:  296:
+        1:  297:          CFE_ES_TaskData.ErrCounter++;
+        1:  298:          CFE_EVS_SendEvent(CFE_ES_PERF_STOPCMD_ERR2_EID, CFE_EVS_ERROR,
+        -:  299:                   "Stop performance data cmd ignored,perf data write in progress");
+        -:  300:      }/* end if */
+        -:  301:
+        -:  302:    }/* end VerifyCmdLength */
+        -:  303:
+        5:  304:} /* End of CFE_ES_PerfStopDataCmd() */
+        -:  305:
+        -:  306:
+        -:  307:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  308:/*  Function:  CFE_ES_PerfLogDump()                                              */
+        -:  309:/*                                                                               */
+        -:  310:/*  Purpose:                                                                     */
+        -:  311:/*    Write performance data to a file                                           */
+        -:  312:/*                                                                               */
+        -:  313:/*  Arguments:                                                                   */
+        -:  314:/*    None                                                                       */
+        -:  315:/*                                                                               */
+        -:  316:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  317:void CFE_ES_PerfLogDump(void){
+        -:  318:
+        -:  319:    int32               WriteStat;
+        -:  320:    uint32              i;
+        -:  321:    uint32              FileSize;
+        -:  322:    CFE_FS_Header_t     FileHdr;
+        -:  323:
+        2:  324:    CFE_ES_RegisterChildTask();
+        -:  325:
+        -:  326:
+        -:  327:    /* Zero cFE header, then fill in fields */
+        2:  328:    CFE_PSP_MemSet(&FileHdr, 0, sizeof(CFE_FS_Header_t));
+        2:  329:    strcpy(&FileHdr.Description[0], CFE_ES_PERF_LOG_DESC);
+        2:  330:    FileHdr.SubType = CFE_FS_ES_PERFDATA_SUBTYPE;
+        -:  331:
+        -:  332:    /* write the cFE header to the file */
+        2:  333:    WriteStat = CFE_FS_WriteHeader( CFE_ES_PerfLogDumpStatus.DataFileDescriptor, &FileHdr);
+        2:  334:    if(WriteStat != sizeof(CFE_FS_Header_t))
+        -:  335:    {
+        1:  336:        CFE_ES_FileWriteByteCntErr(&CFE_ES_PerfLogDumpStatus.DataFileName[0],
+        -:  337:                                   sizeof(CFE_FS_Header_t),WriteStat);
+        -:  338:        
+        1:  339:        OS_close(CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        1:  340:        CFE_ES_ExitChildTask();
+        -:  341:    }/* end if */
+        2:  342:    FileSize = WriteStat;
+        -:  343:
+        -:  344:    /* write the performance metadata to the file */
+        2:  345:    WriteStat = OS_write(CFE_ES_PerfLogDumpStatus.DataFileDescriptor,(uint8 *)&Perf->MetaData,sizeof(CFE_ES_PerfMetaData_t));
+        2:  346:    if(WriteStat != sizeof(CFE_ES_PerfMetaData_t))
+        -:  347:    {
+        1:  348:        CFE_ES_FileWriteByteCntErr(&CFE_ES_PerfLogDumpStatus.DataFileName[0],
+        -:  349:                                   sizeof(CFE_ES_PerfMetaData_t),WriteStat);
+        1:  350:        OS_close(CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        1:  351:        CFE_ES_ExitChildTask();
+        -:  352:    }/* end if */
+        2:  353:    FileSize += WriteStat;
+        -:  354:
+        2:  355:    CFE_ES_PerfLogDumpStatus.DataToWrite = Perf->MetaData.DataCount;
+        -:  356:
+        -:  357:    /* write the collected data to the file */
+        9:  358:    for(i=0; i < Perf->MetaData.DataCount; i++){
+        7:  359:      WriteStat = OS_write (CFE_ES_PerfLogDumpStatus.DataFileDescriptor, &Perf->DataBuffer[i], sizeof(CFE_ES_PerfDataEntry_t));
+        7:  360:      if(WriteStat != sizeof(CFE_ES_PerfDataEntry_t))
+        -:  361:      {
+        7:  362:        CFE_ES_FileWriteByteCntErr(&CFE_ES_PerfLogDumpStatus.DataFileName[0],
+        -:  363:                                   sizeof(CFE_ES_PerfDataEntry_t),WriteStat);
+        7:  364:        OS_close(CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        -:  365:        /* Reset the DataToWrite variable, so a new file can be written */
+        7:  366:        CFE_ES_PerfLogDumpStatus.DataToWrite = 0;
+        7:  367:        CFE_ES_ExitChildTask();
+        -:  368:      }/* end if */
+        7:  369:      FileSize += WriteStat;
+        7:  370:      CFE_ES_PerfLogDumpStatus.DataToWrite--;
+        7:  371:      if((i % CFE_ES_PERF_ENTRIES_BTWN_DLYS) == 0){
+        1:  372:        OS_TaskDelay(CFE_ES_PERF_CHILD_MS_DELAY);
+        -:  373:      }/* end if */
+        -:  374:
+        -:  375:    }/* end for */
+        -:  376:
+        2:  377:    OS_close(CFE_ES_PerfLogDumpStatus.DataFileDescriptor);
+        -:  378:
+        2:  379:    CFE_EVS_SendEvent(CFE_ES_PERF_DATAWRITTEN_EID,CFE_EVS_DEBUG,
+        -:  380:                      "%s written:Size=%d,EntryCount=%d",
+        -:  381:                       &CFE_ES_PerfLogDumpStatus.DataFileName[0],FileSize,
+        -:  382:                       Perf->MetaData.DataCount);
+        -:  383:
+        2:  384:    CFE_ES_ExitChildTask();
+        -:  385:
+        2:  386:}/* end CFE_ES_PerfLogDump */
+        -:  387:
+        -:  388:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  389:/*                                                                               */
+        -:  390:/* CFE_ES_PerfSetFilterMaskCmd() --                                              */
+        -:  391:/*                                                                               */
+        -:  392:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  393:void CFE_ES_PerfSetFilterMaskCmd(CFE_SB_MsgPtr_t msg){
+        -:  394:
+        2:  395:    uint16 ExpectedLength = sizeof(CFE_ES_PerfSetFilterMaskCmd_t);
+        2:  396:    CFE_ES_PerfSetFilterMaskCmd_t *cmd = (CFE_ES_PerfSetFilterMaskCmd_t *) msg;
+        -:  397:
+        -:  398:    /*
+        -:  399:    ** Verify command packet length.
+        -:  400:    */
+        2:  401:    if (CFE_ES_VerifyCmdLength(msg, ExpectedLength))
+        -:  402:    {
+        -:  403:
+        2:  404:         if(cmd->FilterMaskNum < CFE_ES_PERF_32BIT_WORDS_IN_MASK ){
+        -:  405:
+        1:  406:            Perf->MetaData.FilterMask[cmd->FilterMaskNum] = cmd->FilterMask;
+        -:  407:
+        1:  408:            CFE_EVS_SendEvent(CFE_ES_PERF_FILTMSKCMD_EID, CFE_EVS_DEBUG,
+        -:  409:                        "Set Performance Filter Mask Cmd rcvd, num %d, val 0x%x",
+        -:  410:                        cmd->FilterMaskNum,cmd->FilterMaskNum);
+        -:  411:
+        1:  412:            CFE_ES_TaskData.CmdCounter++;
+        -:  413:         }else{
+        1:  414:            CFE_EVS_SendEvent(CFE_ES_PERF_FILTMSKERR_EID, CFE_EVS_ERROR,
+        -:  415:                      "Performance Filter Mask Cmd Error,Index(%d)out of range(%d)",
+        -:  416:                      cmd->FilterMaskNum,CFE_ES_PERF_32BIT_WORDS_IN_MASK);
+        -:  417:
+        1:  418:            CFE_ES_TaskData.ErrCounter++;
+        -:  419:
+        -:  420:        }
+        -:  421:    }
+        2:  422:} /* End of CFE_ES_PerfSetFilterMaskCmd() */
+        -:  423:
+        -:  424:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  425:/*                                                                               */
+        -:  426:/* CFE_ES_PerfSetTriggerMaskCmd() --                                             */
+        -:  427:/*                                                                               */
+        -:  428:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  429:void CFE_ES_PerfSetTriggerMaskCmd(CFE_SB_MsgPtr_t msg){
+        -:  430:
+        3:  431:   uint16 ExpectedLength = sizeof(CFE_ES_PerfSetTrigMaskCmd_t);
+        3:  432:   CFE_ES_PerfSetTrigMaskCmd_t *cmd = (CFE_ES_PerfSetTrigMaskCmd_t *) msg;
+        -:  433:
+        -:  434:   /*
+        -:  435:    ** Verify command packet length.
+        -:  436:    */
+        3:  437:    if (CFE_ES_VerifyCmdLength(msg, ExpectedLength))
+        -:  438:    {
+        -:  439:
+        3:  440:       if(cmd->TriggerMaskNum < CFE_ES_PERF_32BIT_WORDS_IN_MASK ){
+        -:  441:
+        2:  442:            Perf->MetaData.TriggerMask[cmd->TriggerMaskNum] = cmd->TriggerMask;
+        -:  443:
+        2:  444:            CFE_EVS_SendEvent(CFE_ES_PERF_TRIGMSKCMD_EID, CFE_EVS_DEBUG,
+        -:  445:                      "Set Performance Trigger Mask Cmd rcvd,num %d, val 0x%x",
+        -:  446:                      cmd->TriggerMaskNum,cmd->TriggerMaskNum);
+        -:  447:
+        2:  448:            CFE_ES_TaskData.CmdCounter++;
+        -:  449:
+        -:  450:       }else{
+        1:  451:           CFE_EVS_SendEvent(CFE_ES_PERF_TRIGMSKERR_EID, CFE_EVS_ERROR,
+        -:  452:                      "Performance Trigger Mask Cmd Error,Index(%d)out of range(%d)",
+        -:  453:                      cmd->TriggerMaskNum,CFE_ES_PERF_32BIT_WORDS_IN_MASK);
+        -:  454:
+        1:  455:            CFE_ES_TaskData.ErrCounter++;
+        -:  456:       }
+        -:  457:    }
+        3:  458:} /* End of CFE_ES_PerfSetTriggerMaskCmd() */
+        -:  459:
+        -:  460:
+        -:  461:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  462:/* Name: CFE_ES_PerfLogAdd                                                       */
+        -:  463:/*                                                                               */
+        -:  464:/* Purpose: This function adds a new entry to the data buffer.                   */
+        -:  465:/*                                                                               */
+        -:  466:/* Assumptions and Notes:                                                        */
+        -:  467:/*                                                                               */
+        -:  468:/*  This function implements a circular buffer using an array.                   */
+        -:  469:/*      DataStart points to first stored entry                                   */
+        -:  470:/*      DataEnd points to next available entry                                   */
+        -:  471:/*      if DataStart == DataEnd then the buffer is either empty or full          */
+        -:  472:/*      depending on the value of the DataCount                                  */
+        -:  473:/*                                                                               */
+        -:  474:/*  Time is stored as 2 32 bit integers, (TimerLower32, TimerUpper32):           */
+        -:  475:/*      TimerLower32 is the curent value of the hardware timer register.         */
+        -:  476:/*      TimerUpper32 is the number of times the timer has rolled over.           */
+        -:  477:/*                                                                               */
+        -:  478:/*  Time is stored as a absolute time instead of a relative time between log     */
+        -:  479:/*  entries. This will yield better accuracy since storing relative time between */
+        -:  480:/*  entries will accumulate (rounding/sampling) errors over time.  It also is    */
+        -:  481:/*  faster since the time does not need to be calculated.                        */
+        -:  482:/*                                                                               */
+        -:  483:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  484:void CFE_ES_PerfLogAdd(uint32 Marker, uint32 EntryExit)
+       14:  485:{
+        -:  486:    int32         IntFlags;
+        -:  487:
+       14:  488:    if (Perf->MetaData.State != CFE_ES_PERF_IDLE) {
+        -:  489:
+        -:  490:        /* if marker is out of range... */
+        4:  491:        if(Marker >= CFE_ES_PERF_MAX_IDS){
+        -:  492:
+        -:  493:          /* if marker has not been reported previously ... */
+        1:  494:          if(Perf->MetaData.InvalidMarkerReported == FALSE){
+        1:  495:            CFE_ES_WriteToSysLog("ES PERF:Invalid performance marker %d,max is %d\n",
+        -:  496:                                  Marker,(CFE_ES_PERF_MAX_IDS - 1));
+        1:  497:            Perf->MetaData.InvalidMarkerReported = TRUE;
+        -:  498:          }/* end if */
+        -:  499:
+        1:  500:          return;
+        -:  501:
+        -:  502:        }/* end if */
+        -:  503:
+        -:  504:
+        -:  505:        /* is this id filtered */
+        3:  506:        if (CFE_ES_TEST_LONG_MASK(Perf->MetaData.FilterMask, Marker)) {
+        -:  507:
+        -:  508:           /* disable interrupts to guarentee exclusive access to the data structures */
+        3:  509:            IntFlags = OS_IntLock();
+        -:  510:
+        3:  511:            Perf->DataBuffer[Perf->MetaData.DataEnd].Data = (Marker | (EntryExit << CFE_ES_PERF_EXIT_BIT));
+        3:  512:            CFE_PSP_Get_Timebase((uint32*)&Perf->DataBuffer[Perf->MetaData.DataEnd].TimerUpper32,(uint32*)&Perf->DataBuffer[Perf->MetaData.DataEnd].TimerLower32);
+        -:  513:
+        3:  514:            Perf->MetaData.DataEnd++;
+        3:  515:            if (Perf->MetaData.DataEnd >= CFE_ES_PERF_DATA_BUFFER_SIZE) {
+        1:  516:                Perf->MetaData.DataEnd = 0;
+        -:  517:            }
+        -:  518:
+        -:  519:            /* we have filled up the buffer */
+        3:  520:            Perf->MetaData.DataCount++;
+        3:  521:            if (Perf->MetaData.DataCount > CFE_ES_PERF_DATA_BUFFER_SIZE) {
+        -:  522:
+        3:  523:                Perf->MetaData.DataCount = CFE_ES_PERF_DATA_BUFFER_SIZE;
+        -:  524:
+        -:  525:                /* after the buffer fills up start and end point to the same entry since we
+        -:  526:                   are now overwriting old data */
+        3:  527:                Perf->MetaData.DataStart = Perf->MetaData.DataEnd;
+        -:  528:            }
+        -:  529:
+        -:  530:            /* waiting for trigger */
+        3:  531:            if (Perf->MetaData.State == CFE_ES_PERF_WAITING_FOR_TRIGGER) {
+        -:  532:
+        1:  533:                if (CFE_ES_TEST_LONG_MASK(Perf->MetaData.TriggerMask, Marker)) {
+        1:  534:                    Perf->MetaData.State = CFE_ES_PERF_TRIGGERED;
+        -:  535:                }
+        -:  536:            }
+        -:  537:            /* triggered */
+        3:  538:            if (Perf->MetaData.State == CFE_ES_PERF_TRIGGERED) {
+        -:  539:
+        3:  540:                Perf->MetaData.TriggerCount++;
+        3:  541:                if (Perf->MetaData.Mode == CFE_ES_PERF_TRIGGER_START) {
+        -:  542:
+        1:  543:                    if (Perf->MetaData.TriggerCount >= CFE_ES_PERF_DATA_BUFFER_SIZE) {
+        1:  544:                        Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        -:  545:                    }
+        -:  546:                }
+        2:  547:                else if (Perf->MetaData.Mode == CFE_ES_PERF_TRIGGER_CENTER) {
+        -:  548:
+        1:  549:                    if (Perf->MetaData.TriggerCount >= CFE_ES_PERF_DATA_BUFFER_SIZE / 2) {
+        1:  550:                        Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        -:  551:                    }
+        -:  552:                }
+        1:  553:                else if (Perf->MetaData.Mode == CFE_ES_PERF_TRIGGER_END) {
+        -:  554:
+        1:  555:                    Perf->MetaData.State = CFE_ES_PERF_IDLE;
+        -:  556:                }
+        -:  557:            }
+        -:  558:
+        -:  559:            /* enable interrupts */
+        3:  560:            OS_IntUnlock(IntFlags);
+        -:  561:        }
+        -:  562:    }
+        -:  563:}/* end CFE_ES_PerfLogAdd */
+        -:  564:
+        -:  565:

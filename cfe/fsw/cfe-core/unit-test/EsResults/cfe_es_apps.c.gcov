@@ -1,0 +1,1670 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_apps.c
+        -:    0:Graph:cfe_es_apps.gcno
+        -:    0:Data:cfe_es_apps.gcda
+        -:    0:Runs:1
+        -:    0:Programs:2
+        -:    1:/*
+        -:    2:**  File:  
+        -:    3:**    cfe_es_apps.c
+        -:    4:** 
+        -:    5:**
+        -:    6:**
+        -:    7:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    8:**      administrator of the National Aeronautics Space Administration.  
+        -:    9:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:   10:**      Space Flight Center pursuant to government contracts.
+        -:   11:**
+        -:   12:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   13:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   14:**
+        -:   15:**  Purpose:  
+        -:   16:**    This file contains functions for starting cFE applications from a filesystem.
+        -:   17:**
+        -:   18:**  References:
+        -:   19:**     Flight Software Branch C Coding Standard Version 1.0a
+        -:   20:**     cFE Flight Software Application Developers Guide
+        -:   21:**
+        -:   22:**  Notes:
+        -:   23:** 
+        -:   24:**  $Log: cfe_es_apps.c.gcov  $
+        -:   24:**  Revision 1.6 2015/06/24 12:19:44EDT wmoleski 
+        -:   24:**  Checking in the unit-test results for cFE 6.4.2.0
+        -:   25:**  Revision 1.26 2014/09/05 11:35:15GMT-05:00 acudmore 
+        -:   26:**  Changed CFE_ES_AppCreate and CFE_ES_LoadLibrary to remove big shared data lock. Locking shared data at several points now to give other apps a chance to run.
+        -:   27:**  Revision 1.25 2014/08/22 15:50:04GMT-05:00 lwalling 
+        -:   28:**  Changed signed loop counters to unsigned
+        -:   29:**  Revision 1.24 2014/07/25 11:56:54EDT lwalling 
+        -:   30:**  Changed INCLUDE_CFE_TBL to EXCLUDE_CFE_TBL
+        -:   31:**  Revision 1.23 2014/07/23 11:33:22EDT lwalling 
+        -:   32:**  Made Table Services conditionsal based on new environment variable INCLUDE_CFE_TBL
+        -:   33:**  Revision 1.22 2014/05/05 15:00:08EDT acudmore 
+        -:   34:**  Clarified misleading event message text.
+        -:   35:**  Revision 1.21 2014/05/05 13:28:00GMT-05:00 acudmore 
+        -:   36:**  Fixed event message string, replaced variable name with %s.
+        -:   37:**  Revision 1.20 2012/09/28 16:13:24GMT-05:00 aschoeni 
+        -:   38:**  Replaced OS_ERROR with NOT OS_SUCCESS in calls for semphore deletion
+        -:   39:**  Revision 1.19 2012/01/13 11:49:59EST acudmore 
+        -:   40:**  Changed license text to reflect open source
+        -:   41:**  Revision 1.18 2011/12/07 19:20:26EST aschoeni 
+        -:   42:**  Removed returns for TIME and SB for cleaning up apps
+        -:   43:**  Revision 1.17 2011/11/30 15:43:11EST jmdagost 
+        -:   44:**  Added test for task delete error when cleaning up resources.
+        -:   45:**  Revision 1.16 2011/09/02 11:04:11EDT jmdagost 
+        -:   46:**  Corrected filename string copy length from max api length to max path length.
+        -:   47:**  Revision 1.15 2010/11/04 14:06:43EDT acudmore 
+        -:   48:**  Added ram disk mount path configuration option.
+        -:   49:**  Revision 1.14 2010/10/25 17:43:44EDT jmdagost 
+        -:   50:**  Add length tests for extracted filename and path
+        -:   51:**  Revision 1.13 2009/07/30 19:17:49EDT jmdagost 
+        -:   52:**  Deleted static keyword in CFE_ES_StartApplications
+        -:   53:**  Revision 1.12 2009/07/28 16:31:15EDT jmdagost 
+        -:   54:**  Replaced 20 references to filename with references to function name.
+        -:   55:**  Revision 1.11 2009/06/10 09:08:52EDT acudmore 
+        -:   56:**  Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   57:**  Revision 1.10 2008/08/28 08:46:53EDT apcudmore 
+        -:   58:**  changed CFS call back to CFE
+        -:   59:**  Revision 1.9 2008/08/27 16:59:01EDT apcudmore 
+        -:   60:**  Added timer delete code in ES task cleanup.
+        -:   61:**  Revision 1.8 2008/08/06 22:42:33EDT dkobe 
+        -:   62:**  Added CFE_TIME_RegisterSynchCallback, CFE_TIME_UnregisterSynchCallback and CFE_TIME_CleanUpApp
+        -:   63:**  Revision 1.7 2008/08/04 15:06:48EDT apcudmore 
+        -:   64:**  Updated handling code when file decompress fails.
+        -:   65:**  Revision 1.6 2008/07/31 15:41:35EDT apcudmore 
+        -:   66:**  Added execution counter API:
+        -:   67:**    -- Added execution counter to ES internal task data
+        -:   68:**    -- Added code to increment counter in RunLoop
+        -:   69:**    -- Added code to report counter in GetInfo APIs
+        -:   70:**    -- Added API to increment counter for child tasks
+        -:   71:**    -- Added code to cFE Core apps to increment counters.
+        -:   72:**  Revision 1.5 2008/07/30 14:52:32EDT apcudmore 
+        -:   73:**  Added startup sync support and API
+        -:   74:**  Revision 1.4 2008/07/08 12:35:29EDT apcudmore 
+        -:   75:**  Added an "AddressesAreValid" flag to the ES App Info structure.
+        -:   76:**  Revision 1.3 2008/06/26 15:41:54EDT apcudmore 
+        -:   77:**  Added public CFE_ES_GetAppInfo API.
+        -:   78:**  Moved the old API to CFE_ES_GetAppInfoInternal
+        -:   79:**  -- May merge these two in the near future.
+        -:   80:**  Revision 1.2 2008/06/20 15:40:31EDT apcudmore 
+        -:   81:**  Added support for OSAL based module loader
+        -:   82:**   - Removed calls and references to the BSP based module loader
+        -:   83:**  Revision 1.1 2008/04/17 08:05:02EDT ruperera 
+        -:   84:**  Initial revision
+        -:   85:**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   86:**  Revision 1.32 2007/09/25 11:46:09EDT apcudmore 
+        -:   87:**  Updated cfe_es_startup.scr file format
+        -:   88:**  Revision 1.31 2007/09/21 15:40:19EDT David Kobe (dlkobe) 
+        -:   89:**  Modified pointer type definitions to eliminate Linux gcc compile warnings
+        -:   90:**  Revision 1.30 2007/07/11 13:55:38EDT dlkobe 
+        -:   91:**  Corrected order of WriteToSysLog parameters to match format string
+        -:   92:**  Revision 1.29 2007/07/05 13:37:14EDT apcudmore 
+        -:   93:**  Fixed error with Volatile and Nonvolatile ES startup file names.
+        -:   94:**  Revision 1.28 2007/05/25 14:04:12EDT apcudmore 
+        -:   95:**  Return an error code on CFE_ES_CleanUpApp function.
+        -:   96:**  Revision 1.27 2007/05/25 11:55:43EDT apcudmore 
+        -:   97:**  Error Handling updates
+        -:   98:**     - CFE_ES_GetAppInfo returns void
+        -:   99:**     - added app ID range check in RestartApp
+        -:  100:**   
+        -:  101:**  Revision 1.26 2007/05/22 14:56:55EDT apcudmore 
+        -:  102:**  cFE Non-Volatile Disk/Startup File changes:
+        -:  103:**    - cFE startup now passes in startup file path/name
+        -:  104:**    - cFE startup code does not init non-volatile disk ( BSP does )
+        -:  105:**    - BSPs now can map cFE paths without making the OS_initfs/OS_mount calls
+        -:  106:**    - MCP750 vxWorks6.2 BSP inits/mounts CF disk
+        -:  107:**    - Desktop ports pass in the same startup file path/name as before
+        -:  108:**  Revision 1.25 2007/05/15 11:16:07EDT apcudmore 
+        -:  109:**  Added modification log tags.
+        -:  110:**
+        -:  111:*/
+        -:  112:
+        -:  113:/* 
+        -:  114:** Includes
+        -:  115:*/
+        -:  116:#include "cfe.h"
+        -:  117:#include "cfe_es.h"
+        -:  118:#include "cfe_psp.h"     
+        -:  119:#include "cfe_es_global.h"
+        -:  120:#include "cfe_es_apps.h"
+        -:  121:
+        -:  122:#include <stdio.h>
+        -:  123:#include <string.h> /* memset() */
+        -:  124:#include <fcntl.h>
+        -:  125:
+        -:  126:typedef int32 (*CFE_ES_LibraryEntryFuncPtr_t)(void);
+        -:  127:/*
+        -:  128:** Prototypes for cleanup functions
+        -:  129:*/
+        -:  130:#ifndef EXCLUDE_CFE_TBL
+        -:  131:void  CFE_TBL_CleanUpApp(uint32 AppId);
+        -:  132:#endif
+        -:  133:void  CFE_SB_CleanUpApp(uint32 AppId);
+        -:  134:int32 CFE_EVS_CleanUpApp(uint32 AppId);
+        -:  135:void  CFE_TIME_CleanUpApp(uint32 AppId);
+        -:  136:
+        -:  137:/*
+        -:  138:** Defines
+        -:  139:*/
+        -:  140:#define ES_START_BUFF_SIZE 128
+        -:  141:
+        -:  142:/* For extra debug code */
+        -:  143:#undef ES_APP_DEBUG
+        -:  144:
+        -:  145:/*
+        -:  146:**
+        -:  147:**  Global Variables
+        -:  148:**
+        -:  149:*/
+        -:  150:
+        -:  151:/*
+        -:  152:****************************************************************************
+        -:  153:** Functions
+        -:  154:***************************************************************************
+        -:  155:*/
+        -:  156:
+        -:  157:/*
+        -:  158:** Name: 
+        -:  159:**   CFE_ES_StartApplications
+        -:  160:**
+        -:  161:** Purpose: 
+        -:  162:**   This routine loads/starts cFE applications.
+        -:  163:**
+        -:  164:*/
+        -:  165:void CFE_ES_StartApplications(uint32 ResetType, uint8 *StartFilePath )
+       10:  166:{
+        -:  167:   char ES_AppLoadBuffer[ES_START_BUFF_SIZE];  /* A buffer of for a line in a file */   
+       10:  168:   int         BuffLen = 0;                            /* Length of the current buffer */
+       10:  169:   int         AppFile = 0;
+        -:  170:   char        c;
+        -:  171:   int32       ReadStatus;
+       10:  172:   boolean     LineTooLong = FALSE;
+       10:  173:   boolean     FileOpened = FALSE;
+        -:  174:
+        -:  175:   /*
+        -:  176:   ** Get the ES startup script filename.
+        -:  177:   ** If this is a Processor Reset, try to open the file in the volatile disk first.
+        -:  178:   */
+       10:  179:   if ( ResetType == CFE_ES_PROCESSOR_RESET )
+        -:  180:   {
+        -:  181:      /*
+        -:  182:      ** Open the file in the volatile disk.
+        -:  183:      */
+        5:  184:      AppFile = OS_open( CFE_ES_VOLATILE_STARTUP_FILE, O_RDONLY, 0);
+        -:  185:
+        5:  186:      if ( AppFile >= 0 )
+        -:  187:      {
+        4:  188:         CFE_ES_WriteToSysLog ("ES Startup: Opened ES App Startup file: %s\n", 
+        -:  189:                                CFE_ES_VOLATILE_STARTUP_FILE);
+        4:  190:         FileOpened = TRUE;
+        -:  191:      }
+        -:  192:      else 
+        -:  193:      {
+        1:  194:         CFE_ES_WriteToSysLog ("ES Startup: Cannot Open Volatile Startup file, Trying Nonvolatile.\n");
+        1:  195:         FileOpened = FALSE;
+        -:  196:      }
+        -:  197:
+        -:  198:   } /* end if */
+        -:  199:   
+        -:  200:   /*
+        -:  201:   ** This if block covers two cases: A Power on reset, and a Processor reset when
+        -:  202:   ** the startup file on the volatile file system could not be opened.
+        -:  203:   */
+       10:  204:   if ( FileOpened == FALSE )
+        -:  205:   {
+        -:  206:      /*
+        -:  207:      ** Try to Open the file passed in to the cFE start.
+        -:  208:      */
+        6:  209:      AppFile = OS_open( (const char *)StartFilePath, O_RDONLY, 0);
+        -:  210:
+        6:  211:      if ( AppFile >= 0 )
+        -:  212:      {
+        5:  213:         CFE_ES_WriteToSysLog ("ES Startup: Opened ES App Startup file: %s\n",StartFilePath);
+        5:  214:         FileOpened = TRUE;
+        -:  215:      }
+        -:  216:      else 
+        -:  217:      {
+        1:  218:         CFE_ES_WriteToSysLog ("ES Startup: Error, Can't Open ES App Startup file: %s EC = 0x%08X\n",
+        -:  219:                              StartFilePath, AppFile );
+        1:  220:         FileOpened = FALSE;
+        -:  221:      }
+        -:  222:   
+        -:  223:   }
+        -:  224:   
+        -:  225:   /*
+        -:  226:   ** If the file is opened in either the Nonvolatile or the Volatile disk, process it.
+        -:  227:   */
+       10:  228:   if ( FileOpened == TRUE)
+        -:  229:   {
+        9:  230:      memset(ES_AppLoadBuffer,0x0,ES_START_BUFF_SIZE);
+        9:  231:      BuffLen = 0;      
+        -:  232:      
+        -:  233:      /*
+        -:  234:      ** Parse the lines from the file. If it has an error
+        -:  235:      ** or reaches EOF, then abort the loop.
+        -:  236:      */
+        -:  237:      while(1)
+        -:  238:      {
+     2051:  239:         ReadStatus = OS_read(AppFile, &c, 1);
+     2051:  240:         if ( ReadStatus == OS_FS_ERROR )
+        -:  241:         {
+        1:  242:            CFE_ES_WriteToSysLog ("ES Startup: Error Reading Startup file. EC = 0x%08X\n",ReadStatus);
+        1:  243:            break;
+        -:  244:         }
+     2050:  245:         else if ( ReadStatus == 0 )
+        -:  246:         {
+        -:  247:            /*
+        -:  248:            ** EOF Reached
+        -:  249:            */
+        1:  250:            break;
+        -:  251:         }
+     2049:  252:         else if(c != '!')
+        -:  253:         {
+     2042:  254:             if ( c <= ' ')
+        -:  255:             {
+        -:  256:                /*
+        -:  257:                ** Skip all white space in the file
+        -:  258:                */
+        -:  259:                ;
+        -:  260:             }
+     1818:  261:             else if ( c == ',' )
+        -:  262:             {
+        -:  263:                /*
+        -:  264:                ** replace the field delimiter with a space
+        -:  265:                ** This is used for the sscanf string parsing
+        -:  266:                */
+      196:  267:                if ( BuffLen < ES_START_BUFF_SIZE )
+        -:  268:                {
+      193:  269:                   ES_AppLoadBuffer[BuffLen] = ' ';
+        -:  270:                }
+        -:  271:                else
+        -:  272:                {
+        3:  273:                   LineTooLong = TRUE;
+        -:  274:                } 
+      196:  275:                BuffLen++;
+        -:  276:             }
+     1622:  277:             else if ( c != ';' )
+        -:  278:             {
+        -:  279:                /*
+        -:  280:                ** Regular data gets copied in
+        -:  281:                */
+     1594:  282:                if ( BuffLen < ES_START_BUFF_SIZE )
+        -:  283:                {
+     1588:  284:                   ES_AppLoadBuffer[BuffLen] = c;
+        -:  285:                }
+        -:  286:                else
+        -:  287:                {
+        6:  288:                   LineTooLong = TRUE;
+        -:  289:                }
+     1594:  290:                BuffLen++;
+        -:  291:             }
+        -:  292:             else
+        -:  293:             {
+       28:  294:                if ( LineTooLong == TRUE )
+        -:  295:                {   
+        -:  296:                   /*
+        -:  297:                   ** The was too big for the buffer
+        -:  298:                   */
+        1:  299:                   CFE_ES_WriteToSysLog ("ES Startup: ES Startup File Line is too long: %d bytes.\n",BuffLen);
+        1:  300:                   LineTooLong = FALSE;
+        -:  301:                }
+        -:  302:                else
+        -:  303:                {
+        -:  304:                   /*
+        -:  305:                   ** Send the line to the file parser
+        -:  306:                   */
+       27:  307:                   CFE_ES_ParseFileEntry(ES_AppLoadBuffer);
+        -:  308:                }
+       28:  309:                memset(ES_AppLoadBuffer,0x0,ES_START_BUFF_SIZE);
+       28:  310:                BuffLen = 0;
+        -:  311:             }
+        -:  312:         }
+        -:  313:         else
+        -:  314:         {
+        -:  315:           /*
+        -:  316:           ** break when EOF character '!' is reached
+        -:  317:           */
+        7:  318:           break;
+        -:  319:         }
+     2042:  320:      }
+        -:  321:      /*
+        -:  322:      ** close the file
+        -:  323:      */
+        9:  324:      OS_close(AppFile);
+        -:  325:       
+        -:  326:   }
+       10:  327:}
+        -:  328:
+        -:  329:/*
+        -:  330:**---------------------------------------------------------------------------------------
+        -:  331:** Name: CFE_ES_ParseFileEntry
+        -:  332:**
+        -:  333:**   Purpose: This function parses the startup file line for an individual
+        -:  334:**            cFE application.
+        -:  335:**---------------------------------------------------------------------------------------
+        -:  336:*/
+        -:  337:int32 CFE_ES_ParseFileEntry(char *FileEntry)
+       30:  338:{
+        -:  339:   char   FileName[OS_MAX_PATH_LEN];
+        -:  340:   char   AppName[OS_MAX_API_NAME];
+        -:  341:   char   EntryPoint[OS_MAX_API_NAME];
+        -:  342:   char   EntryType[OS_MAX_API_NAME];
+        -:  343:   int    Priority;
+        -:  344:   int    StackSize;
+        -:  345:   int    ScanfStatus;
+        -:  346:   uint32 Unused;
+        -:  347:   uint32 ExceptionAction;
+        -:  348:   uint32 ApplicationId;
+       30:  349:   int32  CreateStatus = CFE_ES_ERR_APP_CREATE;
+        -:  350:
+        -:  351:   /*
+        -:  352:   ** Use sscanf to parse the string.
+        -:  353:   ** When this routine is called, the buffer is already verified to be less than the 
+        -:  354:   ** maximum size, and the parameters have been separated by a single space each.
+        -:  355:   ** If the sscanf fails, then it is a malformed file entry.  
+        -:  356:   */
+       30:  357:   ScanfStatus = sscanf(FileEntry,"%s %s %s %s %d %d %x %d",
+        -:  358:                         EntryType, FileName, EntryPoint, AppName, 
+        -:  359:                        &Priority, &StackSize, (unsigned int *)&Unused, 
+        -:  360:                        (int *)&ExceptionAction);
+        -:  361:
+        -:  362:   /*
+        -:  363:   ** Check to see if the correct number of items were parsed
+        -:  364:   */
+       30:  365:   if ( ScanfStatus != 8 )
+        -:  366:   {
+        1:  367:      CFE_ES_WriteToSysLog("ES Startup: Invalid ES Startup file entry: %d\n",ScanfStatus);
+        1:  368:      return (CreateStatus);
+        -:  369:   }
+        -:  370:     
+       29:  371:   if(strncmp(EntryType,"CFE_APP",OS_MAX_API_NAME)==0)
+        -:  372:   {
+       21:  373:      CFE_ES_WriteToSysLog("ES Startup: Loading file: %s, APP: %s\n",
+        -:  374:                            FileName, AppName);
+        -:  375:      
+        -:  376:      /*
+        -:  377:      ** Validate Some parameters
+        -:  378:      ** Exception action should be 0 ( Restart App ) or
+        -:  379:      ** 1 ( Processor reset ). If it's non-zero, assume it means
+        -:  380:      ** reset CPU.
+        -:  381:      */
+       21:  382:      if ( ExceptionAction > CFE_ES_APP_EXCEPTION_RESTART_APP ) 
+       21:  383:          ExceptionAction = CFE_ES_APP_EXCEPTION_PROC_RESTART;
+        -:  384:      /*
+        -:  385:      ** Now create the application 
+        -:  386:      */
+       21:  387:      CreateStatus = CFE_ES_AppCreate(&ApplicationId, FileName, 
+        -:  388:                               EntryPoint, AppName, (uint32)Priority, 
+        -:  389:                               (uint32)StackSize, ExceptionAction );
+        -:  390:   }
+        8:  391:   else if(strncmp(EntryType,"CFE_LIB",OS_MAX_API_NAME)==0)
+        -:  392:   {            
+        6:  393:      CFE_ES_WriteToSysLog("ES Startup: Loading shared library: %s\n",FileName);
+        -:  394:                                                             
+        -:  395:      /*
+        -:  396:      ** Now load the library
+        -:  397:      */
+        6:  398:      CreateStatus = CFE_ES_LoadLibrary(&ApplicationId, FileName, 
+        -:  399:                               EntryPoint, AppName);
+        -:  400:
+        -:  401:   }
+        2:  402:   else if(strncmp(EntryType,"CFE_DRV",OS_MAX_API_NAME)==0)
+        -:  403:   { 
+        1:  404:      CFE_ES_WriteToSysLog("ES Startup: Device Drivers not yet implemented. %s\n",FileName);
+        -:  405:   }
+        -:  406:   else
+        -:  407:   {
+        1:  408:      CFE_ES_WriteToSysLog("ES Startup: Unexpected EntryType %s in startup file.\n",EntryType);
+        -:  409:   }
+        -:  410:
+       29:  411:   return (CreateStatus);
+        -:  412:
+        -:  413:}
+        -:  414:
+        -:  415:/*
+        -:  416:**---------------------------------------------------------------------------------------
+        -:  417:** Name: ES_AppCreate
+        -:  418:**
+        -:  419:**   Purpose: This function loads and creates a cFE Application.
+        -:  420:**            This function can be called from the ES startup code when it
+        -:  421:**            loads the cFE Applications from the disk using the startup script, or it
+        -:  422:**            can be called when the ES Start Application command is executed.
+        -:  423:**
+        -:  424:**---------------------------------------------------------------------------------------
+        -:  425:*/
+        -:  426:int32 CFE_ES_AppCreate(uint32 *ApplicationIdPtr,
+        -:  427:                       char   *FileName,
+        -:  428:                       char   *EntryPoint,
+        -:  429:                       char   *AppName,
+        -:  430:                       uint32  Priority,
+        -:  431:                       uint32  StackSize,
+        -:  432:                       uint32  ExceptionAction)
+       36:  433:{
+        -:  434:   uint32  StartAddr;
+        -:  435:   int32   ReturnCode;
+        -:  436:   uint32  i;
+        -:  437:   boolean AppSlotFound;
+        -:  438:   uint32  TaskId;
+        -:  439:   uint32  ModuleId;
+        -:  440:   char    FileNameOnly[OS_MAX_PATH_LEN];
+        -:  441:   char    RamDiskPath[OS_MAX_PATH_LEN];
+        -:  442:   int     StringLength;
+       36:  443:   boolean IsRamDiskFile = FALSE;
+        -:  444:
+        -:  445:
+        -:  446:   /*
+        -:  447:   ** Allocate an ES_AppTable entry
+        -:  448:   */
+       36:  449:   CFE_ES_LockSharedData(__func__,__LINE__);
+       36:  450:   AppSlotFound = FALSE;
+      335:  451:   for ( i = 0; i < CFE_ES_MAX_APPLICATIONS; i++ )
+        -:  452:   {
+      329:  453:      if ( CFE_ES_Global.AppTable[i].RecordUsed == FALSE )
+        -:  454:      {
+       30:  455:         AppSlotFound = TRUE;
+       30:  456:         CFE_ES_Global.AppTable[i].RecordUsed = TRUE; /* Reserve Slot */
+       30:  457:         break;
+        -:  458:      }
+        -:  459:   }
+       36:  460:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  461:
+        -:  462:   /*
+        -:  463:   ** If a slot was found, create the application
+        -:  464:   */
+       36:  465:   if ( AppSlotFound == TRUE)
+        -:  466:   {
+        -:  467:      /*   
+        -:  468:      ** Check to see if the code is a Gzip file
+        -:  469:      */
+       30:  470:      if ( CFE_FS_IsGzFile(FileName) == TRUE )
+        -:  471:      {   
+        -:  472:         /* 
+        -:  473:         ** Build up the destination path in the RAM disk
+        -:  474:         */
+        5:  475:         strncpy(RamDiskPath, CFE_ES_RAM_DISK_MOUNT_STRING"/", OS_MAX_PATH_LEN);
+        -:  476:        
+        -:  477:         /*
+        -:  478:         ** Extract the filename from the path
+        -:  479:         */
+        5:  480:         ReturnCode = CFE_FS_ExtractFilenameFromPath(FileName, FileNameOnly);
+        -:  481:              
+        5:  482:         if ( ReturnCode == CFE_SUCCESS )
+        -:  483:         {
+        3:  484:            if ((strlen(RamDiskPath) + strlen(FileNameOnly)) < OS_MAX_PATH_LEN)
+        -:  485:            {
+        -:  486:            
+        -:  487:                /* 
+        -:  488:                ** Cat the Filename to the RamDiskPath 
+        -:  489:                */
+        2:  490:                strcat(RamDiskPath, FileNameOnly);
+        -:  491:        
+        -:  492:                /* 
+        -:  493:                ** Remove the ".gz" prefix from the filename 
+        -:  494:                ** Already Determined that the filename ends in ".gz"
+        -:  495:                */
+        2:  496:                StringLength = strlen(RamDiskPath);
+        2:  497:                RamDiskPath[StringLength - 3] = '\0';
+        -:  498:            
+        -:  499:                /*
+        -:  500:                ** Decompress the file:
+        -:  501:                */
+        2:  502:                ReturnCode =  CFE_FS_Decompress( FileName, RamDiskPath);
+        -:  503:            
+        2:  504:                if ( ReturnCode != OS_SUCCESS )
+        -:  505:                {
+        1:  506:                   CFE_ES_WriteToSysLog("ES Startup: Unable to decompress Application File: %s\n",FileName);
+        -:  507:
+        1:  508:                   CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  509:                   CFE_ES_Global.AppTable[i].RecordUsed = FALSE; /* Release slot */
+        1:  510:                   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  511:
+        1:  512:                   return(CFE_ES_ERR_APP_CREATE);
+        -:  513:                }
+        -:  514:                else
+        -:  515:                {
+        -:  516:                   /*
+        -:  517:                   ** All ready to use unzipped RAM disk file
+        -:  518:                   */
+        1:  519:                   IsRamDiskFile = TRUE;
+        -:  520:                }
+        -:  521:            }
+        -:  522:            else 
+        -:  523:            {
+        -:  524:                /* Can't include the name string since it could be too long for the message */
+        1:  525:                CFE_ES_WriteToSysLog("ES Startup: Application path plus file name length (%d) exceeds max allowed (%d)\n", 
+        -:  526:                                     (strlen(RamDiskPath) + strlen(FileNameOnly)), OS_MAX_PATH_LEN);
+        -:  527:
+        1:  528:                CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  529:                CFE_ES_Global.AppTable[i].RecordUsed = FALSE; /* Release slot */
+        1:  530:                CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  531:
+        1:  532:                return(CFE_ES_ERR_APP_CREATE);
+        -:  533:            }
+        -:  534:            
+        -:  535:         }
+        -:  536:         else
+        -:  537:         {
+        2:  538:            CFE_ES_WriteToSysLog("ES Startup: Unable to extract filename from path: %s.\n",FileName);
+        2:  539:            CFE_ES_LockSharedData(__func__,__LINE__);
+        2:  540:            CFE_ES_Global.AppTable[i].RecordUsed = FALSE; /* Release slot */
+        2:  541:            CFE_ES_UnlockSharedData(__func__,__LINE__);
+        2:  542:            return(CFE_ES_ERR_APP_CREATE);
+        -:  543:         }
+        -:  544:              
+        -:  545:      }
+        -:  546:     
+        -:  547:     /*
+        -:  548:     ** Load the module
+        -:  549:     */
+       26:  550:     if ( IsRamDiskFile == TRUE )
+        -:  551:     {
+        1:  552:        ReturnCode = OS_ModuleLoad( &ModuleId, AppName, RamDiskPath);
+        -:  553:     }
+        -:  554:     else
+        -:  555:     {
+       25:  556:        ReturnCode = OS_ModuleLoad ( &ModuleId, AppName, FileName );
+        -:  557:     }
+        -:  558:     /*
+        -:  559:     ** If the Load was OK, then lookup the address of the entry point
+        -:  560:     */
+       26:  561:     if ( ReturnCode == OS_SUCCESS )
+        -:  562:     {
+        -:  563:       
+       25:  564:        ReturnCode = OS_SymbolLookup( &StartAddr, EntryPoint );
+        -:  565:       
+        -:  566:        /*
+        -:  567:        ** If the EntryPoint symbol was found, then start creating the App
+        -:  568:        */
+       25:  569:        if ( ReturnCode == OS_SUCCESS )
+        -:  570:        {
+       24:  571:           CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  572:           /*
+        -:  573:           ** Allocate and populate the ES_AppTable entry
+        -:  574:           */
+       24:  575:           CFE_PSP_MemSet ( (void *)&(CFE_ES_Global.AppTable[i]), 0, sizeof(CFE_ES_AppRecord_t));
+       24:  576:           CFE_ES_Global.AppTable[i].RecordUsed = TRUE;
+       24:  577:           CFE_ES_Global.AppTable[i].Type = CFE_ES_APP_TYPE_EXTERNAL;
+        -:  578:
+        -:  579:           /*
+        -:  580:           ** Fill out the parameters in the AppStartParams sub-structure
+        -:  581:           */         
+       24:  582:           strncpy((char *)CFE_ES_Global.AppTable[i].StartParams.Name, AppName, OS_MAX_API_NAME);
+       24:  583:           CFE_ES_Global.AppTable[i].StartParams.Name[OS_MAX_API_NAME - 1] = '\0';
+       24:  584:           strncpy((char *)CFE_ES_Global.AppTable[i].StartParams.EntryPoint, EntryPoint, OS_MAX_API_NAME);
+       24:  585:           CFE_ES_Global.AppTable[i].StartParams.EntryPoint[OS_MAX_API_NAME - 1] = '\0';
+       24:  586:           strncpy((char *)CFE_ES_Global.AppTable[i].StartParams.FileName, FileName, OS_MAX_PATH_LEN);         
+       24:  587:           CFE_ES_Global.AppTable[i].StartParams.FileName[OS_MAX_PATH_LEN - 1] = '\0';
+       24:  588:           CFE_ES_Global.AppTable[i].StartParams.StackSize = StackSize;
+        -:  589:
+       24:  590:           CFE_ES_Global.AppTable[i].StartParams.StartAddress = StartAddr;
+       24:  591:           CFE_ES_Global.AppTable[i].StartParams.ModuleId = ModuleId;
+        -:  592:
+       24:  593:           CFE_ES_Global.AppTable[i].StartParams.ExceptionAction = ExceptionAction;
+       24:  594:           CFE_ES_Global.AppTable[i].StartParams.Priority = Priority;
+        -:  595:
+        -:  596:           /*
+        -:  597:           ** Fill out the Task Info
+        -:  598:           */
+       24:  599:           strncpy((char *)CFE_ES_Global.AppTable[i].TaskInfo.MainTaskName, AppName, OS_MAX_API_NAME);
+       24:  600:           CFE_ES_Global.AppTable[i].TaskInfo.MainTaskName[OS_MAX_API_NAME - 1] = '\0';
+       24:  601:           CFE_ES_Global.AppTable[i].TaskInfo.NumOfChildTasks = 0;
+        -:  602:          
+        -:  603:           /*
+        -:  604:           ** Increment the app started counter. This is used in the startup sync
+        -:  605:           ** code.
+        -:  606:           */
+       24:  607:           ++CFE_ES_Global.AppStartedCount;
+        -:  608:
+        -:  609:           /*
+        -:  610:           ** Fill out the Task State info
+        -:  611:           */
+       24:  612:           CFE_ES_Global.AppTable[i].StateRecord.AppControlRequest = CFE_ES_APP_RUN;
+       24:  613:           CFE_ES_Global.AppTable[i].StateRecord.AppState = CFE_ES_APP_STATE_INITIALIZING; 
+       24:  614:           CFE_ES_Global.AppTable[i].StateRecord.AppTimer = 0;         
+        -:  615:
+        -:  616:           /*
+        -:  617:           ** Create the primary task for the newly loaded task
+        -:  618:           */
+       24:  619:           ReturnCode = OS_TaskCreate(&CFE_ES_Global.AppTable[i].TaskInfo.MainTaskId,   /* task id */
+        -:  620:                                   AppName,             /* task name */
+        -:  621:                           (void*)StartAddr,   /* task function pointer */
+        -:  622:                           NULL,                /* stack pointer */
+        -:  623:                           StackSize,           /* stack size */
+        -:  624:                           Priority,            /* task priority */
+        -:  625:                           OS_FP_ENABLED);     /* task options */
+        -:  626:
+        -:  627:
+       24:  628:           if(ReturnCode != OS_SUCCESS)
+        -:  629:           {
+        4:  630:              CFE_ES_WriteToSysLog("ES Startup: AppCreate Error: TaskCreate %s Failed. EC = 0x%08X!\n",
+        -:  631:                            AppName,ReturnCode);
+        -:  632:
+        4:  633:              CFE_ES_Global.AppTable[i].RecordUsed = FALSE;
+        4:  634:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  635:
+        4:  636:              return(CFE_ES_ERR_APP_CREATE);
+        -:  637:           }
+        -:  638:           else
+        -:  639:           {
+        -:  640:
+        -:  641:              /*
+        -:  642:              ** Record the ES_TaskTable entry
+        -:  643:              */
+       20:  644:              TaskId = CFE_ES_Global.AppTable[i].TaskInfo.MainTaskId;
+        -:  645:            
+       20:  646:              if ( CFE_ES_Global.TaskTable[TaskId].RecordUsed == TRUE )
+        -:  647:              {
+       16:  648:                 CFE_ES_WriteToSysLog("ES Startup: Error: ES_TaskTable slot in use at task creation!\n");
+        -:  649:              }
+        -:  650:              else
+        -:  651:              {
+        4:  652:                 CFE_ES_Global.TaskTable[TaskId].RecordUsed = TRUE;
+        -:  653:              }
+       20:  654:              CFE_ES_Global.TaskTable[TaskId].AppId = i;
+       20:  655:              CFE_ES_Global.TaskTable[TaskId].TaskId = TaskId;
+       20:  656:              strncpy((char *)CFE_ES_Global.TaskTable[TaskId].TaskName, 
+        -:  657:                  (char *)CFE_ES_Global.AppTable[i].TaskInfo.MainTaskName,OS_MAX_API_NAME );
+       20:  658:              CFE_ES_Global.TaskTable[TaskId].TaskName[OS_MAX_API_NAME - 1]='\0';
+       20:  659:              CFE_ES_WriteToSysLog("ES Startup: %s loaded and created\n", AppName);
+       20:  660:              *ApplicationIdPtr = i;
+        -:  661:
+        -:  662:              /*
+        -:  663:              ** Increment the registered App and Registered External Task variables.
+        -:  664:              */
+       20:  665:              CFE_ES_Global.RegisteredTasks++;
+       20:  666:              CFE_ES_Global.RegisteredExternalApps++;
+        -:  667:
+        -:  668:
+       20:  669:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  670:              
+        -:  671:              /*
+        -:  672:              ** Remove the temporary RAM disk file
+        -:  673:              */
+       20:  674:              if ( IsRamDiskFile == TRUE )
+        -:  675:              {
+        1:  676:                 ReturnCode = OS_remove(RamDiskPath);
+        -:  677:              }    
+        -:  678:              
+       20:  679:              return(CFE_SUCCESS);
+        -:  680:           
+        -:  681:           } /* End If OS_TaskCreate */
+        -:  682:              
+        -:  683:       }
+        -:  684:       else /* Cannot find symbol */
+        -:  685:       {
+        1:  686:            CFE_ES_WriteToSysLog("ES Startup: Could not find symbol:%s. EC = 0x%08X\n",
+        -:  687:                                   EntryPoint, ReturnCode);
+        -:  688:
+        1:  689:            CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  690:            CFE_ES_Global.AppTable[i].RecordUsed = FALSE; /* Release slot */
+        1:  691:            CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  692:
+        1:  693:            return(CFE_ES_ERR_APP_CREATE);
+        -:  694:        }
+        -:  695:     }
+        -:  696:     else /* load not successful */
+        -:  697:     {
+        1:  698:         CFE_ES_WriteToSysLog("ES Startup: Could not load cFE application file:%s. EC = 0x%08X\n",
+        -:  699:                           FileName, ReturnCode);
+        -:  700:
+        1:  701:         CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  702:         CFE_ES_Global.AppTable[i].RecordUsed = FALSE; /* Release slot */
+        1:  703:         CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  704:
+        1:  705:         return(CFE_ES_ERR_APP_CREATE);
+        -:  706:      }
+        -:  707:   }
+        -:  708:   else /* appSlot not found */
+        -:  709:   {
+        6:  710:      CFE_ES_WriteToSysLog("ES Startup: No free application slots available\n");
+        6:  711:      return(CFE_ES_ERR_APP_CREATE);
+        -:  712:   }
+        -:  713:
+        -:  714:} /* End Function */
+        -:  715:/*
+        -:  716:**---------------------------------------------------------------------------------------
+        -:  717:** Name: CFE_ES_LoadLibrary
+        -:  718:**
+        -:  719:**   Purpose: This function loads and initializes a cFE Shared Library.
+        -:  720:**
+        -:  721:**---------------------------------------------------------------------------------------
+        -:  722:*/
+        -:  723:int32 CFE_ES_LoadLibrary(uint32 *LibraryIdPtr,
+        -:  724:                         char   *FileName,
+        -:  725:                         char   *EntryPoint,
+        -:  726:                         char   *LibName)
+       15:  727:{
+        -:  728:   uint32                       StartAddr;
+        -:  729:   int32                        ReturnCode;
+        -:  730:   boolean                      LibSlotFound;
+        -:  731:   CFE_ES_LibraryEntryFuncPtr_t FunctionPointer;
+        -:  732:   uint32                       ModuleId;
+       15:  733:   boolean                      IsRamDiskFile = FALSE;
+        -:  734:   char                         FileNameOnly[OS_MAX_PATH_LEN];
+        -:  735:   char                         RamDiskPath[OS_MAX_PATH_LEN];
+        -:  736:   int                          StringLength;
+        -:  737:   uint32                       i;
+        -:  738:
+        -:  739:
+        -:  740:   /*
+        -:  741:   ** Allocate an ES_LibTable entry
+        -:  742:   */
+       15:  743:   CFE_ES_LockSharedData(__func__,__LINE__);
+       15:  744:   LibSlotFound = FALSE;
+       46:  745:   for ( i = 0; i < CFE_ES_MAX_LIBRARIES; i++ )
+        -:  746:   {
+       45:  747:      if ( CFE_ES_Global.LibTable[i].RecordUsed == FALSE )
+        -:  748:      {
+       14:  749:         LibSlotFound = TRUE;
+       14:  750:         CFE_ES_Global.LibTable[i].RecordUsed = TRUE; /* Reserve Slot */
+       14:  751:         break;
+        -:  752:      }
+        -:  753:   }
+       15:  754:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  755:
+        -:  756:   /*
+        -:  757:   ** If a slot was found, Load and Register the library 
+        -:  758:   */
+       15:  759:   if ( LibSlotFound == TRUE)
+        -:  760:   {
+        -:  761:      /*   
+        -:  762:      ** Check to see if the library is a Gzip file
+        -:  763:      */
+       14:  764:      if ( CFE_FS_IsGzFile(FileName) == TRUE )
+        -:  765:      {   
+        -:  766:         /* 
+        -:  767:         ** Build up the destination path in the RAM disk
+        -:  768:         */
+        5:  769:         strncpy(RamDiskPath, CFE_ES_RAM_DISK_MOUNT_STRING"/", OS_MAX_PATH_LEN);
+        -:  770:        
+        -:  771:         /*
+        -:  772:         ** Extract the filename from the path
+        -:  773:         */
+        5:  774:         ReturnCode = CFE_FS_ExtractFilenameFromPath(FileName, FileNameOnly);
+        -:  775:              
+        5:  776:         if ( ReturnCode == CFE_SUCCESS )
+        -:  777:         {
+        3:  778:            if ((strlen(RamDiskPath) + strlen(FileNameOnly)) < OS_MAX_PATH_LEN)
+        -:  779:            {
+        -:  780:                /* 
+        -:  781:                ** Cat the Filename to the RamDiskPath 
+        -:  782:                */
+        2:  783:                strcat(RamDiskPath, FileNameOnly);
+        -:  784:        
+        -:  785:                /* 
+        -:  786:                ** Remove the ".gz" prefix from the filename 
+        -:  787:                ** Already Determined that the filename ends in ".gz"
+        -:  788:                */
+        2:  789:                StringLength = strlen(RamDiskPath);
+        2:  790:                RamDiskPath[StringLength - 3] = '\0';
+        -:  791:            
+        -:  792:                /*
+        -:  793:                ** Decompress the file:
+        -:  794:                */
+        2:  795:                ReturnCode =  CFE_FS_Decompress( FileName, RamDiskPath);
+        -:  796:            
+        2:  797:                if ( ReturnCode != OS_SUCCESS )
+        -:  798:                {               
+        1:  799:                   CFE_ES_WriteToSysLog("ES Startup: Unable to decompress library file: %s\n",FileName);
+        -:  800:
+        1:  801:                   CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  802:                   CFE_ES_Global.LibTable[i].RecordUsed = FALSE; /* Release Slot */
+        1:  803:                   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  804:
+        1:  805:                   return(CFE_ES_ERR_LOAD_LIB);
+        -:  806:                }
+        -:  807:                else
+        -:  808:                {
+        -:  809:                   /*
+        -:  810:                   ** All ready to use unzipped RAM disk file
+        -:  811:                   */
+        1:  812:                   IsRamDiskFile = TRUE;
+        -:  813:                }
+        -:  814:            }            
+        -:  815:            else 
+        -:  816:            {
+        -:  817:                /* Can't include the name string since it could be too long for the message */
+        1:  818:                CFE_ES_WriteToSysLog("ES Startup: Library path plus file name length (%d) exceeds max allowed (%d)\n", 
+        -:  819:                                     (strlen(RamDiskPath) + strlen(FileNameOnly)), OS_MAX_PATH_LEN);
+        -:  820:
+        1:  821:                CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  822:                CFE_ES_Global.LibTable[i].RecordUsed = FALSE; /* Release Slot */
+        1:  823:                CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  824:
+        1:  825:                return(CFE_ES_ERR_LOAD_LIB);
+        -:  826:            }
+        -:  827:         }
+        -:  828:         else
+        -:  829:         {
+        2:  830:            CFE_ES_WriteToSysLog("ES Startup: Unable to extract filename from path: %s.\n",FileName);
+        -:  831:
+        2:  832:            CFE_ES_LockSharedData(__func__,__LINE__);
+        2:  833:            CFE_ES_Global.LibTable[i].RecordUsed = FALSE; /* Release Slot */
+        2:  834:            CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  835:
+        2:  836:            return(CFE_ES_ERR_LOAD_LIB);
+        -:  837:         }
+        -:  838:              
+        -:  839:      }
+        -:  840:     
+        -:  841:     /*
+        -:  842:     ** Load the library module
+        -:  843:     */
+       10:  844:     if ( IsRamDiskFile == TRUE )
+        -:  845:     {
+        1:  846:        ReturnCode = OS_ModuleLoad( &ModuleId, LibName, RamDiskPath);
+        -:  847:     }
+        -:  848:     else
+        -:  849:     {
+        9:  850:        ReturnCode = OS_ModuleLoad ( &ModuleId, LibName, FileName );
+        -:  851:     }
+        -:  852:     
+        -:  853:     /*
+        -:  854:     ** If the Load was OK, then lookup the address of the entry point
+        -:  855:     */
+       10:  856:     if ( ReturnCode == OS_SUCCESS )
+        -:  857:     {
+        -:  858:       
+        9:  859:        ReturnCode = OS_SymbolLookup( &StartAddr, EntryPoint );
+        -:  860:       
+        -:  861:        /*
+        -:  862:        ** If the EntryPoint symbol was found, then finish creating the Library
+        -:  863:        */
+        9:  864:        if ( ReturnCode == OS_SUCCESS )
+        -:  865:        {
+        8:  866:           CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  867:           /*
+        -:  868:           ** Allocate and populate the ES_LibTable entry
+        -:  869:           */
+        8:  870:           CFE_ES_Global.LibTable[i].RecordUsed = TRUE;
+        8:  871:           strncpy(CFE_ES_Global.LibTable[i].LibName, LibName, OS_MAX_API_NAME);
+        8:  872:           CFE_ES_Global.LibTable[i].LibName[OS_MAX_API_NAME - 1] = '\0';
+        -:  873:
+        -:  874:           /*
+        -:  875:           ** Call the library initialization routine
+        -:  876:           */
+        8:  877:           FunctionPointer = (CFE_ES_LibraryEntryFuncPtr_t)StartAddr;
+        8:  878:           ReturnCode = (*FunctionPointer)();
+        -:  879:
+        8:  880:           if(ReturnCode != CFE_SUCCESS)
+        -:  881:           {
+        1:  882:              CFE_ES_Global.LibTable[i].RecordUsed = FALSE;
+        1:  883:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  884:
+        1:  885:              CFE_ES_WriteToSysLog("ES Startup: Load Shared Library Init Error.\n");
+        1:  886:              return(CFE_ES_ERR_LOAD_LIB);
+        -:  887:           }
+        -:  888:           else
+        -:  889:           {
+        7:  890:              CFE_ES_Global.RegisteredLibs++;
+        7:  891:              *LibraryIdPtr = i;
+        -:  892:            
+        7:  893:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  894:                          
+        -:  895:              /*
+        -:  896:              ** Remove the temporary RAM disk file
+        -:  897:              */
+        7:  898:              if ( IsRamDiskFile == TRUE )
+        -:  899:              {
+        1:  900:                 ReturnCode = OS_remove(RamDiskPath);
+        -:  901:              }                
+        7:  902:              return(CFE_SUCCESS);
+        -:  903:           }
+        -:  904:        }
+        -:  905:        else /* could not find symbol */
+        -:  906:        {
+        1:  907:            CFE_ES_WriteToSysLog("ES Startup: Could not find Library Init symbol:%s. EC = 0x%08X\n",
+        -:  908:                                   EntryPoint, ReturnCode);
+        -:  909:
+        1:  910:            CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  911:            CFE_ES_Global.LibTable[i].RecordUsed = FALSE; /* Release Slot */
+        1:  912:            CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  913:
+        1:  914:            return(CFE_ES_ERR_LOAD_LIB);
+        -:  915:        
+        -:  916:        } /* end if -- look up symbol */
+        -:  917:        
+        -:  918:      }
+        -:  919:      else /* load not successful */
+        -:  920:      {
+        1:  921:         CFE_ES_WriteToSysLog("ES Startup: Could not load cFE Shared Library\n");
+        -:  922:
+        1:  923:         CFE_ES_LockSharedData(__func__,__LINE__);
+        1:  924:         CFE_ES_Global.LibTable[i].RecordUsed = FALSE; /* Release Slot */
+        1:  925:         CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  926:
+        1:  927:         return(CFE_ES_ERR_LOAD_LIB); 
+        -:  928:      }
+        -:  929:   }
+        -:  930:   else /* libSlot not found */
+        -:  931:   {
+        1:  932:      CFE_ES_WriteToSysLog("ES Startup: No free library slots available\n");
+        1:  933:      return(CFE_ES_ERR_LOAD_LIB); 
+        -:  934:   }
+        -:  935:
+        -:  936:
+        -:  937:} /* End Function */
+        -:  938:
+        -:  939:/*
+        -:  940:**---------------------------------------------------------------------------------------
+        -:  941:** Name: CFE_ES_ScanAppTable
+        -:  942:**
+        -:  943:**   Purpose: This function scans the ES Application table and acts on the changes
+        -:  944:**             in application states. This is where the external cFE Applications are
+        -:  945:**             restarted, reloaded, or deleted.
+        -:  946:**---------------------------------------------------------------------------------------
+        -:  947:*/
+        -:  948:void CFE_ES_ScanAppTable(void)
+        5:  949:{
+        -:  950:   uint32 i;
+        -:  951:         
+        -:  952:   /*
+        -:  953:   ** Scan the ES Application table. Skip entries that are:
+        -:  954:   **  - Not in use, or 
+        -:  955:   **  - cFE Core apps, or
+        -:  956:   **  - Currently running
+        -:  957:   */
+      165:  958:   for ( i = 0; i < CFE_ES_MAX_APPLICATIONS; i++ )
+        -:  959:   {
+        -:  960:   
+      160:  961:      if ((CFE_ES_Global.AppTable[i].RecordUsed == TRUE) && 
+        -:  962:          (CFE_ES_Global.AppTable[i].Type == CFE_ES_APP_TYPE_EXTERNAL) && 
+        -:  963:          (CFE_ES_Global.AppTable[i].StateRecord.AppState != CFE_ES_APP_STATE_RUNNING))
+        -:  964:      {
+        -:  965:      
+        -:  966:          /*
+        -:  967:          ** Process the External cFE App according to it's state.
+        -:  968:          */
+       10:  969:          if ( CFE_ES_Global.AppTable[i].StateRecord.AppState == CFE_ES_APP_STATE_WAITING )
+        -:  970:          {
+        -:  971:              /*
+        -:  972:              ** If the timeout value is zero, take the action to delete/restart/reload the app
+        -:  973:              */
+        2:  974:              if ( CFE_ES_Global.AppTable[i].StateRecord.AppTimer <= 0 )
+        -:  975:              {              
+        1:  976:                 CFE_ES_ProcessControlRequest(i);
+        -:  977:              }
+        -:  978:              else
+        -:  979:              {
+        -:  980:                 #ifdef ES_APP_DEBUG
+        -:  981:                    OS_printf("%d..\n",(int)CFE_ES_Global.AppTable[i].StateRecord.AppTimer);
+        -:  982:                 #endif
+        1:  983:                 CFE_ES_Global.AppTable[i].StateRecord.AppTimer --;   
+        -:  984:                                
+        -:  985:              }
+        -:  986:              
+        -:  987:          }
+        8:  988:          else if ( CFE_ES_Global.AppTable[i].StateRecord.AppState == CFE_ES_APP_STATE_STOPPED )
+        -:  989:          {
+        -:  990:              /*
+        -:  991:              ** The App is stopped and ready to get deleted/restarted/reloaded
+        -:  992:              */
+        1:  993:              CFE_ES_ProcessControlRequest(i);
+        -:  994:            
+        -:  995:          } /* end if */
+        -:  996:                       
+        -:  997:      } /* end if */
+        -:  998:
+        -:  999:   } /* end for loop */
+        -: 1000:
+        5: 1001:} /* End Function */
+        -: 1002:
+        -: 1003:
+        -: 1004:/*
+        -: 1005:**---------------------------------------------------------------------------------------
+        -: 1006:**   Name: CFE_ES_ProcessControlRequest
+        -: 1007:**
+        -: 1008:**   Purpose: This function will perform the requested control action for an application.
+        -: 1009:**---------------------------------------------------------------------------------------
+        -: 1010:*/
+        -: 1011:void CFE_ES_ProcessControlRequest(uint32 AppID)
+       16: 1012:{
+        -: 1013:   
+        -: 1014:   int32                   Status;
+        -: 1015:   CFE_ES_AppStartParams_t AppStartParams;
+        -: 1016:   uint32                  NewAppId;
+        -: 1017:   
+        -: 1018:   /*
+        -: 1019:   ** First get a copy of the Apps Start Parameters
+        -: 1020:   */
+       16: 1021:   CFE_PSP_MemCpy(&AppStartParams, &(CFE_ES_Global.AppTable[AppID].StartParams), sizeof(CFE_ES_AppStartParams_t));
+        -: 1022:   
+        -: 1023:   /*
+        -: 1024:   ** Now, find out what kind of Application control is being requested
+        -: 1025:   */
+       16: 1026:   switch ( CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest )
+        -: 1027:   {
+        -: 1028:         
+        -: 1029:      case CFE_ES_APP_EXIT:
+        -: 1030:         /*
+        -: 1031:         ** Kill the app, and dont restart it
+        -: 1032:         */
+        2: 1033:         Status = CFE_ES_CleanUpApp(AppID);
+        -: 1034:
+        2: 1035:         if ( Status == CFE_SUCCESS )
+        -: 1036:         {
+        1: 1037:            CFE_EVS_SendEvent(CFE_ES_EXIT_APP_INF_EID, CFE_EVS_INFORMATION, 
+        -: 1038:                              "Exit Application %s Completed.",AppStartParams.Name);
+        -: 1039:         }
+        -: 1040:         else
+        -: 1041:         {
+        1: 1042:            CFE_EVS_SendEvent(CFE_ES_EXIT_APP_ERR_EID, CFE_EVS_ERROR, 
+        -: 1043:                               "Exit Application %s Failed: CleanUpApp Error 0x%08X.",AppStartParams.Name, Status);
+        -: 1044:         }
+        2: 1045:         break;
+        -: 1046:                
+        -: 1047:      case CFE_ES_APP_ERROR:
+        -: 1048:         /*
+        -: 1049:         ** Kill the app, and dont restart it
+        -: 1050:         */
+        2: 1051:         Status = CFE_ES_CleanUpApp(AppID);
+        -: 1052:
+        2: 1053:         if ( Status == CFE_SUCCESS )
+        -: 1054:         {         
+        1: 1055:            CFE_EVS_SendEvent(CFE_ES_ERREXIT_APP_INF_EID, CFE_EVS_INFORMATION, 
+        -: 1056:                               "Exit Application %s on Error Completed.",AppStartParams.Name);
+        -: 1057:         }
+        -: 1058:         else
+        -: 1059:         {
+        1: 1060:            CFE_EVS_SendEvent(CFE_ES_ERREXIT_APP_ERR_EID, CFE_EVS_ERROR, 
+        -: 1061:                              "Exit Application %s on Error Failed: CleanUpApp Error 0x%08X.",AppStartParams.Name, Status);
+        -: 1062:         }
+        2: 1063:         break;
+        -: 1064:         
+        -: 1065:      case CFE_ES_SYS_DELETE:
+        -: 1066:         /*
+        -: 1067:         ** Kill the app, and dont restart it
+        -: 1068:         */
+        2: 1069:         Status = CFE_ES_CleanUpApp(AppID);
+        -: 1070:
+        2: 1071:         if ( Status == CFE_SUCCESS )
+        -: 1072:         {         
+        1: 1073:            CFE_EVS_SendEvent(CFE_ES_STOP_INF_EID, CFE_EVS_INFORMATION, 
+        -: 1074:                              "Stop Application %s Completed.",AppStartParams.Name);
+        -: 1075:         }
+        -: 1076:         else
+        -: 1077:         {
+        1: 1078:            CFE_EVS_SendEvent(CFE_ES_STOP_ERR3_EID, CFE_EVS_ERROR, 
+        -: 1079:                              "Stop Application %s Failed: CleanUpApp Error 0x%08X.",AppStartParams.Name, Status);
+        -: 1080:         }
+        2: 1081:         break;
+        -: 1082:                                         
+        -: 1083:      case CFE_ES_SYS_RESTART:
+        -: 1084:         /*
+        -: 1085:         ** Kill the app
+        -: 1086:         */
+        3: 1087:         Status = CFE_ES_CleanUpApp(AppID);
+        -: 1088:
+        3: 1089:         if ( Status == CFE_SUCCESS )
+        -: 1090:         {
+        -: 1091:            /*
+        -: 1092:            ** And start it back up again
+        -: 1093:            */
+        2: 1094:            Status = CFE_ES_AppCreate(&NewAppId, (char *)AppStartParams.FileName, 
+        -: 1095:                                           (char *)AppStartParams.EntryPoint, 
+        -: 1096:                                           (char *)AppStartParams.Name, 
+        -: 1097:                                           AppStartParams.Priority, 
+        -: 1098:                                           AppStartParams.StackSize, 
+        -: 1099:                                           AppStartParams.ExceptionAction);
+        -: 1100:                                           
+        2: 1101:            if ( Status == CFE_SUCCESS )
+        -: 1102:            {
+        1: 1103:               CFE_EVS_SendEvent(CFE_ES_RESTART_APP_INF_EID, CFE_EVS_INFORMATION, 
+        -: 1104:                                  "Restart Application %s Completed.", AppStartParams.Name);
+        -: 1105:            }
+        -: 1106:            else
+        -: 1107:            {
+        1: 1108:               CFE_EVS_SendEvent(CFE_ES_RESTART_APP_ERR3_EID, CFE_EVS_ERROR, 
+        -: 1109:                                  "Restart Application %s Failed: AppCreate Error 0x%08X.", AppStartParams.Name, Status);            
+        -: 1110:            }
+        -: 1111:         }
+        -: 1112:         else
+        -: 1113:         {
+        1: 1114:               CFE_EVS_SendEvent(CFE_ES_RESTART_APP_ERR4_EID, CFE_EVS_ERROR, 
+        -: 1115:                                  "Restart Application %s Failed: CleanUpApp Error 0x%08X.", AppStartParams.Name, Status);            
+        -: 1116:         }
+        3: 1117:         break;
+        -: 1118:            
+        -: 1119:      case CFE_ES_SYS_RELOAD:
+        -: 1120:         /*
+        -: 1121:         ** Kill the app
+        -: 1122:         */
+        3: 1123:         Status = CFE_ES_CleanUpApp(AppID);
+        -: 1124:
+        3: 1125:         if ( Status == CFE_SUCCESS )
+        -: 1126:         {
+        -: 1127:            /*
+        -: 1128:            ** And start it back up again
+        -: 1129:            */
+        2: 1130:            Status = CFE_ES_AppCreate(&NewAppId, (char *)AppStartParams.FileName, 
+        -: 1131:                                           (char *)AppStartParams.EntryPoint, 
+        -: 1132:                                           (char *)AppStartParams.Name, 
+        -: 1133:                                           AppStartParams.Priority, 
+        -: 1134:                                           AppStartParams.StackSize, 
+        -: 1135:                                           AppStartParams.ExceptionAction);
+        2: 1136:            if ( Status == CFE_SUCCESS )
+        -: 1137:            {
+        1: 1138:               CFE_EVS_SendEvent(CFE_ES_RELOAD_APP_INF_EID, CFE_EVS_INFORMATION, 
+        -: 1139:                                  "Reload Application %s Completed.", AppStartParams.Name);
+        -: 1140:            }
+        -: 1141:            else
+        -: 1142:            {
+        1: 1143:               CFE_EVS_SendEvent(CFE_ES_RELOAD_APP_ERR3_EID, CFE_EVS_ERROR, 
+        -: 1144:                                  "Reload Application %s Failed: AppCreate Error 0x%08X.", AppStartParams.Name, Status);            
+        -: 1145:            }
+        -: 1146:         }
+        -: 1147:         else
+        -: 1148:         {
+        1: 1149:            CFE_EVS_SendEvent(CFE_ES_RELOAD_APP_ERR4_EID, CFE_EVS_ERROR, 
+        -: 1150:                              "Reload Application %s Failed: CleanUpApp Error 0x%08X.", AppStartParams.Name, Status);            
+        -: 1151:         }
+        -: 1152:                                           
+        3: 1153:         break;
+        -: 1154:                
+        -: 1155:      case CFE_ES_SYS_EXCEPTION:
+        -: 1156:      
+        1: 1157:         CFE_EVS_SendEvent(CFE_ES_PCR_ERR1_EID, CFE_EVS_ERROR, 
+        -: 1158:                            "ES_ProcControlReq: Invalid State (EXCEPTION) Application %s.",
+        -: 1159:                             AppStartParams.Name);            
+        1: 1160:         break;
+        -: 1161:         
+        -: 1162:      default:
+        -: 1163: 
+        3: 1164:         CFE_EVS_SendEvent(CFE_ES_PCR_ERR2_EID, CFE_EVS_ERROR, 
+        -: 1165:                            "ES_ProcControlReq: Unknown State ( %d ) Application %s.",
+        -: 1166:                            CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest, AppStartParams.Name); 
+        -: 1167:         break;
+        -: 1168:      
+        -: 1169:   } 
+        -: 1170:   
+       16: 1171:} /* End Function */
+        -: 1172:
+        -: 1173:/*
+        -: 1174:**---------------------------------------------------------------------------------------
+        -: 1175:**   Name: CFE_ES_CleanUpApp
+        -: 1176:**
+        -: 1177:**   Purpose: Delete an application by cleaning up all of it's resources.
+        -: 1178:**---------------------------------------------------------------------------------------
+        -: 1179:*/
+        -: 1180:int32 CFE_ES_CleanUpApp(uint32 AppId)
+       16: 1181:{
+        -: 1182:   uint32    i;
+        -: 1183:   int32  Status;
+        -: 1184:   uint32 MainTaskId;
+       16: 1185:   int32  ReturnCode = CFE_SUCCESS;
+        -: 1186:
+        -: 1187:   #ifdef ES_APP_DEBUG
+        -: 1188:      OS_printf("------------- Starting App Cleanup: AppID = %d -----------\n",AppId);
+        -: 1189:      CFE_ES_ListResourcesDebug();
+        -: 1190:   #endif
+        -: 1191:   
+        -: 1192:   /*
+        -: 1193:   ** Call the Table Clean up function
+        -: 1194:   */
+        -: 1195:#ifndef EXCLUDE_CFE_TBL
+       16: 1196:   CFE_TBL_CleanUpApp(AppId);
+        -: 1197:#endif   
+        -: 1198:   /*
+        -: 1199:   ** Call the Software Bus clean up function
+        -: 1200:   */
+       16: 1201:   CFE_SB_CleanUpApp(AppId);
+        -: 1202:   
+        -: 1203:   /*
+        -: 1204:   ** Call the TIME Clean up function
+        -: 1205:   */
+       16: 1206:   CFE_TIME_CleanUpApp(AppId);
+        -: 1207:     
+        -: 1208:   /*
+        -: 1209:   ** Call the EVS Clean up function
+        -: 1210:   */
+       16: 1211:   Status = CFE_EVS_CleanUpApp(AppId);
+       16: 1212:   if ( Status != CFE_SUCCESS )
+        -: 1213:   {
+        6: 1214:      CFE_ES_WriteToSysLog("CFE_ES_CleanUpApp: Call to CFE_EVS_CleanUpApp returned Error: 0x%08X\n",Status);
+        6: 1215:      ReturnCode = CFE_ES_APP_CLEANUP_ERR;
+        -: 1216:   }
+        -: 1217:     
+        -: 1218:   
+        -: 1219:   /*
+        -: 1220:   ** Delete the ES Resources
+        -: 1221:   */
+       16: 1222:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1223:        
+        -: 1224:   /*
+        -: 1225:   ** Get Main Task ID
+        -: 1226:   */
+       16: 1227:   MainTaskId = CFE_ES_Global.AppTable[AppId].TaskInfo.MainTaskId;   
+        -: 1228:
+        -: 1229:   /*
+        -: 1230:   ** Delete all of the OS resources, close files, and delete the main task
+        -: 1231:   */
+       16: 1232:   Status = CFE_ES_CleanupTaskResources(MainTaskId);
+       16: 1233:   if ( Status != CFE_SUCCESS )
+        -: 1234:   {
+        2: 1235:      CFE_ES_WriteToSysLog("CFE_ES_CleanUpApp: CleanUpTaskResources for Task ID:%d returned Error: 0x%08X\n",
+        -: 1236:                               MainTaskId, Status);
+        2: 1237:      ReturnCode = CFE_ES_APP_CLEANUP_ERR;
+        -: 1238: 
+        -: 1239:   }
+        -: 1240:
+        -: 1241:   /*
+        -: 1242:   ** Delete any child tasks associated with this app
+        -: 1243:   */
+     1040: 1244:   for ( i = 0; i < OS_MAX_TASKS; i++ )
+        -: 1245:   {
+     1024: 1246:      if ((CFE_ES_Global.TaskTable[i].RecordUsed == TRUE) &&
+        -: 1247:          (CFE_ES_Global.TaskTable[i].AppId == AppId ))
+        -: 1248:      {         
+        2: 1249:         Status = CFE_ES_CleanupTaskResources(i);
+        2: 1250:         if ( Status != CFE_SUCCESS )
+        -: 1251:         {
+        2: 1252:            CFE_ES_WriteToSysLog("CFE_ES_CleanUpApp: CleanUpTaskResources for Task ID:%d returned Error: 0x%08X\n",
+        -: 1253:                                  i, Status);
+        2: 1254:            ReturnCode = CFE_ES_APP_CLEANUP_ERR;
+        -: 1255:         }
+        -: 1256:      } /* end if */
+        -: 1257:   } /* end for */
+        -: 1258:
+        -: 1259:   /*
+        -: 1260:   ** Unload the module
+        -: 1261:   */
+       16: 1262:   Status = OS_ModuleUnload(CFE_ES_Global.AppTable[AppId].StartParams.ModuleId);
+       16: 1263:   if ( Status == OS_ERROR )
+        -: 1264:   {
+        1: 1265:         CFE_ES_WriteToSysLog("CFE_ES_CleanUpApp: Module (ID:0x%08X) Unload failed. RC=0x%08X\n",
+        -: 1266:                               CFE_ES_Global.AppTable[AppId].StartParams.ModuleId, Status);
+        1: 1267:         ReturnCode = CFE_ES_APP_CLEANUP_ERR;
+        -: 1268:   }
+        -: 1269:
+        -: 1270:   /*
+        -: 1271:   ** Remove the app from the AppTable
+        -: 1272:   */
+       16: 1273:   if ( CFE_ES_Global.AppTable[AppId].Type == CFE_ES_APP_TYPE_EXTERNAL )
+        -: 1274:   {
+       16: 1275:      CFE_ES_Global.RegisteredExternalApps--;
+        -: 1276:   }
+        -: 1277:      
+       16: 1278:   CFE_ES_Global.AppTable[AppId].RecordUsed = FALSE;
+        -: 1279:
+        -: 1280:    #ifdef ES_APP_DEBUG   
+        -: 1281:       OS_TaskDelay(1000);   
+        -: 1282:       CFE_ES_ListResourcesDebug();
+        -: 1283:       printf("--------- Finished CFE_ES_CleanUpApp-------------\n");
+        -: 1284:    #endif 
+        -: 1285:
+       16: 1286:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1287:    
+       16: 1288:   return(ReturnCode);
+        -: 1289:   
+        -: 1290:} /* end function */
+        -: 1291:
+        -: 1292:/*
+        -: 1293:**---------------------------------------------------------------------------------------
+        -: 1294:**   Name: CFE_ES_CleanupTaskResources
+        -: 1295:**
+        -: 1296:**   Purpose: Clean up the OS resources associated with an individual Task
+        -: 1297:**---------------------------------------------------------------------------------------
+        -: 1298:*/
+        -: 1299:int32 CFE_ES_CleanupTaskResources(uint32 TaskId)
+       26: 1300:{
+        -: 1301:    OS_queue_prop_t         QueueProp;
+        -: 1302:    OS_timer_prop_t         TimerProp;
+        -: 1303:    OS_bin_sem_prop_t       SemProp;
+        -: 1304:    OS_count_sem_prop_t     CountSemProp;
+        -: 1305:    OS_mut_sem_prop_t       MutProp;
+        -: 1306:    OS_FDTableEntry         FileProp;
+        -: 1307:    
+        -: 1308:    int32                   Status;
+        -: 1309:    
+       26: 1310:    int32 Result = CFE_SUCCESS;
+        -: 1311:    uint32 i;
+        -: 1312:
+        -: 1313:    /*
+        -: 1314:    ** Delete Mutexes that belong to this task
+        -: 1315:    */
+      546: 1316:    for ( i= 0; i < OS_MAX_MUTEXES; i++)
+        -: 1317:    {
+      520: 1318:        if (OS_MutSemGetInfo(i, &MutProp) == OS_SUCCESS)
+        -: 1319:        {
+      520: 1320:            if ( MutProp.creator == TaskId )
+        -: 1321:            {
+        -: 1322:               #ifdef ES_APP_DEBUG   
+        -: 1323:                 OS_printf("Found a Mutex that belongs to Task %d\n", TaskId);
+        -: 1324:               #endif
+        -: 1325:               
+        -: 1326:               /*
+        -: 1327:               ** Delete it
+        -: 1328:               */
+      340: 1329:               Status = OS_MutSemDelete(i);
+      340: 1330:               if ( Status != OS_SUCCESS )
+        -: 1331:               {
+        2: 1332:                  CFE_ES_WriteToSysLog("Call to OS_MutSemDelete (ID:%d) failed. RC=0x%08X\n",
+        -: 1333:                               i, Status);
+        2: 1334:                  Result = CFE_ES_MUT_SEM_DELETE_ERR;
+        -: 1335:               }
+        -: 1336:               
+        -: 1337:            }            
+        -: 1338:        }
+        -: 1339:    }
+        -: 1340:
+        -: 1341:    /*
+        -: 1342:    ** Delete Binary Semaphores that belong to this task
+        -: 1343:    */
+      546: 1344:    for ( i= 0; i < OS_MAX_BIN_SEMAPHORES; i++)
+        -: 1345:    {
+      520: 1346:        if (OS_BinSemGetInfo(i, &SemProp) == OS_SUCCESS)
+        -: 1347:        {
+      520: 1348:           if(SemProp.creator == TaskId )
+        -: 1349:           {
+        -: 1350:               #ifdef ES_APP_DEBUG   
+        -: 1351:                 OS_printf("Found a Bin Semaphore that belongs to Task %d\n", TaskId);
+        -: 1352:               #endif
+        -: 1353:              /*
+        -: 1354:              ** Delete it
+        -: 1355:              */
+      180: 1356:              Status = OS_BinSemDelete(i);
+      180: 1357:               if ( Status != OS_SUCCESS )
+        -: 1358:               {
+        1: 1359:                  CFE_ES_WriteToSysLog("Call to OS_BinSemDelete (ID:%d) failed. RC=0x%08X\n",
+        -: 1360:                               i, Status);
+        1: 1361:                  Result = CFE_ES_BIN_SEM_DELETE_ERR;
+        -: 1362:
+        -: 1363:               }
+        -: 1364:
+        -: 1365:           }
+        -: 1366:         
+        -: 1367:        }
+        -: 1368:    }
+        -: 1369:
+        -: 1370:    /*
+        -: 1371:    ** Delete Counting Semaphores that belong to this task
+        -: 1372:    */
+      546: 1373:    for ( i= 0; i < OS_MAX_COUNT_SEMAPHORES; i++)
+        -: 1374:    {
+      520: 1375:       if (OS_CountSemGetInfo(i, &CountSemProp) == OS_SUCCESS)
+        -: 1376:        {
+      520: 1377:           if(CountSemProp.creator == TaskId )
+        -: 1378:           {
+        -: 1379:               #ifdef ES_APP_DEBUG   
+        -: 1380:                 OS_printf("Found a Counting Semaphore that belongs to Task %d\n", TaskId);
+        -: 1381:               #endif
+        -: 1382:              /*
+        -: 1383:              ** Delete it
+        -: 1384:              */
+      180: 1385:              Status = OS_CountSemDelete(i);
+      180: 1386:               if ( Status != OS_SUCCESS )
+        -: 1387:               {
+        1: 1388:                  CFE_ES_WriteToSysLog("Call to OS_CountSemDelete (ID:%d) failed. RC=0x%08X\n",
+        -: 1389:                               i, Status);
+        1: 1390:                  Result = CFE_ES_COUNT_SEM_DELETE_ERR;
+        -: 1391:
+        -: 1392:               }
+        -: 1393:
+        -: 1394:           }
+        -: 1395:        }
+        -: 1396:    }
+        -: 1397:
+        -: 1398:
+        -: 1399:    /*
+        -: 1400:    ** Delete Queues that belong to this task
+        -: 1401:    */
+     1690: 1402:    for ( i= 0; i < OS_MAX_QUEUES; i++)
+        -: 1403:    {
+     1664: 1404:        if (OS_QueueGetInfo(i, &QueueProp) == OS_SUCCESS)
+        -: 1405:        {
+     1664: 1406:           if(QueueProp.creator == TaskId )
+        -: 1407:           {
+        -: 1408:               #ifdef ES_APP_DEBUG   
+        -: 1409:                 OS_printf("Found a Queue that belongs to Task %d\n", TaskId);
+        -: 1410:               #endif
+        -: 1411:              /*
+        -: 1412:              ** Delete it
+        -: 1413:              */
+      576: 1414:              Status = OS_QueueDelete(i);
+      576: 1415:               if ( Status == OS_ERROR )
+        -: 1416:               {
+        1: 1417:                  CFE_ES_WriteToSysLog("Call to OS_QueueDelete (ID:%d) failed. RC=0x%08X\n",
+        -: 1418:                               i, Status);
+        1: 1419:                  Result = CFE_ES_QUEUE_DELETE_ERR;
+        -: 1420:
+        -: 1421:               }
+        -: 1422:
+        -: 1423:           }
+        -: 1424:        }
+        -: 1425:    }
+        -: 1426:
+        -: 1427:    /*
+        -: 1428:    ** Delete Timers that belong to this task
+        -: 1429:    */
+      156: 1430:    for ( i= 0; i < OS_MAX_TIMERS; i++)
+        -: 1431:    {
+      130: 1432:        if (OS_TimerGetInfo(i, &TimerProp) == OS_SUCCESS)
+        -: 1433:        {
+      130: 1434:           if(TimerProp.creator == TaskId )
+        -: 1435:           {
+        -: 1436:               #ifdef ES_APP_DEBUG   
+        -: 1437:                 OS_printf("Found a Timer that belongs to Task %d\n", TaskId);
+        -: 1438:               #endif
+        -: 1439:              /*
+        -: 1440:              ** Delete it
+        -: 1441:              */
+       15: 1442:              Status = OS_TimerDelete(i);
+       15: 1443:               if ( Status != OS_SUCCESS )
+        -: 1444:               {
+       15: 1445:                  CFE_ES_WriteToSysLog("Call to OS_TimerDelete (ID:%d) failed. RC=0x%08X\n",
+        -: 1446:                               i, Status);
+       15: 1447:                  Result = CFE_ES_TIMER_DELETE_ERR;
+        -: 1448:
+        -: 1449:               }
+        -: 1450:
+        -: 1451:           }
+        -: 1452:        }
+        -: 1453:    }
+        -: 1454:
+        -: 1455:    /*
+        -: 1456:    ** Close files that belong to this task
+        -: 1457:    */
+     1326: 1458:    for ( i= 0; i < OS_MAX_NUM_OPEN_FILES; i++)
+        -: 1459:    {
+     1300: 1460:        if (OS_FDGetInfo(i, &FileProp) == OS_FS_SUCCESS)
+        -: 1461:        {
+     1300: 1462:           if(FileProp.User == TaskId )
+        -: 1463:           {
+        -: 1464:               #ifdef ES_APP_DEBUG   
+        -: 1465:                 OS_printf("Found an open File that belongs to Task %d\n", TaskId);
+        -: 1466:               #endif
+        -: 1467:              /*
+        -: 1468:              ** Close it
+        -: 1469:              */
+      450: 1470:              Status = OS_close(i);
+      450: 1471:               if ( Status < OS_FS_SUCCESS )
+        -: 1472:               {
+      100: 1473:                  CFE_ES_WriteToSysLog("Call to OS_close (FD:%d) failed. RC=0x%08X\n",
+        -: 1474:                               i, Status);
+      100: 1475:                  Result = CFE_ES_FILE_CLOSE_ERR;
+        -: 1476:               }
+        -: 1477:
+        -: 1478:           }
+        -: 1479:        }
+        -: 1480:    }
+        -: 1481:
+        -: 1482:    /*
+        -: 1483:    ** Delete the task
+        -: 1484:    */
+       26: 1485:    Status = OS_TaskDelete(TaskId);
+       26: 1486:    if ( Status < OS_FS_SUCCESS )
+        -: 1487:    {
+        3: 1488:       CFE_ES_WriteToSysLog("Call to OS_TaskDelete (TaskID:%d) failed. RC=0x%08X\n",
+        -: 1489:                    TaskId, Status);
+        3: 1490:       Result = CFE_ES_TASK_DELETE_ERR;
+        -: 1491:    }
+        -: 1492:    
+        -: 1493:    /*
+        -: 1494:    ** Invalidate ES Task Table entry
+        -: 1495:    */
+       26: 1496:    CFE_ES_Global.TaskTable[TaskId].RecordUsed = FALSE;
+       26: 1497:    CFE_ES_Global.RegisteredTasks--;
+        -: 1498:    
+       26: 1499:    return(Result);
+        -: 1500:
+        -: 1501:}
+        -: 1502:
+        -: 1503:
+        -: 1504:/*
+        -: 1505:**---------------------------------------------------------------------------------------
+        -: 1506:**   Name: CFE_ES_ListResourcesDebug
+        -: 1507:**
+        -: 1508:**   Purpose: List the resources.
+        -: 1509:**---------------------------------------------------------------------------------------
+        -: 1510:*/
+        -: 1511:int32 CFE_ES_ListResourcesDebug(void)
+        1: 1512:{
+        -: 1513:    OS_task_prop_t        TaskProp;
+        -: 1514:    OS_queue_prop_t       QueueProp;
+        -: 1515:    OS_bin_sem_prop_t     SemProp;
+        -: 1516:    OS_count_sem_prop_t   CountSemProp;
+        -: 1517:    OS_mut_sem_prop_t     MutProp;
+        -: 1518:    OS_FDTableEntry       FileProp;
+        1: 1519:    int32                 NumSemaphores = 0;
+        1: 1520:    int32                 NumCountSems =0;
+        1: 1521:    int32                 NumMutexes = 0;
+        1: 1522:    int32                 NumQueues = 0;
+        1: 1523:    int32                 NumTasks = 0;
+        1: 1524:    int32                 NumFiles = 0;
+        -: 1525:    uint32                i;
+        -: 1526:
+        1: 1527:    OS_printf("OS Resources in Use:\n");
+        -: 1528:
+       65: 1529:    for ( i= 0; i < OS_MAX_TASKS; i++)
+        -: 1530:    {
+       64: 1531:        if (OS_TaskGetInfo(i, &TaskProp) == OS_SUCCESS)
+        -: 1532:        {
+       64: 1533:            NumTasks++;
+        -: 1534:        }
+        -: 1535:    }
+        1: 1536:    OS_printf("Number of Tasks: %d\n", (int) NumTasks);
+        -: 1537:
+       65: 1538:    for ( i= 0; i < OS_MAX_QUEUES; i++)
+        -: 1539:    {
+       64: 1540:        if (OS_QueueGetInfo(i, &QueueProp) == OS_SUCCESS)
+        -: 1541:        {
+       64: 1542:            NumQueues++;
+        -: 1543:        }
+        -: 1544:    }
+        1: 1545:    OS_printf("Number of Queues: %d\n", (int) NumQueues);
+        -: 1546:
+        -: 1547:
+       21: 1548:    for ( i= 0; i < OS_MAX_COUNT_SEMAPHORES; i++)
+        -: 1549:    {
+       20: 1550:       if (OS_CountSemGetInfo(i, &CountSemProp) == OS_SUCCESS)
+        -: 1551:        {
+       20: 1552:            NumCountSems++;
+        -: 1553:        }
+        -: 1554:    }
+        1: 1555:    OS_printf("Number of Counting Semaphores: %d\n",(int) NumCountSems);
+        -: 1556:    
+        -: 1557:    
+       21: 1558:    for ( i= 0; i < OS_MAX_BIN_SEMAPHORES; i++)
+        -: 1559:    {
+       20: 1560:        if (OS_BinSemGetInfo(i, &SemProp) == OS_SUCCESS)
+        -: 1561:        {
+       20: 1562:            NumSemaphores++;
+        -: 1563:        }
+        -: 1564:    }
+        1: 1565:    OS_printf("Number of Binary Semaphores: %d\n",(int) NumSemaphores);
+        -: 1566:
+        -: 1567:
+       21: 1568:    for ( i= 0; i < OS_MAX_MUTEXES; i++)
+        -: 1569:    {
+       20: 1570:        if (OS_MutSemGetInfo(i, &MutProp) == OS_SUCCESS)
+        -: 1571:        {
+       20: 1572:            NumMutexes++;
+        -: 1573:        }
+        -: 1574:    }
+        1: 1575:    OS_printf("Number of Mutexes: %d\n", (int) NumMutexes);
+        -: 1576:
+       51: 1577:    for ( i= 0; i < OS_MAX_NUM_OPEN_FILES; i++)
+        -: 1578:    {
+       50: 1579:        if (OS_FDGetInfo(i, &FileProp) == OS_FS_SUCCESS)
+        -: 1580:        {
+       50: 1581:            NumFiles++;
+        -: 1582:        }
+        -: 1583:    }
+        1: 1584:    OS_printf("Number of Open Files: %d\n",(int) NumFiles);
+        -: 1585:
+        1: 1586:    return CFE_SUCCESS;
+        -: 1587:
+        -: 1588:}
+        -: 1589:
+        -: 1590:/*
+        -: 1591:**---------------------------------------------------------------------------------------
+        -: 1592:**   Name: CFE_ES_GetAppInfoInternal
+        -: 1593:**
+        -: 1594:**   Purpose: Populate the cFE_ES_AppInfo structure with the data for an app.
+        -: 1595:**---------------------------------------------------------------------------------------
+        -: 1596:*/
+        -: 1597:void CFE_ES_GetAppInfoInternal(uint32 AppId, CFE_ES_AppInfo_t *AppInfoPtr )
+       11: 1598:{
+        -: 1599:
+        -: 1600:   int32              ReturnCode;
+        -: 1601:   OS_module_record_t ModuleInfo;
+        -: 1602:   
+        -: 1603:   
+       11: 1604:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1605:
+       11: 1606:   AppInfoPtr->AppId = AppId;
+       11: 1607:   AppInfoPtr->Type = CFE_ES_Global.AppTable[AppId].Type;
+       11: 1608:   strncpy((char *)AppInfoPtr->Name, (char *)CFE_ES_Global.AppTable[AppId].StartParams.Name, OS_MAX_API_NAME);
+       11: 1609:   AppInfoPtr->Name[OS_MAX_API_NAME - 1] = '\0';
+        -: 1610:
+       11: 1611:   strncpy((char *)AppInfoPtr->EntryPoint, (char *)CFE_ES_Global.AppTable[AppId].StartParams.EntryPoint, OS_MAX_API_NAME);
+       11: 1612:   AppInfoPtr->EntryPoint[OS_MAX_API_NAME - 1] = '\0';
+        -: 1613:   
+       11: 1614:   strncpy((char *)AppInfoPtr->FileName, (char *)CFE_ES_Global.AppTable[AppId].StartParams.FileName, OS_MAX_PATH_LEN);
+       11: 1615:   AppInfoPtr->FileName[OS_MAX_PATH_LEN - 1] = '\0';
+        -: 1616:   
+       11: 1617:   AppInfoPtr->ModuleId = CFE_ES_Global.AppTable[AppId].StartParams.ModuleId;
+       11: 1618:   AppInfoPtr->StackSize = CFE_ES_Global.AppTable[AppId].StartParams.StackSize;
+       11: 1619:   AppInfoPtr->StartAddress = CFE_ES_Global.AppTable[AppId].StartParams.StartAddress;
+       11: 1620:   AppInfoPtr->ExceptionAction = CFE_ES_Global.AppTable[AppId].StartParams.ExceptionAction;
+       11: 1621:   AppInfoPtr->Priority = CFE_ES_Global.AppTable[AppId].StartParams.Priority;
+        -: 1622: 
+       11: 1623:   AppInfoPtr->MainTaskId = CFE_ES_Global.AppTable[AppId].TaskInfo.MainTaskId;   
+       11: 1624:   strncpy((char *)AppInfoPtr->MainTaskName, (char *)CFE_ES_Global.AppTable[AppId].TaskInfo.MainTaskName, OS_MAX_API_NAME);
+       11: 1625:   AppInfoPtr->MainTaskName[OS_MAX_API_NAME - 1] = '\0';
+       11: 1626:   AppInfoPtr->NumOfChildTasks = CFE_ES_Global.AppTable[AppId].TaskInfo.NumOfChildTasks;
+        -: 1627:
+        -: 1628:   /*
+        -: 1629:   ** Get the execution counter for the main task
+        -: 1630:   */
+       11: 1631:   AppInfoPtr->ExecutionCounter = CFE_ES_Global.TaskTable[AppInfoPtr->MainTaskId].ExecutionCounter;
+        -: 1632:
+        -: 1633:   /* 
+        -: 1634:   ** Get the address information from the OSAL
+        -: 1635:   */
+       11: 1636:   ReturnCode = OS_ModuleInfo ( AppInfoPtr->ModuleId, &ModuleInfo );
+       11: 1637:   if ( ReturnCode == OS_SUCCESS )
+        -: 1638:   {
+       10: 1639:      AppInfoPtr->AddressesAreValid = ModuleInfo.addr.valid;
+       10: 1640:      AppInfoPtr->CodeAddress = ModuleInfo.addr.code_address;
+       10: 1641:      AppInfoPtr->CodeSize = ModuleInfo.addr.code_size;
+       10: 1642:      AppInfoPtr->DataAddress = ModuleInfo.addr.data_address;
+       10: 1643:      AppInfoPtr->DataSize = ModuleInfo.addr.data_size;
+       10: 1644:      AppInfoPtr->BSSAddress = ModuleInfo.addr.bss_address;
+       10: 1645:      AppInfoPtr->BSSSize = ModuleInfo.addr.bss_size;
+        -: 1646:   } 
+        -: 1647:   else
+        -: 1648:   {
+        1: 1649:      AppInfoPtr->AddressesAreValid = FALSE;
+        1: 1650:      AppInfoPtr->CodeAddress = 0;
+        1: 1651:      AppInfoPtr->CodeSize = 0;
+        1: 1652:      AppInfoPtr->DataAddress = 0;
+        1: 1653:      AppInfoPtr->DataSize = 0;
+        1: 1654:      AppInfoPtr->BSSAddress = 0;
+        1: 1655:      AppInfoPtr->BSSSize = 0;
+        -: 1656:   }
+        -: 1657:   
+        -: 1658:
+        -: 1659:
+       11: 1660:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1661:
+       11: 1662:} /* end function */
+        -: 1663:

@@ -1,0 +1,924 @@
+/**
+    \mainpage CFS Limit Checker (LC) User's Guide    
+
+       <UL>
+           <LI> \subpage cfslcrevhist
+           <LI> \subpage cfslcintro
+           <LI> \subpage cfslcovr
+           <LI> \subpage cfslcopr
+           <LI> \subpage cfslcreq
+           <LI> \subpage cfslcdg
+           <LI> \subpage cfslccmds
+           <LI> \subpage cfslctlm
+           <LI> \subpage cfslctbl
+           <LI> \subpage cfslccfg
+           <LI> \subpage cfslccons
+           <LI> \subpage cfslcfaqs
+           <LI> \subpage lc_events.h "CFS Limit Checker Event Message Reference" <BR>
+       </UL>
+**/
+
+/**
+  \page cfslcrevhist CFS Limit Checker User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_lc.dox  $
+  Revision 1.1 2012/07/31 16:53:25EDT nschweis 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/docs/dox_src/detailed_design/project.pj
+  Revision 1.4 2009/04/18 14:50:44EDT dkobe 
+  Cleaned up comments for users guide generation
+  Revision 1.4 2009/04/18 13:49:37EDT dkobe 
+  Corrected image links
+  Revision 1.3 2009/04/18 13:30:21EDT dkobe 
+  Standardized some content
+  \endverbatim
+  
+**/
+/**
+	\page cfslcintro CFS Limit Checker Introduction
+	
+  <H2> Scope </H2>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the CFS Limit Checker (LC) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personnel).  
+  The last section of the document, the deployment guide section, is intended for mission 
+  developers when deploying and configuring the FM application software for a mission 
+  flight software build environment. 
+
+  <H2> Applicable Documents </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Limit Checker Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Limit Checker Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Limit Checker Design Document </TD>
+  </TABLE>
+
+
+  <H2> Acronyms </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> LC      </TD> <TD WIDTH="40%"> CFS Limit Checker                               </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TDM     </TD> <TD WIDTH="40%"> Time Data Multiplex                             </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Prev: \ref cfslcrevhist <BR>
+  Next: \ref cfslcovr
+**/
+
+/**
+	\page cfslcovr CFS Limit Checker Overview
+	
+	The CFS Limit Checker (LC) application monitors telemetry data points in the flight system 
+	and compares the values against predefined threshold limits. When a threshold condition 
+	is encountered, an event message is issued and a Relative Time Sequence (RTS) command 
+	script may be initiated to respond to the threshold violation.
+	
+	LC is a table driven application. Monitoring and response configuration data is stored in 
+	definition tables that can be updated by the ground operators, while statistics on threshold 
+	violations are stored in dump-only results tables and summarized in housekeeping data.
+	
+	When processing beyond the standard comparison operators is needed, LC supports the use of 
+	custom evaluation functions that can be modified by a software patch or application update.
+	
+	\section LC Design Overview
+	
+	The LC design is built around two fundamental constructs. The Watchpoint and the 
+	Actionpoint.
+	
+	A Watchpoint defines a comparison between a piece of telemetry data and a pre-defined 
+	constant. Watchpoints are defined in the Watchpoint Definition Table (WDT). Statistics 
+	on watchpoint evaluations are stored in the Watchpoint Results Table (WRT)
+	(see \ref cfslctbl). Watchpoints are evaluated whenever a message containing the 
+    telemetry point is received over the software bus by LC.
+	
+	An Actionpoint defines the response LC will take based upon the current state of one 
+	or more watchpoints. Actionpoints are defined in the Actionpoint Definition Table (ADT). 
+	Statistics on actionpoint evaluations are stored in the Actionpoint Results Table (ART)
+    (see \ref cfslctbl). Actionpoints are evaluated whenever LC receives a message with
+    the #LC_SAMPLE_AP_MID message ID. This is not a ground command but an internal message 
+    that will normally come from the CFS scheduler (SCH) application.
+  
+    \image html LC_Context.png "LC Context Diagram" <BR>
+
+	Next: \ref cfslcopr
+**/
+
+/**
+    \page cfslcopr CFS Limit Checker Operation
+   
+    The CFS Limit Checker has three modes of operation, set by the #LC_SET_LC_STATE_CC ground 
+    command and echoed in the CurrentLCState housekeeping variable.
+  
+    Active - Active mode is the normal operation mode. In Active mode, the LC task performs 
+             all limit tests defined in the watchpoint definition table and will invoke stored 
+             command sequences if the results of watchpoint evaluations trigger an actionpoint 
+             condition as defined in the actionpoint definition table.
+
+    Passive - In Passive mode, the LC task behaves just like in Active mode except no stored 
+              command sequences will be invoked as a result of actionpoint triggers.
+
+    Disabled - When disabled, the LC task will perform no watchpoint or actionpoint limit 
+               tests.
+  
+    Watchpoints are evaluated whenever a message containing the telemetry point is received 
+    by LC. Watchpoints may evaluate to #LC_WATCH_TRUE, #LC_WATCH_FALSE, #LC_WATCH_NOT_MEASURED 
+    or #LC_WATCH_ERROR. Watchpoints can not be individually disabled. The only ways to keep 
+    Watchpoints from being evaluated are to squelch the telemetry packet on which they trigger, 
+    load a WDT that undefines a Watchpoint or disable the entire LC task.  
+  
+    Actionpoints are evaluated whenever LC receives a message with the #LC_SAMPLE_AP_MID message 
+    ID. An Actionpoint defines a logical relationship between one or more Watchpoint results. 
+    This logical relationship is defined in the form of a Reverse Polish Notation (RPN) 
+    expression in the actionpoint definition specified in the ADT. The result of this RPN 
+    evaluation is either #LC_ACTION_PASS, #LC_ACTION_FAIL, #LC_ACTION_NOT_MEASURED or
+    #LC_ACTION_ERROR. In the Actionpoint definition, a maximum number of consecutive fails is 
+    specified. If an Actionpoint fails the specified number of times consecutively, LC sends a 
+    request to the Stored Command (SC) application to execute a RTS (Relative Time Sequence) of 
+    commands as a response to this condition. 
+    
+    Actionpoints can be individually enabled/disabled with the #LC_SET_AP_STATE_CC ground 
+    command. The state of an actionpoint may be set to #LC_APSTATE_ACTIVE, #LC_APSTATE_PASSIVE, 
+    or #LC_APSTATE_DISABLED. These states operate in the same way as the application operating 
+    modes described above. #LC_APSTATE_PASSIVE will just disable RTS requests, while 
+    #LC_APSTATE_DISABLED will stop evaluation of the actionpoint all together. An additional 
+    state #LC_APSTATE_PERMOFF which functions the same as #LC_APSTATE_DISABLED but can only 
+    be changed via table load, can be set using the #LC_SET_AP_PERMOFF_CC ground command 
+    (see \ref cfslcfaqs).
+  
+    An example of this watchpoint/actionpoint relationship is shown in the following
+    diagram:
+    \image html LC_Monitor_Process.png "LC Monitoring Process Example Diagram" <BR>
+    
+    Since LC is a table driven application, it's behavior is dictated by the contents of the 
+    WDT and ADT configuration tables. To change this behavior is simply a matter of loading a 
+    new table with modified parameters. LC will check for any pending table updates whenever
+    it processes a housekeeping request. If the table passes validation it will go into
+    effect right away before the next message is read from the software bus. It is not necessary 
+    to disable LC before updating a table, however since the watchpoint and actionpoint definitions 
+    use two separate tables, careful attention needs to be paid to ensure that the tables are 
+    consistent with each other whenever LC is active. For this reason, a mission may choose to
+    always disable LC prior to any table updates and then re-enable monitoring.
+    
+    When either the WDT or ADT are updated, the corresponding results table (WRT or ART) is
+    reset to initialization values. 
+
+    Ideally, LC should require no intervention from the ground on a routine basis. Once monitoring 
+    is enabled, it will keep processing data and checking for threshold violations (assuming regular 
+    scheduler input).  
+   
+    Next: \ref cfslcreq <BR>
+    Prev: \ref cfslcovr
+**/
+
+/**
+    \page cfslcreq CFS Limit Checker Requirements
+    
+    The following are LC subsystem requirements. Detailed requirements are kept under MKS
+    version control and can be obtained by contacting CFS project management.  
+    
+    CFS-500: The CFS shall provide for on-board monitoring of telemetry points.
+   
+    CFS-501: The CFS shall have the capability to modify the selection and configuration of  
+             monitored telemetry via ground command 
+    
+    CFS-502: The selection of the monitored points shall be table driven and configurable 
+             via ground uploads  
+    
+    CFS-503: The CFS shall be able to execute autonomous recovery sequences upon detection 
+             of threshold failures in monitored telemetry  
+    
+    CFS-504: The contents of recovery sequences shall be configurable via ground uploads  
+    
+    Next: \ref cfslcdg <BR>
+    Prev: \ref cfslcopr 
+**/
+
+/**
+    \page cfslcdg  CFS Limit Checker Deployment Guide
+  
+    The first step in deploying the LC application is to size and construct default WDT 
+    and ADT tables. LC requires these default table images to be on the filesystem when
+    the application is started or it will fail to load. These files are required even
+    if using the Critical Data Store (CDS) since LC will fall back to these table images
+    if a table restore from CDS fails (which will happen during a power-on reset). Where LC 
+    will look to find these files is dictated by the configuration parameters 
+    #LC_WDT_FILENAME and #LC_ADT_FILENAME. 
+        
+    The size of the WDT and ADT tables is dictated by the configuration parameters    
+    #LC_MAX_WATCHPOINTS and #LC_MAX_ACTIONPOINTS. The total size of either table should 
+    not exceed the cFE size limit for a single buffered table set by the 
+    #CFE_TBL_MAX_SNGL_TABLE_SIZE parameter. When considering how many watchpoints and
+    actionpoints are needed, keep in mind the the entire WDT is sequentially searched
+    whenever a message that may contain watchpoints is received. Likewise the entire
+    ADT will be processed whenever a #LC_SAMPLE_AP_MID message is recieved. While it
+    is desirable to leave unused entries in both tables for later updates, large tables
+    will increase search time which may be undesirable depending on the telemetry and 
+    actionpoint sample rates required. LC defines the performance ID #LC_WDT_SEARCH_PERF_ID
+    that can be used to monitor WDT search time. There is not currently a performance
+    ID for ADT processing since the actionpoint sample cycle is not dependent on telemetry
+    rates but set by the configuration of the scheduler (SCH) application. 
+    
+    Example source code for these tables sized to the default number of watchpoints
+    and actionpoints are provided in the files lc_def_wdt.c and lc_def_adt.c.
+    
+    LC requires a message with the message ID #LC_SAMPLE_AP_MID to sample actionpoints.
+    The CFS scheduler application (SCH) needs to be configured to provide this trigger
+    message at the desired frequency for actionpoint processing to occur.
+    
+    The function #LC_ExecuteRTS in the file lc_custom.c needs to be reviewed for any 
+    modifications that may be needed to properly initiate RTS responses to actionpoint
+    failures. This function uses a local declaration of an example stored commanding
+    (SC) message structure which was done to allow LC to be compiled independent
+    of any other external application's data structures. A mission may choose to remove 
+    this and use a message structure declared outside LC instead. This also applies to the 
+    #LC_RTS_REQ_MID and #LC_RTS_REQ_CC constants in lc_mission_cfg.h. 
+    
+    If custom functions are to be used, the function #LC_CustomFunction in the file 
+    lc_custom.c needs to modified appropriately (see \ref cfslcfaqs). 
+  
+    In the lc_platform_cfg.h file, there are configuration parameters that control use
+    of the Critical Data Store (CDS) and the LC operation mode on application
+    initialization. The default case is not to use the CDS and to set the application
+    state to #LC_STATE_DISABLED.
+     
+    Next: \ref cfslccmds <BR>
+    Prev: \ref cfslcreq
+**/
+
+/**
+    \page cfslccmds CFS Limit Checker Commands
+
+    <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+    <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctlm</B> </TD> 
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctbl</B></TD>
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccfg</B></TD>
+    </TABLE>
+  
+    The following is a list of commands that are processed by the CFS Limit Checker Application: 
+**/
+
+/**
+    \page cfslctlm  CFS Limit Checker Telemetry
+
+    <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+    <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccmds</B> </TD> 
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctbl</B></TD>
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccfg</B></TD>
+    </TABLE>
+  
+    The following is a list of telemetry that is generated by the CFS Limit Checker Application: 
+**/
+
+/**
+    \page cfslctbl CFS Limit Checker Table Definitions
+
+    <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+    <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccmds</B></TD>
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctlm</B> </TD> 
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccfg</B></TD>
+    </TABLE>
+
+    <BR><BR>
+    <H2>Watchpoint Definition Table (WDT)</H2>
+      
+    The structure of a single watchpoint definition is defined by #LC_WDTEntry_t. The WDT is
+    an array of these entries sized by the configuration parameter #LC_MAX_WATCHPOINTS. 
+    The zero based index into this table is used by LC as the Watchpoint ID. 
+
+    Brief description of WDT fields:
+    <TABLE BORDER="0">
+    <TR><TD WIDTH="15%"><B>DataType</B></TD>
+        <TD WIDTH="30%">Watchpoint Data Type. Enumerated type that must be one of the following:</TD>
+        <TD WIDTH="25%"></TD></TR>
+      <TR><TD></TD><TD> #LC_WATCH_NOT_USED                     </TD><TD> Used to mark unused entries</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_BYTE,      #LC_DATA_UBYTE     </TD><TD> Signed or unsigned byte</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_WORD_BE,   #LC_DATA_WORD_LE   </TD><TD> Signed word, big or little endian</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_UWORD_BE,  #LC_DATA_UWORD_LE  </TD><TD> Unsigned word, big or little endian</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_DWORD_BE,  #LC_DATA_DWORD_LE  </TD><TD> Signed double word, big or little endian</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_UDWORD_BE, #LC_DATA_UDWORD_LE </TD><TD> Unsized double word, big or little endian</TD></TR>
+      <TR><TD></TD><TD> #LC_DATA_FLOAT_BE,  #LC_DATA_FLOAT_BE  </TD><TD> 32 bit float, big or little endian</TD></TR>
+    
+    <TR><TD><B>OperatorID</B></TD><TD>Comparison type. Enumerated type that must be one of the following:</TD></TR>
+      <TR><TD></TD><TD> #LC_NO_OPER              </TD><TD> Can be used for unused entries (optional)</TD></TR>
+      <TR><TD></TD><TD> #LC_OPER_LT, #LC_OPER_LE </TD><TD> Less Than, Less Than or Equal</TD></TR>
+      <TR><TD></TD><TD> #LC_OPER_NE, #LC_OPER_EQ </TD><TD> Not Equal, Equal</TD></TR>
+      <TR><TD></TD><TD> #LC_OPER_GT, #LC_OPER_GE </TD><TD> Greater Than, Greater Than or Equal</TD></TR>
+      <TR><TD></TD><TD> #LC_OPER_CUSTOM          </TD><TD> No compare, call custom function</TD></TR>
+    
+    <TR><TD><B>MessageID</B></TD><TD>Message ID for the message containing the watchpoint</TD></TR>
+                                                          
+    <TR><TD><B>WatchpointOffset</B></TD><TD>Zero based byte offset from the beginning of the message 
+                       (including any headers) to the first byte of the 
+                       watchpoint data</TD></TR>
+                                                          
+    <TR><TD><B>BitMask</B></TD><TD>Value to be masked with watchpoint data prior to comparison. Use the
+              constant #LC_NO_BITMASK when no masking is desired</TD></TR>
+                                                          
+    <TR><TD><B>ComparisonValue</B></TD><TD>Value watchpoint data is to be compared against. This field
+                      uses the #LC_MultiType_t union to store different data types
+                      in a fixed 32-bit field. See lc_def_wdt.c for examples of how 
+                      to set this value.</TD></TR>
+                                                          
+    <TR><TD><B>CustomFuncArgument</B></TD><TD>Optional 32 bit data to be passed to the custom function. 
+                         Can be used for any mission-defined purpose. </TD></TR>
+    </TABLE>
+    
+    <BR><BR>
+    <H2>Actionpoint Definition Table (ADT)</H2>
+      
+    The structure of a single actionpoint definition is defined by #LC_ADTEntry_t. The ADT is
+    an array of these entries sized by the configuration parameter #LC_MAX_ACTIONPOINTS. 
+    The zero based index into this table is used by LC as the Actionpoint ID. 
+
+    Brief description of ADT fields:<BR>
+
+    <TABLE BORDER="0">
+    <TR><TD WIDTH="15%"><B>DefaultState</B></TD>
+        <TD WIDTH="30%">Default (initial) state for this AP. Enumerated type that must be one
+                                     of the following:</TD>
+        <TD WIDTH="25%"></TD></TR>
+      <TR><TD></TD><TD> #LC_ACTION_NOT_USED</TD><TD> Used to mark unused entries</TD></TR>
+      <TR><TD></TD><TD> #LC_APSTATE_ACTIVE, #LC_APSTATE_PASSIVE, #LC_APSTATE_DISABLED</TD></TR>
+
+    <TR><TD><B>RTSId</B></TD><TD> RTS to request if this AP fails</TD></TR>
+    
+    <TR><TD><B>MaxFailsBeforeRTS</B></TD><TD> How may consecutive failures before an RTS request is sent</TD></TR>
+
+    <TR><TD><B>RPNEquation [#LC_MAX_RPN_EQU_SIZE]</B></TD><TD> Reverse Polish Equation that specifies when this 
+                                         actionpoint should fail. Combination of Watchpoint 
+                                         IDs and the following enumerated RPN operators:</TD></TR>
+      <TR><TD></TD><TD> #LC_RPN_AND, #LC_RPN_OR, #LC_RPN_XOR, #LC_RPN_NOT, #LC_RPN_EQUAL</TD></TR>
+      <TR><TD></TD><TD> See lc_def_adt.c for examples of how to construct this expression </TD></TR>
+
+    <TR><TD><B>EventType</B></TD><TD> Event type used for event message if AP fails. Enumerated type that must be 
+                                      one of the following:</TD></TR>
+      <TR><TD></TD><TD> #CFE_EVS_INFORMATION, #CFE_EVS_DEBUG, #CFE_EVS_ERROR, #CFE_EVS_CRITICAL</TD></TR>
+                                                          
+    <TR><TD><B>EventID</B></TD><TD> Event ID used for event message if AP fails   </TD></TR>
+    
+    <TR><TD><B>EventText[#LC_MAX_ACTION_TEXT]</B></TD><TD> Text used for the event msg when this AP fails
+                                     LC appends the trailer text #LC_AP_EVENT_TAIL_STR to 
+                                     this string when reporting actionpoint failures.</TD></TR>
+    </TABLE>
+
+    <BR><BR>
+    <H2>Watchpoint Results Table (WRT)</H2>
+      
+    The structure of a single watchpoint results table entry is defined by #LC_WRTEntry_t.
+    The WRT is an array of these entries sized by the configuration parameter 
+    #LC_MAX_WATCHPOINTS. The index into this table is the same Watchpoint ID used for the
+    corresponding definition table entry.
+
+    Brief description of WRT fields: <BR>
+    <TABLE BORDER="0">
+    <TR><TD WIDTH="15%"><B>WatchResult</B></TD><TD WIDTH="50%"> Result for the last evaluation of this watchpoint. Enumerated type that 
+                  will be one of the following:</TD></TR>
+      <TR><TD></TD><TD> #LC_WATCH_TRUE, #LC_WATCH_FALSE, #LC_WATCH_NOT_MEASURED, #LC_WATCH_ERROR</TD></TR>
+    
+    <TR><TD><B>EvaluationCount</B></TD><TD> How many times this watchpoint has been evaluated</TD></TR>
+    
+    <TR><TD><B>FalseToTrueCount</B></TD><TD> How many times this watchpoint has transitioned from #LC_WATCH_FALSE 
+                                             to #LC_WATCH_TRUE</TD></TR>
+    
+    <TR><TD><B>ConsecutiveTrueCount</B></TD><TD> Number of consecutive times this watchpoint has evaluated to 
+                                                 #LC_WATCH_TRUE</TD></TR>
+    
+    <TR><TD><B>CumulativeTrueCount</B></TD><TD> Total number of times this watchpoint has evaluated to 
+                                                #LC_WATCH_TRUE</TD></TR>
+    
+    <TR><TD><B>LastFalseToTrue</B></TD><TD> Watchpoint value and timestamp at the last transition from 
+                                           #LC_WATCH_FALSE (or #LC_WATCH_NOT_MEASURED) to #LC_WATCH_TRUE</TD></TR>
+
+    <TR><TD><B>LastTrueToFalse</B></TD><TD> Watchpoint value and timestamp at the last transition from 
+                                            #LC_WATCH_TRUE to #LC_WATCH_FALSE</TD></TR>
+    </TABLE>
+                      
+    The timestamp used for the LastFalseToTrue and LastTrueToFalse fields is taken from the
+    header of the message that contained the watchpoint. If the message timestamp is zero, LC 
+    will use the time returned by the #CFE_TIME_GetTime function instead.
+
+    <BR><BR>
+    <H2>Actionpoint Results Table (ART)</H2>
+      
+    The structure of a single actionpoint results table entry is defined by #LC_ARTEntry_t.
+    The ART is an array of these entries sized by the configuration parameter 
+    #LC_MAX_ACTIONPOINTS. The index into this table is the same Actionpoint ID used for the
+    corresponding definition table entry.
+ 
+    Brief description of ART fields: <BR>
+ 
+    <TABLE BORDER="0">
+    <TR><TD><B>ActionResult</B></TD><TD> Result for the last sample of this actionpoint. Enumerated type that 
+                   will be one of the following:</TD></TR>
+      <TR><TD></TD><TD> #LC_ACTION_PASS, #LC_ACTION_FAIL, #LC_ACTION_NOT_MEASURED, 
+                        #LC_ACTION_ERROR</TD></TR>
+    
+    <TR><TD><B>CurrentState</B></TD><TD> Current state of this actionpoint. Enumerated type that 
+                   will be one of the following:</TD></TR>
+      <TR><TD></TD><TD> #LC_ACTION_NOT_USED, #LC_APSTATE_ACTIVE, #LC_APSTATE_PASSIVE, 
+                        #LC_APSTATE_DISABLED, #LC_APSTATE_PERMOFF </TD></TR>
+    
+    <TR><TD><B>FailToPassCount</B></TD><TD> How many times this actionpoint has transitioned from 
+                      #LC_ACTION_FAIL to #LC_ACTION_PASS</TD></TR>
+    
+    <TR><TD><B>PassToFailCount</B></TD><TD> How many times this actionpoint has transitioned from
+                      #LC_ACTION_PASS to #LC_ACTION_FAIL</TD></TR>
+    
+    <TR><TD><B>ConsecutiveFailCount</B></TD><TD> Number of consecutive times this actionpoint has evaluated 
+                           #LC_ACTION_FAIL</TD></TR>
+    
+    <TR><TD><B>CumulativeFailCount</B></TD><TD> Total number of times this actionpoint has evaluated to 
+                          #LC_ACTION_FAIL</TD></TR>
+    
+    <TR><TD><B>CumulativeRTSExecCount</B></TD><TD> Total number of times an RTS request has been sent for 
+                             this actionpoint</TD></TR>
+    </TABLE>
+ 
+    <BR><BR>
+       
+    The entire WDT is searched anytime a message is received that may contain watchpoints.
+    For this reason, it is important that unused entries are properly marked by setting
+    the WDT parameter DataType to #LC_WATCH_NOT_USED.
+    
+    The entire ADT is processed anytime a sample request is received that specifies an
+    actionpoint equal to #LC_ALL_ACTIONPOINTS. For this reason, it is important that unused 
+    entries are properly marked by setting the ADT parameter DefaultState to 
+    #LC_ACTION_NOT_USED.
+     
+    When either the WDT or ADT are updated, the corresponding results table (WRT or ART) is
+    reset to initialization values. For each entry in the WRT, WatchResult is set to 
+    #LC_WATCH_NOT_MEASURED and all other values are zeroed. For each entry in the ART, 
+    ActionResult is set to #LC_ACTION_NOT_MEASURED, the CurrentState is set to the 
+    value of the actionpoint's DefaultState specified in the ADT, and all other values are 
+    zeroed.
+    
+    These are also the values used (for the entries specified in the command) when the 
+    #LC_RESET_AP_STATS_CC or #LC_RESET_WP_STATS_CC ground command is received.
+**/
+
+/**
+  \page cfslccfg CFS Limit Checker Configuration Parameters
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslccmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfslctbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the CFS Limit Checker
+  Application either for each platform or for a mission as a whole.
+
+**/
+
+/**
+    \page cfslccons CFS Limit Checker Operational Constraints
+  
+    The LC application requires default WDT and ADT table images to be on the filesystem 
+    when the application is started or it will fail to load. These files are required even
+    if using the Critical Data Store (CDS) since LC will fall back to these table images
+    if a table restore from CDS fails (which will happen during a power-on reset). Where LC 
+    will look to find these files is dictated by the configuration parameters 
+    #LC_WDT_FILENAME and #LC_ADT_FILENAME. 
+  
+    Potential causes for LC to terminate prematurely are an error return from the 
+    software bus in the application main loop or error return from one of the cFE table
+    services functions when LC tries to do table management (check for updates, dump 
+    requests etc.) during each housekeeping cycle. 
+    
+    When using the Critical Data Store (CDS), the results tables and housekeeping data
+    will only be restored if the application was shut down through cFE Executive Services 
+    and exited clean. If this is not the case, default values will be used 
+    (see \ref cfslcfaqs). 
+    
+    Ideally, LC should require no intervention from the ground on a routine basis. Once 
+    monitoring is enabled, it will keep processing data and checking for threshold violations 
+    (assuming regular scheduler input).  
+  
+    Next: \ref cfslcfaqs <BR>
+    Prev: \ref cfslctbl
+**/
+
+/**
+    \page cfslcfaqs CFS Limit Checker Frequently Asked Questions
+
+    <H1> Watchpoint Questions </H1>
+
+    <B> (Q)
+       Watchpoints evaluate to #LC_WATCH_TRUE or #LC_WATCH_FALSE. When the
+       the watchpoint is defined which should be the error condition?
+    </B> <BR> <BR> <I>
+       Watchpoints evaluate to a boolean True or False. So if you setup a 
+       comparison < 100 any watchpoint value 0 to 99 will evaluate #LC_WATCH_TRUE 
+       and 100+ will be #LC_WATCH_FALSE.
+
+       You want to construct the watchpoint cases so they evaluate True when you 
+       are outside of the acceptable range for a telemetry point. That's why there
+       are cumulative and consecutive true counts in the watchpoint results 
+       table, but no corresponding values for False.
+       
+       For some examples, see the file lc_def_wdt.c  
+    </I>
+
+    <B> (Q)
+       There is only a single comparison value for each watchpoint.
+       How can I have multiple thresholds for a single telemetry point?
+    </B> <BR> <BR> <I>
+       Create additional watchpoint definitions that reference the same telemetry
+       point but have different comparison values. The watchpoints will be evaluated
+       in the order they are listed in the WDT when the monitor point arrives.
+       
+       Having multiple watchpoints allows different Actionpoints to trigger on
+       each watchpoint state (or combination of states).
+    </I>
+  
+    <B> (Q)
+       How do I calculate the watchpoint offset?
+    </B> <BR> <BR> <I>
+       The offset is a zero based byte offset from the beginning of the message 
+       (including any headers) to the first byte of the watchpoint data. So for
+       a cFE raw command using CCSDS, the offset has to account for the size of
+       the cFE command header (#CFE_SB_CMD_HDR_SIZE).
+    </I>
+
+    <B> (Q)
+       When do I need to use the bitmask in a watchpoint definition?
+    </B> <BR> <BR> <I>
+       All watchpoints are sized to a 32 bit value when extracted from a message.
+       The specified bitmask value is then applied (as a bitwise AND operation) before
+       the comparison is made or the custom function is called.
+       
+       When the watchpoint data is sized, data types smaller than 32 bits are
+       properly sign or zero extended. For this reason, it is not necessary to
+       define a mask for UWORD, WORD or UBYTE, BYTE data types to compare properly.
+       Although it's not needed, a properly constructed bit mask will not cause
+       a problem for these evaluations either.
+       
+       When you really need to use a bitmask is when monitoring odd sized data 
+       (such as a 24 bit sensor reading) or testing data to see if certain bits
+       have been set (or cleared).
+       
+       When no bitmask is needed, be sure to use the constant #LC_NO_BITMASK (or it's
+       equivalent value 0xFFFFFFFF) in your WDT tables. Since masking is a bitwise
+       AND, setting the bitmask to zero will have the effect of always clearing the
+       watchpoint data prior to comparison.
+    </I>
+
+    <B> (Q)
+       Why do I need to specify the byte order (big or little endian) of the watchpoint
+       data type?
+    </B> <BR> <BR> <I>
+       One enhancement made to the CFS version of LC is that it will properly byte
+       swap watchpoint data prior to masking and comparison if the byte order of the 
+       data is different than the order used by the processor running LC. This allows 
+       LC to monitor telemetry data that might be constructed by instrument or other
+       subsystem processors that use a different byte order. 
+
+       LC determines it's byte order using the _STRUCT_HIGH_BIT_FIRST_ and 
+       _STRUCT_LOW_BIT_FIRST_ compiler switches that are set in the cFE header 
+       common_types.h according to the platform designated in the cFE platform 
+       makefile.         
+    </I>
+
+    <B> (Q)
+       When would a watchpoint evalute to #LC_WATCH_NOT_MEASURED?
+    </B> <BR> <BR> <I>
+       #LC_WATCH_NOT_MEASURED is an initialization value for the Watchpoint
+       Results Table. If a watchpoint has this WatchResult then the watchpoint
+       is unused (the DataType in the WDT is set to #LC_WATCH_NOT_USED) or a
+       message that contains the watchpoint has not yet been recieved by LC and 
+       evaluated.
+    </I>
+
+    <B> (Q)
+       When would a watchpoint evalute to #LC_WATCH_ERROR?
+    </B> <BR> <BR> <I>
+       #LC_WATCH_ERROR is a runtime error indicator for watchpoint processing.
+       Such a result should be rare since most of the causes are invalid watchpoint 
+       parameters that should be caught during validation of the Watchpoint
+       Definition Table.
+       
+       One notable exception is for floating point watchpoints when the message 
+       data is detected to be a floating point NAN (Not-A-Number) that can't
+       be relationally compared to any value.
+       
+       In all cases, an error event detailing the cause of the problem will be
+       issued when a WatchResult is set to #LC_WATCH_ERROR.
+    </I>
+
+    <B> (Q)
+       What is a custom function and how do I create one?
+    </B> <BR> <BR> <I>
+       A custom function is a way to do more complicated processing on a watchpoint
+       when the standard comparison operators are not adequate.
+       
+       When the OperatorID in a watchpoint definition is set to #LC_OPER_CUSTOM.
+       The function #LC_CustomFunction is called instead of LC doing a comparison.
+       #LC_CustomFunction will then return #LC_WATCH_TRUE or #LC_WATCH_FALSE that
+       will be used as the WatchResult.
+       
+       Although #LC_CustomFunction is the same entry point for all watchpoints with a 
+       designated custom function operator, a mission can modify the function body 
+       to switch on the watchpoint ID (or CustomFuncArgument specified in the
+       watchpoint definition) and branch to as many different sub-functions
+       as it needs for watchpoint specific processing.
+ 
+       The #LC_CustomFunction stub is in the source file lc_custom.c   
+    </I>
+
+    <B> (Q)
+       How is the WPResults array in the housekeeping packet (#LC_HkPacket_t) 
+       interpreted?
+    </B> <BR> <BR> <I>
+       The WPResults array is a byte array (aligned to the nearest longword
+       boundary) that contains a packed subset of the current contents of the 
+       Watchpoint Results Table (see #LC_WRTEntry_t).
+       
+       It allocates 2 bits per watchpoint for the most recent watchpoint
+       comparison result. The numerical 2 bit values are defined using the
+       following constants:
+       
+       #LC_HKWR_FALSE, #LC_HKWR_TRUE, #LC_HKWR_ERROR, #LC_HKWR_NOT_MEASURED
+       
+       Ordering (up to #LC_MAX_WATCHPOINTS) is as follows : 
+       
+       Byte 0:(Rwp3, Rwp2, Rwp1, Rwp0), Byte 1:(Rwp7, Rwp6, Rwp5, Rwp4), etc...
+ 
+       The WPResults array is constructed every housekeeping cycle and is not
+       effected by the reset counters (#LC_RESET_CC) ground command. It will only
+       get cleared if the Watchpoint Results Table is reset (via a new WDT table 
+       load or with a #LC_RESET_WP_STATS_CC ground command)
+    </I>
+
+    <H1> Actionpoint Questions </H1>
+
+    <B> (Q)
+       Actionpoints evaluate to #LC_ACTION_PASS or #LC_ACTION_FAIL. 
+       How should the RPN expression get constructed so it will evaluate
+       to the proper result?
+    </B> <BR> <BR> <I>
+       Actionpoint RPN expressions are combinations of watchpoint states and
+       logical operators that evaluate to a boolean True or False. 
+       
+       Just like a watchpoint evaluation of True indicates a parameter outside
+       acceptable limits, an AP expression that evaluates True is considered
+       to have Failed and will have it's ActionResult set to #LC_ACTION_FAIL.
+       
+       While the terminology may seem confusing, the key point is to construct
+       both watchpoint and actionpoint expressions to define the error condition
+       LC is looking for and NOT the normal condition of the spacecraft data
+       stream.
+       
+       For some examples, see the file lc_def_adt.c  
+    </I>
+
+    <B> (Q)
+       When would a actionpoint evalute to #LC_ACTION_NOT_MEASURED?
+    </B> <BR> <BR> <I>
+       #LC_ACTION_NOT_MEASURED is an initialization value for the Actionpoint
+       Results Table. If an actionpoint has this ActionResult then one of
+       three possible conditions are true: 
+       
+       1) The actionpoint is unused (the DefaultState in the ADT is set to 
+          #LC_ACTION_NOT_USED).
+        
+       2) An actionpoint sample request (#LC_SAMPLE_AP_MID) targeting the AP has not 
+          yet been recieved by LC so the AP has not yet been evaluated.
+          
+       3) One or more of the watchpoints that this AP depends on (as defined by
+          the RPN expression) has a current WatchResult of #LC_WATCH_NOT_MEASURED
+          so the AP can't be evaluated.
+    </I>
+
+    <B> (Q)
+       When would a actionpoint evalute to #LC_ACTION_ERROR?
+    </B> <BR> <BR> <I>
+       #LC_ACTION_ERROR is a runtime error indicator for actionpoint processing.
+       Such a result should be rare since most of the causes are invalid actionpoint 
+       parameters or improperly constructed RPN expressions that should be caught 
+       during validation of the Actionpoint Definition Table.
+       
+       However, an exception is the case where one or more watchpoints that this 
+       AP depends on (as defined by the RPN expression) has a current WatchResult of 
+       #LC_WATCH_ERROR. Since the AP can't be evaluated, this will cause the ActionResult
+       to be set to #LC_ACTION_ERROR.
+       
+       In all cases, an error event detailing the cause of the problem will be
+       issued when an ActionResult is set to #LC_ACTION_ERROR.
+    </I>
+
+    <B> (Q)
+       How does the Actionpoint state #LC_APSTATE_PERMOFF differ from 
+       #LC_APSTATE_DISABLED?
+    </B> <BR> <BR> <I>
+       The AP state #LC_APSTATE_PERMOFF is intended to provide a way to disable
+       an AP so it can not easily be turned back on by mistake. Such actionpoints
+       may not be needed after a seperation sequence or only apply to certain 
+       mission phases. 
+       
+       While the two states are treated the same way during actionpoint processing
+       (the AP isn't evaluated), there are a few differences.
+       
+       An AP can't be set to #LC_APSTATE_PERMOFF with the #LC_SET_AP_STATE_CC command,
+       it must be done with the #LC_SET_AP_PERMOFF_CC command.
+       
+       To set an AP to #LC_APSTATE_PERMOFF with the #LC_SET_AP_PERMOFF_CC command, the
+       current AP state must be #LC_APSTATE_DISABLED.
+       
+       The #LC_SET_AP_PERMOFF_CC command can only be issued for a single actionpoint,
+       #LC_ALL_ACTIONPOINTS is not valid as an argument for this command.
+       
+       Once an AP is set to #LC_APSTATE_PERMOFF, it can only be changed with a new ADT
+       table load.
+    </I>
+
+    <B> (Q)
+       How is the APResults array in the housekeeping packet (#LC_HkPacket_t) 
+       interpreted?
+    </B> <BR> <BR> <I>
+       The APResults array is a byte array (aligned to the nearest longword
+       boundary) that contains a packed subset of the current contents of the 
+       Actionpoint Results Table (see #LC_ARTEntry_t).
+       
+       It allocates 4 bits per actionpoint, with 2 bits representing the current
+       state, and 2 bits for the most recent evaluation result. 
+       
+       The numerical 2 bit values for current state are defined using the
+       following constants:
+       
+       #LC_HKAR_STATE_NOT_USED, #LC_HKAR_STATE_ACTIVE, #LC_HKAR_STATE_PASSIVE,
+       #LC_HKAR_STATE_DISABLED
+
+       An actionpoint whose current state is #LC_APSTATE_PERMOFF will have it's
+       state reported in the APResults as #LC_HKAR_STATE_NOT_USED.
+
+       The numerical 2 bit values for evaluation results are defined using the
+       following constants:
+       
+       #LC_HKAR_PASS, #LC_HKAR_FAIL, #LC_HKAR_ERROR, #LC_HKAR_NOT_MEASURED 
+       
+       Ordering (up to #LC_MAX_ACTIONPOINTS) is as follows : 
+       
+       Byte 0:(Sap1, Rap1, Sap0, Rap0), Byte 1:(Sap3, Rap3, Sap2, Rap2), etc...
+ 
+       The APResults array is constructed every housekeeping cycle and is not
+       effected by the reset counters (#LC_RESET_CC) ground command. It will only
+       get cleared if the Actionpoint Results Table is reset (via a new ADT table 
+       load or with a #LC_RESET_AP_STATS_CC ground command)
+    </I>
+  
+    <B> (Q)
+       Will an RTS get requested more than once if an AP stays in the #LC_ACTION_FAIL
+       state?
+    </B> <BR> <BR> <I>
+       No. Assuming the current state of an actionpoint is #LC_APSTATE_ACTIVE, then
+       when the actionpoint fails enough times to trigger an RTS, the state is set
+       to #LC_APSTATE_PASSIVE.
+       
+       In the passive state, the AP will continue to be sampled and statistics
+       updated, but no RTS requests will be initiated.
+    </I>
+
+    <B> (Q)
+       Can we filter event messages per actionpoint?
+    </B> <BR> <BR> <I>
+       Not in the current implementation. Transition event messages for actionpoints
+       are of type #CFE_EVS_DEBUG and enabling them will turn on events for all
+       actionpoint transitions.
+       
+       However, it is planned to add event message limits and event message counts
+       to the ADT and ART tables that would allow this type of filtering in a future
+       version of LC.
+    </I>
+
+    <H1> General Questions </H1>
+  
+    <B> (Q)
+       When do results tables get cleared?
+    </B> <BR> <BR> <I>
+       When either the WDT or ADT are updated, the corresponding results table (WRT or ART) is
+       reset to initialization values. For each entry in the WRT, WatchResult is set to 
+       #LC_WATCH_NOT_MEASURED and all other values are zeroed. For each entry in the ART, 
+       ActionResult is set to #LC_ACTION_NOT_MEASURED, the CurrentState is set to the 
+       value of the actionpoint's DefaultState specified in the ADT, and all other values are 
+       zeroed.
+    
+       These are also the values used (for the entries specified in the command) when the 
+       #LC_RESET_AP_STATS_CC or #LC_RESET_WP_STATS_CC ground command is received.
+    </I>
+  
+    <B> (Q)
+       Where can I find some examples of watchpoint and actionpoint table definitions?
+    </B> <BR> <BR> <I>
+       The files lc_def_wdt.c and lc_def_adt.c provide example source code files that can be
+       used to build LC tables and contain some sample table entries in the comment blocks.
+       
+       Since the CFS LC was based upon the LC implementation for LRO, LRO limit checker
+       tables may also provide guidance though there are some minor differences in syntax between
+       the two implementations. 
+    </I>
+
+    <B> (Q)
+       When using the CDS, what is restored and when will defaults be used?
+    </B> <BR> <BR> <I>
+       When the platform configuration parameter LC_SAVE_TO_CDS is defined, LC will attempt to
+       use the critical data store (CDS) to save and restore data across application restarts. 
+       The data that LC will save are:
+       
+         Watchpoint and Actionpoint Definition Tables
+         Watchpoint and Actionpoint Results Tables
+         LC Housekeeping Data
+         
+       While the definition tables only need to be updated in the CDS when new ones are loaded, 
+       it is not practical from a performance standpoint to update the CDS every time the 
+       housekeeping data or results data changes. For this reason, results tables and housekeeping
+       are only updated in the CDS if the application is shut down by cFE Executive Services and exits 
+       cleanly. When the application starts, it will check a "saved on exit" flag in the data 
+       restored from CDS to see if the data is good. If not, it will be reset to initialization
+       values.
+       
+       The detailed sequence for a CDS restore on application startup (with failure cases) is as
+       follows:
+       
+       1) Try to restore Watchpoint Definition Table from CDS
+       If FAILS Load default Watchpoint Definition Table from filesystem
+            Load default Actionpoint Definition Table from filesystem
+            Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+
+       2) If 1 succeeded, try to restore Actionpoint Definition Table from CDS
+       If FAILS Load default Watchpoint Definition Table from filesystem
+            Load default Actionpoint Definition Table from filesystem
+            Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+
+       3) If 1 and 2 succeeded, try to restore Watchpoint Results Table from CDS
+       If FAILS Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+
+       4) If 1 - 3 succeeded, try to restore Actionpoint Results Table from CDS
+       If FAILS Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+
+       5) If 1 - 4 succeeded, try to restore Application data 
+       (housekeeping variables) from CDS
+       If FAILS Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+
+       6) If 1 - 5 succeeded, check "save on exit" flag in application data
+       restored in 5
+       IF not set to "SAVED" (meaning we updated on exit)
+            Clear Watchpoint Results Table to init values
+            Clear Actionpoint Results Table to init values
+            Clear Housekeeping variables to init values
+    </I>
+  
+    Prev: \ref cfslccons
+**/

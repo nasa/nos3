@@ -1,0 +1,40 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: March 18, 2008  
+!
+!       REFERENCES:
+!
+!       NOTES:  This defines the "secondary header" for Memory Manager Load and
+!		dump files.  The CFE_SubType in the cfe_file_header is used to 
+!		determine if this secondary header should be used.
+!
+!       HISTORY: 
+!
+!  2008/03/18  WFM             : Initial
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+  RECORD MM_FILE_HEADER APPEND,     DESC="CFS Memory Manager File Header (Secondary header)"
+!
+    ULI AddrOffset	DESC="Optional offset used as the absolute address if SymName is NULL" 
+!
+    char SymName[OS_MAX_SYM_LEN] DESC="Symbol name string if supported"
+!
+    ULI NumBytes	DESC="Number of bytes to load from or dump to the file"
+!
+    ULI CRC		DESC="CRC value of the data"
+!
+    UB MemType		DESC="Memory Type of the data", DISCRETE,
+			DRANGE=(1,2,3,4,5),
+			DLABEL=("RAM","EEPROM","MEM8","MEM16","MEM32")
+
+    UB spare[3]		DESC="pad for alignment"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

@@ -1,0 +1,52 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TST ES HK Packet
+!       Packet Length:  ? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2006/11/13  WFM	: Initial
+!  2007/ 6/27  WFM	: Added Memory Pool Handle variables for the first 5
+!			: Memory Pools allocated
+!
+!==============================================================================
+!
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST TBL HK Packet",
+                        STALE = 36
+!
+#include "ccsds_header.rdl"
+! 
+  UB  $sc_$cpu_TST_ES_CMDPC        DESC="$sc $cpu TST ES Command Processed Counter"
+!
+  UB  $sc_$cpu_TST_ES_CMDEC        DESC="$sc $cpu TST ES Command Error Counter"
+  UI  $sc_$cpu_TST_ES_SPARE	DESC="Spare"
+!
+  ULI $sc_$cpu_TST_ES_CDSVar1	DESC="$sc $cpu TST ES Critical Data variable 1"
+  ULI $sc_$cpu_TST_ES_CDSVar2	DESC="$sc $cpu TST ES Critical Data variable 2"
+  ULI $sc_$cpu_TST_ES_CDSVar3	DESC="$sc $cpu TST ES Critical Data variable 3"
+  ULI $sc_$cpu_TST_ES_CDSVar4	DESC="$sc $cpu TST ES Critical Data variable 4"
+  ULI $sc_$cpu_TST_ES_CDSVar5	DESC="$sc $cpu TST ES Critical Data variable 5"
+  ULI $sc_$cpu_TST_ES_MemPool1	DESC="$sc $cpu TST ES Memory Pool 1 Handle"
+  ULI $sc_$cpu_TST_ES_MemPool2	DESC="$sc $cpu TST ES Memory Pool 2 Handle"
+  ULI $sc_$cpu_TST_ES_MemPool3	DESC="$sc $cpu TST ES Memory Pool 3 Handle"
+  ULI $sc_$cpu_TST_ES_MemPool4	DESC="$sc $cpu TST ES Memory Pool 4 Handle"
+  ULI $sc_$cpu_TST_ES_MemPool5	DESC="$sc $cpu TST ES Memory Pool 5 Handle"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

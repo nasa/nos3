@@ -1,0 +1,386 @@
+        -:    0:Source:../src/mm_utils.c
+        -:    0:Graph:mm_utils.gcno
+        -:    0:Data:mm_utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:7
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: mm_utils.c.gcov 1.1.2.4 2011/12/05 15:19:19EST jmdagost Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**   Utility functions used for processing CFS memory manager commands
+        -:    7:**
+        -:    8:**   $Log: mm_utils.c.gcov  $
+        -:    8:**   Revision 1.1.2.4 2011/12/05 15:19:19EST jmdagost 
+        -:    8:**   Latest unit test results (as of 2011-Dec-05)
+        -:    9:**   Revision 1.9 2010/11/29 13:35:17EST jmdagost 
+        -:   10:**   Replaced ifdef tests with if-true tests.
+        -:   11:**   Revision 1.8 2009/06/18 10:17:09EDT rmcgraw 
+        -:   12:**   DCR8291:1 Changed OS_MEM_ #defines to CFE_PSP_MEM_
+        -:   13:**   Revision 1.7 2009/06/12 14:37:28EDT rmcgraw 
+        -:   14:**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   15:**   Revision 1.6 2008/09/05 14:24:12EDT dahardison 
+        -:   16:**   Updated references to local HK variables
+        -:   17:**   Revision 1.5 2008/09/05 12:33:08EDT dahardison 
+        -:   18:**   Modified the MM_VerifyCmdLength routine to issue a special error event message and
+        -:   19:**   not increment the command error counter if a housekeeping request is received
+        -:   20:**   with a bad command length
+        -:   21:**   Revision 1.4 2008/05/22 15:13:56EDT dahardison 
+        -:   22:**   Changed inclusion of cfs_lib.h to cfs_utils.h
+        -:   23:**   Revision 1.3 2008/05/19 15:23:35EDT dahardison 
+        -:   24:**   Version after completion of unit testing
+        -:   25:** 
+        -:   26:*************************************************************************/
+        -:   27:
+        -:   28:/*************************************************************************
+        -:   29:** Includes
+        -:   30:*************************************************************************/
+        -:   31:#include "mm_app.h"
+        -:   32:#include "mm_utils.h"
+        -:   33:#include "mm_perfids.h"
+        -:   34:#include "mm_msgids.h"
+        -:   35:#include "mm_events.h"
+        -:   36:#include "cfs_utils.h"
+        -:   37:#include <string.h>
+        -:   38:
+        -:   39:/*************************************************************************
+        -:   40:** External Data
+        -:   41:*************************************************************************/
+        -:   42:extern MM_AppData_t MM_AppData;
+        -:   43:
+        -:   44:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   45:/*                                                                 */
+        -:   46:/* Reset the local housekeeping variables to default parameters    */
+        -:   47:/*                                                                 */
+        -:   48:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:   49:void MM_ResetHk(void)
+function MM_ResetHk called 102 returned 100% blocks executed 100%
+      102:   50:{
+        -:   51:                                                     
+      102:   52:   MM_AppData.LastAction      = MM_NOACTION;
+      102:   53:   MM_AppData.MemType         = MM_NOMEMTYPE;
+      102:   54:   MM_AppData.Address         = MM_CLEAR_ADDR;
+      102:   55:   MM_AppData.FillPattern     = MM_CLEAR_PATTERN;               
+      102:   56:   MM_AppData.BytesProcessed  = 0;
+      102:   57:   MM_AppData.FileName[0]     = MM_CLEAR_FNAME;       
+        -:   58:
+        -:   59:   return;
+        -:   60:    
+        -:   61:} /* end MM_ResetHk */
+        -:   62:
+        -:   63:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   64:/*                                                                 */
+        -:   65:/* Process a load, dump, or fill segment break                     */
+        -:   66:/*                                                                 */
+        -:   67:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   68:void MM_SegmentBreak(void)
+function MM_SegmentBreak called 119 returned 100% blocks executed 100%
+      119:   69:{
+        -:   70:   /* 
+        -:   71:   ** Performance Log entry stamp 
+        -:   72:   */
+      119:   73:   CFE_ES_PerfLogEntry(MM_SEGBREAK_PERF_ID);
+call    0 returned 100%
+        -:   74:   
+        -:   75:   /*
+        -:   76:   ** Give something else the chance to run
+        -:   77:   */
+      119:   78:   OS_TaskDelay(MM_PROCESSOR_CYCLE);
+call    0 returned 100%
+        -:   79:
+        -:   80:   /* 
+        -:   81:   ** Performance Log exit stamp 
+        -:   82:   */
+      119:   83:   CFE_ES_PerfLogExit(MM_SEGBREAK_PERF_ID);
+call    0 returned 100%
+        -:   84:   
+        -:   85:   return;
+        -:   86:
+        -:   87:} /* End of MM_SegmentBreak */
+        -:   88:
+        -:   89:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   90:/*                                                                 */
+        -:   91:/* Verify command packet length                                    */
+        -:   92:/*                                                                 */
+        -:   93:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   94:boolean MM_VerifyCmdLength(CFE_SB_MsgPtr_t msg, 
+        -:   95:                           uint16          ExpectedLength)
+function MM_VerifyCmdLength called 259 returned 100% blocks executed 100%
+      259:   96:{
+      259:   97:   boolean result = TRUE;
+        -:   98:   uint16  CommandCode;  
+        -:   99:   uint16  ActualLength;
+        -:  100:   CFE_SB_MsgId_t MessageID;
+        -:  101:   
+        -:  102:   /*
+        -:  103:   ** Verify the message packet length...
+        -:  104:   */
+      259:  105:   ActualLength = CFE_SB_GetTotalMsgLength(msg);
+call    0 returned 100%
+      259:  106:   if (ExpectedLength != ActualLength)
+branch  0 taken 7% (fallthrough)
+branch  1 taken 93%
+        -:  107:   {
+       17:  108:      MessageID   = CFE_SB_GetMsgId(msg);
+call    0 returned 100%
+       17:  109:      CommandCode = CFE_SB_GetCmdCode(msg);
+call    0 returned 100%
+        -:  110:
+       17:  111:      if (MessageID == MM_SEND_HK_MID)
+branch  0 taken 6% (fallthrough)
+branch  1 taken 94%
+        -:  112:      {
+        -:  113:          /*
+        -:  114:          ** For a bad HK request, just send the event. We only increment
+        -:  115:          ** the error counter for ground commands and not internal messages.
+        -:  116:          */
+        1:  117:          CFE_EVS_SendEvent(MM_HKREQ_LEN_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  118:                  "Invalid HK request msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  119:                  MessageID, CommandCode, ActualLength, ExpectedLength);
+        -:  120:      }
+        -:  121:      else
+        -:  122:      {
+       16:  123:          CFE_EVS_SendEvent(MM_LEN_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  124:                  "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  125:                  MessageID, CommandCode, ActualLength, ExpectedLength);
+       16:  126:          MM_AppData.ErrCounter++;          
+        -:  127:      }
+        -:  128:
+       17:  129:      result = FALSE;
+        -:  130:   }
+        -:  131:
+      259:  132:   return(result);
+        -:  133:
+        -:  134:} /* End of MM_VerifyCmdLength */
+        -:  135:
+        -:  136:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  137:/*                                                                 */
+        -:  138:/* Verify peek and poke command parameters                         */
+        -:  139:/*                                                                 */
+        -:  140:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  141:boolean MM_VerifyPeekPokeParams(uint32 Address, 
+        -:  142:                                uint8  MemType, 
+        -:  143:                                uint8  SizeInBits)
+function MM_VerifyPeekPokeParams called 46 returned 100% blocks executed 100%
+       46:  144:{
+       46:  145:   boolean  Valid = TRUE;
+        -:  146:   uint8    SizeInBytes;
+        -:  147:   int32    OS_Status;
+        -:  148:   
+       46:  149:   switch(SizeInBits)
+branch  0 taken 20%
+branch  1 taken 33%
+branch  2 taken 43%
+branch  3 taken 4%
+        -:  150:   {
+        -:  151:      case MM_BYTE_BIT_WIDTH:
+        9:  152:         SizeInBytes = 1;
+        9:  153:         break;
+        -:  154:      
+        -:  155:      case MM_WORD_BIT_WIDTH:
+       15:  156:         SizeInBytes = 2;
+       15:  157:         if (CFS_Verify16Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 13% (fallthrough)
+branch  2 taken 87%
+        -:  158:            {
+        2:  159:            Valid = FALSE;
+        2:  160:            MM_AppData.ErrCounter++;
+        2:  161:            CFE_EVS_SendEvent(MM_ALIGN16_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  162:                              "Data and address not 16 bit aligned: Addr = 0x%08X Size = %d",
+        -:  163:                                                                       Address, SizeInBytes);
+        -:  164:            
+        -:  165:            
+        -:  166:            }
+       15:  167:         break;
+        -:  168:         
+        -:  169:      case MM_DWORD_BIT_WIDTH:
+       20:  170:         SizeInBytes = 4;
+       20:  171:         if (CFS_Verify32Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 10% (fallthrough)
+branch  2 taken 90%
+        -:  172:            {
+        2:  173:            Valid = FALSE;
+        2:  174:            MM_AppData.ErrCounter++;
+        2:  175:            CFE_EVS_SendEvent(MM_ALIGN32_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  176:                              "Data and address not 32 bit aligned: Addr = 0x%08X Size = %d",
+        -:  177:                                                                       Address, SizeInBytes);
+        -:  178:            }
+       20:  179:         break;
+        -:  180:      
+        -:  181:      default:
+        2:  182:         Valid = FALSE;
+        2:  183:         MM_AppData.ErrCounter++;
+        2:  184:         CFE_EVS_SendEvent(MM_DATA_SIZE_BITS_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  185:                     "Data size in bits invalid: Data Size = %d", SizeInBits);
+        -:  186:         break;
+        -:  187:   }
+        -:  188:
+        -:  189:   /* Do other checks if this one passed */
+       46:  190:   if (Valid == TRUE)   
+branch  0 taken 87% (fallthrough)
+branch  1 taken 13%
+        -:  191:   {
+       40:  192:      switch(MemType)
+branch  0 taken 23%
+branch  1 taken 28%
+branch  2 taken 15%
+branch  3 taken 15%
+branch  4 taken 15%
+branch  5 taken 5%
+        -:  193:      {
+        -:  194:         case MM_RAM:
+        9:  195:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  196:         
+        9:  197:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 22% (fallthrough)
+branch  1 taken 78%
+        -:  198:            {
+        2:  199:               Valid = FALSE;
+        2:  200:               MM_AppData.ErrCounter++;
+        2:  201:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  202:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  203:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  204:            }
+        9:  205:            break;
+        -:  206:         
+        -:  207:         case MM_EEPROM:
+       11:  208:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_EEPROM);
+call    0 returned 100%
+        -:  209:         
+       11:  210:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 18% (fallthrough)
+branch  1 taken 82%
+        -:  211:            {
+        2:  212:               Valid = FALSE;
+        2:  213:               MM_AppData.ErrCounter++;
+        2:  214:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  215:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  216:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_EEPROM); 
+        -:  217:            }
+       11:  218:            break;
+        -:  219:         
+        -:  220:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE)
+        -:  221:            case MM_MEM32:
+        6:  222:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  223:         
+        6:  224:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  225:            {
+        2:  226:               Valid = FALSE;
+        2:  227:               MM_AppData.ErrCounter++;
+        2:  228:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  229:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  230:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  231:            }
+        -:  232:            /* 
+        -:  233:            ** Peeks and Pokes must be 32 bits wide for this memory type 
+        -:  234:            */
+        4:  235:            else if (SizeInBytes != 4)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  236:            {
+        2:  237:               Valid = FALSE;
+        2:  238:               MM_AppData.ErrCounter++;
+        2:  239:               CFE_EVS_SendEvent(MM_DATA_SIZE_BITS_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  240:                           "Data size in bits invalid: Data Size = %d", SizeInBits);
+        -:  241:            }
+        6:  242:            break;
+        -:  243:#endif /* MM_OPT_CODE_MEM32_MEMTYPE */
+        -:  244:
+        -:  245:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -:  246:         case MM_MEM16:
+        6:  247:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  248:         
+        6:  249:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  250:            {
+        2:  251:               Valid = FALSE;
+        2:  252:               MM_AppData.ErrCounter++;
+        2:  253:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  254:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  255:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  256:            }
+        -:  257:            /* 
+        -:  258:            ** Peeks and Pokes must be 16 bits wide for this memory type
+        -:  259:            */
+        4:  260:            else if (SizeInBytes != 2)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  261:            {
+        2:  262:               Valid = FALSE;
+        2:  263:               MM_AppData.ErrCounter++;
+        2:  264:               CFE_EVS_SendEvent(MM_DATA_SIZE_BITS_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  265:                           "Data size in bits invalid: Data Size = %d", SizeInBits);
+        -:  266:            }
+        6:  267:            break;
+        -:  268:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -:  269:            
+        -:  270:#if (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)
+        -:  271:         case MM_MEM8:
+        6:  272:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  273:         
+        6:  274:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  275:            {
+        2:  276:               Valid = FALSE;
+        2:  277:               MM_AppData.ErrCounter++;
+        2:  278:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  279:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  280:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  281:            }
+        -:  282:            /* 
+        -:  283:            ** Peeks and Pokes must be 8 bits wide for this memory type
+        -:  284:            */
+        4:  285:            else if (SizeInBytes != 1)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  286:            {
+        2:  287:               Valid = FALSE;
+        2:  288:               MM_AppData.ErrCounter++;
+        2:  289:               CFE_EVS_SendEvent(MM_DATA_SIZE_BITS_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  290:                           "Data size in bits invalid: Data Size = %d", SizeInBits);
+        -:  291:            }
+        6:  292:            break;
+        -:  293:#endif /* MM_OPT_CODE_MEM8_MEMTYPE */
+        -:  294:            
+        -:  295:         default:
+        2:  296:            Valid = FALSE;
+        2:  297:            MM_AppData.ErrCounter++;
+        2:  298:            CFE_EVS_SendEvent(MM_MEMTYPE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  299:                              "Invalid memory type specified: MemType = %d", MemType);
+        -:  300:            break;
+        -:  301:      
+        -:  302:      } /* end switch */
+        -:  303:
+        -:  304:   } /* end Valid == TRUE if */
+        -:  305:   
+       46:  306:   return (Valid);
+        -:  307:
+        -:  308:} /* end MM_VerifyPeekPokeParams */
+        -:  309:
+        -:  310:/************************/
+        -:  311:/*  End of File Comment */
+        -:  312:/************************/

@@ -1,0 +1,13 @@
+TITLE 'COSMOS Command and Telemetry Server - Mission Configuration' 
+ 
+PACKET_LOG_WRITER COSMOSLOG packet_log_writer.rb cosmos 
+ 
+INTERFACE COSMOS_INT cmd_tlm_server_interface.rb
+  TARGET COSMOS
+  DISABLE_DISCONNECT
+
+INTERFACE MISSION_INT udp_interface.rb 127.0.0.1 1234 1235 nil nil 128 nil nil
+  TARGET CFS_TLM
+  TARGET MISSION
+  TARGET MISSION_TLM
+  

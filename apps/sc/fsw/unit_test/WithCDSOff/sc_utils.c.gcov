@@ -1,0 +1,176 @@
+        -:    0:Source:/Users/nyanchik/Desktop/cfs-sandbox/sc/fsw/src/sc_utils.c
+        -:    0:Graph:sc_utils.gcno
+        -:    0:Data:sc_utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:7
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_utils.c.gcov 1.2 2009/02/19 10:07:07EST nyanchik Exp  $
+        -:    4: **
+        -:    5: ** Purpose: 
+        -:    6: **   This file contains the utilty functions for Stored Command
+        -:    7: **
+        -:    8: ** References:
+        -:    9: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   10: **   CFS Development Standards Document
+        -:   11: ** Notes:
+        -:   12: **
+        -:   13: **   $Log: sc_utils.c.gcov  $
+        -:   13: **   Revision 1.2 2009/02/19 10:07:07EST nyanchik 
+        -:   13: **   Update SC To work with cFE 5.2 Config parameters
+        -:   14: **   Revision 1.2 2009/01/05 08:26:59EST nyanchik 
+        -:   15: **   Check in after code review changes
+        -:   16: *************************************************************************/
+        -:   17:
+        -:   18:
+        -:   19:/**************************************************************************
+        -:   20: **
+        -:   21: ** Include section
+        -:   22: **
+        -:   23: **************************************************************************/
+        -:   24:
+        -:   25:
+        -:   26:#include "sc_atsrq.h"
+        -:   27:#include "sc_cmds.h"
+        -:   28:#include "sc_loads.h"
+        -:   29:#include "sc_rtsrq.h"
+        -:   30:#include "sc_state.h"
+        -:   31:#include "sc_utils.h"
+        -:   32:
+        -:   33:/**************************************************************************
+        -:   34: **
+        -:   35: ** Functions
+        -:   36: **
+        -:   37: **************************************************************************/
+        -:   38:
+        -:   39:
+        -:   40:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   41:/*                                                                 */
+        -:   42:/* Get the Absolute time from CFE TIME                             */
+        -:   43:/*                                                                 */
+        -:   44:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   45:void SC_GetAbsTime(void)
+      195:   46:{
+        -:   47:    CFE_TIME_SysTime_t TempTime;
+        -:   48:    
+        -:   49:    /* Get the system time of the correct time */
+        -:   50:    
+        -:   51:    if (SC_TIME_TO_USE == SC_USE_UTC)
+        -:   52:    {
+        -:   53:        TempTime = CFE_TIME_GetUTC();
+        -:   54:    }
+        -:   55:    else
+        -:   56:    {
+        -:   57:        if (SC_TIME_TO_USE == SC_USE_TAI)
+        -:   58:        {
+        -:   59:            TempTime = CFE_TIME_GetTAI();
+        -:   60:        }
+        -:   61:        else
+        -:   62:        {
+        -:   63:            /* Gets the cFE configured time */
+      195:   64:            TempTime = CFE_TIME_GetTime();
+        -:   65:        }            
+        -:   66:    }
+        -:   67:
+        -:   68:    /* We don't care about subseconds */
+      195:   69:    SC_AppData.CurrentTime = TempTime.Seconds;
+        -:   70:    
+        -:   71:} /* end of SC_GetAbsTime */
+        -:   72:
+        -:   73:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   74:/*                                                                 */
+        -:   75:/* Compute Absolute time from relative time                       */
+        -:   76:/*                                                                 */
+        -:   77:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   78:SC_AbsTimeTag_t SC_ComputeAbsTime(uint16 RelTime)
+       57:   79:{
+        -:   80:    CFE_TIME_SysTime_t  AbsoluteTimeWSubs;
+        -:   81:    CFE_TIME_SysTime_t  RelTimeWSubs;
+        -:   82:    CFE_TIME_SysTime_t  ResultTimeWSubs;       
+        -:   83:    /*
+        -:   84:     ** get the current time
+        -:   85:     */
+       57:   86:    AbsoluteTimeWSubs.Seconds    = SC_AppData.CurrentTime;
+       57:   87:    AbsoluteTimeWSubs.Subseconds = 0;
+        -:   88:    
+       57:   89:    RelTimeWSubs.Seconds    = RelTime;
+       57:   90:    RelTimeWSubs.Subseconds = 0;    
+        -:   91:    /*
+        -:   92:     ** add the relative time the current time
+        -:   93:     */
+       57:   94:    ResultTimeWSubs = CFE_TIME_Add ( AbsoluteTimeWSubs, RelTimeWSubs);
+        -:   95:    
+        -:   96:    /* We don't need subseconds */
+       57:   97:    return (ResultTimeWSubs.Seconds);
+        -:   98:    
+        -:   99:} /* end of SC_ComputeAbsTime */
+        -:  100:
+        -:  101:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  102:/*                                                                 */
+        -:  103:/*  Compare absolute times                                         */
+        -:  104:/*                                                                 */
+        -:  105:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  106:boolean SC_CompareAbsTime(SC_AbsTimeTag_t AbsTime1,
+        -:  107:                          SC_AbsTimeTag_t AbsTime2)
+     1924:  108:{    
+        -:  109:    boolean Status;
+        -:  110:    CFE_TIME_SysTime_t Time1WSubs;
+        -:  111:    CFE_TIME_SysTime_t Time2WSubs; 
+        -:  112:    CFE_TIME_Compare_t Result;   
+        -:  113:    
+     1924:  114:    Time1WSubs.Seconds = AbsTime1;
+     1924:  115:    Time1WSubs.Subseconds = 0;
+        -:  116:
+     1924:  117:    Time2WSubs.Seconds = AbsTime2;
+     1924:  118:    Time2WSubs.Subseconds = 0;    
+        -:  119:    
+     1924:  120:    Result = CFE_TIME_Compare( Time1WSubs, Time2WSubs);
+        -:  121:    
+     1924:  122:   if ( Result == CFE_TIME_A_GT_B)
+        -:  123:   {
+     1748:  124:        Status = TRUE;
+        -:  125:   }
+        -:  126:   else
+        -:  127:   {
+      176:  128:        Status = FALSE;
+        -:  129:   }
+        -:  130:
+     1924:  131:    return Status;
+        -:  132:    
+        -:  133:}/* end of SC_CompareAbsTime */
+        -:  134:
+        -:  135:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  136:/*                                                                 */
+        -:  137:/* SC Verify the length of the command                             */
+        -:  138:/*                                                                 */
+        -:  139:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  140:boolean SC_VerifyCmdLength(CFE_SB_MsgPtr_t msg, 
+        -:  141:                           uint16          ExpectedLength)
+       54:  142:{
+        -:  143:    CFE_SB_MsgId_t MessageID;
+        -:  144:    uint16  CommandCode;
+       54:  145:    boolean Result = TRUE;
+       54:  146:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(msg);
+        -:  147:    
+        -:  148:    /* Verify the command packet length */
+       54:  149:    if (ExpectedLength !=  ActualLength)
+        -:  150:    {
+        3:  151:        CommandCode = CFE_SB_GetCmdCode(msg);
+        3:  152:        MessageID =  CFE_SB_GetMsgId(msg);
+        -:  153:        
+        3:  154:        CFE_EVS_SendEvent(SC_LEN_ERR_EID,
+        -:  155:                          CFE_EVS_ERROR,
+        -:  156:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  157:                          MessageID,
+        -:  158:                          CommandCode,
+        -:  159:                          ActualLength,
+        -:  160:                          ExpectedLength);
+        3:  161:        Result = FALSE;
+        3:  162:        SC_AppData.CmdErrCtr++;
+        -:  163:    }    
+       54:  164:    return(Result);
+        -:  165:} /* End of SC_VerifyCmdLength */
+        -:  166:
+        -:  167:/************************/
+        -:  168:/*  End of File Comment */
+        -:  169:/************************/

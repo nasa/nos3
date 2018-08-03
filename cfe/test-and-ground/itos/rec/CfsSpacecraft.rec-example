@@ -1,0 +1,46 @@
+/** Every use must define a CfsCommand prototype because
+   all CFS commands are defined as instances of this. */
+
+prototype CCSDSCommandPacket CfsCommand {
+  destination=itos.graphs.cmddest
+  secondary { range=1 }
+  U1 checksum { lengthInBits=8, range=0 }
+  U1 commandCode { lengthInBits=8 }
+}
+
+/** Every use must define a CfsTelemetryPacket prototype because
+   all CFS telemetry pakets are defined as instances of this. */
+
+prototype CCSDSTelemetryPacket CfsTelemetryPacket {
+  source=itos.graphs.stdtlmsrc
+  timeout="30"
+  timeStamp=time
+  RTIME42 time { clock=cfsTime }
+}
+
+Clock cfsTime {
+  epoch="1980-006-00:00:00"
+  subsecondsPerSecond=65536
+}
+
+/* Define our spacecraft in terms of the Core Flight System apps in use */
+/* cFE apps */
+ExecutiveServices es {}
+EventServices evs {}
+SoftwareBus sb {}
+TableServices tbl {}
+TimeServices time {}
+/* CFS apps */
+CheckSum cs {}
+CFDP cf {}
+CommandIngest ci {}
+DataStorage ds {}
+FileManagement fm {}
+Housekeeping hk {}
+HealthAndSafety hs {}
+LimitChecker lc {}
+MemoryDwell md {}
+MemoryManagement mm {}
+StoredCommand sc {}
+Scheduler sch {}
+TelemetryOutput to {}

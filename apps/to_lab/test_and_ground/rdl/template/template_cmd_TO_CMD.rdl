@@ -1,0 +1,52 @@
+!======================================================================================================
+!                Originator:      M. Bartholomew
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TO Command Packet #xxxx
+!                  ================================
+!
+!       Packet Application ID: xxxx
+!       Packet Title:$sc $cpu TO Command Packet
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  24APR05     MOB          : Initial
+!  25MAY05     SMA          : Convert FCTN code 6 to allow selection of machine 
+!                             name
+!  21JUN05     SMA          : Convert rdl to template format. Add To_AddPacket FC
+!  12JUL05     TGC          : Added RemovePacket command, FCTN code 4
+!
+!======================================================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu TO Commands"
+!
+  CMD  $sc_$cpu_TO_NOOP        	FCTN=0, DESC="$sc $cpu TO no-operation command code"
+!
+  CMD  $sc_$cpu_TO_ResetCtrs    	FCTN=1, DESC="$sc $cpu TO reset counters command code"
+!
+  CMDS $sc_$cpu_TO_AddPacket        FCTN=2, DESC="$sc $cpu TO Add Packet command code"
+    UI Stream        
+    UI Pkt_Size
+    RECORD QOS   DESC="Quality"
+      UB Priority
+      UB Reliability
+    END
+    UB BufLimit
+  END
+!
+  CMDS $sc_$cpu_TO_RemovePacket     FCTN=4, DESC="$sc $cpu TO Remove Packet command code"
+    UI Stream        
+  END
+!
+  CMDS $sc_$cpu_TO_OUTPUT_ENA    FCTN=6, DESC="$sc $cpu Enables TO output"
+     UNION IP_Address   DESC="IP address to enable to receive packets"
+       Char CFEASIST[16] STATIC, DEFAULT="192.168.1.81", DESC="IP address for cfeasist.gsfc.nasa.gov"
+       Char RAINMAN[16]  STATIC, DEFAULT="192.168.1.191", DESC="IP address for gpm-rainman.gsfc.nasa.gov"
+     END
+  END
+
+END       !END PACKET
+!
+!======================================================================================================

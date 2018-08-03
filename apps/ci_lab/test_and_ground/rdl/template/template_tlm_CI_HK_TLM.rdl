@@ -1,0 +1,68 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 11 2005  
+!
+!                    Telemetry Packet # 129 (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CI Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISCIRY: 
+!
+!  2005/04/11  SMA	: Initial
+!  2005/04/28  JWW	: Added DLABELs for flags
+!  2010/08/30  WFM	: Modified to add additional CI items to report CF PDU
+!			: information now contained in CI
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CI Telemetry Data Packet",
+                        STALE = 10
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_CI_CMDEC         DESC="$sc $cpu CI Command Error Counter",
+                                 UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_CI_CMDPC         DESC="$sc $cpu CI Command Processed Counter",
+                                 UNITS=Counts
+!
+  UB   $sc_$cpu_CI_XSUMSENA      DESC="$sc $cpu CI Checksums Enabled",
+                                 DISCRETE, DRANGE =(0,1),
+				 DLABEL=("Disabled","Enabled")
+!
+  UB   $sc_$cpu_CI_SOCKETCONNECT DESC="$sc $cpu CI Socket Connected",
+                                 DISCRETE, DRANGE =(0,1), DLABEL=("No","Yes")
+!
+  UB   $sc_$cpu_CI_FDPDUsDropped DESC="The number of CFDP File Data PDUs dropped"
+!
+  UB   $sc_$cpu_CI_EOFPDUsDropped DESC="The number of CFDP EOF PDUs dropped"
+!
+  UB   $sc_$cpu_CI_FINPDUsDropped DESC="The number of CFDP FIN PDUs dropped"
+!
+  UB   $sc_$cpu_CI_ACKPDUsDropped DESC="The number of CFDP ACK PDUs dropped"
+!
+  UB   $sc_$cpu_CI_MDPDUsDropped DESC="The number of CFDP Meta Data PDUs dropped"
+!
+  UB   $sc_$cpu_CI_NAKPDUsDropped DESC="The number of NAK PDUs dropped"
+!
+  UB   $sc_$cpu_CI_SPARE[2]      DESC="$sc $cpu CI Spare"
+!
+  ULI  $sc_$cpu_CI_INGESTPKTS    DESC="$sc $cpu CI Ingest Packets"
+!
+  ULI  $sc_$cpu_CI_INGESTERRORS  DESC="$sc $cpu CI Ingest Errors"
+!
+  ULI  $sc_$cpu_CI_PDUsCaptured  DESC="The total number of CFDP PDUs captured"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

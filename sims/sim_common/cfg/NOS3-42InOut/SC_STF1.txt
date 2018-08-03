@@ -1,0 +1,89 @@
+<<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>
+STF-1 S/C         		!  Description
+"STF-1"                         !  Label
+GenScSpriteAlpha.ppm          !  Sprite File Name
+PROTOTYPE_FSW                 !  Flight Software Identifier
+************************* Orbit Parameters ****************************
+FIXED                         !  Orbit Prop FIXED, EULER_HILL, ENCKE, or COWELL
+CM                            !  Pos of CM or ORIGIN, wrt F
+0.0  0.0  0.0                 !  Pos wrt Formation (m), expressed in F
+0.0  0.0  0.0                 !  Vel wrt Formation (m/s), expressed in F
+*************************** Initial Attitude ***************************
+NAN                           ! Ang Vel wrt [NL], Att [QA] wrt [NLF]
+5.0 5.0 2.0	           ! Ang Vel (deg/sec)
+0.0    0.0    0.0    1.0      ! Quaternion
+0.0  0.0   0.0    123     ! Angles (deg) & Euler Sequence
+***************************  Dynamics Flags  ***************************
+DYN_JOINT                     ! Rotation STEADY, KIN_JOINT, or DYN_JOINT
+TRUE                          ! Assume constant mass properties
+FALSE                         ! Passive Joint Forces and Torques Enabled
+FALSE                         ! Compute Constraint Forces and Torques
+REFPT_CM                      ! Mass Props referenced to REFPT_CM or REFPT_JOINT
+FALSE                         ! Flex Active
+FALSE                         ! Include 2nd Order Flex Terms
+2.0                           ! Drag Coefficient
+************************************************************************
+************************* Body Parameters ******************************
+************************************************************************
+1                             ! Number of Bodies
+================================ Body 0 ================================
+4.0                         	! Mass
+0.0067  0.033  0.033           ! Moments of Inertia (kg-m^2)
+0.0  0.0  0.0                 ! Products of Inertia (xy,xz,yz)
+.12  -.25  .2                ! Location of mass center, m
+stf1_red.obj               	! Geometry Input File Name
+NONE                          ! Flex File Name
+************************************************************************
+*************************** Joint Parameters ***************************
+************************************************************************
+         (Number of Joints is Number of Bodies minus one)
+============================== Joint 0 ================================
+0 1                           ! Inner, outer body indices
+0   213   GIMBAL              ! RotDOF, Seq, GIMBAL or SPHERICAL
+0   123                       ! TrnDOF, Seq
+FALSE  FALSE  FALSE           ! RotDOF Locked
+FALSE  FALSE  FALSE           ! TrnDOF Locked
+0.0    0.0    0.0             ! Initial Angles [deg]
+0.0    0.0    0.0             ! Initial Rates, deg/sec
+0.0    0.0    0.0             ! Initial Displacements [m]
+0.0    0.0    0.0             ! Initial Displacement Rates, m/sec
+0.0   0.0  0.0  312           ! Bi to Gi Static Angles [deg] & Seq
+0.0   0.0  0.0  312           ! Go to Bo Static Angles [deg] & Seq
+0.0   0.0  0.0                ! Position wrt inner body origin, m
+0.0   0.0  0.0                ! Position wrt outer body origin, m
+0.0   0.0  0.0                ! Rot Passive Spring Coefficients (Nm/rad)
+0.0   0.0  0.0                ! Rot Passive Damping Coefficients (Nms/rad)
+0.0   0.0  0.0                ! Trn Passive Spring Coefficients (N/m)
+0.0   0.0  0.0                ! Trn Passive Damping Coefficients (Ns/m)
+*************************** Wheel Parameters ***************************
+0                             ! Number of wheels
+=============================  Wheel 0  ================================
+0.0                           ! Initial Momentum, N-m-sec
+1.0   0.0   0.0               ! Wheel Axis Components, [X, Y, Z]
+0.14   50.0                   ! Max Torque (N-m), Momentum (N-m-sec)
+0.012                         ! Wheel Rotor Inertia, kg-m^2
+0.48                          ! Static Imbalance, g-cm
+13.7                          ! Dynamic Imbalance, g-cm^2
+0                             ! Flex Node Index
+**************************** MTB Parameters ****************************
+0                                   ! Number of MTBs
+==============================  MTB 0  =================================
+180.0                         ! Saturation (A-m^2)
+1.0   0.0   0.0               ! MTB Axis Components, [X, Y, Z]
+************************* Thruster Parameters **************************
+0                             ! Number of Thrusters
+==============================  Thr 0  =================================
+ 1.0                          ! Thrust Force (N)
+-1.0  0.0  0.0                ! Thrust Axis 
+ 1.0  1.0  1.0                ! Location in B0, m
+**************************** CMG Parameters ****************************
+0                             ! Number of CMGs
+===============================  CMG 0  ================================
+1                             ! CMG DOF (typically 1 or 2)
+0.0  0.0  0.0  123            ! Initial Gimbal Angles [deg] and Seq
+0.0  0.0  0.0                 ! Initial Gimbal Angle Rates, deg/sec
+-90.0  0.0  -54.74  123       ! Static Mounting Angles [deg] and Seq
+0.12                          ! Rotor Inertia, kg-m^2
+75.0                          ! Momentum, Nms
+1.0  0.0  0.0                 ! Max Gimbal Angle Rates, deg/sec
+

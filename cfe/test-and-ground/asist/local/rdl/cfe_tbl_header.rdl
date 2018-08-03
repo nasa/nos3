@@ -1,0 +1,34 @@
+!==============================================================================
+!
+!                Originator: M. Bartholomew	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: December 19 2005  
+!
+!       REFERENCES:
+!
+!       NOTES:  This defines the "secondary header" for tables.  The CFE_SubType
+!               in the cfe_file_header is used to determine if this secondary header
+!               should be used.
+!
+!       HISTORY: 
+!
+!  2005/12/19  MOB             : Initial
+!  2014/08/27  WFM             : Changed hard-coded 40 to TBL_NAME_LEN
+!
+!==============================================================================
+!
+!! TBL_NAME_LEN is defined in the cfe_types.rdl file
+!
+  RECORD CFE_TBL_HEADER APPEND,     DESC="cFE Table Header (Secondary header)"
+!
+    ULI  CFE_Reserved             DESC="Unused/Reserved" 
+!
+    ULI  CFE_ByteOffset           DESC="Byte offset at which load should commence"
+!
+    ULI  CFE_NumBytes             DESC="Number of bytes to load into table"
+!
+    Char CFE_TblName[TBL_NAME_LEN]   DESC="Fully qualified name of the table"
+!  END                !END APPEND RECORD FUNCTION
+!
+END

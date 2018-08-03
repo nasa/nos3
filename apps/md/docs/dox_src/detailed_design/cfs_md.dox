@@ -1,0 +1,466 @@
+/**
+    \mainpage CFS Memory Dwell (MD) User's Guide    
+
+       <UL>
+           <LI> \subpage cfsmdrevhist
+           <LI> \subpage cfsmdintro
+           <LI> \subpage cfsmdovr
+           <LI> \subpage cfsmdopr
+           <LI> \subpage cfsmdreq
+           <LI> \subpage cfsmddg
+           <LI> \subpage cfsmdcmds
+           <LI> \subpage cfsmdtlm
+           <LI> \subpage cfsmdtbl
+           <LI> \subpage cfsmdcfg
+           <LI> \subpage cfsmdcons
+           <LI> \subpage cfsmdfaqs
+           <LI> \subpage md_events.h "CFS Memory Dwell Event Message Reference" <BR>
+       </UL>
+
+**/
+
+/**
+  \page cfsmdrevhist CFS Memory Dwell User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_md.dox  $
+  Revision 1.3 2009/10/20 09:42:48EDT aschoeni 
+  Updated to remove doxygen warning
+  Revision 1.2 2009/04/18 15:03:59EDT dkobe 
+  Updates to standardize users guide format
+  Revision 1.1 2009/04/16 13:10:52EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/md/docs/dox_src/users_guide/project.pj
+  \endverbatim
+  
+**/
+
+/**
+  \page cfsmdintro CFS Memory Dwell Introduction
+
+  <H1> Scope </H1>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the CFS Memory Dwell (MD) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personal).  
+  The deployment guide section, is intended for mission developers when deploying and 
+  configuring the FM application software for a mission flight software build environment. 
+
+  <H1> Applicable Documents </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Dwell Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Dwell Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Memory Dwell Design Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> <I>Need Reference to OSAL Document</I> </TD>
+  </TABLE>
+
+
+  <H1> Acronyms </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Next: \ref cfsmdovr
+**/
+
+/**
+    \page cfsmdovr CFS Memory Dwell Overview
+    
+    The Memory Dwell (MD) application enables an operator to create and control telemetry streams.  
+    These dwell telemetry streams can be defined either by table loads or by jam commands.  
+    If the operating system supports symbolic addressing, Memory Dwell supports specifying memory 
+    addresses using a symbolic name.  Memory addresses to be sampled are specified in terms of a 
+    numerical "offset" address, and a symbolic address.  See <A HREF="../mm/cfsmmugsymbols.html">
+    Symbolic Address Arguments</A> in the <A HREF="../mm/index.html">Memory Manager Users Guide </A>
+    for more details about symbolic addressing.  Dwell stream definitions and state information 
+    (i.e. enable vs. disable) for each dwell that are provided via table load are saved across 
+    processor resets.  An optional ability to insert string signatures into dwell packets is provided.
+    
+    \section MD Design Overview 
+    MD is a command driven, single threaded application. It will pend indefinitely 
+    on the software bus message queue until messages arrive and then processes them sequentially.  
+    Memory Dwell utilizes OSAL routines to:<BR>
+        - Read memory <BR>
+        - Translate symbolic addresses to their numerical equivalents <BR>
+        - Determine if a memory address is in a valid range <BR>
+        
+    The fastest rate at which memory values are collected by the Memory Dwell application is determined 
+    by the rate at which the <A HREF="../sch/index.html">Scheduler</A> issues wakeup messages.  Collection 
+    rates are specified in terms of multiples of wakeup calls.  Memory Dwell specifications that are 
+    initiated via Table Loads are saved to the Critical Data Store (CDS).  Memory Dwell specifications 
+    that are initiated via Jam Commands are not saved to the CDS.  Similarly, enabled/disabled state 
+    information for each Memory Dwell included in Table Loads is saved to the CDS.  Enabled/disabled 
+    state information set by commands is not saved to the CDS.
+
+  Next: \ref cfsmdopr
+**/
+    
+/**
+    \page cfsmdopr CFS Memory Dwell Operation
+    
+    The operational interface of the MD application consists of ground commands, dwell table loads, and 
+    housekeeping telemetry. The following items detail the operational interface: <BR>
+    
+    -# <B>The application version number </B> - 
+       The application version number is displayed in the \link #MD_INIT_INF_EID Initialization event message \endlink 
+       and the \link #MD_NOOP_INF_EID No-op event message\endlink. Both events are 
+       'informational' type and are unfiltered by default.<BR><BR>
+    -# <B>Loading a Dwell Table </B> - Memory Dwell supports a configurable number of dwell tables.  
+       Each of these dwell tables can be loaded by way of a file.  A new dwell table may be loaded 
+       at any time. The steps to load a new Copy Table are:<BR><BR>
+        a) Transfer the table file to the on-board file system <BR>    
+        b) Send the \link #CFE_TBL_LOAD_CC CFE Table load \endlink command <BR>
+        c) Send the \link #CFE_TBL_VALIDATE_CC CFE Table validate \endlink command <BR>
+        d) Send the \link #CFE_TBL_ACTIVATE_CC CFE Table activate \endlink command <BR><BR>
+    -# <B>Sending the No-op Command </B> - To verify connectivity with the Memory Dwell application, the ground may send an
+       \link #MD_NOOP_CC MD No-op command \endlink. If the packet length field in the command is set to the value expected by 
+       the MD app, then the command counter will increment and a \link #MD_INIT_INF_EID No-op informational event message \endlink 
+       will be sent. This no-op event will show the version number of the MD application.<BR><BR>
+    -# <B>Sending the reset counters command</B> - The reset counters command will reset only the telemetry points listed here:<BR><BR>
+         a) \link #MD_HkTlm_t.ValidCmdCntr \MD_CMDPC \endlink - Number of accepted commands <BR>
+         b) \link #MD_HkTlm_t.InvalidCmdCntr \MD_CMDEC \endlink - Number of rejected commands <BR><BR>
+    -# <B>Monitoring the command counter</B> - The command counter, MD_CMDPC, will increment when the MD application receives 
+       any valid command.<BR><BR>
+    -# <B>Monitoring the command error counter</B> - The command error counter will increment under the following conditions:<BR><BR>
+         a) Invalid command code <BR>
+         b) Unexpected packet length field for \link #MD_WAKEUP_MID 'MD Wakeup' command \endlink <BR>   
+         c) Unexpected packet length field for \link #MD_SEND_HK_MID 'Send MD Housekeeping' command \endlink <BR>
+         d) Unexpected packet length field for a ground command <BR>
+         e) Invalid command argument <BR><BR>
+    -# <B>Enabling and Disabling Dwell Packet Streams</B> - The enabled/disabled state of dwell packet streams can be modified 
+       using the start and stop ground commands.  The enabled/disabled state is also controlled by the enabled flag 
+       in the dwell load table.Note that a dwell packet stream will not actively operate if the total delay count is 
+       zero, no matter what the enabled/disabled state is.<BR><BR>
+    -# <B>Specifying a memory dwell stream</B> - Each Memory Dwell Table consists of #MD_DWELL_TABLE_SIZE entries.  
+       Each entry serves either as an individual dwell definition or a null entry.  The MD will build packets beginning 
+       with the dwell specified in the first slot, adding additional dwells until it reaches either a null entry or the 
+       end of the table.  Each individual memory dwell definition is specified by a memory address, the number of delay 
+       counts before the next read, and the dwell length.  The number of delay counts is the number of wakeup calls the 
+       application will receive before the next memory dwell read.  A valid Dwell Table entry which is an individual 
+       memory dwell definition must have:<BR><BR>
+          a) a valid memory address (Symbol name, if any, must be in operating system Symbol Table, and resolved address
+             i.e. symbol plus offset must be in a valid range), <BR>
+          b) a value of 1, 2, or 4 for dwell length.<BR><BR>
+       A valid Dwell Table entry which is a null entry must have a zero value for dwell length.
+    
+  Next: \ref cfsmdreq <BR>
+  Prev: \ref cfsmdovr 
+**/
+
+/**
+    \page cfsmdreq CFS Memory Dwell Requirements
+    
+    For detailed MD requirements, please see the "Core Flight System (CFS) Memory Dwell Application Requirements" Document number: 582-2007-019.
+    
+  Next: \ref cfsmddg <BR>
+  Prev: \ref cfsmdopr 
+**/
+
+/**
+    \page cfsmddg CFS Memory Dwell Deployment Guide
+    
+    In order to generate dwell streams, MD must receive \link #MD_WAKEUP_MID Wakeup messages \endlink, typically from
+    the <A HREF="../sch/index.html">CFS Scheduler Application</A>. The rate at which these 
+    \link #MD_WAKEUP_MID Wakeup messages \endlink are sent will determine the fastest rate at which Memory Dwell 
+    can sample memory addresses.  
+    
+    In order to generate housekeeping data, MD must receive \link #MD_SEND_HK_MID Send Housekeeping messages\endlink,
+    which are also typically sent from the <A HREF="../sch/index.html">CFS Scheduler Application</A>.
+    
+    MD sends \link #MD_HkTlm_t housekeeping telemetry messages \endlink and  MD sends 
+    \link #MD_DwellPkt_t Dwell Packet telemetry streams. \endlink
+    
+    The number of dwell packet telemetry streams is determined by the #MD_NUM_DWELL_TABLES configuration parameter and
+    can be a number between 1 and 8 (inclusive).
+    
+    MD requires one message pipe from <A HREFPre="../cfe/cfesbovr.html"> CFE Software Bus</A>.
+    
+    <A HREF="../cfe/cfetblovr.html"> CFE Table Services </A> must be configured so that its 
+    \link #CFE_TBL_MAX_SNGL_TABLE_SIZE maximum size \endlink is large enough to accommodate a single dwell table.
+    
+    Memory Dwell assumes sufficient pool memory from Table Services for the tables to be single-buffered.
+    
+    Enable or disable the MD Signature capability by setting the #MD_SIGNATURE_OPTION platform configuration parameter.
+    Note that if the option is set to zero, the command to set the signature will not be compiled, and the field will 
+    not be present in dwell packets.  When enabled (non-zero), the length of the signature field is specified by the 
+    #MD_SIGNATURE_FIELD_LENGTH platform configuration parameter.  
+    
+    The number of dwell slots in each Dwell Table is specified by the #MD_DWELL_TABLE_SIZE platform configuration 
+    parameter.
+    
+    The Memory Dwell Performance Id, #MD_APPMAIN_PERF_ID, must be distinct from other spacecraft application performance
+    identifiers. #MD_APPMAIN_PERF_ID is currently defined in md_perfids.h.
+    
+  Next: \ref cfsmdcmds <BR>
+  Prev: \ref cfsmdreq 
+**/
+
+/**
+    \page cfsmdcmds CFS Memory Dwell Commands
+    
+    <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+    <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtlm</B> </TD> 
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtbl</B></TD>
+        <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcfg</B></TD>
+    </TABLE>
+  
+    The Memory Dwell Application has the following commands:<BR>
+**/
+
+/**
+    \page cfsmdtlm CFS Memory Dwell Telemetry
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcfg</B></TD>
+  </TABLE>
+  
+    The Memory Dwell Application sends the following telemetry to the ground: <BR>
+**/
+
+/**
+    \page cfsmdtbl CFS Memory Dwell Table Definitions
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcfg</B></TD>
+  </TABLE>
+  
+    The Memory Dwell Application uses one type of table, a Memory Dwell Load Table.  One table is used for 
+    each dwell stream that MD is configured to manage.  The #MD_NUM_DWELL_TABLES configuration parameter 
+    specifies the number of dwell streams MD will manage. The structure format of a single table entry 
+    is as follows:
+    
+    \verbatim
+    typedef struct
+    {	
+        uint16          Length;       /* Length of dwell  field in bytes.  0 indicates null entry. */	
+        uint16          Delay;        /* Delay before following dwell sample in terms of number of task wakeup calls */    
+        CFS_SymAddr_t   DwellAddress; /* Dwell Address in #CFS_SymAddr_t format */
+    } MD_TableLoadEntry_t;
+    \endverbatim
+    
+    The overall structure format of a Memory Dwell Load Table is as follows:
+    
+    \verbatim
+    typedef struct
+    {
+        uint32 Enabled;                                 /* Is table is enabled for dwell?
+                                                           Valid values are MD_DWELL_STREAM_DISABLED, MD_DWELL_STREAM_ENABLED */    
+       MD_TableLoadEntry_t Entry[MD_DWELL_TABLE_SIZE];  /* Array of individual memory dwell specifications */
+    } MD_DwellTableLoad_t;
+    \endverbatim
+    
+*/
+
+/**
+  \page cfsmdcfg CFS Memory Dwell Configuration Parameters
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsmdtbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the CFS Memory Dwell
+  Application either for each platform or for a mission as a whole.
+
+**/
+
+    
+/**
+    \page cfsmdcons CFS Memory Dwell Constraints
+    
+    During initialization of CFE Software Bus services, the Memory Dwell task will generate a SysLog message 
+    and then terminate if any of the following steps fail:<BR><BR>
+      1) Create command pipe<BR>
+      2) Subscribe to Housekeeping request commands<BR>
+      3) Subscribe to MD ground command packets<BR>
+      4) Subscribe to MD wakeup packets<BR><BR>
+    During initialization of CFE Table Services, the Memory Dwell task will send an event message and then terminate 
+    if any of the following steps fail:<BR><BR>
+      1) Register each dwell table<BR>
+      2) Load initial values to each dwell table whenever a recovered table is unavailable.<BR><BR>
+    If a pipe read error is encountered from the CFE Software Bus, 
+    the Memory Dwell task will send an error message and then terminate. 
+    
+  Next: \ref cfsmdfaqs <BR>
+  Prev: \ref cfsmdtbl 
+**/
+
+/**
+    \page cfsmdfaqs CFS Memory Dwell Frequently Asked Questions
+    
+    <H1> Questions about CFE Table Services Interface </H1>
+         <B> (Q)
+            If a dwell stream is modified or defined using jam commands, will those changes 
+            and definition be copied to the buffer maintained by Table Services?
+         </B> <BR> <BR> <I>
+            Yes.
+         </I>
+            
+         <B> (Q)
+            Are changes to dwell tables preserved across processor resets?
+         </B> <BR> <BR> <I>
+            Dwell table contents that are introduced via table loads are preserved across 
+            processor resets.  Information modified via jam commands, start commands, and 
+            stop commands are also preserved across processor resets.
+         </I>
+            
+    <H1> Questions about Command and Telemetry </H1>
+         <B> (Q)
+            Which MD telemetry can be used to confirm that dwell packet processing is proceeding? 
+         </B> <BR> <BR> <I>
+            The \b \c \MD_COUNTDOWN telemetry point should change each time a Wakeup Message is received 
+            for all dwell streams that are being actively processed.
+         </I>
+            
+         <B> (Q)
+            What needs to be in place for dwell packets to be issued?
+         </B> <BR> <BR> <I>
+            1) The dwell table's entry slot must contain a valid entry definition, i.e. a valid memory 
+               address and field length.<BR>
+            2) The total delay, defined as the total of all individual entry delays from the first 
+               slot until the last slot before the terminal entry, must be 1 or more.<BR>
+            3) The dwell table must be enabled.<BR>
+         </I>
+            
+         <B> (Q)
+            How long will it be before the first dwell packet is issued?
+         </B> <BR> <BR> <I>
+            The first dwell always takes place when the first wakeup message is received following a 
+            \link #MD_START_DWELL_CC Start command \endlink.  Dwelling proceeds until the first entry 
+            with a non-zero delay is reached. Thus, anytime a start command is sent for a dwell table 
+            that does not have non-zero delays for intermediate entries, a dwell packet will be issued 
+            immediately.  So, for example, a dwell table that is set up to sample several addresses 
+            every 10 cycles, will actually issue dwell packets following the 1st, 11th, and 21st wakeup 
+            messages.
+         </I>
+            
+         <B> (Q)
+            What happens if a dwell tream is \link #MD_START_DWELL_CC Started \endlink, 
+            \link #MD_STOP_DWELL_CC Stopped \endlink, and then \link #MD_START_DWELL_CC Started \endlink again?
+         </B> <BR> <BR> <I>
+            Whenever a start command is received, whether or not there is an intervening stop command, 
+            the dwell packet processing starts over.  The countdown timer is reinitialized, and the 
+            dwelling begins again with the first table entry.
+         </I>
+            
+         <B> (Q)
+            What if an operating system does not support referencing memory addresses by symbolic names?
+         </B> <BR> <BR> <I>
+            The symbol name portion of the memory address in a table load or \link #MD_JAM_DWELL_CC Jam command \endlink
+            must be set to a null string.
+         </I>
+            
+    <H1> Questions about Specifying Memory Dwell Streams </H1>
+         <B> (Q)
+            What confirmation is available for changes made using a \link #MD_JAM_DWELL_CC Jam command \endlink?
+         </B> <BR> <BR> <I>
+            1) An information event, #MD_JAM_DWELL_INF_EID, will be issued showing the table number and 
+               entry number affected. <BR>
+            2) The following housekeeping parameters for the corresponding dwell table may be affected:<BR>
+                  \b \c \MD_ADDRCNT, <BR>
+                  \b \c \MD_RATE, <BR>
+                  \b \c \MD_DATASIZE.<BR><BR>
+         </I>
+            
+         <B> (Q)
+            Does MD support supercommutation?  What is it?  How do you set up a dwell table to achieve 
+            supercommutation?
+         </B> <BR> <BR> <I>
+            Yes it does.  Supercommutation is the insertion of multiple instances of the same dwell address 
+            in the same packet.  To define a dwell table for supercommutation, associate a non-zero delay 
+            multiple for each instance of the dwell address in the table. 
+         </I>
+            
+         <B> (Q)
+            How large is a dwell table?
+         </B> <BR> <BR> <I>
+            The size of a dwell table depends on: <BR><BR>
+               1) the \link #MD_SIGNATURE_FIELD_LENGTH size of a signature field, \endlink <BR>
+               2) the \link #OS_MAX_SYM_LEN size of symbolic addresses \endlink if enabled, <BR>
+               3) the \link #MD_NUM_DWELL_TABLES number of dwell tables \endlink which have been configured, <BR> 
+               4) the \link #MD_DWELL_TABLE_SIZE number of entries in a dwell table. \endlink <BR><BR>
+               
+            It is also possible that a compiler may insert padding between fields for alignment purposes, which 
+            will add to the size.  If #MD_DEBUG is set to a non-zero value, the size of the dwell table will be 
+            issued via #OS_printf on initialization.
+         </I>
+            
+         <B> (Q)
+            What is the fastest rate at which MD can sample memory addresses?
+         </B> <BR> <BR> <I>
+            The fastest that MD can sample memory address is the rate at which \link #MD_WAKEUP_MID Wakeup messages 
+            \endlink are received.  To achieve this fastest rate, the dwell table must be defined to have a total 
+            delay multiple of 1.
+         </I>
+            
+         <B> (Q)
+            How would a simple dwell table be defined to sample several memory addresses at the same time?
+         </B> <BR> <BR> <I>
+            For each memory address to be sampled, define a dwell entry beginning with the first entry, entry #1.  
+            Enter the dwell field length value of 1, 2, or 4. Note that if the desired memory region is larger than 
+            4, it must be broken down into consecutive dwell entries. Enter the memory address using the numerical 
+            value, a symbolic value, or a symbolic value and numerical offset combination.  In each of the entries 
+            that are not the last dwell, enter a zero value for the delay.  For the last dwell entry, enter a value 
+            corresponding to the multiple of the wakeup call rate, which is the desired issue rate for the dwell 
+            packets.  If the last dwell entry is not the last entry in the table, then the next entry must be a 
+            "null entry" with a zero value for the field length to signify that this is the end of the dwell packet. 
+         </I>
+            
+         <B> (Q)
+            Does MD accept tables with non-null entries past a terminator entry?
+         </B> <BR> <BR> <I>
+            Yes, a non-null entry is accepted past a terminator entry as long as that entry itself is valid.  
+            To be valid, the entry must have valid values for dwell address, and field length.
+         </I>
+            
+
+  Prev: \ref cfsmdcons 
+**/

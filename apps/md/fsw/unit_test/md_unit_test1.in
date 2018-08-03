@@ -1,0 +1,432 @@
+* * * * * * * * * * * * * * * * * * * * *
+; $Id: md_unit_test1.in 1.1.1.6 2012/01/09 19:28:00EST aschoeni Exp  $
+; $Log: md_unit_test1.in  $
+; Revision 1.1.1.6 2012/01/09 19:28:00EST aschoeni 
+; Updated to support newest versions
+; Revision 1.1.1.5 2009/10/09 17:13:12EDT aschoeni 
+; Updated unit tests to use new tables
+; Revision 1.1.1.4 2009/09/16 15:29:52EDT aschoeni 
+; Updated MIDs to development standards document value for cpu1
+; Revision 1.1.1.3 2008/12/09 16:58:24EST nschweis 
+; Include calls to test utilities to display contents of Table Services buffer.
+; Revision 1.1.1.2 2008/10/01 16:16:46EDT nsschweiss 
+; Modified input file to include 'Send Housekeeping' commands before and after command with invalid 
+; function code, so that error counter can be observed incrementing.
+; CPID 4203:1.
+* Command Input File md_unit_test1.in opened for reading *
+* * * * * * * * * * * * * * * * * * * * *
+
+* * * * * * * * * * * * * * * * * * * * *
+* Execute nominal Noop and Reset Commands *
+* * * * * * * * * * * * * * * * * * * * *
+*
+* * * ->  Noop command
+* * * Expected output: event message
+1890 C000 0001 0000 ; Noop command
+
+*
+* * * ->  Reset command
+* * * Expected output: event message
+1890 C000 0001 0100; Reset command
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Execute nominal and error Start and Stop Commands *
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * ->   Start Table #1
+* * * Expected output: info event message
+1890 C000 0003 0200 0001; Start Table #1
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Table 1 is enabled.
+1891 C000 0001 0000
+
+*
+* * * -> Display Table Enabled Fields from Table Services Buffer
+* * * Expected output:  Table 1 is enabled.
+@SHOW_BUFFER_ENABLED_FIELDS
+
+*
+* * * ->  Start Tables #2 and #3
+* * * Expected output: info event message
+1890 C000 0003 0200 0006 ;Start Tables #2 and #3
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  1, 2, and 3 are enabled.
+1891 C000 0001 0000
+
+*
+* * * -> Display Table Enabled Fields from Table Services Buffer
+* * * Expected output:  Tables  1, 2, and 3 are enabled.
+@SHOW_BUFFER_ENABLED_FIELDS
+
+*
+* * * ->  Start Tables #0
+* * * Expected output: error event message
+1890 C000 0003 0200 0000 ;Start Tables #0
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  1, 2, and 3 are enabled.
+1891 C000 0001 0000
+
+*
+* * * ->   Stop Table #1
+* * * Expected output: info event message
+1890 C000 0003 0300 0001
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  2 and 3 are enabled.
+1891 C000 0001 0000
+
+*
+* * * -> Display Table Enabled Fields from Table Services Buffer
+* * * Expected output:  Tables  2 and 3 are enabled.
+@SHOW_BUFFER_ENABLED_FIELDS
+
+
+*
+* * * ->   Stop Table #0
+* * * Expected output: error event message
+1890 C000 0003 0300 0000
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  2 and 3 are enabled.
+1891 C000 0001 0000
+
+*
+* * * ->   Start Table #1
+* * * Expected output: event message
+1890 C000 0003 0200 0001; Start Table #1
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables 1, 2, and 3 enabled.
+1891 C000 0001 0000
+
+*
+* * * -> Display Table Enabled Fields from Table Services Buffer
+* * * Expected output:  Tables 1, 2, and 3 enabled.
+@SHOW_BUFFER_ENABLED_FIELDS
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Execute nominal and error 'Set Signature' Commands *
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send 'Set Signature' command to set signature of table #1 to 'abc'
+* * * Expected output:  Event message
+1890 C000 0025 0500 0001 0000 6261 0063 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display signature for table #1
+* * * Expected output: Signature = 'abc'
+@SHOW_BUFFER_SIGNATURE 1
+
+*
+* * * -> Send 'Set Signature' command with signature 'abcabc...' that is _not_ null terminated
+* * * Expected output:  Memory Dwell rejects signature as it is too long
+1890 C000 0025 0500 0001 0000 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261 6163 6362 6261
+
+*
+* * * -> Display signature for table #1
+* * * Expected output: Signature = 'abc'
+@SHOW_BUFFER_SIGNATURE 1
+
+*
+* * * -> Send 'Set Signature' command to set signature of table #7 to 'abc'
+* * * Expected output:  Error event message for invalid table designation
+1890 C000 0025 0500 0007 0000 6261 0063 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Send command with incorrect length                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send (noop) command with incorrect length (extra bytes at the end)
+* * * Expected output:  error event message
+1890 C000 0003 0000 1234
+
+*
+* * * -> Send Wakeup Message with incorrect length
+* * * Expected output:  error event message
+1892 C000 0003 0000 eeee
+
+*
+* * * -> Send Housekeeping Request with incorrect length
+* * * Expected output:  error event message
+1891 C000 0005 0000 eeff 1234
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Test sending of command with invalid command code (9)             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Housekeeping packet
+1891 C000 0001 0000
+
+*
+* * * -> Send command with invalid command code (9)
+1890 C000 0003 0900 
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Error count has incremented.
+1891 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Jam some 4-byte addresses into table #1 and generate a dwell packet *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Allocated simulated memory
+@ADD_SIM_MEMORY
+
+*
+* * * -> Send Jam Command (table #1, entry #1, length=4, delay=0, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0001 0001 0004 0000 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #1, entry #1, length=4, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0001 0001 0004 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display buffer entry for table #1, entry #1
+* * * Expected output: length=4, delay=1, address 0x004610A0
+@SHOW_BUFFER_JAM_ENTRY 1 1
+
+*
+* * * -> Send Jam Command (table #1, entry #2, length=4, delay=1, address 0x004610A4)
+* * * Expected output: Event message
+1890 C000 004D 0400 0001 0002 0004 0001 10A4 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display buffer entry for table #1, entry #2
+* * * Expected output: length=4, delay=1, address 0x004610A4
+@SHOW_BUFFER_JAM_ENTRY 1 2
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #1.
+1891 C000 0001 0000
+
+*
+* * * -> Send two Wakeup Messages
+* * * Expected output:  dwell packet
+1892 C000 0001 0000
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * 
+* Jam 1-byte and 2-byte addresses into table #4 *
+* * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Jam Command (table #4, entry #1, length=1, delay=0, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0004 0001 0001 0000 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display buffer entry for table #4, entry #1
+* * * Expected output: length=1, delay=0, address 0x004610A0
+@SHOW_BUFFER_JAM_ENTRY 4 1
+
+*
+* * * -> Send Jam Command (table #4, entry #2, length=2, delay=1, address 0x004610A4)
+* * * Expected output: Event message
+1890 C000 004D 0400 0004 0002 0002 0001 10A4 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * ->   Start Table #4 (corresponds to table mask 0x08)
+* * * Expected output: event message
+1890 C000 0003 0200 0008; Start Table #1
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #4.
+1891 C000 0001 0000
+
+* * * -> Send a Wakeup Message
+* * * Expected output:  dwell packet with a 1-byte and 2-byte reads.
+1892 C000 0001 0000
+
+*
+* * * ->   Stop all Tables 
+* * * Expected output: info event message
+1890 C000 0003 0300 000F
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Jam 1-byte, 2-byte, and 4-byte addresses into table #2         *
+* Use memory addresses which haven't been added to simulation to *
+* force error from OS Read calls.                                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Jam Command (table #2, entry #1, length=1, delay=0, address 0x005610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0002 0001 0001 0000 10A0 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #2, entry #2, length=2, delay=0, address 0x005610A4)
+* * * Expected output: Event message
+1890 C000 004D 0400 0002 0002 0002 0000 10A4 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #2, entry #3, length=4, delay=1, address 0x005610A4)
+* * * Expected output: Event message
+1890 C000 004D 0400 0002 0003 0004 0001 10A4 0056 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * ->   Start Table #2 (corresponds to table mask 0x02)
+* * * Expected output: event message
+1890 C000 0003 0200 0002; Start Table #2
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Expect to see 3 dwell addresses present for dwell stream #2,
+* * * 7 bytes dwelled on, dwell steam #2 enabled (enable mask=0x02).
+1891 C000 0001 0000
+
+* * * -> Send a Wakeup Message
+* * * Expected output:  dwell packet with a 1-byte, 2-byte, and 4-byte reads.
+* * * These reads will cause error returns from MemRead utilities, so MemCpy is not
+* * * performed into dwell packet and packet contents will not change.
+1892 C000 0001 0000
+
+*
+* * * ->   Stop all Tables 
+* * * Expected output: info event message
+1890 C000 0003 0300 000F
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Jam some addresses, perform dwell reads, then insert null entry so that pkt now completes  *
+* _before_ completed reads.                                                                  *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Jam Command (table #3, entry #1, length=1, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0003 0001 0001 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #3, entry #2, length=1, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0003 0002 0001 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #3, entry #3, length=1, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0003 0003 0001 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #3, entry #4, length=1, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0003 0004 0001 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command (table #3, entry #5, length=1, delay=1, address 0x004610A0)
+* * * Expected output: Event message
+1890 C000 004D 0400 0003 0005 0001 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * ->   Start Table #3 (corresponds to table mask 0x04)
+* * * Expected output: event message
+1890 C000 0003 0200 0004; Start Table #3
+
+* * * -> Send Housekeeping packet
+* * * Expected output:  Expect to see 5 dwell addresses present for dwell stream #3.
+1891 C000 0001 0000
+
+* * * -> Send 4 Wakeup Messages
+* * * Expected output:  
+1892 C000 0001 0000
+1892 C000 0001 0000
+1892 C000 0001 0000
+1892 C000 0001 0000
+
+*
+* * * -> Send Jam Command to set null entry (table #3, entry #3, length=0, delay=0, address 0x00000000)
+1890 C000 004D 0400 0003 0003 0000 0000 10A8 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display buffer entry for table #3, entry #3
+* * * Expected output: length=0, delay=0, address 0x00000000
+@SHOW_BUFFER_JAM_ENTRY 3 3
+
+* * * -> Send Housekeeping packet
+* * * Expected output:  Expect to see 2 dwell addresses present for dwell stream #3.
+1891 C000 0001 0000
+
+* * * -> Send one Wakeup Message.
+* * * Expected output:  Dwell packet.
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * 
+* Issue some invalid Jam commands *
+* * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Jam Command with invalid length (table #1, entry #1, length=3, delay=1, address 0x004610A0)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0001 0003 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command with invalid table # (table #0, entry #1, length=4, delay=1, address 0x004610A0)
+* * Expected Output: error event message
+1890 C000 004D 0400 0000 0001 0004 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command with invalid entry # (table #1, entry #0, length=4, delay=1, address 0x004610A0)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0000 0004 0001 10A0 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command with a symbol name 'abab' which will be found to be invalid
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0001 0004 0001 10A0 0046 6162 6162 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+
+*
+* * * -> Set up simulator so that mem range checks will return false
+@SET_MEM_RANGE_FALSE
+
+*
+* * * -> Send Jam Command (table #1, entry #3, length=4, delay=1, address 0x004610A8)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0003 0004 0001 10A8 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Set up simulator so that mem range checks will return valid
+@SET_MEM_RANGE_VALID
+
+*
+* * * -> Send Jam Command with improper 32 bit alignment (table #1, entry #3, length=4, delay=1, address 0x004610AA)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0003 0004 0001 10AA 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command with improper alignment (table #1, entry #3, length=4, delay=1, address 0x004610A9)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0003 0004 0001 10A9 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Send Jam Command with improper alignment (table #1, entry #3, length=2, delay=1, address 0x004610A9)
+* * * Expected output:  error event message
+1890 C000 004D 0400 0001 0003 0002 0001 10A9 0046 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+
+*
+* * * -> Display list of tables registered with Table Services
+@DISPLAY_TABLE_REGISTRY
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Special Case: Set CFE_TBL_GetStatus to return error code,
+* then send a command to trigger this error.
+
+* * * -> Configure CFE_TBL_GetStatus stub to return CFE_TBL_ERR_NO_ACCESS error event.
+@SET_TBL_RETURN_CODE 11 0xcc000008
+
+* * * -> Send Wakeup Message
+* * * -> Expected output: MD_TBL_STATUS_ERR_EID "Received unexpected error..."
+1892 C000 0001 0000
+
+* * * -> Return CFE_TBL_GetStatus to default behavior
+@USE_DEFAULT_TBL_RETURN_CODE 11

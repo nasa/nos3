@@ -1,0 +1,36 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Jan 11 2007
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TST ES App table 2
+!       Packet Length: 8 Bytes (Not including Bytes Of Table Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  	2007/01/11 WFM : Initial implementation
+!==============================================================================
+!
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST_ES Table 2 File", VARYING
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  SLI $sc_$cpu_TST_ES_TABLE2_Element1	DESC="$sc $cpu TST_ES Table 2 Element 1"
+  SI  $sc_$cpu_TST_ES_TABLE2_Element2	DESC="$sc $cpu TST_ES Table 2 Element 2"
+  SB  $sc_$cpu_TST_ES_TABLE2_Element3	DESC="$sc $cpu TST_ES Table 2 Element 3"
+  UB  $sc_$cpu_TST_ES_TABLE2_Pad	DESC="PAD to boundary"
+!
+END

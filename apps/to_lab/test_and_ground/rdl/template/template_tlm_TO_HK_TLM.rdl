@@ -1,0 +1,41 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 11 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TO Telemetry Data Packet
+!       Packet Length:  21 Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/11  SMA             : Initial
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TO Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_TO_CMDPC         DESC="$sc $cpu TO Command Processed Counter",
+                                UNITS=Counts
+!
+  UB   $sc_$cpu_TO_CMDEC         DESC="$sc $cpu TO Command Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_TO_Spare2Align[2] DESC="$sc $cpu TO fill bytes for 32-bit alignment"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

@@ -1,0 +1,100 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: June 1 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/11  SMA	: Initial
+!  2005/04/28  MOB	: Added temporary checksum
+!  2005/06/01  MOB	: Added cFE version label and OS version label
+!  2005/11/04  SMA	: Added cFE sub minor version label
+!  2006/11/15  WFM	: Updated to reflect the cFE 4.0 version
+!  2007/05/02  WFM	: Updated to reflect the cFE 4.1 version
+!  2007/06/05  WFM	: Added Discrete values to PerfState & PerfMode
+!  2009/08/05  WFM	: Added 3 new Heap mnemonics for cFE 6.0.0
+!  2010/11/24  WFM	: Modified CFESUBMINORVER to CFERevision and added
+!			: the new CFEMissionRevision mnemonic
+!  2012/01/19  WFM	: Replaced PAD1 and PAD2 with OSREVISION and
+!			: OSMISSIONREV for cFE 6.3.0.0
+!==============================================================================
+!
+#include "cfe_platform_cfg.h"
+#define MaskCnt (CFE_ES_PERF_MAX_IDS / 32)
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_ES_CMDPC       DESC="$sc $cpu ES Command Processed Counter",
+                               UNITS=Counts
+!
+  UB   $sc_$cpu_ES_CMDEC       DESC="$sc $cpu ES Command Error Counter",
+                               UNITS=Counts, YH=1, DOLIMIT
+!
+  UI   $sc_$cpu_ES_CKSUM	DESC="$sc $cpu ES Core Checksum"
+  UB   $sc_$cpu_ES_CFEMAJORVER  DESC="$sc $cpu cFE Major Version Label"
+  UB   $sc_$cpu_ES_CFEMINORVER  DESC="$sc $cpu cFE Minor Version Label"
+  UB   $sc_$cpu_ES_CFEREVISION  DESC="$sc $cpu cFE Revision Label"
+  UB   $sc_$cpu_ES_CFEMSNREV	DESC="$sc $cpu cFE Mission Revision Label"
+  UB   $sc_$cpu_ES_OSMAJORVER   DESC="$sc $cpu OS Major Version Label"
+  UB   $sc_$cpu_ES_OSMINORVER   DESC="$sc $cpu OS Minor Version Label"
+  UB   $sc_$cpu_ES_OSREVISION	DESC="$sc $cpu OS Revision Label"
+  UB   $sc_$cpu_ES_OSMISSIONREV	DESC="$sc $cpu OS Mission Revision Label"
+  ULI  $sc_$cpu_ES_SYSLOGBYTEUSED DESC="$sc $cpu Bytes used by the System Log"
+  ULI  $sc_$cpu_ES_SYSLOGSIZE     DESC="$sc $cpu Total size of the System Log"
+  ULI  $sc_$cpu_ES_SYSLOGENTRIES  DESC="$sc $cpu Entries in the System Log"
+  ULI  $sc_$cpu_ES_SYSLOGMODE     DESC="$sc $cpu System Log Write Mode",
+				  DISCRETE, DRANGE=(0,1),
+				  DLABEL=("Overwrite","Discard")
+  ULI  $sc_$cpu_ES_ERLOGINDEX	  DESC="$sc $cpu Current ER Log index"
+  ULI  $sc_$cpu_ES_ERLOGENTRIES	  DESC="$sc $cpu ER Log entries since power-on"
+  ULI  $sc_$cpu_ES_RegCoreApps	  DESC="$sc $cpu ES Registered Core Apps"
+  ULI  $sc_$cpu_ES_RegExtApps	  DESC="$sc $cpu ES Registered External Apps"
+  ULI  $sc_$cpu_ES_RegTasks	  DESC="$sc $cpu ES Registered Tasks"
+  ULI  $sc_$cpu_ES_RegLibs	  DESC="$sc $cpu ES Registered Libraries"
+  ULI  $sc_$cpu_ES_ResetType	  DESC="$sc $cpu ES Reset type",
+				  DISCRETE, DRANGE=(1,2),
+				  DLABEL=("Processor","Power-On")
+  ULI  $sc_$cpu_ES_ResetSubtype	  DESC="$sc $cpu ES Reset subtype",
+				  DISCRETE, DRANGE=(1,2,3,4,5,6,7),
+				  DLABEL=("Power Cycle","Push Button",
+					  "HW Special Command","HW Watchdog",
+					  "Command","Exception","Undefined")
+  ULI  $sc_$cpu_ES_ProcResetCnt	  DESC="$sc $cpu Processor resets since the last Power-On reset"
+  ULI  $sc_$cpu_ES_MaxProcResets  DESC="$sc $cpu Max Processor resets before a Power-On reset is done"
+  ULI  $sc_$cpu_ES_BootSource     DESC="$sc $cpu Boot Source (from BSP)"
+  ULI  $sc_$cpu_ES_PerfState      DESC="$sc $cpu Current Perf Analyzer state",
+				  DISCRETE, DRANGE=(0,1,2),
+				  DLABEL=("Idle","Waiting","Triggered")
+  ULI  $sc_$cpu_ES_PerfMode       DESC="$sc $cpu Current Perf Analyzer mode",
+				  DISCRETE, DRANGE=(0,1,2),
+				  DLABEL=("Start","Center","End")
+  ULI  $sc_$cpu_ES_PerfTrigCnt    DESC="$sc $cpu Perf Analyzer Trigger counter"
+  ULI  $sc_$cpu_ES_PerfFltrMask[MaskCnt] DESC="$sc $cpu Perf Analyzer Filter Mask"
+  ULI  $sc_$cpu_ES_PerfTrigMask[MaskCnt] DESC="$sc $cpu Perf Analyzer Trigger Mask"
+  ULI  $sc_$cpu_ES_PerfDataStart  DESC="$sc $cpu Perf Analyzer Data start"
+  ULI  $sc_$cpu_ES_PerfDataEnd    DESC="$sc $cpu Perf Analyzer Data end"
+  ULI  $sc_$cpu_ES_PerfDataCnt    DESC="$sc $cpu Perf Analyzer Data counter"
+  ULI  $sc_$cpu_ES_PerfData2Write DESC="$sc $cpu Perf Analyzer Data left to write"
+  ULI  $sc_$cpu_ES_HeapBytesFree  DESC="$sc $cpu bytes free on the heap"
+  ULI  $sc_$cpu_ES_HeapBlocksFree DESC="$sc $cpu blocks free on the heap"
+  ULI  $sc_$cpu_ES_HeapMaxBlkSize DESC="$sc $cpu Max Block size of the heap"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

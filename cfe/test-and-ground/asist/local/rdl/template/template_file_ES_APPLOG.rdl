@@ -1,0 +1,80 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Aug 25 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES App Log File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/08/25  SMA	: Initial
+!  2005/09/15  SMA	: Redo record description.                    
+!  2008/08/28  WFM	: Modified the App Info structure to match fsw	
+!  2009/12/09  WFM	: Modified the hard-coded 64 in ALE to use the cFE
+!			: configuration parameter CFE_ES_MAX_APPLICATIONS
+!                                                             
+!==============================================================================
+!
+!
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+
+TYPES
+   RECORD $sc_$cpu_ES_AppLog               DESC="ES Application Info Log"
+    ULI   ES_AL_AppId                      DESC="App Id"
+    ULI	  ES_AL_AppType			  DESC="Application Type (Core or Ext)",
+					  DISCRETE, DRANGE=(1,2),
+					  DLABEL=("CORE","External")
+    CHAR  ES_AL_AppName[OS_MAX_API_NAME]   DESC="Application Name"
+    CHAR  ES_AL_EntryPoint[OS_MAX_API_NAME] DESC="Entry Point Name"
+    CHAR  ES_AL_FileName[OS_MAX_PATH_LEN]  DESC="File Name"
+    ULI   ES_AL_StackSize                  DESC="Stack Size"
+    ULI   ES_AL_ModuleID                   DESC="OS Module ID"
+    ULI   ES_AL_AddrsValid                 DESC="Valid Address flag",
+					  DISCRETE, DRANGE=(0,1),
+					  DLABEL=("False","True")
+    ULI   ES_AL_CodeAddr                   DESC="Code Address"
+    ULI   ES_AL_CodeSize                   DESC="Code Size"
+    ULI   ES_AL_DataAddr                   DESC="Data Address"
+    ULI   ES_AL_DataSize                   DESC="Data Size"
+    ULI   ES_AL_BSSAddr                    DESC="BSS Address"
+    ULI   ES_AL_BSSSize                    DESC="BSS Size"
+    ULI   ES_AL_StartAddr                  DESC="Start Address"
+    UI	  ES_AL_ExceptionAction		   DESC="Exception Action",
+					   DISCRETE, DRANGE=(0,1),
+					   DLABEL=("RestartApp","RestartCPU")
+    UI	  ES_AL_Priority		   DESC="Application Priority"
+    ULI   ES_AL_TaskId                     DESC="Task Id"
+    ULI   ES_AL_ExecutionCtr               DESC="Execution Counter"
+    CHAR  ES_AL_TaskName[OS_MAX_API_NAME]  DESC="Task Name"
+    ULI   ES_AL_ChildTasks	 	   DESC="Number of Child Tasks for this App"
+
+   END
+   
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES App Log File", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_ES_AppLog $sc_$cpu_ES_ALE[CFE_ES_MAX_APPLICATIONS]  DESC="$sc $cpu ES App Log Entry"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+
+ 

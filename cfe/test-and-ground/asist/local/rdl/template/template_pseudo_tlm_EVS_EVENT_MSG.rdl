@@ -1,0 +1,98 @@
+!=============================================================
+!
+!                Originator: T.  Clement
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                 cFE Pseudo Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: xxxx
+!       Packet Title:  $sc Event Pseudo Telemetry Packet for the $cpu processor
+!       Packet Length:  ??? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  25AUG04   S.Strege        : Initial
+!  21SEP04   M.Bartholomew   : Added all event messages from all processors 
+!                                and modified SC_TAI reference to packet time
+!  21SEP04   M.Bartholomew   : temporarily removed formatting of event msg
+!                                to debug garbage that was being displayed
+!  01OCT04   M. Bartholomew  : Added converted value to processor ID
+!  01APR05   M. Bartholomew  : Modified mnemonics for cFE Build 1
+!  12APR05   M. Bartholomew  : Modified format to make prettier
+!  02MAY05   T. Clement      : Changed APPID to APPNAME
+!  13MAY05   M. Bartholomew  : Added "Event ID="
+!  15JUN05   T. Clement      : Initial release for ut_setupevt portion of rdl.
+!  22AUG05   S. Applebee     : Added SC_TAI time
+!  11OCT05   T. Clement      : Convert APPNAME to upper case
+!  26OCT05   S. Applebee     : Combine with cfe_event_pseudo.rdl to merge into one
+!                            : pseudo-telemetry packet following APID assignment
+!                            : convention. Deleted cfe_event_pseudo.rdl 
+!  22MAR06   W. Moleski      : Modified to handle multiple events
+!  06APR06   S. Applebee     : Fixed packet numbers
+!  09DEC09   W. Moleski      : Modified APPNAME and EVENT_TXT to use the
+!			     : appropriate configuration parameters rather than
+!			     : hard-coded values
+!  02MAY12   W. Moleski      : Modified event display appearance by removing
+!			     : the substring(PrxxTTIME...). Events will now
+!			     : display year and day as YY-DDD-
+!=============================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_MULTI_EVENT_TYPE   DESC="$sc $cpu Multiple Event Search Type"
+        UI        NUM_FOUND_MESSAGES INIT = 0
+        UI        SCID           DESC= "Spacecraft ID of the sought event"
+        UI        PROCESSORID    DESC= "Processor ID of the sought event", DISCRETE,
+                                 DRANGE=(1,2,3),DLABEL=("CPU1", "CPU2", "CPU3")
+        CHAR      APPNAME[OS_MAX_API_NAME] DESC= "Application Name of the sought event"
+        UI        EVENTID        DESC= "Event ID of the sought event"
+        UI        EVENTTYPE      DESC= "Event Type of the sought event", DISCRETE,
+                                 DRANGE=(1,2,3,4),DLABEL=("DEBUG", "INFO", "ERROR", "CRITICAL")
+        CHAR      EVENT_TXT[CFE_EVS_MAX_MESSAGE_LENGTH] DESC= "Event Message of the found event"
+        SC_TAI_W_LEAP EVENT_TIME DESC= "UTC Time of the found event"
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Event Pseudo Telemetry Packet"
+
+#include "ccsds_header.rdl"
+
+UI                        $sc_$cpu_NUM_FOUND_MESSAGES INIT = 0
+$sc_$cpu_MULTI_EVENT_TYPE $sc_$cpu_FIND_EVENT[8]  DESC= "Array of up to 5 events to look for"
+
+UI $sc_$cpu_EVTMSG
+   DESC="$sc $cpu Event Pseudo Telemetry",
+   EQUATION = WHEN PKT_RCVD = rnnn
+   DO
+     LOCAL i
+     FOR i = 1 to 8 DO
+         IF ($sc_$cpu_FIND_EVENT[i].SCID        = $sc_$cpu_EVS_SCID            AND
+             $sc_$cpu_FIND_EVENT[i].PROCESSORID = $sc_$cpu_EVS_PROCESSORID     AND
+             $sc_$cpu_FIND_EVENT[i].APPNAME     = %upper($sc_$cpu_EVS_APPNAME) AND
+             $sc_$cpu_FIND_EVENT[i].EVENTID     = $sc_$cpu_EVS_EVENTID         AND
+             $sc_$cpu_FIND_EVENT[i].EVENTTYPE   = $sc_$cpu_EVS_EVENTTYPE) THEN
+                                                                                                                                                            
+           $sc_$cpu_FIND_EVENT[i].NUM_FOUND_MESSAGES  = $sc_$cpu_FIND_EVENT[i].NUM_FOUND_MESSAGES + 1
+           $sc_$cpu_FIND_EVENT[i].EVENT_TXT = $sc_$cpu_EVS_EVENT
+           $sc_$cpu_FIND_EVENT[i].EVENT_TIME  = PrxxTTIME
+           $sc_$cpu_NUM_FOUND_MESSAGES  = $sc_$cpu_FIND_EVENT[1].NUM_FOUND_MESSAGES
+         ENDIF
+     ENDDO
+     EVENT PrxxTTIME & " " & p@$sc_$cpu_EVS_EVENTTYPE &;;
+           " CPU=" & p@$sc_$cpu_EVS_PROCESSORID  & ;;
+           " APPNAME=" & $sc_$cpu_EVS_APPNAME & ;;
+           " EVENT ID=" & $sc_$cpu_EVS_EVENTID  & " " &;;
+           $sc_$cpu_EVS_EVENT
+   ENDDO
+
+END ! PACKET Pxxxx

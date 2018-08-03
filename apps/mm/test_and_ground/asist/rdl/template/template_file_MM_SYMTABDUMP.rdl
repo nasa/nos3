@@ -1,0 +1,44 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: March 18, 2008
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MM Load Dump File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/03/18  WFM             : Initial implementation
+!                                                             
+!==============================================================================
+!
+#include "osconfig.h"
+#include "mm_platform_cfg.h"
+
+#define MM_SYM_ENTRY_SIZE (OS_MAX_SYM_LEN + 4)
+#define MM_NUM_SYMBOLS	(MM_MAX_DUMP_FILE_DATA_SYMTBL/MM_SYM_ENTRY_SIZE) + 1
+
+TYPES
+  RECORD $sc_$cpu_MM_SymbolTableEntry	DESC="Memory Manager Symbol Table Entry"
+	char SymbolName[OS_MAX_SYM_LEN]	DESC="The name of the symbol"
+	ULI  Address			DESC="The absolute address associated with this symbol"
+  END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Memory Manager Symbol Table File", VARYING
+!
+    $sc_$cpu_MM_SymbolTableEntry $sc_$cpu_MM_SymTabFile[MM_NUM_SYMBOLS] DESC="A list of symbol table enytries defined"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

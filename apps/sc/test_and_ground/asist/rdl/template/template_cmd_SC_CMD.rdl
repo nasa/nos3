@@ -1,0 +1,89 @@
+!==============================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  ??
+!                Responsible CSE: ??
+!
+!                  $sc $cpu SC Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Stored Command App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  27FEB08     WFM           : Initial
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Stored Command App Commands"
+!
+  CMD  $sc_$cpu_SC_NOOP        	    FCTN=0, DESC="$sc $cpu SC no-op command code"
+!
+  CMD  $sc_$cpu_SC_ResetCtrs        FCTN=1, DESC="$sc $cpu SC reset counters command code"
+!
+  CMDS  $sc_$cpu_SC_StartATS        FCTN=2, DESC="$sc $cpu SC Start ATS command code"
+      UI ATSID	DESC="The ID of the ATS to Start"
+  END
+!
+  CMD  $sc_$cpu_SC_StopATS         FCTN=3, DESC="$sc $cpu SC Stop ATS command code"
+!
+  CMDS  $sc_$cpu_SC_StartRTS        FCTN=4, DESC="$sc $cpu SC Start RTS command code"
+      UI RTSID	DESC="The ID of the RTS to Start"
+  END
+!
+  CMDS  $sc_$cpu_SC_StopRTS         FCTN=5, DESC="$sc $cpu SC Stop RTS command code"
+      UI RTSID	DESC="The ID of the RTS to Stop"
+  END
+!
+  CMDS  $sc_$cpu_SC_DisableRTS      FCTN=6, DESC="$sc $cpu SC Disable RTS command code"
+      UI RTSID	DESC="The ID of the RTS to Disable"
+  END
+!
+  CMDS  $sc_$cpu_SC_EnableRTS       FCTN=7, DESC="$sc $cpu SC Enable RTS command code"
+      UI RTSID	DESC="The ID of the RTS to Enable"
+  END
+!
+  CMD   $sc_$cpu_SC_SwitchATS       FCTN=8, DESC="$sc $cpu SC Switch ATS command code"
+!
+  CMDS  $sc_$cpu_SC_JumpATS         FCTN=9, DESC="$sc $cpu SC Switch ATS command code"
+      ULI NewTime	DESC="The new time to jump to in the current ATS"
+  END
+!
+  CMDS  $sc_$cpu_SC_ContinueATS     FCTN=10, DESC="$sc $cpu SC Continue ATS on Failure command code"
+      UNION Continue_Flag
+        UI stop 	STATIC, DEFAULT=0, DESC="Stop ATS execution"
+        UI continue	STATIC, DEFAULT=1, DESC="Continue to execute the ATS"
+      END
+  END
+!
+  CMDS  $sc_$cpu_SC_AppendATS       FCTN=11, DESC="$sc $cpu SC Append ATS command code"
+      UI ATSID		DESC="The ID of the ATS to append data to"
+  END
+!
+  CMDS  $sc_$cpu_SC_StartRTSGroup   FCTN=13, DESC="$sc $cpu SC Start a group of RTSs command code"
+      UI FirstRTSID	DESC="The ID of the first RTS to Start"
+      UI LastRTSID	DESC="The ID of the Last RTS to Start"
+  END
+!
+  CMDS  $sc_$cpu_SC_StopRTSGroup    FCTN=14, DESC="$sc $cpu SC Stop RTS command code"
+      UI FirstRTSID	DESC="The ID of the first RTS to Start"
+      UI LastRTSID	DESC="The ID of the Last RTS to Start"
+  END
+!
+  CMDS  $sc_$cpu_SC_DisableRTSGroup FCTN=15, DESC="$sc $cpu SC Disable RTS command code"
+      UI FirstRTSID	DESC="The ID of the first RTS to Start"
+      UI LastRTSID	DESC="The ID of the Last RTS to Start"
+  END
+!
+  CMDS  $sc_$cpu_SC_EnableRTSGroup  FCTN=16, DESC="$sc $cpu SC Enable RTS command code"
+      UI FirstRTSID	DESC="The ID of the first RTS to Start"
+      UI LastRTSID	DESC="The ID of the Last RTS to Start"
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

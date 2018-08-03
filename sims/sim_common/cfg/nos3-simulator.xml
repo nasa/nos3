@@ -1,0 +1,116 @@
+<nos3-configuration>
+    <!-- Simulator Configuration File -->
+    <!-- Configuration is in XML format -->
+    <common>
+        <log-config-file>sim_log_config.xml</log-config-file>
+        <!-- 533156400.0 = 11/23/2016 07:00:00.00 GMT -->
+        <!-- 552110400.0 = 06/30/2017 16:00:00.00 GMT -->
+        <absolute-start-time>552110400.0</absolute-start-time>
+        <sim-microseconds-per-tick>1000000</sim-microseconds-per-tick>
+        <nos-connection-string>tcp://127.0.0.1:12001</nos-connection-string>
+    </common>
+
+    <simulators>
+        <simulator>
+            <name>time</name>
+            <active>true</active>
+            <hardware-model>
+                <type>TimeDriver</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
+                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
+                </connections>
+                <real-microseconds-per-tick>1000000</real-microseconds-per-tick>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>terminal</name>
+            <active>true</active>
+            <hardware-model>
+                <type>SimTerminal</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>terminal</node-name></connection>
+                </connections>
+                <sim-commanded>cam-command-node</sim-commanded>
+                <input-mode>HEX</input-mode> <!-- HEX or ASCII -->
+                <output-mode>HEX</output-mode> <!-- HEX or ASCII -->
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>gps</name>
+            <active>true</active>
+            <library>libgps_sim.so</library>
+            <hardware-model>
+                <type>OEM615</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>gps-command</node-name></connection> -->
+                    <connection><type>usart</type>
+                        <bus-name>usart_1</bus-name>
+                        <node-port>1</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GPS42SOCKET</type>
+                    <hostname>localhost</hostname>
+                    <port>4242</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                </data-provider>               
+                <!-- <data-provider>               
+                    <type>GPSFILE</type>
+                    <filename>gps_data.42</filename>
+                    <data-step-size>10</data-step-size>
+                </data-provider> -->
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>camsim</name>
+            <active>true</active>
+            <library>libcam_sim.so</library>
+            <hardware-model>
+                <type>ARDUCAM_OV5640</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>cam-command-node</node-name></connection>
+                </connections>
+                <!-- <stream_data>true</stream_data> -->
+                <i2c>
+                    <address>60</address>
+                    <bus>i2c_2</bus>
+                </i2c>
+                <spi>
+                    <bus>spi_0</bus>
+                    <chip_select>0</chip_select>
+                </spi>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>foosim</name>
+            <active>true</active>
+            <library>libexample_sim.so</library>
+            <hardware-model>
+                <type>FOOHARDWARE</type>
+                <connections>
+                    <connection>
+                        <connection-param1>cp1</connection-param1>
+                        <!-- ... -->
+                        <connection-paramN>cpN</connection-paramN>
+                    </connection>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>foosim-command-node</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_0</bus-name>
+                        <node-port>0</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>BARPROVIDER</type>
+                    <provider-param1>fpp1</provider-param1>
+                    <!-- ... -->
+                    <provider-paramN>fppN</provider-paramN>
+                </data-provider>
+                <other-hardware-parameter1>OTHER-FOO</other-hardware-parameter1>
+                <!-- ... -->
+                <other-hardware-parameterN>OTHER-FOO</other-hardware-parameterN>
+            </hardware-model>
+        </simulator>
+    </simulators>
+</nos3-configuration>

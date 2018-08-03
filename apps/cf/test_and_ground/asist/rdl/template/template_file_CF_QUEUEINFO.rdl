@@ -1,0 +1,55 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 18, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CF Queue Info File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2009/11/18  WFM             : Initial implementation
+!  2010/03/10  WFM             : Updated for first official Version
+!                                                             
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cf_platform_cfg.h"
+#include "cf_defs.h"
+
+TYPES
+   RECORD $sc_$cpu_CF_Q_INFO_ENTRY  DESC="CF Queue Info File"
+    ULI   TranStatus		    DESC="Transaction Status",DISCRETE,
+				    DRANGE=(0,1,2,3,4,5,6,7,8,9),
+				    DLABEL=("Unknown","Success","Cancelled",
+				    "Abandoned","No Meta","Pending",
+				    "Already Active","Put Issued","Put Failed",
+				    "Active")
+    ULI   TransNum		    DESC="Transaction number assigned by the engine"
+    CHAR  SrcEntityID[CF_MAX_CFG_VALUE_CHARS] DESC="Entity ID of file sender"
+    CHAR  FileName[OS_MAX_PATH_LEN] DESC="Path/Filename at the source"
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CFDF Queue Info File", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_CF_Q_INFO_ENTRY $sc_$cpu_CF_QInfo[100] DESC="$sc $cpu CFDP Queue Info File Entry"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+
+ 

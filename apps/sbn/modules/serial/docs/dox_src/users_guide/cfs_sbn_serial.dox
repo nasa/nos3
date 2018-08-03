@@ -1,0 +1,195 @@
+/**
+  \page serial CFS Software Bus Network Serial Module
+
+  <UL>
+    <LI> \subpage sbnserialrevhist </LI>
+    <LI> \subpage sbnserialovr </LI>
+    <LI> \subpage sbnserialopr </LI>
+    <LI> \subpage sbnserialcfg </LI>
+    <LI> \subpage sbnserialcons </LI>
+  </UL>
+**/
+
+/**
+  \page sbnserialrevhist SBN Serial Module User's Guide Revision History
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="15%"><B>Date</B></TD> <TD WIDTH="15%"><B>Author</B></TD> <TD WIDTH="30%"><B>Comments</B></TD></TR>
+  <TR><TD WIDTH="15%">6/02/2014</TD> <TD WIDTH="15%">ejtimmon</TD> <TD WIDTH="30%">Content template from similar module</TD></TR>
+  <TR><TD WIDTH="15%">8/08/2014</TD> <TD WIDTH="15%">jurriste</TD> <TD WIDTH="30%">Initial revision</TD></TR>
+  <TR><TD WIDTH="15%">6/24/2015</TD> <TD WIDTH="15%">jrbeck</TD> <TD WIDTH="30%">Updated with changes from finished module.</TD></TR>
+  </TABLE>
+
+  Next: \ref sbnserialovr
+**/
+
+/**
+  \page sbnserialovr SBN Serial Module Overview
+
+  The Serial plugin for the Software Bus Network (SBN) allows two CPUs 
+  running cFE to send software bus (SB) messages to each other through a 
+  serial connection (e.g. RS-232). This plugin is never used directly by a user cFE app; 
+  instead it is used by the SBN to make message passing across CPUs transparent 
+  to other apps.
+
+  SBN uses this module by internally calling a set of functions:
+  <UL>
+    <LI>#Serial_SbnParseInterfaceFileEntry  (Reads module setup from SBN peer data file)
+    <LI>#Serial_SbnInitPeerInterface        (Initializes Serial interface)
+    <LI>#Serial_SbnSendNetMsg               (Sends SB or SBN messages to other CPU)
+    <LI>#Serial_SbnCheckForNetProtoMsg      (Checks for SBN protocol messages)
+    <LI>#Serial_SbnReceiveMsg               (Reads software bus messages from other CPU)
+    <LI>#Serial_SbnVerifyPeerInterface      (Verifies that a given peer has a matching host)
+    <LI>#Serial_SbnVerifyHostInterface      (Verifies that a given host has a matching peer)
+    <LI>#Serial_SbnReportModuleStatus       (Reports the status of a peer)
+    <LI>#Serial_SbnResetPeer                (Resets a peer's interface)
+  </UL>
+
+  These functions then use general read/write operations to 
+  pass messages, with serial-specific formatting for handling discrete messages. 
+
+  Next: \ref sbnserialopr <BR>
+  Prev: \ref sbnserialrevhist
+**/
+
+/**
+  \page sbnserialopr SBN Serial Module Operation
+  
+  The serial module operates point-to-point, so there is one "host" and one "peer"
+  per serial port. The serial module operates a little differently than other SBN
+  modules due to the fact that one serial wire cannot be divided into two different
+  ports like IPv4. Instead of having a separate protocol port and a separate data
+  port, the serial module uses two OS Queues provided by OSAL to simulate the two
+  different streams of data coming from one serial port. 
+
+  The module operates as follows: 
+  <UL>
+    <LI>On module load, host/peer data is read from SBN's peer data file
+    <LI>All peers are verified as valid (having a matching host with correct settings)
+    <LI>During the host verification process, if a matching peer is found for a host,
+        a thread is started to begin reading from the serial port shared by that host/peer
+    <LI>That thread reads messages from the serial port, looks at the "Type" in the 
+        SBN header, and determines whether to put it in the protocol queue or data queue
+        for that host/peer
+    <LI>Outside the thread, in main SBN operations, the host/peer check their appropriate
+        queue (protocol or data) for messages instead of reading from the serial port. 
+  </UL>
+
+  Next: \ref sbnserialcfg <BR>
+  Prev: \ref sbnserialovr
+**/
+
+/**
+  \page sbnserialcfg SBN Serial Module Configuration
+
+  <H1>SBN Peer Data File Entry</H1>
+
+  The file entry in SbnPeerData.dat for a Serial interface requires 7 fields.
+  The first 4 fields are the fields required of all interface modules:
+  <UL>
+    <LI>Peer Name
+    <LI>Processor ID
+    <LI>Protocol ID (6 for Serial)
+    <LI>Spacecraft ID
+  </UL>
+
+  The remaining fields are the interface specific fields that are determined by the device driver's behavior:
+  <UL>
+    <LI>Pair Number, a number that is used to identify two lines in the file as "paired" (connected by the serial wire)
+    <LI>Device Name, as it would appear on the file system (e.g. /dev/ttyS0)
+    <LI>Baud Rate, the desired baud rate for the serial port
+  </UL>
+
+  These three fields have some constraints on their values:
+
+  <B>Pair Number</B>
+  <UL>
+    <LI>The two lines representing a host/peer pair connected by a serial wire must
+        have the same pair number.
+    <LI>Pair numbers must be unique across pairs of lines
+  </UL>
+
+  <B>Device Name:</B> The serial Device Name value is defined by the device driver.
+
+  <B>Baud Rate:</B>
+  <UL>
+    <LI>Valid values for Linux are 38400, 57600, 115200, 230400. Other operating 
+        systems are not implemented. 
+    <LI>Larger baud rates are preferred, especially if SBN will be routing 
+        messages larger than 100 bytes. However, the highest baud rate may
+        produce tty overruns so test different baud rates for your specific system. 
+  </UL>
+
+  In order for the serial interface to work, there must be a "matching" set of
+  two peers for each serial wire. Two peers "match" if they have the same pair
+  number and the same baud rate. An example of serial entries is below, showing 
+  a setup where CPU1 has two serial connections: one to CPU2 and one to CPU3. 
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR>
+    <TD WIDTH="5%"><B>Name</B></TD> 
+    <TD WIDTH="10%"><B>Processor ID</B></TD>
+    <TD WIDTH="10%"><B>Protocol ID</B></TD>
+    <TD WIDTH="10%"><B>Spacecraft ID</B></TD>
+    <TD WIDTH="10%"><B>Pair Number</B></TD>
+    <TD WIDTH="10%"><B>Device Name</B></TD>
+    <TD WIDTH="10%"><B>Baud Rate</B></TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU1</TD> 
+    <TD WIDTH="10%">1</TD> 
+    <TD WIDTH="10%">6</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">1</TD>
+    <TD WIDTH="10%">/dev/ttyS0</TD>
+    <TD WIDTH="10%">115200</TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU2</TD> 
+    <TD WIDTH="10%">2</TD> 
+    <TD WIDTH="10%">6</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">1</TD>
+    <TD WIDTH="10%">/dev/ttyS0</TD>
+    <TD WIDTH="10%">115200</TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU1</TD> 
+    <TD WIDTH="10%">1</TD> 
+    <TD WIDTH="10%">6</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">2</TD>
+    <TD WIDTH="10%">/dev/ttyS1</TD>
+    <TD WIDTH="10%">115200</TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU3</TD> 
+    <TD WIDTH="10%">3</TD> 
+    <TD WIDTH="10%">6</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">2</TD>
+    <TD WIDTH="10%">/dev/ttyS0</TD>
+    <TD WIDTH="10%">115200</TD>
+  </TR>
+  </TABLE>
+
+  Next: \ref sbnserialcons <BR>
+  Prev: \ref sbnserialopr
+**/
+
+/**
+  \page sbnserialcons SBN Serial Module Constraints
+
+  <UL>
+    <LI>This module is dependent on Linux structures for managing a TTY device.
+        There is a function hook available for future implementation for other 
+        operating systems but this function is not used currently. 
+	<LI>Current implementation does not abstract endianness differences when 
+        handling message lengths, so both CPUs must have the same endianness.
+    <LI>The directory /dev must be mountable by CFE. This is accomplished by adding
+        the following line to the cfe_psp_voltab.c file:<BR>
+        {"/",        "/dev",      FS_BASED,        FALSE,     FALSE,    FALSE,     "DEV",    "/dev",  512      },
+  </UL>
+
+  Prev: \ref sbnserialcfg
+**/

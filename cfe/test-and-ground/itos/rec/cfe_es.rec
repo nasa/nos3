@@ -1,0 +1,447 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System ExecutiveServices {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  System enum {
+    Enumeration exceptionaction {
+      EnumerationValue RestartCPU { value=0x0001 }
+      EnumerationValue RestartApp { value=0x0000 }
+    }
+
+    Enumeration triggermode {
+      EnumerationValue TriggerEnd    { value=0x0002 }
+      EnumerationValue TriggerCenter { value=0x0001 }
+      EnumerationValue TriggerStart  { value=0x0000 }
+    }
+
+    Enumeration bank {
+      EnumerationValue Bank3 { value=0x0003 }
+      EnumerationValue Bank2 { value=0x0002 }
+      EnumerationValue Bank1 { value=0x0001 }
+      EnumerationValue Bank0 { value=0x0000 }
+    }
+
+    Enumeration mode {
+      EnumerationValue Discard   { value=0x0001 }
+      EnumerationValue Overwrite { value=0x0000 }
+    }
+  }
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand ESCommand {
+    verification=Verifier {}
+    applicationId { range=0x06 }
+  }
+
+  /** ES no-operation command */
+  ESCommand noop {
+    commandCode { range=0 }
+  }
+
+  /** ES reset counters command */
+  ESCommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  /** Commands which reset the processor aren't verified like the others. */
+  prototype CfsCommand ESResetCommand {
+    applicationId { range=0x06 }
+  }
+
+  /** ES Processor Reset command */
+  ESResetCommand processor_reset {
+    commandCode { range=2 }
+    cfs.U8 restartType { range=1 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** ES Power-On Reset command */
+  ESResetCommand poweron_reset {
+    commandCode { range=2 }
+    cfs.U8 restartType { range=2 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** ES shell command */
+  ESCommand shell {
+    commandCode { range=3 }
+    cfs.S8 cmdstring { lengthInCharacters=64 }
+    cfs.FileName filename {}
+  }
+
+  /** ES load and start single application command */
+  ESCommand start_app {
+    commandCode { range=4 }
+    cfs.AppName application {}
+    cfs.S8 app_entry_pt { lengthInCharacters=20 }
+    cfs.FileName app_file_name {}
+    cfs.U32 stacksize {}
+    cfs.U16 exception_action { enumeration=enum.exceptionaction }
+    cfs.U16 priority {}
+  }
+
+  /** ES Delete Application command */
+  ESCommand delete_app {
+    commandCode { range=5 }
+    cfs.AppName application {}
+  }
+
+  /** ES Restart Application command */
+  ESCommand restart_app {
+    commandCode { range=6 }
+    cfs.AppName application {}
+  }
+
+  /** ES Reload Application command */
+  ESCommand reload_app {
+    commandCode { range=7 }
+    cfs.AppName application {}
+    cfs.FileName filename {}
+  }
+
+  /** ES Query application command */
+  ESCommand query_app {
+    commandCode { range=8 }
+    cfs.AppName application {}
+  }
+
+  /** ES Write App Info command */
+  ESCommand write_appinfo2file {
+    commandCode { range=9 }
+    cfs.FileName filename {}
+  }
+
+  /** ES clear system log command */
+  ESCommand clear_syslog {
+    commandCode { range=10 }
+  }
+
+  /** ES write system log command */
+  ESCommand write_syslog2file {
+    commandCode { range=11 }
+    cfs.FileName filename {}
+  }
+
+  /** ES clear Exception and Reset log command */
+  ESCommand clear_errlog {
+    commandCode { range=12 }
+  }
+
+  /** ES write Exception and Reset log command */
+  ESCommand write_errlog2file {
+    commandCode { range=13 }
+    cfs.FileName filename {}
+  }
+
+  /** ES Start Performance Analyzer data collection command */
+  ESCommand start_perf {
+    commandCode { range=14 }
+    cfs.U32 triggermode { enumeration=enum.triggermode }
+  }
+
+  /** ES Stop Performance Analyzer data collection command */
+  ESCommand stop_perf {
+    commandCode { range=15 }
+    cfs.FileName filename {}
+  }
+
+  /** ES Set Performance Analyzer Filter Mask command */
+  ESCommand set_perf_filter {
+    commandCode { range=16 }
+    cfs.U32 bank { enumeration=enum.bank }
+    cfs.U32 mask {}
+  }
+
+  /** ES Set Performance Analyzer Trigger Mask command */
+  ESCommand set_perf_triger {
+    commandCode { range=17 }
+    cfs.U32 bank { enumeration=enum.bank }
+    cfs.U32 mask {}
+  }
+
+  /** Overwrite System Log Mode command */
+  ESCommand overwrite_syslog_mode {
+    commandCode { range=18 }
+    cfs.U32 mode { enumeration=enum.mode }
+   }
+
+  /** ES Set Processor Reset Counter to Zero */
+  ESCommand reset_prcnt {
+    commandCode { range=19 }
+  }
+
+  /** ES Set Maximum Processor Counter (before Power-on) */
+  ESCommand set_max_prcnt {
+    commandCode { range=20 }
+    cfs.U16 max_count {}
+  }
+
+  /** ES Delete CDS command */
+  ESCommand delete_cds {
+    commandCode { range=21 }
+    cfs.S8 name { lengthInCharacters=38 }
+  }
+
+  /** ES Memory Pool Stats command */
+  ESCommand poolstats {
+    commandCode { range=22 }
+    cfs.AppName application {}
+    cfs.U32 handle {}
+  }
+
+  /** ES Dump CDS Registry command */
+  ESCommand write_cds2file {
+    commandCode { range=23 }
+    cfs.FileName filename {}
+  }
+
+  /** ES Write Task Info command */
+  ESCommand write_taskinfo2file {
+    commandCode { range=24 }
+    cfs.FileName filename {}
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  System cnv {
+    DiscreteConversion resetType {
+      Dsc Processor { range=1, fgColor=white, bgColor=black }
+      Dsc PowerOn { range=2, fgColor=white, bgColor=black, displayString="Power-On" }
+    }
+    DiscreteConversion resetSubtype {
+      Dsc power { range=1, fgColor=white, bgColor=black, displayString="Power Cycle" }
+      Dsc button { range=2, fgColor=white, bgColor=black, displayString="Push Button" }
+      Dsc special { range=3, fgColor=white, bgColor=black, displayString="HW Special Command" }
+      Dsc watchdog { range=4, fgColor=white, bgColor=black, displayString="HW Watchdog" }
+      Dsc command { range=5, fgColor=white, bgColor=black, displayString="Command" }
+      Dsc excpetion { range=6, fgColor=white, bgColor=black, displayString="Exception" }
+      Dsc undefined { range=7, fgColor=white, bgColor=black, displayString="Undefined" }
+    }
+    DiscreteConversion perfState {
+      Dsc Idle { range=0, fgColor=white, bgColor=black }
+      Dsc Waiting { range=1, fgColor=white, bgColor=black }
+      Dsc Triggered { range=2, fgColor=white, bgColor=black }
+    }
+    DiscreteConversion perfMode {
+      Dsc Start { range=0, fgColor=white, bgColor=black }
+      Dsc Center { range=1, fgColor=white, bgColor=black }
+      Dsc End { range=2, fgColor=white, bgColor=black }
+    }
+    DiscreteConversion kind {
+      Dsc CORE { range=1, fgColor=white, bgColor=black }
+      Dsc External { range=2, fgColor=white, bgColor=black }
+    }
+    DiscreteConversion addrsValid {
+      Dsc FALSE { range=0, fgColor=red, bgColor=black }
+      Dsc TRUE  { range=1, fgColor=green, bgColor=black }
+    }
+    DiscreteConversion exceptnActn {
+      Dsc RestartApp { range=0, fgColor=white, bgColor=black }
+      Dsc RestartCPU { range=1, fgColor=white, bgColor=black }
+    }
+  }
+
+  /** Executive Services Housekeeping Packet */
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x00 } }
+
+    /** ES Command Processed Counter */
+    cfs.U8 cmdpc {}
+
+    /** ES Command Error Counter */
+    cfs.U8 cmdec {}
+
+    /** ES Core Checksum */
+    cfs.U16 cksum {}
+
+    /** cFE Major Version Label */
+    cfs.U8 cfemajorver {}
+
+    /** cFE Minor Version Label */
+    cfs.U8 cfeminorver {}
+
+    /** cFE Revision Label */
+    cfs.U8 cferevision {}
+
+    /** cFE Mission Revision Label */
+    cfs.U8 cfemsnrev {}
+
+    /** OS Major Version Label */
+    cfs.U8 osmajorver {}
+
+    /** OS Minor Version Label */
+    cfs.U8 osminorver {}
+
+    /** OS Revision Label */
+    cfs.U8 osrevision {}
+
+    /** OS Mission Revision Label */
+    cfs.U8 osmissionrev {}
+
+    /** Bytes used by the System Log */
+    cfs.U32 syslogbyteused {}
+
+    /** Total size of the System Log */
+    cfs.U32 syslogsize {}
+
+    /** Entries in the System Log */
+    cfs.U32 syslogentries {}
+
+    /** System Log Write Mode */
+    cfs.U32 syslogmode {}
+
+    /** Current ER Log index */
+    cfs.U32 erlogindex {}
+
+    /** ER Log entries since power-on */
+    cfs.U32 erlogentries {}
+
+    /** ES Registered Core Apps */
+    cfs.U32 regCoreApps {}
+
+    /** ES Registered External Apps */
+    cfs.U32 regExtApps {}
+
+    /** ES Registered Tasks */
+    cfs.U32 regTasks {}
+
+    /** ES Registered Libraries */
+    cfs.U32 regLibs {}
+
+    /** ES Reset type */
+    cfs.U32 resetType { conversion=cnv.resetType}
+
+    /** ES Reset subtype */
+    cfs.U32 resetSubtype { conversion=cnv.resetSubtype }
+
+    /** Processor resets since the last Power-On reset */
+    cfs.U32 procResetCnt {}
+
+    /** Max Processor resets before a Power-On reset is done */
+    cfs.U32 maxProcResets {}
+
+    /** Boot Source (from BSP) */
+    cfs.U32 bootsource {}
+
+    /** Current Perf Analyzer state */
+    cfs.U32 perfState { conversion=cnv.perfState}
+
+    /** Current Perf Analyzer mode */
+    cfs.U32 perfMode { conversion=cnv.perfMode}
+
+    /** Perf Analyzer Trigger counter */
+    cfs.U32 perftrigcnt {}
+
+    /** Perf Analyzer Filter Mask */
+    cfs.U32 perfFltrMask0 {}
+
+    /** Perf Analyzer Filter Mask 1 */
+    cfs.U32 perfFltrMask1 {}
+
+    /** Perf Analyzer Filter Mask 2 */
+    cfs.U32 perfFltrMask2 {}
+
+    /** Perf Analyzer Filter Mask 3 */
+    cfs.U32 perfFltrMask3 {}
+
+    /** Perf Analyzer Trigger Mask 1 */
+    cfs.U32 perfTrigMask0 {}
+
+    /** Perf Analyzer Trigger Mask 1 */
+    cfs.U32 perfTrigMask1 {}
+
+    /** Perf Analyzer Trigger Mask 2 */
+    cfs.U32 perfTrigMask2 {}
+
+    /** Perf Analyzer Trigger Mask 3 */
+    cfs.U32 perfTrigMask3 {}
+
+    /** Perf Analyzer Data start */
+    cfs.U32 perfDataStart {}
+
+    /** Perf Analyzer Data end */
+    cfs.U32 perfdataend {}
+
+    /** Perf Analyzer Data counter */
+    cfs.U32 perfdatacnt {}
+
+    /** Perf Analyzer Data left to write */
+    cfs.U32 perfData2Write {}
+
+    /** bytes free on the heap */
+    cfs.U32 heapBytesFree {}
+
+    /** blocks free on the heap */
+    cfs.U32 heapBlocksFree {}
+
+    /** Max Block size of the heap */
+    cfs.U32 heapMaxBlkSize {}
+  }
+
+  /** ES Application Telemetry Data Packet */
+  CfsTelemetryPacket app {
+    applyWhen = { FieldInRange { field=applicationId, range=0x0B } }
+    cfs.U32 id {}             /**<-- Id of this application */
+    cfs.U32 kind { conversion=cnv.kind } /**<-- Application type */
+    cfs.AppName name {}       /**<-- Name of this application */
+    cfs.AppName entryPoint {} /**<-- application entry point */
+    cfs.FileName filename {}  /**<-- Filename that contains the load image */
+    cfs.U32 stackSize {}      /**<-- Stack size (in bytes) */
+    cfs.U32 moduleID {}       /**<-- OS ModuleID of this app */
+    cfs.U32 addrsValid { conversion=cnv.addrsValid } /**<-- Valid Address flag */
+    cfs.U32 codeAddress {}    /**<-- The address of this applications code segment */
+    cfs.U32 codeSize {}       /**<-- The Code size of this application */
+    cfs.U32 dataAddress {}    /**<-- The address of this applications Data segment */
+    cfs.U32 dataSize {}       /**<-- The Data size of this application */
+    cfs.U32 bSSAddress {}     /**<-- The BSS address of this applications code segment */
+    cfs.U32 bSSSize {}        /**<-- The BSS size of this application */
+    cfs.U32 startAddr {}      /**<-- Start address */
+    cfs.U16 exceptnActn { conversion=cnv.exceptnActn } /**<-- Exception Action */
+    cfs.U16 priority {}       /**<-- Priority */
+    cfs.U32 mainTaskId {}     /**<-- Task id */
+    cfs.U32 executionCtr {}   /**<-- Execution counter */
+    cfs.AppName mainTaskName {} /**<-- Name of the Main task */
+    cfs.U32 childTasks {}     /**<-- number of child tasks for this application */
+  }
+
+  /** ES Memory Pool Block Statistics */
+  CfsTelemetryPacket memory {
+    applyWhen = { FieldInRange { field=applicationId, range=0x10 } }
+    cfs.U32 poolHandle {} /**<-- Memory Pool Handle */
+    cfs.U32 poolSize {}   /**<-- Memory Pool Size (in bytes) */
+    cfs.U32 blksReq {}    /**<-- Blocks Requested */
+    cfs.U32 blkErrCTR {}  /**<-- Errors detected when freeing a memory block */
+    cfs.U32 freeBytes {}  /**<-- Bytes remaining in the Memory Pool */
+    /** Memory Pool Block Statistics */
+    Structure block[17] {
+      cfs.U32 size {}     /**<-- Size of this memory block */
+      cfs.U32 created {}  /**<-- Memory blocks created of this size */
+      cfs.U32 free {}     /**<-- Memory blocks of this size that are free */
+    }
+  }
+}
+

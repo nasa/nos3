@@ -1,0 +1,889 @@
+        -:    0:Source:../src/hs_monitors.c
+        -:    0:Programs:4
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: hs_monitors.c.gcov 1.4 2016/09/07 19:17:44EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**   Copyright © 2007-2014 United States Government as represented by the 
+        -:    6:**   Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**   All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**   This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**   used, distributed and modified only pursuant to the terms of that 
+        -:   12:**   agreement.
+        -:   13:**
+        -:   14:** Purpose:
+        -:   15:**   Functions used for CFS Health and Safety Monitors for Applications
+        -:   16:**   and Events
+        -:   17:**
+        -:   18:**   $Log: hs_monitors.c.gcov  $
+        -:   18:**   Revision 1.4 2016/09/07 19:17:44EDT mdeschu 
+        -:   18:**   Update gcov results
+        -:   19:**   Revision 1.3 2016/08/05 09:27:05EDT mdeschu 
+        -:   20:**   Ticket #17 HS - Fix payload structure access
+        -:   21:**   Revision 1.2 2015/11/12 14:25:14EST wmoleski 
+        -:   22:**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
+        -:   23:**   Revision 1.19 2015/05/04 11:59:20EDT lwalling 
+        -:   24:**   Change critical event to monitored event
+        -:   25:**   Revision 1.18 2015/05/04 11:00:09EDT lwalling 
+        -:   26:**   Change definitions for MAX_CRITICAL to MAX_MONITORED
+        -:   27:**   Revision 1.17 2015/05/01 16:48:56EDT lwalling 
+        -:   28:**   Remove critical from application monitor descriptions
+        -:   29:**   Revision 1.16 2015/03/03 12:16:18EST sstrege 
+        -:   30:**   Added copyright information
+        -:   31:**   Revision 1.15 2011/10/13 18:48:06EDT aschoeni 
+        -:   32:**   updated for hs utilization calibration changes
+        -:   33:**   Revision 1.14 2011/03/23 12:16:12EDT aschoeni 
+        -:   34:**   Fixed event number in hogging event
+        -:   35:**   Revision 1.13 2010/11/19 17:58:31EST aschoeni 
+        -:   36:**   Added command to enable and disable CPU Hogging Monitoring
+        -:   37:**   Revision 1.12 2010/11/17 17:05:09EST aschoeni 
+        -:   38:**   minor fixes for CPU utilization
+        -:   39:**   Revision 1.11 2010/11/16 18:19:29EST aschoeni 
+        -:   40:**   Added support for Device Driver and ISR Execution Counters
+        -:   41:**   Revision 1.10 2010/10/14 17:45:13EDT aschoeni 
+        -:   42:**   Removed assumptions of rate of utilization measurement
+        -:   43:**   Revision 1.9 2010/10/01 15:18:37EDT aschoeni 
+        -:   44:**   Added Telemetry point to track message actions
+        -:   45:**   Revision 1.8 2010/09/29 18:28:39EDT aschoeni 
+        -:   46:**   Added Utilization Monitoring
+        -:   47:**   Revision 1.7 2010/09/13 14:41:10EDT aschoeni 
+        -:   48:**   Made Table validation events Info instead of Debug
+        -:   49:**   Revision 1.6 2009/08/20 16:03:59EDT aschoeni 
+        -:   50:**   Updated validation error output to output the proper app/resource name and limit it to 20 characters.
+        -:   51:**   Revision 1.5 2009/06/02 16:34:11EDT aschoeni 
+        -:   52:**   Removed 'ID' field from XCT val error event
+        -:   53:**   Revision 1.4 2009/05/21 16:21:36EDT aschoeni 
+        -:   54:**   added newline characters to syslog messages
+        -:   55:**   Revision 1.3 2009/05/21 16:10:55EDT aschoeni 
+        -:   56:**   Updated based on errors found during unit testing
+        -:   57:**   Revision 1.2 2009/05/04 17:44:32EDT aschoeni 
+        -:   58:**   Updated based on actions from Code Walkthrough
+        -:   59:**   Revision 1.1 2009/05/01 13:57:43EDT aschoeni 
+        -:   60:**   Initial revision
+        -:   61:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
+        -:   62:**
+        -:   63:*************************************************************************/
+        -:   64:
+        -:   65:/*************************************************************************
+        -:   66:** Includes
+        -:   67:*************************************************************************/
+        -:   68:#include "hs_app.h"
+        -:   69:#include "hs_monitors.h"
+        -:   70:#include "hs_custom.h"
+        -:   71:#include "hs_tbldefs.h"
+        -:   72:#include "hs_events.h"
+        -:   73:
+        -:   74:#include <string.h>
+        -:   75:
+        -:   76:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   77:/*                                                                 */
+        -:   78:/* Monitor Applications                                            */
+        -:   79:/*                                                                 */
+        -:   80:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       10:   81:void HS_MonitorApplications(void)
+        -:   82:{
+        -:   83:    CFE_ES_AppInfo_t   AppInfo;
+        -:   84:    uint32             AppId;
+        -:   85:    int32              Status;
+        -:   86:    uint32             TableIndex;
+        -:   87:    uint16             ActionType;
+        -:   88:    uint32             MsgActsIndex;
+        -:   89:
+      330:   90:    for(TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++)
+        -:   91:    {
+        -:   92:
+      320:   93:        ActionType = HS_AppData.AMTablePtr[TableIndex].ActionType;
+        -:   94:
+        -:   95:        /*
+        -:   96:        ** Check this App if it has an action, and hasn't already expired
+        -:   97:        */
+      555:   98:        if((ActionType != HS_AMT_ACT_NOACT) &&
+      235:   99:           (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0))
+        -:  100:        {
+        8:  101:            Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.AMTablePtr[TableIndex].AppName);
+        -:  102:
+        8:  103:            if (Status == CFE_SUCCESS)
+        -:  104:            {
+        7:  105:                Status = CFE_ES_GetAppInfo(&AppInfo, AppId);
+        -:  106:            }
+        1:  107:            else if(HS_AppData.AppMonCheckInCountdown[TableIndex] == HS_AppData.AMTablePtr[TableIndex].CycleCount)
+        -:  108:            {
+        -:  109:                /*
+        -:  110:                ** Only send an event the first time the App fails to resolve
+        -:  111:                */
+        1:  112:                CFE_EVS_SendEvent(HS_APPMON_APPNAME_ERR_EID, CFE_EVS_ERROR,
+        -:  113:                                 "App Monitor App Name not found: APP:(%s)",
+        1:  114:                                  HS_AppData.AMTablePtr[TableIndex].AppName);
+        -:  115:            }
+        -:  116:
+        -:  117:            /*
+        -:  118:            ** Failure to get an execution counter is not considered an automatic failure (or eventworthy)
+        -:  119:            */
+       15:  120:            if((Status == CFE_SUCCESS) &&
+        6:  121:               (HS_AppData.AppMonLastExeCount[TableIndex] != AppInfo.ExecutionCounter))
+        -:  122:            {
+        -:  123:                /*
+        -:  124:                ** Set the current count, and reset the timeout
+        -:  125:                */
+        1:  126:                HS_AppData.AppMonCheckInCountdown[TableIndex] = HS_AppData.AMTablePtr[TableIndex].CycleCount;
+        1:  127:                HS_AppData.AppMonLastExeCount[TableIndex] = AppInfo.ExecutionCounter;
+        -:  128:            }
+        -:  129:            else
+        -:  130:            {
+        7:  131:                HS_AppData.AppMonCheckInCountdown[TableIndex]--;
+        -:  132:
+        -:  133:                /*
+        -:  134:                ** Take Action once the counter reaches zero
+        -:  135:                */
+        7:  136:                if(HS_AppData.AppMonCheckInCountdown[TableIndex] == 0)
+        -:  137:                {
+        -:  138:
+        -:  139:                    /*
+        -:  140:                    ** Unset the enabled bit flag
+        -:  141:                    */
+        7:  142:                    CFE_CLR(HS_AppData.AppMonEnables[TableIndex / HS_BITS_PER_APPMON_ENABLE],
+        -:  143:                            (TableIndex % HS_BITS_PER_APPMON_ENABLE));
+        7:  144:                    switch (ActionType)
+        -:  145:                    {
+        -:  146:
+        -:  147:                        case HS_AMT_ACT_PROC_RESET:
+        2:  148:                            CFE_EVS_SendEvent(HS_APPMON_PROC_ERR_EID, CFE_EVS_ERROR,
+        -:  149:                               "App Monitor Failure: APP:(%s): Action: Processor Reset",
+        2:  150:                               HS_AppData.AMTablePtr[TableIndex].AppName);
+        -:  151:
+        -:  152:                            /*
+        -:  153:                            ** Perform a reset if we can
+        -:  154:                            */
+        2:  155:                            if(HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
+        -:  156:                            {
+        1:  157:                                HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
+        -:  158:
+        1:  159:                                OS_TaskDelay(HS_RESET_TASK_DELAY);
+        1:  160:                                CFE_ES_WriteToSysLog("HS App: App Monitor Failure: APP:(%s): Action: Processor Reset\n",
+        1:  161:                                                      HS_AppData.AMTablePtr[TableIndex].AppName);
+        1:  162:                                HS_AppData.ServiceWatchdogFlag = HS_STATE_DISABLED;
+        1:  163:                                CFE_ES_ResetCFE(CFE_ES_PROCESSOR_RESET);
+        -:  164:                            }
+        -:  165:                            else
+        -:  166:                            {
+        1:  167:                                CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID, CFE_EVS_ERROR,
+        -:  168:                                   "Processor Reset Action Limit Reached: No Reset Performed");
+        -:  169:                            }
+        -:  170:
+        2:  171:                            break;
+        -:  172:    
+        -:  173:                        case HS_AMT_ACT_APP_RESTART:
+        2:  174:                            CFE_EVS_SendEvent(HS_APPMON_RESTART_ERR_EID, CFE_EVS_ERROR,
+        -:  175:                                "App Monitor Failure: APP:(%s) Action: Restart Application",
+        2:  176:                                HS_AppData.AMTablePtr[TableIndex].AppName);
+        -:  177:                            /*
+        -:  178:                            ** Attempt to restart the App if we resolved the AppId
+        -:  179:                            */
+        2:  180:                            if (Status == CFE_SUCCESS)
+        -:  181:                            {
+        1:  182:                                Status = CFE_ES_RestartApp(AppId);
+        -:  183:                            }
+        -:  184: 
+        -:  185:                            /*
+        -:  186:                            ** Report an error; either no valid AppId, or RestartApp failed
+        -:  187:                            */
+        2:  188:                            if (Status != CFE_SUCCESS)
+        -:  189:                            {
+        4:  190:                                CFE_EVS_SendEvent(HS_APPMON_NOT_RESTARTED_ERR_EID, CFE_EVS_ERROR,
+        -:  191:                                    "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
+        2:  192:                                    HS_AppData.AMTablePtr[TableIndex].AppName, (unsigned int)Status);
+        -:  193:                            }
+        -:  194:
+        2:  195:                            break;
+        -:  196:    
+        -:  197:                        case HS_AMT_ACT_EVENT:
+        1:  198:                            CFE_EVS_SendEvent(HS_APPMON_FAIL_ERR_EID, CFE_EVS_ERROR,
+        -:  199:                                "App Monitor Failure: APP:(%s): Action: Event Only",
+        1:  200:                                HS_AppData.AMTablePtr[TableIndex].AppName);
+        1:  201:                            break;
+        -:  202:    
+        -:  203:                        /*
+        -:  204:                        ** Also the case for Message Action types
+        -:  205:                        */
+        -:  206:                        case HS_AMT_ACT_NOACT:
+        -:  207:                        default:
+        -:  208:                            /*
+        -:  209:                            ** Check to see if this is a Message Action Type
+        -:  210:                            */
+        2:  211:                            if((HS_AppData.MsgActsState == HS_STATE_ENABLED) &&
+        -:  212:                               (ActionType > HS_AMT_ACT_LAST_NONMSG) &&
+        -:  213:                               (ActionType <= (HS_AMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES)))
+        -:  214:                            {
+        1:  215:                                MsgActsIndex = ActionType - HS_AMT_ACT_LAST_NONMSG - 1;
+        -:  216:
+        -:  217:                                /*
+        -:  218:                                ** Send the message if off cooldown and not disabled
+        -:  219:                                */
+        2:  220:                                if((HS_AppData.MsgActCooldown[MsgActsIndex] == 0) &&
+        1:  221:                                    (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_DISABLED))
+        -:  222:                                {
+        1:  223:                                    CFE_SB_SendMsg((CFE_SB_Msg_t *) HS_AppData.MATablePtr[MsgActsIndex].Message);
+        1:  224:                                    HS_AppData.MsgActExec++;
+        1:  225:                                    HS_AppData.MsgActCooldown[MsgActsIndex] = HS_AppData.MATablePtr[MsgActsIndex].Cooldown;
+        1:  226:                                    if(HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_NOEVENT)
+        -:  227:                                    {
+        2:  228:                                        CFE_EVS_SendEvent(HS_APPMON_MSGACTS_ERR_EID, CFE_EVS_ERROR,
+        -:  229:                                            "App Monitor Failure: APP:(%s): Action: Message Action Index: %d",
+        1:  230:                                            HS_AppData.AMTablePtr[TableIndex].AppName, (int)MsgActsIndex);
+        -:  231:                                    
+        -:  232:                                    }
+        -:  233:
+        -:  234:                                }
+        -:  235:
+        -:  236:                            }
+        -:  237:
+        -:  238:                            /* Otherwise, Take No Action */
+        -:  239:                            break;
+        -:  240:                    } /* end switch */
+        -:  241:
+        -:  242:                } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] == 0) if */
+        -:  243:
+        -:  244:            } /* end "failed to update counter" else */
+        -:  245:
+        -:  246:        } /* end (HS_AppData.AppMonCheckInCountdown[TableIndex] != 0) if */
+        -:  247:
+        -:  248:    } /* end for loop */
+        -:  249:
+       10:  250:    return;
+        -:  251:
+        -:  252:} /* end HS_MonitorApplications */
+        -:  253:
+        -:  254:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  255:/*                                                                 */
+        -:  256:/* Monitor Events                                                  */
+        -:  257:/*                                                                 */
+        -:  258:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:  259:void HS_MonitorEvent(CFE_SB_MsgPtr_t MessagePtr)
+        -:  260:{
+        -:  261:    CFE_EVS_Packet_t  *EventPtr;
+        -:  262:    uint32 TableIndex;
+        -:  263:    int32  Status;
+        8:  264:    uint32 AppId = 0;
+        -:  265:    uint16 ActionType;
+        -:  266:    uint32 MsgActsIndex;
+        -:  267:
+        8:  268:    EventPtr = ((CFE_EVS_Packet_t *)MessagePtr);
+        -:  269:
+      136:  270:    for(TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++)
+        -:  271:    {
+      128:  272:        ActionType = HS_AppData.EMTablePtr[TableIndex].ActionType;
+        -:  273:
+        -:  274:        /*
+        -:  275:        ** Check this Event Monitor if it has an action, and the event IDs match
+        -:  276:        */
+      216:  277:        if ((ActionType != HS_EMT_ACT_NOACT) &&
+       88:  278:            (HS_AppData.EMTablePtr[TableIndex].EventID == EventPtr->Payload.PacketID.EventID))
+        -:  279:        {
+        7:  280:            if ( strncmp(HS_AppData.EMTablePtr[TableIndex].AppName, EventPtr->Payload.PacketID.AppName, OS_MAX_API_NAME) == 0 )
+        -:  281:            {
+        -:  282:
+        -:  283:                /*
+        -:  284:                ** Perform the action if the strings also match
+        -:  285:                */
+        7:  286:                switch (ActionType)
+        -:  287:                {
+        -:  288:
+        -:  289:                    case HS_EMT_ACT_PROC_RESET:
+        4:  290:                       CFE_EVS_SendEvent(HS_EVENTMON_PROC_ERR_EID, CFE_EVS_ERROR,
+        -:  291:                                         "Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset",
+        2:  292:                                         HS_AppData.EMTablePtr[TableIndex].AppName,
+        2:  293:                                         HS_AppData.EMTablePtr[TableIndex].EventID);
+        -:  294:
+        -:  295:                        /*
+        -:  296:                        ** Perform a reset if we can
+        -:  297:                        */
+        2:  298:                        if(HS_AppData.CDSData.ResetsPerformed < HS_AppData.CDSData.MaxResets)
+        -:  299:                        {
+        1:  300:                            HS_SetCDSData((HS_AppData.CDSData.ResetsPerformed + 1), HS_AppData.CDSData.MaxResets);
+        -:  301:
+        1:  302:                            OS_TaskDelay(HS_RESET_TASK_DELAY);
+        2:  303:                            CFE_ES_WriteToSysLog("HS App: Event Monitor: APP:(%s) EID:(%d): Action: Processor Reset\n",
+        1:  304:                                                  HS_AppData.EMTablePtr[TableIndex].AppName,
+        1:  305:                                                  (int)HS_AppData.EMTablePtr[TableIndex].EventID);
+        1:  306:                            HS_AppData.ServiceWatchdogFlag = HS_STATE_DISABLED;
+        1:  307:                            CFE_ES_ResetCFE(CFE_ES_PROCESSOR_RESET);
+        -:  308:                        }
+        -:  309:                        else
+        -:  310:                        {
+        1:  311:                           CFE_EVS_SendEvent(HS_RESET_LIMIT_ERR_EID, CFE_EVS_ERROR,
+        -:  312:                              "Processor Reset Action Limit Reached: No Reset Performed");
+        -:  313:                        }
+        -:  314:
+        -:  315:
+        2:  316:                        break;
+        -:  317:
+        -:  318:                    case HS_EMT_ACT_APP_RESTART:
+        -:  319:                        /*
+        -:  320:                        ** Check to see if the App is still there, and try to restart if it is
+        -:  321:                        */
+        2:  322:                        Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
+        2:  323:                        if (Status == CFE_SUCCESS)
+        -:  324:                        {
+        2:  325:                            CFE_EVS_SendEvent(HS_EVENTMON_RESTART_ERR_EID, CFE_EVS_ERROR,
+        -:  326:                                "Event Monitor: APP:(%s) EID:(%d): Action: Restart Application",
+        1:  327:                                HS_AppData.EMTablePtr[TableIndex].AppName,
+        1:  328:                                HS_AppData.EMTablePtr[TableIndex].EventID);
+        1:  329:                            Status = CFE_ES_RestartApp(AppId);
+        -:  330:                        }
+        -:  331:
+        2:  332:                        if (Status != CFE_SUCCESS)
+        -:  333:                        {
+        4:  334:                            CFE_EVS_SendEvent(HS_EVENTMON_NOT_RESTARTED_ERR_EID, CFE_EVS_ERROR,
+        -:  335:                                "Call to Restart App Failed: APP:(%s) ERR: 0x%08X",
+        2:  336:                                HS_AppData.EMTablePtr[TableIndex].AppName, (unsigned int)Status);
+        -:  337:                        }
+        -:  338:
+        2:  339:                        break;
+        -:  340:
+        -:  341:
+        -:  342:                    case HS_EMT_ACT_APP_DELETE:
+        -:  343:                        /*
+        -:  344:                        ** Check to see if the App is still there, and try to delete if it is
+        -:  345:                        */
+        2:  346:                        Status = CFE_ES_GetAppIDByName(&AppId, HS_AppData.EMTablePtr[TableIndex].AppName);
+        2:  347:                        if (Status == CFE_SUCCESS)
+        -:  348:                        {
+        2:  349:                            CFE_EVS_SendEvent(HS_EVENTMON_DELETE_ERR_EID, CFE_EVS_ERROR,
+        -:  350:                                "Event Monitor: APP:(%s) EID:(%d): Action: Delete Application",
+        1:  351:                                HS_AppData.EMTablePtr[TableIndex].AppName,
+        1:  352:                                HS_AppData.EMTablePtr[TableIndex].EventID);
+        1:  353:                            Status = CFE_ES_DeleteApp(AppId);
+        -:  354:                        }
+        -:  355:
+        2:  356:                        if (Status != CFE_SUCCESS)
+        -:  357:                        {
+        4:  358:                            CFE_EVS_SendEvent(HS_EVENTMON_NOT_DELETED_ERR_EID, CFE_EVS_ERROR,
+        -:  359:                                "Call to Delete App Failed: APP:(%s) ERR: 0x%08X",
+        2:  360:                                HS_AppData.EMTablePtr[TableIndex].AppName, (unsigned int)Status);
+        -:  361:                        }
+        -:  362:
+        2:  363:                        break;
+        -:  364:
+        -:  365:                    /*
+        -:  366:                    ** Also the case for Message Action types
+        -:  367:                    */
+        -:  368:                    case HS_EMT_ACT_NOACT:
+        -:  369:                    default:
+        -:  370:                        /* 
+        -:  371:                        ** Check to see if this is a Message Action Type
+        -:  372:                        */
+        1:  373:                        if((HS_AppData.MsgActsState == HS_STATE_ENABLED) &&
+        -:  374:                           (ActionType > HS_EMT_ACT_LAST_NONMSG) &&
+        -:  375:                           (ActionType <= (HS_EMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES)))
+        -:  376:                        {
+        1:  377:                            MsgActsIndex = ActionType - HS_EMT_ACT_LAST_NONMSG - 1;
+        -:  378:
+        -:  379:                            /*
+        -:  380:                            ** Send the message if off cooldown and not disabled
+        -:  381:                            */
+        2:  382:                            if((HS_AppData.MsgActCooldown[MsgActsIndex] == 0) &&
+        1:  383:                               (HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_DISABLED))
+        -:  384:                            {
+        1:  385:                                CFE_SB_SendMsg((CFE_SB_Msg_t *) HS_AppData.MATablePtr[MsgActsIndex].Message);
+        1:  386:                                HS_AppData.MsgActExec++;
+        1:  387:                                HS_AppData.MsgActCooldown[MsgActsIndex] = HS_AppData.MATablePtr[MsgActsIndex].Cooldown;
+        1:  388:                                if(HS_AppData.MATablePtr[MsgActsIndex].EnableState != HS_MAT_STATE_NOEVENT)
+        -:  389:                                {
+        3:  390:                                    CFE_EVS_SendEvent(HS_EVENTMON_MSGACTS_ERR_EID, CFE_EVS_ERROR,
+        -:  391:                                       "Event Monitor: APP:(%s) EID:(%d): Action: Message Action Index: %d",
+        1:  392:                                       HS_AppData.EMTablePtr[TableIndex].AppName,
+        1:  393:                                       HS_AppData.EMTablePtr[TableIndex].EventID, (int)MsgActsIndex);
+        -:  394:                                }
+        -:  395:
+        -:  396:                            }
+        -:  397:                        }
+        -:  398:
+        -:  399:                        /* Otherwise, Take No Action */
+        -:  400:                        break;
+        -:  401:                } /* end switch */
+        -:  402:
+        -:  403:            } /* end AppName comparison */
+        -:  404:
+        -:  405:        } /* end EventID comparison */
+        -:  406:
+        -:  407:    } /* end for loop */
+        -:  408:
+        8:  409:    return;
+        -:  410:
+        -:  411:} /* end HS_MonitorEvent */
+        -:  412:
+        -:  413:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  414:/*                                                                 */
+        -:  415:/* Monitor CPU Utilization and Hogging                             */
+        -:  416:/*                                                                 */
+        -:  417:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        8:  418:void HS_MonitorUtilization(void)
+        -:  419:{
+        -:  420:    int32 CurrentUtil;
+        -:  421:    uint32 UtilIndex;
+        8:  422:    uint32 CombinedUtil = 0;
+        8:  423:    uint32 PeakUtil = 0;
+        8:  424:    uint32 ThisUtilIndex = HS_AppData.CurrentCPUUtilIndex;
+        -:  425:
+        8:  426:    HS_AppData.CurrentCPUUtilIndex++;
+        -:  427:
+        8:  428:    if(HS_AppData.CurrentCPUUtilIndex >= HS_UTIL_PEAK_NUM_INTERVAL)
+        -:  429:    {
+        3:  430:        HS_AppData.CurrentCPUUtilIndex = 0;
+        -:  431:    }
+        -:  432:
+        8:  433:    CurrentUtil = HS_CustomGetUtil();
+        -:  434:
+        8:  435:    if (CurrentUtil > HS_UTIL_PER_INTERVAL_TOTAL)
+        -:  436:    {
+        1:  437:        CurrentUtil = HS_UTIL_PER_INTERVAL_TOTAL;
+        -:  438:    }
+        7:  439:    else if (CurrentUtil < 0)
+        -:  440:    {
+        1:  441:        CurrentUtil = 0;
+        -:  442:    }
+        -:  443:
+        -:  444:
+       15:  445:    if ((CurrentUtil >= HS_UTIL_PER_INTERVAL_HOGGING) &&
+        6:  446:        (HS_AppData.CurrentCPUHogState == HS_STATE_ENABLED))
+        -:  447:    {
+        1:  448:        HS_AppData.CurrentCPUHoggingTime++;
+        -:  449:
+        1:  450:        if (HS_AppData.CurrentCPUHoggingTime == HS_AppData.MaxCPUHoggingTime)
+        -:  451:        {
+        1:  452:            CFE_EVS_SendEvent(HS_CPUMON_HOGGING_ERR_EID, CFE_EVS_ERROR, "CPU Hogging Detected");
+        1:  453:            CFE_ES_WriteToSysLog("HS App: CPU Hogging Detected\n");
+        -:  454:        }
+        -:  455:    }
+        -:  456:    else
+        -:  457:    {
+        7:  458:        HS_AppData.CurrentCPUHoggingTime = 0;
+        -:  459:    }
+        -:  460:
+        8:  461:    HS_AppData.UtilizationTracker[ThisUtilIndex] = CurrentUtil;
+        -:  462:
+      520:  463:    for(UtilIndex = 0; UtilIndex < HS_UTIL_PEAK_NUM_INTERVAL; UtilIndex++)
+        -:  464:    {
+      512:  465:        if (HS_AppData.UtilizationTracker[UtilIndex] > PeakUtil)
+        -:  466:        {
+        4:  467:            PeakUtil = HS_AppData.UtilizationTracker[UtilIndex];
+        -:  468:        }
+        -:  469:
+      512:  470:        if (ThisUtilIndex >= HS_UTIL_AVERAGE_NUM_INTERVAL)
+        -:  471:        {
+      256:  472:            if ((UtilIndex >  (ThisUtilIndex - HS_UTIL_AVERAGE_NUM_INTERVAL)) &&
+        -:  473:                (UtilIndex <=  ThisUtilIndex))
+        -:  474:            {
+       14:  475:                CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+        -:  476:            }
+        -:  477:        }
+        -:  478:        else
+        -:  479:        {
+      256:  480:            if (UtilIndex <= ThisUtilIndex)
+        -:  481:            {
+        5:  482:                CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+        -:  483:            }
+      251:  484:            else if (UtilIndex > (HS_UTIL_PEAK_NUM_INTERVAL - (HS_UTIL_AVERAGE_NUM_INTERVAL - ThisUtilIndex)))
+        -:  485:            {
+       11:  486:                CombinedUtil += HS_AppData.UtilizationTracker[UtilIndex];
+        -:  487:            }
+        -:  488:
+        -:  489:        }
+        -:  490:
+        -:  491:    }
+        -:  492:
+        8:  493:    HS_AppData.UtilCpuAvg  = (CombinedUtil / HS_UTIL_AVERAGE_NUM_INTERVAL);
+        8:  494:    HS_AppData.UtilCpuPeak = PeakUtil;
+        -:  495:
+        8:  496:    return;
+        -:  497:
+        -:  498:} /* end HS_MonitorUtilization */
+        -:  499:
+        -:  500:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  501:/*                                                                 */
+        -:  502:/* Validate the Application Monitor Table                          */
+        -:  503:/*                                                                 */
+        -:  504:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  505:int32 HS_ValidateAMTable(void *TableData)
+        -:  506:{
+        5:  507:    HS_AMTEntry_t *TableArray = (HS_AMTEntry_t *) TableData;
+        -:  508:
+        5:  509:    int32 TableResult = CFE_SUCCESS;
+        -:  510:    uint32 TableIndex;
+        -:  511:    int32 EntryResult;
+        -:  512:
+        -:  513:    uint16 ActionType;
+        -:  514:    uint16 CycleCount;
+        -:  515:    uint16 NullTerm;
+        -:  516:
+        5:  517:    uint32 GoodCount   = 0;
+        5:  518:    uint32 BadCount    = 0;
+        5:  519:    uint32 UnusedCount = 0;
+        5:  520:    char BadName[OS_MAX_API_NAME] = "";
+        -:  521:
+      165:  522:    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_APPS; TableIndex++ )
+        -:  523:    {
+        -:  524:
+      160:  525:        ActionType = TableArray[TableIndex].ActionType;
+      160:  526:        CycleCount = TableArray[TableIndex].CycleCount;
+      160:  527:        NullTerm   = TableArray[TableIndex].NullTerm;
+      160:  528:        EntryResult = HS_AMTVAL_NO_ERR;
+        -:  529:
+      224:  530:        if ((CycleCount == 0) ||
+        -:  531:            (ActionType == HS_AMT_ACT_NOACT))
+        -:  532:        {
+        -:  533:            /*
+        -:  534:            ** Unused table entry
+        -:  535:            */
+       64:  536:            UnusedCount++;
+        -:  537:        }
+       96:  538:        else if (NullTerm != 0)   
+        -:  539:        {
+        -:  540:            /*
+        -:  541:            ** Null Terminator Safety Buffer is not Null
+        -:  542:            */
+       32:  543:            EntryResult = HS_AMTVAL_ERR_NUL;
+       32:  544:            BadCount++;
+        -:  545:        }
+       64:  546:        else if(ActionType > (HS_AMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES))
+        -:  547:        {
+        -:  548:            /*
+        -:  549:            ** Action Type is not valid
+        -:  550:            */
+       32:  551:            EntryResult = HS_AMTVAL_ERR_ACT;
+       32:  552:            BadCount++;
+        -:  553:        }
+        -:  554:        else
+        -:  555:        {
+        -:  556:            /*
+        -:  557:            ** Otherwise, this entry is good
+        -:  558:            */
+       32:  559:            GoodCount++;
+        -:  560:        }
+        -:  561:        /*
+        -:  562:        ** Generate detailed event for "first" error
+        -:  563:        */
+      160:  564:        if ((EntryResult != HS_AMTVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
+        -:  565:        {
+        2:  566:            strncpy(BadName,TableArray[TableIndex].AppName,OS_MAX_API_NAME);
+        2:  567:            BadName[OS_MAX_API_NAME-1] = '\0'; 
+        2:  568:            CFE_EVS_SendEvent(HS_AMTVAL_ERR_EID, CFE_EVS_ERROR,
+        -:  569:                    "AppMon verify err: Entry = %d, Err = %d, Action = %d, App = %s",
+        -:  570:                    (int)TableIndex, (int)EntryResult, ActionType, BadName );
+        2:  571:            TableResult = EntryResult;
+        -:  572:        }
+        -:  573:
+        -:  574:    }
+        -:  575:
+        -:  576:    /*
+        -:  577:    ** Generate informational event with error totals
+        -:  578:    */
+        5:  579:    CFE_EVS_SendEvent(HS_AMTVAL_INF_EID, CFE_EVS_INFORMATION,
+        -:  580:                     "AppMon verify results: good = %d, bad = %d, unused = %d",
+        -:  581:                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
+        -:  582:
+        5:  583:    return(TableResult);
+        -:  584:
+        -:  585:} /* end HS_ValidateAMTable */
+        -:  586:
+        -:  587:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  588:/*                                                                 */
+        -:  589:/* Validate the Event Monitor Table                                */
+        -:  590:/*                                                                 */
+        -:  591:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  592:int32 HS_ValidateEMTable(void *TableData)
+        -:  593:{
+        5:  594:    HS_EMTEntry_t *TableArray = (HS_EMTEntry_t *) TableData;
+        -:  595:
+        5:  596:    int32  TableResult = CFE_SUCCESS;
+        -:  597:    uint32 TableIndex;
+        -:  598:    int32  EntryResult;
+        -:  599:
+        -:  600:    uint16 ActionType;
+        -:  601:    uint16 EventID;
+        -:  602:    uint16 NullTerm;
+        -:  603:
+        5:  604:    uint32 GoodCount   = 0;
+        5:  605:    uint32 BadCount    = 0;
+        5:  606:    uint32 UnusedCount = 0;
+        5:  607:    char BadName[OS_MAX_API_NAME] = "";
+        -:  608:
+       85:  609:    for (TableIndex = 0; TableIndex < HS_MAX_MONITORED_EVENTS; TableIndex++ )
+        -:  610:    {
+        -:  611:
+       80:  612:        ActionType = TableArray[TableIndex].ActionType;
+       80:  613:        EventID    = TableArray[TableIndex].EventID;
+       80:  614:        NullTerm   = TableArray[TableIndex].NullTerm;
+       80:  615:        EntryResult = HS_EMTVAL_NO_ERR;
+        -:  616:
+      112:  617:        if ((EventID == 0) ||
+        -:  618:            (ActionType == HS_EMT_ACT_NOACT))
+        -:  619:        {
+        -:  620:            /*
+        -:  621:            ** Unused table entry
+        -:  622:            */
+       32:  623:            UnusedCount++;
+        -:  624:        }
+       48:  625:        else if (NullTerm != 0)   
+        -:  626:        {
+        -:  627:            /*
+        -:  628:            ** Null Terminator Safety Buffer is not Null
+        -:  629:            */
+       16:  630:            EntryResult = HS_EMTVAL_ERR_NUL;
+       16:  631:            BadCount++;
+        -:  632:        }
+       32:  633:        else if(ActionType > (HS_EMT_ACT_LAST_NONMSG + HS_MAX_MSG_ACT_TYPES))
+        -:  634:        {
+        -:  635:            /*
+        -:  636:            ** Action Type is not valid
+        -:  637:            */
+       16:  638:            EntryResult = HS_EMTVAL_ERR_ACT;
+       16:  639:            BadCount++;
+        -:  640:        }
+        -:  641:        else
+        -:  642:        {
+        -:  643:            /*
+        -:  644:            ** Otherwise, this entry is good
+        -:  645:            */
+       16:  646:            GoodCount++;
+        -:  647:        }
+        -:  648:        /*
+        -:  649:        ** Generate detailed event for "first" error
+        -:  650:        */
+       80:  651:        if ((EntryResult != HS_EMTVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
+        -:  652:        {
+        2:  653:            strncpy(BadName,TableArray[TableIndex].AppName,OS_MAX_API_NAME);
+        2:  654:            BadName[OS_MAX_API_NAME-1] = '\0'; 
+        2:  655:            CFE_EVS_SendEvent(HS_EMTVAL_ERR_EID, CFE_EVS_ERROR,
+        -:  656:                    "EventMon verify err: Entry = %d, Err = %d, Action = %d, ID = %d App = %s",
+        -:  657:                    (int)TableIndex, (int)EntryResult, ActionType, EventID, BadName );
+        2:  658:            TableResult = EntryResult;
+        -:  659:        }
+        -:  660:
+        -:  661:    }
+        -:  662:
+        -:  663:    /*
+        -:  664:    ** Generate informational event with error totals
+        -:  665:    */
+        5:  666:    CFE_EVS_SendEvent(HS_EMTVAL_INF_EID, CFE_EVS_INFORMATION,
+        -:  667:                     "EventMon verify results: good = %d, bad = %d, unused = %d",
+        -:  668:                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
+        -:  669:
+        5:  670:    return(TableResult);
+        -:  671:
+        -:  672:} /* end HS_ValidateEMTable */
+        -:  673:
+        -:  674:#if HS_MAX_EXEC_CNT_SLOTS != 0
+        -:  675:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  676:/*                                                                 */
+        -:  677:/* Validate the Execution Counters Table                           */
+        -:  678:/*                                                                 */
+        -:  679:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  680:int32 HS_ValidateXCTable(void *TableData)
+        -:  681:{
+        -:  682:    HS_XCTEntry_t *TableArray = (HS_XCTEntry_t *) TableData;
+        -:  683:
+        -:  684:    int32  TableResult = CFE_SUCCESS;
+        -:  685:    uint32 TableIndex;
+        -:  686:    int32  EntryResult;
+        -:  687:
+        -:  688:    uint16 ResourceType;
+        -:  689:    uint32 NullTerm;
+        -:  690:
+        -:  691:    uint32 GoodCount   = 0;
+        -:  692:    uint32 BadCount    = 0;
+        -:  693:    uint32 UnusedCount = 0;
+        -:  694:    char BadName[OS_MAX_API_NAME] = "";
+        -:  695:
+        -:  696:    for (TableIndex = 0; TableIndex < HS_MAX_EXEC_CNT_SLOTS; TableIndex++ )
+        -:  697:    {
+        -:  698:
+        -:  699:        ResourceType = TableArray[TableIndex].ResourceType;
+        -:  700:        NullTerm = TableArray[TableIndex].NullTerm;
+        -:  701:        EntryResult = HS_XCTVAL_NO_ERR;
+        -:  702:
+        -:  703:
+        -:  704:        if (ResourceType == HS_XCT_TYPE_NOTYPE)
+        -:  705:        {
+        -:  706:            /*
+        -:  707:            ** Unused table entry
+        -:  708:            */
+        -:  709:            UnusedCount++;
+        -:  710:        }
+        -:  711:        else if (NullTerm != 0)   
+        -:  712:        {
+        -:  713:            /*
+        -:  714:            ** Null Terminator Safety Buffer is not Null
+        -:  715:            */
+        -:  716:            EntryResult = HS_XCTVAL_ERR_NUL;
+        -:  717:            BadCount++;
+        -:  718:        }
+        -:  719:        else if((ResourceType != HS_XCT_TYPE_APP_MAIN)  &&
+        -:  720:                (ResourceType != HS_XCT_TYPE_APP_CHILD)  &&
+        -:  721:                (ResourceType != HS_XCT_TYPE_DEVICE)  &&
+        -:  722:                (ResourceType != HS_XCT_TYPE_ISR))
+        -:  723:        {
+        -:  724:            /*
+        -:  725:            ** Resource Type is not valid
+        -:  726:            */
+        -:  727:            EntryResult = HS_XCTVAL_ERR_TYPE;
+        -:  728:            BadCount++;
+        -:  729:        }
+        -:  730:        else
+        -:  731:        {
+        -:  732:            /*
+        -:  733:            ** Otherwise, this entry is good
+        -:  734:            */
+        -:  735:            GoodCount++;
+        -:  736:        }
+        -:  737:
+        -:  738:        /*
+        -:  739:        ** Generate detailed event for "first" error
+        -:  740:        */
+        -:  741:        if ((EntryResult != HS_XCTVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
+        -:  742:        {
+        -:  743:            strncpy(BadName,TableArray[TableIndex].ResourceName,OS_MAX_API_NAME);
+        -:  744:            BadName[OS_MAX_API_NAME-1] = '\0'; 
+        -:  745:            CFE_EVS_SendEvent(HS_XCTVAL_ERR_EID, CFE_EVS_ERROR,
+        -:  746:                    "ExeCount verify err: Entry = %d, Err = %d, Type = %d, Name = %s",
+        -:  747:                    (int)TableIndex, (int)EntryResult, ResourceType, BadName );
+        -:  748:            TableResult = EntryResult;
+        -:  749:        }
+        -:  750:
+        -:  751:    }
+        -:  752:
+        -:  753:    /*
+        -:  754:    ** Generate informational event with error totals
+        -:  755:    */
+        -:  756:    CFE_EVS_SendEvent(HS_XCTVAL_INF_EID, CFE_EVS_INFORMATION,
+        -:  757:                     "ExeCount verify results: good = %d, bad = %d, unused = %d",
+        -:  758:                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
+        -:  759:
+        -:  760:    return(TableResult);
+        -:  761:
+        -:  762:} /* end HS_ValidateXCTable */
+        -:  763:#endif
+        -:  764:
+        -:  765:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  766:/*                                                                 */
+        -:  767:/* Validate the Message Actions Table                              */
+        -:  768:/*                                                                 */
+        -:  769:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  770:int32 HS_ValidateMATable(void *TableData)
+        -:  771:{
+        5:  772:    HS_MATEntry_t *TableArray = (HS_MATEntry_t *) TableData;
+        -:  773:
+        5:  774:    int32  TableResult = CFE_SUCCESS;
+        -:  775:    uint32 TableIndex;
+        -:  776:    uint16 Length;
+        -:  777:    uint16 MessageID;
+        -:  778:    uint16 EnableState;
+        -:  779:    int32  EntryResult;
+        -:  780:
+        -:  781:    CFE_SB_MsgPtr_t Msg;
+        -:  782:
+        5:  783:    uint32 GoodCount   = 0;
+        5:  784:    uint32 BadCount    = 0;
+        5:  785:    uint32 UnusedCount = 0;
+        -:  786:
+       45:  787:    for (TableIndex = 0; TableIndex < HS_MAX_MSG_ACT_TYPES; TableIndex++ )
+        -:  788:    {
+        -:  789:
+       40:  790:        EntryResult = HS_MATVAL_NO_ERR;
+       40:  791:        Msg = (CFE_SB_MsgPtr_t) TableArray[TableIndex].Message;
+       40:  792:        Length = CFE_SB_GetTotalMsgLength(Msg);
+       40:  793:        MessageID = CFE_SB_GetMsgId(Msg);
+       40:  794:        EnableState = TableArray[TableIndex].EnableState;
+        -:  795:
+       40:  796:        if(EnableState == HS_MAT_STATE_DISABLED)
+        -:  797:        {
+        -:  798:            /*
+        -:  799:            ** Unused table entry
+        -:  800:            */
+        8:  801:            UnusedCount++;
+        -:  802:        }
+       40:  803:        else if((EnableState != HS_MAT_STATE_ENABLED)  &&
+        -:  804:                (EnableState != HS_MAT_STATE_NOEVENT))
+        -:  805:        {
+        -:  806:            /*
+        -:  807:            ** Enable State is Invalid
+        -:  808:            */
+        8:  809:            EntryResult = HS_MATVAL_ERR_ENA;
+        8:  810:            BadCount++;
+        -:  811:        }
+       24:  812:        else if (MessageID > CFE_SB_HIGHEST_VALID_MSGID)
+        -:  813:        {
+        -:  814:            /*
+        -:  815:            ** Message ID is too high
+        -:  816:            */
+        8:  817:            EntryResult = HS_MATVAL_ERR_ID;
+        8:  818:            BadCount++;
+        -:  819:        }
+       16:  820:        else if (Length > CFE_SB_MAX_SB_MSG_SIZE)
+        -:  821:        {
+        -:  822:            /*
+        -:  823:            ** Length is too high
+        -:  824:            */
+        8:  825:            EntryResult = HS_MATVAL_ERR_LEN;
+        8:  826:            BadCount++;
+        -:  827:        }
+        -:  828:        else
+        -:  829:        {
+        -:  830:            /*
+        -:  831:            ** Otherwise, this entry is good
+        -:  832:            */
+        8:  833:            GoodCount++;
+        -:  834:        }
+        -:  835:        /*
+        -:  836:        ** Generate detailed event for "first" error
+        -:  837:        */
+       40:  838:        if ((EntryResult != HS_MATVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
+        -:  839:        {
+        3:  840:            CFE_EVS_SendEvent(HS_MATVAL_ERR_EID, CFE_EVS_ERROR,
+        -:  841:                    "MsgActs verify err: Entry = %d, Err = %d, Length = %d, ID = %d",
+        -:  842:                    (int)TableIndex, (int)EntryResult, Length, MessageID );
+        3:  843:            TableResult = EntryResult;
+        -:  844:        }
+        -:  845:    }
+        -:  846:
+        -:  847:    /*
+        -:  848:    ** Generate informational event with error totals
+        -:  849:    */
+        5:  850:    CFE_EVS_SendEvent(HS_MATVAL_INF_EID, CFE_EVS_INFORMATION,
+        -:  851:                     "MsgActs verify results: good = %d, bad = %d, unused = %d",
+        -:  852:                      (int)GoodCount, (int)BadCount, (int)UnusedCount);
+        -:  853:
+        5:  854:    return(TableResult);
+        -:  855:
+        -:  856:} /* end HS_ValidateMATable */
+        -:  857:
+        -:  858:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  859:/*                                                                 */
+        -:  860:/* Set the values being stored in the CDS                          */
+        -:  861:/*                                                                 */
+        -:  862:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        7:  863:void HS_SetCDSData(uint16 ResetsPerformed, uint16 MaxResets)
+        -:  864:{
+        -:  865:    /*
+        -:  866:    ** Set CDS data and verification inverses
+        -:  867:    */
+        7:  868:    HS_AppData.CDSData.ResetsPerformed = ResetsPerformed;
+        7:  869:    HS_AppData.CDSData.ResetsPerformedNot = ~HS_AppData.CDSData.ResetsPerformed;
+        7:  870:    HS_AppData.CDSData.MaxResets = MaxResets;
+        7:  871:    HS_AppData.CDSData.MaxResetsNot = ~HS_AppData.CDSData.MaxResets;
+        -:  872:    /*
+        -:  873:    ** Copy the data to the CDS if CDS Creation was successful
+        -:  874:    */
+        7:  875:    if(HS_AppData.CDSState == HS_STATE_ENABLED)
+        -:  876:    {
+        1:  877:        CFE_ES_CopyToCDS(HS_AppData.MyCDSHandle,&HS_AppData.CDSData);
+        -:  878:    }
+        7:  879:    return;
+        -:  880:
+        -:  881:} /* end HS_SetCDSData */
+        -:  882:
+        -:  883:/************************/
+        -:  884:/*  End of File Comment */
+        -:  885:/************************/

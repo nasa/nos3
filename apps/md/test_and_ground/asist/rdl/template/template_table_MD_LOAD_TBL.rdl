@@ -1,0 +1,85 @@
+!==============================================================================
+!
+!                Originator: S. Jonke
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: April 28 2007
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MD Dwell Table 1 Load Table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!   Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!       2008/06/16  S. Jonke   initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definitions
+!==============================================================================
+!
+#include "cfe_mission_cfg.h"
+#include "md_platform_cfg.h"
+#include "osconfig.h"
+
+TYPES
+   RECORD $sc_$cpu_MD_TableLoadEntry  DESC="$sc $cpu MD Table Load Entry Type"
+      UI      MD_TLE_Length   DESC="Length of dwell field in bytes. 0 indicates null entry"
+      UI      MD_TLE_Delay    DESC="Delay before following dwell sample in terms of number of task wakeup calls"
+      ULI     MD_TLE_Offset   DESC="Offset from symbol or absolute address"
+      char    MD_TLE_SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+   END
+   
+   RECORD $sc_$cpu_MD_DwellTableLoad  DESC="$sc $cpu MD Table Load structure"
+      ULI  MD_DTL_Enabled   DESC="$sc $cpu MD Dwell Table enabled flag"
+#if MD_SIGNATURE_OPTION == 1
+      char MD_DTL_Signature[MD_SIGNATURE_FIELD_LENGTH] DESC="$sc $cpu MD dwell packet signature"
+#endif
+      $sc_$cpu_MD_TableLoadEntry  MD_DTL_Entry[MD_DWELL_TABLE_SIZE]  DESC="$sc $cpu MD Dwell Table Load Entries"
+   END
+END_TYPES
+
+! MD DwellTableLoad Table 1 Packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Table 1 Load Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  $sc_$cpu_MD_DwellTableLoad  $sc_$cpu_MD_Dwell_Load_Tbl1  DESC="$sc $cpu MD Dwell Table 1 Load Table"
+!
+END
+
+! MD DwellTableLoad Table 2 Packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Table 2 Load Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  $sc_$cpu_MD_DwellTableLoad  $sc_$cpu_MD_Dwell_Load_Tbl2  DESC="$sc $cpu MD Dwell Table 2 Load Table"
+!
+END
+
+! MD DwellTableLoad Table 3 Packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Table 3 Load Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  $sc_$cpu_MD_DwellTableLoad  $sc_$cpu_MD_Dwell_Load_Tbl3  DESC="$sc $cpu MD Dwell Table 3 Load Table"
+!
+END
+
+! MD DwellTableLoad Table 3 Packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Table 4 Load Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  $sc_$cpu_MD_DwellTableLoad  $sc_$cpu_MD_Dwell_Load_Tbl4  DESC="$sc $cpu MD Dwell Table 4 Load Table"
+!
+END
+

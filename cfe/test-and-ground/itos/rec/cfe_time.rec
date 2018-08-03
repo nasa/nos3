@@ -1,0 +1,202 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System TimeServices {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  System enum {
+    Enumeration timeSource {
+      EnumerationValue use_intern { value=1 }
+      EnumerationValue use_extern { value=2 }
+    }
+
+    Enumeration clockState {
+      EnumerationValue invalid  { value=-1 }
+      EnumerationValue valid    { value=0 }
+      EnumerationValue flywheel { value=1 }
+    }
+
+    Enumeration toneSource {
+      EnumerationValue tone_pri { value=1 }
+      EnumerationValue tone_red { value=2 }
+    }
+  }
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand TimeCommand {
+    verification=Verifier {}
+    applicationId { range=0x05 }
+  }
+
+  /** TIME no-operation command */
+  TimeCommand noop {
+    commandCode { range=0 }
+  }
+
+  /** TIME reset counters command */
+  TimeCommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  /** TIME request diagnostic telemetry */
+  TimeCommand diag_tlm {
+    commandCode { range=2 }
+  }
+
+  /** TIME select Time Service clock source */
+  TimeCommand set_source {
+    commandCode { range=3 }
+    cfs.I16 timeSource { enumeration=enum.timeSource }
+  }
+
+  /** TIME set Time Service clock state */
+  TimeCommand set_state {
+    commandCode { range=4 }
+    cfs.I16 clockState { enumeration=enum.clockState }
+  }
+
+  /** TIME add clock latency */
+  TimeCommand add_delay {
+    commandCode { range=5 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME subtract clock latency */
+  TimeCommand sub_delay {
+    commandCode { range=6 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME set clock time */
+  TimeCommand set_time {
+    commandCode { range=7 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME set clock MET */
+  TimeCommand set {
+    commandCode { range=7 }
+    cfs.Date64 time {}
+  }
+
+  /** TIME set clock MET */
+  TimeCommand set_met {
+    commandCode { range=8 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME set clock STCF */
+  TimeCommand set_stcf {
+    commandCode { range=9 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME set clock leap seconds */
+  TimeCommand set_leaps {
+    commandCode { range=10 }
+    cfs.U16 seconds {}
+  }
+
+  /** TIME add STCF adjustment */
+  TimeCommand add_adjust {
+    commandCode { range=11 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME subtract STCF adjustment */
+  TimeCommand sub_adjust {
+    commandCode { range=12 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME add 1Hz STCF adjustment */
+  TimeCommand add_1hzadj {
+    commandCode { range=13 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME subtract 1Hz STCF adjustment */
+  TimeCommand sub_1hzadj {
+    commandCode { range=14 }
+    cfs.U32 seconds {}
+    cfs.U32 microSeconds {}
+  }
+
+  /** TIME Set Signal Command */
+  TimeCommand set_signal {
+    commandCode { range=15 }
+    U21 toneSource { enumeration=enum.toneSource }
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x05 } }
+
+    /** Time Command Execution Counter */
+    cfs.U8 cmdpc {}
+
+    /** Time Command Error Counter */
+    cfs.U8 cmdec {}
+
+    /** Time State Flags */
+    cfs.U16 stateflg {}
+
+    /** Time API State */
+    cfs.I16 apistate {}
+
+    /** Time Current Leaps Seconds */
+    cfs.I16 leapsecs {}
+
+    /** Time Current MET (seconds) */
+    cfs.U32 metsecs {}
+
+    /** Time Current MET (sub-seconds) */
+    cfs.U32 metsubsecs {}
+
+    /**Time Current STCF (seconds) */
+    cfs.U32 stcfsecs {}
+
+    /** Time Current STCF (sub-seconds) */
+    cfs.U32 stcfsubsecs {}
+
+    /** Time Current 1 Hz STCF adjustment (seconds) */
+    cfs.U32 onehzadjsecs {}
+
+    /** Time Current 1 Hz STCF adjustment (sub-seconds) */
+    cfs.U32 onehzadjssecs {}
+  }
+
+  /* Need to add definition for diagnostic teletry packet. */
+}
+

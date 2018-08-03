@@ -1,0 +1,44 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: April 28 2007
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TST TBL App table 1 & 2
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2008/04/28  B. Medina  initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definition
+!==============================================================================
+!
+TYPES
+   RECORD $sc_$cpu_HK_CopyTableEntry  DESC="$sc $cpu HK Copy Table Entry Type"
+      SB_MSGID_T  InputMid	 DESC="Input message id"
+      ui          InputOffset	 DESC="Offset in input message to copy data from"
+      SB_MSGID_T  OutputMid	 DESC="Output message id"
+      ui          OutputOffset	 DESC="Offset in output message to write data to"
+      ui          NumBytes	 DESC="Number of bytes to copy"
+   END
+END_TYPES
+
+! HK Copy Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu HK Copy Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_HK_CopyTableEntry $sc_$cpu_HK_CopyTable[128]  DESC="$sc $cpu HK Copy Table"
+!
+END
+

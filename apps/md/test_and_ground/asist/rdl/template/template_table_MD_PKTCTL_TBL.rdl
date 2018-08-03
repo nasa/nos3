@@ -1,0 +1,59 @@
+!==============================================================================
+!
+!                Originator: S. Jonke
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: April 28 2007
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MD Dwell Tables
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!   Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!       2008/06/16  S. Jonke   initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definition
+!==============================================================================
+!
+#include "cfe_mission_cfg.h"
+#include "md_platform_cfg.h"
+
+TYPES
+   RECORD $sc_$cpu_MD_DwellControlEntry  DESC="$sc $cpu MD Dwell Control Entry Type"
+      UI      MD_DwlCtrlEntry_Length   DESC="Length of dwell field in bytes. 0 indicates null entry"
+      UI      MD_DwlCtrlEntry_Delay    DESC="Delay before following dwell sample in terms of number of task wakeup calls"
+      ULI     MD_DwlCtrlEntry_Offset   DESC="Dwell address in numerical form"
+   END
+   
+   RECORD $sc_$cpu_MD_DwellPacketControl  DESC="$sc $cpu MD Dwell Packet Control Type"
+      UI   MD_DwlPktCtrl_Enabled        DESC="Dwell table enabled flag"
+      UI   MD_DwlPktCtrl_AddrCount      DESC="Number of dwell addresses to telemeter"
+      ULI  MD_DwlPktCtrl_Rate           DESC="Packet issuance interval in terms of number of task wakeup calls"
+      ULI  MD_DwlPktCtrl_Countdown      DESC="Counts down from Rate to 0, then read next address"
+      UI   MD_DwlPktCtrl_PktOffset      DESC="Tracks where to write next data in dwell pkt"
+      UI   MD_DwlPktCtrl_CurrentEntry   DESC="Current entry in dwell table"
+      UI   MD_DwlPktCtrl_DataSize       DESC="Total number of data bytes specified in dwell table"
+      UB   MD_DwlPktCtrl_Filler[2]      DESC="Preserves alignment"
+      $sc_$cpu_MD_DwellControlEntry MD_DwlPktCtrl_Entry[MD_DWELL_TABLE_SIZE]  DESC="$sc $cpu MD Dwell Control Structure"
+   END
+END_TYPES
+
+
+
+! MD DwellTables Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Tables Structure"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+  $sc_$cpu_MD_DwellPacketControl $sc_$cpu_MD_DwellTables[MD_NUM_DWELL_TABLES]  DESC="$sc $cpu MD Dwell Tables"
+!
+END
+

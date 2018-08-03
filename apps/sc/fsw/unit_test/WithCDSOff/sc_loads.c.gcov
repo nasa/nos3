@@ -1,0 +1,711 @@
+        -:    0:Source:/Users/nyanchik/Desktop/cfs-sandbox/sc/fsw/src/sc_loads.c
+        -:    0:Graph:sc_loads.gcno
+        -:    0:Data:sc_loads.gcda
+        -:    0:Runs:1
+        -:    0:Programs:4
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_loads.c.gcov 1.2 2009/02/19 10:06:56EST nyanchik Exp  $
+        -:    4: **
+        -:    5: ** Purpose: 
+        -:    6: **   This file contains functions to handle validation of TBL tables,
+        -:    7: **   as well as setting up Stored Command's internal data structures for
+        -:    8: **   those tables
+        -:    9: **
+        -:   10: ** References:
+        -:   11: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   12: **   CFS Development Standards Document
+        -:   13: ** Notes:
+        -:   14: **
+        -:   15: **   $Log: sc_loads.c.gcov  $ 
+        -:   15: **   Revision 1.2 2009/02/19 10:06:56EST nyanchik  
+        -:   15: **   Update SC To work with cFE 5.2 Config parameters 
+        -:   16: **   Revision 1.3 2009/01/26 14:44:46EST nyanchik  
+        -:   17: **   Check in of Unit test 
+        -:   18: **   Revision 1.2 2009/01/05 08:26:52EST nyanchik  
+        -:   19: **   Check in after code review changes 
+        -:   20: *************************************************************************/
+        -:   21:
+        -:   22:/**************************************************************************
+        -:   23: **
+        -:   24: ** Include section
+        -:   25: **
+        -:   26: **************************************************************************/
+        -:   27:
+        -:   28:#include "sc_app.h"
+        -:   29:#include "sc_atsrq.h"
+        -:   30:#include "sc_cmds.h"
+        -:   31:#include "sc_loads.h"
+        -:   32:#include "sc_rtsrq.h"
+        -:   33:#include "sc_state.h"
+        -:   34:#include "sc_utils.h"
+        -:   35:/**************************************************************************
+        -:   36: **
+        -:   37: ** Local #defines
+        -:   38: **
+        -:   39: **************************************************************************/
+        -:   40:
+        -:   41:/**************************************************************************
+        -:   42: **
+        -:   43: ** Functions
+        -:   44: **
+        -:   45: **************************************************************************/
+        -:   46:
+        -:   47:/************************************************************************/
+        -:   48:/** \brief Parses an RTS to see if it is valid
+        -:   49: **  
+        -:   50: **  \par Description
+        -:   51: **         This routine is called to validate an RTS buffer. It parses through
+        -:   52: **           the RTS to make sure all of the commands look in reasonable shape.
+        -:   53: **       
+        -:   54: **  \par Assumptions, External Events, and Notes:
+        -:   55: **        None
+        -:   56: **
+        -:   57: **  \param [in]    Buffer          A pointer to the area to validate
+        -:   58: **
+        -:   59: **
+        -:   60: *************************************************************************/
+        -:   61:boolean SC_ParseRts (uint16 Buffer []);
+        -:   62:
+        -:   63:/************************************************************************/
+        -:   64:/** \brief Buids the Time index buffer for the ATS
+        -:   65: **  
+        -:   66: **  \par Description
+        -:   67: **            This routine builds the ATS Time Index Table after an ATS buffer
+        -:   68: **            has been loaded and the ATS Command Index Table has been built.
+        -:   69: **            This routine will take the commands that are pointed to by the
+        -:   70: **            pointers in the command index table and sort the commands by
+        -:   71: **            time order.       
+        -:   72: **       
+        -:   73: **  \par Assumptions, External Events, and Notes:
+        -:   74: **        None
+        -:   75: **
+        -:   76: **  \param [in]    AtsId           The Ats to build the index table for
+        -:   77: **
+        -:   78: **
+        -:   79: *************************************************************************/
+        -:   80:
+        -:   81:void SC_BuildTimeIndexTable (uint16 AtsId);
+        -:   82:
+        -:   83:/************************************************************************/
+        -:   84:/** \brief Inserts an item in a sorted list
+        -:   85: **  
+        -:   86: **  \par Description
+        -:   87: **            This function is the heart of the insertion sort algorithm
+        -:   88: **            for the SC_build_time_index routine. This function will insert
+        -:   89: **            an element into a sorted list.       
+        -:   90: **       
+        -:   91: **  \par Assumptions, External Events, and Notes:
+        -:   92: **        None
+        -:   93: **
+        -:   94: **  \param [in]    AtsId           The Ats to build the index table for
+        -:   95: **
+        -:   96: **  \param [in]    NewElement           The new element to insert into the list
+        -:   97: ** 
+        -:   98: **  \param [in]    LastElement           The Last element thus far in the list
+        -:   99: **
+        -:  100: **
+        -:  101: *************************************************************************/
+        -:  102:void SC_Insert (uint16 AtsId, uint16 NewElement, uint16 LastElement);
+        -:  103:
+        -:  104:/************************************************************************/
+        -:  105:/** \brief Initializes ATS tables before a load starts
+        -:  106: **  
+        -:  107: **  \par Description
+        -:  108: **            This function simply clears out the ats tables in preparation
+        -:  109: **            for a load.     
+        -:  110: **       
+        -:  111: **  \par Assumptions, External Events, and Notes:
+        -:  112: **        None
+        -:  113: **
+        -:  114: **  \param [in]    AtsId           The Ats to build the index table for
+        -:  115: **
+        -:  116: *************************************************************************/
+        -:  117:void SC_InitAtsTables (uint16 AtsId);
+        -:  118:
+        -:  119:
+        -:  120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  121:/*                                                                 */
+        -:  122:/* Load the ATS from its table to memory                           */
+        -:  123:/*                                                                 */
+        -:  124:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  125:void SC_LoadAts (uint16 AtsId)
+       11:  126:{
+        -:  127:    uint16                  AtsCmdLength;       /* the length of the command in words     */
+        -:  128:    uint16                  AtsCmdNum;          /* the current command number in the load */
+        -:  129:    uint16                  AtsCmdPtr;          /* the current command pointer in the load */
+        -:  130:    CFE_SB_MsgPtr_t         AtsCmd;             /* a pointer to an ats command */
+        -:  131:    SC_AtsCommandHeader_t  *AtsCmdHeaderPtr;    /* a pointer to the ats commandwith the ats header */
+        -:  132:    uint16                  AtsLoadStatus;      /* the status of the ats load in progress */
+        -:  133:    uint16                 *AtsTablePtr;        /* pointer to the start of the Ats table */
+        -:  134:
+        -:  135:
+        -:  136:    /*
+        -:  137:     ** Initialize all structrures
+        -:  138:     */
+       11:  139:    SC_InitAtsTables (AtsId);
+        -:  140: 
+       11:  141:    AtsTablePtr = SC_OperData.AtsTblAddr[AtsId];
+        -:  142:    
+        -:  143:    /* initialize the pointers and counters */
+       11:  144:    AtsCmdPtr = 0;
+       11:  145:    AtsLoadStatus = SC_PARSING;
+        -:  146:  
+      449:  147:        while (AtsLoadStatus == SC_PARSING)
+        -:  148:    {
+        -:  149:        /*
+        -:  150:         ** Make sure that the pointer as well as the primary packet
+        -:  151:         ** header fit in the buffer, so a G.P fault is not caused.
+        -:  152:         */
+      427:  153:        if (AtsCmdPtr < SC_ATS_BUFF_SIZE)
+        -:  154:        {
+        -:  155:            /* get the next command number from the buffer */
+      426:  156:            AtsCmdNum = ((SC_AtsCommandHeader_t *)&AtsTablePtr[AtsCmdPtr]) ->CmdNum;
+        -:  157:    
+      426:  158:            if (AtsCmdNum == 0)
+        -:  159:            {   
+        -:  160:                /* end of the load reached */
+        6:  161:                AtsLoadStatus = SC_COMPLETE;
+        -:  162:            }
+        -:  163:           
+        -:  164:                    /* make sure the CmdPtr can fit in a whole Ats Cmd Header at the very least */
+      420:  165:            else if (AtsCmdPtr > (SC_ATS_BUFF_SIZE - (sizeof(SC_AtsCommandHeader_t)/SC_BYTES_IN_WORD)))
+        -:  166:            {
+        -:  167:                /*
+        -:  168:                **  A command does not fit in the buffer
+        -:  169:                */
+        1:  170:                AtsLoadStatus = SC_ERROR;
+        -:  171:            }  /* else if the cmd number is valid and the command */
+        -:  172:            /* has not already been loaded                     */
+        -:  173:            else
+      419:  174:                if (AtsCmdNum <= SC_MAX_ATS_CMDS &&
+        -:  175:                    SC_OperData.AtsCmdStatusTblAddr[AtsId][AtsCmdNum - 1] == SC_EMPTY)
+        -:  176:                {
+        -:  177:                    /* get a pointer to the ats command in the table */
+      418:  178:                    AtsCmdHeaderPtr = (SC_AtsCommandHeader_t*) (&AtsTablePtr[AtsCmdPtr]);
+      418:  179:                    AtsCmd = (CFE_SB_MsgPtr_t)(AtsCmdHeaderPtr -> CmdHeader);
+        -:  180:                                       
+        -:  181:                    /* if the length of the command is valid */
+      418:  182:                    if (CFE_SB_GetTotalMsgLength(AtsCmd) >= SC_PACKET_MIN_SIZE && 
+        -:  183:                        CFE_SB_GetTotalMsgLength(AtsCmd) <= SC_PACKET_MAX_SIZE)
+        -:  184:                    {
+        -:  185:                        /* get the length of the command in WORDS */
+      417:  186:                        AtsCmdLength = (CFE_SB_GetTotalMsgLength(AtsCmd) + SC_ATS_HEADER_SIZE) / SC_BYTES_IN_WORD; 
+        -:  187:                        
+        -:  188:                        /* if the command does not run off of the end of the buffer */
+      417:  189:                        if (AtsCmdPtr + AtsCmdLength <= SC_ATS_BUFF_SIZE)
+        -:  190:                        {
+        -:  191:                            /* set the command pointer in the command index table */
+        -:  192:                            /* CmdNum starts at one....                          */
+        -:  193:                            
+      416:  194:                            SC_AppData.AtsCmdIndexBuffer[AtsId] [AtsCmdNum -1] = 
+        -:  195:                                                (SC_AtsCommandHeader_t *)(&SC_OperData.AtsTblAddr[AtsId][AtsCmdPtr]);
+        -:  196:                            
+        -:  197:                            /* set the command status to loaded in the command status table */
+      416:  198:                            SC_OperData.AtsCmdStatusTblAddr[AtsId][AtsCmdNum - 1] = SC_LOADED;
+        -:  199:                            
+        -:  200:                            /* increment the number of commands loaded */
+      416:  201:                            SC_OperData.AtsInfoTblAddr[AtsId].NumberOfCommands++;
+        -:  202:                            
+        -:  203:                            /* increment the ats_cmd_ptr to point to the next command */
+      416:  204:                            AtsCmdPtr = AtsCmdPtr + AtsCmdLength;
+        -:  205:                        }
+        -:  206:                        else
+        -:  207:                        { /* the command runs off the end of the buffer */
+        1:  208:                              AtsLoadStatus = SC_ERROR;
+        -:  209:                        } /* end if */
+        -:  210:                    }
+        -:  211:                    else
+        -:  212:                    { /* the command length was invalid */
+        1:  213:                        AtsLoadStatus = SC_ERROR;
+        -:  214:                    } /* end if */
+        -:  215:                }
+        -:  216:                else
+        -:  217:                { /* the cmd number is invalid */                    
+        1:  218:                    AtsLoadStatus = SC_ERROR;
+        -:  219:                } /* end if */
+        -:  220:        }
+        -:  221:        else
+        -:  222:        {
+        1:  223:            if (AtsCmdPtr == SC_ATS_BUFF_SIZE)
+        -:  224:            {
+        -:  225:                /* we encountered a load exactly as long as the buffer */
+        1:  226:                AtsLoadStatus = SC_COMPLETE;
+        -:  227:
+        -:  228:            }
+        -:  229:            else
+        -:  230:            { /* the pointer is over the end of the buffer */
+        -:  231:                
+    #####:  232:                AtsLoadStatus = SC_ERROR;
+        -:  233:            } /* end if */
+        -:  234:        }/*end else */
+        -:  235:    } /* end while */
+        -:  236:    
+        -:  237:    /*
+        -:  238:     **   Now the commands are parsed through, need to build the tables
+        -:  239:     **   if the load was a sucess, need to build the tables
+        -:  240:     */
+        -:  241:    
+        -:  242:    /* if the load finished without errors and there was at least one command */
+       18:  243:    if (AtsLoadStatus == SC_COMPLETE && SC_OperData.AtsInfoTblAddr[AtsId].NumberOfCommands > 0)
+        -:  244:    {  
+        -:  245:        /* record the size of the load in the ATS info table */
+        7:  246:        SC_OperData.AtsInfoTblAddr[AtsId].AtsSize = AtsCmdPtr;  /* size in WORDS */
+        -:  247:             
+        -:  248:        /* build the time index table */
+        7:  249:        SC_BuildTimeIndexTable(AtsId);   
+        -:  250:    }
+        -:  251:    else
+        -:  252:    { /* there was an error */
+        4:  253:        SC_InitAtsTables (AtsId);
+        -:  254:    } /* end if */ 
+        -:  255:} /* end SC_LoadAts */
+        -:  256:
+        -:  257:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  258:/*                                                                 */
+        -:  259:/* Builds the time table for the ATS buffer                        */
+        -:  260:/*                                                                 */
+        -:  261:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  262:void SC_BuildTimeIndexTable (uint16 AtsId)
+        8:  263:{
+        -:  264:    uint16     CmdIndex;        /* the current command index */
+        -:  265:    uint16     LengthOfList;   /* the number of commands sorted */
+        -:  266:
+        -:  267:    /* initialize */
+        8:  268:    CmdIndex = 0;
+        8:  269:    LengthOfList = 1;
+        -:  270:    
+        -:  271:    /* find the first non-null element */
+        -:  272:   
+     1015:  273:    while (SC_AppData.AtsCmdIndexBuffer[AtsId][CmdIndex] == NULL)
+        -:  274:    {
+      999:  275:        CmdIndex++;
+        -:  276:    }
+        -:  277:
+        -:  278:   
+        8:  279:    SC_AppData.AtsTimeIndexBuffer[AtsId][0]  =  SC_AppData.AtsCmdIndexBuffer[AtsId] [CmdIndex] -> CmdNum -1  ;
+        -:  280:        
+        8:  281:    CmdIndex++;
+        -:  282:    
+        -:  283:    /* next go through the rest of the list and add the cmds in */
+     7002:  284:    while (CmdIndex < SC_MAX_ATS_CMDS)
+        -:  285:    {
+     6986:  286:        if (SC_AppData.AtsCmdIndexBuffer[AtsId] [CmdIndex] !=  NULL)
+        -:  287:        { 
+        -:  288:            /* insert the element index and the current length of the index */
+        -:  289:            /* put the element at that index into the time index table */
+      153:  290:            SC_Insert (AtsId, CmdIndex, LengthOfList - 1);
+        -:  291:            
+      153:  292:            LengthOfList++;   
+        -:  293:        }
+        -:  294:        
+     6986:  295:        CmdIndex++;        
+        -:  296:    }  /* end while loop */
+        -:  297:} /* end SC_BuildTimeIndexTable */
+        -:  298:
+        -:  299:
+        -:  300:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  301:/*                                                                 */
+        -:  302:/*  Inserts and element into a sorted list                         */
+        -:  303:/*                                                                 */
+        -:  304:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  305:void SC_Insert (uint16 AtsId, uint16 NewElement, uint16 LastElement)
+      153:  306:{
+        -:  307:
+        -:  308:    int16 j;                 /* this must be a signed int16 */        
+      153:  309:    j = LastElement;
+        -:  310:
+        -:  311:
+        -:  312:    /*
+        -:  313:    AtsCmdNum = *(uint16*)SC_AppData.AtsCmdIndexBuffer[AtsId] [j];
+        -:  314:    AtsCmdNum = AtsCmdNum << 16;
+        -:  315:    AtsCmdNum |= *((uint16*)(SC_AppData.AtsCmdIndexBuffer[AtsId] [j]) +1);
+        -:  316:    */
+     1942:  317:    while ((j >= 0) &&(SC_CompareAbsTime (SC_AppData.AtsCmdIndexBuffer [AtsId] [SC_AppData.AtsTimeIndexBuffer[AtsId][j] ] -> TimeTag,
+        -:  318:                                          SC_AppData.AtsCmdIndexBuffer [AtsId] [NewElement] -> TimeTag) ))
+        -:  319:    {        
+        -:  320:        /* send the last element in the time index up one position */
+     1636:  321:        SC_AppData.AtsTimeIndexBuffer[AtsId][j+1] = SC_AppData.AtsTimeIndexBuffer[AtsId][j];
+        -:  322:        
+        -:  323:        /* decrement the last element index */
+     1636:  324:        j = j - 1;
+        -:  325: 
+        -:  326:        
+        -:  327:    } /* end while */
+        -:  328:    
+        -:  329:    /*
+        -:  330:     ** The position for the command has been found...
+        -:  331:     ** If the element added was greater to begin with, it goes on the end.
+        -:  332:     ** If the element was walked up the list, it will go in the middle.
+        -:  333:     */
+      153:  334:    SC_AppData.AtsTimeIndexBuffer[AtsId][j+1]  = 
+        -:  335:    SC_AppData.AtsCmdIndexBuffer[AtsId] [NewElement] -> CmdNum - 1;
+        -:  336:} /* end SC_Insert */
+        -:  337:
+        -:  338:
+        -:  339:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  340:/*                                                                 */
+        -:  341:/*  Clears out Ats Tables before a load                            */
+        -:  342:/*                                                                 */
+        -:  343:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  344:void SC_InitAtsTables (uint16 AtsId)
+       15:  345:{
+        -:  346:    
+        -:  347:    uint16 i; 
+        -:  348:
+        -:  349:        
+        -:  350:    /* loop through and set the ATS tables to zero */
+    15000:  351:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  352:    {
+        -:  353:        
+    14985:  354:        SC_AppData.AtsCmdIndexBuffer[AtsId][i] = NULL;
+    14985:  355:        SC_OperData.AtsCmdStatusTblAddr[AtsId][i] = SC_EMPTY;
+    14985:  356:        SC_AppData.AtsTimeIndexBuffer[AtsId][i] = 0;
+        -:  357:        
+        -:  358:    } /* end for */
+        -:  359:    
+        -:  360:    /* initialize the pointers and counters   */
+       15:  361:    SC_OperData.AtsInfoTblAddr[AtsId].AtsSize = 0;
+       15:  362:    SC_OperData.AtsInfoTblAddr[AtsId].NumberOfCommands = 0;
+        -:  363:    
+        -:  364:    
+        -:  365:} /* end SC_InitAtsTables */
+        -:  366:
+        -:  367:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  368:/*                                                                 */
+        -:  369:/* Load an RTS into memory                                         */
+        -:  370:/*                                                                 */
+        -:  371:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  372:void SC_LoadRts (uint16 RtsId)
+       12:  373:{    
+        -:  374:    /* Clear out the RTS info table */
+       12:  375:    SC_OperData.RtsInfoTblAddr[RtsId].RtsStatus = SC_LOADED;
+       12:  376:    SC_OperData.RtsInfoTblAddr[RtsId].UseCtr = 0;
+       12:  377:    SC_OperData.RtsInfoTblAddr[RtsId].CmdCtr = 0;
+       12:  378:    SC_OperData.RtsInfoTblAddr[RtsId].CmdErrCtr = 0;
+       12:  379:    SC_OperData.RtsInfoTblAddr[RtsId].NextCommandTime = 0;
+       12:  380:    SC_OperData.RtsInfoTblAddr[RtsId].NextCommandPtr = 0;
+        -:  381:       
+        -:  382:    /* Make sure the RTS is disabled */
+       12:  383:    SC_OperData.RtsInfoTblAddr[RtsId].DisabledFlag = TRUE;
+        -:  384:        
+        -:  385:} /* SC_LoadRts */
+        -:  386:
+        -:  387:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  388:/*                                                                 */
+        -:  389:/*  Validate the ATS buffer                                        */
+        -:  390:/*                                                                 */
+        -:  391:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  392:int32 SC_ValidateAts (void *TableData)
+       12:  393:{
+        -:  394:    uint16                           AtsCmdLength;       /* the length of the command in words     */
+        -:  395:    uint16                           AtsCmdNum;          /* the current command number in the load */
+        -:  396:    uint16                           AtsCmdPtr;          /* the current command pointer in the load */
+       12:  397:    uint16                           NumberOfCommands = 0;
+        -:  398:    uint16                           i;
+        -:  399:    int32                            AtsLoadStatus;     /* the status of the ats load in progress */
+        -:  400:    CFE_SB_MsgPtr_t                  AtsCmd;            /* a pointer to an ats command */
+        -:  401:    SC_AtsCommandHeader_t *          AtsCmdHeaderPtr;
+        -:  402:    uint16                          *AtsTable;
+        -:  403:    static uint8                     AtsCmdStatusTblAddr[SC_MAX_ATS_CMDS];
+        -:  404:    static SC_AtsCommandHeader_t    *AtsCmdIndexBuffer[SC_MAX_ATS_CMDS];
+        -:  405:    
+        -:  406:    
+        -:  407:    /* initialize the pointers and counters */
+       12:  408:    AtsCmdPtr = 0;
+       12:  409:    AtsLoadStatus = SC_PARSING;
+       12:  410:    AtsTable = TableData;
+        -:  411:    
+    12000:  412:    for (i = 0; i < SC_MAX_ATS_CMDS; i++)
+        -:  413:    {
+    11988:  414:        AtsCmdStatusTblAddr[i] = SC_EMPTY;
+        -:  415:    }
+        -:  416:   
+      440:  417:    while (AtsLoadStatus == SC_PARSING)
+        -:  418:    {
+        -:  419:        /*
+        -:  420:         ** Make sure that the pointer as well as the primary packet
+        -:  421:         ** header fit in the buffer.
+        -:  422:         */
+      428:  423:        if (AtsCmdPtr < SC_ATS_BUFF_SIZE)
+        -:  424:        {            
+        -:  425:            
+        -:  426:            /* get the next command number from the buffer */
+      427:  427:            AtsCmdNum = ((SC_AtsCommandHeader_t *)&AtsTable[AtsCmdPtr]) ->CmdNum;
+        -:  428:                           
+      427:  429:            if (AtsCmdNum == 0)
+        -:  430:            {   /* end of the load reached */
+        -:  431:                
+        7:  432:                AtsLoadStatus = CFE_SUCCESS;
+        -:  433:            }
+        -:  434:                    /* make sure the CmdPtr can fit in a whole Ats Cmd Header at the very least */
+      420:  435:            else if (AtsCmdPtr > (SC_ATS_BUFF_SIZE - (sizeof(SC_AtsCommandHeader_t)/SC_BYTES_IN_WORD)) ) 
+        -:  436:            {
+        -:  437:                
+        -:  438:                /*
+        -:  439:                 **  The command does not fit in the buffer
+        -:  440:                 */
+        1:  441:                AtsLoadStatus = SC_ERROR;
+        1:  442:                CFE_EVS_SendEvent (SC_ATS_PARSE_TOO_BIG_ERR_EID,
+        -:  443:                                   CFE_EVS_ERROR,
+        -:  444:                                   "ATS Load Aborted: Cmd number %d at offset %d doesn't fit in ATS buffer",
+        -:  445:                                   AtsCmdNum, 
+        -:  446:                                   AtsCmdPtr);
+        -:  447:
+        -:  448:            }  /* else if the cmd number is valid and the command */
+        -:  449:               /* has not already been loaded                     */
+      419:  450:            else if (AtsCmdNum <= SC_MAX_ATS_CMDS &&
+        -:  451:                     AtsCmdStatusTblAddr[AtsCmdNum - 1] == SC_EMPTY)
+        -:  452:            {
+        -:  453:                /* get a pointer to the ats command in the Table */   
+        -:  454:                
+      418:  455:                AtsCmdHeaderPtr = (SC_AtsCommandHeader_t *)&AtsTable[AtsCmdPtr];
+      418:  456:                AtsCmd = (CFE_SB_MsgPtr_t) (AtsCmdHeaderPtr -> CmdHeader);
+        -:  457:                
+        -:  458:                /* if the length of the command is valid */
+      418:  459:                if (CFE_SB_GetTotalMsgLength(AtsCmd) >= SC_PACKET_MIN_SIZE &&
+        -:  460:                    CFE_SB_GetTotalMsgLength(AtsCmd) <= SC_PACKET_MAX_SIZE)
+        -:  461:                { 
+        -:  462:                    /* get the length of the command in WORDS */
+      417:  463:                    AtsCmdLength = (CFE_SB_GetTotalMsgLength(AtsCmd) + SC_ATS_HEADER_SIZE) / SC_BYTES_IN_WORD;
+        -:  464:                    
+        -:  465:                    /* if the command does not run off of the end of the buffer */
+      417:  466:                    if (AtsCmdPtr + AtsCmdLength <= SC_ATS_BUFF_SIZE)
+        -:  467:                    {       
+        -:  468:                        /* set the command pointer in the command index table */
+        -:  469:                        /* CmdNum starts at one....                           */
+      416:  470:                        AtsCmdIndexBuffer[AtsCmdNum -1]  = 
+        -:  471:                        (SC_AtsCommandHeader_t *)&AtsTable[AtsCmdPtr];
+        -:  472:                        
+        -:  473:                        /* set the command status to loaded in the command status table */
+      416:  474:                        AtsCmdStatusTblAddr[AtsCmdNum - 1] = SC_LOADED;
+        -:  475:                        
+        -:  476:                        /* increment the number of commands loaded */
+      416:  477:                        NumberOfCommands++;
+        -:  478:                        
+        -:  479:                        /* increment the ats_cmd_ptr to point to the next command */
+      416:  480:                        AtsCmdPtr = AtsCmdPtr + AtsCmdLength;
+        -:  481:                                                
+        -:  482:                    }
+        -:  483:                    else
+        -:  484:                    { /* the command runs off the end of the buffer */
+        -:  485:                        
+        1:  486:                        AtsLoadStatus = SC_ERROR;
+        -:  487:                        
+        1:  488:                        CFE_EVS_SendEvent (SC_ATS_PARSE_RUNS_OFF_ERR_EID,
+        -:  489:                                           CFE_EVS_ERROR,
+        -:  490:                                           "ATS Load Aborted: The length for cmd number %d at offset %d runs off the end of the ATS buffer",
+        -:  491:                                           AtsCmdNum, 
+        -:  492:                                           AtsCmdPtr);    
+        -:  493:                    } /* end if */
+        -:  494:                }
+        -:  495:                else
+        -:  496:                { /* the command length was invalid */
+        -:  497:                    
+        1:  498:                    AtsLoadStatus = SC_ERROR;
+        1:  499:                    CFE_EVS_SendEvent (SC_ATS_PARSE_LEN_INVALID_ERR_EID,
+        -:  500:                                       CFE_EVS_ERROR,
+        -:  501:                                       "ATS Load Aborted: The length for command number %d at offset %d is invalid",
+        -:  502:                                       AtsCmdNum, 
+        -:  503:                                       AtsCmdPtr);    
+        -:  504:                } /* end if */
+        -:  505:            }
+        -:  506:            else
+        -:  507:            { /* the cmd number is invalid */
+        -:  508:                
+        1:  509:                AtsLoadStatus = SC_ERROR;
+        1:  510:                CFE_EVS_SendEvent (SC_ATS_PARSE_CMD_INVALID_ERR_EID,
+        -:  511:                                   CFE_EVS_ERROR,
+        -:  512:                                   "ATS Load Aborted: The command number %d at offset %d is invalid",
+        -:  513:                                   AtsCmdNum,
+        -:  514:                                   AtsCmdPtr);  
+        -:  515:            } /* end if */
+        -:  516:        }
+        1:  517:        else if (AtsCmdPtr == SC_ATS_BUFF_SIZE)
+        -:  518:        {
+        -:  519:            /* we encountered a load exactly as long as the buffer */
+        1:  520:            AtsLoadStatus = CFE_SUCCESS;   
+        -:  521:        }
+        -:  522:        else
+        -:  523:        { /* the pointer is over the end of the buffer */
+        -:  524:            
+    #####:  525:            AtsLoadStatus = SC_ERROR;
+        -:  526:            
+    #####:  527:            CFE_EVS_SendEvent (SC_ATS_PARSE_TOO_LONG_ERR_EID,
+        -:  528:                               CFE_EVS_ERROR,
+        -:  529:                               "ATS Load Aborted: Load is too long");
+        -:  530:        } /* end if */
+        -:  531:        
+        -:  532:    } /* end while */
+        -:  533:    
+        -:  534:    /*
+        -:  535:     **   Now the commands are parsed through, need to build the tables
+        -:  536:     **   if the load was a sucess, need to build the tables
+        -:  537:     */
+       12:  538:    if (AtsLoadStatus == CFE_SUCCESS)
+        -:  539:    {
+        8:  540:        if (NumberOfCommands == 0)
+        -:  541:        {
+        1:  542:            CFE_EVS_SendEvent (SC_ATS_PARSE_EMPTY_ERR_EID,
+        -:  543:                               CFE_EVS_ERROR,
+        -:  544:                               "ATS Load Aborted: no ATS commands to execute");
+        1:  545:            AtsLoadStatus = SC_ERROR;
+        -:  546:        }
+        -:  547:    }
+        -:  548:        
+       12:  549:    return(AtsLoadStatus);
+        -:  550:    
+        -:  551:} /* end SC_ValidateAts */
+        -:  552:
+        -:  553:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  554:/*                                                                 */
+        -:  555:/* Parses the RTS to make sure it looks good                       */
+        -:  556:/*                                                                 */
+        -:  557:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  558:boolean SC_ParseRts (uint16 Buffer[])
+       10:  559:{
+        -:  560:    uint16                          i;
+        -:  561:    uint16                          NumberOfCommands;
+        -:  562:    boolean                         Done;
+        -:  563:    boolean                         Error;
+        -:  564:    CFE_SB_MsgPtr_t                 RtsCmd;
+        -:  565:    SC_RtsCommandHeader_t*          RtsCmdHeaderPtr;
+        -:  566:    uint16                          RtsCmdSize;
+        -:  567:
+       10:  568:    i = 0;
+       10:  569:    NumberOfCommands = 0;
+       10:  570:    Done = Error = FALSE;
+        -:  571:        
+      172:  572:    while (Error == FALSE && Done == FALSE)
+        -:  573:    {
+        -:  574:        
+        -:  575:        /*
+        -:  576:         ** Check to see if a minimum command fits within an RTS
+        -:  577:         */
+      152:  578:        if (i <= (SC_RTS_BUFF_SIZE - (sizeof(SC_RtsCommandHeader_t)/ SC_BYTES_IN_WORD)))
+        -:  579:        {
+        -:  580:            
+        -:  581:            /*
+        -:  582:             ** Cast a header to the RTS buffer current location
+        -:  583:             ** and get the size of the packet
+        -:  584:             */
+        -:  585:            
+      150:  586:            RtsCmdHeaderPtr  = (SC_RtsCommandHeader_t*) &Buffer[i];
+      150:  587:            RtsCmd = (CFE_SB_MsgPtr_t) RtsCmdHeaderPtr -> CmdHeader; 
+        -:  588:            
+      150:  589:            RtsCmdSize = CFE_SB_GetTotalMsgLength(RtsCmd) + SC_RTS_HEADER_SIZE;
+        -:  590:               
+      153:  591:            if ( RtsCmdHeaderPtr -> TimeTag == 0 && CFE_SB_GetMsgId(RtsCmd) == 0)
+        -:  592:            {
+        -:  593:                
+        3:  594:                Done = TRUE;     /* assumed end of file */
+        -:  595:            }
+      147:  596:            else if (CFE_SB_GetMsgId(RtsCmd) == 0)
+        -:  597:            {
+        1:  598:                CFE_EVS_SendEvent (SC_RTS_INVLD_MID_ERR_EID,
+        -:  599:                                   CFE_EVS_ERROR,
+        -:  600:                                   "RTS cmd loaded with invalid MID at %d",
+        -:  601:                                   i);
+        -:  602:                                   
+        1:  603:                Error = TRUE;     /* invalid message id */
+        -:  604:            }
+        -:  605:            else
+        -:  606:            {
+        -:  607:                 /* check to see if the length field in the RTS is valid */
+      147:  608:                if (CFE_SB_GetTotalMsgLength(RtsCmd) < SC_PACKET_MIN_SIZE ||
+        -:  609:                    CFE_SB_GetTotalMsgLength(RtsCmd) > SC_PACKET_MAX_SIZE) 
+        -:  610:                {
+        1:  611:                CFE_EVS_SendEvent (SC_RTS_LEN_ERR_EID,
+        -:  612:                                   CFE_EVS_ERROR,
+        -:  613:                                   "RTS cmd loaded with invalid length at %d, len: %d",
+        -:  614:                                   i,
+        -:  615:                                   CFE_SB_GetTotalMsgLength(RtsCmd));
+        -:  616:                                   
+        1:  617:                    Error = TRUE;  /* Length error */
+        -:  618:                    
+        -:  619:                }
+      145:  620:                else if ((i + (RtsCmdSize/SC_BYTES_IN_WORD)) > SC_RTS_BUFF_SIZE)
+        -:  621:                {
+        1:  622:                     CFE_EVS_SendEvent (SC_RTS_LEN_BUFFER_ERR_EID,
+        -:  623:                                        CFE_EVS_ERROR,
+        -:  624:                                       "RTS cmd at %d runs off end of buffer",
+        -:  625:                                        i);
+        1:  626:                    Error = TRUE; /* command runs off of the end of the buffer */   
+        -:  627:                }
+      144:  628:                else if ((i + (RtsCmdSize/ SC_BYTES_IN_WORD)) == SC_RTS_BUFF_SIZE)
+        -:  629:                {
+        2:  630:                    Done = TRUE;
+        2:  631:                    NumberOfCommands++;   
+        -:  632:                }
+        -:  633:                else
+        -:  634:                {  /* command fits in buffer */
+        -:  635:                    
+      142:  636:                    i += (RtsCmdSize/ SC_BYTES_IN_WORD);   /* remember 'i' is expressed in words */
+      142:  637:                    NumberOfCommands++;
+        -:  638:                    
+        -:  639:                } /* end if */
+        -:  640:                
+        -:  641:            } /* endif */    
+        -:  642:        }
+        -:  643:        else
+        -:  644:        {  /* command does not fit in the buffer */
+        -:  645:
+        -:  646:            /*
+        -:  647:             ** If it looks like there is data, reject the load,
+        -:  648:             ** if it looks empty then we are done
+        -:  649:             */
+        2:  650:            if (Buffer[i] == 0)
+        -:  651:            {
+        1:  652:                Done = TRUE;
+        -:  653:            }
+        -:  654:            else
+        -:  655:            {
+        1:  656:                CFE_EVS_SendEvent (SC_RTS_LEN_TOO_LONG_ERR_EID,
+        -:  657:                                   CFE_EVS_ERROR,
+        -:  658:                                   "RTS cmd loaded won't fit in buffer at %d",
+        -:  659:                                   i);
+        1:  660:                Error = TRUE;
+        -:  661:            }
+        -:  662:        } /* endif */
+        -:  663:        
+        -:  664:    } /* endwhile */
+        -:  665:        
+        -:  666:    /*
+        -:  667:     ** finished, report results
+        -:  668:     */
+        -:  669:     
+        -:  670:    /* If Error was TRUE, then SC_ParseRts must return FALSE */
+       10:  671:    return (!Error);
+        -:  672:} /* end SC_ParseRts */
+        -:  673:
+        -:  674:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  675:/*                                                                 */
+        -:  676:/* Validate an RTS                                                 */
+        -:  677:/*                                                                 */
+        -:  678:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  679:int32 SC_ValidateRts (void *TableData)
+       10:  680:{
+        -:  681:
+        -:  682:    uint16 *TableDataPtr;
+       10:  683:    int32   Result = CFE_SUCCESS;
+        -:  684:    
+       10:  685:    TableDataPtr = (uint16 *)TableData;
+        -:  686:    
+        -:  687:    /*
+        -:  688:     ** make a rough check on the first command to see if there is
+        -:  689:     ** something in the buffer
+        -:  690:     */
+       10:  691:    if (SC_ParseRts (TableDataPtr) == FALSE)
+        -:  692:    {
+        -:  693:        /* event message is put out by Parse RTS */
+        4:  694:        Result = SC_ERROR;
+        -:  695:    }
+       10:  696:    return (Result);
+        -:  697:} /* end SC_ValidateRts */
+        -:  698:
+        -:  699:/************************/
+        -:  700:/*  End of File Comment */
+        -:  701:/************************/
+        -:  702:
+        -:  703:
+        -:  704:

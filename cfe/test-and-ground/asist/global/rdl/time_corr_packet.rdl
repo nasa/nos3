@@ -1,0 +1,22 @@
+PACKET P853 APID=%x853
+   
+#include "feds_ccsds_header.rdl"
+
+   CHAR TC_Station[8]
+   INTEGER TC_Sequence SIZE=4,ORDER=(1,2,3,4)
+;   PB5B TC_Time ABSOLUTE=1995-283-0:0
+
+;     This is if you don't have PB5B (asist 8.0)
+
+   UNION UNION_TC1
+     INTEGER TC_USELESS_PB_FLAG SIZE=4,MASK=%x80000000
+     INTEGER TC_JulianDays      SIZE=4,MASK=%x7ffE0000
+     INTEGER TC_SecOfDay      SIZE=4,MASK=%x0001ffff
+   END
+   INTEGER TC_MSec_of_Sec   SIZE=2,MASK=%xffc0
+
+;
+;  Date in seconds=Oct 10, 1995 + Julian_days * 86400 + SecOfDay
+;                  + Msec / 1000.0
+
+END

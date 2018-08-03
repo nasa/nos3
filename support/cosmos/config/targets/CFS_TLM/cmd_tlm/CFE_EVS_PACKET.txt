@@ -1,0 +1,15 @@
+TELEMETRY MISSION CFE_EVS_PACKET LITTLE_ENDIAN "Event Message Telemetry Packet"
+  APPEND_ID_ITEM CCSDS_STREAMID 16 UINT 0x0808 "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SEQUENCE 16 UINT "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM CCSDS_LENGTH 16 UINT "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM CCSDS_SECONDS 32 UINT "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM CCSDS_SUBSECS 16 UINT "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM PACKETID_APPNAME 160 STRING "Application name. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_EVENTID 16 UINT "Numerical event identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_EVENTTYPE 16 UINT "Numerical event type identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_SPACECRAFTID 32 UINT "Spacecraft identifier. (Parent: Event packet information.)"
+  APPEND_ITEM PACKETID_PROCESSORID 32 UINT "Numerical processor identifier. (Parent: Event packet information.)"
+  APPEND_ITEM MESSAGE 976 STRING "Event message string."
+  APPEND_ITEM SPARE1 8 UINT "Structure padding."
+  APPEND_ITEM SPARE2 8 UINT "Structure padding."
+

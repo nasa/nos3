@@ -1,0 +1,43 @@
+!This file supports the I&T Command database for cFE S/C Simulator
+!       Date of last change: 18 Dec 2014
+!  INITIAL CREATION                                               SMA    01DEC05
+!  Added RTS SFDU definition for CFS                              WFM    14APR09
+!  Added WORD_PAD to ATS and RTS SFDU definitions                 SLS    18DEC14
+!
+!  Notes:
+!
+!  1. The use of WORD_PAD will ensure the next command starts on a word  
+!     (uint16) boundary when commands are odd length. 
+!
+!  2. The user_cmd.rdl or cmd.rdl file will get overwritten with each new 
+!     release of ASIST.  It is the users responsibility to update the
+!     user_cmd.rdl or cmd.rdl ATS and RTS SFDU defintions to use the WORD_PAD 
+!     macro when odd length commands are being used by the mission/project.
+!
+
+MODIFY UTC ABSOLUTE=TAI
+MODIFY SUTC ABSOLUTE=TAI
+MODIFY ULI ORDER=(1,2,3,4)        
+MODIFY SLI ORDER=(1,2,3,4)
+
+#include "data_center.rdl"
+
+#include "sc_platform_cfg.h"
+
+CLASS STORED_CMD_BLOCKS APID=%x888,FCTN=1
+  SFDU CFSATS DESC="ATS Stored Command Header for CFS",ASCII_HEX,WORD_PAD
+    INTEGER Seq SIZE=2
+    SUTC    When SIZE=4 /** 4 byte, second since epoch **/
+    UB      CMD_DATA[SC_PACKET_MAX_SIZE] VARIABLE
+  END
+  SFDU CFSRTS DESC="RTS Stored Command Header for CFS",ASCII_HEX,WORD_PAD
+    CUC_TIME WHEN SIZE=2,ORDER=(1,2),RELATIVE,SUB_SIZE=0
+    UB       CMD_DATA[SC_PACKET_MAX_SIZE] VARIABLE
+  END
+END
+
+
+#include "cfe_user_cmd.rdl"
+
+#include "cfs_cfdp_cmd.rdl"
+

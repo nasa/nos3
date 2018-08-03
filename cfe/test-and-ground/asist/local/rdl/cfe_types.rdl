@@ -1,0 +1,97 @@
+!=============================================================
+!
+!                Originator: M. Bartholomew
+!
+!                 cFE Data Types definition
+!               =================================
+!
+! Note that to have the CCSDS header be 32 bit aligned, the secondary header 
+! was changed from previous implementations from 8 bytes to 6 bytes.
+!
+!       Change History:
+!
+!  01APR05  MOB           : Initial release 
+!  11APR05  MOB           : Modified SC_TAI time to include SUB_SIZE =2 (WAS 4)
+!  18JUN09  WFM           : Added the FM_FileName and FM_AppName types
+!  22APR10  WFM           : Removed the FM_FileName and FM_AppName types since
+!			  : a cfs_types.rdl file was created to contain them
+!  05OCT10  WFM           : Removed CORRELATED from the SC_TAI_W_LEAP type and
+!			  : changed hard-coded app name size to #define in
+!			  : EVS_PacketID and EVS_APP_Data_Type
+!  27AUG14  WFM		  : Added TBL_NAME_LEN_SIZE and TBL_NAME_LEN #defines
+!===============================================================================
+
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+#include "cfe_mission_cfg.h"
+
+#define CDS_NAME_LEN (OS_MAX_API_NAME + CFE_ES_CDS_MAX_NAME_LENGTH + 2)
+
+! The defines below determine the size of the Table Name field used for many
+! rdls. This size is used by the cFE fsw and duplicated here for use by the
+! ASIST database. The fsw defines these in cfe_tbl.h. Please refer to that
+! file for further comments.
+#define TBL_NAME_LEN_SIZE (OS_MAX_API_NAME + CFE_TBL_MAX_NAME_LENGTH + 2)
+#define TBL_NAME_LEN (((TBL_NAME_LEN_SIZE + 3)/4)*4)
+
+TYPES
+   ! To be used for packet secondary header times
+   ! It will display as an absolute time. It does not include leap seconds
+   ! Note that to have the CCSDS header be 32 bit aligned, the secondary header 
+   ! was changed from 8 bytes to 6 bytes
+   TIME  SC_TAI  ORDER=(1,2,3,4,5,6), SIZE=6, ABSOLUTE=TAI, SUB_SIZE=2
+   ! 
+   ! To be used for packet secondary header times 
+   ! It adds spacecraft leap seconds to the Spacecraft TAI time, 
+   ! thus displaying it as Spacecraft UTC         
+   TIME  SC_TAI_W_LEAP ORDER=(1,2,3,4,5,6), SIZE=6, ABSOLUTE=TAI,SUB_SIZE=2
+   
+   ! This is for times that already include the leap seconds 
+   TIME  SC_UTC  ORDER=(1,2,3,4,5,6), SIZE=6, ABSOLUTE=TAI, SUB_SIZE=2
+
+   RECORD CFE_EVS_PacketID     DESC="EVS Packet Id"
+      CHAR      AppName[OS_MAX_API_NAME]    DESC="Application Name"
+      UI        EvtId          DESC="Event Id"
+      UI        EvtType        DESC="Event Type", DISCRETE=((0,"UNK"),(1,"DBG"),(2,"INFO"),(3,"ERR"),(4,"CRIT"))
+      ULI       ScId           DESC="Spacecraft Id", DISCRETE, DRANGE=(0,66), DLABEL=("UNK","SCX")
+      ULI       PrcId          DESC="Processor Id", DISCRETE, DRANGE=(0,1,2,3), DLABEL=("UNK","CPU1","CPU2","CPU3")
+   END
+
+   RECORD CFE_EVS_APP_DATA_TYPE     DESC="EVS Application Data File Type"
+      CHAR   AppName[OS_MAX_API_NAME]       DESC="Application Name"
+      UB     ActiveFlag        DESC="Active Flag", DISCRETE, DRANGE=(0,1),
+                               DLABEL=("DIS","ENA")
+      UNION  EvtTypeAF         DESC="Event Type Active Flags"
+        UB     Debug            MASK=%X0001,DESC="Debug Event Type Active Flag",
+                                DISCRETE, DRANGE=(0,1), DLABEL=("DIS","ENA")
+        UB     Info             MASK=%X0002,DESC="Informational Event Type Active Flag",
+                                DISCRETE, DRANGE=(0,1), DLABEL=("DIS","ENA")
+        UB     Err              MASK=%X0004,DESC="Error Event Type Active Flag",
+                                DISCRETE, DRANGE=(0,1), DLABEL=("DIS","ENA")
+        UB     Crit             MASK=%X0008,DESC="Critical Event Type Active Flag",
+                                DISCRETE, DRANGE=(0,1), DLABEL=("DIS","ENA")
+      END
+      UI     EventCounter      DESC="Event Counter"
+      RECORD BinFltr[CFE_EVS_MAX_EVENT_FILTERS]   DESC="EVS Binary Filter"
+         UI  EvtId             DESC="Event Id"
+         UI  Msk               DESC="Mask"
+         UI  Ctr               DESC="Counter"
+         UI  Padding           DESC="Padding"
+      END
+   END
+
+   UB  SB_PIPEID_T                    DESC="SB Pipe Id Type"
+
+   UI  SB_MSGID_T                     DESC="SB Message Id Type"
+                                                                                                                                                            
+   RECORD SB_RoutingFile              DESC="SB Routing File"
+      SB_MSGID_T  SB_MsgId              DESC="Message Id"
+      SB_PIPEID_T SB_PipeId             DESC="Pipe Id"
+      UB  SB_State                      DESC="State", DISCRETE, DRANGE=(0,1),
+                                        DLABEL=("DIS","ENA")
+      UI  SB_MsgCnt                     DESC="Message Counter", UNITS=Counts
+    CHAR  SB_AppName[OS_MAX_API_NAME]   DESC="Application Name"
+    CHAR  SB_PipeName[OS_MAX_API_NAME]  DESC="Pipe Name"
+   END
+
+END_TYPES

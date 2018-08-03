@@ -1,0 +1,82 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TBL Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu File Services Task Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  31OCT05     SMA          : Initial
+!  15NOV05     MOB          : Modified Table Dump command to include table name
+!			    : param
+!  15NOV05     SMA          : Modified Table Dump Registry command to include
+!			    : static file name and directory
+!  16NOV05     MOB          : Added Abort command
+!  17NOV05     SMA          : Standardize File Write Commands.
+!  08JUN06     WFM          : Updates for cFE 3.3
+!  15MAY07     WFM          : Added the DeleteCDS command (8)
+!  27AUG14     WFM          : Removed TBL_NAME_LEN #define and added comments
+!
+!======================================================================================================
+!
+!! OS_MAX_PATH_LEN is defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_cmd_types.rdl file
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Table Services Task Commands"
+!
+  CMD  $sc_$cpu_TBL_NOOP        	FCTN=0, DESC="$sc $cpu TBL no-operation command code"
+!
+  CMD  $sc_$cpu_TBL_ResetCtrs    	FCTN=1, DESC="$sc $cpu TBL reset counters command code"
+!
+  CMDS  $sc_$cpu_TBL_Load            FCTN=2, DESC="$sc $cpu TBL load table command"            
+    CHAR  LFilename[OS_MAX_PATH_LEN] DESC="Filename (and path) of data to be loaded"
+ END
+!
+  CMDS  $sc_$cpu_TBL_DUMP            FCTN=3, DESC="$sc $cpu TBL dump table command"
+    UNION TBL_DATF                   DESC="Active Table Flag"
+      UI Inactive                    STATIC, DEFAULT=0, DESC="Inactive"
+      UI Active                      STATIC, DEFAULT=1, DESC="Active"
+    END
+    CHAR  DTablename[TBL_NAME_LEN]  DESC="Full name of table to be dumped"
+    CHAR  DFilename[OS_MAX_PATH_LEN] DESC="Filename (and path) where dumped data is to be written"
+ END
+!
+  CMDS  $sc_$cpu_TBL_VALIDATE        FCTN=4, DESC="$sc $cpu TBL validate table command"
+    UNION TBL_VATF                   DESC="Active Table Flag"
+      UI Inactive                    STATIC, DEFAULT=0, DESC="Inactive"
+      UI Active                      STATIC, DEFAULT=1, DESC="Active"
+    END
+    CHAR  VTablename[TBL_NAME_LEN]    DESC="Full name of table to be validated"
+ END
+!
+  CMDS  $sc_$cpu_TBL_ACTIVATE        FCTN=5, DESC="$sc $cpu TBL activate table command"
+    CHAR  ATablename[TBL_NAME_LEN]    DESC="Full name of table to be activated"
+ END
+!
+  CMDS  $sc_$cpu_TBL_WriteReg2File        FCTN=6, DESC="$sc $cpu TBL dump table registry command"
+    CHAR  DumpFilename[OS_MAX_PATH_LEN]   DESC="Filename (and path) where dumped data is to be written"
+ END
+!
+  CMDS  $sc_$cpu_TBL_TLMReg         FCTN=7, DESC="$sc $cpu TBL telemetry table registry entry"
+    UNION dummy
+      CHAR  RTTablename[TBL_NAME_LEN]    DESC="Full name of table whose registry entry is to be telemetered",ORDER=(1,2,3,4,5,6,7,8)
+    END
+ END
+!
+  CMDS  $sc_$cpu_TBL_DeleteCDS      FCTN=8, DESC="$sc $cpu TBL Delete Critical table"
+    CHAR  Tablename[TBL_NAME_LEN]    DESC="Full name of Critical table to be deleted"
+ END
+!
+  CMDS  $sc_$cpu_TBL_LOADABORT      FCTN=9, DESC="$sc $cpu TBL Abort Loading of a table"
+    CHAR  ABTablename[TBL_NAME_LEN]    DESC="Full name of table whose whose loading is to be aborted"
+ END
+!
+END       !END PACKET
+!
+!======================================================================================================

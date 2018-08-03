@@ -1,0 +1,190 @@
+#!/usr/bin/perl -X
+
+foreach $arg (@ARGV)
+{
+    $arg_cnt++;
+}
+if ($arg_cnt != 3)
+{
+   print "Incorrect number of arguments: $arg_cnt\n";
+   die "Please enter <template file> <spacecraft> <processor>.\nUse \"\" in place of the spacecraft or processor if you want them omitted.\n\n";
+}
+
+$inputfilename = $ARGV[0];
+$spacecraft = $ARGV[1];
+$processor = $ARGV[2];
+    
+# Make the spacecraft and processor all uppercase.
+
+$spacecraft =~tr/a-z/A-Z/;
+if (length($spacecraft) == 0) {
+    # If the spacecraft has been ommited, we want to make sure there are no floating underscores.
+    $spacecraft_ = "";
+} else {
+    $spacecraft_ = $spacecraft."_";
+}
+$processor =~tr/a-z/A-Z/;
+if (length($processor) == 0) {
+    # If the processor has been ommited, we want to make sure there are no floating underscores.
+    $processor_ = "";
+} else {
+    $processor_ = $processor."_";
+}
+
+$telemname = substr($inputfilename, index($inputfilename, "_")+1);
+if (index($telemname, "pseudo") >=0) {
+    $telemname = substr($telemname, index($telemname, "_")+1);
+    $pseudo = 1;
+} else {
+    $pseudo = 0;
+}
+
+$telemname = substr($telemname, index($telemname, "_")+1);
+$telemname = substr($telemname, 0, index($telemname, "."));
+
+if (index($inputfilename, "cmd") >= 0) {
+    $tlmorcmd = "cmd";
+}
+if (index($inputfilename, "tlm") >= 0) {
+    $tlmorcmd = "tlm";
+}
+if (index($inputfilename, "file") >= 0) {
+    $tlmorcmd = "file";
+}
+if (index($inputfilename, "tbl") >= 0) {
+    $tlmorcmd = "tbl";
+}
+$configfile = "/s/opr/accounts/global/tools/cFEBuildMsgIds.h";
+open (INPUT, "<$configfile") or die "Missing configuration file $configfile\n";
+$foundsection = 0;
+while (<INPUT>) {
+  chomp;
+  $line = $_;
+  # If we see " - Processor" we know we're starting a new section
+  if ($line =~ / - Processor/) {
+    $foundsection = 0;
+  }
+  # Flag the section if it matches the processor
+  if ($line =~ /$processor/i) {
+    $foundsection = 1;
+  }
+  # If we're in the right section, check for the command
+  if ($foundsection == 1) {
+    if (index ($line, $telemname) >= 0) {
+      # modified for 4 digit app ids - was -4 changed to -5
+      $number = substr($line, -5);
+      $number =~ s/^\s+//;
+      chomp($number);
+      # This had to be added to cause the script to exit the loop once a match was found.     
+      last;
+    }
+  }
+}
+close (INPUT);
+
+# Check if it's a pseudo telemetry rdl
+if ($pseudo == 1) {
+    $number = $number + 3584;
+}
+
+if (length($number) == 1) {
+  $number = "000$number";
+} elsif (length($number) == 2) {
+  $number = "00$number";
+} elsif (length($number) == 3) {
+  $number = "0$number";
+} elsif (length($number) == 4) {
+  $number = "$number";
+}
+
+# Changed index to rindex to support template file name with two "_"
+
+if ($pseudo == 1) {
+    $outputfilename = $spacecraft_."pseudo_".$tlmorcmd."_".$processor_.substr($telemname, 0, rindex($telemname, "_"))."_$number.rdl";
+} else {
+    $outputfilename = $spacecraft_.$tlmorcmd."_".$processor_.substr($telemname, 0, rindex($telemname, "_"))."_$number.rdl";    
+}
+# Make the output filename all lowercase.
+$outputfilename =~ tr/A-Z/a-z/;
+
+# Make the number string 3 digits - remove due to 4 digit app ids 
+# $number = substr($number, 1);
+
+open(INPUT, "<$inputfilename");
+open (OUTPUT, ">$outputfilename"); 
+$addhistory = 0;
+while (<INPUT>) {
+  chomp;
+  $line = $_;
+  if (index($line, "\$sc") >= 0) {
+      $line =~ s/\$sc_/$spacecraft_/g;
+      $line =~ s/\$sc/$spacecraft/g;
+  }
+  if (index($line, "\$cpu") >= 0) {
+      $line =~ s/\$cpu_/$processor_/g;
+      $line =~ s/\$cpu/$processor/g;
+  }
+
+  if (index($line, "nnnn+") >= 0) {
+      #TODO: What about numbers above 9?
+      $addition = substr($line, index($line, "nnnn+")+5, 1);
+      $result = $number+$addition;
+      $line =~ s/nnnn\+$addition/$result/g;
+  } elsif (index($line, "nnnn") >= 0) {
+      $line =~ s/nnnn/$number/g;
+  } elsif (($pseudo == 1) && (index($line, "rnnn") >= 0)) {
+      $realnumber = $number-3584;
+      if (length($realnumber) == 1) {
+          $realnumber = "000$realnumber";
+      } elsif (length($realnumber) == 2) {
+          $realnumber = "00$realnumber";
+      } elsif (length($realnumber) == 3) {
+          $realnumber = "0$realnumber";
+      } elsif (length($number) == 4) {
+          $realnumber = "$realnumber";
+      }
+      $line =~ s/rnnn/$realnumber/g;
+  }
+
+  if (index($line, "xxxx+") >= 0) {
+      #TODO: What about numbers above 9?
+      $addition = substr($line, index($line, "xxxx+")+5, 1);
+      $result = $number+$addition;
+      $hexnumber = sprintf("%4.4X",$result);
+      $line =~ s/xxxx\+$addition/$hexnumber/g;
+  } elsif (index($line, "xxx+") >= 0) {
+      #TODO: What about numbers above 9?
+      $addition = substr($line, index($line, "xxx+")+5, 1);
+      $result = $number+$addition;
+      $hexnumber = sprintf("%3.3X",$result);
+      $line =~ s/xxx\+$addition/$hexnumber/g;
+  } elsif (($pseudo == 1) && (index($line, "rxxx") >= 0)) {
+    $hexnumber = sprintf("%4.4X",$number-3584);
+    $line =~ s/rxxx/$hexnumber/g;
+  } elsif (($pseudo == 1) && (index($line, "rxx") >= 0)) {
+    $hexnumber = sprintf("%3.3X",$number-3584);
+    $line =~ s/rxx/$hexnumber/g;
+  } elsif (index($line, "xxxx") >= 0) {
+    $hexnumber = sprintf("%4.4X",$number);
+    $line =~ s/xxxx/$hexnumber/g;
+  } elsif (index($line, "xxx") >= 0) {
+    $hexnumber = sprintf("%3.3X",$number);
+    $line =~ s/xxx/$hexnumber/g;
+  }
+
+  if (index($line, "Last Change:") >= 0) {
+    $line = substr($line, 0, index($line, "Last Change:")+12)." ".`date '+%b %d %Y'`;
+  }
+  if (index($line, "HISTORY:") >= 0) {
+    $addhistory = 1;
+  }
+  if ((index($line,  "!==============") >= 0) && ($addhistory == 1)) {
+    $date = `date +%Y/%m/%d`;
+    chomp($date);
+    print OUTPUT "!\t$date\t: Created from template '$inputfilename'\n!\twith parameters spacecraft='$spacecraft' and processor='$processor'.\n";
+    $addhistory = 0;
+  }
+  print OUTPUT "$line\n";
+}
+
+print "File $outputfilename created.\n";

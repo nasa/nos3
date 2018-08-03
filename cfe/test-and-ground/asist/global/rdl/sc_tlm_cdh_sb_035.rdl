@@ -1,0 +1,85 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Mar 25 2005  
+!
+!                    Telemetry Packet # 35 (dec)
+!                 =================================
+!
+!       Packet Application ID: 35 (Hex '23')
+!       Packet Title:  cFE SB Telemetry Data Packet
+!       Packet Length:  21 Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/03/25  SMA             : Initial
+!
+!==============================================================================
+!
+PACKET P0823 APID=35, VARYING, DESC="cFE SB Telemetry Data Packet",
+                        STALE = 10
+#include "ccsds_header.rdl"
+!
+!  RECORD  CDH_CMN, APPEND, DESC="APPLY APID TO EACH MNEMONIC IN RECORD"
+!
+!
+!****************************************
+!               SB Data
+!****************************************
+!
+  UB   CFE_CDH_SB_CMDPC         DESC="cFE SB Command Processed Counter",
+                                UNITS=Counts
+!
+  UB   CFE_CDH_SB_CMDEC         DESC="cFE SB Command Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_NoSubEC       DESC="cFE SB No Subscribers Error Counter",
+                                UNITS=Counts
+!
+  UB   CFE_CDH_SB_MsgSndEC	DESC="cFE SB Message Send Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_MsgRecEC	DESC="cFE SB Message Receive Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_InternalEC	DESC="cFE SB Internal Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_SystemEC      DESC="cFE SB System Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_NewPipeEC     DESC="cFE SB Create Pipe Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_SubscrEC	DESC="cFE SB Subscribe Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_Fill2Align[3] DESC="cFE SB fill bytes for 32-bit alignment"
+!
+  UI   CFE_CDH_SB_PipeOvrEC	DESC="cFE SB Pipe Overflow Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UI   CFE_CDH_SB_MsgLimEC	DESC="cFE SB Message ID to Pipe Limit Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UB   CFE_CDH_SB_TBD[1500]     DESC="More TBD SB items"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

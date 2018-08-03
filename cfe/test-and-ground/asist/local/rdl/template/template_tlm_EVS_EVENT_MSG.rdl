@@ -1,0 +1,43 @@
+!=============================================================
+!
+!                Originator: M. Bartholomew
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                 cFE Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: xxxx
+!       Packet Title:  $sc Event Packet for the $cpu processor
+!       Packet Length:  ??? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  31MAR05  MOB             ; Initial release
+!  12APR05  MOB             ; Added Event type DISCRETES
+!  02MAY05  TGC             ; Changed APPID to APPNAME
+!  12OCT05  SMA             ; Updates per S. Strege email (DCR 183)
+!=============================================================
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Event Packet", STALE = 36
+#include "ccsds_header.rdl"
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+
+   CHAR $sc_$cpu_EVS_APPNAME[OS_MAX_API_NAME]   DESC= "Name of application that originated the event"
+   UI   $sc_$cpu_EVS_EVENTID       DESC= "Event ID"
+   UI   $sc_$cpu_EVS_EVENTTYPE     DESC= "Event Type",
+                                   DISCRETE, DRANGE=(1,2,3,4),DLABEL=("DEBUG", "INFO", "ERROR", "CRITICAL")
+   ULI   $sc_$cpu_EVS_SCID          DESC= "Spacecraft ID that originated the event"
+   ULI   $sc_$cpu_EVS_PROCESSORID   DESC= "Processor ID that originated the event",
+                                   DISCRETE, DRANGE=(1,2,3),DLABEL=("CPU1", "CPU2", "CPU3")
+   CHAR $sc_$cpu_EVS_EVENT[CFE_EVS_MAX_MESSAGE_LENGTH]    DESC= "$sc $cpu Event Packet"
+   UB   $sc_$cpu_EVS_SPARE1        DESC="PADDING"
+   UB   $sc_$cpu_EVS_SPARE2        DESC="PADDING"
+END

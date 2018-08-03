@@ -1,0 +1,37 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: January 14, 2009
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SC ATS Info table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2009/01/14 WFM	: Initial implementation
+!       2012/01/04 WFM  : Removed VARYING from Packet definition
+!==============================================================================
+!
+#include "sc_platform_cfg.h"
+
+#define SC_NUMBER_OF_ATS 2
+!
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SC ATS Info Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+SC_ATSINFO_ENTRY_TYPE  $sc_$cpu_SC_ATSInfoTable[SC_NUMBER_OF_ATS]  DESC="$sc $cpu SC ATS Info Table"
+!
+END

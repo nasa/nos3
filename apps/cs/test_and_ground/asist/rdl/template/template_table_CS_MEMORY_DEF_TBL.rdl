@@ -1,0 +1,45 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: June 30 2008
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CS Memory Definition table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2008/06/30 WFM	: Initial implementation
+!       2012/01/04 WFM  : Removed VARYING from Packet definition
+!==============================================================================
+!
+#include "cs_platform_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_CS_MEM_DEF_ENTRY_TYPE  DESC="$sc $cpu Checksum Memory Table Entry Type"
+      UI  State		DESC="The State of this table entry",DISCRETE,
+                        DRANGE=(0,1,2,3), DLABEL=("Empty","Enabled",
+                        "Disabled","Undefined")
+      UI  spare		DESC="spare for alignment"
+      ULI StartAddr	DESC="The starting memory address for this entry" 
+      ULI NumBytes	DESC="The size (in bytes) of this entry" 
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Checksum Memory Definition Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_CS_MEM_DEF_ENTRY_TYPE $sc_$cpu_CS_MEM_DEF_TABLE[0 .. CS_MAX_NUM_MEMORY_TABLE_ENTRIES-1]  DESC="$sc $cpu Checksum Memory Definition Table"
+!
+END

@@ -1,0 +1,708 @@
+        -:    0:Source:../src/cs_cmds.c
+        -:    0:Programs:9
+        -:    1:/************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: cs_cmds.c.gcov 1.6 2017/03/30 16:06:29EDT mdeschu Exp  $
+        -:    4: **
+        -:    5: **   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6: **   Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **   All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **   This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **   used, distributed and modified only pursuant to the terms of that 
+        -:   12: **   agreement.
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   The CFS Checksum (CS) Application's commands for OS code segement,
+        -:   16: **   the cFE core code segment, and for CS in general
+        -:   17: ** 
+        -:   18: *************************************************************************/
+        -:   19:
+        -:   20:/**************************************************************************
+        -:   21: **
+        -:   22: ** Include section
+        -:   23: **
+        -:   24: **************************************************************************/
+        -:   25:#include "cfe.h"
+        -:   26:#include "cs_app.h"
+        -:   27:#include "cs_events.h"
+        -:   28:#include "cs_cmds.h"
+        -:   29:#include "cs_utils.h"
+        -:   30:#include "cs_compute.h"
+        -:   31:
+        -:   32:/**************************************************************************
+        -:   33: **
+        -:   34: ** Function Prototypes
+        -:   35: **
+        -:   36: **************************************************************************/
+        -:   37:
+        -:   38:
+        -:   39:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   40:/*                                                                 */
+        -:   41:/* CS no operation command                                         */
+        -:   42:/*                                                                 */
+        -:   43:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:   44:void CS_NoopCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:   45:{
+        -:   46:    /* command verification variables */
+        2:   47:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   48:
+        -:   49:    /* Verify command packet length */
+        2:   50:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:   51:    {
+        2:   52:        CS_AppData.CmdCounter++;
+        -:   53:        
+        2:   54:        CFE_EVS_SendEvent (CS_NOOP_INF_EID, CFE_EVS_INFORMATION,
+        -:   55:                           "No-op command. Version %d.%d.%d.%d",
+        -:   56:                           CS_MAJOR_VERSION,
+        -:   57:                           CS_MINOR_VERSION,
+        -:   58:                           CS_REVISION,
+        -:   59:                           CS_MISSION_REV);
+        -:   60:    }
+        2:   61:    return;
+        -:   62:} /* End of CS_NoopCmd () */
+        -:   63:
+        -:   64:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   65:/*                                                                 */
+        -:   66:/* CS Reset Application counters command                           */
+        -:   67:/*                                                                 */
+        -:   68:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:   69:void CS_ResetCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:   70:{
+        -:   71:    /* command verification variables */
+        2:   72:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:   73:
+        -:   74:    /* Verify command packet length */
+        2:   75:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:   76:    {
+        2:   77:        CS_AppData.CmdCounter          = 0;
+        2:   78:        CS_AppData.CmdErrCounter       = 0;
+        -:   79:        
+        2:   80:        CS_AppData.EepromCSErrCounter  = 0;
+        2:   81:        CS_AppData.MemoryCSErrCounter  = 0;
+        2:   82:        CS_AppData.TablesCSErrCounter  = 0;
+        2:   83:        CS_AppData.AppCSErrCounter     = 0;
+        2:   84:        CS_AppData.CfeCoreCSErrCounter = 0;
+        2:   85:        CS_AppData.OSCSErrCounter      = 0;
+        2:   86:        CS_AppData.PassCounter         = 0;        
+        -:   87:        
+        2:   88:        CFE_EVS_SendEvent (CS_RESET_DBG_EID, CFE_EVS_DEBUG,
+        -:   89:                           "Reset Counters command recieved");
+        -:   90:    }
+        2:   91:    return;
+        -:   92:} /* End of CS_ResetCmd () */
+        -:   93:
+        -:   94:
+        -:   95:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   96:/*                                                                 */
+        -:   97:/* CS's background checksumming command                            */
+        -:   98:/*                                                                 */
+        -:   99:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       10:  100:void CS_BackgroundCheckCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  101:{
+        -:  102:    /* command verification variables */
+       10:  103:    uint16                                  ExpectedLength = sizeof(CS_NoArgsCmd_t);
+       10:  104:    boolean                                 DoneWithCycle = FALSE;
+       10:  105:    boolean                                 EndOfList = FALSE;
+        -:  106:    CFE_SB_MsgId_t MessageID;
+        -:  107:    uint16  CommandCode;
+       10:  108:    uint16  ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
+        -:  109:    
+        -:  110:    /* Verify the command packet length */
+       10:  111:    if (ExpectedLength != ActualLength)
+        -:  112:    {
+        1:  113:        CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+        1:  114:        MessageID= CFE_SB_GetMsgId(MessagePtr);
+        -:  115:        
+        1:  116:        CFE_EVS_SendEvent(CS_LEN_ERR_EID,
+        -:  117:                          CFE_EVS_ERROR,
+        -:  118:                          "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -:  119:                          MessageID,
+        -:  120:                          CommandCode,
+        -:  121:                          ActualLength,
+        -:  122:                          ExpectedLength);
+        -:  123:    }    
+        -:  124:    else
+        -:  125:    {
+        9:  126:        if (CS_AppData.ChecksumState == CS_STATE_ENABLED)
+        -:  127:        {
+        7:  128:            DoneWithCycle = FALSE;
+        7:  129:            EndOfList = FALSE;
+        -:  130:            
+        -:  131:            /* We check for end-of-list because we don't necessarily know the
+        -:  132:               order in which the table entries are defined, and we don't
+        -:  133:               want to keep looping through the list */
+        -:  134:            
+       27:  135:            while ((DoneWithCycle != TRUE) && (EndOfList != TRUE))
+        -:  136:            {
+        -:  137:                /* We need to check the current table value here because
+        -:  138:                   it is updated (and possibly reset to zero) inside each
+        -:  139:                   function called */
+       13:  140:                if (CS_AppData.CurrentCSTable >= (CS_NUM_TABLES - 1))
+        -:  141:                {
+        5:  142:                    EndOfList = TRUE;
+        -:  143:                }
+        -:  144:                
+        -:  145:                /* Call the appropriate background function based on the current table
+        -:  146:                   value.  The value is updated inside each function */
+       13:  147:                switch (CS_AppData.CurrentCSTable)
+        -:  148:                {
+        -:  149:                    case (CS_CFECORE):
+        1:  150:                        DoneWithCycle = CS_BackgroundCfeCore();
+        1:  151:                        break;
+        -:  152:                        
+        -:  153:                    case(CS_OSCORE):
+        -:  154:                        
+        1:  155:                        DoneWithCycle = CS_BackgroundOS();
+        1:  156:                        break;
+        -:  157:                        
+        -:  158:                    case (CS_EEPROM_TABLE):
+        1:  159:                        DoneWithCycle = CS_BackgroundEeprom();
+        1:  160:                        break;
+        -:  161:                        
+        -:  162:                    case (CS_MEMORY_TABLE):
+        2:  163:                        DoneWithCycle = CS_BackgroundMemory();
+        2:  164:                        break;
+        -:  165:                        
+        -:  166:                    case (CS_TABLES_TABLE):
+        3:  167:                        DoneWithCycle = CS_BackgroundTables();
+        3:  168:                        break;
+        -:  169:                        
+        -:  170:                    case (CS_APP_TABLE):
+        -:  171:                        
+        4:  172:                        DoneWithCycle = CS_BackgroundApp();
+        4:  173:                        break;
+        -:  174:                        
+        -:  175:                        /* default case in case CS_AppData.CurrentCSTable is some random bad value */
+        -:  176:                    default:
+        -:  177:                        
+        -:  178:                        /* We are at the end of the line */
+        1:  179:                        CS_AppData.CurrentCSTable = 0;
+        1:  180:                        CS_AppData.CurrentEntryInTable = 0;
+        1:  181:                        CS_AppData.PassCounter++;
+        1:  182:                        DoneWithCycle = TRUE;
+        -:  183:                        break;
+        -:  184:                        
+        -:  185:                        
+        -:  186:                }/* end switch */
+        -:  187:            } /* end while */
+        -:  188:        }
+        -:  189:        else
+        -:  190:        {
+        -:  191:            /* CS is disabled, Application-wide */
+        -:  192:        }
+        -:  193:    }
+       10:  194:    return;
+        -:  195:} /* End of CS_BackgroundCheckCmd () */
+        -:  196:
+        -:  197:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  198:/*                                                                 */
+        -:  199:/* CS Disable all background checksumming command                  */
+        -:  200:/*                                                                 */
+        -:  201:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  202:void CS_DisableAllCSCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  203:{
+        -:  204:    /* command verification variables */
+        2:  205:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  206:    
+        -:  207:    /* Verify command packet length */
+        2:  208:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:  209:    {
+        2:  210:        CS_AppData.ChecksumState = CS_STATE_DISABLED;
+        -:  211:        
+        -:  212:        /* zero out the temp values in all the tables
+        -:  213:         so that when the checksums are re-enabled,
+        -:  214:         they don't start with a half-old value */
+        2:  215:        CS_ZeroEepromTempValues();
+        2:  216:        CS_ZeroMemoryTempValues();
+        2:  217:        CS_ZeroTablesTempValues();
+        2:  218:        CS_ZeroAppTempValues();
+        2:  219:        CS_ZeroCfeCoreTempValues();
+        2:  220:        CS_ZeroOSTempValues();
+        -:  221:        
+        2:  222:        CS_AppData.CmdCounter++;
+        -:  223:        
+        2:  224:        CFE_EVS_SendEvent (CS_DISABLE_ALL_INF_EID,
+        -:  225:                           CFE_EVS_INFORMATION,
+        -:  226:                           "Background Checksumming Disabled");
+        -:  227:    }
+        2:  228:    return;
+        -:  229:} /* End of CS_DisableAllCSCmd () */
+        -:  230:
+        -:  231:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  232:/*                                                                 */
+        -:  233:/* CS Enable all background checksumming command                   */
+        -:  234:/*                                                                 */
+        -:  235:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  236:void CS_EnableAllCSCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  237:{
+        -:  238:    /* command verification variables */
+        2:  239:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  240:    
+        -:  241:    /* Verify command packet length */
+        2:  242:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:  243:    {
+        2:  244:        CS_AppData.ChecksumState = CS_STATE_ENABLED;
+        -:  245:        
+        2:  246:        CS_AppData.CmdCounter++;
+        -:  247:        
+        2:  248:        CFE_EVS_SendEvent (CS_ENABLE_ALL_INF_EID,
+        -:  249:                           CFE_EVS_INFORMATION,
+        -:  250:                           "Background Checksumming Enabled");
+        -:  251:    }
+        2:  252:    return;
+        -:  253:} /* End of CS_EnableAllCSCmd () */
+        -:  254:
+        -:  255:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  256:/*                                                                 */
+        -:  257:/* CS Disable background checking of the cFE core command          */
+        -:  258:/*                                                                 */
+        -:  259:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  260:void CS_DisableCfeCoreCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  261:{
+        -:  262:    /* command verification variables */
+        2:  263:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  264:    
+        -:  265:    /* Verify command packet length */
+        2:  266:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:  267:    {
+        2:  268:        CS_AppData.CfeCoreCSState = CS_STATE_DISABLED;
+        2:  269:        CS_ZeroCfeCoreTempValues();
+        -:  270:        
+        -:  271:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:  272:        CS_UpdateCDS();
+        -:  273:#endif
+        -:  274:        
+        2:  275:        CFE_EVS_SendEvent (CS_DISABLE_CFECORE_INF_EID,
+        -:  276:                           CFE_EVS_INFORMATION, 
+        -:  277:                           "Checksumming of cFE Core is Disabled");
+        -:  278:        
+        2:  279:        CS_AppData.CmdCounter++;
+        -:  280:    }
+        2:  281:    return;
+        -:  282:} /* End of CS_DisableCfeCoreCmd () */
+        -:  283:
+        -:  284:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  285:/*                                                                 */
+        -:  286:/* CS Enable background checking of the cFE core command           */
+        -:  287:/*                                                                 */
+        -:  288:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  289:void CS_EnableCfeCoreCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  290:{
+        -:  291:    /* command verification variables */
+        2:  292:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  293:    
+        -:  294:    /* Verify command packet length */
+        2:  295:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:  296:    {
+        2:  297:        CS_AppData.CfeCoreCSState = CS_STATE_ENABLED;
+        -:  298:        
+        -:  299:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:  300:        CS_UpdateCDS();
+        -:  301:#endif
+        -:  302:        
+        2:  303:        CFE_EVS_SendEvent (CS_ENABLE_CFECORE_INF_EID,
+        -:  304:                           CFE_EVS_INFORMATION, 
+        -:  305:                           "Checksumming of cFE Core is Enabled");
+        -:  306:        
+        2:  307:        CS_AppData.CmdCounter++;
+        -:  308:    }
+        -:  309:    
+        2:  310:    return;
+        -:  311:    
+        -:  312:} /* End of CS_EnableCfeCoreCmd () */
+        -:  313:
+        -:  314:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  315:/*                                                                 */
+        -:  316:/* CS Disable background checking of the OS code segment command   */
+        -:  317:/*                                                                 */
+        -:  318:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  319:void CS_DisableOSCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  320:{
+        -:  321:    /* command verification variables */
+        2:  322:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  323:    
+        -:  324:    /* Verify command packet length */
+        2:  325:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )  
+        -:  326:    {
+        2:  327:        CS_AppData.OSCSState = CS_STATE_DISABLED;
+        2:  328:        CS_ZeroOSTempValues();
+        -:  329:        
+        -:  330:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:  331:        CS_UpdateCDS();
+        -:  332:#endif
+        -:  333:        
+        2:  334:        CFE_EVS_SendEvent (CS_DISABLE_OS_INF_EID,
+        -:  335:                           CFE_EVS_INFORMATION, 
+        -:  336:                           "Checksumming of OS code segment is Disabled");
+        -:  337:        
+        2:  338:        CS_AppData.CmdCounter++;
+        -:  339:    }
+        2:  340:    return;
+        -:  341:} /* End of CS_DisableOSCmd () */
+        -:  342:
+        -:  343:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  344:/*                                                                 */
+        -:  345:/* CS Enable background checking of the OS code segment command    */
+        -:  346:/*                                                                 */
+        -:  347:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  348:void CS_EnableOSCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  349:{
+        -:  350:    /* command verification variables */
+        2:  351:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  352:    
+        -:  353:    /* Verify command packet length */
+        2:  354:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )   
+        -:  355:    {
+        2:  356:        CS_AppData.OSCSState = CS_STATE_ENABLED;
+        -:  357:        
+        -:  358:#if (CS_PRESERVE_STATES_ON_PROCESSOR_RESET == TRUE)
+        2:  359:        CS_UpdateCDS();
+        -:  360:#endif
+        -:  361:        
+        2:  362:        CFE_EVS_SendEvent (CS_ENABLE_OS_INF_EID,
+        -:  363:                           CFE_EVS_INFORMATION, 
+        -:  364:                           "Checksumming of OS code segment is Enabled");
+        -:  365:        
+        2:  366:        CS_AppData.CmdCounter++;
+        -:  367:    }
+        2:  368:    return;
+        -:  369:} /* End of CS_OSEnableCmd () */
+        -:  370:
+        -:  371:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  372:/*                                                                 */
+        -:  373:/* CS Report the baseline checksum for the cFE core command        */
+        -:  374:/*                                                                 */
+        -:  375:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  376:void CS_ReportBaselineCfeCoreCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  377:{
+        -:  378:    /* command verification variables */
+        3:  379:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  380:    
+        -:  381:    
+        -:  382:    /* Verify command packet length */
+        3:  383:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  384:    {
+        3:  385:        if (CS_AppData.CfeCoreCodeSeg.ComputedYet == TRUE)
+        -:  386:        {
+        1:  387:            CFE_EVS_SendEvent (CS_BASELINE_CFECORE_INF_EID,
+        -:  388:                               CFE_EVS_INFORMATION, 
+        -:  389:                               "Baseline of cFE Core is 0x%08X", 
+        -:  390:                               (unsigned int)CS_AppData.CfeCoreCodeSeg.ComparisonValue);
+        -:  391:        }
+        -:  392:        else
+        -:  393:        {
+        2:  394:            CFE_EVS_SendEvent (CS_NO_BASELINE_CFECORE_INF_EID,
+        -:  395:                               CFE_EVS_INFORMATION, 
+        -:  396:                               "Baseline of cFE Core has not been computed yet");   
+        -:  397:        }
+        3:  398:        CS_AppData.CmdCounter++;
+        -:  399:    }
+        3:  400:    return;
+        -:  401:} /* End of CS_ReportBaselineCfeCoreCmd () */
+        -:  402:
+        -:  403:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  404:/*                                                                 */
+        -:  405:/* CS Report the baseline checksum for the OS code segment command */
+        -:  406:/*                                                                 */
+        -:  407:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  408:void CS_ReportBaselineOSCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  409:{
+        -:  410:    /* command verification variables */
+        3:  411:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  412:    
+        -:  413:    /* Verify command packet length */
+        3:  414:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  415:    {
+        3:  416:        if (CS_AppData.OSCodeSeg.ComputedYet == TRUE)
+        -:  417:        {
+        1:  418:            CFE_EVS_SendEvent (CS_BASELINE_OS_INF_EID,
+        -:  419:                               CFE_EVS_INFORMATION, 
+        -:  420:                               "Baseline of OS code segment is 0x%08X", 
+        -:  421:                               (unsigned int)CS_AppData.OSCodeSeg.ComparisonValue);
+        -:  422:        }
+        -:  423:        else
+        -:  424:        {
+        2:  425:            CFE_EVS_SendEvent (CS_NO_BASELINE_OS_INF_EID, 
+        -:  426:                               CFE_EVS_INFORMATION, 
+        -:  427:                               "Baseline of OS code segment has not been computed yet");   
+        -:  428:        }
+        3:  429:        CS_AppData.CmdCounter++;
+        -:  430:    }
+        3:  431:    return;
+        -:  432:} /* End of CS_ReportBaselineOSCmd () */
+        -:  433:
+        -:  434:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  435:/*                                                                 */
+        -:  436:/* CS Recompute the baseline checksum for the cFE core command     */
+        -:  437:/*                                                                 */
+        -:  438:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  439:void CS_RecomputeBaselineCfeCoreCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  440:{
+        -:  441:    /* command verification variables */
+        4:  442:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  443:    uint32              ChildTaskID;
+        -:  444:    int32               Status;
+        -:  445:    
+        -:  446:    /* Verify command packet length... */
+        4:  447:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  448:    {
+        7:  449:        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
+        -:  450:        {
+        -:  451:            /* There is no child task running right now, we can use it*/
+        3:  452:            CS_AppData.RecomputeInProgress           = TRUE;
+        -:  453:            
+        -:  454:            /* fill in child task variables */
+        3:  455:            CS_AppData.ChildTaskTable                = CS_CFECORE;
+        3:  456:            CS_AppData.ChildTaskEntryID              = 0;
+        3:  457:            CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.CfeCoreCodeSeg;
+        -:  458:            
+        -:  459:            
+        3:  460:            Status= CFE_ES_CreateChildTask(&ChildTaskID,
+        -:  461:                                           CS_RECOMP_CFECORE_TASK_NAME,
+        -:  462:                                           CS_RecomputeEepromMemoryChildTask,
+        -:  463:                                           NULL,
+        -:  464:                                           CFE_ES_DEFAULT_STACK_SIZE,
+        -:  465:                                           CS_CHILD_TASK_PRIORITY,
+        -:  466:                                           0);
+        -:  467:            
+        3:  468:            if (Status == CFE_SUCCESS)
+        -:  469:            {
+        2:  470:                CFE_EVS_SendEvent (CS_RECOMPUTE_CFECORE_STARTED_DBG_EID,
+        -:  471:                                   CFE_EVS_DEBUG, 
+        -:  472:                                   "Recompute of cFE core started");
+        2:  473:                CS_AppData.CmdCounter++;
+        -:  474:            }
+        -:  475:            else/* child task creation failed */
+        -:  476:            {
+        1:  477:                CFE_EVS_SendEvent (CS_RECOMPUTE_CFECORE_CREATE_CHDTASK_ERR_EID,
+        -:  478:                                   CFE_EVS_ERROR,
+        -:  479:                                   "Recompute cFE core failed, CFE_ES_CreateChildTask returned: 0x%08X",
+        -:  480:                                   (unsigned int)Status);
+        1:  481:                CS_AppData.CmdErrCounter++;
+        1:  482:                CS_AppData.RecomputeInProgress = FALSE;
+        -:  483:            }
+        -:  484:        }
+        -:  485:        else
+        -:  486:        {
+        -:  487:            /*send event that we can't start another task right now */
+        1:  488:            CFE_EVS_SendEvent (CS_RECOMPUTE_CFECORE_CHDTASK_ERR_EID,
+        -:  489:                               CFE_EVS_ERROR,
+        -:  490:                               "Recompute cFE core failed: child task in use");
+        1:  491:            CS_AppData.CmdErrCounter++;
+        -:  492:        }
+        -:  493:    }
+        4:  494:    return;
+        -:  495:}/* end CS_RecomputeBaselineCfeCoreCmd */
+        -:  496:
+        -:  497:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  498:/*                                                                 */
+        -:  499:/* CS Recompute the baseline checksum for the OS code seg command  */
+        -:  500:/*                                                                 */
+        -:  501:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  502:void CS_RecomputeBaselineOSCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  503:{
+        -:  504:    /* command verification variables */
+        4:  505:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  506:    uint32              ChildTaskID;
+        -:  507:    int32               Status;
+        -:  508:    
+        -:  509:    /* Verify command packet length... */
+        4:  510:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  511:    {
+        7:  512:        if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
+        -:  513:        {
+        -:  514:            /* There is no child task running right now, we can use it*/
+        3:  515:            CS_AppData.RecomputeInProgress                = TRUE;
+        -:  516:            
+        -:  517:            /* fill in child task variables */
+        3:  518:            CS_AppData.ChildTaskTable                = CS_OSCORE;
+        3:  519:            CS_AppData.ChildTaskEntryID              = 0;
+        3:  520:            CS_AppData.RecomputeEepromMemoryEntryPtr = &CS_AppData.OSCodeSeg;
+        -:  521:            
+        -:  522:            
+        3:  523:            Status= CFE_ES_CreateChildTask(&ChildTaskID,
+        -:  524:                                           CS_RECOMP_OS_TASK_NAME,
+        -:  525:                                           CS_RecomputeEepromMemoryChildTask,
+        -:  526:                                           NULL,
+        -:  527:                                           CFE_ES_DEFAULT_STACK_SIZE,
+        -:  528:                                           CS_CHILD_TASK_PRIORITY,
+        -:  529:                                           0);
+        3:  530:            if (Status == CFE_SUCCESS)
+        -:  531:            {
+        2:  532:                CFE_EVS_SendEvent (CS_RECOMPUTE_OS_STARTED_DBG_EID, 
+        -:  533:                                   CFE_EVS_DEBUG, 
+        -:  534:                                   "Recompute of OS code segment started");
+        2:  535:                CS_AppData.CmdCounter++;
+        -:  536:            }
+        -:  537:            else/* child task creation failed */
+        -:  538:            {
+        1:  539:                CFE_EVS_SendEvent (CS_RECOMPUTE_OS_CREATE_CHDTASK_ERR_EID,
+        -:  540:                                   CFE_EVS_ERROR,
+        -:  541:                                   "Recompute OS code segment failed, CFE_ES_CreateChildTask returned: 0x%08X",
+        -:  542:                                   (unsigned int)Status);
+        1:  543:                CS_AppData.CmdErrCounter++;
+        1:  544:                CS_AppData.RecomputeInProgress = FALSE;
+        -:  545:            }
+        -:  546:        }
+        -:  547:        else
+        -:  548:        {
+        -:  549:            /*send event that we can't start another task right now */
+        1:  550:            CFE_EVS_SendEvent (CS_RECOMPUTE_OS_CHDTASK_ERR_EID,
+        -:  551:                               CFE_EVS_ERROR,
+        -:  552:                               "Recompute OS code segment failed: child task in use");
+        1:  553:            CS_AppData.CmdErrCounter++;
+        -:  554:        }
+        -:  555:    }
+        4:  556:    return;
+        -:  557:}/* end CS_RecomputeBaselineOSCmd */
+        -:  558:
+        -:  559:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  560:/*                                                                 */
+        -:  561:/* CS Compute the OneShot checksum command                         */
+        -:  562:/*                                                                 */
+        -:  563:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        6:  564:void CS_OneShotCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  565:{
+        -:  566:    /* command verification variables */
+        6:  567:    uint16              ExpectedLength = sizeof(CS_OneShotCmd_t);
+        -:  568:    uint32              ChildTaskID;
+        -:  569:    int32               Status;
+        -:  570:    CS_OneShotCmd_t   * CmdPtr;
+        -:  571:    
+        -:  572:    /* Verify command packet length... */    
+        6:  573:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  574:    {
+        5:  575:        CmdPtr = (CS_OneShotCmd_t*) MessagePtr;
+        -:  576:        
+        -:  577:        /* validate size and address */
+        5:  578:        Status = CFE_PSP_MemValidateRange(CmdPtr -> Address, CmdPtr -> Size, CFE_PSP_MEM_ANY);
+        -:  579:        
+        5:  580:        if (Status == OS_SUCCESS)
+        -:  581:        {
+        7:  582:            if (CS_AppData.RecomputeInProgress == FALSE && CS_AppData.OneShotInProgress == FALSE)
+        -:  583:            {
+        -:  584:                /* There is no child task running right now, we can use it*/
+        3:  585:                CS_AppData.RecomputeInProgress                   = FALSE;
+        3:  586:                CS_AppData.OneShotInProgress                 = TRUE;
+        -:  587:                
+        3:  588:                CS_AppData.LastOneShotAddress   = CmdPtr -> Address;
+        3:  589:                CS_AppData.LastOneShotSize      = CmdPtr -> Size;
+        3:  590:                if (CmdPtr -> MaxBytesPerCycle == 0)
+        -:  591:                {
+        2:  592:                    CS_AppData.LastOneShotMaxBytesPerCycle    = CS_AppData.MaxBytesPerCycle;
+        -:  593:                }
+        -:  594:                else
+        -:  595:                {
+        1:  596:                    CS_AppData.LastOneShotMaxBytesPerCycle    = CmdPtr -> MaxBytesPerCycle;
+        -:  597:                }
+        -:  598:
+        3:  599:                CS_AppData.LastOneShotChecksum  = 0;
+        -:  600:                
+        3:  601:                Status = CFE_ES_CreateChildTask(&ChildTaskID,
+        -:  602:                                                CS_ONESHOT_TASK_NAME,
+        -:  603:                                                CS_OneShotChildTask,
+        -:  604:                                                NULL,
+        -:  605:                                                CFE_ES_DEFAULT_STACK_SIZE,
+        -:  606:                                                CS_CHILD_TASK_PRIORITY,
+        -:  607:                                                0);
+        3:  608:                if (Status == CFE_SUCCESS)
+        -:  609:                {
+        4:  610:                    CFE_EVS_SendEvent (CS_ONESHOT_STARTED_DBG_EID,
+        -:  611:                                       CFE_EVS_DEBUG,
+        -:  612:                                       "OneShot checksum started on address: 0x%08X, size: %d",
+        2:  613:                                       (unsigned int)(CmdPtr -> Address),
+        2:  614:                                       (int)(CmdPtr -> Size));
+        -:  615:                    
+        2:  616:                    CS_AppData.ChildTaskID = ChildTaskID;
+        2:  617:                    CS_AppData.CmdCounter++;
+        -:  618:                }
+        -:  619:                else/* child task creation failed */
+        -:  620:                {
+        1:  621:                    CFE_EVS_SendEvent (CS_ONESHOT_CREATE_CHDTASK_ERR_EID,
+        -:  622:                                       CFE_EVS_ERROR,
+        -:  623:                                       "OneShot checkum failed, CFE_ES_CreateChildTask returned: 0x%08X",
+        -:  624:                                       (unsigned int)Status);
+        -:  625:                    
+        1:  626:                    CS_AppData.CmdErrCounter++;
+        1:  627:                    CS_AppData.RecomputeInProgress   = FALSE;
+        1:  628:                    CS_AppData.OneShotInProgress = FALSE;
+        -:  629:                }
+        -:  630:            }
+        -:  631:            else
+        -:  632:            {
+        -:  633:                /*send event that we can't start another task right now */
+        1:  634:                CFE_EVS_SendEvent (CS_ONESHOT_CHDTASK_ERR_EID,
+        -:  635:                                   CFE_EVS_ERROR,
+        -:  636:                                   "OneShot checksum failed: child task in use");
+        -:  637:                
+        1:  638:                CS_AppData.CmdErrCounter++;
+        -:  639:            }
+        -:  640:        }/* end if CFE_PSP_MemValidateRange */
+        -:  641:        else
+        -:  642:        {
+        1:  643:            CFE_EVS_SendEvent (CS_ONESHOT_MEMVALIDATE_ERR_EID,
+        -:  644:                               CFE_EVS_ERROR,
+        -:  645:                               "OneShot checksum failed, CFE_PSP_MemValidateRange returned: 0x%08X",
+        -:  646:                               (unsigned int)Status);
+        -:  647:            
+        1:  648:            CS_AppData.CmdErrCounter++;
+        -:  649:        }
+        -:  650:    }
+        6:  651:    return;
+        -:  652:}/* end CS_OneShotCmd */
+        -:  653:
+        -:  654:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  655:/*                                                                 */
+        -:  656:/* CS Cancel the OneShot checksum command                          */
+        -:  657:/*                                                                 */
+        -:  658:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        4:  659:void CS_CancelOneShotCmd (CFE_SB_MsgPtr_t MessagePtr)
+        -:  660:{
+        -:  661:    /* command verification variables */
+        4:  662:    uint16              ExpectedLength = sizeof(CS_NoArgsCmd_t);
+        -:  663:    int32               Status;
+        -:  664:    
+        -:  665:    /* Verify command packet length... */
+        4:  666:    if ( CS_VerifyCmdLength (MessagePtr,ExpectedLength) )
+        -:  667:    {
+        -:  668:        /* Make sure there is a OneShot command in use */
+        6:  669:        if (CS_AppData.RecomputeInProgress == FALSE  && CS_AppData.OneShotInProgress == TRUE)
+        -:  670:        {
+        2:  671:            Status= CFE_ES_DeleteChildTask(CS_AppData.ChildTaskID);
+        -:  672:            
+        2:  673:            if (Status == CFE_SUCCESS)
+        -:  674:            {
+        1:  675:                CS_AppData.ChildTaskID          = 0;
+        1:  676:                CS_AppData.RecomputeInProgress       = FALSE;
+        1:  677:                CS_AppData.OneShotInProgress     = FALSE;
+        1:  678:                CS_AppData.CmdCounter++;
+        1:  679:                CFE_EVS_SendEvent (CS_ONESHOT_CANCELLED_INF_EID,
+        -:  680:                                   CFE_EVS_INFORMATION,
+        -:  681:                                   "OneShot checksum calculation has been cancelled");
+        -:  682:            }
+        -:  683:            else
+        -:  684:            {
+        1:  685:                CFE_EVS_SendEvent (CS_ONESHOT_CANCEL_DELETE_CHDTASK_ERR_EID,
+        -:  686:                                   CFE_EVS_ERROR,
+        -:  687:                                   "Cancel OneShot checksum failed, CFE_ES_DeleteChildTask returned:  0x%08X",
+        -:  688:                                   (unsigned int)Status);
+        1:  689:                CS_AppData.CmdErrCounter++;
+        -:  690:            }
+        -:  691:        }
+        -:  692:        else
+        -:  693:        {
+        2:  694:            CFE_EVS_SendEvent (CS_ONESHOT_CANCEL_NO_CHDTASK_ERR_EID,
+        -:  695:                               CFE_EVS_ERROR,
+        -:  696:                               "Cancel OneShot checksum failed. No OneShot active");
+        2:  697:            CS_AppData.CmdErrCounter++;
+        -:  698:        }
+        -:  699:    }
+        4:  700:    return;
+        -:  701:}/* end CS_CancelOneShotCmd */
+        -:  702:
+        -:  703:
+        -:  704:/************************/
+        -:  705:/*  End of File Comment */
+        -:  706:/************************/

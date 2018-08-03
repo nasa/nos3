@@ -1,0 +1,1639 @@
+        -:    0:Source:../src/lc_watch.c
+        -:    0:Graph:lc_watch.gcno
+        -:    0:Data:lc_watch.gcda
+        -:    0:Runs:1
+        -:    0:Programs:4
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: lc_watch.c.gcov 1.1.1.1 2012/10/01 18:48:45EDT lwalling Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**   Functions used for CFS Limit Checker watchpoint processing
+        -:    7:**
+        -:    8:**   $Log: lc_watch.c.gcov  $
+        -:    8:**   Revision 1.1.1.1 2012/10/01 18:48:45EDT lwalling 
+        -:    8:**   Apply unit test output file updates to branch
+        -:    8:**   Revision 1.3 2012/10/01 13:58:04PDT lwalling 
+        -:    8:**   Updates to output files after fix compile warnings
+        -:    9:**   Revision 1.4 2012/08/22 14:19:06PDT lwalling 
+        -:   10:**   Modified true to false transition monitor to also accept stale to false
+        -:   11:**   Revision 1.3 2012/08/01 12:42:12PDT lwalling 
+        -:   12:**   Add STALE counters to watchpoint definition and result tables
+        -:   13:**   Revision 1.2 2012/08/01 11:19:54PDT lwalling 
+        -:   14:**   Change NOT_MEASURED to STALE
+        -:   15:**   Revision 1.1 2012/07/31 13:53:40PDT nschweis 
+        -:   16:**   Initial revision
+        -:   17:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/src/project.pj
+        -:   18:**   Revision 1.7 2011/06/08 16:17:16EDT lwalling 
+        -:   19:**   Added hash table functions, modified LC_CheckMsgForWPs() to use hash table functions
+        -:   20:**   Revision 1.6 2011/01/19 12:43:11EST jmdagost 
+        -:   21:**   Added lc_watch.h to include list.
+        -:   22:**   Revision 1.5 2011/01/19 11:38:40EST jmdagost 
+        -:   23:**   Initialize local variables per IV&V.
+        -:   24:**   Revision 1.4 2009/02/26 11:01:01EST dahardis 
+        -:   25:**   Modified so a watchponit transition from Not Measured to True
+        -:   26:**   will get treated the same as a transition from False to True (DCR #7097)
+        -:   27:**   Revision 1.3 2009/01/15 15:36:17EST dahardis 
+        -:   28:**   Unit test fixes
+        -:   29:**   Revision 1.2 2008/12/03 13:59:46EST dahardis 
+        -:   30:**   Corrections from peer code review
+        -:   31:**   Revision 1.1 2008/10/29 14:19:52EDT dahardison 
+        -:   32:**   Initial revision
+        -:   33:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
+        -:   34:** 
+        -:   35:*************************************************************************/
+        -:   36:
+        -:   37:/*************************************************************************
+        -:   38:** Includes
+        -:   39:*************************************************************************/
+        -:   40:#include "lc_app.h"
+        -:   41:#include "lc_watch.h"
+        -:   42:#include "lc_events.h"
+        -:   43:#include "lc_custom.h"
+        -:   44:#include "lc_perfids.h"
+        -:   45:
+        -:   46:/************************************************************************
+        -:   47:** Local Macro Definitions
+        -:   48:*************************************************************************/
+        -:   49:/**
+        -:   50:** \name LC Byte Order Identifiers */ 
+        -:   51:/** \{ */
+        -:   52:#define LC_BIG_ENDIAN       1
+        -:   53:#define LC_LITTLE_ENDIAN    2
+        -:   54:/** \} */
+        -:   55:
+        -:   56:/*************************************************************************
+        -:   57:** Local Function Prototypes
+        -:   58:*************************************************************************/
+        -:   59:/************************************************************************/
+        -:   60:/** \brief Process a single watchpoint
+        -:   61:**  
+        -:   62:**  \par Description
+        -:   63:**       Support function for watchpoint processing that will
+        -:   64:**       evaluate a single watchpoint
+        -:   65:**
+        -:   66:**  \par Assumptions, External Events, and Notes:
+        -:   67:**       None
+        -:   68:**       
+        -:   69:**  \param [in]   WatchIndex  The watchpoint number to evaluate (zero
+        -:   70:**                            based watchpoint definition table index)
+        -:   71:**
+        -:   72:**  \param [in]   MessagePtr  A #CFE_SB_MsgPtr_t pointer that
+        -:   73:**                            references the software bus message that
+        -:   74:**                            contains the watchpoint data
+        -:   75:**
+        -:   76:**  \param [in]   Timestamp   A #CFE_TIME_SysTime_t timestamp to use
+        -:   77:**                            to update the watchpoint results data
+        -:   78:**                            if a state transition is detected
+        -:   79:**
+        -:   80:*************************************************************************/
+        -:   81:void LC_ProcessWP(uint16             WatchIndex, 
+        -:   82:                  CFE_SB_MsgPtr_t    MessagePtr,
+        -:   83:                  CFE_TIME_SysTime_t Timestamp);
+        -:   84:
+        -:   85:/************************************************************************/
+        -:   86:/** \brief Operator comparison
+        -:   87:**  
+        -:   88:**  \par Description
+        -:   89:**       Support function for watchpoint processing that will perform
+        -:   90:**       the watchpoint data comparison based upon the operator and
+        -:   91:**       data type specified in the watchpoint definition table
+        -:   92:**
+        -:   93:**  \par Assumptions, External Events, and Notes:
+        -:   94:**       None
+        -:   95:**       
+        -:   96:**  \param [in] WatchIndex         The watchpoint number to compare (zero
+        -:   97:**                                 based watchpoint definition table index)
+        -:   98:**
+        -:   99:**  \param [in] ProcessedWPData    The watchpoint data extracted from
+        -:  100:**                                 the message that it was contained
+        -:  101:**                                 in. This is the data after any
+        -:  102:**                                 sizing, bit-masking, and endianess
+        -:  103:**                                 fixing that LC might have done
+        -:  104:**                                 according to the watchpoint definition
+        -:  105:**
+        -:  106:**  \returns
+        -:  107:**  \retcode #LC_WATCH_ERROR  \retdesc \copydoc LC_WATCH_ERROR \endcode
+        -:  108:**  \retstmt Return codes from #LC_SignedCompare    \endcode
+        -:  109:**  \retstmt Return codes from #LC_UnsignedCompare  \endcode
+        -:  110:**  \retstmt Return codes from #LC_FloatCompare     \endcode
+        -:  111:**  \endreturns
+        -:  112:**
+        -:  113:*************************************************************************/
+        -:  114:uint8 LC_OperatorCompare(uint16 WatchIndex,
+        -:  115:                         uint32 ProcessedWPData);
+        -:  116:
+        -:  117:/************************************************************************/
+        -:  118:/** \brief Signed comparison
+        -:  119:**  
+        -:  120:**  \par Description
+        -:  121:**       Support function for watchpoint processing that will perform
+        -:  122:**       a signed watchpoint data comparison based upon the operator
+        -:  123:**       specified in the watchpoint definition table
+        -:  124:**
+        -:  125:**  \par Assumptions, External Events, and Notes:
+        -:  126:**       None
+        -:  127:**       
+        -:  128:**  \param [in] WatchIndex    The watchpoint number to compare (zero
+        -:  129:**                            based watchpoint definition table index)
+        -:  130:**
+        -:  131:**  \param [in] WPValue       The watchpoint data extracted from
+        -:  132:**                            the message that it was contained
+        -:  133:**                            in. This is the data after any
+        -:  134:**                            sizing, bit-masking, and endianess
+        -:  135:**                            fixing that LC might have done
+        -:  136:**                            according to the watchpoint definition
+        -:  137:**
+        -:  138:**  \param [in] CompareValue  The comparison value specified in the 
+        -:  139:**                            watchpoint definition table (sign
+        -:  140:**                            extended, if needed, in an int32)
+        -:  141:**
+        -:  142:**  \returns
+        -:  143:**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
+        -:  144:**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
+        -:  145:**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
+        -:  146:**  \endreturns
+        -:  147:**
+        -:  148:*************************************************************************/
+        -:  149:uint8 LC_SignedCompare(uint16 WatchIndex,
+        -:  150:                       int32  WPValue, 
+        -:  151:                       int32  CompareValue);
+        -:  152:  
+        -:  153:/************************************************************************/
+        -:  154:/** \brief Unsigned comparison
+        -:  155:**  
+        -:  156:**  \par Description
+        -:  157:**       Support function for watchpoint processing that will perform
+        -:  158:**       an unsigned watchpoint data comparison based upon the operator
+        -:  159:**       specified in the watchpoint definition table
+        -:  160:**
+        -:  161:**  \par Assumptions, External Events, and Notes:
+        -:  162:**       None
+        -:  163:**       
+        -:  164:**  \param [in] WatchIndex    The watchpoint number to compare (zero
+        -:  165:**                            based watchpoint definition table index)
+        -:  166:**
+        -:  167:**  \param [in] WPValue       The watchpoint data extracted from
+        -:  168:**                            the message that it was contained
+        -:  169:**                            in. This is the data after any
+        -:  170:**                            sizing, bit-masking, and endianess
+        -:  171:**                            fixing that LC might have done
+        -:  172:**                            according to the watchpoint definition
+        -:  173:**
+        -:  174:**  \param [in] CompareValue  The comparison value specified in the 
+        -:  175:**                            watchpoint definition table (zero
+        -:  176:**                            extended, if needed, in an uint32)
+        -:  177:**
+        -:  178:**  \returns
+        -:  179:**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
+        -:  180:**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
+        -:  181:**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
+        -:  182:**  \endreturns
+        -:  183:**
+        -:  184:*************************************************************************/
+        -:  185:uint8 LC_UnsignedCompare(uint16 WatchIndex,
+        -:  186:                         uint32 WPValue, 
+        -:  187:                         uint32 CompareValue);
+        -:  188:  
+        -:  189:/************************************************************************/
+        -:  190:/** \brief Float comparison
+        -:  191:**  
+        -:  192:**  \par Description
+        -:  193:**       Support function for watchpoint processing that will perform
+        -:  194:**       an floating point watchpoint data comparison based upon the operator
+        -:  195:**       specified in the watchpoint definition table
+        -:  196:**
+        -:  197:**  \par Assumptions, External Events, and Notes:
+        -:  198:**       None
+        -:  199:**       
+        -:  200:**  \param [in] WatchIndex        The watchpoint number to compare (zero
+        -:  201:**                                based watchpoint definition table index)
+        -:  202:**
+        -:  203:**  \param [in] WPMultiType       The watchpoint data extracted from
+        -:  204:**                                the message that it was contained
+        -:  205:**                                in. Stored in a multi-type union.
+        -:  206:**                                This is the data after any sizing,
+        -:  207:**                                bit-masking, and endianess fixing
+        -:  208:**                                that LC might have done according
+        -:  209:**                                to the watchpoint definition
+        -:  210:**
+        -:  211:**  \param [in] CompareMultiType  The comparison value specified in the 
+        -:  212:**                                watchpoint definition table. Stored
+        -:  213:**                                in a muti-type union so it can easily
+        -:  214:**                                be accessed as a uint32 for validity
+        -:  215:**                                checks
+        -:  216:**
+        -:  217:**  \returns
+        -:  218:**  \retcode #LC_WATCH_TRUE  \retdesc \copydoc LC_WATCH_TRUE  \endcode
+        -:  219:**  \retcode #LC_WATCH_FALSE \retdesc \copydoc LC_WATCH_FALSE \endcode
+        -:  220:**  \retcode #LC_WATCH_ERROR \retdesc \copydoc LC_WATCH_ERROR \endcode
+        -:  221:**  \endreturns
+        -:  222:**
+        -:  223:*************************************************************************/
+        -:  224:uint8 LC_FloatCompare(uint16 WatchIndex,
+        -:  225:                      LC_MultiType_t WPMultiType, 
+        -:  226:                      LC_MultiType_t CompareMultiType);
+        -:  227:
+        -:  228:/************************************************************************/
+        -:  229:/** \brief Watchpoint offset valid
+        -:  230:**  
+        -:  231:**  \par Description
+        -:  232:**       Support function for watchpoint processing that will check if
+        -:  233:**       the watchpoint offset specified in the definition table would
+        -:  234:**       extend past the message that contains the watchpoint data
+        -:  235:**
+        -:  236:**  \par Assumptions, External Events, and Notes:
+        -:  237:**       None
+        -:  238:**       
+        -:  239:**  \param [in]   WatchIndex  The watchpoint number to check (zero
+        -:  240:**                            based watchpoint definition table index)
+        -:  241:**
+        -:  242:**  \param [in]   MessagePtr  A #CFE_SB_MsgPtr_t pointer that
+        -:  243:**                            references the software bus message that
+        -:  244:**                            contains the watchpoint data
+        -:  245:**
+        -:  246:**  \returns
+        -:  247:**  \retstmt Returns TRUE if the offset is within the message size \endcode
+        -:  248:**  \retstmt Returns FALSE if the offset extends past message end  \endcode
+        -:  249:**  \endreturns
+        -:  250:**
+        -:  251:*************************************************************************/
+        -:  252:boolean LC_WPOffsetValid(uint16          WatchIndex, 
+        -:  253:                         CFE_SB_MsgPtr_t MessagePtr);
+        -:  254:
+        -:  255:/************************************************************************/
+        -:  256:/** \brief Get sized data
+        -:  257:**  
+        -:  258:**  \par Description
+        -:  259:**       Support function for watchpoint processing that will extract
+        -:  260:**       the watchpoint data from a software bus message based upon the
+        -:  261:**       data type specified in the watchpoint definition table and 
+        -:  262:**       store it in a uint32. If there are any endian differences between
+        -:  263:**       LC and the watchpoint data, this is where it will get fixed up.
+        -:  264:**
+        -:  265:**  \par Assumptions, External Events, and Notes:
+        -:  266:**       None
+        -:  267:**       
+        -:  268:**  \param [in]  WatchIndex     The watchpoint number to extract (zero
+        -:  269:**                              based watchpoint definition table index)
+        -:  270:**
+        -:  271:**  \param [in]  WPDataPtr      A pointer to the first byte of the 
+        -:  272:**                              watchpoint data as it exists in the 
+        -:  273:**                              software bus message it was received in
+        -:  274:**
+        -:  275:**  \param [in]  SizedDataPtr   A pointer to where the extracted watchpoint
+        -:  276:*                               data should be stored
+        -:  277:**
+        -:  278:**  \param [out] *SizedDataPtr  Contains the extracted watchpoint data.
+        -:  279:**                              This will be set to zero on error
+        -:  280:**
+        -:  281:**  \returns
+        -:  282:**  \retstmt Returns TRUE if no error           \endcode
+        -:  283:**  \retstmt Returns FALSE if an error occurred \endcode
+        -:  284:**  \endreturns
+        -:  285:**
+        -:  286:*************************************************************************/
+        -:  287:boolean LC_GetSizedWPData(uint16 WatchIndex,
+        -:  288:                          uint8  *WPDataPtr,
+        -:  289:                          uint32 *SizedDataPtr);
+        -:  290:
+        -:  291:/************************************************************************/
+        -:  292:/** \brief Check uint32 for float NAN
+        -:  293:**  
+        -:  294:**  \par Description
+        -:  295:**       Utility function for watchpoint processing that will test if
+        -:  296:**       a uint32 value would result in a NAN (not-a-number) value if
+        -:  297:**       it was interpreted as a float.
+        -:  298:**
+        -:  299:**  \par Assumptions, External Events, and Notes:
+        -:  300:**       None
+        -:  301:**       
+        -:  302:**  \param [in]  Data     The uint32 value to check
+        -:  303:**
+        -:  304:**  \returns
+        -:  305:**  \retstmt Returns TRUE if value is a float NAN      \endcode
+        -:  306:**  \retstmt Returns FALSE if value is not a float NAN \endcode
+        -:  307:**  \endreturns
+        -:  308:**
+        -:  309:*************************************************************************/
+        -:  310:boolean LC_Uint32IsNAN(uint32 Data);
+        -:  311:
+        -:  312:/************************************************************************/
+        -:  313:/** \brief Check uint32 for float infinite
+        -:  314:**  
+        -:  315:**  \par Description
+        -:  316:**       Utility function for watchpoint processing that will test if
+        -:  317:**       a uint32 value would result in an infinite value if
+        -:  318:**       it was interpreted as a float.
+        -:  319:**
+        -:  320:**  \par Assumptions, External Events, and Notes:
+        -:  321:**       None
+        -:  322:**       
+        -:  323:**  \param [in]  Data     The uint32 value to check
+        -:  324:**
+        -:  325:**  \returns
+        -:  326:**  \retstmt Returns TRUE if value is an inifinite float      \endcode
+        -:  327:**  \retstmt Returns FALSE if value is not an inifinite float \endcode
+        -:  328:**  \endreturns
+        -:  329:**
+        -:  330:*************************************************************************/
+        -:  331:boolean LC_Uint32IsInfinite(uint32 Data);
+        -:  332:
+        -:  333:/************************************************************************/
+        -:  334:/** \brief Convert messageID into hash table index
+        -:  335:**  
+        -:  336:**  \par Description
+        -:  337:**       Utility function for watchpoint processing that converts a
+        -:  338:**       messageID into an index into the watchpoint hash table.
+        -:  339:**       
+        -:  340:**       The following code supports use of the watchpoint hash table:
+        -:  341:**
+        -:  342:**       1) #LC_GetHashTableIndex - convert messageID to hash table index
+        -:  343:**       2) #LC_CreateHashTable   - after load Watchpoint Definition Table
+        -:  344:**       3) #LC_AddWatchpoint     - add one watchpoint to hash table
+        -:  345:**       4) #LC_CheckMsgForWPs    - process all WP's that reference messageID
+        -:  346:**       
+        -:  347:**       The following data structures support the hash table:
+        -:  348:**
+        -:  349:**       1) Hash table (256 entries)
+        -:  350:**       2) Array of links for messageID linked lists (LC_MAX_WATCHPOINTS)
+        -:  351:**       3) Array of links for watchpoint linked lists (LC_MAX_WATCHPOINTS)
+        -:  352:**       
+        -:  353:**       Rather than search the entire Watchpoint Definition Table to find
+        -:  354:**       the watchpoints that reference a particular messageID, LC does
+        -:  355:**       the following:
+        -:  356:**
+        -:  357:**       1) Call hash table function (convert messageID to hash table index)
+        -:  358:**       2) Get messageID linked list from indexed hash table entry
+        -:  359:**       3) Search messageID list (max 8) for matching messageID
+        -:  360:**       4) Get watchpoint linked list from matching messageID link
+        -:  361:**       5) Done - only watchpoints that reference messageID are in list
+        -:  362:**
+        -:  363:**  \par Assumptions, External Events, and Notes:
+        -:  364:**       None
+        -:  365:**       
+        -:  366:**  \param [in]  MessageID   SoftwareBus packet message ID
+        -:  367:**
+        -:  368:**  \returns
+        -:  369:**  \retstmt Returns index into watchpoint hash table  \endcode
+        -:  370:**  \endreturns
+        -:  371:**
+        -:  372:*************************************************************************/
+        -:  373:uint32 LC_GetHashTableIndex(CFE_SB_MsgId_t MessageID);
+        -:  374:
+        -:  375:/************************************************************************/
+        -:  376:/** \brief Add one watchpoint linked list entry during creation of hash table
+        -:  377:**  
+        -:  378:**  \par Description
+        -:  379:**       Utility function that adds another link to the watchpoint linked list
+        -:  380:**       for the specified messageID. The function will also add a messageID
+        -:  381:**       linked list entry to the hash table if this is the first reference
+        -:  382:**       to that messageID. The function will also subscribe to the messageID
+        -:  383:**       if this is the first reference to that messageID. The function will
+        -:  384:**       return a pointer to the watchpoint linked list entry just added.
+        -:  385:**       
+        -:  386:**       The following code supports use of the watchpoint hash table:
+        -:  387:**
+        -:  388:**       1) #LC_GetHashTableIndex - convert messageID to hash table index
+        -:  389:**       2) #LC_CreateHashTable   - after load Watchpoint Definition Table
+        -:  390:**       3) #LC_AddWatchpoint     - add one watchpoint to hash table
+        -:  391:**       4) #LC_CheckMsgForWPs    - process all WP's that reference messageID
+        -:  392:**       
+        -:  393:**       The following data structures support the hash table:
+        -:  394:**
+        -:  395:**       1) Hash table (256 entries)
+        -:  396:**       2) Array of links for messageID linked lists (LC_MAX_WATCHPOINTS)
+        -:  397:**       3) Array of links for watchpoint linked lists (LC_MAX_WATCHPOINTS)
+        -:  398:**       
+        -:  399:**       Rather than search the entire Watchpoint Definition Table to find
+        -:  400:**       the watchpoints that reference a particular messageID, LC does
+        -:  401:**       the following:
+        -:  402:**
+        -:  403:**       1) Call hash table function (convert messageID to hash table index)
+        -:  404:**       2) Get messageID linked list from indexed hash table entry
+        -:  405:**       3) Search messageID list (max 8) for matching messageID
+        -:  406:**       4) Get watchpoint linked list from matching messageID link
+        -:  407:**       5) Done - only watchpoints that reference messageID are in list
+        -:  408:**
+        -:  409:**  \par Assumptions, External Events, and Notes:
+        -:  410:**       None
+        -:  411:**       
+        -:  412:**  \param [in]  MessageID   SoftwareBus packet message ID
+        -:  413:**
+        -:  414:**  \returns
+        -:  415:**  \retstmt Returns pointer to the watchpoint linked list entry just added  \endcode
+        -:  416:**  \endreturns
+        -:  417:**
+        -:  418:*************************************************************************/
+        -:  419:LC_WatchPtList_t  *LC_AddWatchpoint(CFE_SB_MsgId_t MessageID);
+        -:  420:
+        -:  421:
+        -:  422:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  423:/*                                                                 */
+        -:  424:/* LC_GetHashTableIndex() - convert messageID to hash table index  */
+        -:  425:/*                                                                 */
+        -:  426:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  427:
+        -:  428:uint32 LC_GetHashTableIndex(CFE_SB_MsgId_t MessageID)
+       93:  429:{
+        -:  430:    /*
+        -:  431:    **   The purpose of a hash function is to take the input value
+        -:  432:    ** and convert it to an index into the hash table. Assume that
+        -:  433:    ** the range of input values is much different (larger) than
+        -:  434:    ** the number of entries in the hash table. Then multiple input
+        -:  435:    ** values must resolve to the same output table index. This is ok
+        -:  436:    ** because each entry in the hash table is a linked list of all
+        -:  437:    ** the inputs with the same hash function result.
+        -:  438:    **
+        -:  439:    **   This particular hash function takes advantage of knowledge
+        -:  440:    ** regarding the format of the input values (cFE MessageID). By
+        -:  441:    ** ignoring the bits that define version number, packet type and
+        -:  442:    ** secondary header (high 5 bits of 16) we are left with the bits
+        -:  443:    ** (mask = 0x7FF) that can identify 2048 unique input telemetry
+        -:  444:    ** packets. Also, by using a fixed hash table size of 256 entries
+        -:  445:    ** and using only the lower 8 bits of the bitmask as the result
+        -:  446:    ** of the hash function, no single hash table entry will have more
+        -:  447:    ** than 8 elements in its linked list.
+        -:  448:    */
+       93:  449:    return((uint32) (MessageID & LC_HASH_TABLE_MASK));
+        -:  450:
+        -:  451:} /* End of LC_GetHashTableIndex() */
+        -:  452:
+        -:  453:
+        -:  454:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  455:/*                                                                 */
+        -:  456:/* LC_CreateHashTable() - create watchpoint hash table             */
+        -:  457:/*                                                                 */
+        -:  458:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  459:
+        -:  460:void LC_CreateHashTable(void)
+        6:  461:{
+        -:  462:    LC_WatchPtList_t  *WatchPtLink;
+        -:  463:    CFE_SB_MsgId_t     LastMessageID;
+        -:  464:    CFE_SB_MsgId_t     MessageID;
+        -:  465:    int32              MessageLinkIndex;
+        -:  466:    int32              WatchPtTblIndex;
+        -:  467:    int32              Result;
+        -:  468:
+        -:  469:
+        -:  470:    /* Un-subscribe to any MessageID's referenced in previous Watchpoint Definition Table */
+       26:  471:    for (MessageLinkIndex = 0; MessageLinkIndex < LC_OperData.MessageIDsCount; MessageLinkIndex++)
+        -:  472:    {
+       20:  473:        MessageID = LC_OperData.MessageLinks[MessageLinkIndex].MessageID;
+        -:  474:
+       20:  475:        if ((Result = CFE_SB_Unsubscribe(MessageID, LC_OperData.CmdPipe)) != CFE_SUCCESS)
+        -:  476:        {
+        5:  477:            CFE_EVS_SendEvent(LC_UNSUB_WP_ERR_EID, CFE_EVS_ERROR,
+        -:  478:                             "Error unsubscribing watchpoint: MID=0x%04X, RC=0x%08X", 
+        -:  479:                              MessageID, Result);
+        -:  480:        }
+        -:  481:    }
+        -:  482:
+        -:  483:    /* Initialize hash table structures */
+        6:  484:    CFE_PSP_MemSet(LC_OperData.HashTable, 0, (LC_HASH_TABLE_ENTRIES * sizeof(LC_MessageList_t *)));
+        6:  485:    CFE_PSP_MemSet(LC_OperData.MessageLinks, 0, (LC_MAX_WATCHPOINTS * sizeof(LC_MessageList_t)));
+        6:  486:    CFE_PSP_MemSet(LC_OperData.WatchPtLinks, 0, (LC_MAX_WATCHPOINTS * sizeof(LC_WatchPtList_t)));
+        -:  487:
+        6:  488:    LC_OperData.MessageIDsCount = 0;
+        6:  489:    LC_OperData.WatchpointCount = 0;
+        -:  490:
+        6:  491:    LastMessageID = 0xFFFF;
+        6:  492:    WatchPtLink = (LC_WatchPtList_t *) NULL;
+        -:  493:
+        -:  494:    /* Process each entry in the Watchpoint Definition Table */
+     1062:  495:    for (WatchPtTblIndex = 0; WatchPtTblIndex < LC_MAX_WATCHPOINTS; WatchPtTblIndex++)
+        -:  496:    {
+        -:  497:        /* Skip unused watchpoint table entries */
+     1056:  498:        if (LC_OperData.WDTPtr[WatchPtTblIndex].DataType != LC_WATCH_NOT_USED)
+        -:  499:        {
+      194:  500:            MessageID = LC_OperData.WDTPtr[WatchPtTblIndex].MessageID;
+        -:  501:
+        -:  502:            /* Use optimized code path if same MessageID as last watchpoint */
+      302:  503:            if ((LastMessageID == MessageID) && (WatchPtLink != (LC_WatchPtList_t *) NULL))
+        -:  504:            {
+        -:  505:                /* WatchPtLink points to last link in list for this Message ID */
+      108:  506:                WatchPtLink->Next = &LC_OperData.WatchPtLinks[LC_OperData.WatchpointCount++];
+        -:  507:
+        -:  508:                /* Add new link to end of list, point to new last link */
+      108:  509:                WatchPtLink = WatchPtLink->Next;
+        -:  510:            }
+        -:  511:            else
+        -:  512:            {
+        -:  513:                /* May add message list link and subscribe to MessageID */
+       86:  514:                WatchPtLink = LC_AddWatchpoint(MessageID);
+        -:  515:            }
+        -:  516:
+        -:  517:            /* Set watchpoint table index for this entry in list */
+      194:  518:            WatchPtLink->WatchIndex = WatchPtTblIndex;
+        -:  519:
+      194:  520:            LastMessageID = MessageID;
+        -:  521:        }
+        -:  522:    }
+        -:  523:
+        -:  524:    return;
+        -:  525:
+        -:  526:} /* End of LC_CreateHashTable() */
+        -:  527:
+        -:  528:
+        -:  529:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  530:/*                                                                 */
+        -:  531:/* LC_AddWatchpoint() - add one watchpoint entry to hash table     */
+        -:  532:/*                                                                 */
+        -:  533:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  534:
+        -:  535:LC_WatchPtList_t  *LC_AddWatchpoint(CFE_SB_MsgId_t MessageID)
+       86:  536:{
+        -:  537:    LC_MessageList_t  *MessageLink;
+        -:  538:    LC_WatchPtList_t  *WatchPtLink;
+        -:  539:    boolean            NeedSubscription;
+        -:  540:    int32              HashTableIndex;
+        -:  541:    int32              Result;
+        -:  542:
+        -:  543:    /* Hash function converts MessageID into hash table index */
+       86:  544:    HashTableIndex = LC_GetHashTableIndex(MessageID);
+        -:  545:
+        -:  546:    /* Subscribe only for first reference to each MessageID */
+       86:  547:    NeedSubscription = FALSE;
+        -:  548:
+        -:  549:    /* Each hash table entry is a linked list of MessageID's with same hash result */
+       86:  550:    if (LC_OperData.HashTable[HashTableIndex] == (LC_MessageList_t *) NULL)
+        -:  551:    {
+        -:  552:        /* Get next unused MessageID linked list entry */
+       12:  553:        MessageLink = &LC_OperData.MessageLinks[LC_OperData.MessageIDsCount++];
+        -:  554:
+        -:  555:        /* Set first (and only) link in this hash table entry linked list */
+       12:  556:        LC_OperData.HashTable[HashTableIndex] = MessageLink;
+        -:  557:
+        -:  558:        /* Set the MessageID for this link */
+       12:  559:        MessageLink->MessageID = MessageID;
+        -:  560:
+        -:  561:        /* Subscribe to first link in list */
+       12:  562:        NeedSubscription = TRUE;
+        -:  563:    }
+        -:  564:    else
+        -:  565:    {
+        -:  566:        /* Get start of linked list (all MID's with same hash result) */
+       74:  567:        MessageLink = LC_OperData.HashTable[HashTableIndex];
+        -:  568:
+        -:  569:        /* Find the link for this MessageID */
+      194:  570:        while (MessageLink->MessageID != MessageID)
+        -:  571:        {
+       46:  572:            if (MessageLink->Next == (LC_MessageList_t *) NULL)
+        -:  573:            {
+        -:  574:                /* Reached end of list without finding MessageID */
+       20:  575:                MessageLink->Next = &LC_OperData.MessageLinks[LC_OperData.MessageIDsCount++];
+       20:  576:                MessageLink = MessageLink->Next;
+        -:  577:
+        -:  578:                /* Add link with this MessageID (will exit loop) */
+       20:  579:                MessageLink->MessageID = MessageID;
+        -:  580:
+        -:  581:                /* Subscribe to new link in list */
+       20:  582:                NeedSubscription = TRUE;
+        -:  583:            }
+        -:  584:            else
+        -:  585:            {
+        -:  586:                /* Try the next link in the list */
+       26:  587:                MessageLink = MessageLink->Next;
+        -:  588:            }
+        -:  589:        }
+        -:  590:    }
+        -:  591:
+        -:  592:    /* Subscribe only once to each MessageID */
+       86:  593:    if (NeedSubscription)
+        -:  594:    {
+       32:  595:        if ((Result = CFE_SB_Subscribe(MessageID, LC_OperData.CmdPipe)) != CFE_SUCCESS)
+        -:  596:        {
+        -:  597:            /* Signal the error, but continue */
+        5:  598:            CFE_EVS_SendEvent(LC_SUB_WP_ERR_EID, CFE_EVS_ERROR,
+        -:  599:               "Error subscribing watchpoint: MID=0x%04X, RC=0x%08X",
+        -:  600:                MessageID, Result);    
+        -:  601:        }
+        -:  602:    }
+        -:  603:
+        -:  604:    /* MessageLink points to the link for this MessageID */
+       86:  605:    if (MessageLink->WatchPtList == (LC_WatchPtList_t *) NULL)
+        -:  606:    {
+        -:  607:        /* Get next unused watchpoint linked list entry */
+       32:  608:        WatchPtLink = &LC_OperData.WatchPtLinks[LC_OperData.WatchpointCount++];
+        -:  609:
+        -:  610:        /* Set the start (and only) link in the watchpoint link list */
+       32:  611:        MessageLink->WatchPtList = WatchPtLink;
+        -:  612:    }
+        -:  613:    else
+        -:  614:    {
+        -:  615:        /* Find the end of the watchpoint linked list */
+       54:  616:        WatchPtLink = MessageLink->WatchPtList;
+        -:  617:
+      228:  618:        while (WatchPtLink->Next != (LC_WatchPtList_t *) NULL)
+        -:  619:        {
+      120:  620:            WatchPtLink = WatchPtLink->Next;
+        -:  621:        }
+        -:  622:
+        -:  623:        /* Add the new watchpoint link to the end of the list */
+       54:  624:        WatchPtLink->Next = &LC_OperData.WatchPtLinks[LC_OperData.WatchpointCount++];
+       54:  625:        WatchPtLink = WatchPtLink->Next;
+        -:  626:    }
+        -:  627:
+        -:  628:    /* Return pointer to last link in watchpoint linked list */
+       86:  629:    return(WatchPtLink);
+        -:  630:
+        -:  631:} /* End of LC_AddWatchpoint() */
+        -:  632:
+        -:  633:
+        -:  634:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  635:/*                                                                 */
+        -:  636:/* Handle a message with possible watchpoints                      */
+        -:  637:/*                                                                 */
+        -:  638:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  639:void LC_CheckMsgForWPs(CFE_SB_MsgId_t MessageID, CFE_SB_MsgPtr_t MessagePtr)
+        7:  640:{
+        -:  641:    CFE_TIME_SysTime_t Timestamp;
+        -:  642:    LC_MessageList_t  *MessageList;
+        -:  643:    LC_WatchPtList_t  *WatchPtList;
+        7:  644:    boolean            WatchPtFound = FALSE;
+        -:  645:    
+        -:  646:    /* Do nothing if disabled at the application level */
+        7:  647:    if (LC_AppData.CurrentLCState != LC_STATE_DISABLED)
+        -:  648:    {
+        -:  649:        /* Use message timestamp - if none, use current time */
+        7:  650:        Timestamp = CFE_SB_GetMsgTime(MessagePtr);
+        -:  651:        
+        7:  652:        if ((Timestamp.Seconds == 0) && (Timestamp.Subseconds == 0))
+        -:  653:        {
+        7:  654:            Timestamp = CFE_TIME_GetTime();
+        -:  655:        }
+        -:  656:        
+        -:  657:        /* Performance Log (start time counter) */
+        7:  658:        CFE_ES_PerfLogEntry(LC_WDT_SEARCH_PERF_ID);
+        -:  659:
+        -:  660:        /* Get start of linked list (all MID's with same hash result) */
+        7:  661:        MessageList = LC_OperData.HashTable[LC_GetHashTableIndex(MessageID)];
+        -:  662:
+        -:  663:        /* NULL when list is empty or end of list */
+       21:  664:        while (MessageList != (LC_MessageList_t *) NULL)
+        -:  665:        {
+        -:  666:            /* Compare this linked list entry for matching MessageID */
+       13:  667:            if (MessageList->MessageID == MessageID)
+        -:  668:            {
+        -:  669:                /* Stop the search - we found it */
+        6:  670:                break;
+        -:  671:            }
+        -:  672:
+        -:  673:            /* Max of 8 links per design */
+        7:  674:            MessageList = MessageList->Next;
+        -:  675:        }
+        -:  676:
+        -:  677:        /* Should be true - else wouldn't subscribe to MessageID */
+        7:  678:        if (MessageList != (LC_MessageList_t *) NULL)
+        -:  679:        {
+        -:  680:            /* Get linked list of WP's that reference MessageID */
+        6:  681:            WatchPtList = MessageList->WatchPtList;
+        -:  682:
+        -:  683:            /* NULL when list is empty or end of list */
+       53:  684:            while (WatchPtList != (LC_WatchPtList_t *) NULL)
+        -:  685:            {
+       41:  686:                WatchPtFound = TRUE;
+        -:  687:                
+        -:  688:                /* Verify that WP packet offset is within actual packet */
+       41:  689:                if (LC_WPOffsetValid(WatchPtList->WatchIndex, MessagePtr) == TRUE)
+        -:  690:                {
+       38:  691:                    LC_ProcessWP(WatchPtList->WatchIndex, MessagePtr, Timestamp);
+        -:  692:                }
+        -:  693:
+        -:  694:                /* No limit to how many WP's can reference one MessageID */
+       41:  695:                WatchPtList = WatchPtList->Next;
+        -:  696:            }
+        -:  697:        }
+        -:  698:
+        -:  699:        /* Performance Log (stop time counter) */
+        7:  700:        CFE_ES_PerfLogExit(LC_WDT_SEARCH_PERF_ID);
+        -:  701:
+        7:  702:        if (WatchPtFound == TRUE)
+        -:  703:        {
+        6:  704:            LC_AppData.MonitoredMsgCount++;
+        -:  705:        }
+        -:  706:        else
+        -:  707:        {
+        -:  708:            /* MessageID with no defined watchpoints */
+        1:  709:            CFE_EVS_SendEvent(LC_MID_INF_EID, CFE_EVS_INFORMATION,
+        -:  710:               "Msg with unreferenced message ID rcvd: ID = 0x%04X", MessageID);
+        -:  711:        }
+        -:  712:    }
+        -:  713:    
+        -:  714:    return;
+        -:  715:   
+        -:  716:} /* end LC_CheckMsgForWPs */
+        -:  717:
+        -:  718:
+        -:  719:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  720:/*                                                                 */
+        -:  721:/* Process a single watchpoint                                     */
+        -:  722:/*                                                                 */
+        -:  723:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  724:void LC_ProcessWP(uint16             WatchIndex, 
+        -:  725:                  CFE_SB_MsgPtr_t    MessagePtr,
+        -:  726:                  CFE_TIME_SysTime_t Timestamp)
+       38:  727:{
+        -:  728:    uint8   *WPDataPtr;
+        -:  729:    uint8   PreviousResult;
+        -:  730:    uint8   WPEvalResult;
+        -:  731:    uint32  SizedWPData;
+        -:  732:    uint32  MaskedWPData;
+        -:  733:    uint32  StaleCounter;
+        -:  734:    boolean SizedDataValid;
+        -:  735:    
+        -:  736:    /*
+        -:  737:    ** Setup the pointer and get the massaged data
+        -:  738:    */
+       38:  739:    WPDataPtr = ((uint8 *)MessagePtr) + 
+        -:  740:                 LC_OperData.WDTPtr[WatchIndex].WatchpointOffset;
+        -:  741:    
+       38:  742:    SizedDataValid = LC_GetSizedWPData(WatchIndex, 
+        -:  743:                                       WPDataPtr,
+        -:  744:                                       &SizedWPData);
+       38:  745:    if (SizedDataValid == TRUE)
+        -:  746:    {
+        -:  747:        /*
+        -:  748:        ** Get the last evalution result for this watchpoint
+        -:  749:        */
+       38:  750:        PreviousResult = LC_OperData.WRTPtr[WatchIndex].WatchResult;
+        -:  751:        
+        -:  752:        /*
+        -:  753:        ** Apply the defined bitmask for this watchpoint and then
+        -:  754:        ** call the mission defined custom function or do our own 
+        -:  755:        ** relational comparison.
+        -:  756:        */
+       38:  757:        MaskedWPData = SizedWPData & LC_OperData.WDTPtr[WatchIndex].BitMask;
+        -:  758:        
+       38:  759:        if (LC_OperData.WDTPtr[WatchIndex].OperatorID == LC_OPER_CUSTOM)
+        -:  760:        {
+        1:  761:           WPEvalResult = LC_CustomFunction(WatchIndex,
+        -:  762:                                            MaskedWPData,
+        -:  763:                                            MessagePtr,
+        -:  764:                                            LC_OperData.WDTPtr[WatchIndex].CustomFuncArgument);
+        -:  765:        }
+        -:  766:        else
+        -:  767:        {
+       37:  768:           WPEvalResult = LC_OperatorCompare(WatchIndex, MaskedWPData);
+        -:  769:        }
+        -:  770:     
+        -:  771:        /*
+        -:  772:        ** Update the watch result
+        -:  773:        */
+       38:  774:        LC_OperData.WRTPtr[WatchIndex].WatchResult = WPEvalResult;
+        -:  775:        
+        -:  776:        /*
+        -:  777:        ** Update the watchpoint statistics based on the evaluation
+        -:  778:        ** result
+        -:  779:        */
+       38:  780:        LC_OperData.WRTPtr[WatchIndex].EvaluationCount++;
+        -:  781:        
+       38:  782:        if (WPEvalResult == LC_WATCH_TRUE)
+        -:  783:        {
+       15:  784:            LC_OperData.WRTPtr[WatchIndex].CumulativeTrueCount++;
+       15:  785:            LC_OperData.WRTPtr[WatchIndex].ConsecutiveTrueCount++;
+       15:  786:            StaleCounter = LC_OperData.WDTPtr[WatchIndex].ResultAgeWhenStale;
+       15:  787:            LC_OperData.WRTPtr[WatchIndex].CountdownToStale = StaleCounter;
+        -:  788:            
+       15:  789:            if ((PreviousResult == LC_WATCH_FALSE) || 
+        -:  790:                (PreviousResult == LC_WATCH_STALE))
+        -:  791:            {
+       11:  792:                LC_OperData.WRTPtr[WatchIndex].FalseToTrueCount++;
+        -:  793:                
+       11:  794:                LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue
+        -:  795:                                              .Value = MaskedWPData;
+        -:  796:                
+       11:  797:                LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue
+        -:  798:                                              .Timestamp.Seconds = Timestamp.Seconds; 
+        -:  799:                
+       11:  800:                LC_OperData.WRTPtr[WatchIndex].LastFalseToTrue
+        -:  801:                                              .Timestamp.Subseconds = Timestamp.Subseconds; 
+        -:  802:            }
+        -:  803:        }
+       23:  804:        else if (WPEvalResult == LC_WATCH_FALSE)
+        -:  805:        {
+       20:  806:            LC_OperData.WRTPtr[WatchIndex].ConsecutiveTrueCount = 0;
+       20:  807:            StaleCounter = LC_OperData.WDTPtr[WatchIndex].ResultAgeWhenStale;
+       20:  808:            LC_OperData.WRTPtr[WatchIndex].CountdownToStale = StaleCounter;
+        -:  809:            
+       20:  810:            if ((PreviousResult == LC_WATCH_TRUE) || 
+        -:  811:                (PreviousResult == LC_WATCH_STALE))
+        -:  812:            {
+        3:  813:                LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse
+        -:  814:                                              .Value = MaskedWPData;
+        -:  815:                
+        3:  816:                LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse
+        -:  817:                                              .Timestamp.Seconds = Timestamp.Seconds; 
+        -:  818:                
+        3:  819:                LC_OperData.WRTPtr[WatchIndex].LastTrueToFalse
+        -:  820:                                              .Timestamp.Subseconds = Timestamp.Subseconds; 
+        -:  821:            }
+        -:  822:        }
+        -:  823:        else
+        -:  824:        {
+        -:  825:            /*
+        -:  826:            ** WPEvalResult is STALE or ERROR
+        -:  827:            */
+        3:  828:            LC_OperData.WRTPtr[WatchIndex].CountdownToStale = 0;
+        -:  829:        }        
+        -:  830:        
+        -:  831:    } /* end SizedDataValid if */
+        -:  832:    
+        -:  833:    return;
+        -:  834:    
+        -:  835:} /* end LC_ProcessWP */
+        -:  836:
+        -:  837:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  838:/*                                                                 */
+        -:  839:/* Perform a watchpoint relational comparison                      */
+        -:  840:/*                                                                 */
+        -:  841:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  842:uint8 LC_OperatorCompare(uint16 WatchIndex,
+        -:  843:                         uint32 ProcessedWPData)
+       38:  844:{
+        -:  845:    uint8          EvalResult;
+        -:  846:    LC_MultiType_t WatchpointValue;
+        -:  847:    LC_MultiType_t ComparisonValue;
+        -:  848:
+       38:  849:    WatchpointValue.Unsigned32 = ProcessedWPData;
+       38:  850:    ComparisonValue = LC_OperData.WDTPtr[WatchIndex].ComparisonValue;
+        -:  851:
+        -:  852:    /*
+        -:  853:    ** Handle the comparison appropriately depending on the data type
+        -:  854:    ** Any endian difference was handled when the watchpoint 
+        -:  855:    ** data was extracted from the SB message
+        -:  856:    */
+       38:  857:    switch (LC_OperData.WDTPtr[WatchIndex].DataType)
+        -:  858:    {
+        -:  859:        /*
+        -:  860:        ** Signed integer types will get sign extended
+        -:  861:        */
+        -:  862:        case LC_DATA_BYTE:
+       12:  863:            EvalResult = LC_SignedCompare(WatchIndex,
+        -:  864:                                          WatchpointValue.Signed8in32.Signed8,
+        -:  865:                                          ComparisonValue.Signed8in32.Signed8);
+       12:  866:            break;
+        -:  867:              
+        -:  868:        case LC_DATA_WORD_BE:
+        -:  869:        case LC_DATA_WORD_LE:
+        4:  870:            EvalResult = LC_SignedCompare(WatchIndex,
+        -:  871:                                          WatchpointValue.Signed16in32.Signed16,
+        -:  872:                                          ComparisonValue.Signed16in32.Signed16);
+        4:  873:            break;
+        -:  874:
+        -:  875:        case LC_DATA_DWORD_BE:
+        -:  876:        case LC_DATA_DWORD_LE:
+        3:  877:            EvalResult = LC_SignedCompare(WatchIndex,
+        -:  878:                                          WatchpointValue.Signed32,
+        -:  879:                                          ComparisonValue.Signed32);
+        3:  880:            break;
+        -:  881:
+        -:  882:        /*
+        -:  883:        ** Unsigned integer types will get zero extended
+        -:  884:        */
+        -:  885:        case LC_DATA_UBYTE:
+        6:  886:            EvalResult = LC_UnsignedCompare(WatchIndex,
+        -:  887:                                            WatchpointValue.Unsigned8in32.Unsigned8,
+        -:  888:                                            ComparisonValue.Unsigned8in32.Unsigned8);
+        6:  889:            break;
+        -:  890:
+        -:  891:        case LC_DATA_UWORD_BE:
+        -:  892:        case LC_DATA_UWORD_LE:
+        2:  893:            EvalResult = LC_UnsignedCompare(WatchIndex,
+        -:  894:                                            WatchpointValue.Unsigned16in32.Unsigned16,
+        -:  895:                                            ComparisonValue.Unsigned16in32.Unsigned16);
+        2:  896:            break;
+        -:  897:
+        -:  898:        case LC_DATA_UDWORD_BE:
+        -:  899:        case LC_DATA_UDWORD_LE:
+        3:  900:            EvalResult = LC_UnsignedCompare(WatchIndex,
+        -:  901:                                            WatchpointValue.Unsigned32,
+        -:  902:                                            ComparisonValue.Unsigned32);
+        3:  903:            break;
+        -:  904:
+        -:  905:        /*
+        -:  906:        ** Floating point values are handled separately
+        -:  907:        */
+        -:  908:        case LC_DATA_FLOAT_BE:
+        -:  909:        case LC_DATA_FLOAT_LE:            
+        7:  910:            EvalResult = LC_FloatCompare(WatchIndex,
+        -:  911:                                         WatchpointValue,
+        -:  912:                                         ComparisonValue);
+        7:  913:            break;
+        -:  914:
+        -:  915:        default:
+        -:  916:            /*
+        -:  917:            ** This should have been caught before now, but we'll 
+        -:  918:            ** handle it just in case we ever get here.
+        -:  919:            */ 
+        1:  920:            CFE_EVS_SendEvent(LC_WP_DATATYPE_ERR_EID, CFE_EVS_ERROR,
+        -:  921:                              "WP has undefined data type: WP = %d, DataType = %d",
+        -:  922:                              WatchIndex, LC_OperData.WDTPtr[WatchIndex].DataType);
+        -:  923:            
+        1:  924:            EvalResult = LC_WATCH_ERROR;
+        -:  925:            break;
+        -:  926:    }
+        -:  927:    
+       38:  928:    return (EvalResult);
+        -:  929:    
+        -:  930:} /* end LC_OperatorCompare */
+        -:  931:
+        -:  932:
+        -:  933:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  934:/*                                                                 */
+        -:  935:/* Perform a watchpoint signed integer comparison                  */
+        -:  936:/*                                                                 */
+        -:  937:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  938:uint8 LC_SignedCompare(uint16 WatchIndex,
+        -:  939:                       int32  WPValue, 
+        -:  940:                       int32  CompareValue)
+       19:  941:{
+        -:  942:    uint8   EvalResult;
+        -:  943:    uint8   OperatorID;
+        -:  944:    
+       19:  945:    OperatorID      = LC_OperData.WDTPtr[WatchIndex].OperatorID;
+        -:  946:    
+       19:  947:    switch (OperatorID)
+        -:  948:        {
+        -:  949:        case LC_OPER_LE:
+        2:  950:            EvalResult = (WPValue <= CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        2:  951:            break;
+        -:  952:
+        -:  953:        case LC_OPER_LT:
+        2:  954:            EvalResult = (WPValue <  CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        2:  955:            break;
+        -:  956:
+        -:  957:        case LC_OPER_EQ:
+        5:  958:            EvalResult = (WPValue == CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        5:  959:            break;
+        -:  960:
+        -:  961:        case LC_OPER_NE:
+        5:  962:            EvalResult = (WPValue != CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        5:  963:            break;
+        -:  964:
+        -:  965:        case LC_OPER_GT:
+        2:  966:            EvalResult = (WPValue >  CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        2:  967:            break;
+        -:  968:
+        -:  969:        case LC_OPER_GE:
+        2:  970:            EvalResult = (WPValue >= CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        2:  971:            break;
+        -:  972:
+        -:  973:        default:
+        -:  974:            /*
+        -:  975:            ** This should have been caught before now, but we'll 
+        -:  976:            ** handle it just in case we ever get here.
+        -:  977:            */ 
+        1:  978:            CFE_EVS_SendEvent(LC_WP_OPERID_ERR_EID, CFE_EVS_ERROR,
+        -:  979:                              "WP has invalid operator ID: WP = %d, OperID = %d",
+        -:  980:                              WatchIndex, OperatorID);
+        -:  981:            
+        1:  982:            EvalResult = LC_WATCH_ERROR;
+        -:  983:            break;
+        -:  984:        }
+        -:  985:    
+       19:  986:    return (EvalResult);
+        -:  987:    
+        -:  988:} /* end LC_SignedCompare */
+        -:  989:
+        -:  990:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  991:/*                                                                 */
+        -:  992:/* Perform a watchpoint unsigned integer comparison                */
+        -:  993:/*                                                                 */
+        -:  994:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  995:uint8 LC_UnsignedCompare(uint16 WatchIndex,
+        -:  996:                         uint32 WPValue, 
+        -:  997:                         uint32 CompareValue)
+       11:  998:{
+        -:  999:    uint8   EvalResult;
+        -: 1000:    uint8   OperatorID;
+        -: 1001:    
+       11: 1002:    OperatorID      = LC_OperData.WDTPtr[WatchIndex].OperatorID;
+        -: 1003:    
+       11: 1004:    switch (OperatorID)
+        -: 1005:        {
+        -: 1006:        case LC_OPER_LE:
+        1: 1007:            EvalResult = (WPValue <= CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1008:            break;
+        -: 1009:
+        -: 1010:        case LC_OPER_LT:
+        1: 1011:            EvalResult = (WPValue <  CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1012:            break;
+        -: 1013:
+        -: 1014:        case LC_OPER_EQ:
+        3: 1015:            EvalResult = (WPValue == CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        3: 1016:            break;
+        -: 1017:
+        -: 1018:        case LC_OPER_NE:
+        3: 1019:            EvalResult = (WPValue != CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        3: 1020:            break;
+        -: 1021:
+        -: 1022:        case LC_OPER_GT:
+        1: 1023:            EvalResult = (WPValue >  CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1024:            break;
+        -: 1025:
+        -: 1026:        case LC_OPER_GE:
+        1: 1027:            EvalResult = (WPValue >= CompareValue) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1028:            break;
+        -: 1029:
+        -: 1030:        default:
+        -: 1031:            /*
+        -: 1032:            ** This should have been caught before now, but we'll 
+        -: 1033:            ** handle it just in case we ever get here.
+        -: 1034:            */ 
+        1: 1035:            CFE_EVS_SendEvent(LC_WP_OPERID_ERR_EID, CFE_EVS_ERROR,
+        -: 1036:                              "WP has invalid operator ID: WP = %d, OperID = %d",
+        -: 1037:                              WatchIndex, OperatorID);
+        -: 1038:            
+        1: 1039:            EvalResult = LC_WATCH_ERROR;
+        -: 1040:            break;
+        -: 1041:        }
+        -: 1042:    
+       11: 1043:    return (EvalResult);
+        -: 1044:    
+        -: 1045:} /* end LC_UnsignedCompare */
+        -: 1046:
+        -: 1047:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1048:/*                                                                 */
+        -: 1049:/* Perform a floating point number comparison                      */
+        -: 1050:/*                                                                 */
+        -: 1051:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1052:uint8 LC_FloatCompare(uint16 WatchIndex,
+        -: 1053:                      LC_MultiType_t WPMultiType, 
+        -: 1054:                      LC_MultiType_t CompareMultiType)
+        8: 1055:{
+        -: 1056:    uint8   EvalResult;
+        -: 1057:    uint8   OperatorID;
+        -: 1058:    float   WPFloat;
+        -: 1059:    float   CompareFloat;
+        -: 1060:    float   Diff;
+        -: 1061:
+        8: 1062:    OperatorID      = LC_OperData.WDTPtr[WatchIndex].OperatorID;
+        -: 1063:   
+        -: 1064:    /*
+        -: 1065:    ** Before we do any comparison, check the watchpoint value for
+        -: 1066:    ** a floating point NAN (not-a-number). NAN comparisons don't
+        -: 1067:    ** work and can generate floating point exceptions. By contrast
+        -: 1068:    ** comparisons with infinite numbers will behave as they should
+        -: 1069:    ** so we don't try to catch those (we would rather they generate
+        -: 1070:    ** watchpoint violations).
+        -: 1071:    ** 
+        -: 1072:    ** The comparison (threshold) value comes from the Watchpoint
+        -: 1073:    ** Definition Table (WDT) and any weird values should get nailed
+        -: 1074:    ** during table validation.
+        -: 1075:    */
+        8: 1076:    if (LC_Uint32IsNAN(WPMultiType.Unsigned32) == FALSE)
+        -: 1077:    {
+        7: 1078:        WPFloat      = WPMultiType.Float32;
+        7: 1079:        CompareFloat = CompareMultiType.Float32;
+        -: 1080:        
+        7: 1081:        switch (OperatorID)
+        -: 1082:            {
+        -: 1083:            case LC_OPER_LE:
+        1: 1084:                EvalResult = (WPFloat <= CompareFloat) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1085:                break;
+        -: 1086:
+        -: 1087:            case LC_OPER_LT:
+        1: 1088:                EvalResult = (WPFloat <  CompareFloat) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1089:                break;
+        -: 1090:
+        -: 1091:            case LC_OPER_EQ:
+        1: 1092:                Diff = (WPFloat > CompareFloat) ? (WPFloat - CompareFloat) : (CompareFloat - WPFloat);
+        1: 1093:                EvalResult = (Diff <= (float) LC_FLOAT_TOLERANCE) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1094:                break;
+        -: 1095:                
+        -: 1096:            case LC_OPER_NE:
+        1: 1097:                Diff = (WPFloat > CompareFloat) ? (WPFloat - CompareFloat) : (CompareFloat - WPFloat);
+        1: 1098:                EvalResult = (Diff > (float) LC_FLOAT_TOLERANCE) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1099:                break;
+        -: 1100:                
+        -: 1101:            case LC_OPER_GT:
+        1: 1102:                EvalResult = (WPFloat >  CompareFloat) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1103:                break;
+        -: 1104:
+        -: 1105:            case LC_OPER_GE:
+        1: 1106:                EvalResult = (WPFloat >= CompareFloat) ? LC_WATCH_TRUE : LC_WATCH_FALSE;
+        1: 1107:                break;
+        -: 1108:
+        -: 1109:            default:
+        -: 1110:                /*
+        -: 1111:                ** This should have been caught before now, but we'll 
+        -: 1112:                ** handle it just in case we ever get here.
+        -: 1113:                */ 
+        1: 1114:                CFE_EVS_SendEvent(LC_WP_OPERID_ERR_EID, CFE_EVS_ERROR,
+        -: 1115:                                  "WP has invalid operator ID: WP = %d, OperID = %d",
+        -: 1116:                                  WatchIndex, OperatorID);
+        -: 1117:                
+        1: 1118:                EvalResult = LC_WATCH_ERROR;
+        -: 1119:                break;
+        -: 1120:                     
+        -: 1121:            } /*  end of switch  */
+        -: 1122:        
+        -: 1123:    } /* end LC_WPIsNAN if */
+        -: 1124:    else
+        -: 1125:    {
+        1: 1126:        CFE_EVS_SendEvent(LC_WP_NAN_ERR_EID, CFE_EVS_ERROR,
+        -: 1127:                          "WP data value is a float NAN: WP = %d, Value = 0x%08X",
+        -: 1128:                          WatchIndex, WPMultiType.Unsigned32);
+        -: 1129:        
+        1: 1130:        EvalResult = LC_WATCH_ERROR;
+        -: 1131:    }
+        -: 1132:    
+        8: 1133:    return (EvalResult);
+        -: 1134:    
+        -: 1135:} /* end LC_FloatCompare */
+        -: 1136:
+        -: 1137:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1138:/*                                                                 */
+        -: 1139:/* Checks if a defined watchpoint offset will send us past the     */ 
+        -: 1140:/* end of the received message                                     */
+        -: 1141:/*                                                                 */
+        -: 1142:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1143:boolean LC_WPOffsetValid(uint16             WatchIndex, 
+        -: 1144:                         CFE_SB_MsgPtr_t    MessagePtr)
+       41: 1145:{
+        -: 1146:    uint16          MsgLength;
+        -: 1147:    uint32          Offset;
+       41: 1148:    uint32          NumOfDataBytes = 0;
+       41: 1149:    boolean         OffsetValid    = TRUE; 
+       41: 1150:    CFE_SB_MsgId_t  MessageID      = 0;
+        -: 1151:    
+        -: 1152:    /*
+        -: 1153:    ** Check the message length against the watchpoint
+        -: 1154:    ** offset and data type to make sure we won't
+        -: 1155:    ** try to read past it.
+        -: 1156:    */
+       41: 1157:    switch (LC_OperData.WDTPtr[WatchIndex].DataType)
+        -: 1158:        {
+        -: 1159:        case LC_DATA_BYTE:
+        -: 1160:        case LC_DATA_UBYTE:
+       20: 1161:            NumOfDataBytes = sizeof (uint8);
+       20: 1162:            break;
+        -: 1163:
+        -: 1164:        case LC_DATA_WORD_BE:
+        -: 1165:        case LC_DATA_WORD_LE:
+        -: 1166:        case LC_DATA_UWORD_BE:
+        -: 1167:        case LC_DATA_UWORD_LE:
+        6: 1168:            NumOfDataBytes = sizeof (uint16);
+        6: 1169:            break;
+        -: 1170:
+        -: 1171:        case LC_DATA_DWORD_BE:
+        -: 1172:        case LC_DATA_DWORD_LE:
+        -: 1173:        case LC_DATA_UDWORD_BE:
+        -: 1174:        case LC_DATA_UDWORD_LE:
+        7: 1175:            NumOfDataBytes = sizeof (uint32);
+        7: 1176:            break;
+        -: 1177:            
+        -: 1178:        case LC_DATA_FLOAT_BE:
+        -: 1179:        case LC_DATA_FLOAT_LE:
+        7: 1180:            NumOfDataBytes = sizeof (float);
+        7: 1181:            break;
+        -: 1182:            
+        -: 1183:        default:
+        -: 1184:            /*
+        -: 1185:            ** This should have been caught before now, but we'll 
+        -: 1186:            ** handle it just in case we ever get here.
+        -: 1187:            */ 
+        1: 1188:            CFE_EVS_SendEvent(LC_WP_DATATYPE_ERR_EID, CFE_EVS_ERROR,
+        -: 1189:                              "WP has undefined data type: WP = %d, DataType = %d",
+        -: 1190:                              WatchIndex, LC_OperData.WDTPtr[WatchIndex].DataType);
+        -: 1191:            
+        1: 1192:            LC_OperData.WRTPtr[WatchIndex].WatchResult = LC_WATCH_ERROR;
+        1: 1193:            LC_OperData.WRTPtr[WatchIndex].CountdownToStale = 0;
+        -: 1194:            
+        1: 1195:            return (FALSE);
+        -: 1196:            break;
+        -: 1197:            
+        -: 1198:        } /* end switch */     
+        -: 1199:    
+       40: 1200:    MsgLength = CFE_SB_GetTotalMsgLength(MessagePtr);
+        -: 1201:    
+       40: 1202:    Offset = LC_OperData.WDTPtr[WatchIndex].WatchpointOffset;
+        -: 1203:    
+       40: 1204:    if ((Offset + NumOfDataBytes) > MsgLength)
+        -: 1205:    {
+        2: 1206:        OffsetValid = FALSE;   
+        -: 1207:
+        2: 1208:        MessageID = CFE_SB_GetMsgId(MessagePtr);
+        -: 1209:        
+        2: 1210:        CFE_EVS_SendEvent(LC_WP_OFFSET_ERR_EID, CFE_EVS_ERROR,
+        -: 1211:                "WP offset error: MID = %d, WP = %d, Offset = %d, DataSize = %d, MsgLen = %d",
+        -: 1212:                MessageID, WatchIndex, Offset, NumOfDataBytes, MsgLength);
+        -: 1213:        
+        2: 1214:        LC_OperData.WRTPtr[WatchIndex].WatchResult = LC_WATCH_ERROR;
+        2: 1215:        LC_OperData.WRTPtr[WatchIndex].CountdownToStale = 0;
+        -: 1216:    }
+        -: 1217:    
+       40: 1218:    return (OffsetValid);
+        -: 1219:   
+        -: 1220:} /* end LC_WPOffsetValid */
+        -: 1221:
+        -: 1222:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1223:/*                                                                 */
+        -: 1224:/* Get sized watchpoint data                                       */
+        -: 1225:/*                                                                 */
+        -: 1226:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -: 1227:boolean LC_GetSizedWPData(uint16 WatchIndex,
+        -: 1228:                          uint8  *WPDataPtr,
+        -: 1229:                          uint32 *SizedDataPtr)
+       39: 1230:{
+       39: 1231:    boolean Success    = TRUE;
+       39: 1232:    uint32  uint32Data = 0;
+       39: 1233:    uint16  uint16Data = 0;
+        -: 1234:
+       39: 1235:    int32   int32Data  = 0;
+       39: 1236:    int16   int16Data  = 0;
+       39: 1237:    int8    int8Data   = 0;
+        -: 1238:
+        -: 1239:    uint8   *uint8Ptr;
+       39: 1240:    uint8   *RawBytePtr = WPDataPtr;
+        -: 1241:    
+        -: 1242:    /*
+        -: 1243:    ** Use these OSAL compiler flags to figure out what
+        -: 1244:    ** the target's byte order is that LC was compiled for.
+        -: 1245:    ** We define these this way so if neither (or both) are
+        -: 1246:    ** defined, we'll get a build error
+        -: 1247:    */
+        -: 1248:#ifdef _STRUCT_HIGH_BIT_FIRST_
+        -: 1249:    int32 OurByteOrder = LC_BIG_ENDIAN;
+        -: 1250:#endif    
+        -: 1251:
+        -: 1252:#ifdef _STRUCT_LOW_BIT_FIRST_
+       39: 1253:    int32 OurByteOrder = LC_LITTLE_ENDIAN;
+        -: 1254:#endif
+        -: 1255:
+        -: 1256:    /* 
+        -: 1257:    ** Get the watchpoint data value (which may be on a misaligned
+        -: 1258:    ** address boundary) and put it into an unsigned 32 properly
+        -: 1259:    ** handling endian and sign extension issues 
+        -: 1260:    */
+       39: 1261:    switch (LC_OperData.WDTPtr[WatchIndex].DataType)
+        -: 1262:        {
+        -: 1263:        case LC_DATA_BYTE:
+       12: 1264:            int8Data   =   (int8) RawBytePtr[0];
+       12: 1265:            int32Data  =  (int32) int8Data;
+       12: 1266:            uint32Data = (uint32) int32Data;
+       12: 1267:            break;
+        -: 1268:              
+        -: 1269:        case LC_DATA_UBYTE:
+        6: 1270:            uint32Data = (uint32) RawBytePtr[0];
+        6: 1271:            break;
+        -: 1272:
+        -: 1273:        case LC_DATA_WORD_BE:
+        2: 1274:            uint8Ptr    = (uint8 *) &int16Data;
+        2: 1275:            if (OurByteOrder == LC_BIG_ENDIAN)
+        -: 1276:            {
+    #####: 1277:                uint8Ptr[0] = RawBytePtr[0];
+    #####: 1278:                uint8Ptr[1] = RawBytePtr[1];
+        -: 1279:            }
+        -: 1280:            else
+        -: 1281:            {
+        2: 1282:                uint8Ptr[0] = RawBytePtr[1];
+        2: 1283:                uint8Ptr[1] = RawBytePtr[0];
+        -: 1284:            }
+        2: 1285:            int32Data   =  (int32) int16Data;
+        2: 1286:            uint32Data  = (uint32) int32Data;
+        2: 1287:            break;
+        -: 1288:
+        -: 1289:        case LC_DATA_WORD_LE:
+        2: 1290:            uint8Ptr    = (uint8 *) &int16Data;
+        2: 1291:            if (OurByteOrder == LC_LITTLE_ENDIAN)
+        -: 1292:            {
+        2: 1293:                uint8Ptr[0] = RawBytePtr[0];
+        2: 1294:                uint8Ptr[1] = RawBytePtr[1];
+        -: 1295:            }
+        -: 1296:            else
+        -: 1297:            {
+    #####: 1298:                uint8Ptr[0] = RawBytePtr[1];
+    #####: 1299:                uint8Ptr[1] = RawBytePtr[0];
+        -: 1300:            }
+        2: 1301:            int32Data   =  (int32) int16Data;
+        2: 1302:            uint32Data  = (uint32) int32Data;
+        2: 1303:            break;
+        -: 1304:
+        -: 1305:        case LC_DATA_UWORD_BE:
+        1: 1306:            uint8Ptr    = (uint8 *) &uint16Data;
+        1: 1307:            if (OurByteOrder == LC_BIG_ENDIAN)
+        -: 1308:            {
+    #####: 1309:                uint8Ptr[0] = RawBytePtr[0];
+    #####: 1310:                uint8Ptr[1] = RawBytePtr[1];
+        -: 1311:            }
+        -: 1312:            else
+        -: 1313:            {
+        1: 1314:                uint8Ptr[0] = RawBytePtr[1];
+        1: 1315:                uint8Ptr[1] = RawBytePtr[0];
+        -: 1316:            }
+        1: 1317:            uint32Data  = (uint32) uint16Data;
+        1: 1318:            break;
+        -: 1319:            
+        -: 1320:        case LC_DATA_UWORD_LE:
+        1: 1321:            uint8Ptr    = (uint8 *) &uint16Data;
+        1: 1322:            if (OurByteOrder == LC_LITTLE_ENDIAN)
+        -: 1323:            {
+        1: 1324:                uint8Ptr[0] = RawBytePtr[0];
+        1: 1325:                uint8Ptr[1] = RawBytePtr[1];
+        -: 1326:            }
+        -: 1327:            else
+        -: 1328:            {
+    #####: 1329:                uint8Ptr[0] = RawBytePtr[1];
+    #####: 1330:                uint8Ptr[1] = RawBytePtr[0];
+        -: 1331:            }
+        1: 1332:            uint32Data  = (uint32) uint16Data;
+        1: 1333:            break;
+        -: 1334:
+        -: 1335:        case LC_DATA_DWORD_BE:
+        -: 1336:        case LC_DATA_UDWORD_BE:
+        -: 1337:        case LC_DATA_FLOAT_BE:
+       12: 1338:            uint8Ptr    = (uint8 *) &uint32Data;
+       12: 1339:            if (OurByteOrder == LC_BIG_ENDIAN)
+        -: 1340:            {
+    #####: 1341:                uint8Ptr[0] = RawBytePtr[0];
+    #####: 1342:                uint8Ptr[1] = RawBytePtr[1];
+    #####: 1343:                uint8Ptr[2] = RawBytePtr[2];
+    #####: 1344:                uint8Ptr[3] = RawBytePtr[3];
+        -: 1345:            }
+        -: 1346:            else
+        -: 1347:            {
+       12: 1348:                uint8Ptr[0] = RawBytePtr[3];
+       12: 1349:                uint8Ptr[1] = RawBytePtr[2];
+       12: 1350:                uint8Ptr[2] = RawBytePtr[1];
+       12: 1351:                uint8Ptr[3] = RawBytePtr[0];
+        -: 1352:            }
+       12: 1353:            break;
+        -: 1354:                
+        -: 1355:        case LC_DATA_DWORD_LE:
+        -: 1356:        case LC_DATA_UDWORD_LE:
+        -: 1357:        case LC_DATA_FLOAT_LE:
+        2: 1358:            uint8Ptr    = (uint8 *) &uint32Data;
+        2: 1359:            if (OurByteOrder == LC_LITTLE_ENDIAN)
+        -: 1360:            {
+        2: 1361:                uint8Ptr[0] = RawBytePtr[0];
+        2: 1362:                uint8Ptr[1] = RawBytePtr[1];
+        2: 1363:                uint8Ptr[2] = RawBytePtr[2];
+        2: 1364:                uint8Ptr[3] = RawBytePtr[3];
+        -: 1365:            }
+        -: 1366:            else
+        -: 1367:            {
+    #####: 1368:                uint8Ptr[0] = RawBytePtr[3];
+    #####: 1369:                uint8Ptr[1] = RawBytePtr[2];
+    #####: 1370:                uint8Ptr[2] = RawBytePtr[1];
+    #####: 1371:                uint8Ptr[3] = RawBytePtr[0];
+        -: 1372:            }
+        2: 1373:            break;
+        -: 1374:            
+        -: 1375:        default:
+        -: 1376:            /*
+        -: 1377:            ** This should have been caught before now, but we'll 
+        -: 1378:            ** handle it just in case we ever get here.
+        -: 1379:            */ 
+        1: 1380:            CFE_EVS_SendEvent(LC_WP_DATATYPE_ERR_EID, CFE_EVS_ERROR,
+        -: 1381:                              "WP has undefined data type: WP = %d, DataType = %d",
+        -: 1382:                              WatchIndex, LC_OperData.WDTPtr[WatchIndex].DataType);
+        -: 1383:            
+        1: 1384:            LC_OperData.WRTPtr[WatchIndex].WatchResult = LC_WATCH_ERROR;
+        1: 1385:            LC_OperData.WRTPtr[WatchIndex].CountdownToStale = 0;
+        -: 1386:            
+        1: 1387:            Success = FALSE;
+        -: 1388:            break;
+        -: 1389:            
+        -: 1390:        } /* end switch */     
+        -: 1391:    
+        -: 1392:    /*
+        -: 1393:    ** Set result value
+        -: 1394:    */
+       39: 1395:    *SizedDataPtr = uint32Data;
+        -: 1396:    
+        -: 1397:    /*
+        -: 1398:    ** Return success flag
+        -: 1399:    */
+       39: 1400:    return (Success);
+        -: 1401:    
+        -: 1402:} /* end LC_GetSizedWPData */
+        -: 1403:
+        -: 1404:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1405:/*                                                                 */
+        -: 1406:/* Validate the watchpoint definition table (WDT)                  */
+        -: 1407:/*                                                                 */
+        -: 1408:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -: 1409:int32 LC_ValidateWDT(void *TableData)
+        7: 1410:{
+        7: 1411:    LC_WDTEntry_t *TableArray = (LC_WDTEntry_t *) TableData;
+        -: 1412:
+        7: 1413:    int32 EntryResult = LC_WDTVAL_NO_ERR;
+        7: 1414:    int32 TableResult = CFE_SUCCESS;
+        -: 1415:    int32 TableIndex;
+        -: 1416:    
+        -: 1417:    uint8  DataType;
+        -: 1418:    uint8  OperatorID;
+        -: 1419:    uint16 MessageID;
+        -: 1420:    uint32 CompareValue;
+        -: 1421:    
+        7: 1422:    int32 GoodCount   = 0;
+        7: 1423:    int32 BadCount    = 0;
+        7: 1424:    int32 UnusedCount = 0;
+        -: 1425:
+        -: 1426:    /*
+        -: 1427:    ** Verify each entry in the pending watchpoint definition table
+        -: 1428:    */
+     1239: 1429:    for (TableIndex = 0; TableIndex < LC_MAX_WATCHPOINTS; TableIndex++ )
+        -: 1430:    {
+     1232: 1431:        DataType     = TableArray[TableIndex].DataType;
+     1232: 1432:        OperatorID   = TableArray[TableIndex].OperatorID;
+     1232: 1433:        MessageID    = TableArray[TableIndex].MessageID;
+     1232: 1434:        CompareValue = TableArray[TableIndex].ComparisonValue.Unsigned32;
+        -: 1435:
+     1232: 1436:        if (DataType == LC_WATCH_NOT_USED)
+        -: 1437:        {
+        -: 1438:            /*
+        -: 1439:            ** Unused table entry
+        -: 1440:            */
+     1225: 1441:            UnusedCount++;
+        -: 1442:        }
+        8: 1443:        else if ((DataType != LC_DATA_BYTE)      &&
+        -: 1444:                 (DataType != LC_DATA_UBYTE)     &&
+        -: 1445:                 (DataType != LC_DATA_BYTE)      &&
+        -: 1446:                 (DataType != LC_DATA_UBYTE)     &&
+        -: 1447:                 (DataType != LC_DATA_WORD_BE)   &&
+        -: 1448:                 (DataType != LC_DATA_WORD_LE)   &&
+        -: 1449:                 (DataType != LC_DATA_UWORD_BE)  &&
+        -: 1450:                 (DataType != LC_DATA_UWORD_LE)  &&
+        -: 1451:                 (DataType != LC_DATA_DWORD_BE)  &&
+        -: 1452:                 (DataType != LC_DATA_DWORD_LE)  &&
+        -: 1453:                 (DataType != LC_DATA_UDWORD_BE) &&
+        -: 1454:                 (DataType != LC_DATA_UDWORD_LE) &&
+        -: 1455:                 (DataType != LC_DATA_FLOAT_BE)  &&
+        -: 1456:                 (DataType != LC_DATA_FLOAT_LE))
+        -: 1457:        {
+        -: 1458:            /*
+        -: 1459:            ** Invalid data type
+        -: 1460:            */
+        1: 1461:            BadCount++;
+        1: 1462:            EntryResult = LC_WDTVAL_ERR_DATATYPE;
+        -: 1463:        }
+        7: 1464:        else if ((OperatorID != LC_OPER_LT)  &&
+        -: 1465:                 (OperatorID != LC_OPER_LT)  &&
+        -: 1466:                 (OperatorID != LC_OPER_LE)  &&
+        -: 1467:                 (OperatorID != LC_OPER_NE)  &&
+        -: 1468:                 (OperatorID != LC_OPER_EQ)  &&
+        -: 1469:                 (OperatorID != LC_OPER_GE)  &&
+        -: 1470:                 (OperatorID != LC_OPER_GT)  &&
+        -: 1471:                 (OperatorID != LC_OPER_CUSTOM))
+        -: 1472:        {
+        -: 1473:            /*
+        -: 1474:            ** Invalid operator
+        -: 1475:            */
+        1: 1476:            BadCount++;
+        1: 1477:            EntryResult = LC_WDTVAL_ERR_OPER;
+        -: 1478:        }
+        5: 1479:        else if (MessageID > CFE_SB_HIGHEST_VALID_MSGID)
+        -: 1480:        {
+        -: 1481:            /*
+        -: 1482:            ** Bad message ID (limit set by configuration parameter,
+        -: 1483:            ** see cfe_platform_cfg.h)
+        -: 1484:            */
+        1: 1485:            BadCount++;
+        1: 1486:            EntryResult = LC_WDTVAL_ERR_MID;
+        -: 1487:        }
+        7: 1488:        else if ((DataType == LC_DATA_FLOAT_BE) ||
+        -: 1489:                 (DataType == LC_DATA_FLOAT_LE))
+        -: 1490:        {
+        -: 1491:            /*
+        -: 1492:            ** Check the floating point comparison value for
+        -: 1493:            ** NAN (not-a-number) or infinite values
+        -: 1494:            */
+        3: 1495:            if (LC_Uint32IsNAN(CompareValue) == TRUE)
+        -: 1496:            {
+        1: 1497:                BadCount++;
+        1: 1498:                EntryResult = LC_WDTVAL_ERR_FPNAN;
+        -: 1499:            }
+        2: 1500:            else if (LC_Uint32IsInfinite(CompareValue) == TRUE)
+        -: 1501:            {
+        1: 1502:                BadCount++;
+        1: 1503:                EntryResult = LC_WDTVAL_ERR_FPINF;
+        -: 1504:            }
+        -: 1505:            else
+        -: 1506:            {
+        -: 1507:                /*
+        -: 1508:                ** We passed all checks for this floating point entry
+        -: 1509:                */
+        1: 1510:                GoodCount++;
+        -: 1511:            }
+        -: 1512:        }
+        -: 1513:        else
+        -: 1514:        {
+        -: 1515:            /*
+        -: 1516:            ** We passed all checks for this non-floating point entry
+        -: 1517:            */
+        1: 1518:            GoodCount++;
+        -: 1519:        }
+        -: 1520:        
+        -: 1521:        /*
+        -: 1522:        ** Generate detailed event for "first" error
+        -: 1523:        */
+     1232: 1524:        if ((EntryResult != LC_WDTVAL_NO_ERR) && (TableResult == CFE_SUCCESS))
+        -: 1525:        {
+        7: 1526:            if ((EntryResult == LC_WDTVAL_ERR_FPNAN) ||
+        -: 1527:                (EntryResult == LC_WDTVAL_ERR_FPINF))
+        -: 1528:            {
+        2: 1529:                CFE_EVS_SendEvent(LC_WDTVAL_FPERR_EID, CFE_EVS_ERROR,
+        -: 1530:                        "WDT verify float err: WP = %d, Err = %d, ComparisonValue = 0x%08X",
+        -: 1531:                        TableIndex, EntryResult, CompareValue);
+        -: 1532:            }
+        -: 1533:            else
+        -: 1534:            {
+        3: 1535:                CFE_EVS_SendEvent(LC_WDTVAL_ERR_EID, CFE_EVS_ERROR,
+        -: 1536:                        "WDT verify err: WP = %d, Err = %d, DType = %d, Oper = %d, MID = %d",
+        -: 1537:                        TableIndex, EntryResult, DataType, OperatorID, MessageID);
+        -: 1538:            }
+        -: 1539:            
+        5: 1540:            TableResult = EntryResult;
+        -: 1541:        }
+        -: 1542:        
+        -: 1543:    } /* end TableIndex for */
+        -: 1544:    
+        -: 1545:    /*
+        -: 1546:    ** Generate informational event with error totals
+        -: 1547:    */
+        7: 1548:    CFE_EVS_SendEvent(LC_WDTVAL_INF_EID, CFE_EVS_INFORMATION,
+        -: 1549:                     "WDT verify results: good = %d, bad = %d, unused = %d",
+        -: 1550:                      GoodCount, BadCount, UnusedCount);
+        -: 1551:
+        7: 1552:    return(TableResult);
+        -: 1553:    
+        -: 1554:} /* end LC_ValidateWDT */
+        -: 1555:
+        -: 1556:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1557:/*                                                                 */
+        -: 1558:/* Test if a 32 bit integer's value would be a floating point      */
+        -: 1559:/* NAN (not-a-number). Assumes IEEE-754 floating point format      */
+        -: 1560:/*                                                                 */
+        -: 1561:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -: 1562:boolean LC_Uint32IsNAN(uint32 Data)
+       11: 1563:{
+       11: 1564:    boolean Result = FALSE;
+        -: 1565:    uint32  Exponent;
+        -: 1566:    uint32  Fraction;
+        -: 1567:    
+        -: 1568:    /*
+        -: 1569:    ** Check if the exponent field is all 1's
+        -: 1570:    */
+       11: 1571:    Exponent = Data & 0x7F800000;
+        -: 1572:    
+       11: 1573:    if (Exponent == 0x7F800000)
+        -: 1574:    {
+        -: 1575:        /*
+        -: 1576:        ** If the fraction field is also non-zero,
+        -: 1577:        ** it's a NAN
+        -: 1578:        */
+        3: 1579:        Fraction = Data & 0x007FFFFF;
+        -: 1580:        
+        3: 1581:        if (Fraction > 0)
+        -: 1582:        {
+        2: 1583:            Result = TRUE;
+        -: 1584:        }
+        -: 1585:    }
+        -: 1586:    
+       11: 1587:    return (Result);
+        -: 1588:    
+        -: 1589:} /* end LC_Uint32IsNAN */
+        -: 1590:
+        -: 1591:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1592:/*                                                                 */
+        -: 1593:/* Test if a 32 bit integer's value would be an infinite           */
+        -: 1594:/* (positive or negative) floating point number. Assumes           */
+        -: 1595:/* IEEE-754 floating point format                                  */
+        -: 1596:/*                                                                 */
+        -: 1597:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -: 1598:boolean LC_Uint32IsInfinite(uint32 Data)
+        2: 1599:{
+        2: 1600:    boolean Result = FALSE;
+        -: 1601:    uint32  Exponent;
+        -: 1602:    uint32  Fraction;
+        -: 1603:    
+        -: 1604:    /*
+        -: 1605:    ** Check if the exponent field is all 1's
+        -: 1606:    */
+        2: 1607:    Exponent = Data & 0x7F800000;
+        -: 1608:    
+        2: 1609:    if (Exponent == 0x7F800000)
+        -: 1610:    {
+        -: 1611:        /*
+        -: 1612:        ** If the fraction field is also zero,
+        -: 1613:        ** it's infinite
+        -: 1614:        */
+        1: 1615:        Fraction = Data & 0x007FFFFF;
+        -: 1616:        
+        1: 1617:        if (Fraction == 0)
+        -: 1618:        {
+        1: 1619:            Result = TRUE;
+        -: 1620:        }
+        -: 1621:    }
+        -: 1622:    
+        2: 1623:    return (Result);
+        -: 1624:    
+        -: 1625:} /* end LC_Uint32IsInfinite */
+        -: 1626:
+        -: 1627:
+        -: 1628:/************************/
+        -: 1629:/*  End of File Comment */
+        -: 1630:/************************/

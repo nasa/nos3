@@ -1,0 +1,61 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+System cfs {
+  prototype U1 U8 {}
+  prototype U21 U16 {}
+  prototype U4321 U32 {}
+  prototype I1 I8 {}
+  prototype I21 I16 {}
+  prototype I4321 I32 {}
+  prototype F4321 F32 {}
+  prototype F87654321 F64 {}
+  prototype S1 S8 {}
+  prototype S8 FileName { lengthInCharacters=64 }
+  prototype S8 AppName { lengthInCharacters=20 }
+  prototype S8 TableName { lengthInCharacters=38 }
+  prototype RTIME44 Date64 {}
+
+  prototype Structure FileHeader {
+    cfs.U32 contentType { conversion=cfs.cnv.contentType }
+    cfs.U32 subType {}
+    cfs.U32 length {}
+    cfs.U32 spacecraftId {}
+    cfs.U32 processorId {}
+    cfs.U32 processId {} /**<-- was "ApplicationId", but that's used */
+    cfs.Date64 createTime {}
+    cfs.S8 description { lengthInCharacters=32 }
+  }
+
+  prototype TelemetryPacket File {
+    FileHeader fh {}
+  }
+
+  prototype Structure TableHeader {
+    cfs.U32 reserved {}
+    cfs.U32 byteOffset {}
+    cfs.U32 numBytes {}
+    cfs.TableName name {}
+  }
+
+  prototype TelemetryPacket Table {
+    FileHeader fh {}
+    TableHeader th {}
+  }
+
+  System cnv {
+    DiscreteConversion contentType {
+      Dsc cFE1 { range=1665549617, fgColor=black, bgColor=white }
+    }
+  }
+}
+

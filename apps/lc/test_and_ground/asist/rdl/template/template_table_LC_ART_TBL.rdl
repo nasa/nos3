@@ -1,0 +1,57 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: November 15, 2008
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu LC ART 
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2008/11/15  B. Medina  initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definition
+!       2012/08/08  W. Moleski Modified Not Measured state to Stale
+!==============================================================================
+!
+#include "lc_msgdefs.h"
+#include "lc_tbldefs.h"
+#include "lc_platform_cfg.h"
+TYPES
+   RECORD $sc_$cpu_LC_ARTEntry  DESC="$sc $cpu LC AP Results Table Entry"
+     UB  ActionResult           DESC="Results for the last sample of this AP",
+                                DISCRETE, DRANGE=(0,1,2,255),
+                                DLABEL=("Pass","Fail","Error","Stale")
+
+     UB  CurrentState           DESC="Current state of this AP",
+                                DISCRETE, DRANGE=(1,2,3,4),
+                                DLABEL=("Active","Passive","Disabled","Permanently Disabled")
+     UI  Padding
+     ULI PassiveAPCount         DESC="How many times this APs RTS has not been invoked because the AP was passive"
+     ULI FailToPassCount        DESC="How many times this AP has transition from Fail to Pass"
+     ULI PassToFailCount        DESC="How many times this AP has transition from Pass to Fail"
+     ULI ConsecutiveFailCount   DESC="Number of consecutive times this AP has evaluated to Fail"
+     ULI CumulativeFailCount    DESC="Total number of times this AP has evaluated to Fail"
+     ULI CumulativeRTSExecCount DESC="Total number of times an RTS request has been sent for this AP"
+   END
+END_TYPES
+
+! LC AP Results Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu LC AP Definition Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_LC_ARTEntry $sc_$cpu_LC_ART[0 .. LC_MAX_ACTIONPOINTS-1]  DESC="$sc $cpu LC AP Results Table"
+!
+END
+

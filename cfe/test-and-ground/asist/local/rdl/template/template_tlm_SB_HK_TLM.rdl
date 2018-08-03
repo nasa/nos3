@@ -1,0 +1,82 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Mar 31 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SB Telemetry Data Packet
+!       Packet Length:  21 Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/03/25  SMA             : Initial
+!  2005/08/25  SMA             : Change System Error Counter to spare (cFE B3)
+!  2005/11/10  SMA             : Shift NewPipeEC, SubscrEC, and add EvtLogCtr 
+!                              : per RJ request.
+!  2007/09/20  WFM             : Changed EvtLogCtr to a spare
+!  2009/02/06  WFM             : Added 2 new ULI parameters at end of packet
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SB Telemetry Data Packet",
+                        STALE = 36
+!
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_SB_CMDPC      DESC="$sc $cpu SB Command Processed Counter",
+                              UNITS=Counts
+!
+  UB   $sc_$cpu_SB_CMDEC      DESC="$sc $cpu SB Command Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_NoSubEC    DESC="$sc $cpu SB No Subscribers Error Counter",
+                              UNITS=Counts
+!
+  UB   $sc_$cpu_SB_MsgSndEC   DESC="$sc $cpu SB Message Send Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_MsgRecEC   DESC="$sc $cpu SB Message Receive Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_InternalEC DESC="$sc $cpu SB Internal Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_NewPipeEC  DESC="$sc $cpu SB Create Pipe Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_SubscrEC   DESC="$sc $cpu SB Subscribe Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SB_Spare      DESC="$sc $cpu SB spare",
+			      UNITS=Counts
+!
+  UB   $sc_$cpu_SB_DupSubCnt  DESC="$sc $cpu SB Duplicate Subscription Counter",
+			      UNITS=Counts
+!
+  UB   $sc_$cpu_SB_Spare2Align[2]   DESC="$sc $cpu SB fill bytes for 32-bit alignment"
+!
+  UI   $sc_$cpu_SB_PipeOvrEC  DESC="$sc $cpu SB Pipe Overflow Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  UI   $sc_$cpu_SB_MsgLimEC   DESC="$sc $cpu SB Message ID to Pipe Limit Error Counter",
+                              UNITS=Counts, YH=1, DOLIMIT
+!
+  ULI   $sc_$cpu_SB_MemPoolHdl DESC="$sc $cpu SB Memory Pool handle"
+!
+  ULI   $sc_$cpu_SB_MemInUse DESC="$sc $cpu SB Memory bytets currently in use"
+!
+  ULI   $sc_$cpu_SB_UnMarkedMem DESC="$sc $cpu SB Memory Buffer Bytes minus Peak Memory in use."
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

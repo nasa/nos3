@@ -1,0 +1,61 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Aug 25 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SB Pipe File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/08/25  SMA      : Initial
+!  2009/12/09  WFM	: Modified PE[256] to use the cFE configuration
+!			: parameter CFE_SB_MAX_PIPES
+!  2010/11/17  WFM	: Added a second buffer parameter added in cFE 6.1.0
+!                                                             
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_SB_PipeEntry                      DESC="$sc $cpu SB Pipe Entry"
+          UB  $sc_$cpu_SBPF_InUse                        DESC="$sc $cpu In Use"
+ SB_PIPEID_T  $sc_$cpu_SBPF_PipeID                       DESC="$sc $cpu Pipe Id"
+        CHAR  $sc_$cpu_SBPF_PipeName[OS_MAX_API_NAME]    DESC="$sc $cpu Pipe Name" 
+        CHAR  $sc_$cpu_SBPF_AppName[OS_MAX_API_NAME]     DESC="$sc $cpu Application Name"
+          UI  $sc_$cpu_SBPF_Spare                        DESC="$sc $cpu Spare"
+         ULI  $sc_$cpu_SBPF_TaskId                       DESC="$sc $cpu Task Id"
+         ULI  $sc_$cpu_SBPF_SysQId                       DESC="$sc $cpu System Queue Id"
+         ULI  $sc_$cpu_SBPF_LastSender                   DESC="$sc $cpu Last Sender"
+          UI  $sc_$cpu_SBPF_QDepth                       DESC="$sc $cpu Queue Depth"
+          UI  $sc_$cpu_SBPF_SendErrs                     DESC="$sc $cpu Send Errors"
+         ULI $sc_$cpu_SBPF_Buffer                        DESC="$sc $cpu Current Buffer"
+         ULI $sc_$cpu_SBPF_Buffer2                       DESC="$sc $cpu Trash Buffer"
+    END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SB PIPE File", VARYING
+!
+#include "cfe_file_header.rdl"
+
+$sc_$cpu_SB_PipeEntry   $sc_$cpu_PE[CFE_SB_MAX_PIPES] DESC="$sc $cpu SB Pipes"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+
+ 

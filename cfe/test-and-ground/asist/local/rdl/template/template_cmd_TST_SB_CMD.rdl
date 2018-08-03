@@ -1,0 +1,93 @@
+!===============================================================================
+!                Originator:      T. Clement
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu SB Test App Commands
+!                  ================================
+!
+!       Packet Application ID: nnnn
+!       Packet Title: $sc $cpu SB Test App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  27JUN05     TGC          : Initial
+!  03JAN06     SMA          : Updates per tst_sb_task.h revision 1.4
+!  01MAR06     WFM	    : Added 2 new commands for new test app version
+!  29MAR06     WFM	    : Added the IncrementNewPipeEC command
+!  26NOV07     WFM	    : Added the FillPipe command
+!  12AUG09     WFM	    : Added the SendMaxMsgZeroCopy command
+!  17AUG09     WFM	    : Added the PassMsg and PassMsgZeroCopy commands
+!
+!===============================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu SB Test App Commands"
+!
+  CMD  $sc_$cpu_TST_SB_NOOP        	   FCTN=0, DESC="$sc $cpu SB Test App no-operation"
+!                                   
+  CMD  $sc_$cpu_TST_SB_RESETCTRS    	   FCTN=1, DESC="$sc $cpu SB Test App reset counters"
+!
+  CMD  $sc_$cpu_TST_SB_EnablePipe          FCTN=2, DESC="$sc $cpu SB Test App enable pipe"
+!
+  CMD  $sc_$cpu_TST_SB_DisablePipe         FCTN=3, DESC="$sc $cpu SB Test App disable pipe"
+!
+  CMDS  $sc_$cpu_TST_SB_DeletePipe         FCTN=4, DESC="$sc $cpu SB Test App delete pipe"
+   UB PIPEID                       DESC="Pipe Id"
+  END
+!
+  CMD  $sc_$cpu_TST_SB_SendMsg0            FCTN=5, DESC="$sc $cpu SB Test App send id 0 msg"
+!
+  CMD  $sc_$cpu_TST_SB_SendMsg1            FCTN=6, DESC="$sc $cpu SB Test App send id 1 msg"
+!
+  CMD  $sc_$cpu_TST_SB_SendMsg2            FCTN=7, DESC="$sc $cpu SB Test App send id 2 msg"
+!
+  CMD  $sc_$cpu_TST_SB_ProcessOnePipeMsg   FCTN=8, DESC="$sc $cpu SB Test App Process One Pipe Message"
+!
+  CMD  $sc_$cpu_TST_SB_SendMaxMsg          FCTN=9, DESC="$sc $cpu SB Test App Send Max Size Message"
+!
+  CMD  $sc_$cpu_TST_SB_SendMaxMsgP1        FCTN=10, DESC="$sc $cpu SB Test App Send Max Size Message plus 1"
+!
+  CMD  $sc_$cpu_TST_SB_SendMaxMsgP1ZC      FCTN=11, DESC="$sc $cpu SB Test App Send Max Size Message plus 1 Zero Copy"
+!
+  CMD  $sc_$cpu_TST_SB_SendBadLngthMsg     FCTN=12, DESC="$sc $cpu SB Test App Send Bad Length Message command"
+!
+  CMDS  $sc_$cpu_TST_SB_UnsubPipe          FCTN=13, DESC="$sc $cpu SB Test App Unsubscribe Pipe"
+   UI MSGID                        DESC="Message Id"
+   UB PIPEID                       DESC="Pipe Id"
+   UB FILLER                       DESC="FILLER", STATIC, INVISIBLE, DEFAULT=0
+  END                           
+!
+  CMD $sc_$cpu_TST_SB_InfiniteTimeout      FCTN=14, DESC="$sc $cpu SB Test App Infinite Timeout"
+!
+  CMD $sc_$cpu_TST_SB_IncrementMsgRcvEC    FCTN=15, DESC="$sc $cpu SB Test App Increment Message Receive Error Counter"
+!
+  CMD $sc_$cpu_TST_SB_IncrementSubsEC      FCTN=16, DESC="$sc $cpu SB Test App Increment Subscribe Error Counter"
+!
+  CMD $sc_$cpu_TST_SB_IncrementNewPipeEC   FCTN=17, DESC="$sc $cpu SB Test App Increment New Pipe Error Counter"
+!
+  CMDS $sc_$cpu_TST_SB_MaxMsgIDs           FCTN=18, DESC="$sc $cpu SB Test App Max Message IDs command"
+   UI MSGID                        DESC="Message Id"
+   UB PIPEID                       DESC="Pipe Id"
+   UB FILLER                       DESC="FILLER", STATIC, INVISIBLE, DEFAULT=0
+  END                           
+!
+  CMD $sc_$cpu_TST_SB_FillPipe             FCTN=19, DESC="$sc $cpu SB Test App Fill Pipe Command"
+!
+  CMD  $sc_$cpu_TST_SB_SendMaxMsgZC        FCTN=20, DESC="$sc $cpu SB Test App Send Max Size Message Zero Copy"
+!
+  CMD  $sc_$cpu_TST_SB_PassMsg             FCTN=21, DESC="$sc $cpu SB Test App Pass Message Command"
+!
+  CMD  $sc_$cpu_TST_SB_PassMsgZC           FCTN=22, DESC="$sc $cpu SB Test App Pass Message Zero Copy"
+!
+  CMDS  $sc_$cpu_TST_SB_SendMsg           FCTN=23, DESC="$sc $cpu SB Test App Send Msg"
+    ULI MsgSize		DESC="Size in bytes of message to send"
+  END
+!
+  CMD  $sc_$cpu_TST_SB_ZCGetPtr           FCTN=24, DESC="$sc $cpu SB Test App Zero Copy Get Pointer"
+!
+  CMD  $sc_$cpu_TST_SB_ZCReleasePtr       FCTN=25, DESC="$sc $cpu SB Test App Zero Copy Release Pointer"
+!
+END       !END PACKET
+!
+!======================================================================================================

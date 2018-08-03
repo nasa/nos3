@@ -1,0 +1,36 @@
+!=============================================================
+!
+!                Originator: M. Bartholomew
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                 cFE Telemetry Packet # 08 (dec)
+!                 =================================
+!
+!       Packet Application ID: BOX_BASE + x'08'
+!       Packet Title:  cFE Event Packet for the $CPU_ processor
+!       Packet Length:  ??? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  31MAR05  MOB             ; Initial release
+!=============================================================
+
+PACKET P08 APID=08, DESC="cFE $CPU_ Event Packet", STALE = 36
+#include "ccsds_header.rdl"
+
+   UI   $SC_$CPU_EVS_SCID,         desc= "Spacecraft ID that originated the event"
+   UI   $SC_$CPU_EVS_PROCESSORID,  desc= "Processor ID that originated the event",
+                DISCRETE, DRANGE=(1,2,3),DLABEL=("CDH", "PSE", "ACE")
+   UI   $SC_$CPU_EVS_TASKID,       desc= "Task ID that originated the event"
+   UI   $SC_$CPU_EVS_EVENTID,      desc= "Event ID"
+   UI   $SC_$CPU_EVS_EVENTTYPE,    desc= "Event Type"
+   CHAR $SC_$CPU_EVS_EVENT[122]    desc= "cFE CDH Event Packet"
+
+END

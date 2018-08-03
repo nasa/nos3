@@ -1,0 +1,81 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 10 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TBL Registry Info Packet
+!       Packet Length:  ? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/11/10  SMA           : Initial
+!  2005/11/15  MOB           : Added 2 spare bytes at the end for alignment
+!  2005/11/15  SMA           : Removed stale parameter.
+!  2006/06/08  WFM           : Modified to reflect cFE 3.3 changes
+!  2007/07/06  WFM           : Added Critical flag
+!  2010/11/16  WFM           : Added CRC after Size
+!  2014/08/27  WFM           : Removed TBL_NAME_LEN #define and added comments
+!
+!==============================================================================
+!
+!! OS_MAX_PATH_LEN and OS_MAX_API_NAME are defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_types.rdl file
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TBL Registry Info Packet"
+!
+#include "ccsds_header.rdl"
+! 
+  ULI  $sc_$cpu_TBL_SIZE        DESC="$sc $cpu TBL Size (bytes)"
+!
+  ULI  $sc_$cpu_TBL_CRC         DESC="$sc $cpu TBL CRC"
+!
+  ULI  $sc_$cpu_TBL_ActBufAdd   DESC="$sc $cpu TBL Active Buffer Address"
+!
+  ULI  $sc_$cpu_TBL_IActBufAdd  DESC="$sc $cpu TBL Inactive Buffer Address"
+!
+  ULI  $sc_$cpu_TBL_ValFuncPtr  DESC="$sc $cpu TBL Validation Function Pointer"
+!
+  RECORD $sc_$cpu_TBL_TimeLastUpd DESC="$sc $cpu TBL Time of Last Update"
+    ULI $sc_$cpu_TBL_TLUSECONDS
+    ULI $sc_$cpu_TBL_TLUSUBSECONDS
+  END
+!
+  ULI $sc_$cpu_TBL_FILECSECONDS	DESC="$sc $cpu TBL File Create Time (seconds)"
+  ULI $sc_$cpu_TBL_FILECSUBSECONDS DESC="$sc $cpu TBL File Create Time (subseconds)"
+!
+  UB   $sc_$cpu_TBL_LoadedOnce  DESC="$sc $cpu TBL Loaded at Least Once Flag", DISCRETE, 
+                                DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TBL_UpdatePndng DESC="$sc $cpu TBL Activated but Not Yet Updated", DISCRETE,
+                                DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TBL_DumpOnly    DESC="$sc $cpu TBL Dump Only Indicator", DISCRETE,
+                                DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TBL_DblBuffered DESC="$sc $cpu TBL Double buffered Indicator",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!  
+  CHAR  $sc_$cpu_TBL_Name[TBL_NAME_LEN]  DESC="$sc $cpu Table Name"
+!
+  CHAR  $sc_$cpu_TBL_LastFileUpd[OS_MAX_PATH_LEN]   DESC="$sc $cpu Filename of last file updated"
+!
+  CHAR  $sc_$cpu_TBL_OwnerApp[OS_MAX_API_NAME]  DESC="$sc $cpu Owning Application Name"
+!
+  UB   $sc_$cpu_TBL_CritFlag	DESC="$sc $cpu Critical TBL Flag",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TBL_Spare4[3]   DESC="$sc $cpu TBL Spare4"
+!
+!
+END

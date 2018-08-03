@@ -1,0 +1,40 @@
+!==============================================================================
+!
+!                Originator: T. Clement	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Jul 05 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TST SB Test Application Telemetry Data Packet
+!       Packet Length:  16  Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/07/05  TGC             : Initial
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST SB Telemetry Data Packet",
+                        STALE = 36
+!
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_TST_SB_CMDPC    DESC="$sc $cpu TST SB Command Processed Counter",
+                                UNITS=Counts
+!
+  UB   $sc_$cpu_TST_SB_CMDEC    DESC="$sc $cpu SB Command Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

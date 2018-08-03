@@ -1,0 +1,63 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: November 15, 2008
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu LC WDT 
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2008/11/15  B. Medina  initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definition
+!       2012/08/08  W. Moleski Added StaleAge to WDTEntry record
+!==============================================================================
+!
+#include "lc_msgdefs.h"
+#include "lc_tbldefs.h"
+#include "lc_platform_cfg.h"
+TYPES
+   RECORD $sc_$cpu_LC_WDTEntry  DESC="$sc $cpu LC WP Definition Table Entry"
+     UB  DataType	DESC="WP Data Type", DISCRETE,
+			DRANGE=(1,2,3,4,5,6,7,8,9,10,11,12,255),
+                        DLABEL=("Byte","UBYTE","WORD_BE","WORD_LE","UWORD_BE",
+			"UWORD_LE","DWORD_BE","DWORD_LE","UDWORD_BE",
+			"UDWORD_LE","FLOAT_BE","FLOAT_LE","empty entry")
+     UB   OperatorID	DESC="Comparison Type", DISCRETE,
+			DRANGE=(1,2,3,4,5,6,7,255),
+                        DLABEL=("<","<=","!=","==",">=",">","Custom Function",
+			"empty entry")
+    UI   MessageID	DESC="Message ID for the message containing the WP"
+    ULI  WPOffset       DESC="Byte offset from the beginning of the message (including any headers) to the WP"
+    ULI  BitMask	DESC="Value to be masked with WP data prior to comparison"
+    
+    UNION  ComparisonValue  DESC="Value WP Data is compared against"
+       SLI   Signed32       DESC="compare signed"
+       ULI   UnSigned32     DESC="compare unsigned" 
+       SFP   Float32        DESC="compare float", ORDER=(1,2,3,4)
+    END                                 
+    ULI  StaleAge	    DESC="Number of LC Sample AP commands that must be processed for result to go Stale"
+    ULI  CustFctArgument    DESC="Data passed to the custom function when the OperatorID is set to custom"
+   END
+END_TYPES
+
+! LC WP Definition Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu LC WP Definition Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_LC_WDTEntry $sc_$cpu_LC_WDT[0 .. LC_MAX_WATCHPOINTS-1]  DESC="$sc $cpu LC WP Definition Table"
+!
+END
+

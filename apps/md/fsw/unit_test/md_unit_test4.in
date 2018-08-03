@@ -1,0 +1,222 @@
+;
+; File:
+;   $Id: md_unit_test4.in 1.8 2012/01/09 19:28:13EST aschoeni Exp  $
+;
+; Notes:
+;   $Log: md_unit_test4.in  $
+;   Revision 1.8 2012/01/09 19:28:13EST aschoeni 
+;   Updated to support newest versions
+;   Revision 1.7 2009/10/09 17:13:13EDT aschoeni 
+;   Updated unit tests to use new tables
+;   Revision 1.6 2009/09/16 15:30:02EDT aschoeni 
+;   Updated MIDs to development standards document value for cpu1
+;   Revision 1.5 2009/02/11 16:51:58EST nschweis 
+;   Modified to remove references to MD_DEBUG statements (which have been removed source.)
+;   CPID 4205:2.
+;   Revision 1.4 2008/12/09 16:05:27EST nschweis 
+;   Modified to generate a dwell packet in order to demonstrate that  signature fields loaded via
+;   dwell tables are copied to dwell packets.
+;   Revision 1.3 2008/10/21 13:43:37EDT nsschweiss 
+;   Added test case for loading a Dwell Table with Enabled field on.
+;   Also added source control keywords.
+;
+* * * * * * * * * * * * * * * * * * * * *
+* Command Input File opened for reading *
+* * * * * * * * * * * * * * * * * * * * *
+* Enable all EVS Messages
+1801 C000 0002 0300 0F00
+*
+* * * -> Allocated simulated memory
+@ADD_SIM_MEMORY
+
+*
+* * * -> Display list of tables registered with Table Services
+@DISPLAY_TABLE_REGISTRY
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load valid table
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/validfile1.tbl
+
+*
+* * * -> Send Wakeup Message to trigger MD main loop, causing table to update
+1892 C000 0001 0000
+*
+* * * ->   Start Table #1
+* * * Expected output: info event message
+1890 C000 0003 0200 0001; Start Table #1
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: dwell packet with signature = 'validfile1'
+1892 C000 0001 0000
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table : invalid value for enabled flag
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile1.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: Error message
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table : contains invalid dwell length
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile2.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: Error message
+1892 C000 0001 0000
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table : table with invalid alignment
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile3.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: Error message
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table : table with invalid alignment
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile3a.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: Error message
+1892 C000 0001 0000
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table : table has invalid symbol
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile4.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output: Error message
+1892 C000 0001 0000
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load valid table :  Valid entry follows terminator
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/validfile2.tbl
+
+
+*
+* * * -> Send Wakeup Message
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table :   Invalid entry follows terminator 
+* * *    Expected output: ERROR message
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile5.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  ERROR message
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table :   Total delay is zero
+* * *    Expected output: Warning message: this is no longer an error
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile6.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  ERROR message
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table :   Table has entry with invalid alignment for 2-byte dwell
+* * *    Expected output: ERROR message
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile7.tbl
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  Message that table has been validated
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Set up simulator so that mem range checks will return false,
+*
+@SET_MEM_RANGE_FALSE
+
+* * * -> Load a table which would be otherwise valid.
+* * *    Expected output: ERROR message
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/validfile1.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  Message that table has been validated
+1892 C000 0001 0000
+
+*
+* * * -> Set up simulator so that mem range checks will return to default behavior.
+@SET_MEM_RANGE_VALID
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Set up simulator for special case that CFE_TBL_GetAddress
+* * * unexpectedly returns something other than CFE_SUCCESS following 
+* * * table passing validation check.
+@SET_TBL_RETURN_CODE 5 0xc4000003
+
+* * * -> Load a table which would be otherwise valid.
+* * *    Expected output: ERROR message
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/validfile1.tbl
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  Message that table has been validated
+1892 C000 0001 0000
+
+* * * -> Return to default behavior for CFE_TBL_GetAddress.
+@USE_DEFAULT_TBL_RETURN_CODE 5
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load a valid dwell table w/enabled flag set.
+* * * Expected result: Dwell packet is issued.
+
+*
+* * * -> Stop dwell stream #3.  (0x04 corresponds to stream #3.)
+* * * Expected output: info event message
+1890 C000 0003 0300 0004
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Table 3 is disabled.
+1891 C000 0001 0000
+
+* * * -> Load valid table
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE3 /ram/validfile3.tbl
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  Message that table has been validated
+1892 C000 0001 0000
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:   Dwell packet is issued.
+1892 C000 0001 0000
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * * -> Load invalid table :   Invalid signature
+* * *    Expected output: ERROR message if signatures enabled
+@ LOAD_TABLE_FROM_GROUND  MD.DWELL_TABLE1 /ram/invalidfile8.tbl
+
+
+*
+* * * -> Send Wakeup Message
+* * * Expected output:  ERROR message
+1892 C000 0001 0000
+

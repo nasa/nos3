@@ -1,0 +1,234 @@
+/**
+  \mainpage CFS Software Bus Network (SBN) User's Guide
+	
+  <UL>
+    <LI> \subpage cfssbnrevhist
+    <LI> \subpage cfssbnovr
+    <LI> \subpage cfssbnopr
+    <LI> \subpage cfssbnmsgs
+    <LI> \subpage cfssbnreq
+    <LI> \subpage cfssbndg
+    <LI> \subpage cfssbncmds
+    <LI> \subpage cfssbntlm
+    <LI> \subpage cfssbncfg
+    <LI> \subpage cfssbncons
+    <LI> \subpage cfssbnmod
+    <LI> \subpage sbn_events.h "CFS Software Bus Network Event Message Reference" <BR>
+  </UL>
+**/
+
+
+/**
+  \page cfssbnrevhist CFS Software Bus Network User's Guide Revision History
+
+  \verbatim  
+  \endverbatim
+  
+  Next: \ref cfssbnovr
+**/
+
+/**
+  \page cfssbnovr CFS Software Bus Network Overview
+
+  The CFS SBN application provides inter-processor communication by routing protocol and data messages
+  across different interfaces via custom interface modules.  The SBN application is transparent to 
+  other CFS applications and requires no changes to existing applications.
+  
+  Next: \ref cfssbnopr <BR>
+  Prev: \ref cfssbnrevhist
+**/
+
+/**
+  \page cfssbnopr CFS Software Bus Network Operation
+
+  <H1>Initialization </H1>
+
+  During initialization, the Command and Command Error counters are set to zero, as well as all other 
+  numerical data within the packet.  In addition to initializing telemetry, SBN registers for cFE event 
+  services, creates its software bus message pipe, and subscribes to SBN SB housekeeping requests and 
+  commands.
+
+  <H1>Resets</H1>
+
+  On a Power-On or Processor reset all connections with peers are terminated.  All subscriptions are lost and
+  need to be recreated during initialization.
+
+  <H1>SBN-SB Interface</H1>
+
+  \image html SBN_SB_Interface.jpg "Figure SBN-1"
+
+  <H1>Protocol Port Message Processing</H1>
+  <H2>Announce Message Processing</H2>
+  \image html AnnounceMsgProcessing.jpg "Figure SBN-2"
+
+  <H2>Heartbeat Message Processing</H2>
+  \image html HeartbeatMessageProcessing.jpg "Figure SBN-3"
+
+  <H1>Data Port Message Processing</H1>
+  \image html DataMessageProcessing.jpg "Figure SBN-4"
+
+  Next: \ref cfssbnmsgs <BR>
+  Prev: \ref cfssbnovr
+
+**/
+
+/**
+  \page cfssbnmsgs CFS Software Bus Network Message Types
+
+  SBN uses 7 unique network messages:
+  <UL>
+    <LI>Announce - Sent on initialization to all peers
+    <LI>Announce Ack - Sent in response to an Announce message
+    <LI>Heartbeat - Sent periodically to all peers
+    <LI>Heartbeat Ack - Sent in response to a Heartbeat message
+    <LI>Subscribe - Sent to all peers when a task subscribes to a message (via CFE_SB_Subscribe)
+    <LI>Unsubscribe - Send to all peers when a task unsubscribes to a message (via CFE_SB_Unsubscribe)
+    <LI>App Message - Sent to all subscribing peers with a message is read from a pipe
+  </UL>
+
+  SBN appends a custom header to each network message so that the message type and the sender are easily 
+  identified by the receiving SBN.
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="40%">
+    <TR><TD WIDTH="10%"></TD><TD COLSPAN="2"><B>SBN Header</B></TD><TD WIDTH="20%"><B>Data Portion</B></TD></TR>
+    <TR><TD WIDTH="10%"><B>Message Type</B></TD> <TD WIDTH="10%"><B>Uint32 Msg Type</B></TD><TD WIDTH="10%"><B>8-byte String</B></TD><TD WIDTH="20%"><B>Number of bits shown in ()</B></TD></TR>
+    <TR><TD WIDTH="10%">Announce</TD>            <TD WIDTH="10%">0x10</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">Unused</TD></TR>
+    <TR><TD WIDTH="10%">Announce Ack</TD>        <TD WIDTH="10%">0x11</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">Unused</TD></TR>
+    <TR><TD WIDTH="10%">Heartbeat</TD>           <TD WIDTH="10%">0x20</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">Unused</TD></TR>
+    <TR><TD WIDTH="10%">Heartbeat Ack</TD>       <TD WIDTH="10%">0x21</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">Unused</TD></TR>
+    <TR><TD WIDTH="10%">Subscribe</TD>           <TD WIDTH="10%">0x30</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">MsgId(16)|QoS-Reliability(8)|QoS-Priority (8)</TD></TR>
+    <TR><TD WIDTH="10%">Unsubscribe</TD>         <TD WIDTH="10%">0x40</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">MsgId(16)|QoS-Reliability(8)|QoS-Priority (8)</TD></TR>
+    <TR><TD WIDTH="10%">App Message</TD>         <TD WIDTH="10%">0x50</TD>                  <TD WIDTH="10%">Sender</TD>              <TD WIDTH="20%">Unused</TD></TR>
+  </TABLE>
+
+  Next: \ref cfssbnreq <BR>
+  Prev: \ref cfssbnopr
+**/
+
+/**
+  \page cfssbnreq CFS Software Bus Network Requirements
+  
+  Next: \ref cfssbndg <BR>
+  Prev: \ref cfssbnmsgs
+**/
+
+/**
+  \page cfssbndg CFS Software Bus Network Deployment Guide
+  
+  Next: \ref cfssbncmds <BR>
+  Prev: \ref cfssbnreq
+**/
+
+/**
+  \page cfssbncmds CFS Software Bus Network Commands
+  
+  Next: \ref cfssbntlm <BR>
+  Prev: \ref cfssbndg
+**/
+
+/**
+  \page cfssbntlm CFS Software Bus Network Telemetry
+  
+  Next: \ref cfssbncfg <BR>
+  Prev: \ref cfssbncmds
+**/
+
+/**
+  \page cfssbncfg CFS Software Bus Network Configuration
+  
+  <H1>Interface Data</H1>
+  
+  The SBN application must be configured with a file of modules to support.  The 
+  SbnModuleData.dat file must include the protocol ID, the protocol name, the path to the protocol shared
+  library, and the name of a structure containing pointers to the required SBN functions.  For more 
+  information on how modules work, refer to \ref cfssbnmod.
+  
+  <H1>Peer Data</H1>
+  
+  The SBN application must also be configured with a file of peers with which to communicate. 
+  The SbnPeerData.dat file must include, for each peer, the peer name, processor ID, protocol ID, and
+  spacecraft ID.  Other interface-specific parameters may follow.  Depending on the interface types, 
+  the peer data file may or may not be the same for all peers.
+
+  <H1>Variables</H1>
+
+  The following configuration constants can adjusted prior to building the application if the defaults are
+  insufficient.
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="40%">
+    <TR><TD WIDTH="20%"><B>Variable</B></TD>            <TD WIDTH="20%"><B>Default Value</B></TD></TR>
+    <TR><TD WIDTH="20%">SBN_MAIN_LOOP_DELAY</TD>        <TD WIDTH="20%">1 second</TD></TR>
+    <TR><TD WIDTH="20%">SBN_TIMEOUT_CYCLES</TD>         <TD WIDTH="20%">5</TD></TR>
+    <TR><TD WIDTH="20%">SBN_VOL_PEER_FILENAME</TD>      <TD WIDTH="20%">/ram/SbnPeerData.dat</TD></TR>
+    <TR><TD WIDTH="20%">SBN_NONVOL_PEER_FILENAME</TD>   <TD WIDTH="20%">/cf/SbnPeerData.dat</TD></TR>
+    <TR><TD WIDTH="20%">SBN_VOL_MODULE_FILENAME</TD>    <TD WIDTH="20%">/ram/SbnModuleData.dat</TD></TR>
+    <TR><TD WIDTH="20%">SBN_NONVOL_MODULE_FILENAME</TD> <TD WIDTH="20%">/cf/SbnModuleData.dat</TD></TR>
+    <TR><TD WIDTH="20%">SBN_MAX_SUBS_PER_PEER</TD>      <TD WIDTH="20%">256</TD></TR>
+  </TABLE>
+
+  Next: \ref cfssbncons <BR>
+  Prev: \ref cfssbntlm
+**/
+
+/**
+  \page cfssbncons CFS Software Bus Network Constraints
+  
+  <UL>
+    <LI>The SBN can only learn of peers listed in the peer configuration file.  There is no way to learn of
+        peers that are not listed in the peer configuration file.
+    <LI>The SBN can only use modules that are listed in the module configuration file.  
+    <LI>Bridging two subnets is not yet supported.
+    <LI>There can only be one interface for each peer.  
+  </UL>
+
+  Next: \ref cfssbnmod <BR>
+  Prev: \ref cfssbncfg
+**/
+
+/**
+  \page cfssbnmod CFS Software Bus Network Interface Modules
+  
+  <H1> Concept </H1>
+  
+  In order to keep the SBN application as flexible as possible, the SBN application acts as
+  a manager of a number of interfaces, but does not implement anything interface-specific.  
+  Instead, each interface type uses a custom module (shared library) containing, at minimum, a
+  set of core functions that the SBN application uses in order to interact with that specific 
+  interface type.  
+  
+  This design has a couple of key advantages:
+  <UL>
+    <LI> The SBN application does not need to be updated to accommodate additional interface types. </LI>
+    <LI> Interface modules may differ based on the OS, allowing the modules to take advantages of services offered by a specific OS. </LI>
+  </UL>	 
+  
+  <H1> Interface Module Requirements </H1>
+  
+  In order for an interface module to be compatible with the SBN application, it must declare a global #SBN_InterfaceOperations structure 
+  containing function pointers to interface-specific versions of the SBN core functions.  These function pointers will be used by the SBN application to interact with the interface.    
+  
+  A module can implement additional functions as needed, but SBN will only use those that are present in the 
+  required structure.  
+  
+  <H1> Operation </H1>
+  
+  As described in the operations section of this document, the SBN application must be configured with a 
+  file of modules to support.  The SbnModuleData.dat file must include the protocol ID, the protocol name, 
+  the path to the protocol shared library, and the name of the global #SBN_InterfaceOperations structure.
+  
+  The SBN application parses this file and creates a list of the interface types that will be used.  The 
+  SBN then iterates through the list and loads the shared library specified in the SbnModuleData.dat file.
+  After the module is loaded, the application searches through the object symbols to find the specified 
+  structure of function pointers and stores the address of the structure in the list of interface types.  
+  During execution, in each core function, the SBN will use the protocol ID to choose the correct operations
+  structure and will use the function pointers within the structure to call the interface-specific function.
+  
+  <H1> Existing Modules </H1>
+  <UL>
+    <LI>\ref shmem
+    <LI>\ref ipv4
+  </UL>
+
+  Prev: \ref cfssbncons
+
+**/ 

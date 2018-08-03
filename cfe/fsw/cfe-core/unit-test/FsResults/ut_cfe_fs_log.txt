@@ -1,0 +1,246 @@
+Compiling fs tests using Baseline cFE version with following flags: -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE
+
+>>> [CLEAN] - REMOVE <CFS_MISSION_INC> HEADER FILES <<<
+
+rm -f /home/sstrege/cFE650/build/mission_inc/*
+
+>>> [CLEAN] REMOVE BUILD/INC HEADER FILES <<<
+
+rm -f ./inc/*
+make -C cfe/unit-test/fs clean
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'
+rm -f cfe_fs_decompress.o cfe_fs_api.o cfe_fs_priv.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_evs_stubs.o ut_sb_stubs.o ut_time_stubs.o ut_tbl_stubs.o fs_UT.o fs_UT
+rm -f *.lis
+rm -f *.g*
+rm -f *.d
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'
+
+>>> [PRE-BUILD] CONFIGURING OSAL <<<
+
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/osal/build'
+test -d inc || mkdir inc
+cp -f ../src/bsp/pc-linux/config/osconfig.h inc/osconfig.h
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/osal/build'
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_MISSION> CORE <<<
+
+Copying <CFE_FSW>/mission_inc/*.h to <CFS_MISSION_INC>
+Copying <CFE_FSW>/platform_inc/<CFE_CORE_PLATFORM_INC_SRC>/cfe_platform_cfg.h to ./inc
+Copying <OSAL>/build/inc/osconfig.h to ./inc
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_APP_SRC>/INC <<<
+
+Copying <CFS_APP_SRC>/inc/*.h to <CFS_MISSION_INC>
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PUBLIC_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_lib/fsw/public_inc/sample_lib.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/MISSION_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/mission_inc/sample_app_perfids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/mission_inc/ci_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/mission_inc/to_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/mission_inc/sch_lab_perfids.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PLATFORM_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/platform_inc/sample_app_msgids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/platform_inc/ci_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_sub_table.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/platform_inc/sch_lab_sched_tab.h
+
+>>> [PRE-BUILD] CREATING <APP> BUILD DIRECTORY <<<
+
+
+>>> [PRE-BUILD] COPYING MAKEFILES FROM <APP>/FOR_BUILD <<<
+
+Copying <CFS_APP_SRC>/sample_lib/fsw/for_build/* to ./sample_lib
+Copying <CFS_APP_SRC>/sample_app/fsw/for_build/* to ./sample_app
+Copying <CFS_APP_SRC>/ci_lab/fsw/for_build/* to ./ci_lab
+Copying <CFS_APP_SRC>/to_lab/fsw/for_build/* to ./to_lab
+Copying <CFS_APP_SRC>/sch_lab/fsw/for_build/* to ./sch_lab
+make -C cfe/unit-test/fs
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_fs_decompress.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_decompress.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_fs_api.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_api.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_fs_priv.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_priv.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_bsp_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_bsp_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_osprintf_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_osprintf_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_es_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_es_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_evs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_evs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_sb_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_sb_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_time_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_time_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_tbl_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_tbl_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o fs_UT.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/fs_UT.c
+gcc -o fs_UT cfe_fs_decompress.o cfe_fs_api.o cfe_fs_priv.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_evs_stubs.o ut_sb_stubs.o ut_time_stubs.o ut_tbl_stubs.o fs_UT.o -pg -fprofile-arcs -ftest-coverage -m32 ../libut_osapi_stubs/libut_osapi_stubs.a ../libut_bsp/libut_bsp.a ../libut_assert/libut_assert.a
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'
+make -C cfe/unit-test/fs gcov
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'
+
+Running unit test: gcov
+
+./fs_UT
+
+[BEGIN] PC-LINUX UNIT TEST
+Making directories: ram0, ram1, eeprom1 for OSAL mount points
+[ INFO] cFE FS Unit Test Output File
+
+
+
+
+[BEGIN] 01 Test_CFE_FS_InitHeader
+[ PASS] 01.001 fs_UT.c:82 - CFE_FS_InitHeader - Initialize header - successful
+[  END] 01 Test_CFE_FS_InitHeader TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 02 Test_CFE_FS_ReadHeader
+[ INFO] Begin Test Read Header
+
+
+[ PASS] 02.001 fs_UT.c:103 - CFE_FS_ReadHeader - Header read lseek failed
+[ PASS] 02.002 fs_UT.c:112 - CFE_FS_ReadHeader - Header read - successful
+[  END] 02 Test_CFE_FS_ReadHeader TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 03 Test_CFE_FS_WriteHeader
+[ INFO] Begin Test Write Header
+
+
+[ PASS] 03.001 fs_UT.c:133 - CFE_FS_WriteHeader - Header write lseek failed
+[ PASS] 03.002 fs_UT.c:142 - CFE_FS_WriteHeader - Header write - successful
+[  END] 03 Test_CFE_FS_WriteHeader TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 04 Test_CFE_FS_SetTimestamp
+[ INFO] Begin Test Set Time Stamp
+
+
+[ INFO]   CFE_FS:SetTime-Failed to lseek time fields (Status=0xFFFFFFFF)
+
+
+[ PASS] 04.001 fs_UT.c:163 - CFE_FS_SetTimestamp - Failed to lseek time fields
+[ INFO]   CFE_FS:SetTime-Failed to write Seconds (Status=0xFFFFFFFF)
+
+
+[ PASS] 04.002 fs_UT.c:171 - CFE_FS_SetTimestamp - Failed to write seconds
+[ INFO]   CFE_FS:SetTime-Failed to write Seconds (Status=0x00000000)
+
+
+[ PASS] 04.003 fs_UT.c:179 - CFE_FS_SetTimestamp - Failed to write subseconds
+[ PASS] 04.004 fs_UT.c:186 - CFE_FS_SetTimestamp - Write time stamp - successful
+[  END] 04 Test_CFE_FS_SetTimestamp TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 05 Test_CFE_FS_ByteSwapCFEHeader
+[ INFO] Begin Test Byte Swap cFE Header
+
+
+[ PASS] 05.001 fs_UT.c:215 - CFE_FS_ByteSwapUint32 - Byte swap header - successful
+[  END] 05 Test_CFE_FS_ByteSwapCFEHeader TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 06 Test_CFE_FS_ByteSwapUint32
+[ INFO] Begin Test Byte Swap uint32
+
+
+[ PASS] 06.001 fs_UT.c:241 - CFE_FS_ByteSwapUint32 - Byte swap - successful
+[  END] 06 Test_CFE_FS_ByteSwapUint32 TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 07 Test_CFE_FS_IsGzFile
+[ INFO] Begin Test Is .gz File
+
+
+[ PASS] 07.001 fs_UT.c:257 - CFE_FS_IsGzFile - File name too short
+[ PASS] 07.002 fs_UT.c:264 - CFE_FS_IsGzFile - File name missing .gz extension 1
+[ PASS] 07.003 fs_UT.c:271 - CFE_FS_IsGzFile - Null file name
+[ PASS] 07.004 fs_UT.c:278 - CFE_FS_IsGzFile - .gz file name check - successful
+[ PASS] 07.005 fs_UT.c:285 - CFE_FS_IsGzFile - File name missing .gz extension 2
+[ PASS] 07.006 fs_UT.c:292 - CFE_FS_IsGzFile - File name missing .gz extension 3
+[  END] 07 Test_CFE_FS_IsGzFile TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 08 Test_CFE_FS_ExtractFileNameFromPath
+[ INFO] Begin Test Extract File Name from Path
+
+
+[ PASS] 08.001 fs_UT.c:318 - CFE_FS_ExtractFilenameFromPath - Missing file path
+[ PASS] 08.002 fs_UT.c:326 - CFE_FS_ExtractFilenameFromPath - Null name
+[ PASS] 08.003 fs_UT.c:343 - CFE_FS_ExtractFilenameFromPath - Path/file name too long
+[ PASS] 08.004 fs_UT.c:351 - CFE_FS_ExtractFilenameFromPath - Extract path name - successful
+[ PASS] 08.005 fs_UT.c:359 - CFE_FS_ExtractFilenameFromPath - Null file name
+[  END] 08 Test_CFE_FS_ExtractFileNameFrom TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 09 Test_CFE_FS_Private
+[ INFO] Begin Test Private
+
+
+[ PASS] 09.001 fs_UT.c:377 - CFE_FS_EarlyInit - FS initialization - successful
+[ INFO]   FS Shared Data Mutex creation failed! RC=0xffffffff
+
+
+[ PASS] 09.002 fs_UT.c:385 - CFE_FS_EarlyInit - Mutex creation failure
+[ PASS] 09.003 fs_UT.c:393 - CFE_FS_LockSharedData - Lock shared data - successful
+[ INFO]   FS SharedData Mutex Take Err Stat=0xffffffff,App=0,Function=FunctionName
+
+
+[ PASS] 09.004 fs_UT.c:402 - CFE_FS_LockSharedData - Shared data mutex take error
+[ PASS] 09.005 fs_UT.c:411 - CFE_FS_UnlockSharedData - Unlock shared data - successful
+[ INFO]   FS SharedData Mutex Give Err Stat=0xffffffff,App=0,Function=FunctionName
+
+
+[ PASS] 09.006 fs_UT.c:420 - CFE_FS_UnlockSharedData - SharedData mutex give error
+[ INFO] End Test Private
+
+
+
+[  END] 09 Test_CFE_FS_Private  TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 10 Test_CFE_FS_Decompress
+[ INFO] Begin Test Decompress
+
+
+[ INFO]   CFE_FS_Decompress: Cannot open source file: Filename.gz
+
+
+[ PASS] 10.001 fs_UT.c:445 - CFE_FS_Decompress - Open failed
+[ INFO]   CFE_FS_Decompress: Cannot open destination file: Output
+
+
+[ PASS] 10.002 fs_UT.c:454 - CFE_FS_Decompress - Create failed
+[ PASS] 10.003 fs_UT.c:466 - CFE_FS_Decompress - Decompress file - successful
+[ PASS] 10.004 fs_UT.c:476 - CFE_FS_Decompress - File does not exist
+[ PASS] 10.005 fs_UT.c:487 - FS_gz_inflate_fixed - Inflated type 1 decompression - successful
+[ PASS] 10.006 fs_UT.c:495 - FS_gz_inflate_stored - Failed
+[ PASS] 10.007 fs_UT.c:505 - FS_gz_fill_inbuf - gzip read error
+[ PASS] 10.008 fs_UT.c:515 - FS_gz_flush_window - Write output - successful
+[ INFO] End Test Decompress
+
+
+
+[  END] 10 Test_CFE_FS_Decompress TOTAL::8     PASS::8     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+[  END] 10 SUMMARY              TOTAL::36    PASS::36    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+COMPLETE: 10 tests Segment(s) executed
+
+
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_api.c' 100.00%  98
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_decompress.c' 88.21%  441
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs/cfe_fs_priv.c' 100.00%  19
+
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/fs'

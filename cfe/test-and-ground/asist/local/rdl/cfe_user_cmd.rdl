@@ -1,0 +1,101 @@
+!This file supports the I&T Command database for cFE S/C Simulator
+!       Date of last change: 08 Apr 2005
+!  INITIAL CREATION                                               SMA    04APR05
+!  Added scx_cmd_cdh_sb_003.rdl and                               SMA    08APR05
+!  Added scx_cmd_cdh_time_005.rdl    
+!  Added MODIFY ULI ORDER=(1,2,3,4)                               MOB    12APR05                
+!  Added scx_cmd_cdh_evs_001.rdl                                  SMA    12APR05
+!  Added scx_cmd_cdh_fs_002.rdl                                   SMA    13APR05
+!  Added scx_pse ... rdls                                         SMA    14APR05
+!  Changed fs_002 to fs_007                                       MOB    14APR05
+!  Changed fs_007 to fs_002                                       MOB    21APR05
+!  Updated to use template generated rdl files                    SMA    22APR05 
+!  Added TO command packet which has capability to                MOB    25APR05
+!  specify which machine to route telemetry                       
+!  Added scx_cmd_cpu1_es_0006.rdl and scx_cmd_cpu1_es_0008.rdl    SMA    27APR05
+!  Removed non-template generated pse includes                    SMA    29APR05
+!  Added scx_cmd_cpu1_bta_0130.rdl (EVS Test Application)         SMA    05MAY05
+!  Changed name of scx_cmd_cpu1_bta_0130.rdl to                   TGC    11MAY05
+!   scx_cmd_cpu1_tst_0130.rdl
+!  Changed name of scx_cmd_cpu1_tst_0130.rdl to                   SMA    12MAY05 
+!   scx_cmd_cpu1_tst_1793.rdl
+!  Added cpu2 and cpu3                                            SMA    12MAY05
+!  Corrected message ids for test applications                    SMA    13MAY05
+!  Changed name of scx_cmd_cpu1_tst_130.rdl to              
+!    to scx_cmd_cpu1_tst_evs_0130.rdl                             SMA    20MAY05
+!  Added evs test application commands for cpu2 and cpu3          SMA    31MAY05
+!  Added time test application commands for all cpus              SMA    01JUN05
+!  Added time test Send HK rdl for all cpus                       SMA    03JUN05
+!  Added CI cmd rdl                                               SMA    17JUN05
+!  Added scx_cmd_cpu1_tst_sb_1795.rdl                             TGC    27JUN05
+!  Deleted scx_cmd_cpu1_tst_sb_1795.rdl and added                 TGC    06JUL05
+!   scx_cmd_cpu1_tst_sb_0133.rdl, scx_cmd_cpu2_tst_sb_0165.rdl,
+!   and scx_cmd_cpu3_tst_sb_0197.rdl
+!  Added MODIFY SLI ORDER=(1,2,3,4)                               SMA    19JUL05
+!  Added TBL cmd rdl                                              SMA    31OCT05
+!  Added TST TBLx cmd rdl                                         SMA    15NOV05
+!  Renamed from user_cmd.rdl to cfe_user_cmd.rdl                  SMA    01DEC05
+!
+
+MODIFY UTC ABSOLUTE=TAI
+MODIFY SUTC ABSOLUTE=TAI
+MODIFY ULI ORDER=(1,2,3,4)        
+MODIFY SLI ORDER=(1,2,3,4)
+
+#include "cfe_cmd_types.rdl"
+
+#include "scx_cmd_cpu1_evs_0001.rdl"
+#include "scx_cmd_cpu1_fs_0002.rdl"
+#include "scx_cmd_cpu1_sb_0003.rdl"
+#include "scx_cmd_cpu1_tbl_0004.rdl"
+#include "scx_cmd_cpu1_time_0005.rdl"
+#include "scx_cmd_cpu1_es_0006.rdl"
+#include "scx_cmd_cpu1_ci_0129.rdl" 
+
+#include "scx_cmd_cpu2_evs_0033.rdl"
+#include "scx_cmd_cpu2_fs_0034.rdl"
+#include "scx_cmd_cpu2_sb_0035.rdl"
+#include "scx_cmd_cpu2_tbl_0036.rdl"
+#include "scx_cmd_cpu2_time_0037.rdl"
+#include "scx_cmd_cpu2_es_0038.rdl"
+#include "scx_cmd_cpu2_ci_0161.rdl"
+
+#include "scx_cmd_cpu3_evs_0065.rdl"
+#include "scx_cmd_cpu3_fs_0066.rdl"
+#include "scx_cmd_cpu3_sb_0067.rdl"
+#include "scx_cmd_cpu3_tbl_0068.rdl"
+#include "scx_cmd_cpu3_time_0069.rdl"
+#include "scx_cmd_cpu3_es_0070.rdl"
+#include "scx_cmd_cpu3_ci_0193.rdl"
+
+/* Test Application Commands                                                   */
+#include "scx_cmd_cpu1_tst_es_0137.rdl"
+#include "scx_cmd_cpu2_tst_es_0169.rdl"
+#include "scx_cmd_cpu3_tst_es_0201.rdl"
+
+#include "scx_cmd_cpu1_tst_evs_0130.rdl"
+#include "scx_cmd_cpu2_tst_evs_0162.rdl"
+#include "scx_cmd_cpu3_tst_evs_0194.rdl"
+
+#include "scx_cmd_cpu1_tst_time_0131.rdl"
+#include "scx_cmd_cpu2_tst_time_0163.rdl"
+#include "scx_cmd_cpu3_tst_time_0195.rdl"
+#include "scx_cmd_cpu1_tst_time_send_hk_0132.rdl"
+#include "scx_cmd_cpu2_tst_time_send_hk_0164.rdl"
+#include "scx_cmd_cpu3_tst_time_send_hk_0196.rdl"
+
+#include "scx_cmd_cpu1_tst_sb_0133.rdl"
+#include "scx_cmd_cpu2_tst_sb_0165.rdl"
+#include "scx_cmd_cpu3_tst_sb_0197.rdl"
+
+#include "scx_cmd_cpu1_tst_tbl_0134.rdl"
+#include "scx_cmd_cpu2_tst_tbl_0166.rdl"
+#include "scx_cmd_cpu3_tst_tbl_0198.rdl"
+#include "scx_cmd_cpu1_tst_tbl2_0135.rdl"
+#include "scx_cmd_cpu2_tst_tbl2_0167.rdl"
+#include "scx_cmd_cpu3_tst_tbl2_0199.rdl"
+
+/*  TO commands in order to have telemetry routed to the desired ground system */
+#include  "scx_cmd_cpu1_to_0128.rdl" 
+#include  "scx_cmd_cpu2_to_0160.rdl" 
+#include  "scx_cmd_cpu3_to_0192.rdl"

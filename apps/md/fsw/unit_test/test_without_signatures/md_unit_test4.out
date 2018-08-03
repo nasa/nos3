@@ -1,0 +1,272 @@
+
+***Initialize UTF ***
+
+***Add tasks to ES list of tasks ***
+UTF Info: Task <MD> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: MD loaded and created
+UTF Info: App <MD> added to App Tbl.
+AppTable[0]:
+       Name    = MD
+    ChildTasks = 0
+    State = Running
+
+*** Start Memory Dwell Main Task ***
+UTF INFO: CFE_TBL_Register called for new table MD.DWELL_TABLE1.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+UTF INFO: CFE_TBL_Register called for new table MD.DWELL_TABLE2.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE2'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE2'
+UTF INFO: CFE_TBL_Register called for new table MD.DWELL_TABLE3.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE3'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE3'
+UTF INFO: CFE_TBL_Register called for new table MD.DWELL_TABLE4.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE4'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE4'
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 0.0.0.0
+ * * * * * * * * * * * * * * * * * * * *
+ Command Input File opened for reading *
+ * * * * * * * * * * * * * * * * * * * *
+ Enable all EVS Messages
+< CMD: APID:0001 SEQ:0 LEN:9 FC:3 PKT:1801 c000 0002 0300 0f00 
+ERROR EVENT ID=15 Msg with Invalid message ID Rcvd -- ID = 0x1801
+
+ * * -> Allocated simulated memory
+
+ * * -> Display list of tables registered with Table Services
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0          MD.DWELL_TABLE1     1804   0 
+   1          MD.DWELL_TABLE2     1804   0 
+   2          MD.DWELL_TABLE3     1804   0 
+   3          MD.DWELL_TABLE4     1804   0 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load valid table
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/validfile1.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message to trigger MD main loop, causing table to update
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+
+ * * ->   Start Table #1
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0001 
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+
+ * * -> Send Wakeup Message
+ * * Expected output: dwell packet with signature = 'validfile1'
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table : invalid value for enabled flag
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile1.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output: Error message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+ERROR EVENT ID=44 Dwell Table rejected because value of enable flag (5) is invalid
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000001
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table : contains invalid dwell length
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile2.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output: Error message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+ERROR EVENT ID=43 Dwell Table rejected because length (5) in entry #1 was invalid
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000005
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table : table with invalid alignment
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile3.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output: Error message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table : table with invalid alignment
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile3a.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output: Error message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Address Not On 32 Bit Boundary: 0x0123400a
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+ERROR EVENT ID=45 Dwell Table rejected because address (sym=''/offset=0x0123400B) in entry #1 not properly aligned for 4-byte dwell
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000006
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table : table has invalid symbol
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile4.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output: Error message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Address Not On 32 Bit Boundary: 0x0123400a
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+OSAL: Error, cannot locate symbol 'InvalidSymName'
+ERROR EVENT ID=41 Dwell Table rejected because address (sym='InvalidSymName'/offset=0x0123400A) in entry #1 couldn't be resolved
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000003
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load valid table :  Valid entry follows terminator
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/validfile2.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Address Not On 32 Bit Boundary: 0x0123400a
+> TLM: APID:0091 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0891 c000 0011 0001 0000 8000 0101 0004 0001 0000 d00d 1337 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table :   Invalid entry follows terminator 
+ * *    Expected output: ERROR message
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile5.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  ERROR message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+ERROR EVENT ID=42 Dwell Table rejected because address (sym=''/offset=0x03234008) in entry #3 was out of range
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000004
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table :   Total delay is zero
+ * *    Expected output: Warning message: this is no longer an error
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile6.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  ERROR message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+INFO EVENT ID=40 Dwell Table is enabled but no processing will occur for table being loaded (rate is zero)
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table :   Table has entry with invalid alignment for 2-byte dwell
+ * *    Expected output: ERROR message
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile7.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  Message that table has been validated
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+ERROR EVENT ID=45 Dwell Table rejected because address (sym=''/offset=0x01234001) in entry #1 not properly aligned for 2-byte dwell
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000006
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Set up simulator so that mem range checks will return false,
+
+UTF Info: Return value for cFE PSP Api #2 set to ffffffff
+ * * -> Load a table which would be otherwise valid.
+ * *    Expected output: ERROR message
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/validfile1.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  Message that table has been validated
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+ERROR EVENT ID=42 Dwell Table rejected because address (sym=''/offset=0x01234000) in entry #1 was out of range
+ERROR EVENT ID=96 MD validation failed for Inactive 'MD.DWELL_TABLE1', Status=0xC0000004
+
+ * * -> Set up simulator so that mem range checks will return to default behavior.
+UTF Info: Return value for cFE PSP Api #2 set to 0
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Set up simulator for special case that CFE_TBL_GetAddress
+ * * unexpectedly returns something other than CFE_SUCCESS following 
+ * * table passing validation check.
+UTF Info: Return value for CFE TBL Api #5 set to c4000003
+ * * -> Load a table which would be otherwise valid.
+ * *    Expected output: ERROR message
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/validfile1.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  Message that table has been validated
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'
+ERROR EVENT ID=39 Didn't update MD tbl #1 due to unexpected CFE_TBL_GetAddress return: 0xC4000003
+ * * -> Return to default behavior for CFE_TBL_GetAddress.
+UTF Info: Return code for CFE TBL Api #5 returned to default
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load a valid dwell table w/enabled flag set.
+ * * Expected result: Dwell packet is issued.
+
+ * * -> Stop dwell stream #3.  (0x04 corresponds to stream #3.)
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:3 PKT:1890 c000 0003 0300 0004 
+INFO EVENT ID=13 Stop Dwell Table command processed successfully for table mask 0x0004
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Table 3 is disabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00000001 80000000 PKT:0890 c000 0039 0001 0000 8000 0200 0001 0002 0000 0000 0000 0000 0000 0000 0000 0008 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0000 0001 
+ * * -> Load valid table
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE3', File_Name = '/ram/validfile3.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  Message that table has been validated
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE3'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE3'
+
+ * * -> Send Wakeup Message
+ * * Expected output:   Dwell packet is issued.
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0093 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0893 c000 0011 0001 0000 8000 0103 0004 0001 0000 d00d 1337 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * -> Load invalid table :   Invalid signature
+ * *    Expected output: ERROR message if signatures enabled
+UTF_SCRIPT_LoadTableFromGround called for Table_Name = 'MD.DWELL_TABLE1', File_Name = '/ram/invalidfile8.tbl'
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned 0
+Call to CFE_TBL_LoadWorkingBuffer returns 0
+UTF_TBL_LoadTableFromGround returned 0
+ * * -> Send Wakeup Message
+ * * Expected output:  ERROR message
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+> TLM: APID:0093 SEQ:0 LEN:24 TIME:00000001 80000000 PKT:0893 c000 0011 0001 0000 8000 0103 0004 0001 0000 d00d 1337 
+INFO EVENT ID=36 MD validation successful for Inactive 'MD.DWELL_TABLE1'
+INFO EVENT ID=37 MD Successfully Updated 'MD.DWELL_TABLE1'

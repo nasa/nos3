@@ -1,0 +1,35 @@
+!                Originator:     C. Dent         66801
+!                Responsible SC: C. Dent         66801
+!                Responsible CSE: name           phone
+!                Rev: B      Last Change:  30MAY98
+!
+!                 MAP Telemetry TYPES for MAC processor
+!                 ===========================
+!
+!       REFERENCES:
+!
+!       NOTES:  Types created for proper swapping of MAC long integers
+!
+!       HISTORY:
+!
+!       Originator:     C. Dent                                 iii ddmmmyy
+!
+!  Rev  Description of Change                                   SC & Date
+!  A    ADD NEW DATA TYPE FOR ACE COMMANDS                      EJB 22MAY98
+!  B    CHANGE DATA TYPE FOR ACE COMMANDS TO BE 3 BYTES         EJB 30MAY98
+!
+TYPES
+!
+! Defines swap order for MAC unsigned and signed long integers
+INTEGER   MULI  REPRESENTATION=UNSIGNED, ORDER=(1,2,3,4), SIZE=4
+INTEGER   MSLI  REPRESENTATION=TWOS_COMPLEMENT, ORDER=(1,2,3,4), SIZE=4
+!Defines swap order for MAC floating point types
+FLOAT     MSFP  REPRESENTATION=IEEE, ORDER=(1,2,3,4), SIZE=4
+FLOAT     MDFP  REPRESENTATION=IEEE, ORDER=(1,2,3,4,5,6,7,8), SIZE=8
+! Defines a new data type to be used with ACE Commands for EO-1
+INTEGER   ASTIM REPRESENTATION=UNSIGNED, ORDER=(1,2,3), SIZE=3
+!
+END_TYPES
+!
+! END MAC TYPES
+

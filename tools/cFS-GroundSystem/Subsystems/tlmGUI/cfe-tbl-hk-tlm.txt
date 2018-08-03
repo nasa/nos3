@@ -1,0 +1,38 @@
+# 
+# cfe-tbl-hk-tlm.txt
+# 
+# This file should have the following comma delimited fields:
+#   1. Data item description
+#   2. Offset of data item in packet
+#   3. Length of data item
+#   4. Python data type of item ( using python struct library )
+#   5. Display type of item ( Currently Dec, Hex, Str, Enm ) 
+#   6. Display string for enumerated value 0 ( or NULL if none ) 
+#   7. Display string for enumerated value 1 ( or NULL if none ) 
+#   8. Display string for enumerated value 2 ( or NULL if none ) 
+#   9. Display string for enumerated value 3 ( or NULL if none ) 
+# 
+#  Note(1): A line that begins with # is a comment
+#  Note(2): Remove any blank lines from the end of the file
+#
+Command Counter,       12,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Error Counter,         13,  1,  B, Dec, NULL,        NULL,        NULL,       NULL  
+Num tables,            14,  2,  H, Dec, NULL,        NULL,        NULL,       NULL  
+Num load pending,      16,  2,  H, Dec, NULL,        NULL,        NULL,       NULL
+Validation cnt,        18,  2,  H, Dec, NULL,        NULL,        NULL,       NULL
+Last valid CRC,        20,  4,  I, Dec, NULL,        NULL,        NULL,       NULL
+Last valid status,     24,  4,  I, Dec, NULL,        NULL,        NULL,       NULL
+Active buffer,         28,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Last valid tbl,        29, 38,  s, Str, NULL,        NULL,        NULL,       NULL
+Success count,         67,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Failed count,          68,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Num requests,          69,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Num free bufs,         70,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+pad1,                  71,  1,  B, Dec, NULL,        NULL,        NULL,       NULL
+Mem pool hdl,          72,  4,  I, Hex, NULL,        NULL,        NULL,       NULL
+Last upd (secs),       76,  4,  I, Dec, NULL,        NULL,        NULL,       NULL
+Last upd (subs),       80,  4,  I, Dec, NULL,        NULL,        NULL,       NULL
+Last table name,       84, 38,  s, Str, NULL,        NULL,        NULL,       NULL
+Last file loaded,     122, 64,  s, Str, NULL,        NULL,        NULL,       NULL
+Last file dumped,     186, 64,  s, Str, NULL,        NULL,        NULL,       NULL
+pad2,                 188,  2,  H, Dec, NULL,        NULL,        NULL,       NULL

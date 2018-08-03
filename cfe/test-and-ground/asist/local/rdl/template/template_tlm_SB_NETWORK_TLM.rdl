@@ -1,0 +1,46 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 18 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  SCx $cpu SB Network Message
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/18  SMA             : Initial                                                                                                                                           
+!                                                             
+!==============================================================================
+!
+TYPES
+   RECORD $sc_$cpu_SB_Peer_Tlm          DESC="$sc $cpu SB Peer Telemetry"
+      CHAR $sc_$cpu_SB_Name[4]           DESC="Name"
+        UI $sc_$cpu_SB_State             DESC="State"
+        UI $sc_$cpu_SB_Subscriptions     DESC="Subscriptions"
+        UI $sc_$cpu_SB_RecvPktCount      DESC="Received packet count",UNITS=Counts
+        UI $sc_$cpu_SB_XmitPktCount      DESC="Transmit packet count",UNITS=Counts
+   END
+END_TYPES
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SB Network Telemetry",VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_SB_Peer_Tlm           $sc_$cpu_SB_NetworkTlm[5]	DESC="$sc $cpu SB Network Tlm"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

@@ -1,0 +1,50 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 11 2005  
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/11  SMA             : Initial
+!  2005/04/21  MOB             ; Modified Content Type options
+!  2005/04/28  TGC             ; Change ProcessorID labels to CPU1, CPU2, CPU3
+!  2005/04/28  TGC             ; Added label to SpacecraftID (This may have to change)
+!  2005/11/08  SMA             ; Changed to support file header changes by Nick Yanchik.
+!  2005/11/14  SMA             ; Change CFE_ContentType from CHAR to ULI
+!
+!==============================================================================
+!
+  RECORD CFE_FILE_HEADER APPEND,     DESC="cFE File Header"
+!
+    ULI  CFE_ContentType          DESC="cFE Content Type", DISCRETE, DRANGE=(1665549617), 
+                                  DLABEL=("cFE1")
+!
+    ULI  CFE_SubType              DESC="Type of Content Type"
+!
+    ULI  CFE_Length               DESC="Length of Primary Header"
+!
+    ULI  CFE_SpacecraftID         DESC="Spacecraft that generated the file",
+                                  DISCRETE, DRANGE=(66), DLABEL=("SCX") 
+!
+    ULI  CFE_ProcessorID	  DESC="Processor that generated the file",
+                                  DISCRETE, DRANGE=(1,2,3), DLABEL=("CPU1","CPU2","CPU3") 
+!
+    ULI  CFE_ApplicationID	  DESC="Application that generated the file"
+!
+    ULI  CFE_CreateTimeSeconds    DESC="File creation timestamp (seconds)",
+                                         UNITS=Seconds
+!
+    ULI  CFE_CreateTimeSubsecs    DESC="File creation timestamp (sub-seconds)",
+                                         UNITS=SubSeconds
+!
+    CHAR CFE_Description[32]     DESC="File description"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

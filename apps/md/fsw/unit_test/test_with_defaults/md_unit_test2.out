@@ -1,0 +1,65 @@
+
+***Initialize UTF ***
+
+* * * * * * * * * * * * * * * * * * * * * * 
+
+***Add tasks to ES list of tasks ***
+UTF Info: Task <MD_APP> added to Task Tbl.
+SysLog:1980-001-02:46:40.00000 ES Startup: MD_APP loaded and created
+UTF Info: App <MD_APP> added to App Tbl.
+AppTable[0]:
+       Name    = MD_APP
+    ChildTasks = 0
+    State = Running
+
+*** Start Memory Dwell Main Task ***
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE1.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE1'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE1'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE2.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE2'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE2'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE3.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE3'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE3'
+UTF INFO: CFE_TBL_Register called for new table MD_APP.DWELL_TABLE4.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=36 MD_APP validation successful for Inactive 'MD_APP.DWELL_TABLE4'
+INFO EVENT ID=37 MD_APP Successfully Updated 'MD_APP.DWELL_TABLE4'
+INFO EVENT ID=7 Dwell Tables Recovered: 0, Dwell Tables Initialized: 4
+INFO EVENT ID=1 MD Initialized.  Version 0.0.0.0
+ * * * * * * * * * * * * * * * * * * * *
+ Command Input File md_unit_test2.in opened for reading *
+ * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Housekeeping packet
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:00002710 00000000 PKT:0890 c000 0039 2710 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * * * * * * * * * * * * * * * * * * *
+ * * -> Set simulator to return pipe read error
+ * * on CFE_SB_RcvMsg call.
+ * * * * * * * * * * * * * * * * * * * *
+Entered UTF_SCRIPT_SetPipeReadError
+UTF Info: Return value for CFE SB Api #5 set to ca000006
+RcvMsg set to return error
+
+ * * * * * * * * * * * * * * * * * * * *
+ * * -> Send Housekeeping packet
+ * * Expected Output: 1) Housekeeping packet followed by
+ * * 2) Pipe Read error message which in turn triggers
+ * * 3) Application termination.
+ * * * * * * * * * * * * * * * * * * * *
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+ERROR EVENT ID=2 SB Pipe Read Error, App will exit. Pipe Return Status = 0xCA000006
+SysLog:1980-001-02:46:40.00000 Application MD_APP called CFE_ES_ExitApp
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0      MD_APP.DWELL_TABLE1     1836   0 
+   1      MD_APP.DWELL_TABLE2     1836   0 
+   2      MD_APP.DWELL_TABLE3     1836   0 
+   3      MD_APP.DWELL_TABLE4     1836   0 
+(*) indicates the Table was updated via CFE_TBL_Modified API

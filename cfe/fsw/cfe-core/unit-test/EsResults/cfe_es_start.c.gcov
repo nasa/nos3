@@ -1,0 +1,1048 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_start.c
+        -:    0:Graph:cfe_es_start.gcno
+        -:    0:Data:cfe_es_start.gcda
+        -:    0:Runs:1
+        -:    0:Programs:10
+        -:    1:/*
+        -:    2:**  File: 
+        -:    3:**  cfe_es_start.c
+        -:    4:**
+        -:    5:**
+        -:    6:**
+        -:    7:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    8:**      administrator of the National Aeronautics Space Administration.  
+        -:    9:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:   10:**      Space Flight Center pursuant to government contracts.
+        -:   11:**
+        -:   12:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   13:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   14:**
+        -:   15:**  Purpose:
+        -:   16:**  This file contains the Main entrypoint and startup code for the cFE core.
+        -:   17:**  The entry point is called by the board support package for the OS. When the
+        -:   18:**  entry point is finished, the cFE should be fully initialized and running.
+        -:   19:**
+        -:   20:**  References:
+        -:   21:**     Flight Software Branch C Coding Standard Version 1.0a
+        -:   22:**     cFE Flight Software Application Developers Guide
+        -:   23:**
+        -:   24:**  $Log: cfe_es_start.c.gcov  $
+        -:   24:**  Revision 1.6 2015/06/24 12:19:30EDT wmoleski 
+        -:   24:**  Checking in the unit-test results for cFE 6.4.2.0
+        -:   25:**  Revision 1.16 2014/09/05 11:39:05GMT-05:00 acudmore 
+        -:   26:**  Updated CFE_ES_SetupResetVariables to correctly log the Boot Source ( bank ) and clarify ERLog and Syslog text for restarts.
+        -:   27:**  Revision 1.15 2014/08/22 15:50:11GMT-05:00 lwalling 
+        -:   28:**  Changed signed loop counters to unsigned
+        -:   29:**  Revision 1.14 2014/07/23 15:39:42EDT acudmore 
+        -:   30:**  Changed where processor reset count is incremented to make it more consistent.
+        -:   31:**  Removed 2nd ERLog entry when a processor reset reverts to a power on reset.
+        -:   32:**  Clarified ERlog entry text.
+        -:   33:**  Revision 1.13 2012/10/01 16:29:46GMT-05:00 aschoeni 
+        -:   34:**  Fixed missing parenthesis issue
+        -:   35:**  Revision 1.12 2012/07/16 16:18:21EDT lwalling 
+        -:   36:**  Added code to release stuck startup sync semaphore
+        -:   37:**  Revision 1.11 2012/01/13 08:50:04PST acudmore 
+        -:   38:**  Changed license text to reflect open source
+        -:   39:**  Revision 1.10 2010/11/08 12:33:04EST acudmore 
+        -:   40:**  Updated logic that checks for max processor reset count during a non-cfe caused reset ( watchdog ).
+        -:   41:**  Revision 1.9 2010/11/05 15:54:34EDT aschoeni 
+        -:   42:**  Added Generic Counter API to ES
+        -:   43:**  Revision 1.8 2010/11/04 14:05:56EDT acudmore 
+        -:   44:**  Added ram disk mount path configuration option.
+        -:   45:**  Revision 1.7 2010/09/21 15:52:17EDT jmdagost 
+        -:   46:**  Replaced syslog argument RetStatus with BlocksFree.
+        -:   47:**  Revision 1.6 2009/07/30 16:06:55EDT acudmore 
+        -:   48:**  Fixed check for blocks free in RAM disk ( > vs >= )
+        -:   49:**  Revision 1.5 2009/07/28 16:33:19EDT jmdagost 
+        -:   50:**  Replaced 3 references to filename with references to function name.
+        -:   51:**  Revision 1.4 2009/06/10 09:09:01EDT acudmore 
+        -:   52:**  Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   53:**  Revision 1.3 2008/07/30 14:53:30EDT apcudmore 
+        -:   54:**  Updated init code for startup sync support.
+        -:   55:**  Revision 1.2 2008/06/20 15:40:32EDT apcudmore 
+        -:   56:**  Added support for OSAL based module loader
+        -:   57:**   - Removed calls and references to the BSP based module loader
+        -:   58:**  Revision 1.1 2008/04/17 08:05:08EDT ruperera 
+        -:   59:**  Initial revision
+        -:   60:**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   61:**  Revision 1.46 2007/09/21 15:40:20EDT David Kobe (dlkobe) 
+        -:   62:**  Modified pointer type definitions to eliminate Linux gcc compile warnings
+        -:   63:**  Revision 1.45 2007/05/31 10:13:56EDT apcudmore 
+        -:   64:**  Fixed Syslog message text for Volatile Disk initialization
+        -:   65:**  Revision 1.44 2007/05/30 10:26:06EDT apcudmore 
+        -:   66:**  Added Exception handler support:
+        -:   67:**   - BSP routine to attach processor exceptions
+        -:   68:**   - context datatype and size define
+        -:   69:**   - added default exception init for each app+task
+        -:   70:**  Revision 1.43 2007/05/25 14:20:10EDT apcudmore 
+        -:   71:**  Fixed compiler warnings
+        -:   72:**  Revision 1.42 2007/05/25 10:38:12EDT apcudmore 
+        -:   73:**  Added OS_rmfs call to remove file system before reformatting it.
+        -:   74:**  Revision 1.41 2007/05/25 10:02:42EDT apcudmore 
+        -:   75:**  Fixed Typo and Moved WriteToSysLog call
+        -:   76:**  Revision 1.40 2007/05/24 15:09:23EDT apcudmore 
+        -:   77:**  App-Decompression updates:
+        -:   78:**    - Added verify macros for PERCENT_FREE config parameter
+        -:   79:**    - Updated comments in config files
+        -:   80:**    - Updated logic to turn off check if RAM_DISK_PERCENT_FREE is 0
+        -:   81:**  Revision 1.39 2007/05/24 10:57:48EDT apcudmore 
+        -:   82:**  Application Decompression Support:
+        -:   83:**   - Added configuration parameter for Percent of space free in Volatile disk on a P.R.
+        -:   84:**   - Added logic to check for amount of free space and reformat RAM disk if needed on a P.R.
+        -:   85:**   - Fixed warnings in decompression code.
+        -:   86:**  Revision 1.38 2007/05/22 14:56:55EDT apcudmore 
+        -:   87:**  cFE Non-Volatile Disk/Startup File changes:
+        -:   88:**    - cFE startup now passes in startup file path/name
+        -:   89:**    - cFE startup code does not init non-volatile disk ( BSP does )
+        -:   90:**    - BSPs now can map cFE paths without making the OS_initfs/OS_mount calls
+        -:   91:**    - MCP750 vxWorks6.2 BSP inits/mounts CF disk
+        -:   92:**    - Desktop ports pass in the same startup file path/name as before
+        -:   93:**  Revision 1.37 2007/05/07 15:56:32EDT apcudmore 
+        -:   94:**  Removed all ES startup semaphore code
+        -:   95:**  Removed all ES startup delays.
+        -:   96:**  Startup sync problems ( seem to be ) eliminated by protecting the ES global data tables with a mutex.
+        -:   97:**  Revision 1.36 2007/05/04 15:58:36EDT apcudmore 
+        -:   98:**  Implemented ES shared data protection. Eliminates Startup syncronization problem.
+        -:   99:**  Revision 1.35 2007/04/13 16:28:52EDT apcudmore 
+        -:  100:**  Changed function prototype to return int32 status on the ES Object table functions. 
+        -:  101:**  ES will now call OS_BSPPanic when the function returns something other than CFE_SUCCESS
+        -:  102:**  Revision 1.34 2007/04/10 13:50:46EDT rjmcgraw 
+        -:  103:**  Renamed function setupAnalyzerVariables to SetupPerfVariables
+        -:  104:**  Revision 1.33 2007/03/29 13:29:16EST apcudmore 
+        -:  105:**  Updated global variables and housekeeping to count:
+        -:  106:**  - Registered Core Apps
+        -:  107:**  - Registered External Apps
+        -:  108:**  - ALL Tasks 
+        -:  109:**  Revision 1.32 2007/03/22 10:26:23EST apcudmore 
+        -:  110:**  Implemented all code walkthrough items related to ES Application logic, commands, 
+        -:  111:**  and telemetry.
+        -:  112:**  Revision 1.31 2007/03/13 14:32:37EST apcudmore 
+        -:  113:**  Fixed ES Startup code walkthrough items.
+        -:  114:*/
+        -:  115:
+        -:  116:/*
+        -:  117:** Includes
+        -:  118:*/
+        -:  119:
+        -:  120:#include "cfe.h"
+        -:  121:#include "cfe_platform_cfg.h"
+        -:  122:#include "cfe_es.h"
+        -:  123:#include "cfe_es_global.h"       
+        -:  124:#include "cfe_es_start.h" 
+        -:  125:#include "cfe_es_apps.h"
+        -:  126:#include "cfe_es_log.h"
+        -:  127:#include "cfe_psp.h"
+        -:  128:
+        -:  129:#include <stdio.h>
+        -:  130:#include <string.h>
+        -:  131:
+        -:  132:/***************************************************************************/
+        -:  133:
+        -:  134:/*
+        -:  135:** Defines for this module
+        -:  136:*/
+        -:  137:
+        -:  138:/* 
+        -:  139:** Number of msecs to delay before exiting cFE. Allows LogMsg to get through 
+        -:  140:*/
+        -:  141:#define CFE_ES_PANIC_DELAY  500
+        -:  142:
+        -:  143:
+        -:  144:/*
+        -:  145:** Global data for the ES startup code and Runtime library
+        -:  146:*/
+        -:  147:CFE_ES_Global_t     CFE_ES_Global;
+        -:  148:
+        -:  149:/*
+        -:  150:** Pointer to the Reset data that is preserved on a processor reset
+        -:  151:*/
+        -:  152:CFE_ES_ResetData_t  *CFE_ES_ResetDataPtr;
+        -:  153:
+        -:  154:
+        -:  155:/***************************************************************************/
+        -:  156:
+        -:  157:/*
+        -:  158:** Code
+        -:  159:*/
+        -:  160:
+        -:  161:/*
+        -:  162:** Name: CFE_ES_Main
+        -:  163:** Purpose: This is the entry point to the cFE application code.
+        -:  164:**
+        -:  165:*/
+        -:  166:void CFE_ES_Main(uint32 StartType, uint32 StartSubtype, uint32 ModeId, uint8 *StartFilePath )
+        5:  167:{
+        -:  168:   uint32 i;
+        -:  169:   int32 ReturnCode;
+        -:  170:
+        -:  171:   /*
+        -:  172:   ** Indicate that the CFE is the earliest initialization state
+        -:  173:   */
+        5:  174:   CFE_ES_Global.SystemState = CFE_ES_SYSTEM_STATE_EARLY_INIT;
+        -:  175:
+        -:  176:   /*
+        -:  177:   ** Initialize the Reset variables. This call is required
+        -:  178:   ** Before most of the ES functions can be used including the 
+        -:  179:   ** ES System log.
+        -:  180:   */
+        5:  181:   CFE_ES_SetupResetVariables(StartType, StartSubtype, ModeId);
+        -:  182:
+        -:  183:   /*
+        -:  184:   ** Initialize the Logic Perf variables
+        -:  185:   ** Because this is in the ES Reset area, it must be called after
+        -:  186:   ** CFE_ES_SetupResetVariables.
+        -:  187:   */
+        5:  188:   CFE_ES_SetupPerfVariables(StartType);
+        -:  189:
+        -:  190:   /*
+        -:  191:   ** Announce the startup
+        -:  192:   */
+        5:  193:   CFE_ES_WriteToSysLog("ES Startup: CFE_ES_Main in EARLY_INIT state\n");
+        -:  194:
+        -:  195:   /*
+        -:  196:   ** Create and Mount the filesystems needed
+        -:  197:   */
+        5:  198:   CFE_ES_InitializeFileSystems(StartType);
+        -:  199:   
+        -:  200:   /*
+        -:  201:   ** Install exception Handlers ( Placeholder )
+        -:  202:   */
+        5:  203:   CFE_PSP_AttachExceptions();
+        -:  204:
+        -:  205:   /*
+        -:  206:   ** Initialize the ES Application Table
+        -:  207:   ** to mark all entries as unused.
+        -:  208:   */
+      165:  209:   for ( i = 0; i < CFE_ES_MAX_APPLICATIONS; i++ )
+        -:  210:   {
+      160:  211:      CFE_ES_Global.AppTable[i].RecordUsed = FALSE;
+        -:  212:   }
+        -:  213:   
+        -:  214:   /*
+        -:  215:   ** Initialize the ES Task Table
+        -:  216:   ** to mark all entries as unused.
+        -:  217:   */
+      325:  218:   for ( i = 0; i < OS_MAX_TASKS; i++ )
+        -:  219:   {
+      320:  220:      CFE_ES_Global.TaskTable[i].RecordUsed = FALSE;
+        -:  221:   }
+        -:  222:
+        -:  223:   /*
+        -:  224:   ** Initialize the ES Generic Counter Table
+        -:  225:   ** to mark all entries as unused.
+        -:  226:   */
+       45:  227:   for ( i = 0; i < CFE_ES_MAX_GEN_COUNTERS; i++ )
+        -:  228:   {
+       40:  229:      CFE_ES_Global.CounterTable[i].RecordUsed = FALSE;
+        -:  230:   }
+        -:  231:
+        -:  232:   /*
+        -:  233:   ** Create the ES Shared Data Mutex
+        -:  234:   */
+        5:  235:   ReturnCode = OS_MutSemCreate(&(CFE_ES_Global.SharedDataMutex), "ES_DATA_MUTEX", 0 );
+        5:  236:   if(ReturnCode != OS_SUCCESS)
+        -:  237:   {
+        1:  238:      CFE_ES_WriteToSysLog("ES Startup: Error: ES Shared Data Mutex could not be created. RC=0x%08X\n",
+        -:  239:                            ReturnCode);
+        -:  240:         
+        -:  241:      /*
+        -:  242:      ** Delay to allow the message to be read
+        -:  243:      */
+        1:  244:      OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  245:      
+        -:  246:      /* 
+        -:  247:      ** cFE Cannot continue to start up. 
+        -:  248:      */
+        1:  249:      CFE_PSP_Panic(CFE_PSP_PANIC_STARTUP_SEM);
+        -:  250:         
+        -:  251:   } /* end if */
+        -:  252:
+        -:  253:   /*
+        -:  254:   ** Indicate that the CFE core is now starting up / going multi-threaded
+        -:  255:   */
+        5:  256:   CFE_ES_WriteToSysLog("ES Startup: CFE_ES_Main entering CORE_STARTUP state\n");
+        5:  257:   CFE_ES_Global.SystemState = CFE_ES_SYSTEM_STATE_CORE_STARTUP;
+        -:  258:
+        -:  259:   /*
+        -:  260:   ** Create the tasks, OS objects, and initialize hardware
+        -:  261:   */
+        5:  262:   CFE_ES_CreateObjects();
+        -:  263:
+        -:  264:   /*
+        -:  265:   ** Indicate that the CFE core is ready
+        -:  266:   */
+        5:  267:   CFE_ES_WriteToSysLog("ES Startup: CFE_ES_Main entering CORE_READY state\n");
+        5:  268:   CFE_ES_Global.SystemState = CFE_ES_SYSTEM_STATE_CORE_READY;
+        -:  269:
+        -:  270:   /*
+        -:  271:   ** Start the cFE Applications from the disk using the file
+        -:  272:   ** specified in the CFE_ES_NONVOL_STARTUP_FILE or CFE_ES_VOLATILE_STARTUP_FILE 
+        -:  273:   ** ( defined in the cfe_platform_cfg.h file )
+        -:  274:   */   
+        5:  275:   CFE_ES_StartApplications(StartType, StartFilePath );
+        -:  276:
+        -:  277:   /*
+        -:  278:    * Wait for applications to be "running" before declaring as operational.
+        -:  279:    * However, if not everything starts up, that is not a fatal error, we will
+        -:  280:    * continue anyway since the core apps are OK and control/telemetry should function.
+        -:  281:    * The problem app could be deleted/restarted/etc by the ground station.
+        -:  282:    */
+        5:  283:   if (CFE_ES_ApplicationSyncDelay(CFE_ES_SYSTEM_STATE_UNDEFINED,
+        -:  284:           CFE_ES_STARTUP_SCRIPT_TIMEOUT_MSEC) != CFE_SUCCESS)
+        -:  285:   {
+        5:  286:       CFE_ES_WriteToSysLog("ES Startup: Startup Sync failed - Applications may not have all started\n");
+        -:  287:   }
+        -:  288:
+        -:  289:   /*
+        -:  290:   ** Startup is fully complete
+        -:  291:   */
+        5:  292:   CFE_ES_WriteToSysLog("ES Startup: CFE_ES_Main entering OPERATIONAL state\n");
+        5:  293:   CFE_ES_Global.SystemState = CFE_ES_SYSTEM_STATE_OPERATIONAL;
+        5:  294:}
+        -:  295:
+        -:  296:/*
+        -:  297:** Name: CFE_ES_SetupResetVariables
+        -:  298:**
+        -:  299:** Purpose: This function initializes the ES reset variables depending on the reset type.
+        -:  300:**          It will also initiate a power on reset when too many processor resets
+        -:  301:**           have happened.
+        -:  302:**
+        -:  303:*/
+        -:  304:void CFE_ES_SetupResetVariables(uint32 StartType, uint32 StartSubtype, uint32 BootSource )
+       12:  305:{
+        -:  306:
+        -:  307:   int32  status;
+        -:  308:   uint32 resetAreaSize;
+        -:  309:   
+        -:  310:   /*
+        -:  311:   ** Get the pointer to the Reset area from the BSP
+        -:  312:   */
+       12:  313:   status = CFE_PSP_GetResetArea (&(CFE_ES_ResetDataPtr), &(resetAreaSize));
+        -:  314:      
+        -:  315:   /*
+        -:  316:   ** Make sure the status is OK or size is big enough
+        -:  317:   */
+       12:  318:   if ( status == OS_ERROR )
+        -:  319:   {
+        -:  320:      /*
+        -:  321:      ** Cannot use the ES System log without the Reset Area
+        -:  322:      */
+        1:  323:      OS_printf("ES Startup: CFE_PSP_GetResetArea call Failed!\n");
+        -:  324:      
+        -:  325:      /*
+        -:  326:      ** Delay to allow the message to be read
+        -:  327:      */
+        1:  328:      OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  329:      
+        -:  330:      /* 
+        -:  331:      ** cFE Cannot continue to start up. 
+        -:  332:      */
+        1:  333:      CFE_PSP_Panic(CFE_PSP_PANIC_MEMORY_ALLOC);
+        -:  334:      
+        -:  335:   }
+       11:  336:   else if ( resetAreaSize < sizeof(CFE_ES_ResetData_t))
+        -:  337:   {
+        -:  338:      /*
+        -:  339:      ** Cannot use the ES system log without the Reset Area
+        -:  340:      */
+        1:  341:      OS_printf("ES Startup: Error: ES Reset area not big enough. Needed: %d, Given: %d.\n",
+        -:  342:              sizeof(CFE_ES_ResetData_t),
+        -:  343:              resetAreaSize);      
+        -:  344:      /*
+        -:  345:      ** Delay to allow the message to be read
+        -:  346:      */
+        1:  347:      OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  348:      
+        -:  349:      /* 
+        -:  350:      ** cFE Cannot continue to start up. 
+        -:  351:      */
+        1:  352:      CFE_PSP_Panic(CFE_PSP_PANIC_MEMORY_ALLOC);
+        -:  353:      
+        -:  354:   }
+        -:  355:
+        -:  356:   /*
+        -:  357:   ** Record the BootSource (bank) so it will be valid in the ER log entries.
+        -:  358:   */
+       12:  359:   CFE_ES_ResetDataPtr->ResetVars.BootSource   = BootSource;
+        -:  360:
+        -:  361:   /*
+        -:  362:   ** Determine how the system was started. The choices are:
+        -:  363:   **   CFE_ES_POWER_ON_RESET, or CFE_ES_PROCESSOR_RESET
+        -:  364:   ** The subtypes include:
+        -:  365:   **   CFE_ES_POWER_CYCLE, CFE_ES_PUSH_BUTTON, CFE_ES_HW_SPECIAL_COMMAND,
+        -:  366:   **   CFE_ES_HW_WATCHDOG, CFE_ES_RESET_COMMAND, or CFE_ES_EXCEPTION.
+        -:  367:   ** Some of these reset types are logged before the system is restarted.
+        -:  368:   **  ( CFE_ES_RESET_COMMAND, CFE_ES_EXCEPTION ) while others occur
+        -:  369:   **  without the knowledge of the software and must be logged here.
+        -:  370:   */
+       12:  371:   if ( StartType == CFE_ES_POWERON_RESET )
+        -:  372:   {
+        -:  373:      /*
+        -:  374:      ** Record the reset type and subtype
+        -:  375:      */
+        5:  376:      CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = StartSubtype;
+        5:  377:      CFE_ES_ResetDataPtr->ResetVars.ResetType = CFE_ES_POWERON_RESET;
+        -:  378:
+        -:  379:      /*
+        -:  380:      ** Log the power-on reset. 
+        -:  381:      */
+        5:  382:      if ( StartSubtype == CFE_ES_POWER_CYCLE )
+        -:  383:      {
+        3:  384:         CFE_ES_WriteToSysLog("POWER ON RESET due to Power Cycle (Power Cycle).\n");
+        3:  385:         status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, StartSubtype,
+        -:  386:                                    "POWER ON RESET due to Power Cycle (Power Cycle)", NULL,0 );
+        -:  387:      }
+        2:  388:      else if ( StartSubtype == CFE_ES_HW_SPECIAL_COMMAND )
+        -:  389:      {
+        1:  390:         CFE_ES_WriteToSysLog("POWER ON RESET due to HW Special Cmd (Hw Spec Cmd).\n");
+        1:  391:         status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, StartSubtype,
+        -:  392:                                    "POWER ON RESET due to HW Special Cmd (Hw Spec Cmd)", NULL,0 );
+        -:  393:      }
+        -:  394:      else
+        -:  395:      {
+        1:  396:         CFE_ES_WriteToSysLog("POWER ON RESET due to other cause (See Subtype).\n");
+        1:  397:         status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, StartSubtype,
+        -:  398:                                    "POWER ON RESET due to other cause (See Subtype)", NULL,0 );
+        -:  399:      }
+        -:  400:
+        -:  401:      /*
+        -:  402:      ** Initialize all reset counters.
+        -:  403:      */
+        5:  404:      CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount = 0;
+        5:  405:      CFE_ES_ResetDataPtr->ResetVars.MaxProcessorResetCount = CFE_ES_MAX_PROCESSOR_RESETS;
+        5:  406:      CFE_ES_Global.DebugVars.DebugFlag = 0;
+        -:  407:      
+        -:  408:   }
+        7:  409:   else if ( StartType == CFE_ES_PROCESSOR_RESET )
+        -:  410:   {
+        -:  411:      /*
+        -:  412:      ** If a Processor reset was not commanded, it must be a watchdog or other non-commanded reset
+        -:  413:      ** Log the reset before updating any reset variables.
+        -:  414:      */
+        7:  415:      if ( CFE_ES_ResetDataPtr->ResetVars.ES_CausedReset != TRUE )
+        -:  416:      {
+        6:  417:         CFE_ES_ResetDataPtr->ResetVars.ResetType = CFE_ES_PROCESSOR_RESET;
+        6:  418:         CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = StartSubtype; 
+        6:  419:         CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount++;
+        -:  420:         
+        -:  421:         /*
+        -:  422:         ** When coming up from a Processor reset that was not caused by ES, check to see 
+        -:  423:         ** if the maximum number has been exceeded
+        -:  424:         */
+        6:  425:         if ( CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount > 
+        -:  426:              CFE_ES_ResetDataPtr->ResetVars.MaxProcessorResetCount )
+        -:  427:         {
+        3:  428:             if ( StartSubtype == CFE_ES_HW_SPECIAL_COMMAND )
+        -:  429:             {
+        1:  430:                 CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = CFE_ES_HW_SPECIAL_COMMAND;
+        1:  431:                 CFE_ES_WriteToSysLog("POWER ON RESET due to max proc resets (HW Spec Cmd).\n");
+        -:  432:
+        -:  433:                 /*
+        -:  434:                 ** Log the reset in the ER Log. The log will be wiped out, but it's good to have
+        -:  435:                 ** the entry just in case something fails.
+        -:  436:                 */
+        1:  437:                 status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, StartSubtype,
+        -:  438:                                       "POWER ON RESET due to max proc resets (HW Spec Cmd).", NULL,0 );
+        -:  439:             }
+        -:  440:             else
+        -:  441:             {
+        2:  442:                 CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = CFE_ES_HW_WATCHDOG;
+        2:  443:                 CFE_ES_WriteToSysLog("POWER ON RESET due to max proc resets (Watchdog).\n");
+        -:  444:
+        -:  445:                 /*
+        -:  446:                 ** Log the reset in the ER Log. The log will be wiped out, but it's good to have
+        -:  447:                 ** the entry just in case something fails.
+        -:  448:                 */
+        2:  449:                 status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, StartSubtype,
+        -:  450:                                       "POWER ON RESET due to max proc resets (Watchdog).", NULL,0 );
+        -:  451:             } 
+        -:  452:             /*
+        -:  453:             ** Call the BSP reset routine 
+        -:  454:             */
+        3:  455:             CFE_PSP_Restart(CFE_ES_POWERON_RESET);
+        -:  456:             
+        -:  457:             /*
+        -:  458:             ** Should not return here.
+        -:  459:             */
+        3:  460:             CFE_ES_WriteToSysLog("ES Startup: Error: CFE_PSP_Restart returned.\n");
+        -:  461:           
+        -:  462:         }
+        -:  463:         else /* Maximum processor reset not exceeded */
+        -:  464:         {
+        3:  465:             if ( StartSubtype == CFE_ES_HW_SPECIAL_COMMAND )
+        -:  466:             {
+        1:  467:                CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = CFE_ES_HW_SPECIAL_COMMAND;
+        1:  468:                CFE_ES_WriteToSysLog("PROCESSOR RESET due to Hardware Special Command (HW Spec Cmd).\n");
+        -:  469:
+        -:  470:                /*
+        -:  471:                ** Log the watchdog reset 
+        -:  472:                */
+        1:  473:                status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_PROCESSOR_RESET, StartSubtype,
+        -:  474:                                       "PROCESSOR RESET due to Hardware Special Command (Hw Spec Cmd).", NULL,0 );
+        -:  475: 
+        -:  476:             }
+        -:  477:             else
+        -:  478:             {
+        2:  479:                CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = CFE_ES_HW_WATCHDOG;
+        2:  480:                CFE_ES_WriteToSysLog("PROCESSOR RESET due to Watchdog (Watchdog).\n");
+        -:  481:
+        -:  482:                /*
+        -:  483:                ** Log the watchdog reset 
+        -:  484:                */
+        2:  485:                status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_PROCESSOR_RESET, StartSubtype,
+        -:  486:                                       "PROCESSOR RESET due to Watchdog (Watchdog).", NULL,0 );
+        -:  487:
+        -:  488:             }
+        -:  489: 
+        -:  490:         } /* end if */
+        -:  491:         
+        -:  492:      }
+        -:  493:      /*
+        -:  494:      ** If a processor reset is due to a command or exception, the reset has already been logged.
+        -:  495:      ** Update the reset variables only.
+        -:  496:      ** The logic for detecting maximum resets is done on the command/exception side
+        -:  497:      ** on the "way down" when the command or exception handler is executed.
+        -:  498:      */
+        -:  499:      else
+        -:  500:      {
+        1:  501:         CFE_ES_ResetDataPtr->ResetVars.ResetType    = CFE_ES_PROCESSOR_RESET;
+        1:  502:         CFE_ES_ResetDataPtr->ResetVars.ResetSubtype = StartSubtype;
+        -:  503:      }
+        -:  504:
+        -:  505:      /*
+        -:  506:      ** Initialize processor reset counters.
+        -:  507:      */
+        7:  508:      CFE_ES_Global.DebugVars.DebugFlag = 0;
+        -:  509:   }
+        -:  510:   
+        -:  511:   /*
+        -:  512:   ** Clear the commanded reset flag, in case a watchdog happens.
+        -:  513:   */
+       12:  514:   CFE_ES_ResetDataPtr->ResetVars.ES_CausedReset = FALSE;
+        -:  515:      
+       12:  516:}
+        -:  517:
+        -:  518:/*
+        -:  519:** Name: CFE_ES_InitializeFileSystems
+        -:  520:**
+        -:  521:** Purpose: This function initializes the file systems used in the cFE core.
+        -:  522:**
+        -:  523:*/
+        -:  524:void CFE_ES_InitializeFileSystems(uint32 start_type)
+       14:  525:{
+        -:  526:   int32   RetStatus;
+        -:  527:   uint32 *RamDiskMemoryAddress;
+        -:  528:   uint32  RamDiskMemorySize;
+        -:  529:   int32   BlocksFree;
+        -:  530:   int32   PercentFree;
+        -:  531: 
+        -:  532:   /* 
+        -:  533:   ** Get the memory area for the RAM disk 
+        -:  534:   */
+       14:  535:   RetStatus = CFE_PSP_GetVolatileDiskMem(&(RamDiskMemoryAddress), &(RamDiskMemorySize));
+        -:  536:
+       14:  537:   if ( RetStatus != OS_FS_SUCCESS )
+        -:  538:   {
+        1:  539:      CFE_ES_WriteToSysLog("ES Startup: Cannot Get Memory for Volatile Disk. EC = 0x%08X\n",RetStatus);
+        -:  540:
+        -:  541:      /*
+        -:  542:      ** Delay to allow the message to be read
+        -:  543:      */
+        1:  544:      OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  545:      
+        -:  546:      /* 
+        -:  547:      ** cFE Cannot continue to start up.  
+        -:  548:      */
+        1:  549:      CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  550:
+        -:  551:   }      
+        -:  552:   
+        -:  553:   /*
+        -:  554:   ** Next, either format, or just initialize the RAM disk depending on
+        -:  555:   ** the reset type
+        -:  556:   */
+       14:  557:   if ( start_type == CFE_ES_POWERON_RESET )
+        -:  558:   {
+        6:  559:      RetStatus = OS_mkfs((void *)RamDiskMemoryAddress, "/ramdev0", "RAM", CFE_ES_RAM_DISK_SECTOR_SIZE, CFE_ES_RAM_DISK_NUM_SECTORS );
+        6:  560:      if ( RetStatus != OS_FS_SUCCESS )
+        -:  561:      {
+        1:  562:         CFE_ES_WriteToSysLog("ES Startup: Error Creating Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  563:
+        -:  564:         /*
+        -:  565:         ** Delay to allow the message to be read
+        -:  566:         */
+        1:  567:         OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  568:      
+        -:  569:         /* 
+        -:  570:         ** cFE Cannot continue to start up.  
+        -:  571:         */
+        1:  572:         CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  573:      }
+        -:  574:   }
+        -:  575:   else
+        -:  576:   {
+        8:  577:      RetStatus = OS_initfs((void *)RamDiskMemoryAddress, "/ramdev0", "RAM", CFE_ES_RAM_DISK_SECTOR_SIZE, CFE_ES_RAM_DISK_NUM_SECTORS );
+        8:  578:      if ( RetStatus != OS_FS_SUCCESS )
+        -:  579:      {
+        1:  580:         CFE_ES_WriteToSysLog("ES Startup: Error Initializing Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        1:  581:         CFE_ES_WriteToSysLog("ES Startup: Formatting Volatile(RAM) Volume.\n");
+        -:  582:         
+        1:  583:         RetStatus = OS_mkfs((void *)RamDiskMemoryAddress, "/ramdev0", "RAM", CFE_ES_RAM_DISK_SECTOR_SIZE, CFE_ES_RAM_DISK_NUM_SECTORS );
+        1:  584:         if ( RetStatus != OS_SUCCESS )
+        -:  585:         {
+        1:  586:            CFE_ES_WriteToSysLog("ES Startup: Error Creating Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  587:
+        -:  588:            /*
+        -:  589:            ** Delay to allow the message to be read
+        -:  590:            */
+        1:  591:            OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  592:      
+        -:  593:            /* 
+        -:  594:            ** cFE Cannot continue to start up.  
+        -:  595:            */
+        1:  596:            CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  597:         }
+        -:  598:         
+        -:  599:      }
+        -:  600:   }
+        -:  601:
+        -:  602:   /*
+        -:  603:   ** Now, mount the RAM disk
+        -:  604:   */
+       14:  605:   RetStatus = OS_mount("/ramdev0", CFE_ES_RAM_DISK_MOUNT_STRING);
+       14:  606:   if ( RetStatus != OS_FS_SUCCESS )
+        -:  607:   {
+        4:  608:      CFE_ES_WriteToSysLog("ES Startup: Error Mounting Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  609:      /*
+        -:  610:      ** Delay to allow the message to be read
+        -:  611:      */
+        4:  612:      OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  613:      
+        -:  614:      /* 
+        -:  615:      ** cFE Cannot continue to start up.  
+        -:  616:      */
+        4:  617:      CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  618:   }
+        -:  619:
+        -:  620:
+        -:  621:   /*
+        -:  622:   ** During a Processor reset, if the RAM disk has less than a defined 
+        -:  623:   ** amount of free space, reformat and re-mount it.
+        -:  624:   ** The parameter being checked is CFE_ES_RAM_DISK_PERCENT_RESERVED
+        -:  625:   ** Note: When CFE_ES_RAM_DISK_PERCENT_RESERVED is set to 0, this feature is 
+        -:  626:   **       disabled.
+        -:  627:   */
+       14:  628:   if ((start_type == CFE_ES_PROCESSOR_RESET) && (CFE_ES_RAM_DISK_PERCENT_RESERVED > 0))
+        -:  629:   {
+        -:  630:      /*
+        -:  631:      ** See how many blocks are free in the RAM disk
+        -:  632:      */
+        7:  633:      BlocksFree = OS_fsBlocksFree(CFE_ES_RAM_DISK_MOUNT_STRING);   
+        7:  634:      if ( BlocksFree >= 0 )
+        -:  635:      {
+        -:  636:         /*
+        -:  637:         ** Need a sanity check for the desktop systems.
+        -:  638:         ** Because the desktop ports map the volatile disk to the host 
+        -:  639:         ** hard disk, it will report more free blocks than the defined number
+        -:  640:         ** of sectors ( blocks ). Therefore it must be truncated.
+        -:  641:         */
+        6:  642:         if ( BlocksFree > CFE_ES_RAM_DISK_NUM_SECTORS )
+        -:  643:         {
+        1:  644:             BlocksFree = CFE_ES_RAM_DISK_NUM_SECTORS - 1;
+        -:  645:         }
+        -:  646:         
+        -:  647:         /*
+        -:  648:         ** Determine if the disk is too full 
+        -:  649:         */
+        6:  650:         BlocksFree = BlocksFree * 100;
+        6:  651:         PercentFree = BlocksFree / CFE_ES_RAM_DISK_NUM_SECTORS;
+        6:  652:         CFE_ES_WriteToSysLog("Volatile Disk has %d Percent free space.\n",PercentFree);
+        -:  653:
+        6:  654:         if ( PercentFree < CFE_ES_RAM_DISK_PERCENT_RESERVED )
+        -:  655:         {
+        5:  656:            CFE_ES_WriteToSysLog("ES Startup: Insufficent Free Space on Volatile Disk, Reformatting.\n");
+        -:  657:          
+        -:  658:            /*
+        -:  659:            ** First, unmount the disk
+        -:  660:            */
+        5:  661:            RetStatus = OS_unmount(CFE_ES_RAM_DISK_MOUNT_STRING);
+        5:  662:            if ( RetStatus == OS_FS_SUCCESS )
+        -:  663:            {
+        -:  664:
+        -:  665:               /*
+        -:  666:               ** Remove the file system from the OSAL
+        -:  667:               */
+        4:  668:               RetStatus = OS_rmfs("/ramdev0");
+        4:  669:               if ( RetStatus == OS_FS_SUCCESS )
+        -:  670:               {
+        -:  671:               
+        -:  672:                  /*
+        -:  673:                  ** Next, make a new file system on the disk
+        -:  674:                  */
+        3:  675:                  RetStatus = OS_mkfs((void *)RamDiskMemoryAddress, "/ramdev0", 
+        -:  676:                                      "RAM", CFE_ES_RAM_DISK_SECTOR_SIZE, 
+        -:  677:                                       CFE_ES_RAM_DISK_NUM_SECTORS );
+        3:  678:                  if ( RetStatus == OS_FS_SUCCESS )
+        -:  679:                  {
+        -:  680:                     /*
+        -:  681:                     ** Last, remount the disk
+        -:  682:                     */
+        2:  683:                     RetStatus = OS_mount("/ramdev0", CFE_ES_RAM_DISK_MOUNT_STRING);
+        2:  684:                     if ( RetStatus != OS_FS_SUCCESS )
+        -:  685:                     {
+        1:  686:                        CFE_ES_WriteToSysLog("ES Startup: Error Re-Mounting Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  687:                        /*
+        -:  688:                        ** Delay to allow the message to be read
+        -:  689:                        */
+        1:  690:                        OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  691:                     
+        -:  692:                        /* 
+        -:  693:                        ** cFE Cannot continue to start up.  
+        -:  694:                        */
+        1:  695:                        CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  696:                     
+        -:  697:                     } /* end if mount */
+        -:  698:                  }
+        -:  699:                  else
+        -:  700:                  {
+        -:  701:
+        1:  702:                     CFE_ES_WriteToSysLog("ES Startup: Error Re-Formating Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  703:                     /*
+        -:  704:                     ** Delay to allow the message to be read
+        -:  705:                     */
+        1:  706:                     OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  707:      
+        -:  708:                     /* 
+        -:  709:                     ** cFE Cannot continue to start up.  
+        -:  710:                     */
+        1:  711:                     CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  712:                                 
+        -:  713:                  } /* end if mkfs */
+        -:  714:
+        -:  715:              }
+        -:  716:              else /* could not Remove File system */
+        -:  717:              {
+        -:  718:
+        1:  719:                  CFE_ES_WriteToSysLog("ES Startup: Error Removing Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  720:                  /*
+        -:  721:                  ** Delay to allow the message to be read
+        -:  722:                  */
+        1:  723:                  OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  724:      
+        -:  725:                  /* 
+        -:  726:                  ** cFE Cannot continue to start up.  
+        -:  727:                  */
+        1:  728:                  CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  729:
+        -:  730:              } /* end if OS_rmfs */
+        -:  731:
+        -:  732:            }
+        -:  733:            else /* could not un-mount disk */
+        -:  734:            {
+        1:  735:               CFE_ES_WriteToSysLog("ES Startup: Error Un-Mounting Volatile(RAM) Volume. EC = 0x%08X\n",RetStatus);
+        -:  736:               /*
+        -:  737:               ** Delay to allow the message to be read
+        -:  738:               */
+        1:  739:               OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  740:               
+        -:  741:               /* 
+        -:  742:               ** cFE Cannot continue to start up.  
+        -:  743:               */
+        1:  744:               CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);            
+        -:  745:            }
+        -:  746:            
+        -:  747:         } /* end if enough free space */
+        -:  748:         
+        -:  749:      }
+        -:  750:      else  /* could not determine free blocks */
+        -:  751:      {         
+        -:  752:         /* Log error message -- note that BlocksFree returns the error code in this case */
+        1:  753:         CFE_ES_WriteToSysLog("ES Startup: Error Determining Blocks Free on Volume. EC = 0x%08X\n",BlocksFree);
+        -:  754:
+        -:  755:         /*
+        -:  756:         ** Delay to allow the message to be read
+        -:  757:         */
+        1:  758:         OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  759:
+        -:  760:         /* 
+        -:  761:         ** cFE Cannot continue to start up.  
+        -:  762:         */
+        1:  763:         CFE_PSP_Panic(CFE_PSP_PANIC_VOLATILE_DISK);
+        -:  764:         
+        -:  765:      } /* end if BlocksFree */
+        -:  766:   
+        -:  767:   } /* end if processor reset */
+        -:  768:     
+       14:  769:} /* end function */
+        -:  770:
+        -:  771:/*-------------------------------------------------------------------------
+        -:  772:**
+        -:  773:**                  Functional Prolog
+        -:  774:**
+        -:  775:**   Name: CFE_ES_CreateObjects
+        -:  776:**
+        -:  777:**   Purpose: This function reads the es_object_table and performs all of the
+        -:  778:**            application layer initialization.
+        -:  779:**----------------------------------------------------------------------------
+        -:  780:*/
+        -:  781:void  CFE_ES_CreateObjects(void)
+       10:  782:{
+        -:  783:    int32     ReturnCode;
+        -:  784:    boolean   AppSlotFound;
+        -:  785:    uint16    i;
+        -:  786:    uint16    j;
+        -:  787:
+       10:  788:    CFE_ES_WriteToSysLog("ES Startup: Starting Object Creation calls.\n");
+        -:  789:
+      310:  790:    for ( i = 0; i < CFE_ES_OBJECT_TABLE_SIZE; i++ )
+        -:  791:    {
+      300:  792:        switch ( CFE_ES_ObjectTable[i].ObjectType )
+        -:  793:        {
+        -:  794:            case CFE_ES_DRIVER_TASK:
+        -:  795:            case CFE_ES_CORE_TASK:
+        -:  796:
+        -:  797:            /*
+        -:  798:            ** Allocate an ES AppTable entry
+        -:  799:            */
+       50:  800:            AppSlotFound = FALSE;
+      635:  801:            for ( j = 0; j < CFE_ES_MAX_APPLICATIONS; j++ )
+        -:  802:            {
+      625:  803:               if ( CFE_ES_Global.AppTable[j].RecordUsed == FALSE )
+        -:  804:               {
+       40:  805:                  AppSlotFound = TRUE;
+       40:  806:                  break;
+        -:  807:               }
+        -:  808:            }
+        -:  809:
+        -:  810:            /*
+        -:  811:            ** If a slot was found, create the application
+        -:  812:            */
+       50:  813:            if ( AppSlotFound == TRUE )
+        -:  814:            {
+        -:  815:            
+       40:  816:               CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  817:
+        -:  818:               /*
+        -:  819:               ** Allocate and populate the ES_AppTable entry
+        -:  820:               */
+       40:  821:               CFE_PSP_MemSet ( (void *)&(CFE_ES_Global.AppTable[j]), 0, sizeof(CFE_ES_AppRecord_t));
+       40:  822:               CFE_ES_Global.AppTable[j].RecordUsed = TRUE;
+       40:  823:               CFE_ES_Global.AppTable[j].Type = CFE_ES_APP_TYPE_CORE;
+        -:  824:               
+        -:  825:               /*
+        -:  826:               ** Fill out the parameters in the AppStartParams sub-structure
+        -:  827:               */         
+       40:  828:               strncpy((char *)CFE_ES_Global.AppTable[j].StartParams.Name, (char *)CFE_ES_ObjectTable[i].ObjectName, OS_MAX_API_NAME);
+       40:  829:               CFE_ES_Global.AppTable[j].StartParams.Name[OS_MAX_API_NAME - 1] = '\0';
+        -:  830:               /* EntryPoint field is not valid here for base apps */
+        -:  831:               /* FileName is not valid for base apps, either */
+       40:  832:               CFE_ES_Global.AppTable[j].StartParams.StackSize = CFE_ES_ObjectTable[i].ObjectSize;
+       40:  833:               CFE_ES_Global.AppTable[j].StartParams.StartAddress = (uint32)CFE_ES_ObjectTable[i].FuncPtrUnion.FunctionPtr;
+       40:  834:               CFE_ES_Global.AppTable[j].StartParams.ExceptionAction = CFE_ES_APP_EXCEPTION_PROC_RESTART;
+       40:  835:               CFE_ES_Global.AppTable[j].StartParams.Priority = CFE_ES_ObjectTable[i].ObjectPriority;
+        -:  836:               
+        -:  837:               
+        -:  838:               /*
+        -:  839:               ** Fill out the Task Info
+        -:  840:               */
+       40:  841:               strncpy((char *)CFE_ES_Global.AppTable[j].TaskInfo.MainTaskName, (char *)CFE_ES_ObjectTable[i].ObjectName, OS_MAX_API_NAME);
+       40:  842:               CFE_ES_Global.AppTable[j].TaskInfo.MainTaskName[OS_MAX_API_NAME - 1] = '\0';
+       40:  843:               CFE_ES_Global.AppTable[j].TaskInfo.NumOfChildTasks = 0;
+        -:  844:               
+        -:  845:               /*
+        -:  846:               ** Core apps still have the notion of an init/running state
+        -:  847:               */
+       40:  848:               CFE_ES_Global.AppTable[j].StateRecord.AppState = CFE_ES_APP_STATE_INITIALIZING;
+       40:  849:               ++CFE_ES_Global.AppStartedCount;
+        -:  850:               
+        -:  851:               
+        -:  852:               /*
+        -:  853:               ** Create the task
+        -:  854:               */
+       40:  855:               ReturnCode = OS_TaskCreate(&CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId, /* task id */
+        -:  856:                                  CFE_ES_ObjectTable[i].ObjectName,              /* task name */
+        -:  857:                                  CFE_ES_ObjectTable[i].FuncPtrUnion.VoidPtr,    /* task function pointer */
+        -:  858:                                  NULL,                                          /* stack pointer */
+        -:  859:                                  CFE_ES_ObjectTable[i].ObjectSize,              /* stack size */
+        -:  860:                                  CFE_ES_ObjectTable[i].ObjectPriority,          /* task priority */
+        -:  861:                                  OS_FP_ENABLED);                                /* task options */
+        -:  862:
+       40:  863:               if(ReturnCode != OS_SUCCESS)
+        -:  864:               {
+        5:  865:                  CFE_ES_Global.AppTable[j].RecordUsed = FALSE;
+        5:  866:                  CFE_ES_WriteToSysLog("ES Startup: OS_TaskCreate error creating core App: %s: EC = 0x%08X\n",
+        -:  867:                                        CFE_ES_ObjectTable[i].ObjectName, ReturnCode);
+        -:  868:      
+        -:  869:                                        
+        5:  870:                  CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  871:
+        -:  872:                  /*
+        -:  873:                  ** Delay to allow the message to be read
+        -:  874:                  */
+        5:  875:                  OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  876:      
+        -:  877:                  /* 
+        -:  878:                  ** cFE Cannot continue to start up.  
+        -:  879:                  */
+        5:  880:                  CFE_PSP_Panic(CFE_PSP_PANIC_CORE_APP);
+        -:  881:                                              
+        -:  882:               }
+        -:  883:               else
+        -:  884:               {
+       35:  885:                  CFE_ES_ObjectTable[i].ObjectKey = CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId;
+        -:  886:
+        -:  887:                  /*
+        -:  888:                  ** Allocate and populate the CFE_ES_Global.TaskTable entry
+        -:  889:                  */
+       35:  890:                  if ( CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].RecordUsed == TRUE )
+        -:  891:                  {
+       30:  892:                     CFE_ES_WriteToSysLog("ES Startup: CFE_ES_Global.TaskTable record used error for App: %s, continuing.\n",
+        -:  893:                                           CFE_ES_ObjectTable[i].ObjectName);
+        -:  894:                  }
+        -:  895:                  else
+        -:  896:                  {
+        5:  897:                     CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].RecordUsed = TRUE;
+        -:  898:                  }
+       35:  899:                  CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].AppId = j;
+       35:  900:                  CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].TaskId = CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId;
+       35:  901:                  strncpy((char *)CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].TaskName, (char *)CFE_ES_Global.AppTable[j].TaskInfo.MainTaskName, OS_MAX_API_NAME);
+       35:  902:                  CFE_ES_Global.TaskTable[CFE_ES_Global.AppTable[j].TaskInfo.MainTaskId].TaskName[OS_MAX_API_NAME - 1] = '\0';
+        -:  903:
+       35:  904:                  CFE_ES_WriteToSysLog("ES Startup: Core App: %s created. App ID: %d\n",
+        -:  905:                                       CFE_ES_ObjectTable[i].ObjectName,j);
+        -:  906:                                       
+        -:  907:                  /*
+        -:  908:                  ** Increment the registered App and Registered External Task variables.
+        -:  909:                  */
+       35:  910:                  CFE_ES_Global.RegisteredTasks++;
+       35:  911:                  CFE_ES_Global.RegisteredCoreApps++;
+        -:  912:                  
+       35:  913:                  CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  914:                                                                                                      
+        -:  915:               }
+        -:  916:            }
+        -:  917:            else /* appSlot not found -- This should never happen!*/
+        -:  918:            {
+       10:  919:               CFE_ES_WriteToSysLog("ES Startup: Error, No free application slots available for CORE App!\n");
+        -:  920:               /*
+        -:  921:               ** Delay to allow the message to be read
+        -:  922:               */
+       10:  923:               OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  924:      
+        -:  925:               /* 
+        -:  926:               ** cFE Cannot continue to start up.  
+        -:  927:               */
+       10:  928:               CFE_PSP_Panic(CFE_PSP_PANIC_CORE_APP);
+        -:  929:            
+        -:  930:            }
+        -:  931:
+        -:  932:            /*
+        -:  933:             * CFE_ES_ApplicationSyncDelay() will delay this thread until the
+        -:  934:             * newly-started thread calls CFE_ES_WaitForStartupSync()
+        -:  935:             */
+       50:  936:            if (CFE_ES_ApplicationSyncDelay(CFE_ES_SYSTEM_STATE_UNDEFINED, CFE_CORE_MAX_STARTUP_MSEC) != CFE_SUCCESS)
+        -:  937:            {
+       50:  938:                CFE_ES_WriteToSysLog("ES Startup: Core App %s did not complete initialization\n",
+        -:  939:                                      CFE_ES_ObjectTable[i].ObjectName);
+        -:  940:
+        -:  941:                /*
+        -:  942:                ** Delay to allow the message to be read
+        -:  943:                */
+       50:  944:                OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  945:
+        -:  946:                /*
+        -:  947:                ** cFE Cannot continue to start up.
+        -:  948:                */
+       50:  949:                CFE_PSP_Panic(CFE_PSP_PANIC_CORE_APP);
+        -:  950:            }
+       50:  951:            break;
+        -:  952:
+        -:  953:            case CFE_ES_FUNCTION_CALL: /*----------------------------------------------------------*/
+        -:  954:
+       61:  955:               if ( CFE_ES_ObjectTable[i].FuncPtrUnion.FunctionPtr != NULL )
+        -:  956:               {
+       60:  957:                  CFE_ES_WriteToSysLog("ES Startup: Calling %s\n",CFE_ES_ObjectTable[i].ObjectName);
+        -:  958:                  /*
+        -:  959:                  ** Call the function
+        -:  960:                  */
+       60:  961:                  ReturnCode = (*CFE_ES_ObjectTable[i].FuncPtrUnion.FunctionPtr)();
+       60:  962:                  if(ReturnCode != CFE_SUCCESS)
+        -:  963:                  {
+        1:  964:                     CFE_ES_WriteToSysLog("ES Startup: Error returned when calling function: %s: EC = 0x%08X\n",
+        -:  965:                                           CFE_ES_ObjectTable[i].ObjectName, ReturnCode);
+        -:  966:                                        
+        -:  967:                     /*
+        -:  968:                     ** Delay to allow the message to be read
+        -:  969:                     */
+        1:  970:                     OS_TaskDelay(CFE_ES_PANIC_DELAY);
+        -:  971:      
+        -:  972:                     /* 
+        -:  973:                     ** cFE Cannot continue to start up.  
+        -:  974:                     */
+        1:  975:                     CFE_PSP_Panic(CFE_PSP_PANIC_CORE_APP);
+        -:  976:                                              
+        -:  977:                  } /* end if */
+        -:  978:                  
+        -:  979:               }
+        -:  980:               else
+        -:  981:               {
+        1:  982:                  CFE_ES_WriteToSysLog("ES Startup: bad function pointer ( table entry = %d).\n",i);
+        -:  983:               }
+        -:  984:               break;
+        -:  985:
+        -:  986:            case CFE_ES_NULL_ENTRY: /*-------------------------------------------------------*/
+        -:  987:               break;
+        -:  988:            default:
+        -:  989:               break;
+        -:  990:       } /* end switch */
+        -:  991:
+        -:  992:    } /* end for */
+        -:  993:
+       10:  994:    CFE_ES_WriteToSysLog("ES Startup: Finished ES CreateObject table entries.\n");
+       10:  995:}
+        -:  996:
+        -:  997:/*
+        -:  998:** Function: CFE_ES_ApplicationSyncDelay
+        -:  999:**
+        -: 1000:** Purpose:  Waits for all of the applications that CFE has started thus far to
+        -: 1001:**           reach the "running" state, i.e. call CFE_ES_RunLoop or CFE_ES_WaitForStartupSync
+        -: 1002:**
+        -: 1003:**           It will also wait for the overall system state to be (at least) reach
+        -: 1004:**           the desired state.  This may be "CFE_ES_SYSTEM_STATE_UNDEFINED" to match any.
+        -: 1005:**
+        -: 1006:*/
+        -: 1007:int32 CFE_ES_ApplicationSyncDelay(uint32 MinimumSystemState, uint32 TimeOutMilliseconds)
+       60: 1008:{
+        -: 1009:    int32 Status;
+        -: 1010:    uint32 WaitTime;
+        -: 1011:    uint32 WaitRemaining;
+        -: 1012:
+       60: 1013:    Status = CFE_SUCCESS;
+       60: 1014:    WaitRemaining = TimeOutMilliseconds;
+    34322: 1015:    while (CFE_ES_Global.SystemState < MinimumSystemState ||
+        -: 1016:            (CFE_ES_Global.AppReadyCount != CFE_ES_Global.AppStartedCount &&
+        -: 1017:                    CFE_ES_SYSTEM_STATE_UNDEFINED == MinimumSystemState))
+        -: 1018:    {
+        -: 1019:        /* TBD: Very Crude timing here, but not sure if it matters,
+        -: 1020:         * as this is only done during startup, not real work */
+    34260: 1021:        if (WaitRemaining > CFE_ES_STARTUP_SYNC_POLL_MSEC)
+        -: 1022:        {
+    34144: 1023:            WaitTime = CFE_ES_STARTUP_SYNC_POLL_MSEC;
+        -: 1024:        }
+      116: 1025:        else if (WaitRemaining > 0)
+        -: 1026:        {
+       58: 1027:            WaitTime = WaitRemaining;
+        -: 1028:        }
+        -: 1029:        else
+        -: 1030:        {
+       58: 1031:            Status = CFE_ES_OPERATION_TIMED_OUT;
+       58: 1032:            break;
+        -: 1033:        }
+        -: 1034:
+    34202: 1035:        OS_TaskDelay(WaitTime);
+    34202: 1036:        WaitRemaining -= WaitTime;
+        -: 1037:    }
+        -: 1038:
+       60: 1039:    return Status;
+        -: 1040:}
+        -: 1041:

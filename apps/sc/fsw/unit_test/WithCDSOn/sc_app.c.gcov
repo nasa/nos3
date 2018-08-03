@@ -1,0 +1,1233 @@
+        -:    0:Source:/Users/nyanchik/Desktop/cfs-sandbox/sc/fsw/src/sc_app.c
+        -:    0:Graph:sc_app.gcno
+        -:    0:Data:sc_app.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: sc_app.c.gcov 1.1.1.2 2009/01/26 14:39:04EST nyanchik Exp  $
+        -:    4: **
+        -:    5: ** Purpose: 
+        -:    6: **     This file contains the Stored Command main event loop function. It also
+        -:    7: **     contains the initialization function. The SC app handles the scheduling
+        -:    8: **     of stored commands for the fsw. The main event loop handles the Software
+        -:    9: **     Bus interface.
+        -:   10: **
+        -:   11: ** References:
+        -:   12: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   13: **   CFS Development Standards Document
+        -:   14: ** Notes:
+        -:   15: **
+        -:   16: **   $Log: sc_app.c.gcov  $
+        -:   16: **   Revision 1.1.1.2 2009/01/26 14:39:04EST nyanchik 
+        -:   16: **   Initial revision
+        -:   16: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/sc/fsw/unit_test/WithCDSOn/project.pj
+        -:   16: **   Revision 1.1 2009/01/26 14:19:58EST nyanchik 
+        -:   16: **   Initial revision
+        -:   16: **   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/sc/fsw/unit_test/project.pj
+        -:   17: **   Revision 1.2 2009/01/05 08:26:48EST nyanchik 
+        -:   18: **   Check in after code review changes
+        -:   19: *************************************************************************/
+        -:   20:
+        -:   21:
+        -:   22:/**************************************************************************
+        -:   23: **
+        -:   24: ** Include section
+        -:   25: **
+        -:   26: **************************************************************************/
+        -:   27:
+        -:   28:#include "sc_app.h"
+        -:   29:
+        -:   30:#include "sc_atsrq.h"
+        -:   31:#include "sc_cmds.h"
+        -:   32:#include "sc_loads.h"
+        -:   33:#include "sc_rtsrq.h"
+        -:   34:#include "sc_state.h"
+        -:   35:#include "sc_utils.h"
+        -:   36:#include <string.h>
+        -:   37:
+        -:   38:
+        -:   39:
+        -:   40:/************************************************************************/
+        -:   41:/** \brief Main loop for SC
+        -:   42: **  
+        -:   43: **  \par Description
+        -:   44: **       This function is the main loop for SC. It is designed to not 
+        -:   45: **       return unless the application terminates with an error
+        -:   46: **    
+        -:   47: **  \par Assumptions, External Events, and Notes:
+        -:   48: **        None
+        -:   49: **
+        -:   50: *************************************************************************/
+        -:   51:void SC_AppMain (void);
+        -:   52:
+        -:   53:/************************************************************************/
+        -:   54:/** \brief Initialization routine for SC app
+        -:   55: **  
+        -:   56: **  \par Description
+        -:   57: **       Initializes SC app. Reurns status of initialzation 
+        -:   58: **       
+        -:   59: **       
+        -:   60: **       
+        -:   61: **  \par Assumptions, External Events, and Notes:
+        -:   62: **        None
+        -:   63: **
+        -:   64: **  \returns
+        -:   65: **  \retcode #CFE_SUCCESS \retdesc \copydoc CFE_SUCCESS \endcode
+        -:   66: **  \retstmt Return status from CFE on initialization \endcode
+        -:   67: **  \endreturns
+        -:   68: **
+        -:   69: *************************************************************************/
+        -:   70:int32 SC_AppInit(void);
+        -:   71:
+        -:   72:/************************************************************************/
+        -:   73:/** \brief Initalize without a CDS
+        -:   74: **  
+        -:   75: **  \par Description
+        -:   76: **       SC has tables for RTS's, ATS's and control structures. All of 
+        -:   77: **       those tables are registered in this function.
+        -:   78: **           
+        -:   79: **       
+        -:   80: **  \par Assumptions, External Events, and Notes:
+        -:   81: **        None
+        -:   82: **
+        -:   83: **  \returns
+        -:   84: **  \retstmt Returns result form #CFE_TBL_Load or #CFE_TBL_Register \endcode
+        -:   85: **  \endreturns
+        -:   86: **
+        -:   87: *************************************************************************/
+        -:   88:int32 SC_InitNoCDS(void);
+        -:   89:
+        -:   90:/************************************************************************/
+        -:   91:/** \brief Registers tables without using the CDS
+        -:   92: **  
+        -:   93: **  \par Description
+        -:   94: **         Registers SC's tables without using the CDS
+        -:   95: **       
+        -:   96: **  \par Assumptions, External Events, and Notes:
+        -:   97: **        None
+        -:   98: **
+        -:   99: **  \returns
+        -:  100: **  \retcode #CFE_SUCCESS         \retdesc \copydoc CFE_SUCCESS      \endcode
+        -:  101: **  \retstmt Returns error codes from #CFE_TBL_GetAddress            \endcode
+        -:  102: **  \retstmt Returns error codes from #CFE_TBL_Register              \endcode  
+        -:  103: **  \endreturns
+        -:  104: **
+        -:  105: *************************************************************************/
+        -:  106:
+        -:  107:int32 SC_RegisterTablesNoCDS(void);
+        -:  108:
+        -:  109:/************************************************************************/
+        -:  110:/** \brief  Initization routine for use with the CDS
+        -:  111: **  
+        -:  112: **  \par Description
+        -:  113: **         When using the CDS, this is the SC routine that is used to initialize.
+        -:  114: **       
+        -:  115: **  \par Assumptions, External Events, and Notes:
+        -:  116: **        None
+        -:  117: **
+        -:  118: **  \returns
+        -:  119: **  \retcode #CFE_SUCCESS         \retdesc \copydoc CFE_SUCCESS      \endcode 
+        -:  120: **  \retstmt Returns error codes from #CFE_TBL_GetAddress            \endcode
+        -:  121: **  \retstmt Returns error codes from #CFE_TBL_Register              \endcode  
+        -:  122: **  \endreturns
+        -:  123: **
+        -:  124: *************************************************************************/
+        -:  125:int32 SC_InitWithCDS(void);
+        -:  126:
+        -:  127:/************************************************************************/
+        -:  128:/** \brief Registers tables for use with the CDS
+        -:  129: **  
+        -:  130: **  \par Description
+        -:  131: **         When using the CDS, this function registers tables as critical
+        -:  132: **       
+        -:  133: **  \par Assumptions, External Events, and Notes:
+        -:  134: **        None
+        -:  135: **
+        -:  136: **  \returns
+        -:  137: **  \retcode #CFE_SUCCESS         \retdesc \copydoc CFE_SUCCESS      \endcode
+        -:  138: **  \retstmt Returns error codes from #CFE_TBL_GetAddress            \endcode
+        -:  139: **  \retstmt Returns error codes from #CFE_TBL_Register              \endcode 
+        -:  140: **  \endreturns
+        -:  141: **
+        -:  142: *************************************************************************/
+        -:  143:int32 SC_RegisterTablesWithCDS(boolean *Restored);
+        -:  144:
+        -:  145:/************************************************************************/
+        -:  146:/** \brief Loads RTS table files from Nonvol
+        -:  147: **  
+        -:  148: **  \par Description
+        -:  149: **         Loads RTS table files from Nonvolitile memory
+        -:  150: **       
+        -:  151: **  \par Assumptions, External Events, and Notes:
+        -:  152: **        None
+        -:  153: **
+        -:  154: **  \returns
+        -:  155: **  \retcode #CFE_SUCCESS         \retdesc \copydoc CFE_SUCCESS      \endcode
+        -:  156: **  \retstmt Returns error codes from #CFE_TBL_Load                  \endcode  
+        -:  157: **  \endreturns
+        -:  158: **
+        -:  159: *************************************************************************/
+        -:  160:int32 SC_LoadRTSFromNonVol(void);
+        -:  161:
+        -:  162:/************************************************************************/
+        -:  163:/** \brief Loads default data into SC
+        -:  164: **  
+        -:  165: **  \par Description
+        -:  166: **         Loads default data into SC if we are noit using the CDS, or, if
+        -:  167: **         if we are, and the CDS couldn't be restored.
+        -:  168: **       
+        -:  169: **  \par Assumptions, External Events, and Notes:
+        -:  170: **        None
+        -:  171: **
+        -:  172: **
+        -:  173: *************************************************************************/
+        -:  174:void SC_LoadDefaultData(void);
+        -:  175:/************************************************************************/
+        -:  176:/** \brief Registers Dump Only tables for SC
+        -:  177: **  
+        -:  178: **  \par Description
+        -:  179: **         Registers all Dump Only tables that SC needs
+        -:  180: **       
+        -:  181: **  \par Assumptions, External Events, and Notes:
+        -:  182: **        None
+        -:  183: **
+        -:  184: **  \returns
+        -:  185: **  \retcode #CFE_SUCCESS         \retdesc \copydoc CFE_SUCCESS      \endcode
+        -:  186: **  \retstmt Returns error codes from #CFE_TBL_Register              \endcode  
+        -:  187: **  \endreturns
+        -:  188: **
+        -:  189: *************************************************************************/
+        -:  190:int32 SC_RegisterDumpOnlyTables(void);
+        -:  191:
+        -:  192:/************************************************************************/
+        -:  193:/** \brief Exit function for SC
+        -:  194: **  
+        -:  195: **  \par Description
+        -:  196: **       If SC can exit cleanly, it will save information to the CDS for
+        -:  197: **       potential later use
+        -:  198: **    
+        -:  199: **  \par Assumptions, External Events, and Notes:
+        -:  200: **        None
+        -:  201: **
+        -:  202: *************************************************************************/
+        -:  203:void SC_ExitApp (void);
+        -:  204:
+        -:  205:/**************************************************************************
+        -:  206: **
+        -:  207: ** Global variables
+        -:  208: **
+        -:  209: **************************************************************************/
+        -:  210:
+        -:  211:SC_AppData_t            SC_AppData;         /* SC Application Data */
+        -:  212:SC_OperData_t           SC_OperData;        /* SC Operationa Data */
+        -:  213:
+        -:  214:#ifdef SC_SAVE_TO_CDS
+        -:  215:SC_CDS_Tables_Area_t    SC_CDSRestoreArea;  /* SC CDS Area for Dump Only tables */
+        -:  216:#endif
+        -:  217:/**************************************************************************
+        -:  218: **
+        -:  219: ** Functions
+        -:  220: **
+        -:  221: **************************************************************************/
+        -:  222:
+        -:  223:/************************************************************************
+        -:  224:The structure of a cFE raw command using CCSDS. 
+        -:  225:Note the command shown has no parameters. If more parameters are needed, the are added after the checksum.
+        -:  226:
+        -:  227:0x1803,0xC000,0x0001,0x0000
+        -:  228:   ^       ^      ^     ^ ^ 
+        -:  229:   |       |      |     | the last byte is the checksum for the command
+        -:  230:   |       |      |     The first byte is the command code
+        -:  231:   |       |      2 bytes for the length of command after these two bytes
+        -:  232:   |       2 bytes for sequence counter always 0xC000
+        -:  233:   The application to recieve and processs the command in app_msgids.h
+        -:  234:   
+        -:  235:note that in the case of SC, there is information before the cFE command structure,
+        -:  236:like the time tag and the command number (for ATS's)
+        -:  237:************************************************************************/
+        -:  238:
+        -:  239:
+        -:  240:
+        -:  241:uint16     SC_RtsBuffer[SC_RTS_BUFF_SIZE] = {
+        -:  242:0x0000, 0x0001, 0x18A9, 0xC000, 0x0001, 0x008F,
+        -:  243:0x0000, 0x0000, 0x18A9, 0xC000, 0x0001, 0x008F,
+        -:  244:0x0000, 0x0000, 0x18A9, 0xC000, 0x0001, 0x008F,
+        -:  245:0x0000, 0x0000, 0x18A9, 0xC000, 0x0079, 0x0AFD, 0x0000, 0x0000, 
+        -:  246:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+        -:  247:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+        -:  248:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+        -:  249:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+        -:  250:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+        -:  251:0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+        -:  252:
+        -:  253:};
+        -:  254:
+        -:  255:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  256:/*                                                                 */
+        -:  257:/*  Main loop of SC                                                */
+        -:  258:/*                                                                 */
+        -:  259:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  260:void SC_AppMain(void)
+        1:  261:{   
+        1:  262:    uint32 RunStatus = CFE_ES_APP_RUN;
+        -:  263:    int32 Result;
+        -:  264:
+        -:  265:    
+        -:  266:    /*
+        -:  267:     ** Register application...
+        -:  268:     */
+        1:  269:    Result = CFE_ES_RegisterApp();
+        -:  270:
+        -:  271:
+        -:  272:    /*
+        -:  273:     ** Performance Log (start time counter)...
+        -:  274:     */
+        1:  275:    CFE_ES_PerfLogEntry(SC_APPMAIN_PERF_ID);
+        -:  276:       
+        -:  277:    /*
+        -:  278:     ** Call the Init Routine
+        -:  279:     */
+        -:  280:    
+        1:  281:    if (Result == CFE_SUCCESS)
+        -:  282:    {
+        1:  283:        Result = SC_AppInit();                  
+        -:  284:    }
+        -:  285:    
+        1:  286:    printf(" NJY: Result Init: 0x%08X\n", Result);
+        -:  287:    /*
+        -:  288:     ** Check for start-up error...
+        -:  289:     */
+        1:  290:    if (Result !=  CFE_SUCCESS)
+        -:  291:    {
+        -:  292:        /*
+        -:  293:         ** Set request to terminate main loop...
+        -:  294:         */
+        1:  295:        RunStatus = CFE_ES_APP_ERROR;
+        -:  296:    }
+        -:  297:    
+        -:  298:    /*
+        -:  299:     ** Main process loop...
+        -:  300:     */
+        1:  301:    while (CFE_ES_RunLoop(&RunStatus))
+        -:  302:    {
+        -:  303:        /*
+        -:  304:         ** Performance Log (stop time counter)...
+        -:  305:         */
+    #####:  306:        CFE_ES_PerfLogExit(SC_APPMAIN_PERF_ID);
+        -:  307:
+        -:  308:        /*
+        -:  309:         * Pendon on SB for a message 
+        -:  310:         */
+        -:  311:        
+    #####:  312:        Result = CFE_SB_RcvMsg(&SC_OperData.MsgPtr,
+        -:  313:                               SC_OperData.CmdPipe,
+        -:  314:                               CFE_SB_PEND_FOREVER);
+        -:  315:        
+        -:  316:        /*
+        -:  317:         ** Performance Log (start time counter)...
+        -:  318:         */
+    #####:  319:        CFE_ES_PerfLogEntry(SC_APPMAIN_PERF_ID);
+        -:  320:                
+        -:  321:        /*
+        -:  322:         ** Based on the return status, execute requests or schedule sequences.
+        -:  323:         */
+    #####:  324:        if(Result == CFE_SUCCESS)
+        -:  325:        {
+    #####:  326:            SC_ProcessRequest(SC_OperData.MsgPtr);   
+        -:  327:        } /* endif */
+        -:  328:        
+        -:  329:        /*
+        -:  330:         ** Note: If there were some reason to exit the app
+        -:  331:         **       normally (without error) then we would set
+        -:  332:         **       RunStatus = CFE_ES_APP_EXIT
+        -:  333:         */
+        -:  334:        else
+        -:  335:        {
+        -:  336:            /*
+        -:  337:             ** Set request to terminate main loop...
+        -:  338:             */
+    #####:  339:            RunStatus = CFE_ES_APP_ERROR;
+        -:  340:        }
+        -:  341:    } /* end main event loop */
+        -:  342:    
+        -:  343:    /*
+        -:  344:     ** Check for "fatal" process error...
+        -:  345:     */
+        1:  346:    if (Result !=  CFE_SUCCESS)
+        -:  347:    {
+        -:  348:        /*
+        -:  349:         ** Send an event describing the reason for the termination...
+        -:  350:         */
+        -:  351:        
+        1:  352:         CFE_EVS_SendEvent(SC_APP_EXIT_ERR_EID,
+        -:  353:                           CFE_EVS_ERROR,
+        -:  354:                           "App terminating, Result = 0x%08X",
+        -:  355:                            Result);
+        -:  356:        /*
+        -:  357:         ** In case cFE Event Services is not working...
+        -:  358:         */
+        1:  359:        CFE_ES_WriteToSysLog("SC App terminating, Result = 0x%08X\n", Result);
+        -:  360:    }
+        -:  361:    
+        -:  362:    /*
+        -:  363:     ** Performance Log (stop time counter)...
+        -:  364:     */
+        1:  365:    CFE_ES_PerfLogExit(SC_APPMAIN_PERF_ID);
+        -:  366:    
+        -:  367:    /* Do SC Cleanup andstore to CDS if possible */
+        1:  368:    SC_ExitApp();
+        -:  369:   
+        -:  370:    /*
+        -:  371:     ** Let cFE kill the app...
+        -:  372:     */
+        1:  373:    CFE_ES_ExitApp(RunStatus);
+        -:  374:    
+        -:  375:} /* end SC_AppMain */
+        -:  376:
+        -:  377:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  378:/*                                                                 */
+        -:  379:/* Initialization routiune for SC                                  */
+        -:  380:/*                                                                 */
+        -:  381:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  382:int32 SC_AppInit (void)
+        1:  383:{
+        -:  384:    int32 Result;
+        -:  385:    
+        1:  386:    printf("NJY Start of App Init\n");
+        -:  387:        
+        -:  388:    /* Clear the data structure */
+        1:  389:    OS_MemSet(&SC_OperData, 0, sizeof(SC_OperData_t));
+        -:  390:
+        1:  391:    OS_MemSet(&SC_AppData,  0, sizeof(SC_AppData_t));
+        -:  392:       
+        1:  393:    Result = CFE_EVS_Register(NULL,0,CFE_EVS_NO_FILTER);
+        -:  394:    
+        1:  395:    if (Result !=  CFE_SUCCESS)
+        -:  396:    {
+    #####:  397:        CFE_ES_WriteToSysLog("Event Services Register returned: 0x%08X", 
+        -:  398:                              Result);
+    #####:  399:        return Result;
+        -:  400:    }
+        -:  401:    /*
+        -:  402:     ** Create Software Bus message pipe...
+        -:  403:     */
+        -:  404:    
+        1:  405:       Result = CFE_SB_CreatePipe(&SC_OperData.CmdPipe,
+        -:  406:                               SC_PIPE_DEPTH,
+        -:  407:                               SC_CMD_PIPE_NAME);
+        -:  408:        
+        1:  409:    if (Result !=  CFE_SUCCESS)
+        -:  410:    {
+    #####:  411:        CFE_EVS_SendEvent (SC_INIT_SB_CREATE_ERR_EID,
+        -:  412:                           CFE_EVS_ERROR,
+        -:  413:                           "Software Bus Create Pipe returned: 0x%08X", 
+        -:  414:                           Result);
+    #####:  415:        return Result;
+        -:  416:    }
+        -:  417:    
+        -:  418:    /*
+        -:  419:     ** Subscribe to Housekeeping request commands...
+        -:  420:     */
+        -:  421:    
+        1:  422:    Result = CFE_SB_Subscribe(SC_SEND_HK_CMD_MID,
+        -:  423:                              SC_OperData.CmdPipe);
+        -:  424:    
+        1:  425:    if (Result !=  CFE_SUCCESS)
+        -:  426:    {
+    #####:  427:        CFE_EVS_SendEvent (SC_INIT_SB_SUBSCRIBE_HK_ERR_EID,
+        -:  428:                           CFE_EVS_ERROR,
+        -:  429:                           "Software Bus subscribe to housekeeping returned: 0x%08X",
+        -:  430:                           Result);
+    #####:  431:        return Result;
+        -:  432:    }
+        -:  433:    
+        -:  434:    /*
+        -:  435:     ** Subscribe to 1HZ wakeup from Scheduler...
+        -:  436:     */
+        -:  437:    
+        1:  438:    Result = CFE_SB_Subscribe(SC_1HZ_WAKEUP_MID,
+        -:  439:                              SC_OperData.CmdPipe);
+        -:  440:    
+        1:  441:    if (Result !=  CFE_SUCCESS)
+        -:  442:    {
+    #####:  443:        CFE_EVS_SendEvent (SC_INIT_SB_SUBSCRIBE_1HZ_ERR_EID,
+        -:  444:                           CFE_EVS_ERROR,
+        -:  445:                           "Software Bus subscribe to 1 Hz cycle returned: 0x%08X",
+        -:  446:                           Result);        
+    #####:  447:        return Result;
+        -:  448:    }
+        -:  449:     
+        -:  450:    /*
+        -:  451:     ** Subscribe to SC commands...
+        -:  452:     */
+        -:  453:    
+        1:  454:    Result = CFE_SB_Subscribe(SC_CMD_MID,
+        -:  455:                              SC_OperData.CmdPipe);
+        -:  456:    
+        1:  457:    if (Result !=  CFE_SUCCESS)
+        -:  458:    {
+    #####:  459:        CFE_EVS_SendEvent (SC_INIT_SB_SUBSCRIBE_CMD_ERR_EID,
+        -:  460:                           CFE_EVS_ERROR,
+        -:  461:                           "Software Bus subscribe to command returned: 0x%08X",
+        -:  462:                           Result);
+    #####:  463:        return Result;
+        -:  464:    }
+        -:  465:    
+        -:  466:     
+        1:  467:    Result = SC_RegisterDumpOnlyTables();
+        -:  468:    
+        1:  469:    printf("NJY Result for Dump Only : 0x%08X\n", Result);
+        -:  470:    
+        1:  471:    if (Result !=  CFE_SUCCESS)
+        -:  472:    {
+    #####:  473:        CFE_EVS_SendEvent (SC_INIT_DO_TABLES_ERR_EID,
+        -:  474:                           CFE_EVS_ERROR,
+        -:  475:                           "Dump Only Tables initialization failed, returned: 0x%08X",
+        -:  476:                           Result);
+    #####:  477:        return Result;
+        -:  478:    }
+        -:  479:    
+        -:  480:    
+        -:  481:     /*Check the kind of Startup we will have*/    
+        -:  482:#ifdef SC_SAVE_TO_CDS
+        1:  483:    Result = SC_InitWithCDS();    
+        -:  484:#else
+        -:  485:    Result = SC_InitNoCDS();
+        -:  486:#endif
+        -:  487:      
+        -:  488:     
+        -:  489:    /*
+        -:  490:    ** Fill in the Header Information for the housekeeping packet
+        -:  491:    */
+        1:  492:    CFE_SB_InitMsg(&SC_OperData.HkStatus,SC_HK_TLM_MID, sizeof (SC_HkTlm_t), FALSE);
+        -:  493:      
+        -:  494:        
+        1:  495:    if (Result !=  CFE_SUCCESS)
+        -:  496:    {
+        1:  497:        CFE_EVS_SendEvent (SC_INIT_TABLES_ERR_EID,
+        -:  498:                           CFE_EVS_ERROR,
+        -:  499:                           "Table initialization failed, returned: 0x%08X",
+        -:  500:                           Result);
+        1:  501:        return Result;
+        -:  502:    }
+        -:  503:
+    #####:  504:    Result  = CFE_EVS_SendEvent(SC_INIT_INF_EID, 
+        -:  505:                              CFE_EVS_INFORMATION, 
+        -:  506:                              "SC Initialized. Version %d.%d.%d.%d",
+        -:  507:                               SC_MAJOR_VERSION,
+        -:  508:                               SC_MINOR_VERSION,
+        -:  509:                               SC_REVISION,
+        -:  510:                               SC_MISSION_REV);
+        -:  511:    
+    #####:  512:    return(Result);
+        -:  513:} /* end SC_AppInit */
+        -:  514:
+        -:  515:#ifndef SC_SAVE_TO_CDS
+        -:  516:
+        -:  517:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  518:/*                                                                 */
+        -:  519:/* Initialize SC without using the CDS                             */
+        -:  520:/*                                                                 */
+        -:  521:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  522:int32 SC_InitNoCDS(void)
+        -:  523:{
+        -:  524:    int32   i;      
+        -:  525:    int32   Result = CFE_SUCCESS;
+        -:  526:      
+        -:  527:      /*
+        -:  528:     ** Initialize the RTS Table Handles
+        -:  529:     */
+        -:  530:    for (i = 0; i < SC_NUMBER_OF_RTS; i++)
+        -:  531:    {        
+        -:  532:        SC_OperData.RtsTblHandle[i] =  CFE_TBL_BAD_TABLE_HANDLE;
+        -:  533:    }
+        -:  534:      
+        -:  535:    /* Register Load Dump Tables */  
+        -:  536:    Result = SC_RegisterTablesNoCDS();
+        -:  537:    
+        -:  538:    if (Result == CFE_SUCCESS)
+        -:  539:    {
+        -:  540:        Result = SC_GetTableAddresses();
+        -:  541:    }
+        -:  542:    
+        -:  543:    if (Result == CFE_SUCCESS)
+        -:  544:    {
+        -:  545:        SC_LoadDefaultData();   
+        -:  546:        SC_LoadRTSFromNonVol();
+        -:  547:    }
+        -:  548:    return(Result);
+        -:  549:    
+        -:  550:}/*end of SC_InitNoCDS()*/
+        -:  551:#endif
+        -:  552:
+        -:  553:#ifndef SC_SAVE_TO_CDS
+        -:  554:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  555:/*                                                                 */
+        -:  556:/* Regsiter all necessary tables without the CDS                   */
+        -:  557:/*                                                                 */
+        -:  558:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  559:int32 SC_RegisterTablesNoCDS()
+        -:  560:{
+        -:  561:    uint16          i;            
+        -:  562:    int32           Result =               CFE_SUCCESS;
+        -:  563:    char            CfeTblName             [CFE_TBL_MAX_NAME_LENGTH];
+        -:  564:    
+        -:  565:    
+        -:  566:        
+        -:  567:    /* Register Load/Dump Tables */
+        -:  568:    for(i = 0; i < SC_NUMBER_OF_RTS ;i++)
+        -:  569:    {
+        -:  570:        /*builds cFE Table Name. Example SC_RTS_TBL001  */
+        -:  571:        sprintf(CfeTblName,"%s%03d",SC_RTS_TABLE_NAME,i+1);
+        -:  572:        
+        -:  573:        /*Register and verify tables*/
+        -:  574:        Result = CFE_TBL_Register(&SC_OperData.RtsTblHandle[i],
+        -:  575:                                  CfeTblName,
+        -:  576:                                  (SC_RTS_BUFF_SIZE * SC_BYTES_IN_WORD),
+        -:  577:                                  CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_SNGL_BUFFER,
+        -:  578:                                  SC_ValidateRts);
+        -:  579:                                  
+        -:  580:        if(Result !=  CFE_SUCCESS)
+        -:  581:        {
+        -:  582:            CFE_EVS_SendEvent (SC_REGISTER_RTS_TBL_NO_CDS_ERR_EID,
+        -:  583:                               CFE_EVS_ERROR,
+        -:  584:                               "RTS Table Registration Failed for RTS %d, returned: 0x%08X",
+        -:  585:                               i+1,
+        -:  586:                               Result);                      
+        -:  587:         return Result;
+        -:  588:        }    
+        -:  589:    }
+        -:  590:
+        -:  591:    for(i = 0; i < SC_NUMBER_OF_ATS ; i++)
+        -:  592:    {
+        -:  593:        sprintf(CfeTblName,"%s%d",SC_ATS_TABLE_NAME,i+1);
+        -:  594:        
+        -:  595:        Result = CFE_TBL_Register(&SC_OperData.AtsTblHandle[i],
+        -:  596:                                  CfeTblName,
+        -:  597:                                  (SC_ATS_BUFF_SIZE * SC_BYTES_IN_WORD),
+        -:  598:                                  CFE_TBL_OPT_DBL_BUFFER,
+        -:  599:                                  SC_ValidateAts);
+        -:  600:       
+        -:  601:        if(Result !=  CFE_SUCCESS)
+        -:  602:        {
+        -:  603:            CFE_EVS_SendEvent (SC_REGISTER_ATS_TBL_NO_CDS_ERR_EID,
+        -:  604:                               CFE_EVS_ERROR,
+        -:  605:                               "ATS Table Registration Failed for ATS %d, returned: 0x%08X",
+        -:  606:                               i+1,
+        -:  607:                               Result);
+        -:  608:            return Result;                     
+        -:  609:        }    
+        -:  610:    }    
+        -:  611: return Result;   
+        -:  612:}/* end SC_RegisterTablesNoCDS */
+        -:  613:#endif
+        -:  614:
+        -:  615:#ifdef SC_SAVE_TO_CDS
+        -:  616:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  617:/*                                                                 */
+        -:  618:/* Begin initialization using the CDS                              */
+        -:  619:/*                                                                 */
+        -:  620:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  621:int32 SC_InitWithCDS(void)
+        1:  622:{
+        -:  623:    int32 Result;
+        1:  624:    boolean AllRestored = FALSE;
+        -:  625:    int i;
+        -:  626:    
+        -:  627:    /* Clear the 'CDS saved' flag. It will be reinitialized if the CDS
+        -:  628:       is restored properly and was saved on the previous exit */ 
+        1:  629:    SC_AppData.CDSSavedOnExit = 0;   
+        -:  630:       
+        -:  631:       
+        1:  632:    Result = SC_RegisterTablesWithCDS(&AllRestored);
+        -:  633:    
+        1:  634:    printf("NJY: Result from SC_RegisterTablesWithCDS 0x%08X\n", Result);
+        -:  635:    
+        1:  636:    if (Result !=  CFE_SUCCESS)
+        -:  637:    {
+        -:  638:        /* Get the addresses so we have them for the tables that did register */
+        1:  639:        SC_GetTableAddresses();
+        -:  640:        /* Don't need to send an event because previous function sent events */
+        1:  641:        return Result;
+        -:  642:    }
+        -:  643:    
+        -:  644:
+        -:  645:    /* We need to get the Addresses to copy data over from the CDS to the Dump Only tables themselves */
+    #####:  646:    Result = SC_GetTableAddresses();
+        -:  647:         
+        -:  648:    /* Only copy data from the CDS if all of the data was restored, and the Saved flag from AppData
+        -:  649:       matches what should be stored in there. If neither is true, we can't trust the data and 
+        -:  650:       begin anew
+        -:  651:    */
+        -:  652:
+    #####:  653:    if ((AllRestored == TRUE) && 
+        -:  654:         (SC_AppData.CDSSavedOnExit == SC_CDS_SAVED)  &&
+        -:  655:         (Result == CFE_SUCCESS))
+        -:  656:    {
+        -:  657:       /* Copy data from the dump only tables to the TBL tables */
+        -:  658:       
+    #####:  659:       OS_MemCpy(SC_OperData.RtsInfoTblAddr,
+        -:  660:                 &SC_CDSRestoreArea.RtsInfoTable,
+        -:  661:                 sizeof(SC_CDSRestoreArea.RtsInfoTable));
+        -:  662:                 
+    #####:  663:       OS_MemCpy(SC_OperData.RtsCtrlBlckAddr,
+        -:  664:                 &SC_CDSRestoreArea.RtsCtrlBlck, 
+        -:  665:                 sizeof(SC_CDSRestoreArea.RtsCtrlBlck));
+        -:  666:                 
+    #####:  667:       OS_MemCpy(SC_OperData.AtsInfoTblAddr,
+        -:  668:                 &SC_CDSRestoreArea.AtsInfoTable,
+        -:  669:                 sizeof(SC_CDSRestoreArea.AtsInfoTable));
+        -:  670:                 
+    #####:  671:       OS_MemCpy(SC_OperData.AtsCtrlBlckAddr,
+        -:  672:                 &SC_CDSRestoreArea.AtsCtrlBlck,
+        -:  673:                 sizeof(SC_CDSRestoreArea.AtsCtrlBlck));
+        -:  674:       
+    #####:  675:       for (i =  0; i < SC_NUMBER_OF_ATS; i++)
+        -:  676:       {
+    #####:  677:           OS_MemCpy(SC_OperData.AtsCmdStatusTblAddr, 
+        -:  678:                     &SC_CDSRestoreArea.AtsCmdStatusTbl[i],
+        -:  679:                     sizeof(SC_CDSRestoreArea.AtsCmdStatusTbl[i]));                     
+        -:  680:       }
+        -:  681:              
+        -:  682:    }
+        -:  683:    
+        -:  684:    else /* We need to start up from scratch */
+        -:  685:    {
+    #####:  686:       if (Result == CFE_SUCCESS)
+        -:  687:       {          
+    #####:  688:           SC_LoadDefaultData();
+    #####:  689:           SC_LoadRTSFromNonVol();
+        -:  690:       }
+        -:  691:    }
+        -:  692:
+    #####:  693:    return Result;
+        -:  694:}/* end SC_InitWithCDS */
+        -:  695:#endif
+        -:  696:
+        -:  697:#ifdef SC_SAVE_TO_CDS
+        -:  698:
+        -:  699:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  700:/*                                                                 */
+        -:  701:/* Regsiter all necessary tables  with the CDS                     */
+        -:  702:/*                                                                 */
+        -:  703:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  704:int32 SC_RegisterTablesWithCDS(boolean *Restored)
+        1:  705:{
+        -:  706:    uint16     i;            
+        1:  707:    int32      Result =        CFE_SUCCESS;
+        -:  708:    char       CfeTblName      [CFE_TBL_MAX_NAME_LENGTH];
+        1:  709:    boolean    AllRestored =   TRUE;
+        -:  710:    
+        -:  711:    /* Register CDS Handle for all Dump Only Tables */        
+        -:  712:
+        1:  713:    Result = CFE_ES_RegisterCDS(&SC_OperData.TableDataCDSHandle,
+        -:  714:                                sizeof(SC_CDS_Tables_Area_t),
+        -:  715:                                SC_TABLE_DATA_CDS_NAME);
+        -:  716:
+        1:  717:    if(Result < CFE_SUCCESS)
+        -:  718:    {
+    #####:  719:        CFE_EVS_SendEvent (SC_REGISTER_TABLE_DATA_CDS_ERR_EID,
+        -:  720:                           CFE_EVS_ERROR,
+        -:  721:                           "Registering CDS for dump only table data failed, returned: 0x%08X",
+        -:  722:                           Result);
+        -:  723:
+    #####:  724:        *Restored = FALSE;
+    #####:  725:        return (Result);
+        -:  726:    }
+        -:  727:        
+        -:  728:    /* Register CDS Handle for Application Data*/        
+        -:  729:    
+        1:  730:    Result = CFE_ES_RegisterCDS(&SC_OperData.AppDataCDSHandle,
+        -:  731:                                sizeof(SC_AppData_t),
+        -:  732:                                SC_APPDATA_CDS_NAME);
+        -:  733:
+        1:  734:    if(Result < CFE_SUCCESS)
+        -:  735:    {
+    #####:  736:        CFE_EVS_SendEvent (SC_REGISTER_APP_DATA_CDS_ERR_EID,
+        -:  737:                           CFE_EVS_ERROR,
+        -:  738:                           "Registering CDS for SC_AppData failed, returned: 0x%08X",
+        -:  739:                           Result);
+    #####:  740:        *Restored = FALSE;
+    #####:  741:        return (Result);
+        -:  742:    }
+        -:  743:
+        -:  744:    /* Critical Tables get saved to the CDS automatically */
+        -:  745:    
+        -:  746:    /* Register Load Dump Critical Tables */
+      117:  747:    for(i = 0; i < SC_NUMBER_OF_RTS ;i++)
+        -:  748:    {
+        -:  749:        /*builds cFE Table Name. Example SC_RTS_TBL001  */
+      117:  750:        sprintf(CfeTblName,"%s%03d",SC_RTS_TABLE_NAME,i+1);
+        -:  751:        
+        -:  752:        /*Register and verify tables.*/
+      117:  753:        Result = CFE_TBL_Register(&SC_OperData.RtsTblHandle[i],
+        -:  754:                                  CfeTblName,
+        -:  755:                                  (SC_RTS_BUFF_SIZE * SC_BYTES_IN_WORD),
+        -:  756:                                  CFE_TBL_OPT_DEFAULT |CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_CRITICAL,
+        -:  757:                                  SC_ValidateRts);
+        -:  758:                                  
+      117:  759:                                  printf("NJY Result for registering RTS Critical %d : 0x%08X\n",i, Result);
+        -:  760:                                  
+        -:  761:    
+        -:  762:        /* 
+        -:  763:        ** Check if we restored existing data from the CDS 
+        -:  764:        */ 
+      117:  765:        if (Result == CFE_TBL_INFO_RECOVERED_TBL)
+        -:  766:        {
+        -:  767:            /* Don't need to do anything */
+        -:  768:        }
+      117:  769:        else if (Result == CFE_SUCCESS)
+        -:  770:        {
+        -:  771:            /*
+        -:  772:            ** Set this flag which triggers a default init sequence
+        -:  773:            */
+      116:  774:            AllRestored = FALSE;
+        -:  775:        }
+        -:  776:        else
+        -:  777:        {
+        -:  778:            /*
+        -:  779:            ** Can't register table, return with error code
+        -:  780:            */ 
+        1:  781:            CFE_EVS_SendEvent(SC_REGISTER_RTS_TBL_CDS_ERR_EID,
+        -:  782:                              CFE_EVS_ERROR, 
+        -:  783:                              "Error registering RTS %d table, Result = 0x%08X",
+        -:  784:                              i+1,
+        -:  785:                              Result);
+        1:  786:            *Restored = FALSE;
+        1:  787:            return (Result);
+        -:  788:        }    
+        -:  789:    }
+        -:  790:    
+        -:  791:    
+    #####:  792:    for(i = 0; (i < SC_NUMBER_OF_ATS); i++)
+        -:  793:    {
+    #####:  794:        sprintf(CfeTblName,"%s%d",SC_ATS_TABLE_NAME,i+1);
+        -:  795:        
+    #####:  796:        Result = CFE_TBL_Register(&SC_OperData.AtsTblHandle[i],
+        -:  797:                                  CfeTblName,
+        -:  798:                                  (SC_ATS_BUFF_SIZE * SC_BYTES_IN_WORD),
+        -:  799:                                  CFE_TBL_OPT_DBL_BUFFER | CFE_TBL_OPT_CRITICAL,
+        -:  800:                                  SC_ValidateAts);
+    #####:  801:       printf("NJY Result for registering ATS Critical : 0x%08X\n", Result);
+        -:  802:       
+        -:  803:        /* 
+        -:  804:        ** Check if we restored existing data from the CDS 
+        -:  805:        */ 
+    #####:  806:        if (Result == CFE_TBL_INFO_RECOVERED_TBL)
+        -:  807:        {
+        -:  808:            /* Don't need to do anything */
+        -:  809:        }
+    #####:  810:        else if (Result == CFE_SUCCESS)
+        -:  811:        {
+        -:  812:            /*
+        -:  813:            ** Set this flag which triggers a default init sequence
+        -:  814:            */
+    #####:  815:            AllRestored = FALSE;
+        -:  816:        }
+        -:  817:        else
+        -:  818:        {
+        -:  819:            /*
+        -:  820:            ** Can't register table, return with error code
+        -:  821:            */ 
+    #####:  822:            CFE_EVS_SendEvent(SC_REGISTER_ATS_TBL_CDS_ERR_EID,
+        -:  823:                              CFE_EVS_ERROR, 
+        -:  824:                              "Error registering ATS %d table, Result = 0x%08X",
+        -:  825:                              i+1,
+        -:  826:                              Result);
+    #####:  827:            *Restored = FALSE;
+    #####:  828:            return (Result);
+        -:  829:        }    
+        -:  830:    }
+        -:  831:    
+    #####:  832:    if (Result !=  CFE_SUCCESS)
+        -:  833:    {
+    #####:  834:        *Restored = FALSE;
+    #####:  835:        return (Result);
+        -:  836:    }
+        -:  837:    
+        -:  838:    /*
+        -:  839:    ** If we've been able to restore everything so far
+        -:  840:    */
+    #####:  841:    if (AllRestored == TRUE)
+        -:  842:    {
+    #####:  843:        Result = CFE_ES_RestoreFromCDS(&SC_CDSRestoreArea,
+        -:  844:                                       SC_OperData.TableDataCDSHandle);
+    #####:  845:        if (Result !=  CFE_SUCCESS)
+        -:  846:        {
+    #####:  847:            AllRestored = FALSE;
+        -:  848:        }                                       
+        -:  849:               
+        -:  850:    }
+        -:  851:    
+        -:  852:    /* If everything has been able to be restored thus far */
+    #####:  853:    if (AllRestored == TRUE)
+        -:  854:    {
+    #####:  855:        Result = CFE_ES_RestoreFromCDS(&SC_AppData,
+        -:  856:                                       SC_OperData.AppDataCDSHandle);
+        -:  857:
+    #####:  858:        if (Result !=  CFE_SUCCESS)
+        -:  859:        {
+    #####:  860:            AllRestored = FALSE;
+        -:  861:        }                                       
+        -:  862:               
+        -:  863:    }
+        -:  864:        
+    #####:  865:    *Restored = AllRestored;
+    #####:  866:    return Result;
+        -:  867:}/* end SC_RegisterTablesWithCDS */
+        -:  868:#endif
+        -:  869:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  870:/*                                                                 */
+        -:  871:/* Load default data into AppData                                  */
+        -:  872:/*                                                                 */
+        -:  873:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  874:void SC_LoadDefaultData(void)
+    #####:  875:{
+        -:  876:    int i;
+        -:  877:    int j;
+        -:  878:
+        -:  879:    /* we are initializing clean */
+        -:  880:
+        -:  881:    /* Clear all SC App Data, including counters */    
+    #####:  882:    OS_MemSet(&SC_AppData, 0, sizeof(SC_AppData_t));
+        -:  883:       
+        -:  884:    /*
+        -:  885:     **  Clear out the ATP control Block critical fields.
+        -:  886:     */
+    #####:  887:    SC_OperData.AtsCtrlBlckAddr -> AtpState =  SC_IDLE;
+    #####:  888:    SC_OperData.AtsCtrlBlckAddr -> AtsNumber = SC_NONE;
+    #####:  889:    SC_OperData.AtsCtrlBlckAddr -> CmdNumber = 0xFFFF;
+        -:  890:    
+        -:  891:    /*
+        -:  892:     **  Clear out the RTP control Block critical fields
+        -:  893:     */
+    #####:  894:    SC_OperData.RtsCtrlBlckAddr -> NumRtsActive = 0;
+    #####:  895:    SC_OperData.RtsCtrlBlckAddr -> RtsNumber = SC_INVALID_RTS_NUMBER;
+        -:  896:    
+        -:  897:    /* Initialize all the variables in SC_AppData that need initalizing */
+    #####:  898:    SC_OperData.NumCmdsSec = 0;
+        -:  899:    
+        -:  900:     /*
+        -:  901:     ** Initialize the ats command status table.
+        -:  902:     */
+        -:  903:          
+    #####:  904:    for (i = 0; i < SC_NUMBER_OF_ATS; i++)
+        -:  905:    {
+    #####:  906:        for (j = 0; j < SC_MAX_ATS_CMDS; j++)
+        -:  907:        {
+    #####:  908:            SC_OperData.AtsCmdStatusTblAddr[i][j] = SC_EMPTY;
+        -:  909:        }
+        -:  910:    }    
+        -:  911:   
+        -:  912:    /* continue ATS execution if ATS command checksum fails */
+    #####:  913:    SC_AppData.ContinueAtsOnFailureFlag = SC_CONT_ON_FAILURE_START;
+        -:  914:    
+        -:  915:    /*
+        -:  916:     **  Run the Startup-Sequence RTS
+        -:  917:     */
+    #####:  918:    SC_AppData.AutoStartFlag = TRUE;    
+        -:  919:    
+        -:  920:    /*
+        -:  921:     ** make sure nothing is running
+        -:  922:     */
+    #####:  923:    SC_AppData.NextProcNumber = SC_NONE;
+    #####:  924:    SC_AppData.NextCmdTime[SC_ATP] = SC_MAX_TIME;
+    #####:  925:    SC_AppData.NextCmdTime[SC_RTP] = SC_MAX_TIME;
+        -:  926:    
+        -:  927:     /*
+        -:  928:      ** Initialize the RTS info table - disable all RTSs
+        -:  929:     */
+    #####:  930:    for (i = 0; i < SC_NUMBER_OF_RTS; i++)
+        -:  931:    {
+    #####:  932:        SC_OperData.RtsInfoTblAddr[i].NextCommandTime = SC_MAX_TIME;
+    #####:  933:        SC_OperData.RtsInfoTblAddr[i].NextCommandPtr = 0;
+    #####:  934:        SC_OperData.RtsInfoTblAddr[i].RtsStatus = SC_EMPTY;
+    #####:  935:        SC_OperData.RtsInfoTblAddr[i].DisabledFlag = TRUE;
+        -:  936:    }
+        -:  937:            
+        -:  938:    return;
+        -:  939:    
+        -:  940:}/* end SC_LoadDefaultData */
+        -:  941:
+        -:  942:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  943:/*                                                                 */
+        -:  944:/* Regsiter all necessary dump only tables                         */
+        -:  945:/*                                                                 */
+        -:  946:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  947:int32 SC_RegisterDumpOnlyTables(void)
+        1:  948:{
+        -:  949:    int i;
+        -:  950:    int32 Result;
+        -:  951:    char AtsCmdStatusTblName [CFE_TBL_MAX_NAME_LENGTH];
+        -:  952:
+        -:  953:    /*Register RTS information table as dumponly*/
+        -:  954:    
+        1:  955:    Result = CFE_TBL_Register(&SC_OperData.RtsInfoHandle,
+        -:  956:                              SC_RTSINFO_TABLE_NAME,
+        -:  957:                              (sizeof(SC_RtsInfoEntry_t) * SC_NUMBER_OF_RTS),
+        -:  958:                              (CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY),
+        -:  959:                              NULL);
+        -:  960:       
+        1:  961:    if(Result !=  CFE_SUCCESS)
+        -:  962:    {
+    #####:  963:        CFE_EVS_SendEvent (SC_REGISTER_RTS_INFO_TABLE_ERR_EID,
+        -:  964:                           CFE_EVS_ERROR,
+        -:  965:                           "RTS info table register failed, returned: 0x%08X",
+        -:  966:                           Result);
+    #####:  967:        return (Result);
+        -:  968:    }
+        -:  969:
+        -:  970:       
+        -:  971:    /*Register RTP control block table as dumponly*/
+        -:  972:    
+        1:  973:    Result = CFE_TBL_Register(&SC_OperData.RtsCtrlBlckHandle,
+        -:  974:                              SC_RTP_CTRL_TABLE_NAME,
+        -:  975:                              sizeof(SC_RtpControlBlock_t),
+        -:  976:                              (CFE_TBL_OPT_DEFAULT |CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY),
+        -:  977:                              NULL);
+        -:  978:    
+        1:  979:    if(Result !=  CFE_SUCCESS)
+        -:  980:    {
+    #####:  981:        CFE_EVS_SendEvent (SC_REGISTER_RTS_CTRL_BLK_TABLE_ERR_EID,
+        -:  982:                           CFE_EVS_ERROR,
+        -:  983:                           "RTS control block table register failed, returned: 0x%08X",
+        -:  984:                           Result);
+    #####:  985:        return (Result);
+        -:  986:    }
+        -:  987:    
+        -:  988:    /*Register ATS information table as dumponly*/
+        -:  989:    
+        1:  990:    Result = CFE_TBL_Register(&SC_OperData.AtsInfoHandle,
+        -:  991:                              SC_ATSINFO_TABLE_NAME,
+        -:  992:                              (sizeof(SC_AtsInfoTable_t) * SC_NUMBER_OF_ATS),
+        -:  993:                              (CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY),
+        -:  994:                              NULL);
+        -:  995:                              
+        1:  996:    if(Result !=  CFE_SUCCESS)
+        -:  997:    {
+    #####:  998:        CFE_EVS_SendEvent (SC_REGISTER_ATS_INFO_TABLE_ERR_EID,
+        -:  999:                           CFE_EVS_ERROR,
+        -: 1000:                           "ATS Info table register failed, returned: 0x%08X",
+        -: 1001:                           Result);
+        -: 1002:    }
+        -: 1003:    
+        -: 1004:    /*Register ATP control block table as dumponly*/
+        -: 1005:    
+        1: 1006:    Result = CFE_TBL_Register(&SC_OperData.AtsCtrlBlckHandle,
+        -: 1007:                              SC_ATS_CTRL_TABLE_NAME,
+        -: 1008:                              sizeof(SC_AtsControlBlock_t),
+        -: 1009:                              (CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY),
+        -: 1010:                              NULL);
+        -: 1011:    
+        1: 1012:    if(Result !=  CFE_SUCCESS)
+        -: 1013:    {
+    #####: 1014:        CFE_EVS_SendEvent (SC_REGISTER_ATS_CTRL_BLK_TABLE_ERR_EID,
+        -: 1015:                           CFE_EVS_ERROR,
+        -: 1016:                           "ATS control block table register failed, returned: 0x%08X",
+        -: 1017:                           Result);
+        -: 1018:    }
+        -: 1019:    
+        -: 1020:    /* Register ATS command status table as dumponly*/
+        -: 1021:    
+        3: 1022:    for (i  = 0; i < SC_NUMBER_OF_ATS; i++)
+        -: 1023:    {
+        2: 1024:        sprintf(AtsCmdStatusTblName,"%s%d",SC_ATS_CMD_STAT_TABLE_NAME,i+1);
+        -: 1025:        
+        2: 1026:        Result = CFE_TBL_Register(&SC_OperData.AtsCmdStatusHandle[i],
+        -: 1027:                                  AtsCmdStatusTblName,
+        -: 1028:                                  ((SC_MAX_ATS_CMDS)* sizeof(uint8)),
+        -: 1029:                                  (CFE_TBL_OPT_DEFAULT | CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY),
+        -: 1030:                                  NULL);
+        -: 1031:     
+        2: 1032:        if(Result !=  CFE_SUCCESS)
+        -: 1033:        {
+    #####: 1034:            CFE_EVS_SendEvent (SC_REGISTER_ATS_CMD_STATUS_TABLE_ERR_EID,
+        -: 1035:                               CFE_EVS_ERROR,
+        -: 1036:                               "ATS command status table register failed for ATS %d, returned: 0x%08X",
+        -: 1037:                               i+1,
+        -: 1038:                               Result);
+    #####: 1039:            return (Result);
+        -: 1040:        }
+        -: 1041:    }
+        -: 1042:
+        -: 1043:    
+        1: 1044:    return Result;
+        -: 1045:}/* end SC_RegisterDumpOnlyTables */
+        -: 1046:
+        -: 1047:
+        -: 1048:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1049:/*                                                                 */
+        -: 1050:/* Load RTS tables from Non Volatile memory                        */
+        -: 1051:/*                                                                 */
+        -: 1052:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1053:int32 SC_LoadRTSFromNonVol()
+    #####: 1054:{
+        -: 1055:    int i;
+    #####: 1056:    int32           Result =               CFE_SUCCESS;
+        -: 1057:    char            CfeTblName             [CFE_TBL_MAX_NAME_LENGTH];
+        -: 1058:    char            TblFileName            [OS_MAX_API_NAME];
+        -: 1059:    char            TblFilePathName        [OS_MAX_PATH_LEN];
+        -: 1060:    int32           FileDesc;
+    #####: 1061:    uint16          NumNotTried = 0;
+        -: 1062:    
+        -: 1063:        
+        -: 1064:    /*Set up cFE file names for RTS tables*/
+    #####: 1065:    for(i = 0; i < SC_NUMBER_OF_RTS ;i++)
+        -: 1066:    {
+        -: 1067:        /*builds table filename. Example SC_RTS_TBL001.tbl*/
+    #####: 1068:        sprintf(TblFileName,"%s%03d.tbl",SC_RTS_TABLE_NAME,i+1);
+        -: 1069:        
+        -: 1070:        /*builds cFE Table Name. Example SC_RTS_TBL001  */
+    #####: 1071:        sprintf(CfeTblName,"%s%03d",SC_RTS_TABLE_NAME,i+1);
+        -: 1072:        
+        -: 1073:        /* First try to laod the table from a file*/
+        -: 1074:        /* Example: /cf/apps/SC_RTS_TBL001.tbl */
+        -: 1075:            
+    #####: 1076:        strncpy(TblFilePathName,SC_FILENAME_PATH,OS_MAX_PATH_LEN);
+    #####: 1077:        strncat(TblFilePathName,TblFileName,OS_MAX_PATH_LEN);
+        -: 1078:           
+        -: 1079:
+    #####: 1080:        FileDesc = OS_open(TblFilePathName, OS_READ_ONLY, 0);
+        -: 1081:        /*printf("NJY FileName: %s, Desc: %d\n",TblFilePathName,FileDesc); */
+        -: 1082:           
+    #####: 1083:        if (FileDesc >= 0)
+        -: 1084:        {
+    #####: 1085:            OS_close(FileDesc);
+        -: 1086:             
+        -: 1087:            
+    #####: 1088:           Result = CFE_TBL_Load(SC_OperData.RtsTblHandle[i],
+        -: 1089:                                  CFE_TBL_SRC_FILE,
+        -: 1090:                                  TblFilePathName);
+        -: 1091:                                           
+        -: 1092:           
+        -: 1093:           /*  NJY 
+        -: 1094:           Result = CFE_TBL_Load(SC_OperData.RtsTblHandle[i],
+        -: 1095:                                CFE_TBL_SRC_ADDRESS,
+        -: 1096:                                &SC_RtsBuffer);
+        -: 1097:            */  
+        -: 1098:            /* Table Load successful from file */
+    #####: 1099:            if(Result == CFE_SUCCESS || Result == CFE_TBL_INFO_UPDATED)
+        -: 1100:            {
+    #####: 1101:                    SC_LoadRts(i);
+        -: 1102:            }
+        -: 1103:            
+        -: 1104:            else
+        -: 1105:            {
+        -: 1106:                /* Load from file failed, TBL will load the table with zeroes */
+        -: 1107:            }
+        -: 1108:        }
+        -: 1109:        else
+        -: 1110:        {
+    #####: 1111:            NumNotTried++;
+        -: 1112:        }
+        -: 1113:    }/* end for loop */
+        -: 1114:
+    #####: 1115:    if(NumNotTried > 0)
+        -: 1116:    {
+    #####: 1117:        CFE_EVS_SendEvent (SC_REGISTER_RTS_NOT_TRIED_DBG_EID,
+        -: 1118:                           CFE_EVS_DEBUG,
+        -: 1119:                           "Loaded %d of %d RTS's from non volatile memory",
+        -: 1120:                            SC_NUMBER_OF_RTS - NumNotTried,
+        -: 1121:                            SC_NUMBER_OF_RTS);
+        -: 1122:    }
+        -: 1123:
+        -: 1124:
+    #####: 1125:    return Result;    
+        -: 1126:}/* end SC_LoadRTSFromNonVol */
+        -: 1127:
+        -: 1128:
+        -: 1129:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1130:/*                                                                 */
+        -: 1131:/* Do application cleanup on exit                                  */
+        -: 1132:/*                                                                 */
+        -: 1133:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1134:void SC_ExitApp(void)
+        1: 1135:{
+        1: 1136:    boolean AllSaved = TRUE;
+        -: 1137:    
+        -: 1138:    /*
+        -: 1139:    ** If we're using the CDS, try to update its data
+        -: 1140:    */
+        -: 1141:#ifdef SC_SAVE_TO_CDS
+        -: 1142:
+        1: 1143:    int32   Status   = CFE_SUCCESS;
+        -: 1144:    int32 i;
+        -: 1145:        /*
+        -: 1146:        ** Attempt to save all of the dump only tables in the CDS area
+        -: 1147:        */
+        1: 1148:       OS_MemCpy(&SC_CDSRestoreArea.RtsInfoTable,
+        -: 1149:                 SC_OperData.RtsInfoTblAddr,
+        -: 1150:                 sizeof(SC_CDSRestoreArea.RtsInfoTable));
+        -: 1151:                 
+        1: 1152:       OS_MemCpy(&SC_CDSRestoreArea.RtsCtrlBlck,
+        -: 1153:                 SC_OperData.RtsCtrlBlckAddr, 
+        -: 1154:                 sizeof(SC_CDSRestoreArea.RtsCtrlBlck));
+        -: 1155:                 
+        1: 1156:       OS_MemCpy(&SC_CDSRestoreArea.AtsInfoTable,
+        -: 1157:                 SC_OperData.AtsInfoTblAddr,
+        -: 1158:                 sizeof(SC_CDSRestoreArea.AtsInfoTable));
+        -: 1159:                 
+        1: 1160:       OS_MemCpy(&SC_CDSRestoreArea.AtsCtrlBlck,
+        -: 1161:                 SC_OperData.AtsCtrlBlckAddr,
+        -: 1162:                 sizeof(SC_CDSRestoreArea.AtsCtrlBlck));
+        -: 1163:       
+        3: 1164:       for (i =  0; i < SC_NUMBER_OF_ATS; i++)
+        -: 1165:       {
+        2: 1166:           OS_MemCpy(&SC_CDSRestoreArea.AtsCmdStatusTbl[i],
+        -: 1167:                     &SC_OperData.AtsCmdStatusTblAddr[i], 
+        -: 1168:                     sizeof(SC_CDSRestoreArea.AtsCmdStatusTbl[i]));                     
+        -: 1169:       }
+        -: 1170:             
+        1: 1171:        Status = CFE_ES_CopyToCDS(SC_OperData.TableDataCDSHandle, 
+        -: 1172:                                  &SC_CDSRestoreArea);
+        -: 1173:                                                           
+        1: 1174:        if (Status !=  CFE_SUCCESS)
+        -: 1175:        {
+        -: 1176:            /*
+        -: 1177:            ** Clear the all saved flag on error
+        -: 1178:            */
+    #####: 1179:            AllSaved = FALSE;
+        -: 1180:        }
+        -: 1181:                         
+        1: 1182:        if (AllSaved == TRUE)
+        -: 1183:        {
+        -: 1184:            /*
+        -: 1185:            ** Update the CDS saved on exit flag that's stored with the
+        -: 1186:            ** application data. This is the only place where it can
+        -: 1187:            ** get set to TRUE
+        -: 1188:            */
+        1: 1189:            SC_AppData.CDSSavedOnExit = SC_CDS_SAVED;            
+        -: 1190:            
+        -: 1191:            /*
+        -: 1192:            ** Attempt to save the SC application data
+        -: 1193:            */
+        1: 1194:            Status = CFE_ES_CopyToCDS(SC_OperData.AppDataCDSHandle, 
+        -: 1195:                                      &SC_AppData);
+        1: 1196:            if (Status !=  CFE_SUCCESS)
+        -: 1197:            {
+        -: 1198:                /*
+        -: 1199:                ** Clear the all saved flag on error
+        -: 1200:                */
+    #####: 1201:                AllSaved = FALSE;
+        -: 1202:            }   
+        -: 1203:        } /* end AllSaved == TRUE if */
+        -: 1204:        
+        -: 1205:#else
+        -: 1206:    AllSaved = FALSE;
+        -: 1207:#endif
+        -: 1208:
+        -: 1209:
+        1: 1210:    if (AllSaved == TRUE)
+        -: 1211:    {
+        1: 1212:        CFE_EVS_SendEvent(SC_APP_SAVED_INF_EID,
+        -: 1213:                          CFE_EVS_INFORMATION, 
+        -: 1214:                          "Application Data and Tables saved on exit");
+        -: 1215:    }    
+        -: 1216:    return;
+        -: 1217:
+        -: 1218:} /* End SC_ExitApp */
+        -: 1219:
+        -: 1220:/************************/
+        -: 1221:/*  End of File Comment */
+        -: 1222:/************************/

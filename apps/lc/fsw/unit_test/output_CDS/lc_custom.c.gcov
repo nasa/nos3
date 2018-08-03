@@ -1,0 +1,126 @@
+        -:    0:Source:../src/lc_custom.c
+        -:    0:Graph:lc_custom.gcno
+        -:    0:Data:lc_custom.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: lc_custom.c.gcov 1.1 2012/07/31 16:53:46EDT nschweis Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**   CFS Limit Checker (LC) mission specific code, including the 
+        -:    7:**   custom function template.
+        -:    8:**
+        -:    9:**   $Log: lc_custom.c.gcov  $
+        -:    9:**   Revision 1.1 2012/07/31 16:53:46EDT nschweis 
+        -:    9:**   Initial revision
+        -:    9:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/unit_test/output_CDS/project.pj
+        -:    9:**   Revision 1.1 2009/01/15 15:26:28EST dahardis 
+        -:    9:**   Initial revision
+        -:    9:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/unit_test/output_CDS/project.pj
+        -:   10:**   Revision 1.2 2008/12/03 13:59:43EST dahardis 
+        -:   11:**   Corrections from peer code review
+        -:   12:**   Revision 1.1 2008/10/29 14:19:08EDT dahardison 
+        -:   13:**   Initial revision
+        -:   14:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
+        -:   15:** 
+        -:   16:*************************************************************************/
+        -:   17:
+        -:   18:/*************************************************************************
+        -:   19:** Includes
+        -:   20:*************************************************************************/
+        -:   21:#include "lc_custom.h"
+        -:   22:#include "lc_tbldefs.h"
+        -:   23:#include "lc_events.h"
+        -:   24:#include "lc_mission_cfg.h"
+        -:   25:
+        -:   26:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   27:/*                                                                 */
+        -:   28:/* Initiate an RTS request                                         */
+        -:   29:/*                                                                 */
+        -:   30:/* NOTE: For complete prolog information, see 'lc_custom.h'        */
+        -:   31:/*                                                                 */
+        -:   32:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:   33:void LC_ExecuteRTS(uint16 RTSId)
+function LC_ExecuteRTS called 1 returned 100% blocks executed 100%
+        1:   34:{
+        -:   35:    /***************************************************************
+        -:   36:    ** This is a local declaration of the command message structure
+        -:   37:    ** to initiate an RTS and has been placed here to allow the 
+        -:   38:    ** the LC application to be built without including headers from
+        -:   39:    ** any other applications (like Stored Commanding). 
+        -:   40:    ** A mission may choose to remove this and use a message
+        -:   41:    ** structure declared elsewhere instead.
+        -:   42:    **
+        -:   43:    ** This also applies to the LC_RTS_REQ_MID and LC_RTS_REQ_CC
+        -:   44:    ** constants (see lc_mission_cfg.h).
+        -:   45:    */
+        -:   46:    typedef struct {
+        -:   47:        uint8          CmdHeader[CFE_SB_CMD_HDR_SIZE];
+        -:   48:
+        -:   49:        uint16         RTSId;               
+        -:   50:        uint16         Padding;            
+        -:   51:
+        -:   52:    } LC_RTSRequest_t;
+        -:   53:    
+        1:   54:    LC_RTSRequest_t RTSRequest;
+        -:   55:    /**************************************************************/
+        -:   56:    
+        1:   57:    CFE_SB_InitMsg((CFE_SB_Msg_t *) ((uint32) &RTSRequest),
+        -:   58:            LC_RTS_REQ_MID, sizeof(LC_RTSRequest_t), TRUE);
+        -:   59:
+        1:   60:    CFE_SB_SetCmdCode((CFE_SB_Msg_t *) ((uint32) &RTSRequest), 
+        -:   61:                                               LC_RTS_REQ_CC);
+        -:   62:        
+        1:   63:    RTSRequest.RTSId = RTSId;
+        -:   64:        
+        1:   65:    CFE_SB_SendMsg((CFE_SB_Msg_t *) ((uint32) &RTSRequest));
+        -:   66:    
+        -:   67:    return;
+        -:   68:    
+        -:   69:} /* end LC_ExecuteRTS */
+        -:   70:
+        -:   71:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   72:/*                                                                 */
+        -:   73:/* Mission specific custom function entry point                    */
+        -:   74:/*                                                                 */
+        -:   75:/* NOTE: For complete prolog information, see 'lc_custom.h'        */
+        -:   76:/*                                                                 */
+        -:   77:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:   78:uint8 LC_CustomFunction(uint16          WatchIndex,
+        -:   79:                        uint32          ProcessedWPData,
+        -:   80:                        CFE_SB_MsgPtr_t MessagePtr,
+        -:   81:                        uint32          WDTCustomFuncArg)
+function LC_CustomFunction called 1 returned 100% blocks executed 100%
+        1:   82:{
+        1:   83:    uint8  EvalResult = LC_WATCH_FALSE;
+        -:   84:    
+        -:   85:    /*
+        -:   86:    ** This function is the entry point for all watchpoints where
+        -:   87:    ** the OperatorID in the watchpoint definition table entry
+        -:   88:    ** is set to LC_OPER_CUSTOM.
+        -:   89:    ** 
+        -:   90:    ** For this reason The first step would normally be to
+        -:   91:    ** switch on the WatchIndex to figure out what watchpoint got
+        -:   92:    ** us here. As an alternate, a mission may choose to use the
+        -:   93:    ** WDTCustomFuncArg for this instead.
+        -:   94:    */
+        1:   95:    switch (WatchIndex)
+        -:   96:    {
+        -:   97:        case 0x0000:
+        -:   98:        case 0x0001:
+        -:   99:        default:
+        1:  100:            CFE_EVS_SendEvent(LC_CFCALL_ERR_EID, CFE_EVS_ERROR,
+        -:  101:                              "Unexpected LC_CustomFunction call: WP = %d",
+        -:  102:                              WatchIndex);
+        1:  103:            break;
+        -:  104:        
+        -:  105:    } /* end WatchIndex switch */
+        -:  106:    
+        1:  107:    return (EvalResult);
+        -:  108:    
+        -:  109:} /* end LC_CustomFunction */
+        -:  110:
+        -:  111:/************************/
+        -:  112:/*  End of File Comment */
+        -:  113:/************************/

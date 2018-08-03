@@ -1,0 +1,35 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: March 18, 2008
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MM Load Dump File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/03/18  WFM             : Initial implementation
+!                                                             
+!==============================================================================
+!
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Memory Manager Load/Dump File", VARYING
+!
+#include "cfe_file_header.rdl"
+#include "cfs_mm_file_header.rdl"
+!
+    UB $sc_$cpu_MM_data[2048]  DESC="Load or Dump data"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

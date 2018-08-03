@@ -1,0 +1,671 @@
+/**
+  \mainpage Core Flight Executive Documentation
+
+  <UL>
+    <LI> General Information and Concepts <BR>
+    <UL>
+       <LI> \subpage cfebackground <BR>
+       <LI> \subpage cfeappdocs <BR>
+       <LI> \subpage cfedependencies <BR>
+       <LI> \subpage cfeacronyms <BR>
+       <LI> \subpage cfeglossary <BR>
+    </UL>
+    <LI> Executive Services (ES) <BR>
+    <UL>
+      <LI> \subpage cfeesovr  <BR>
+      <LI> \subpage cfeescmds <BR>
+      <LI> \subpage cfeestlm  <BR>
+      <LI> \subpage cfe_es_events.h "ES Event Message Reference" <BR>
+      <LI> \subpage cfeescfg  <BR>
+    </UL>
+    <LI> Events Services (EVS) <BR>
+    <UL>
+      <LI> \subpage cfeevsovr  <BR>
+      <LI> \subpage cfeevscmds <BR>
+      <LI> \subpage cfeevstlm  <BR>
+      <LI> \subpage cfe_evs_events.h "EVS Event Message Reference" <BR>
+      <LI> \subpage cfeevscfg  <BR>
+    </UL>
+    <LI> Software Bus Services (SB) <BR>
+    <UL>
+      <LI> \subpage cfesbovr  <BR>
+      <LI> \subpage cfesbcmds <BR>
+      <LI> \subpage cfesbtlm  <BR>
+      <LI> \subpage cfe_sb_events.h "SB Event Message Reference" <BR>
+      <LI> \subpage cfesbcfg  <BR>
+    </UL>
+    <LI> Table Services (TBL) <BR>
+    <UL>
+      <LI> \subpage cfetblovr  <BR>
+      <LI> \subpage cfetblcmds <BR>
+      <LI> \subpage cfetbltlm  <BR>
+      <LI> \subpage cfe_tbl_events.h "TBL Event Message Reference" <BR>
+      <LI> \subpage cfetblcfg  <BR>
+    </UL>
+    <LI> Time Services (TIME) <BR>
+    <UL>
+      <LI> \subpage cfetimeovr  <BR>
+      <LI> \subpage cfetimecmds <BR>
+      <LI> \subpage cfetimetlm  <BR>
+      <LI> \subpage cfe_time_events.h "TIME Event Message Reference" <BR>
+      <LI> \subpage cfetimecfg  <BR>
+    </UL>
+    <LI> \subpage cfeevents   <BR>
+    <LI> \subpage cfecmdmnems <BR>
+    <LI> \subpage cfetlmmnems <BR>
+    <LI> \subpage cfeapi <BR>
+  </UL>
+
+  \subpage cfeugrevhist
+  
+**/
+
+/**
+  \page cfebackground Background
+
+  The Core Flight Executive (cFE) is an application development and run-time environment. The cFE 
+  provides a set of core services including Software Bus (messaging), Time, Event (Alerts), Executive 
+  (startup and runtime), and Table services. The cFE defines an application programming interface (API) 
+  for each service which serves as the basis for application development. <BR>
+  
+  The cFE Software Bus service provides a publish and subscribe messaging system that allows applications 
+  to easily plug and play into the system. Applications subscribe to cFE services at runtime, making 
+  system modifications easy. Facilitating rapid prototyping, new applications can be compiled, linked, loaded, 
+  and started without requiring the entire system to be rebuilt. 
+
+  \image html CFSPubSub.jpg
+  
+  Each service comes complete with a built in application that allows users to interface with each service. To 
+  support reuse and project independence, the cFE contains a configurable set of requirements and code. The configurable 
+  parameters allow the cFE to be tailored for each environment including desk-top and closed loop simulation environments. 
+  This provides the ability to run and test software applications on a developer's desktop and then deploy that same software 
+  without changes to the embedded system. In addition the cFE includes the following software development tools:
+
+  <ul> <li> Unit Test Framework (UTF) for unit testing applications developed via the cFE </li>
+       <li> Software Timing Analyzer that provides visibility into the real-time performance of embedded systems software </li>
+       <li> Table Builder </li>
+       <li> Command and Telemetry utilities </li> </ul>
+
+   The cFE is one of the components of the Core Flight System (cFS), a platform and project independent reusable 
+   software framework and set of reusable software applications. There are three key aspects to the cFS architecture: 
+   a dynamic run-time environment, layered software, and a component based design. The combination of these key aspects 
+   along with an implementation targeted to the embedded software domain makes it suitable for reuse on any number of 
+   NASA flight projects and/or embedded software systems. <BR> 
+
+   The pivotal design feature, abstracting the software architecture from the hardware and forming the basis of reuse, 
+   is component layering. Each layer of the architecture “hides” its implementation and technology details from the other 
+   layers by defining and using standard Application Programming Interfaces (APIs). The internals of a layer can be changed 
+   without affecting other layers’ internals and components. <BR> 
+
+   \image html CFSLayers.jpg
+
+   The layers include an OS Abstraction Layer (OSAL), Platform Support Package (PSP) layer, core Flight Executive (cFE) layer, 
+   and an Application layer. The cFE layer runs on top of the PSP and OSAL layers. The cFE comes complete with a build 
+   environment, deployment guide, API reference guide, and provides a sample PSP. The OSAL is available open source and 
+   once integrated into the cFE build environment, developers will be ready to build and run the system and start developing 
+   their mission/project specific applications that easily plug and play into the system.
+  
+   <H2> Core Flight Executive (cFE) Goals </H2>
+
+   The main long term goal of the cFE is to form the basis for a platform and project 
+   independent reusable software framework. The cFE with the OSAL allow the development 
+   of portable embedded system software that is independent of a particular Real Time 
+   Operating System and hardware platform. A secondary long term goal is to create a 
+   standardized, product-line approach for development of embedded aerospace flight 
+   software. <BR>
+
+   <H3> Functional and Community Goals </H3>
+
+   The cFE allows embedded system software to be developed and tested on desktop workstations 
+   and ported to the target platform without changing a single line of code, providing a shorter 
+   development and debug time. The cFE is an enabler of software collaboration amongst all users 
+   promoting the growth of the application and library layers where new applications, libraries, 
+   tools, and lessons learned can be contributed and shared. <BR>
+
+   It is important for application developers to realize the long term and functional 
+   goals of the cFE.  With a standard set of services providing a standard API, all 
+   applications developed with the cFE have an opportunity to become useful on 
+   future missions through code reuse.  In order to achieve this goal, 
+   applications must be written with care to ensure that their code does not 
+   have dependencies on specific hardware, software or compilers.  The cFE and 
+   the underlying generic operating system API (OS API) have been designed to 
+   insulate the cFE Application developer from hardware and software dependencies.  
+   The developer, however, must make the effort to identify the proper methods 
+   through the cFE and OS API to satisfy their software requirements and not 
+   be tempted to take a "short-cut" and accomplish their goal with a direct 
+   hardware or operating system software interface.
+**/
+
+/**
+  \page cfeappdocs Applicable Documents
+  
+  <TABLE>
+     <TR>
+        <TD> <B> Document ID </B>
+        <TD> <B> Document Title </B>
+     <TR>
+        <TD> MKS ID 112
+        <TD> cFE Requirements Document
+     <TR>
+        <TD> 582-2007-001
+        <TD> cFE Application Developers Guide
+     <TR>
+        <TD> 582-2007-001
+        <TD> cFE Application Developers Guide
+     <TR>
+        <TD> 582-2008-012
+        <TD> cFS Deployment Guide
+     <TR>
+        <TD> 
+        <TD> OS Abstraction Layer (OSAL) Library API
+     <TR>
+        <TD> 582-2007-00
+        <TD> OS Abstraction Layer (OSAL) Configuraion Guide
+  </TABLE>
+**/
+
+/**
+  \page cfedependencies Dependencies
+
+  The Core Flight Executive (cFE) is required to be built with the Operating System Abstraction Layer (OSAL) and Platform Support Package (PSP) 
+  componenets of the Core Flight System (cFS).  It is always recommended to build with the latest versions of each of the components as 
+  backward compatability may not be supported. <BR>
+  
+  Several internal data structures within the cFE use the "char" data type.  This data type is typically 1 byte in storage size with a value 
+  range -128 to 127 or 0 to 255.  The size of the "char" data type and whether or not the type is signed or unsigned can change across 
+  platforms.  The cFE assumes use of the "char" data type as an <B> 8-bit type. </B>         
+
+**/
+
+/**
+  \page cfeacronyms Acronyms
+
+  <TABLE>
+     <TR>
+        <TD> <B> Acronym </B>
+        <TD> <B> Description </B>
+     <TR>
+        <TD> AC
+        <TD> Attitude Control
+     <TR>
+        <TD> ACE
+        <TD> Attitude Control Electronics
+     <TR>
+        <TD> ACS
+        <TD> Attitude Control System
+     <TR>
+        <TD> API
+        <TD> Application Programming Interface
+     <TR>
+        <TD> APID
+        <TD> CCSDS Application ID
+     <TR>
+        <TD> App
+        <TD> Application
+     <TR>
+        <TD> CCSDS
+        <TD> Consultative Committee for Space Data Systems
+     <TR>
+        <TD> CDH, C&DH
+        <TD> Command and Data Handling
+     <TR>
+        <TD> cFE
+        <TD> core Flight Executive
+     <TR>
+        <TD> cFS
+        <TD> core Flight System
+     <TR>
+        <TD> CM
+        <TD> Configuration Management
+     <TR>
+        <TD> CMD
+        <TD> Command
+     <TR>
+        <TD> CPU
+        <TD> Central Processing Unit
+     <TR>
+        <TD> EDAC
+        <TD> Error Detection and Correction
+     <TR>
+        <TD> EEPROM
+        <TD> Electrically Erasable Programmable Read-Only Memory
+     <TR>
+        <TD> ES
+        <TD> Executive Services
+     <TR>
+        <TD> EVS
+        <TD> Event Services
+     <TR>
+        <TD> FC
+        <TD> Function Code
+     <TR>
+        <TD> FDC
+        <TD> Failure Detection and Correction
+     <TR>
+        <TD> FSW
+        <TD> Flight Software
+     <TR>
+        <TD> HW, H/W
+        <TD> Hardware
+     <TR>
+        <TD> ICD
+        <TD> Interface Control Document
+     <TR>
+        <TD> MET
+        <TD> Mission Elapsed Time
+     <TR>
+        <TD> MID
+        <TD> Message ID
+     <TR>
+        <TD> OS
+        <TD> Operating System
+     <TR>
+        <TD> OSAL
+        <TD> Operating System Abstraction Layer
+     <TR>
+        <TD> PID
+        <TD> Pipeline ID
+     <TR>
+        <TD> PKT
+        <TD> Packet
+     <TR>
+        <TD> PSP
+        <TD> Platform Support Package
+     <TR>
+        <TD> RAM
+        <TD> Random-Access Memory
+     <TR>
+        <TD> SB
+        <TD> Software Bus
+     <TR>
+        <TD> SDO
+        <TD> Solar Dynamics Observatory
+     <TR>
+        <TD> ST5
+        <TD> Space Technology Five
+     <TR>
+        <TD> STCF
+        <TD> Spacecraft Time Correlation Factor
+     <TR>
+        <TD> SW, S/W
+        <TD> Software
+     <TR>
+        <TD> TAI
+        <TD> International Atomic Time
+     <TR>
+        <TD> TBD
+        <TD> To Be Determined
+     <TR>
+        <TD> TBL
+        <TD> Table Services
+     <TR>
+        <TD> TID
+        <TD> Task ID
+     <TR>
+        <TD> TIME
+        <TD> Time Services
+     <TR>
+        <TD> TLM
+        <TD> Telemetry
+     <TR>
+        <TD> UTC
+        <TD> Coordinated Universal Time
+  </TABLE>
+**/
+
+/**
+  \page cfeglossary Glossary of Terms
+  
+  <TABLE>
+     <TR>
+        <TD> <B> Term </B>
+        <TD> <B> Definition </B>
+     <TR>
+        <TD> \anchor cfeadg_application Application (or App)
+        <TD> A set of data and functions that is treated as a single entity 
+             by the cFE.  cFE resources are allocated on a per-Application 
+             basis.  Applications are made up of a Main Task and zero or 
+             more Child Tasks.
+     <TR>
+        <TD> \anchor cfeadg_applicationid Application ID
+        <TD> A processor unique reference to an Application. <BR>
+             <B> NOTE: This is different from a CCSDS Application ID which is 
+             referred to as an "APID." </B>
+     <TR>
+        <TD> \anchor cfeadg_api Application Programmer's Interface (API)
+        <TD> A set of routines, protocols, and tools for building software 
+             applications
+     <TR>
+        <TD> \anchor cfeadg_bsp Board Support Package (BSP)
+        <TD> A collection of user-provided facilities that interface an OS 
+             and the cFE with a specific hardware platform.  The BSP is 
+             responsible for hardware initialization.
+     <TR>
+        <TD> \anchor cfeadg_childtask Child Task
+        <TD> A separate thread of execution that is spawned by an 
+             Application's Main Task.
+     <TR>
+        <TD> \anchor cfeadg_command Command
+        <TD> A Software Bus Message defined by the receiving Application. 
+             Commands can originate from other onboard Applications or 
+             from the ground.
+     <TR>
+        <TD> \anchor cfeadg_cfe Core Flight Executive (cFE)
+        <TD> A runtime environment and a set of services for hosting FSW 
+             Applications
+     <TR>
+        <TD> \anchor cfeadg_cds Critical Data Store (CDS)
+        <TD> A collection of data that is not modified by the OS or 
+             cFE following a Processor Reset.
+     <TR>
+        <TD> \anchor cfeadg_crc Cyclic Redundancy Check
+        <TD> A polynomial based method for checking that a data set 
+             has remained unchanged from one time period to another.
+     <TR>
+        <TD> \anchor cfeadg_developer Developer
+        <TD> Anyone who is coding a cFE Application.
+     <TR>
+        <TD> \anchor cfeadg_eventdata Event Data
+        <TD> Data describing an Event that is supplied to the cFE 
+             Event Service. The cFE includes this data in an  
+             \ref cfeadg_eventmessage "Event Message".
+     <TR>
+        <TD> \anchor cfeadg_eventfilter Event Filter
+        <TD> A numeric value (bit mask) used to determine how 
+             frequently to output an application Event Message 
+             defined by its \ref cfeadg_eventid "Event ID".
+     <TR>
+        <TD> \anchor cfeadg_eventformatmode Event Format Mode
+        <TD> Defines the Event Message Format downlink option: short or long.  
+             The short format is used when there is limited telemetry bandwidth 
+             and is binary.  The long format is in ASCII and is used for 
+             logging to a Local Event Log and to an Event Message Port.
+     <TR>
+        <TD> \anchor cfeadg_eventid Event ID
+        <TD> A numeric literal used to uniquely name an Application event.
+     <TR>
+        <TD> \anchor cfeadg_eventtype Event Type
+        <TD> A numeric literal used to identify the type of an Application event.
+        <TD> An event type may be #CFE_EVS_DEBUG, #CFE_EVS_INFORMATION, 
+        <TD> #CFE_EVS_ERROR, or #CFE_EVS_CRITICAL.
+     <TR>
+        <TD> \anchor cfeadg_eventmessage Event Message
+        <TD> A data item used to notify the user and/or an external 
+             \ref cfeadg_application "Application" of a significant event. 
+             Event Messages include a time-stamp of when the message was 
+             generated, a processor unique identifier, an 
+             \ref cfeadg_applicationid "Application ID", the
+             \ref cfeadg_eventtype "Event Type" (DEBUG,INFO,ERROR or CRITICAL), 
+             and \ref cfeadg_eventdata "Event Data".  An Event Message can 
+             either be real-time or playback from a Local Event Log.
+     <TR>
+        <TD> 
+        <TD> 
+     <TR>
+        <TD> 
+        <TD> 
+  </TABLE>
+**/
+
+/**
+  \page cfeapi cFE Application Programmer's Interface (API) Reference 
+  <H4> Executive Services API </H4>
+  <UL>
+    <LI> cFE Entry/Exit APIs
+    <UL>
+      <LI> #CFE_ES_Main - cFE Main Entry Point used by Board Support Package to start cFE
+      <LI> #CFE_ES_ResetCFE - Reset the cFE Core and all cFE Applications
+    </UL>
+    <LI> Application Control APIs
+    <UL>
+      <LI> #CFE_ES_RestartApp - Restart a single cFE Application
+      <LI> #CFE_ES_ReloadApp - Reload a single cFE Application
+      <LI> #CFE_ES_DeleteApp - Delete a single cFE Application
+    </UL>
+    <LI> Required Application APIs
+    <UL>
+      <LI> #CFE_ES_RegisterApp - Registers a cFE Application with Executive Services
+      <LI> #CFE_ES_RunLoop - Checks for Exit, Restart or Reload commands
+      <LI> #CFE_ES_WaitForStartupSync - Waits for all Apps in Startup Script to complete initialization
+      <LI> #CFE_ES_IncrementTaskCounter - Increments telemetered task counter to indicate task activity
+      <LI> #CFE_ES_ExitApp - Exit for a cFE Application
+    </UL>
+    <LI> Information APIs
+    <UL>
+      <LI> #CFE_ES_GetResetType - Returns the most recent type of reset
+      <LI> #CFE_ES_GetAppID - Returns the Application ID of calling Application
+      <LI> #CFE_ES_GetAppIDByName - Returns the Application ID of an Application specified by name
+      <LI> #CFE_ES_GetAppName - Returns the name of an Application specified by Application ID
+      <LI> #CFE_ES_GetAppInfo - Returns Application info about an Application specified by Application ID
+      <LI> #CFE_ES_GetTaskInfo - Returns the task information about a task specified by task ID
+    </UL>
+    <LI> Child Task APIs
+    <UL>
+      <LI> #CFE_ES_RegisterChildTask - Registers a cFE Child Task with Executive Services
+      <LI> #CFE_ES_CreateChildTask - Creates a new task under an existing Application
+      <LI> #CFE_ES_DeleteChildTask - Deletes a task under an existing Application
+      <LI> #CFE_ES_ExitChildTask - Exit for a cFE Child Task
+    </UL>
+    <LI> Driver APIs
+    <UL>
+      <LI> #CFE_ES_RegisterDriver - Registers a Device Driver for a specified device
+      <LI> #CFE_ES_UnloadDriver - Removes a Device Driver for a specified device
+    </UL>
+    <LI> Critical Data Store APIs
+    <UL>
+      <LI> #CFE_ES_RegisterCDS - Reserves space (or obtains previously reserved space)in the Critical Data Store
+      <LI> #CFE_ES_CopyToCDS - Copies a block of memory into a Critical Data Store
+      <LI> #CFE_ES_RestoreFromCDS - Recovers the contents of memory from a Critical Data Store
+    </UL>
+    <LI> Memory Manager APIs
+    <UL>
+      <LI> #CFE_ES_PoolCreate - Initializes a Memory Pool created by an Application
+      <LI> #CFE_ES_PoolCreateEx - Initializes a Memory Pool created by an Application with Application specified block sizes
+      <LI> #CFE_ES_GetPoolBuf - Gets a buffer from a Memory Pool
+      <LI> #CFE_ES_PutPoolBuf - Releases a buffer to a Memory Pool
+      <LI> #CFE_ES_GetMemPoolStats - Extracts statistics maintained by the memory pool software
+    </UL>
+    <LI> Performance Monitoring APIs
+    <UL>
+      <LI> #CFE_ES_PerfLogEntry - Marks the entry into a performance analyzer segment of code
+      <LI> #CFE_ES_PerfLogExit - Marks the exit from a performance analyzer segment of code
+      <LI> #CFE_ES_PerfLogAdd - Adds a mark into the Performance Log
+    </UL>
+    <LI> Miscellaneous APIs
+    <UL>
+      <LI> #CFE_ES_CalculateCRC -  Calculates a CRC on a block of memory
+      <LI> #CFE_ES_WriteToSysLog - Writes a debug message to the System Log
+    </UL>
+  </UL>
+
+  <H4> Events Services API </H4>
+  <UL>
+    <LI> Registration APIs
+    <UL>
+      <LI> #CFE_EVS_Register - Register an Application for using Event Services
+      <LI> #CFE_EVS_Unregister - Unregister an Application from using Event Services
+    </UL>
+    <LI> Send Event APIs
+    <UL>
+      <LI> #CFE_EVS_SendEvent - Generate a Software Event
+      <LI> #CFE_EVS_SendEventWithAppID - Generate a Software Event as though produced by the specified Application
+      <LI> #CFE_EVS_SendTimedEvent - Generate a Software Event with a specified time tag
+    </UL>
+    <LI> Reset Event Filter APIs
+    <UL>
+      <LI> #CFE_EVS_ResetFilter - Resets the calling Application's Event Filter for a specified event
+      <LI> #CFE_EVS_ResetAllFilters - Resets all of the calling Application's Event Filters
+    </UL>
+  </UL>
+
+  <H4> File Services API </H4>
+  <UL>
+    <LI> cFE File Header Management APIs
+    <UL>
+	  <LI> #CFE_FS_ReadHeader - Read the contents of the Standard cFE File Header
+	  <LI> #CFE_FS_WriteHeader - Write the contents of the Standard cFE File Header
+	  <LI> #CFE_FS_SetTimestamp - Modify the Time Stamp field in the Standard cFE File Header
+    </UL>
+    <LI> Compressed File Management APIs
+    <UL>
+	  <LI> #CFE_FS_IsGzFile - Determines if specified file is a gzip/compressed file
+	  <LI> #CFE_FS_Decompress - Decompresses the specified file to a destination file
+    </UL>
+    <LI> Filename Utility APIs
+    <UL>
+	  <LI> #CFE_FS_ExtractFilenameFromPath - Extracts the filename from a unix style path
+    </UL>
+  </UL>
+
+  <H4> Software Bus API </H4>
+  <UL>
+    <LI> Pipe Creation/Deletion APIs
+    <UL>
+      <LI> #CFE_SB_CreatePipe - Creates a new software bus pipe
+      <LI> #CFE_SB_DeletePipe - Deletes a software bus pipe
+    </UL>
+    <LI> Message Subscription Control APIs
+    <UL>
+      <LI> #CFE_SB_Subscribe - Subscribe to a message on the software bus with default parameters
+      <LI> #CFE_SB_SubscribeEx - Subscribe to a message on the software bus
+      <LI> #CFE_SB_SubscribeLocal - Subscribe to a message while keeping the request on the current CPU
+      <LI> #CFE_SB_Unsubscribe - Remove a subscription to a message on the software bus
+      <LI> #CFE_SB_UnsubscribeLocal - Remove a subscription to a message on the software bus on the current CPU
+    </UL>
+    <LI> Send/Receive Message APIs
+    <UL>
+      <LI> #CFE_SB_SendMsg - Send a software bus message
+      <LI> #CFE_SB_RcvMsg - Receive a software bus message
+      <LI> #CFE_SB_ZeroCopySend - Send a software bus message in "zero copy" mode
+    </UL>
+    <LI> Zero Copy Message APIs
+    <UL>
+      <LI> #CFE_SB_ZeroCopyGetPtr - Get a buffer pointer to use for "zero copy" mode
+      <LI> #CFE_SB_ZeroCopyReleasePtr - Release an unused "zero copy" mode buffer pointer
+      <LI> #CFE_SB_ZeroCopySend - Send a software bus message in "zero copy" mode
+    </UL>
+    <LI> Setting Message Characteristics APIs
+    <UL>
+      <LI> #CFE_SB_InitMsg - Initialize a buffer for a software bus message
+      <LI> #CFE_SB_SetMsgId - Sets the message ID of a software bus message
+      <LI> #CFE_SB_SetUserDataLength - Sets the length of the user data segment of a software bus message
+      <LI> #CFE_SB_SetTotalMsgLength - Sets the length of a software bus message
+      <LI> #CFE_SB_SetMsgTime - Sets the time field in a software bus message
+      <LI> #CFE_SB_TimeStampMsg - Sets the time field in a software bus message with the current spacecraft time
+      <LI> #CFE_SB_SetCmdCode - Sets the command code field in a software bus message
+      <LI> #CFE_SB_GenerateChecksum - Computes and sets the checksum field in a software bus message
+    </UL>
+    <LI> Getting Message Characteristics APIs
+    <UL>
+      <LI> #CFE_SB_MsgHdrSize - Gets the size of a software bus message header
+      <LI> #CFE_SB_GetUserData - Gets a pointer to the first byte of the user data segment in a software bus message
+      <LI> #CFE_SB_GetMsgId - Gets the current message ID in a software bus message
+      <LI> #CFE_SB_GetUserDataLength - Gets the size of the user data segment of a software bus message
+      <LI> #CFE_SB_GetTotalMsgLength - Gets the total size of the software bus message
+      <LI> #CFE_SB_GetMsgTime - Gets the time field from a software bus message
+      <LI> #CFE_SB_GetCmdCode - Gets the command code field from a software bus message
+      <LI> #CFE_SB_GetChecksum - Gets the checksum field from a software bus message
+    </UL>
+    <LI> Checksum Control APIs
+    <UL>
+      <LI> #CFE_SB_GenerateChecksum - Computes and sets the checksum field in a software bus message
+      <LI> #CFE_SB_GetChecksum - Gets the checksum field from a software bus message
+      <LI> #CFE_SB_ValidateChecksum - Validates the checksum of a software bus message
+    </UL>
+  </UL>
+
+  <H4> Table Services API </H4>
+  <UL>
+    <LI> Registration APIs
+    <UL>
+      <LI> #CFE_TBL_Register - Register a table with cFE to obtain Table Management Services
+      <LI> #CFE_TBL_Share - Obtain access to a table registered by another Application
+      <LI> #CFE_TBL_Unregister - Unregister a previously registered table and free resources
+    </UL>
+    <LI> Manage Table Content APIs
+    <UL>
+      <LI> #CFE_TBL_Load - Load a specified table with data
+      <LI> #CFE_TBL_Update - Update the contents of a table with any pending data
+      <LI> #CFE_TBL_Validate - Validate the contents of a table
+      <LI> #CFE_TBL_Manage - Perform standard routine operations to maintain a table
+      <LI> #CFE_TBL_DumpToBuffer - Copies contents of a Dump Only Table to a shared buffer
+      <LI> #CFE_TBL_Modified - Notifies Table Services that table contents have been modified by Application
+    </UL>
+    <LI> Access Table Content APIs
+    <UL>
+      <LI> #CFE_TBL_GetAddress - Obtain the current address of the contents of a table
+      <LI> #CFE_TBL_GetAddresses - Obtain the current addresses of multiple tables
+      <LI> #CFE_TBL_ReleaseAddress - Release the pointer to the contents of a table
+      <LI> #CFE_TBL_ReleaseAddresses - Release the pointers to the contents of multiple tables
+    </UL>
+    <LI> Get Table Information APIs
+    <UL>
+      <LI> #CFE_TBL_GetStatus - Obtain current status of pending actions for a table
+      <LI> #CFE_TBL_GetInfo - Obtain characteristics/information about a specific table
+    </UL>
+  </UL>
+
+  <H4> Time Services API </H4>
+  <UL>
+    <LI> Get Current Time APIs
+    <UL>
+      <LI> #CFE_TIME_GetTime - Get the current spacecraft time
+      <LI> #CFE_TIME_GetTAI - Get the current TAI time
+      <LI> #CFE_TIME_GetUTC - Get the current UTC time
+      <LI> #CFE_TIME_GetMET - Get the current Mission Elapsed Time
+      <LI> #CFE_TIME_GetMETseconds - Get the current seconds count of the Mission Elapsed Time
+      <LI> #CFE_TIME_GetMETsubsecs - Get the current subseconds count of the Mission Elapsed Time
+    </UL>
+    <LI> Get Time Information APIs
+    <UL>
+      <LI> #CFE_TIME_GetSTCF - Get the current value of the Spacecraft Time Correction Factor
+      <LI> #CFE_TIME_GetLeapSeconds - Get the current value of the leap seconds counter
+      <LI> #CFE_TIME_GetClockState - Get the state of the spacecraft clock
+      <LI> #CFE_TIME_GetClockInfo - Get information about the spacecraft clock
+    </UL>
+    <LI> Time Arithmetic APIs
+    <UL>
+      <LI> #CFE_TIME_Add - Adds two time values
+      <LI> #CFE_TIME_Subtract - Subtracts two time values
+      <LI> #CFE_TIME_Compare - Compares two time values
+    </UL>
+    <LI> Time Conversion APIs
+    <UL>
+      <LI> #CFE_TIME_MET2SCTime - Converts the specified MET into a Spacecraft Time
+      <LI> #CFE_TIME_Sub2MicroSecs - Converts a sub-seconds count to an equivalent number of microseconds
+      <LI> #CFE_TIME_Micro2SubSecs - Converts a number of microseconds into an equivalent number of MET sub-seconds
+      <LI> #CFE_TIME_CFE2FSSeconds - Converts cFE seconds into the File System's seconds
+      <LI> #CFE_TIME_FS2CFESeconds - Converts File System's seconds into cFE Seconds
+    </UL>
+    <LI> External Time Source APIs
+    <UL>
+      <LI> #CFE_TIME_ExternalTone - Identifies the receipt of a 1 Hz signal from an external source
+      <LI> #CFE_TIME_ExternalMET - Provide a Mission Elapsed Time (MET) to the cFE from an external source 
+      <LI> #CFE_TIME_ExternalGPS - Provide a time to the cFE from an external source that has common GPS data
+      <LI> #CFE_TIME_ExternalTime - Provide a time to the cFE from an external source that measures time from a known epoch
+      <LI> #CFE_TIME_RegisterSynchCallback - Registers an Application's callback to be called when an external tone arrives
+      <LI> #CFE_TIME_UnregisterSynchCallback - Unregisters an Application's callback that is called when an external tone arrives
+    </UL>
+    <LI> Miscellaneous Time APIs
+    <UL>
+      <LI> #CFE_TIME_Print - Converts a time value to a character string
+    </UL>
+  </UL>
+**/
+
+/**
+  \page cfeugrevhist cFE User's Guide Documentation Revision History
+  
+  \verbatim
+  $Log: main.dox  $
+  Revision 1.5 2014/08/23 20:01:17GMT-05:00 sstrege 
+  Added cFE User Guide TOC, updated background information, updated applicable documents, updated acronyms, glossary of terms, and cFE API reference
+  Revision 1.4 2008/12/06 16:16:05EST dkobe 
+  Corrected faulty links
+  Revision 1.3 2008/12/06 15:34:30EST dkobe 
+  Corrected formatting of revision history
+  Revision 1.2 2008/12/06 14:56:05EST dkobe 
+  Added Revision History Page
+  \endverbatim
+  
+**/

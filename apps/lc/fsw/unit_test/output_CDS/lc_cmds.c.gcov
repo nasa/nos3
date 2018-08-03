@@ -1,0 +1,1667 @@
+        -:    0:Source:../src/lc_cmds.c
+        -:    0:Graph:lc_cmds.gcno
+        -:    0:Data:lc_cmds.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: lc_cmds.c.gcov 1.1 2012/07/31 16:53:46EDT nschweis Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**   CFS Limit Checker (LC) command handling routines
+        -:    7:**
+        -:    8:**   $Log: lc_cmds.c.gcov  $
+        -:    8:**   Revision 1.1 2012/07/31 16:53:46EDT nschweis 
+        -:    8:**   Initial revision
+        -:    8:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/unit_test/output_CDS/project.pj
+        -:    8:**   Revision 1.1 2009/01/15 15:26:19EST dahardis 
+        -:    8:**   Initial revision
+        -:    8:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/unit_test/output_CDS/project.pj
+        -:    9:**   Revision 1.4 2009/01/09 11:34:53EST dahardis 
+        -:   10:**   Fixed call to CFE_TBL_GetAddress for the Actionpoint Definition Table that was 
+        -:   11:**   passing in the wrong table handle, causing the Actionpoint Results Table to be
+        -:   12:**   initialized incorrectly.
+        -:   13:**   Revision 1.3 2008/12/10 09:38:36EST dahardis 
+        -:   14:**   Fixed calls to CFE_TBL_GetAddress (DCR #4699)
+        -:   15:**   Revision 1.2 2008/12/03 13:59:34EST dahardis 
+        -:   16:**   Corrections from peer code review
+        -:   17:**   Revision 1.1 2008/10/29 14:19:03EDT dahardison 
+        -:   18:**   Initial revision
+        -:   19:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/src/project.pj
+        -:   20:** 
+        -:   21:*************************************************************************/
+        -:   22:
+        -:   23:/************************************************************************
+        -:   24:** Includes
+        -:   25:*************************************************************************/
+        -:   26:#include "lc_app.h"
+        -:   27:#include "lc_cmds.h"
+        -:   28:#include "lc_msgids.h"
+        -:   29:#include "lc_events.h"
+        -:   30:#include "lc_version.h"
+        -:   31:#include "lc_action.h"
+        -:   32:#include "lc_watch.h"
+        -:   33:
+        -:   34:/************************************************************************
+        -:   35:** Local function prototypes
+        -:   36:*************************************************************************/
+        -:   37:/************************************************************************/
+        -:   38:/** \brief Sample actionpoints request
+        -:   39:**  
+        -:   40:**  \par Description
+        -:   41:**       Processes an on-board sample actionpoints request message.
+        -:   42:**
+        -:   43:**  \par Assumptions, External Events, and Notes:
+        -:   44:**       This message does not affect the command execution counter
+        -:   45:**       
+        -:   46:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:   47:**                             references the software bus message 
+        -:   48:**
+        -:   49:*************************************************************************/
+        -:   50:void LC_SampleAPReq(CFE_SB_MsgPtr_t MessagePtr);
+        -:   51:   
+        -:   52:/************************************************************************/
+        -:   53:/** \brief Housekeeping request
+        -:   54:**  
+        -:   55:**  \par Description
+        -:   56:**       Processes an on-board housekeeping request message.
+        -:   57:**
+        -:   58:**  \par Assumptions, External Events, and Notes:
+        -:   59:**       This message does not affect the command execution counter
+        -:   60:**       
+        -:   61:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:   62:**                             references the software bus message 
+        -:   63:**
+        -:   64:**  \returns
+        -:   65:**  \retcode #CFE_SUCCESS  \retdesc \copydoc CFE_SUCCESS \endcode
+        -:   66:**  \retstmt Return codes from #LC_AcquirePointers     \endcode
+        -:   67:**  \endreturns
+        -:   68:**
+        -:   69:*************************************************************************/
+        -:   70:int32 LC_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr);
+        -:   71:
+        -:   72:/************************************************************************/
+        -:   73:/** \brief Noop command
+        -:   74:**  
+        -:   75:**  \par Description
+        -:   76:**       Processes a noop ground command.
+        -:   77:**
+        -:   78:**  \par Assumptions, External Events, and Notes:
+        -:   79:**       None
+        -:   80:**       
+        -:   81:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:   82:**                             references the software bus message 
+        -:   83:**
+        -:   84:**  \sa #LC_NOOP_CC
+        -:   85:**
+        -:   86:*************************************************************************/
+        -:   87:void LC_NoopCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:   88:
+        -:   89:/************************************************************************/
+        -:   90:/** \brief Reset counters command
+        -:   91:**  
+        -:   92:**  \par Description
+        -:   93:**       Processes a reset counters ground command which will reset
+        -:   94:**       the following LC application counters to zero:
+        -:   95:**         - Command counter
+        -:   96:**         - Command error counter
+        -:   97:**         - Actionpoint sample counter
+        -:   98:**         - Monitored message counter 
+        -:   99:**         - RTS execution counter
+        -:  100:**         - Passive RTS execution counter
+        -:  101:**
+        -:  102:**  \par Assumptions, External Events, and Notes:
+        -:  103:**       None
+        -:  104:**       
+        -:  105:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  106:**                             references the software bus message 
+        -:  107:**
+        -:  108:**  \sa #LC_RESET_CC
+        -:  109:**
+        -:  110:*************************************************************************/
+        -:  111:void LC_ResetCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  112:
+        -:  113:/************************************************************************/
+        -:  114:/** \brief Set LC state command
+        -:  115:**  
+        -:  116:**  \par Description
+        -:  117:**       Processes a set LC application state ground command.
+        -:  118:**
+        -:  119:**  \par Assumptions, External Events, and Notes:
+        -:  120:**       None
+        -:  121:**       
+        -:  122:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  123:**                             references the software bus message 
+        -:  124:**
+        -:  125:**  \sa #LC_SET_LC_STATE_CC
+        -:  126:**
+        -:  127:*************************************************************************/
+        -:  128:void LC_SetLCStateCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  129:
+        -:  130:/************************************************************************/
+        -:  131:/** \brief Set AP state command
+        -:  132:**  
+        -:  133:**  \par Description
+        -:  134:**       Processes a set actionpoint state ground command.
+        -:  135:**
+        -:  136:**  \par Assumptions, External Events, and Notes:
+        -:  137:**       None
+        -:  138:**       
+        -:  139:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  140:**                             references the software bus message 
+        -:  141:**
+        -:  142:**  \sa #LC_SET_AP_STATE_CC
+        -:  143:**
+        -:  144:*************************************************************************/
+        -:  145:void LC_SetAPStateCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  146:
+        -:  147:/************************************************************************/
+        -:  148:/** \brief Set AP permanently off command
+        -:  149:**  
+        -:  150:**  \par Description
+        -:  151:**       Processes a set actionpoint permanently off ground command.
+        -:  152:**
+        -:  153:**  \par Assumptions, External Events, and Notes:
+        -:  154:**       None
+        -:  155:**       
+        -:  156:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  157:**                             references the software bus message 
+        -:  158:**
+        -:  159:**  \sa #LC_SET_AP_PERMOFF_CC
+        -:  160:**
+        -:  161:*************************************************************************/
+        -:  162:void LC_SetAPPermOffCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  163:
+        -:  164:/************************************************************************/
+        -:  165:/** \brief Reset AP statistics command
+        -:  166:**  
+        -:  167:**  \par Description
+        -:  168:**       Processes a reset actionpoint statistics ground command.
+        -:  169:**
+        -:  170:**  \par Assumptions, External Events, and Notes:
+        -:  171:**       None
+        -:  172:**       
+        -:  173:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  174:**                             references the software bus message 
+        -:  175:**
+        -:  176:**  \sa #LC_RESET_AP_STATS_CC
+        -:  177:**
+        -:  178:*************************************************************************/
+        -:  179:void LC_ResetAPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  180:
+        -:  181:/************************************************************************/
+        -:  182:/** \brief Reset WP statistics command
+        -:  183:**  
+        -:  184:**  \par Description
+        -:  185:**       Processes a reset watchpoint statistics ground command.
+        -:  186:**
+        -:  187:**  \par Assumptions, External Events, and Notes:
+        -:  188:**       None
+        -:  189:**       
+        -:  190:**  \param [in]   MessagePtr   A #CFE_SB_MsgPtr_t pointer that
+        -:  191:**                             references the software bus message 
+        -:  192:**
+        -:  193:**  \sa #LC_RESET_WP_STATS_CC
+        -:  194:**
+        -:  195:*************************************************************************/
+        -:  196:void LC_ResetWPStatsCmd(CFE_SB_MsgPtr_t MessagePtr);
+        -:  197:
+        -:  198:/************************************************************************/
+        -:  199:/** \brief Verify message length
+        -:  200:**  
+        -:  201:**  \par Description
+        -:  202:**       Checks if the actual length of a software bus message matches 
+        -:  203:**       the expected length and sends an error event if a mismatch
+        -:  204:**       occures
+        -:  205:**
+        -:  206:**  \par Assumptions, External Events, and Notes:
+        -:  207:**       None
+        -:  208:**       
+        -:  209:**  \param [in]   msg              A #CFE_SB_MsgPtr_t pointer that
+        -:  210:**                                 references the software bus message 
+        -:  211:**
+        -:  212:**  \param [in]   ExpectedLength   The expected length of the message
+        -:  213:**                                 based upon the command code
+        -:  214:**
+        -:  215:**  \returns
+        -:  216:**  \retstmt Returns TRUE if the length is as expected      \endcode
+        -:  217:**  \retstmt Returns FALSE if the length is not as expected \endcode
+        -:  218:**  \endreturns
+        -:  219:**
+        -:  220:**  \sa #LC_LEN_ERR_EID
+        -:  221:**
+        -:  222:*************************************************************************/
+        -:  223:boolean LC_VerifyMsgLength(CFE_SB_MsgPtr_t msg, 
+        -:  224:                           uint16          ExpectedLength);
+        -:  225:
+        -:  226:/************************************************************************/
+        -:  227:/** \brief Process WDT update
+        -:  228:**  
+        -:  229:**  \par Description
+        -:  230:**       This function gets called when LC detects that a new watchpoint
+        -:  231:**       definition table has been loaded
+        -:  232:**
+        -:  233:**  \par Assumptions, External Events, and Notes:
+        -:  234:**       None
+        -:  235:**       
+        -:  236:**  \param [in]   ResetResultsTable  Tells the function if the watchpoint 
+        -:  237:**                                   results table should be cleared 
+        -:  238:**
+        -:  239:**  \sa #LC_ADTUpdated
+        -:  240:**
+        -:  241:*************************************************************************/
+        -:  242:void LC_WDTUpdated(boolean ResetResultsTable);
+        -:  243:
+        -:  244:/************************************************************************/
+        -:  245:/** \brief Process ADT update
+        -:  246:**  
+        -:  247:**  \par Description
+        -:  248:**       This function gets called when LC detects that a new actionpoint
+        -:  249:**       definition table has been loaded
+        -:  250:**
+        -:  251:**  \par Assumptions, External Events, and Notes:
+        -:  252:**       None
+        -:  253:**       
+        -:  254:**  \param [in]   ResetResultsTable  Tells the function if the actionpoint
+        -:  255:**                                   results table should be cleared 
+        -:  256:**
+        -:  257:**  \sa #LC_WDTUpdated
+        -:  258:**
+        -:  259:*************************************************************************/
+        -:  260:void LC_ADTUpdated(boolean ResetResultsTable);
+        -:  261: 
+        -:  262:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  263:/*                                                                 */
+        -:  264:/* Process a command pipe message                                  */
+        -:  265:/*                                                                 */
+        -:  266:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  267:int32 LC_AppPipe(CFE_SB_MsgPtr_t MessagePtr)
+function LC_AppPipe called 49 returned 100% blocks executed 97%
+       49:  268:{
+       49:  269:    int32           Status      = CFE_SUCCESS;
+       49:  270:    CFE_SB_MsgId_t  MessageID   = 0;
+       49:  271:    uint16          CommandCode = 0;
+        -:  272:
+       49:  273:    MessageID = CFE_SB_GetMsgId(MessagePtr);
+       49:  274:    switch (MessageID)
+        -:  275:    {
+        -:  276:        /*
+        -:  277:        ** Sample actionpoints request
+        -:  278:        */
+        -:  279:        case LC_SAMPLE_AP_MID:
+        1:  280:            LC_SampleAPReq(MessagePtr);
+        1:  281:            break;
+        -:  282:    
+        -:  283:        /*
+        -:  284:        ** Housekeeping telemetry request
+        -:  285:        ** (only routine that can return a critical error indicator)
+        -:  286:        */
+        -:  287:        case LC_SEND_HK_MID:
+       22:  288:            Status = LC_HousekeepingReq(MessagePtr);
+       22:  289:            break;
+        -:  290:
+        -:  291:        /*
+        -:  292:        ** LC application commands...
+        -:  293:        */
+        -:  294:        case LC_CMD_MID:
+        -:  295:
+       25:  296:            CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+       25:  297:            switch (CommandCode)
+        -:  298:            {
+        -:  299:                case LC_NOOP_CC:
+        6:  300:                    LC_NoopCmd(MessagePtr);
+        6:  301:                    break;
+        -:  302:
+        -:  303:                case LC_RESET_CC:
+        2:  304:                    LC_ResetCmd(MessagePtr);
+        2:  305:                    break;
+        -:  306:
+        -:  307:                case LC_SET_LC_STATE_CC:
+        4:  308:                    LC_SetLCStateCmd(MessagePtr);
+        4:  309:                    break;
+        -:  310:             
+        -:  311:                case LC_SET_AP_STATE_CC:
+        1:  312:                    LC_SetAPStateCmd(MessagePtr);
+        1:  313:                    break;
+        -:  314:                     
+        -:  315:                case LC_SET_AP_PERMOFF_CC:
+        1:  316:                    LC_SetAPPermOffCmd(MessagePtr);
+        1:  317:                    break;
+        -:  318:
+        -:  319:                case LC_RESET_AP_STATS_CC:
+        3:  320:                    LC_ResetAPStatsCmd(MessagePtr);
+        3:  321:                    break;
+        -:  322:
+        -:  323:                case LC_RESET_WP_STATS_CC:
+        3:  324:                    LC_ResetWPStatsCmd(MessagePtr);
+        3:  325:                    break;
+        -:  326:
+        -:  327:                default:
+        5:  328:                    CFE_EVS_SendEvent(LC_CC_ERR_EID, CFE_EVS_ERROR,
+        -:  329:                                      "Invalid command code: ID = 0x%04X, CC = %d",
+        -:  330:                                      MessageID, CommandCode);
+        -:  331:                    
+        5:  332:                    LC_AppData.CmdErrCount++;
+        5:  333:                    break;
+        -:  334:            
+        -:  335:            } /* end CommandCode switch */
+        5:  336:            break;
+        -:  337:            
+        -:  338:            /*
+        -:  339:            ** All other message ID's should be monitor
+        -:  340:            ** packets
+        -:  341:            */
+        -:  342:            default:
+        1:  343:                LC_CheckMsgForWPs(MessageID, MessagePtr);
+       49:  344:                break;
+        -:  345:            
+        -:  346:    } /* end MessageID switch */
+        -:  347:    
+       49:  348:    return (Status);
+        -:  349:
+        -:  350:} /* End LC_AppPipe */
+        -:  351:
+        -:  352:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  353:/*                                                                 */
+        -:  354:/* Sample Actionpoints Request                                     */
+        -:  355:/*                                                                 */
+        -:  356:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  357:void LC_SampleAPReq(CFE_SB_MsgPtr_t MessagePtr)
+function LC_SampleAPReq called 16 returned 100% blocks executed 100%
+       16:  358:{
+       16:  359:    uint16 ExpectedLength = sizeof(LC_SampleAP_t);
+       16:  360:    LC_SampleAP_t  *ReqPtr;
+        -:  361:    
+        -:  362:    /* 
+        -:  363:    ** Verify message packet length 
+        -:  364:    */
+       16:  365:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  366:    {
+       15:  367:        ReqPtr = ((LC_SampleAP_t *)MessagePtr);
+        -:  368:        
+        -:  369:        /*
+        -:  370:        ** We don't process actionpoint sample requests
+        -:  371:        ** if we're disabled at the application level
+        -:  372:        */
+       15:  373:        if (LC_AppData.CurrentLCState != LC_STATE_DISABLED)
+        -:  374:        {
+        -:  375:            /*
+        -:  376:            ** Range check the actionpoint number argument
+        -:  377:            */
+       15:  378:            if (((ReqPtr -> APNumber) <  LC_MAX_ACTIONPOINTS) ||
+        -:  379:                ((ReqPtr -> APNumber) == LC_ALL_ACTIONPOINTS))
+        -:  380:            {
+       14:  381:                LC_SampleAPs(ReqPtr -> APNumber);
+        -:  382:            }
+        -:  383:            else
+        -:  384:            {
+        -:  385:                /*
+        -:  386:                **  Actionpoint number is out of range
+        -:  387:                **  (it's zero based, since it's a table index) 
+        -:  388:                */
+        1:  389:                CFE_EVS_SendEvent(LC_APSAMPLE_APNUM_ERR_EID, CFE_EVS_ERROR,
+        -:  390:                                  "Sample AP error: invalid AP number = %d", 
+        -:  391:                                  ReqPtr -> APNumber);
+        -:  392:            }
+        -:  393:            
+        -:  394:        } /* end LC_AppData.CurrentLCState if */
+        -:  395:        
+        -:  396:    } /* end LC_VerifyMsgLength if */
+        -:  397:
+       16:  398:    return;
+        -:  399:
+        -:  400:} /* end LC_SampleAPReq */
+        -:  401:
+        -:  402:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  403:/*                                                                 */
+        -:  404:/* Housekeeping request                                            */
+        -:  405:/*                                                                 */
+        -:  406:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  407:int32 LC_HousekeepingReq(CFE_SB_MsgPtr_t MessagePtr)
+function LC_HousekeepingReq called 23 returned 100% blocks executed 91%
+       23:  408:{
+       23:  409:    int32  TableResult    = CFE_SUCCESS;
+       23:  410:    uint16 ExpectedLength = sizeof(LC_NoArgsCmd_t);
+       23:  411:    uint8  ByteData;
+       23:  412:    uint16 TableIndex;
+       23:  413:    uint16 HKIndex;
+        -:  414:    
+        -:  415:    /* 
+        -:  416:    ** Verify message packet length 
+        -:  417:    */
+       23:  418:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  419:    {
+        -:  420:        /*
+        -:  421:        ** Update HK variables
+        -:  422:        */
+       22:  423:        LC_OperData.HkPacket.CmdCount             = LC_AppData.CmdCount;
+       22:  424:        LC_OperData.HkPacket.CmdErrCount          = LC_AppData.CmdErrCount;
+       22:  425:        LC_OperData.HkPacket.APSampleCount        = LC_AppData.APSampleCount;
+       22:  426:        LC_OperData.HkPacket.MonitoredMsgCount    = LC_AppData.MonitoredMsgCount;
+       22:  427:        LC_OperData.HkPacket.RTSExecCount         = LC_AppData.RTSExecCount;
+       22:  428:        LC_OperData.HkPacket.PassiveRTSExecCount  = LC_AppData.PassiveRTSExecCount;
+       22:  429:        LC_OperData.HkPacket.CurrentLCState       = LC_AppData.CurrentLCState;
+       22:  430:        LC_OperData.HkPacket.WPsInUse             = LC_OperData.WPsInUse;
+        -:  431:        
+        -:  432:        /*
+        -:  433:        ** Clear out the active actionpoint count, it will get
+        -:  434:        ** recomputed below
+        -:  435:        */
+       22:  436:        LC_OperData.HkPacket.ActiveAPs = 0;
+        -:  437:        
+        -:  438:        /*
+        -:  439:        ** Update packed watch results
+        -:  440:        ** (4 watch results in one 8-bit byte)
+        -:  441:        */
+      990:  442:        for (TableIndex = 0; TableIndex < LC_MAX_WATCHPOINTS; TableIndex += 4)
+        -:  443:        {
+      968:  444:            HKIndex = TableIndex / 4;
+        -:  445:
+        -:  446:            /*
+        -:  447:            ** Pack in first result
+        -:  448:            */
+      968:  449:            switch (LC_OperData.WRTPtr[TableIndex + 3].WatchResult)
+        -:  450:            {
+        -:  451:                case LC_WATCH_NOT_MEASURED:
+      965:  452:                    ByteData = LC_HKWR_NOT_MEASURED << 6;
+      965:  453:                    break;
+        -:  454:                    
+        -:  455:                case LC_WATCH_FALSE:
+        1:  456:                    ByteData = LC_HKWR_FALSE << 6;
+        1:  457:                    break;
+        -:  458:                    
+        -:  459:                case LC_WATCH_TRUE:
+        1:  460:                    ByteData = LC_HKWR_TRUE  << 6;
+        1:  461:                    break;
+        -:  462:                    
+        -:  463:                /*
+        -:  464:                ** We should never get an undefined watch result,
+        -:  465:                ** but we'll set an error result if we do
+        -:  466:                */    
+        -:  467:                case LC_WATCH_ERROR:
+        -:  468:                default:   
+        1:  469:                    ByteData = LC_HKWR_ERROR << 6;
+      968:  470:                    break;
+        -:  471:            }
+        -:  472:           
+        -:  473:            /*
+        -:  474:            ** Pack in second result
+        -:  475:            */
+      968:  476:            switch (LC_OperData.WRTPtr[TableIndex + 2].WatchResult)
+        -:  477:            {
+        -:  478:                case LC_WATCH_NOT_MEASURED:
+      965:  479:                    ByteData = (ByteData | (LC_HKWR_NOT_MEASURED << 4));
+      965:  480:                    break;
+        -:  481:                    
+        -:  482:                case LC_WATCH_FALSE:
+        1:  483:                    ByteData = (ByteData | (LC_HKWR_FALSE << 4));
+        1:  484:                    break;
+        -:  485:                    
+        -:  486:                case LC_WATCH_TRUE:
+        1:  487:                    ByteData = (ByteData | (LC_HKWR_TRUE  << 4));
+        1:  488:                    break;
+        -:  489:                    
+        -:  490:                case LC_WATCH_ERROR:
+        -:  491:                default:   
+        1:  492:                    ByteData = (ByteData | (LC_HKWR_ERROR << 4));
+      968:  493:                    break;
+        -:  494:            }
+        -:  495:           
+        -:  496:            /*
+        -:  497:            ** Pack in third result
+        -:  498:            */
+      968:  499:            switch (LC_OperData.WRTPtr[TableIndex + 1].WatchResult)
+        -:  500:            {
+        -:  501:                case LC_WATCH_NOT_MEASURED:
+      965:  502:                    ByteData = (ByteData | (LC_HKWR_NOT_MEASURED << 2));
+      965:  503:                    break;
+        -:  504:                    
+        -:  505:                case LC_WATCH_FALSE:
+        1:  506:                    ByteData = (ByteData | (LC_HKWR_FALSE << 2));
+        1:  507:                    break;
+        -:  508:                    
+        -:  509:                case LC_WATCH_TRUE:
+        1:  510:                    ByteData = (ByteData | (LC_HKWR_TRUE  << 2));
+        1:  511:                    break;
+        -:  512:                    
+        -:  513:                case LC_WATCH_ERROR:
+        -:  514:                default:   
+        1:  515:                    ByteData = (ByteData | (LC_HKWR_ERROR << 2));
+      968:  516:                    break;
+        -:  517:            }
+        -:  518:            
+        -:  519:            /*
+        -:  520:            ** Pack in fourth and last result
+        -:  521:            */
+      968:  522:            switch (LC_OperData.WRTPtr[TableIndex].WatchResult)
+        -:  523:            {
+        -:  524:                case LC_WATCH_NOT_MEASURED:
+      965:  525:                    ByteData = (ByteData | LC_HKWR_NOT_MEASURED);
+      965:  526:                    break;
+        -:  527:                    
+        -:  528:                case LC_WATCH_FALSE:
+        1:  529:                    ByteData = (ByteData | LC_HKWR_FALSE);
+        1:  530:                    break;
+        -:  531:                    
+        -:  532:                case LC_WATCH_TRUE:
+        1:  533:                    ByteData = (ByteData | LC_HKWR_TRUE);
+        1:  534:                    break;
+        -:  535:                    
+        -:  536:                case LC_WATCH_ERROR:
+        -:  537:                default:   
+        1:  538:                    ByteData = (ByteData | LC_HKWR_ERROR);
+      968:  539:                    break;
+        -:  540:            }
+        -:  541:
+        -:  542:            /*
+        -:  543:            ** Update houskeeping watch results array
+        -:  544:            */
+      968:  545:            LC_OperData.HkPacket.WPResults[HKIndex] = ByteData;
+        -:  546:            
+        -:  547:        } /* end watch results for loop */
+        -:  548:
+        -:  549:        /*
+        -:  550:        ** Update packed action results
+        -:  551:        ** (2 action state/result pairs (4 bits each) in one 8-bit byte)
+        -:  552:        */
+     1958:  553:        for (TableIndex = 0; TableIndex < LC_MAX_ACTIONPOINTS; TableIndex += 2)
+        -:  554:        {
+     1936:  555:            HKIndex = TableIndex / 2;
+        -:  556: 
+        -:  557:            /*
+        -:  558:            ** Pack in first actionpoint, current state
+        -:  559:            */
+     1936:  560:            switch (LC_OperData.ARTPtr[TableIndex + 1].CurrentState)
+        -:  561:            {
+        -:  562:                case LC_ACTION_NOT_USED:
+     1932:  563:                    ByteData = LC_HKAR_STATE_NOT_USED << 6;
+     1932:  564:                    break;
+        -:  565:                    
+        -:  566:                case LC_APSTATE_ACTIVE:
+        1:  567:                    ByteData = LC_HKAR_STATE_ACTIVE  << 6;
+        1:  568:                    LC_OperData.HkPacket.ActiveAPs++;
+        1:  569:                    break;
+        -:  570:                    
+        -:  571:                case LC_APSTATE_PASSIVE:
+        1:  572:                    ByteData = LC_HKAR_STATE_PASSIVE << 6;
+        1:  573:                    break;
+        -:  574:
+        -:  575:                case LC_APSTATE_DISABLED:
+        1:  576:                    ByteData = LC_HKAR_STATE_DISABLED << 6;
+        1:  577:                    break;
+        -:  578:
+        -:  579:                /*
+        -:  580:                ** Permanantly disabled actionpoints get reported
+        -:  581:                ** as unused. We should never get an undefined 
+        -:  582:                ** action state, but we'll set to not used if we do.
+        -:  583:                */    
+        -:  584:                case LC_APSTATE_PERMOFF:
+        -:  585:                default:
+        1:  586:                    ByteData = LC_HKAR_STATE_NOT_USED << 6;
+     1936:  587:                    break;
+        -:  588:            }
+        -:  589:
+        -:  590:            /*
+        -:  591:            ** Pack in first actionpoint, action result
+        -:  592:            */
+     1936:  593:            switch (LC_OperData.ARTPtr[TableIndex + 1].ActionResult)
+        -:  594:            {
+        -:  595:                case LC_ACTION_NOT_MEASURED:
+     1933:  596:                    ByteData = (ByteData | (LC_HKAR_NOT_MEASURED << 4));
+     1933:  597:                    break;
+        -:  598:                    
+        -:  599:                case LC_ACTION_PASS:
+        1:  600:                    ByteData = (ByteData | (LC_HKAR_PASS << 4));
+        1:  601:                    break;
+        -:  602:                    
+        -:  603:                case LC_ACTION_FAIL:
+        1:  604:                    ByteData = (ByteData | (LC_HKAR_FAIL  << 4));
+        1:  605:                    break;
+        -:  606:                    
+        -:  607:                /*
+        -:  608:                ** We should never get an undefined action result,
+        -:  609:                ** but we'll set an error result if we do
+        -:  610:                */    
+        -:  611:                case LC_ACTION_ERROR:
+        -:  612:                default:   
+        1:  613:                    ByteData = (ByteData | (LC_HKAR_ERROR << 4));
+     1936:  614:                    break;
+        -:  615:            }
+        -:  616:
+        -:  617:            /*
+        -:  618:            ** Pack in second actionpoint, current state
+        -:  619:            */
+     1936:  620:            switch (LC_OperData.ARTPtr[TableIndex].CurrentState)
+        -:  621:            {
+        -:  622:                case LC_ACTION_NOT_USED:
+        1:  623:                    ByteData = (ByteData | (LC_HKAR_STATE_NOT_USED << 2));
+        1:  624:                    break;
+        -:  625:                    
+        -:  626:                case LC_APSTATE_ACTIVE:
+        1:  627:                    ByteData = (ByteData | (LC_HKAR_STATE_ACTIVE  << 2));
+        1:  628:                    LC_OperData.HkPacket.ActiveAPs++;
+        1:  629:                    break;
+        -:  630:                    
+        -:  631:                case LC_APSTATE_PASSIVE:
+        1:  632:                    ByteData = (ByteData | (LC_HKAR_STATE_PASSIVE << 2));
+        1:  633:                    break;
+        -:  634:
+        -:  635:                case LC_APSTATE_DISABLED:
+        1:  636:                    ByteData = (ByteData | (LC_HKAR_STATE_DISABLED << 2));
+        -:  637:                    break;
+        -:  638:
+        -:  639:                case LC_APSTATE_PERMOFF:
+        -:  640:                default:
+     1936:  641:                    ByteData = (ByteData | (LC_HKAR_STATE_NOT_USED << 2));
+     1936:  642:                    break;
+        -:  643:            }
+        -:  644:
+        -:  645:            /*
+        -:  646:            ** Pack in second actionpoint, action result
+        -:  647:            */
+     1936:  648:            switch (LC_OperData.ARTPtr[TableIndex].ActionResult)
+        -:  649:            {
+        -:  650:                case LC_ACTION_NOT_MEASURED:
+     1933:  651:                    ByteData = (ByteData | LC_HKAR_NOT_MEASURED);
+     1933:  652:                    break;
+        -:  653:                    
+        -:  654:                case LC_ACTION_PASS:
+        1:  655:                    ByteData = (ByteData | LC_HKAR_PASS);
+        1:  656:                    break;
+        -:  657:                    
+        -:  658:                case LC_ACTION_FAIL:
+        1:  659:                    ByteData = (ByteData | LC_HKAR_FAIL);
+        1:  660:                    break;
+        -:  661:                    
+        -:  662:                case LC_ACTION_ERROR:
+        -:  663:                default:   
+        1:  664:                    ByteData = (ByteData | LC_HKAR_ERROR);
+     1936:  665:                    break;
+        -:  666:            }
+        -:  667:            
+        -:  668:            /*
+        -:  669:            ** Update houskeeping action results array
+        -:  670:            */
+     1936:  671:            LC_OperData.HkPacket.APResults[HKIndex] = ByteData;
+        -:  672:        
+        -:  673:        } /* end action results for loop */
+        -:  674:        
+        -:  675:        /*
+        -:  676:        ** Timestamp and send housekeeping packet
+        -:  677:        */
+       22:  678:        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &LC_OperData.HkPacket);
+       22:  679:        CFE_SB_SendMsg((CFE_SB_Msg_t *) &LC_OperData.HkPacket);
+        -:  680:        
+        -:  681:    } /* end LC_VerifyMsgLength if */
+        -:  682:    
+        -:  683:    /*
+        -:  684:    ** Note:
+        -:  685:    **
+        -:  686:    **   The following table functions will give the cFE Table Manager
+        -:  687:    **   a chance to update the tables used by this application.  If
+        -:  688:    **   there is an error (very unlikely) the return value will cause
+        -:  689:    **   us to fall out of the main process loop and terminate the LC
+        -:  690:    **   task.  It may sound extreme but there is nothing for the
+        -:  691:    **   Limit Checker to do if it cannot access both the definition
+        -:  692:    **   and result tables.
+        -:  693:    */
+       23:  694:    CFE_TBL_ReleaseAddress(LC_OperData.WDTHandle);
+       23:  695:    CFE_TBL_ReleaseAddress(LC_OperData.ADTHandle);
+        -:  696:
+       23:  697:    CFE_TBL_ReleaseAddress(LC_OperData.WRTHandle);
+       23:  698:    CFE_TBL_ReleaseAddress(LC_OperData.ARTHandle);
+        -:  699:    
+       23:  700:    TableResult = LC_AcquirePointers(TRUE);
+        -:  701:    
+       23:  702:    return(TableResult);
+        -:  703:
+        -:  704:} /* end LC_HousekeepingCmd */
+        -:  705:
+        -:  706:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  707:/*                                                                 */
+        -:  708:/* Noop command                                                    */
+        -:  709:/*                                                                 */
+        -:  710:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  711:void LC_NoopCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_NoopCmd called 6 returned 100% blocks executed 100%
+        6:  712:{
+        6:  713:    uint16 ExpectedLength = sizeof(LC_NoArgsCmd_t);
+        -:  714:    
+        -:  715:    /* 
+        -:  716:    ** Verify message packet length 
+        -:  717:    */
+        6:  718:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  719:    {
+        5:  720:       LC_AppData.CmdCount++;
+        -:  721:       
+        5:  722:       CFE_EVS_SendEvent(LC_NOOP_INF_EID, CFE_EVS_INFORMATION,
+        -:  723:                        "No-op command: Version %d.%d.%d.%d",
+        -:  724:                         LC_MAJOR_VERSION,
+        -:  725:                         LC_MINOR_VERSION,
+        -:  726:                         LC_REVISION,
+        -:  727:                         LC_MISSION_REV);
+        -:  728:    }
+        -:  729:
+        6:  730:    return;
+        -:  731:
+        -:  732:} /* end LC_NoopCmd */
+        -:  733:
+        -:  734:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  735:/*                                                                 */
+        -:  736:/* Reset counters command                                          */
+        -:  737:/*                                                                 */
+        -:  738:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  739:void LC_ResetCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_ResetCmd called 2 returned 100% blocks executed 100%
+        2:  740:{
+        2:  741:    uint16 ExpectedLength = sizeof(LC_NoArgsCmd_t);
+        -:  742:    
+        -:  743:    /* 
+        -:  744:    ** Verify message packet length 
+        -:  745:    */
+        2:  746:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  747:    {
+        1:  748:        LC_ResetCounters();
+        -:  749:        
+        1:  750:        CFE_EVS_SendEvent(LC_RESET_DBG_EID, CFE_EVS_DEBUG,
+        -:  751:                          "Reset counters command");
+        -:  752:    }
+        -:  753:    
+        2:  754:    return;
+        -:  755:   
+        -:  756:} /* end LC_ResetCmd */
+        -:  757:
+        -:  758:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  759:/*                                                                 */
+        -:  760:/* Reset housekeeping counters                                     */
+        -:  761:/*                                                                 */
+        -:  762:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  763:void LC_ResetCounters(void)
+function LC_ResetCounters called 4 returned 100% blocks executed 100%
+        4:  764:{
+        4:  765:    LC_AppData.CmdCount     = 0;               
+        4:  766:    LC_AppData.CmdErrCount  = 0;         
+        -:  767:
+        4:  768:    LC_AppData.APSampleCount        = 0;          
+        4:  769:    LC_AppData.MonitoredMsgCount    = 0;  
+        4:  770:    LC_AppData.RTSExecCount         = 0;          
+        4:  771:    LC_AppData.PassiveRTSExecCount  = 0; 
+        -:  772:   
+        -:  773:    return;
+        -:  774:    
+        -:  775:} /* end LC_ResetCounters */
+        -:  776:
+        -:  777:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  778:/*                                                                 */
+        -:  779:/* Set LC state command                                            */
+        -:  780:/*                                                                 */
+        -:  781:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  782:void LC_SetLCStateCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_SetLCStateCmd called 4 returned 100% blocks executed 100%
+        4:  783:{
+        4:  784:    uint16            ExpectedLength = sizeof(LC_SetLCState_t);
+        4:  785:    LC_SetLCState_t  *CmdPtr;
+        -:  786:    
+        -:  787:    /* 
+        -:  788:    ** Verify message packet length 
+        -:  789:    */
+        4:  790:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  791:    {
+        3:  792:        CmdPtr = ((LC_SetLCState_t *)MessagePtr);
+        -:  793:        
+        3:  794:        switch (CmdPtr -> NewLCState)
+        -:  795:        {
+        -:  796:            case LC_STATE_ACTIVE:
+        -:  797:            case LC_STATE_PASSIVE:
+        -:  798:            case LC_STATE_DISABLED:
+        2:  799:                LC_AppData.CurrentLCState = CmdPtr -> NewLCState;
+        2:  800:                LC_AppData.CmdCount++;
+        -:  801:                
+        2:  802:                CFE_EVS_SendEvent(LC_LCSTATE_INF_EID, CFE_EVS_INFORMATION,
+        -:  803:                                  "Set LC state command: new state = %d", 
+        -:  804:                                  CmdPtr -> NewLCState);
+        2:  805:                break;
+        -:  806:                
+        -:  807:            default:
+        1:  808:                CFE_EVS_SendEvent(LC_LCSTATE_ERR_EID, CFE_EVS_ERROR,
+        -:  809:                                  "Set LC state error: invalid state = %d", 
+        -:  810:                                  CmdPtr -> NewLCState);
+        -:  811:                
+        1:  812:                LC_AppData.CmdErrCount++;
+        4:  813:                break;
+        -:  814:        }
+        -:  815:    }
+        -:  816:    
+        4:  817:    return;
+        -:  818:   
+        -:  819:} /* end LC_SetLCStateCmd */
+        -:  820:
+        -:  821:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  822:/*                                                                 */
+        -:  823:/* Set actionpoint state command                                   */
+        -:  824:/*                                                                 */
+        -:  825:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  826:void LC_SetAPStateCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_SetAPStateCmd called 6 returned 100% blocks executed 100%
+        6:  827:{
+        6:  828:    uint16           ExpectedLength = sizeof(LC_SetAPState_t);
+        6:  829:    LC_SetAPState_t  *CmdPtr;
+        6:  830:    uint32           TableIndex;
+        6:  831:    uint8            CurrentAPState;
+        6:  832:    boolean          ValidState = TRUE;
+        6:  833:    boolean          CmdSuccess = FALSE;
+        -:  834:    
+        -:  835:    /* 
+        -:  836:    ** Verify message packet length 
+        -:  837:    */
+        6:  838:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  839:    {
+        5:  840:        CmdPtr = ((LC_SetAPState_t *)MessagePtr);
+        -:  841:
+        -:  842:        /*
+        -:  843:        ** Do a sanity check on the new actionpoint state 
+        -:  844:        ** specified.
+        -:  845:        */        
+        5:  846:        switch (CmdPtr -> NewAPState)
+        -:  847:        {
+        -:  848:            case LC_APSTATE_ACTIVE:
+        -:  849:            case LC_APSTATE_PASSIVE:
+        -:  850:            case LC_APSTATE_DISABLED:
+        4:  851:                break;
+        -:  852:                
+        -:  853:            default:
+        1:  854:                ValidState = FALSE;
+        1:  855:                CFE_EVS_SendEvent(LC_APSTATE_NEW_ERR_EID, CFE_EVS_ERROR,
+        -:  856:                                  "Set AP state error: AP = %d, Invalid new state = %d", 
+        -:  857:                                  CmdPtr -> APNumber, CmdPtr -> NewAPState);
+        -:  858:                
+        1:  859:                LC_AppData.CmdErrCount++;
+        5:  860:                break;
+        -:  861:        }
+        -:  862:        
+        -:  863:        /*
+        -:  864:        ** Do the rest based on the actionpoint ID we were given
+        -:  865:        */ 
+        5:  866:        if (ValidState == TRUE)
+        -:  867:        {
+        4:  868:            if ((CmdPtr -> APNumber) == LC_ALL_ACTIONPOINTS)
+        -:  869:            {
+        -:  870:                /*
+        -:  871:                ** Set all actionpoints to the new state except those that are not
+        -:  872:                ** used or set permanently off
+        -:  873:                */
+      177:  874:                for (TableIndex = 0; TableIndex < LC_MAX_ACTIONPOINTS; TableIndex++)
+        -:  875:                {
+      176:  876:                    CurrentAPState = LC_OperData.ARTPtr[TableIndex].CurrentState;
+        -:  877:                
+      176:  878:                    if ((CurrentAPState != LC_ACTION_NOT_USED) &&
+        -:  879:                        (CurrentAPState != LC_APSTATE_PERMOFF))
+        -:  880:                    {
+        1:  881:                        LC_OperData.ARTPtr[TableIndex].CurrentState = CmdPtr -> NewAPState;
+        -:  882:                    }
+        -:  883:                }
+        -:  884:                
+        -:  885:                /*
+        -:  886:                ** Set flag that we succeeded
+        -:  887:                */
+        1:  888:                CmdSuccess = TRUE;
+        -:  889:            }
+        -:  890:            else
+        -:  891:            {
+        3:  892:                if ((CmdPtr -> APNumber) < LC_MAX_ACTIONPOINTS)
+        -:  893:                {
+        2:  894:                    TableIndex = CmdPtr -> APNumber;
+        2:  895:                    CurrentAPState = LC_OperData.ARTPtr[TableIndex].CurrentState;
+        -:  896:                
+        2:  897:                    if ((CurrentAPState != LC_ACTION_NOT_USED) &&
+        -:  898:                        (CurrentAPState != LC_APSTATE_PERMOFF))
+        -:  899:                    {
+        -:  900:                        /* 
+        -:  901:                        ** Update state for single actionpoint specified
+        -:  902:                        */
+        1:  903:                        LC_OperData.ARTPtr[TableIndex].CurrentState = CmdPtr -> NewAPState;
+        -:  904:
+        1:  905:                        CmdSuccess = TRUE;
+        -:  906:                    }
+        -:  907:                    else
+        -:  908:                    {
+        -:  909:                        /* 
+        -:  910:                        ** Actionpoints that are not used or set permanently
+        -:  911:                        ** off can only be changed by a table load 
+        -:  912:                        */
+        1:  913:                        CFE_EVS_SendEvent(LC_APSTATE_CURR_ERR_EID, CFE_EVS_ERROR,
+        -:  914:                                          "Set AP state error: AP = %d, Invalid current AP state = %d", 
+        -:  915:                                          CmdPtr -> APNumber, CurrentAPState);
+        -:  916:                        
+        1:  917:                        LC_AppData.CmdErrCount++;
+        -:  918:                    }
+        -:  919:                }
+        -:  920:                else
+        -:  921:                {
+        -:  922:                    /*
+        -:  923:                    **  Actionpoint number is out of range
+        -:  924:                    **  (it's zero based, since it's a table index) 
+        -:  925:                    */
+        1:  926:                    CFE_EVS_SendEvent(LC_APSTATE_APNUM_ERR_EID, CFE_EVS_ERROR,
+        -:  927:                                      "Set AP state error: Invalid AP number = %d", 
+        -:  928:                                      CmdPtr -> APNumber);
+        -:  929:                    
+        1:  930:                    LC_AppData.CmdErrCount++;
+        -:  931:                }
+        -:  932:            }    
+        -:  933:
+        -:  934:            /*
+        -:  935:            ** Update the command counter and send out event if command
+        -:  936:            ** executed
+        -:  937:            */
+        4:  938:            if (CmdSuccess == TRUE)
+        -:  939:            {
+        2:  940:                LC_AppData.CmdCount++;
+        -:  941:            
+        2:  942:                CFE_EVS_SendEvent(LC_APSTATE_INF_EID, CFE_EVS_INFORMATION,
+        -:  943:                                  "Set AP state command: AP = %d, New state = %d", 
+        -:  944:                                  CmdPtr -> APNumber, CmdPtr -> NewAPState);
+        -:  945:            }
+        -:  946:            
+        -:  947:        } /* end ValidState if */
+        -:  948:        
+        -:  949:    } /* end LC_VerifyMsgLength if */
+        -:  950:    
+        6:  951:    return;
+        -:  952:   
+        -:  953:} /* end LC_SetAPStateCmd */
+        -:  954:
+        -:  955:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  956:/*                                                                 */
+        -:  957:/* Set actionpoint permanently off command                         */
+        -:  958:/*                                                                 */
+        -:  959:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  960:void LC_SetAPPermOffCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_SetAPPermOffCmd called 4 returned 100% blocks executed 100%
+        4:  961:{
+        4:  962:    uint16             ExpectedLength = sizeof(LC_SetAPPermOff_t);
+        4:  963:    LC_SetAPPermOff_t  *CmdPtr;
+        4:  964:    uint32             TableIndex;
+        4:  965:    uint8              CurrentAPState;
+        -:  966:    
+        -:  967:    /* 
+        -:  968:    ** Verify message packet length 
+        -:  969:    */
+        4:  970:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  971:    {
+        3:  972:        CmdPtr = ((LC_SetAPPermOff_t *)MessagePtr);
+        -:  973:
+        3:  974:        if (((CmdPtr -> APNumber) == LC_ALL_ACTIONPOINTS) ||
+        -:  975:            ((CmdPtr -> APNumber) >= LC_MAX_ACTIONPOINTS))
+        -:  976:        {
+        -:  977:            /*
+        -:  978:            **  Invalid actionpoint number
+        -:  979:            **  (This command can't be invoked for all actionpoints) 
+        -:  980:            */
+        1:  981:            CFE_EVS_SendEvent(LC_APOFF_APNUM_ERR_EID, CFE_EVS_ERROR,
+        -:  982:                              "Set AP perm off error: Invalid AP number = %d", 
+        -:  983:                              CmdPtr -> APNumber);
+        -:  984:            
+        1:  985:            LC_AppData.CmdErrCount++;
+        -:  986:                
+        -:  987:        }
+        -:  988:        else
+        -:  989:        {
+        2:  990:            TableIndex = CmdPtr -> APNumber;
+        2:  991:            CurrentAPState = LC_OperData.ARTPtr[TableIndex].CurrentState;
+        -:  992:        
+        2:  993:            if (CurrentAPState != LC_APSTATE_DISABLED)
+        -:  994:            {
+        -:  995:                /* 
+        -:  996:                ** Actionpoints can only be turned permanently off if
+        -:  997:                ** they are currently disabled
+        -:  998:                */
+        1:  999:                CFE_EVS_SendEvent(LC_APOFF_CURR_ERR_EID, CFE_EVS_ERROR,
+        -: 1000:                                  "Set AP perm off error, AP NOT Disabled: AP = %d, Current state = %d", 
+        -: 1001:                                  CmdPtr -> APNumber, CurrentAPState);
+        -: 1002:                
+        1: 1003:                LC_AppData.CmdErrCount++;
+        -: 1004:            }
+        -: 1005:            else
+        -: 1006:            {
+        -: 1007:                /* 
+        -: 1008:                ** Update state for actionpoint specified
+        -: 1009:                */
+        1: 1010:                LC_OperData.ARTPtr[TableIndex].CurrentState = LC_APSTATE_PERMOFF;
+        -: 1011:
+        1: 1012:                LC_AppData.CmdCount++;
+        -: 1013:            
+        1: 1014:                CFE_EVS_SendEvent(LC_APOFF_INF_EID, CFE_EVS_INFORMATION,
+        -: 1015:                                  "Set AP permanently off command: AP = %d", 
+        -: 1016:                                  CmdPtr -> APNumber);
+        -: 1017:            }
+        -: 1018:            
+        -: 1019:        } /* end CmdPtr -> APNumber else */
+        -: 1020:        
+        -: 1021:    } /* end LC_VerifyMsgLength if */
+        -: 1022:    
+        4: 1023:    return;
+        -: 1024:   
+        -: 1025:} /* end LC_SetAPPermOffCmd */
+        -: 1026:
+        -: 1027:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1028:/*                                                                 */
+        -: 1029:/* Reset actionpoint statistics command                            */
+        -: 1030:/*                                                                 */
+        -: 1031:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1032:void LC_ResetAPStatsCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_ResetAPStatsCmd called 3 returned 100% blocks executed 100%
+        3: 1033:{
+        3: 1034:    uint16             ExpectedLength = sizeof(LC_ResetAPStats_t);
+        3: 1035:    LC_ResetAPStats_t  *CmdPtr;
+        3: 1036:    uint32             TableIndex;
+        3: 1037:    boolean            CmdSuccess = FALSE;
+        -: 1038:    
+        -: 1039:    /* 
+        -: 1040:    ** Verify message packet length 
+        -: 1041:    */
+        3: 1042:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -: 1043:    {
+        3: 1044:        CmdPtr = ((LC_ResetAPStats_t *)MessagePtr);
+        -: 1045:
+        3: 1046:        if ((CmdPtr -> APNumber) == LC_ALL_ACTIONPOINTS)
+        -: 1047:        {
+        -: 1048:            /*
+        -: 1049:            ** Clear actionpoint statistics for all actionpoints
+        -: 1050:            ** We leave the current state and action result variables as they are 
+        -: 1051:            */
+      177: 1052:            for (TableIndex = 0; TableIndex < LC_MAX_ACTIONPOINTS; TableIndex++)
+        -: 1053:            {
+      176: 1054:                LC_OperData.ARTPtr[TableIndex].FailToPassCount         = 0;
+      176: 1055:                LC_OperData.ARTPtr[TableIndex].PassToFailCount         = 0;
+      176: 1056:                LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount    = 0;
+      176: 1057:                LC_OperData.ARTPtr[TableIndex].CumulativeFailCount     = 0;
+      176: 1058:                LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount  = 0;
+        -: 1059:            }
+        -: 1060:            
+        -: 1061:            /*
+        -: 1062:            ** Set flag that we succeeded
+        -: 1063:            */
+        1: 1064:            CmdSuccess = TRUE;
+        -: 1065:        }
+        -: 1066:        else
+        -: 1067:        {
+        2: 1068:            if ((CmdPtr -> APNumber) < LC_MAX_ACTIONPOINTS)
+        -: 1069:            {
+        1: 1070:                TableIndex = CmdPtr -> APNumber;
+        -: 1071:                
+        -: 1072:                /* 
+        -: 1073:                ** Clear statistics for just a single actionpoint
+        -: 1074:                */
+        1: 1075:                LC_OperData.ARTPtr[TableIndex].FailToPassCount         = 0;
+        1: 1076:                LC_OperData.ARTPtr[TableIndex].PassToFailCount         = 0;
+        1: 1077:                LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount    = 0;
+        1: 1078:                LC_OperData.ARTPtr[TableIndex].CumulativeFailCount     = 0;
+        1: 1079:                LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount  = 0;
+        -: 1080:                
+        1: 1081:                CmdSuccess = TRUE;
+        -: 1082:            }
+        -: 1083:            else
+        -: 1084:            {
+        -: 1085:                /*
+        -: 1086:                **  Actionpoint number is out of range
+        -: 1087:                **  (it's zero based, since it's a table index) 
+        -: 1088:                */
+        1: 1089:                CFE_EVS_SendEvent(LC_APSTATS_APNUM_ERR_EID, CFE_EVS_ERROR,
+        -: 1090:                                  "Reset AP stats error: invalid AP number = %d", 
+        -: 1091:                                  CmdPtr -> APNumber);
+        -: 1092:                
+        1: 1093:                LC_AppData.CmdErrCount++;
+        -: 1094:            }
+        -: 1095:        }    
+        -: 1096:        
+        -: 1097:        /*
+        -: 1098:        ** Update the command counter and send out event if command
+        -: 1099:        ** executed
+        -: 1100:        */
+        3: 1101:        if (CmdSuccess == TRUE)
+        -: 1102:        {
+        2: 1103:            LC_AppData.CmdCount++;
+        -: 1104:        
+        2: 1105:            CFE_EVS_SendEvent(LC_APSTATS_INF_EID, CFE_EVS_INFORMATION,
+        -: 1106:                              "Reset AP stats command: AP = %d", 
+        -: 1107:                              CmdPtr -> APNumber);
+        -: 1108:        }
+        -: 1109:        
+        -: 1110:    } /* end LC_VerifyMsgLength if */
+        -: 1111:    
+        3: 1112:    return;
+        -: 1113:   
+        -: 1114:} /* end LC_ResetAPStatsCmd */
+        -: 1115:
+        -: 1116:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1117:/*                                                                 */
+        -: 1118:/* Reset watchpoint statistics command                             */
+        -: 1119:/*                                                                 */
+        -: 1120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1121:void LC_ResetWPStatsCmd(CFE_SB_MsgPtr_t MessagePtr)
+function LC_ResetWPStatsCmd called 3 returned 100% blocks executed 100%
+        3: 1122:{
+        3: 1123:    uint16             ExpectedLength = sizeof(LC_ResetWPStats_t);
+        3: 1124:    LC_ResetWPStats_t  *CmdPtr;
+        3: 1125:    uint32             TableIndex;
+        3: 1126:    boolean            CmdSuccess = FALSE;
+        -: 1127:    
+        -: 1128:    /* 
+        -: 1129:    ** Verify message packet length 
+        -: 1130:    */
+        3: 1131:    if(LC_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -: 1132:    {
+        3: 1133:        CmdPtr = ((LC_ResetWPStats_t *)MessagePtr);
+        -: 1134:
+        3: 1135:        if ((CmdPtr -> WPNumber) == LC_ALL_WATCHPOINTS)
+        -: 1136:        {
+        -: 1137:            /*
+        -: 1138:            ** Clear watchpoint statistics for all watchpoints
+        -: 1139:            ** We leave the comparison result variable as it is 
+        -: 1140:            */
+      177: 1141:            for (TableIndex = 0; TableIndex < LC_MAX_WATCHPOINTS; TableIndex++)
+        -: 1142:            {
+      176: 1143:                LC_OperData.WRTPtr[TableIndex].EvaluationCount      = 0;
+      176: 1144:                LC_OperData.WRTPtr[TableIndex].FalseToTrueCount     = 0;
+      176: 1145:                LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount = 0;
+      176: 1146:                LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount  = 0;
+        -: 1147:                
+      176: 1148:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value                = 0;
+      176: 1149:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds    = 0;
+      176: 1150:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds = 0;
+        -: 1151:                
+      176: 1152:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value                = 0;
+      176: 1153:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds    = 0;
+      176: 1154:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds = 0;
+        -: 1155:            }
+        -: 1156:            
+        -: 1157:            /*
+        -: 1158:            ** Set flag that we succeeded
+        -: 1159:            */
+        1: 1160:            CmdSuccess = TRUE;
+        -: 1161:        }
+        -: 1162:        else
+        -: 1163:        {
+        2: 1164:            if ((CmdPtr -> WPNumber) < LC_MAX_WATCHPOINTS)
+        -: 1165:            {
+        1: 1166:                TableIndex = CmdPtr -> WPNumber;
+        -: 1167:                
+        -: 1168:                /* 
+        -: 1169:                ** Clear statistics for just a single watchpoint
+        -: 1170:                */
+        1: 1171:                LC_OperData.WRTPtr[TableIndex].EvaluationCount      = 0;
+        1: 1172:                LC_OperData.WRTPtr[TableIndex].FalseToTrueCount     = 0;
+        1: 1173:                LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount = 0;
+        1: 1174:                LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount  = 0;
+        -: 1175:                
+        1: 1176:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value                = 0;
+        1: 1177:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds    = 0;
+        1: 1178:                LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds = 0;
+        -: 1179:                
+        1: 1180:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value                = 0;
+        1: 1181:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds    = 0;
+        1: 1182:                LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds = 0;
+        -: 1183:                
+        1: 1184:                CmdSuccess = TRUE;
+        -: 1185:            }
+        -: 1186:            else
+        -: 1187:            {
+        -: 1188:                /*
+        -: 1189:                **  Watchpoint number is out of range
+        -: 1190:                **  (it's zero based, since it's a table index) 
+        -: 1191:                */
+        1: 1192:                CFE_EVS_SendEvent(LC_WPSTATS_WPNUM_ERR_EID, CFE_EVS_ERROR,
+        -: 1193:                                  "Reset WP stats error: invalid WP number = %d", 
+        -: 1194:                                  CmdPtr -> WPNumber);
+        -: 1195:                
+        1: 1196:                LC_AppData.CmdErrCount++;
+        -: 1197:            }
+        -: 1198:        }    
+        -: 1199:        
+        -: 1200:        /*
+        -: 1201:        ** Update the command counter and send out event if command
+        -: 1202:        ** executed
+        -: 1203:        */
+        3: 1204:        if (CmdSuccess == TRUE)
+        -: 1205:        {
+        2: 1206:            LC_AppData.CmdCount++;
+        -: 1207:        
+        2: 1208:            CFE_EVS_SendEvent(LC_WPSTATS_INF_EID, CFE_EVS_INFORMATION,
+        -: 1209:                              "Reset WP stats command: WP = %d", 
+        -: 1210:                              CmdPtr -> WPNumber);
+        -: 1211:        }
+        -: 1212:        
+        -: 1213:    } /* end LC_VerifyMsgLength if */
+        -: 1214:    
+        3: 1215:    return;
+        -: 1216:   
+        -: 1217:} /* end LC_ResetWPStatsCmd */
+        -: 1218:
+        -: 1219:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1220:/*                                                                 */
+        -: 1221:/* Verify message packet length                                    */
+        -: 1222:/*                                                                 */
+        -: 1223:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1224:boolean LC_VerifyMsgLength(CFE_SB_MsgPtr_t msg, 
+        -: 1225:                           uint16          ExpectedLength)
+function LC_VerifyMsgLength called 67 returned 100% blocks executed 100%
+       67: 1226:{
+       67: 1227:   boolean result = TRUE;
+       67: 1228:   uint16  CommandCode;  
+       67: 1229:   uint16  ActualLength;
+       67: 1230:   CFE_SB_MsgId_t MessageID;
+        -: 1231:   
+        -: 1232:   /*
+        -: 1233:   ** Verify the message packet length...
+        -: 1234:   */
+       67: 1235:   ActualLength = CFE_SB_GetTotalMsgLength(msg);
+       67: 1236:   if (ExpectedLength != ActualLength)
+        -: 1237:   {
+        7: 1238:      MessageID   = CFE_SB_GetMsgId(msg);
+        7: 1239:      CommandCode = CFE_SB_GetCmdCode(msg);
+        -: 1240:
+        7: 1241:      if (MessageID == LC_SEND_HK_MID)
+        -: 1242:      {
+        -: 1243:          /*
+        -: 1244:          ** For a bad HK request, just send the event. We only increment
+        -: 1245:          ** the error counter for ground commands and not internal messages.
+        -: 1246:          */
+        1: 1247:          CFE_EVS_SendEvent(LC_HKREQ_LEN_ERR_EID, CFE_EVS_ERROR,
+        -: 1248:                  "Invalid HK request msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -: 1249:                  MessageID, CommandCode, ActualLength, ExpectedLength);
+        -: 1250:      }
+        6: 1251:      else if (MessageID == LC_SAMPLE_AP_MID)
+        -: 1252:      {
+        -: 1253:          /*
+        -: 1254:          ** Same thing as previous for a bad actionpoint sample request
+        -: 1255:          */
+        1: 1256:          CFE_EVS_SendEvent(LC_APSAMPLE_LEN_ERR_EID, CFE_EVS_ERROR,
+        -: 1257:                  "Invalid AP sample msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -: 1258:                  MessageID, CommandCode, ActualLength, ExpectedLength);
+        -: 1259:      }
+        -: 1260:      else
+        -: 1261:      {
+        -: 1262:          /*
+        -: 1263:          ** All other cases, increment error counter
+        -: 1264:          */
+        5: 1265:          CFE_EVS_SendEvent(LC_LEN_ERR_EID, CFE_EVS_ERROR,
+        -: 1266:                  "Invalid msg length: ID = 0x%04X, CC = %d, Len = %d, Expected = %d",
+        -: 1267:                  MessageID, CommandCode, ActualLength, ExpectedLength);
+        5: 1268:          LC_AppData.CmdErrCount++;          
+        -: 1269:      }
+        -: 1270:
+        7: 1271:      result = FALSE;
+        -: 1272:   }
+        -: 1273:
+       67: 1274:   return(result);
+        -: 1275:
+        -: 1276:} /* End of LC_VerifyMsgLength */
+        -: 1277:
+        -: 1278:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1279:/*                                                                 */
+        -: 1280:/* Acquire table pointers and process definition table updates     */
+        -: 1281:/* if needed                                                       */
+        -: 1282:/*                                                                 */
+        -: 1283:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1284:int32 LC_AcquirePointers(boolean ResetStats)
+function LC_AcquirePointers called 34 returned 100% blocks executed 77%
+       34: 1285:{
+       34: 1286:    int32  Status;
+        -: 1287:
+        -: 1288:    /*
+        -: 1289:    ** Let cFE manage the definition tables (load or dump)...
+        -: 1290:    */
+       34: 1291:    CFE_TBL_Manage(LC_OperData.WDTHandle);
+       34: 1292:    CFE_TBL_Manage(LC_OperData.ADTHandle);
+        -: 1293:
+        -: 1294:    /*
+        -: 1295:    ** Check for and handle any pending dump request for the
+        -: 1296:    ** (dump only) watchpoint results table
+        -: 1297:    */
+       34: 1298:    Status = CFE_TBL_GetStatus(LC_OperData.WRTHandle);
+        -: 1299:    
+       34: 1300:    if (Status == CFE_TBL_INFO_DUMP_PENDING)
+        -: 1301:    {
+    #####: 1302:        Status = CFE_TBL_DumpToBuffer(LC_OperData.WRTHandle);
+        -: 1303:
+        -: 1304:        /*
+        -: 1305:        ** Change warning results to indicate success
+        -: 1306:        */
+    #####: 1307:        if (Status >= CFE_SUCCESS)
+        -: 1308:        {
+    #####: 1309:            Status = CFE_SUCCESS;
+        -: 1310:        }
+        -: 1311:        else
+        -: 1312:        {
+    #####: 1313:            CFE_EVS_SendEvent(LC_WRT_DUMPBUF_ERR_EID, CFE_EVS_ERROR, 
+        -: 1314:                              "Error dumping WRT to buffer, RC=0x%08X",
+        -: 1315:                              Status);
+        -: 1316:        }
+        -: 1317:    }
+        -: 1318:    else
+        -: 1319:    {
+       34: 1320:        if (Status >= CFE_SUCCESS)
+        -: 1321:        {
+       31: 1322:            Status = CFE_SUCCESS;
+        -: 1323:        }
+        -: 1324:        else
+        -: 1325:        {
+        3: 1326:            CFE_EVS_SendEvent(LC_WRT_GETSTAT_ERR_EID, CFE_EVS_ERROR, 
+        -: 1327:                              "Error getting WRT status, RC=0x%08X",
+        -: 1328:                              Status);
+        -: 1329:        }
+        -: 1330:    }
+        -: 1331:    
+        -: 1332:    /*
+        -: 1333:    ** Check for and handle any pending dump request for the
+        -: 1334:    ** (dump only) actionpoint results table
+        -: 1335:    */
+       34: 1336:    if (Status == CFE_SUCCESS)
+        -: 1337:    {
+       31: 1338:        Status = CFE_TBL_GetStatus(LC_OperData.ARTHandle);
+        -: 1339:        
+       31: 1340:        if (Status == CFE_TBL_INFO_DUMP_PENDING)
+        -: 1341:        {
+    #####: 1342:            Status = CFE_TBL_DumpToBuffer(LC_OperData.ARTHandle);
+        -: 1343:
+        -: 1344:            /*
+        -: 1345:            ** Change warning results to indicate success
+        -: 1346:            */
+    #####: 1347:            if (Status >= CFE_SUCCESS)
+        -: 1348:            {
+    #####: 1349:                Status = CFE_SUCCESS;
+        -: 1350:            }
+        -: 1351:            else
+        -: 1352:            {
+    #####: 1353:                CFE_EVS_SendEvent(LC_ART_DUMPBUF_ERR_EID, CFE_EVS_ERROR, 
+        -: 1354:                                  "Error dumping ART to buffer, RC=0x%08X",
+        -: 1355:                                  Status);
+        -: 1356:            }
+        -: 1357:        }
+        -: 1358:        else
+        -: 1359:        {
+       31: 1360:            if (Status >= CFE_SUCCESS)
+        -: 1361:            {
+       31: 1362:                Status = CFE_SUCCESS;
+        -: 1363:            }
+        -: 1364:            else
+        -: 1365:            {
+    #####: 1366:                CFE_EVS_SendEvent(LC_ART_GETSTAT_ERR_EID, CFE_EVS_ERROR, 
+        -: 1367:                                  "Error getting ART status, RC=0x%08X",
+        -: 1368:                                  Status);
+        -: 1369:            }
+        -: 1370:        }
+        -: 1371:    }
+        -: 1372:    
+        -: 1373:    /*
+        -: 1374:    ** Get the watchpoint results table pointer
+        -: 1375:    */
+       34: 1376:    if (Status == CFE_SUCCESS)
+        -: 1377:    {
+       31: 1378:        Status = CFE_TBL_GetAddress((void *)&LC_OperData.WRTPtr,
+        -: 1379:                                    LC_OperData.WRTHandle);
+        -: 1380:        
+        -: 1381:        /*
+        -: 1382:        ** Change warning results to indicate success
+        -: 1383:        */
+       31: 1384:        if (Status >= CFE_SUCCESS)
+        -: 1385:        {
+       30: 1386:            Status = CFE_SUCCESS;
+        -: 1387:        }
+        -: 1388:        else
+        -: 1389:        {
+        1: 1390:            CFE_EVS_SendEvent(LC_WRT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -: 1391:                              "Error getting WRT address, RC=0x%08X",
+        -: 1392:                              Status);
+        -: 1393:        }
+        -: 1394:    }
+        -: 1395:    
+        -: 1396:    /*
+        -: 1397:    ** Get the actionpoint results table pointer
+        -: 1398:    */    
+       34: 1399:    if (Status == CFE_SUCCESS)
+        -: 1400:    {
+       30: 1401:        Status = CFE_TBL_GetAddress((void *)&LC_OperData.ARTPtr,
+        -: 1402:                                    LC_OperData.ARTHandle);
+        -: 1403:        
+       30: 1404:        if (Status >= CFE_SUCCESS)
+        -: 1405:        {
+       29: 1406:            Status = CFE_SUCCESS;
+        -: 1407:        }
+        -: 1408:        else
+        -: 1409:        {
+        1: 1410:            CFE_EVS_SendEvent(LC_WRT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -: 1411:                              "Error getting ART address, RC=0x%08X",
+        -: 1412:                              Status);
+        -: 1413:        }
+        -: 1414:    }
+        -: 1415:    
+        -: 1416:    /*
+        -: 1417:    ** Get a pointer to the watchpoint definition table...
+        -: 1418:    */
+       34: 1419:    if (Status == CFE_SUCCESS)
+        -: 1420:    {
+       29: 1421:        Status = CFE_TBL_GetAddress((void *)&LC_OperData.WDTPtr, 
+        -: 1422:                                    LC_OperData.WDTHandle);
+        -: 1423:        /*
+        -: 1424:        ** Check for an update to the watchpoint definition table...
+        -: 1425:        */
+       29: 1426:        if (Status == CFE_TBL_INFO_UPDATED)
+        -: 1427:        {
+        2: 1428:            LC_WDTUpdated(ResetStats);
+        -: 1429:        }
+        -: 1430:
+       29: 1431:        if (Status >= CFE_SUCCESS)
+        -: 1432:        {
+       28: 1433:            Status = CFE_SUCCESS;
+        -: 1434:        }
+        -: 1435:        else
+        -: 1436:        {
+        1: 1437:            CFE_EVS_SendEvent(LC_WDT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -: 1438:                              "Error getting WDT address, RC=0x%08X",
+        -: 1439:                              Status);
+        -: 1440:        }
+        -: 1441:    }
+        -: 1442:    
+        -: 1443:    /*
+        -: 1444:    ** Get a pointer to the actionpoint definition table...
+        -: 1445:    */
+       34: 1446:    if (Status == CFE_SUCCESS)
+        -: 1447:    {
+       28: 1448:        Status = CFE_TBL_GetAddress((void *)&LC_OperData.ADTPtr,
+        -: 1449:                                    LC_OperData.ADTHandle);
+        -: 1450:        /*
+        -: 1451:        ** Check for an update to the actionpoint definition table...
+        -: 1452:        */
+       28: 1453:        if (Status == CFE_TBL_INFO_UPDATED)
+        -: 1454:        {
+        3: 1455:            LC_ADTUpdated(ResetStats);
+        -: 1456:        }
+        -: 1457:
+       28: 1458:        if (Status >= CFE_SUCCESS)
+        -: 1459:        {
+       27: 1460:            Status = CFE_SUCCESS;
+        -: 1461:        }
+        -: 1462:        else
+        -: 1463:        {
+        1: 1464:            CFE_EVS_SendEvent(LC_ADT_GETADDR_ERR_EID, CFE_EVS_ERROR, 
+        -: 1465:                              "Error getting ADT address, RC=0x%08X",
+        -: 1466:                              Status);
+        -: 1467:        }
+        -: 1468:    }
+        -: 1469:    
+       34: 1470:    return (Status);
+        -: 1471:    
+        -: 1472:} /* end LC_AcquirePointers */
+        -: 1473:
+        -: 1474:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1475:/*                                                                 */
+        -: 1476:/* Handle a Watchpoint Definition Table (WDT) update               */
+        -: 1477:/*                                                                 */
+        -: 1478:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1479:void LC_WDTUpdated(boolean ResetResultsTable)
+function LC_WDTUpdated called 2 returned 100% blocks executed 100%
+        2: 1480:{
+        2: 1481:    int32  Status;
+        2: 1482:    uint16 MessageID;
+        2: 1483:    int32  TableIndex;
+        2: 1484:    int32  ListIndex;
+        -: 1485:
+        -: 1486:    /*
+        -: 1487:    ** We need to check this flag because if we restored
+        -: 1488:    ** the results tables from the CDS on startup, we don't want 
+        -: 1489:    ** to clear them (which is what we normally do)
+        -: 1490:    */
+        2: 1491:    if (ResetResultsTable == TRUE)
+        -: 1492:    {
+      354: 1493:        for (TableIndex = 0; TableIndex < LC_MAX_WATCHPOINTS; TableIndex++)
+        -: 1494:        {
+        -: 1495:            /*
+        -: 1496:            ** Clear watchpoint statistics 
+        -: 1497:            ** We also need to reinitialize the comparison result
+        -: 1498:            ** variable after a definition table update
+        -: 1499:            */
+      352: 1500:            LC_OperData.WRTPtr[TableIndex].WatchResult = LC_WATCH_NOT_MEASURED;
+        -: 1501:         
+      352: 1502:            LC_OperData.WRTPtr[TableIndex].EvaluationCount      = 0;
+      352: 1503:            LC_OperData.WRTPtr[TableIndex].FalseToTrueCount     = 0;
+      352: 1504:            LC_OperData.WRTPtr[TableIndex].ConsecutiveTrueCount = 0;
+      352: 1505:            LC_OperData.WRTPtr[TableIndex].CumulativeTrueCount  = 0;
+        -: 1506:            
+      352: 1507:            LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Value                = 0;
+      352: 1508:            LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Seconds    = 0;
+      352: 1509:            LC_OperData.WRTPtr[TableIndex].LastFalseToTrue.Timestamp.Subseconds = 0;
+        -: 1510:            
+      352: 1511:            LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Value                = 0;
+      352: 1512:            LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Seconds    = 0;
+      352: 1513:            LC_OperData.WRTPtr[TableIndex].LastTrueToFalse.Timestamp.Subseconds = 0;
+        -: 1514:        }
+        -: 1515:    }
+        -: 1516:    
+        -: 1517:    /*
+        -: 1518:    ** Un-subscribe to message IDs referenced in old watch definition table...
+        -: 1519:    */
+       12: 1520:    for (ListIndex = 0; ListIndex < LC_OperData.SubMsgCount; ListIndex++)
+        -: 1521:    {
+       10: 1522:        Status = CFE_SB_Unsubscribe(LC_OperData.SubMsgList[ListIndex], LC_OperData.CmdPipe);
+        -: 1523:
+       10: 1524:        if (Status != CFE_SUCCESS)
+        -: 1525:        {
+        5: 1526:            CFE_EVS_SendEvent(LC_UNSUB_WP_ERR_EID, CFE_EVS_ERROR,
+        -: 1527:                              "Error unsubscribing watchpoint: MID=0x%04X, RC=0x%08X", 
+        -: 1528:                              LC_OperData.SubMsgList[ListIndex], Status);
+        -: 1529:        }
+        -: 1530:
+        -: 1531:        /*
+        -: 1532:        ** Even if we got an error clear out the entry in our subscription list,
+        -: 1533:        ** because we need to rebuild it below
+        -: 1534:        */
+       10: 1535:        LC_OperData.SubMsgList[ListIndex] = 0;
+        -: 1536:    }
+        -: 1537:    
+        -: 1538:    /*
+        -: 1539:    ** Clear the subscribed message and defined watchpoint count
+        -: 1540:    */
+        2: 1541:    LC_OperData.SubMsgCount = 0;
+        2: 1542:    LC_OperData.WPsInUse    = 0;
+        -: 1543:
+        -: 1544:    /*
+        -: 1545:    ** Process new watchpoint definition table...
+        -: 1546:    */
+      354: 1547:    for (TableIndex = 0; TableIndex < LC_MAX_WATCHPOINTS; TableIndex++)
+        -: 1548:    {
+      352: 1549:        MessageID = LC_OperData.WDTPtr[TableIndex].MessageID;
+        -: 1550:        
+        -: 1551:        /*
+        -: 1552:        ** Skip watchpoints that are unused
+        -: 1553:        */
+      352: 1554:        if (LC_OperData.WDTPtr[TableIndex].DataType != LC_WATCH_NOT_USED)
+        -: 1555:        {
+       10: 1556:            LC_OperData.WPsInUse++;   /* This count gets reported in HK */
+        -: 1557:            
+        -: 1558:            /*
+        -: 1559:            ** Search for packet in subscription list...
+        -: 1560:            */
+       17: 1561:            for (ListIndex = 0; ListIndex < LC_OperData.SubMsgCount; ListIndex++)
+        -: 1562:            {
+        9: 1563:                if (LC_OperData.SubMsgList[ListIndex] == MessageID)
+        -: 1564:                {
+        2: 1565:                    break;
+        -: 1566:                }
+        -: 1567:            }
+        -: 1568:            
+        -: 1569:            /*
+        -: 1570:            ** Subscribe to packet (if not already in subscription list)...
+        -: 1571:            */
+       10: 1572:            if (ListIndex == LC_OperData.SubMsgCount)
+        -: 1573:            {
+        8: 1574:                Status = CFE_SB_Subscribe(MessageID, LC_OperData.CmdPipe);
+        -: 1575:
+        -: 1576:                /*
+        -: 1577:                ** Update subscription list...
+        -: 1578:                */
+        8: 1579:                if (Status == CFE_SUCCESS)
+        -: 1580:                {
+        3: 1581:                    LC_OperData.SubMsgList[ListIndex] = MessageID;
+        3: 1582:                    LC_OperData.SubMsgCount++;
+        -: 1583:                }
+        -: 1584:                else
+        -: 1585:                {
+        5: 1586:                    CFE_EVS_SendEvent(LC_SUB_WP_ERR_EID, CFE_EVS_ERROR,
+        -: 1587:                                      "Error subscribing watchpoint: MID=0x%04X, RC=0x%08X", 
+        -: 1588:                                      MessageID, Status);    
+        -: 1589:                }
+        -: 1590:            }
+        -: 1591:            
+        -: 1592:        } /* end LC_WATCH_NOT_USED if */
+        -: 1593:        
+        -: 1594:    } /* end LC_MAX_WATCHPOINTS for */  
+        -: 1595:
+        2: 1596:    return;
+        -: 1597:    
+        -: 1598:} /* end LC_WDTUpdated */
+        -: 1599:
+        -: 1600:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1601:/*                                                                 */
+        -: 1602:/* Handle an Actionpoint Definition Table (ADT) update             */
+        -: 1603:/*                                                                 */
+        -: 1604:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1605:void LC_ADTUpdated(boolean ResetResultsTable)
+function LC_ADTUpdated called 3 returned 100% blocks executed 100%
+        3: 1606:{
+        3: 1607:    uint32  TableIndex;
+        -: 1608:    
+        -: 1609:    /*
+        -: 1610:    ** We need to check this flag because if we restored
+        -: 1611:    ** the results tables from the CDS on startup, we don't want 
+        -: 1612:    ** to clear them (which is what we normally do)
+        -: 1613:    */
+        3: 1614:    if (ResetResultsTable == TRUE)
+        -: 1615:    {
+        -: 1616:        /*
+        -: 1617:        ** Clear actionpoint statistics 
+        -: 1618:        ** We also need to reinitialize the action result and current state
+        -: 1619:        ** variables after a definition table update
+        -: 1620:        */
+      531: 1621:        for (TableIndex = 0; TableIndex < LC_MAX_ACTIONPOINTS; TableIndex++)
+        -: 1622:        {
+      528: 1623:            LC_OperData.ARTPtr[TableIndex].ActionResult = LC_ACTION_NOT_MEASURED;
+      528: 1624:            LC_OperData.ARTPtr[TableIndex].CurrentState = 
+        -: 1625:                                     LC_OperData.ADTPtr[TableIndex].DefaultState;
+        -: 1626:            
+      528: 1627:            LC_OperData.ARTPtr[TableIndex].FailToPassCount         = 0;
+      528: 1628:            LC_OperData.ARTPtr[TableIndex].PassToFailCount         = 0;
+      528: 1629:            LC_OperData.ARTPtr[TableIndex].ConsecutiveFailCount    = 0;
+      528: 1630:            LC_OperData.ARTPtr[TableIndex].CumulativeFailCount     = 0;
+      528: 1631:            LC_OperData.ARTPtr[TableIndex].CumulativeRTSExecCount  = 0;
+        -: 1632:        }    
+        -: 1633:    }
+        -: 1634:    
+        3: 1635:    return;
+        -: 1636:    
+        -: 1637:} /* end LC_ADTUpdated */
+        -: 1638:
+        -: 1639:/************************/
+        -: 1640:/*  End of File Comment */
+        -: 1641:/************************/

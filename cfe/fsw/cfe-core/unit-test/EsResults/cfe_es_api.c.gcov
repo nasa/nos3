@@ -1,0 +1,2044 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_api.c
+        -:    0:Graph:cfe_es_api.gcno
+        -:    0:Data:cfe_es_api.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:**  File:  
+        -:    3:**    cfe_es_api.c
+        -:    4:**
+        -:    5:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    6:**      administrator of the National Aeronautics Space Administration.  
+        -:    7:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:    8:**      Space Flight Center pursuant to government contracts.
+        -:    9:**
+        -:   10:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   11:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   12:**
+        -:   13:**
+        -:   14:**  Purpose:  
+        -:   15:**    This file implements the cFE Executive Services API functions.
+        -:   16:**
+        -:   17:**  References:
+        -:   18:**     Flight Software Branch C Coding Standard Version 1.0a
+        -:   19:**     cFE Flight Software Application Developers Guide
+        -:   20:**
+        -:   21:**  Notes:
+        -:   22:** 
+        -:   23:**  Modification History:
+        -:   24:**
+        -:   25:** $Log: cfe_es_api.c.gcov  $
+        -:   25:** Revision 1.6 2015/06/24 12:19:32EDT wmoleski 
+        -:   25:** Checking in the unit-test results for cFE 6.4.2.0
+        -:   26:** Revision 1.21 2014/09/05 11:37:51GMT-05:00 acudmore 
+        -:   27:** Updated Syslog and ERlog text in CFE_ES_ResetCFE
+        -:   28:** Revision 1.20 2014/08/22 15:50:05GMT-05:00 lwalling 
+        -:   29:** Changed signed loop counters to unsigned
+        -:   30:** Revision 1.19 2014/07/23 15:35:46EDT acudmore 
+        -:   31:** Updated where the Processor Reset counter is incremented.
+        -:   32:** Made the ER log entry text clearer.
+        -:   33:** Revision 1.18 2014/05/05 14:44:53GMT-05:00 acudmore 
+        -:   34:** fixed potential unititialized variable
+        -:   35:** Revision 1.17 2014/05/05 14:03:39GMT-05:00 acudmore 
+        -:   36:** Fixed syslog logic to check for invalid syslog mode and index due to corrupted global memory
+        -:   37:** Revision 1.16 2012/04/20 15:21:32GMT-05:00 acudmore 
+        -:   38:** Fixed reset subtype in CFE_ES_ResetCFE function.
+        -:   39:** Revision 1.15 2012/01/13 11:49:59EST acudmore 
+        -:   40:** Changed license text to reflect open source
+        -:   41:** Revision 1.14 2012/01/11 18:51:33EST aschoeni 
+        -:   42:** Removed child task exit message from system log
+        -:   43:** Revision 1.13 2011/09/02 11:02:56EDT jmdagost 
+        -:   44:** Added new-line charactesr to the end of sys log messages that were missing them.
+        -:   45:** Revision 1.12 2011/07/15 14:28:52EDT lwalling 
+        -:   46:** Removed const qualifier from CounterName argument to CFE_ES_RegisterGenCounter()
+        -:   47:** Revision 1.11 2010/11/05 15:54:33EDT aschoeni 
+        -:   48:** Added Generic Counter API to ES
+        -:   49:** Revision 1.10 2010/11/05 15:05:23EDT acudmore 
+        -:   50:** Updated CRC function to read memory through PSP interface.
+        -:   51:** Revision 1.9 2010/10/25 15:45:28EDT jmdagost 
+        -:   52:** Added Task Name and/or TaskID in syslog messsages in CFE_ES_CreateChildTask().
+        -:   53:** Revision 1.8 2009/07/28 16:30:29EDT jmdagost 
+        -:   54:** Replaced 34 references to filename with references to function name.
+        -:   55:** Revision 1.7 2009/06/10 09:08:50EDT acudmore 
+        -:   56:** Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   57:** Revision 1.6 2008/08/27 15:56:19EDT apcudmore 
+        -:   58:** removed startup sync debug OS_printfs
+        -:   59:** Revision 1.5 2008/08/01 15:54:54EDT apcudmore 
+        -:   60:** Updated Startup sync logic after vxWorks tests.
+        -:   61:** Revision 1.4 2008/07/31 15:41:32EDT apcudmore 
+        -:   62:** Added execution counter API:
+        -:   63:**   -- Added execution counter to ES internal task data
+        -:   64:**   -- Added code to increment counter in RunLoop
+        -:   65:**   -- Added code to report counter in GetInfo APIs
+        -:   66:**   -- Added API to increment counter for child tasks
+        -:   67:**   -- Added code to cFE Core apps to increment counters.
+        -:   68:** Revision 1.3 2008/07/30 14:52:31EDT apcudmore 
+        -:   69:** Added startup sync support and API
+        -:   70:** Revision 1.2 2008/06/26 15:41:53EDT apcudmore 
+        -:   71:** Added public CFE_ES_GetAppInfo API.
+        -:   72:** Moved the old API to CFE_ES_GetAppInfoInternal
+        -:   73:** -- May merge these two in the near future.
+        -:   74:** Revision 1.1 2008/04/17 08:05:02EDT ruperera 
+        -:   75:** Initial revision
+        -:   76:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   77:** Revision 1.72 2007/09/25 10:44:33EDT apcudmore 
+        -:   78:** Removed unused variable.
+        -:   79:** Revision 1.71 2007/09/25 10:24:06EDT apcudmore 
+        -:   80:** Implement Application Restart on Exception:
+        -:   81:** - Added logic to Exception Handler
+        -:   82:** - Changed Exception Hook to pass host task ID
+        -:   83:** - Added App Reset ER Log entry type
+        -:   84:** Revision 1.70 2007/09/21 15:40:20EDT David Kobe (dlkobe) 
+        -:   85:** Modified pointer type definitions to eliminate Linux gcc compile warnings
+        -:   86:** Revision 1.69 2007/09/20 10:53:00EDT apcudmore 
+        -:   87:** Added Query All Tasks command, file definition, events, error codes etc.
+        -:   88:** Revision 1.68 2007/05/31 10:11:34EDT apcudmore 
+        -:   89:** Removed CFE_ES_CPU_CONTEXT_SIZE from verify.h
+        -:   90:** Removed unused variable.
+        -:   91:** Revision 1.67 2007/05/30 10:16:50EDT apcudmore 
+        -:   92:** Fixed RunLoop Crash 
+        -:   93:** Revision 1.66 2007/05/25 11:55:43EDT apcudmore 
+        -:   94:** Error Handling updates
+        -:   95:**    - CFE_ES_GetAppInfo returns void
+        -:   96:**    - added app ID range check in RestartApp
+        -:   97:**  
+        -:   98:** Revision 1.65 2007/05/15 16:08:51EDT apcudmore 
+        -:   99:** Updated CFE_ES_ExitApp to:
+        -:  100:**    -- Do a Processor Reset on Core app init failure
+        -:  101:**    -- Exit the task on a Core App Runtime failure
+        -:  102:** Revision 1.64 2007/05/14 15:43:46EDT apcudmore 
+        -:  103:** Cleaned up events and disabled debug code for application restart.
+        -:  104:** Revision 1.63 2007/05/04 16:02:50EDT apcudmore 
+        -:  105:** Removed debug printf.
+        -:  106:** Revision 1.62 2007/05/04 15:58:35EDT apcudmore 
+        -:  107:** Implemented ES shared data protection. Eliminates Startup syncronization problem.
+        -:  108:** Revision 1.61 2007/05/02 11:59:11EDT apcudmore 
+        -:  109:** Initialized "ThisAppId" variable to zero from Static Analysis advice.
+        -:  110:** Revision 1.60 2007/04/28 15:42:40EDT dlkobe 
+        -:  111:** Added missing semicolon
+        -:  112:** Revision 1.59 2007/04/28 15:40:53EDT dlkobe 
+        -:  113:** Fix corrupted file
+        -:  114:** Revision 1.58 2007/04/28 15:35:19EDT dlkobe 
+        -:  115:** Corrected Typos from restructuring
+        -:  116:** Revision 1.57 2007/04/28 15:32:38EDT dlkobe 
+        -:  117:** Restructured CFE_ES_RegisterCDS call to avoid Application Unknown Error
+        -:  118:** Revision 1.56 2007/04/28 14:49:00EDT dlkobe 
+        -:  119:** Baseline Implementation of Critical Tables
+        -:  120:** Revision 1.55 2007/04/25 11:57:08EDT apcudmore 
+        -:  121:** Implemented "Back End" of Application Restart and Delete.
+        -:  122:** Changes include all ES Cleanup code to delete App and Task Resources.
+        -:  123:** Revision 1.54 2007/04/13 16:24:52EDT apcudmore 
+        -:  124:** Fixed "==" bug in If/then/else clause in CFE_ES_ExitApp
+        -:  125:** Revision 1.53 2007/04/12 10:37:19EDT apcudmore 
+        -:  126:** Added support for ES task to call CFE_ES_ExitApp on initialization and runtime failure.
+        -:  127:** Revision 1.52 2007/04/09 15:12:04EDT dlkobe 
+        -:  128:** Modified 'Name' parameter to be a const pointer
+        -:  129:** Revision 1.51 2007/04/06 12:23:58EDT apcudmore 
+        -:  130:** Added Paramter verification and a check to make sure that CFE_ES_CreateChildTask is not 
+        -:  131:** called from another Child Task.
+        -:  132:** Revision 1.49 2007/04/05 16:16:03EDT apcudmore 
+        -:  133:** Added CFE_ES_DeleteChildTask and CFE_ES_ExitChildTask along with headers,
+        -:  134:** and associated Error codes.
+        -:  135:** Revision 1.48 2007/03/23 15:06:26EST apcudmore 
+        -:  136:** Fixes for DCR 470: Improved error handling for CFE_ES_RegisterApp and CFE_ES_RegisterChildTask.
+        -:  137:**                             Removed circular include.
+        -:  138:** Revision 1.47 2007/03/23 10:47:23EST apcudmore 
+        -:  139:** Added CFE_ES_GetTaskInfo call and corresponding CFE_ES_TaskInfo_t data structure.
+        -:  140:** Revision 1.46 2007/03/22 10:26:23EST apcudmore 
+        -:  141:** Implemented all code walkthrough items related to ES Application logic, commands, and telemetry.
+        -:  142:** Revision 1.45 2007/03/16 10:07:13EST apcudmore 
+        -:  143:** Fixed Compile error in CreateChildTask
+        -:  144:** Revision 1.44 2007/03/16 09:37:48EST apcudmore 
+        -:  145:** Removed code that does not allow a Child task's priority to be greater than it's parent.
+        -:  146:** Revision 1.43 2007/03/13 16:10:54EST apcudmore 
+        -:  147:** Implemented all ERLog and ES API code walkthrough items.
+        -:  148:** Revision 1.42 2007/02/28 10:09:30EST apcudmore 
+        -:  149:** Command/control logic for ES Application Restart
+        -:  150:**
+        -:  151:*/
+        -:  152:
+        -:  153:/*
+        -:  154:** Required header files.
+        -:  155:*/
+        -:  156:#include "cfe.h"
+        -:  157:#include "cfe_es.h"
+        -:  158:#include "cfe_es_apps.h"
+        -:  159:#include "cfe_es_global.h"
+        -:  160:#include "cfe_es_events.h"
+        -:  161:#include "cfe_es_cds.h"
+        -:  162:#include "cfe_es_cds_mempool.h"
+        -:  163:#include "cfe_psp.h"
+        -:  164:#include "cfe_es_log.h"
+        -:  165:
+        -:  166:
+        -:  167:#include <string.h>
+        -:  168:#include <stdio.h>
+        -:  169:#include <stdarg.h>
+        -:  170:
+        -:  171:
+        -:  172:/*
+        -:  173:** Function: CFE_ES_GetResetType
+        -:  174:**
+        -:  175:** Purpose:  Return The Type of reset the cFE had.
+        -:  176:**           The function will return the start type 
+        -:  177:**           which is CFE_ES_POWERON_RESET or CFE_ES_PROCESSOR_RESET.
+        -:  178:**           The sub-type is optional and will be returned if a non-NULL pointer
+        -:  179:**           is passed in to the function.
+        -:  180:*/
+        -:  181:int32 CFE_ES_GetResetType(uint32 *ResetSubtypePtr)
+        1:  182:{
+        1:  183:    if ( ResetSubtypePtr != NULL )
+        -:  184:    {
+        1:  185:       *ResetSubtypePtr = CFE_ES_ResetDataPtr->ResetVars.ResetSubtype;
+        -:  186:    }
+        -:  187:
+        1:  188:    return(CFE_ES_ResetDataPtr->ResetVars.ResetType);
+        -:  189:
+        -:  190:} /* End of CFE_ES_GetResetType() */
+        -:  191:
+        -:  192:
+        -:  193:/*
+        -:  194:** Function: CFE_ES_ResetCFE
+        -:  195:**
+        -:  196:** Purpose:  Reset the cFE core and all apps.
+        -:  197:**
+        -:  198:*/
+        -:  199:int32 CFE_ES_ResetCFE(uint32 ResetType)
+        6:  200:{
+        -:  201:    int32 ReturnCode;
+        -:  202:    int32 status;
+        -:  203:    
+        6:  204:    if ( ResetType == CFE_ES_PROCESSOR_RESET )
+        -:  205:    {
+        -:  206:       /*
+        -:  207:       ** Increment the processor reset count
+        -:  208:       */
+        4:  209:       CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount++;
+        -:  210:
+        -:  211:       /*
+        -:  212:       ** Before doing a Processor reset, check to see 
+        -:  213:       ** if the maximum number has been exceeded
+        -:  214:       */
+        4:  215:       if ( CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount > 
+        -:  216:            CFE_ES_ResetDataPtr->ResetVars.MaxProcessorResetCount )
+        -:  217:       {
+        2:  218:           CFE_ES_WriteToSysLog("POWER ON RESET due to max proc resets (Commanded).\n");
+        -:  219:
+        -:  220:           /*
+        -:  221:           ** Log the reset in the ER Log. The log will be wiped out, but it's good to have
+        -:  222:           ** the entry just in case something fails.
+        -:  223:           */
+        2:  224:           status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, 
+        -:  225:                                         CFE_ES_RESET_COMMAND,
+        -:  226:                                         "POWER ON RESET due to max proc resets (Commanded).", NULL,0 );
+        -:  227:           /*
+        -:  228:           ** Call the BSP reset routine 
+        -:  229:           */
+        2:  230:           CFE_PSP_Restart(CFE_ES_POWERON_RESET);
+        -:  231:       }
+        -:  232:       else
+        -:  233:       {
+        2:  234:           CFE_ES_WriteToSysLog("PROCESSOR RESET called from CFE_ES_ResetCFE (Commanded).\n");
+        -:  235:
+        -:  236:           /*
+        -:  237:           ** Update the reset variables
+        -:  238:           */
+        2:  239:           CFE_ES_ResetDataPtr->ResetVars.ES_CausedReset = TRUE;
+        -:  240:
+        -:  241:           /*
+        -:  242:           ** Log the reset in the ER Log
+        -:  243:           */
+        2:  244:           status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_PROCESSOR_RESET,
+        -:  245:                                       CFE_ES_RESET_COMMAND,
+        -:  246:                                       "PROCESSOR RESET called from CFE_ES_ResetCFE (Commanded).", NULL,0 );
+        -:  247:           /*
+        -:  248:           ** Call the BSP reset routine
+        -:  249:           */
+        2:  250:           CFE_PSP_Restart(ResetType);
+        -:  251:       
+        -:  252:       } /* end if */
+        -:  253:       
+        -:  254:       /* 
+        -:  255:       ** If the BSP routine is not implemented, 
+        -:  256:       ** it will return. 
+        -:  257:       */
+        4:  258:       ReturnCode = CFE_ES_NOT_IMPLEMENTED;
+        -:  259:    }
+        2:  260:    else if ( ResetType == CFE_ES_POWERON_RESET )
+        -:  261:    {
+        1:  262:       CFE_ES_WriteToSysLog("POWERON RESET called from CFE_ES_ResetCFE (Commanded).\n");
+        -:  263:
+        -:  264:       /*
+        -:  265:       ** Log the reset in the ER Log. The log will be wiped out, but it's good to have
+        -:  266:       ** the entry just in case something fails.
+        -:  267:       */
+        1:  268:       status =  CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_POWERON_RESET, 
+        -:  269:                                       CFE_ES_RESET_COMMAND,
+        -:  270:                                       "POWERON RESET called from CFE_ES_ResetCFE (Commanded).", NULL,0 );
+        -:  271:
+        -:  272:       /*
+        -:  273:       ** Call the BSP reset routine
+        -:  274:       */
+        1:  275:       CFE_PSP_Restart(ResetType);
+        -:  276:       
+        -:  277:       /* 
+        -:  278:       ** If the BSP routine is not implemented, 
+        -:  279:       ** it will return. 
+        -:  280:       */
+        1:  281:       ReturnCode = CFE_ES_NOT_IMPLEMENTED;
+        -:  282:    }
+        -:  283:    else
+        -:  284:    {
+        1:  285:       CFE_ES_WriteToSysLog("ES ResetCFE: Invalid Reset Type: %d.\n",ResetType);
+        1:  286:       ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -:  287:    }
+        -:  288:
+        6:  289:    return(ReturnCode);
+        -:  290:    
+        -:  291:} /* End of CFE_ES_ResetCFE() */
+        -:  292:
+        -:  293:/*
+        -:  294:** Function: CFE_ES_RestartApp
+        -:  295:**
+        -:  296:** Purpose:  Restart a single cFE App.
+        -:  297:**
+        -:  298:*/
+        -:  299:int32 CFE_ES_RestartApp(uint32 AppID)
+        5:  300:{
+        5:  301:    int32 ReturnCode = CFE_SUCCESS;
+        -:  302:
+        5:  303:    if ( AppID < CFE_ES_MAX_APPLICATIONS )
+        -:  304:    {
+        -:  305:
+        4:  306:       CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  307:    
+        -:  308:       /*
+        -:  309:       ** Check to see if the App is an external cFE App.
+        -:  310:       */
+        4:  311:       if ( CFE_ES_Global.AppTable[AppID].Type == CFE_ES_APP_TYPE_CORE )
+        -:  312:       {
+        1:  313:          CFE_ES_WriteToSysLog ("CFE_ES_DeleteApp: Cannot Restart a CORE Application: %s.\n",
+        -:  314:                             CFE_ES_Global.AppTable[AppID].StartParams.Name );
+        1:  315:          ReturnCode = CFE_ES_ERR_APPID; 
+        -:  316:       }
+        3:  317:       else if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppState != CFE_ES_APP_STATE_RUNNING )
+        -:  318:       {
+        2:  319:          CFE_ES_WriteToSysLog ("CFE_ES_RestartApp: Cannot Restart Application %s, It is not running.\n",
+        -:  320:                              CFE_ES_Global.AppTable[AppID].StartParams.Name);
+        2:  321:          ReturnCode = CFE_ES_ERR_APPID; 
+        -:  322:       }
+        -:  323:       else
+        -:  324:       {
+        1:  325:          CFE_ES_WriteToSysLog("CFE_ES_RestartApp: Restart Application %s Initiated\n",
+        -:  326:                             CFE_ES_Global.AppTable[AppID].StartParams.Name);
+        1:  327:          CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest = CFE_ES_SYS_RESTART;
+        1:  328:          CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_WAITING;
+        1:  329:          CFE_ES_Global.AppTable[AppID].StateRecord.AppTimer = CFE_ES_APP_KILL_TIMEOUT;
+        -:  330:       }
+        -:  331:    
+        4:  332:       CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  333:    }
+        -:  334:    else /* App ID is not valid */
+        -:  335:    {
+        1:  336:       ReturnCode = CFE_ES_ERR_APPID;
+        -:  337:
+        -:  338:    } /* end if */
+        -:  339:
+        5:  340:    return(ReturnCode);
+        -:  341:
+        -:  342:} /* End of CFE_ES_RestartApp() */
+        -:  343:
+        -:  344:/*
+        -:  345:** Function: CFE_ES_ReloadApp
+        -:  346:**
+        -:  347:** Purpose:  Reload a single cFE App.
+        -:  348:**
+        -:  349:*/
+        -:  350:int32 CFE_ES_ReloadApp(uint32 AppID, const char *AppFileName)
+        3:  351:{
+        3:  352:    int32 ReturnCode = CFE_SUCCESS;
+        -:  353:
+        3:  354:    CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  355:    
+        -:  356:    /*
+        -:  357:    ** Check to see if the App is an external cFE App.
+        -:  358:    */
+        3:  359:    if ( CFE_ES_Global.AppTable[AppID].Type == CFE_ES_APP_TYPE_CORE )
+        -:  360:    {
+        1:  361:       CFE_ES_WriteToSysLog ("CFE_ES_DeleteApp: Cannot Reload a CORE Application: %s.\n", 
+        -:  362:       CFE_ES_Global.AppTable[AppID].StartParams.Name );
+        1:  363:       ReturnCode = CFE_ES_ERR_APPID; 
+        -:  364:    }
+        2:  365:    else if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppState != CFE_ES_APP_STATE_RUNNING )
+        -:  366:    {
+        1:  367:       CFE_ES_WriteToSysLog ("CFE_ES_ReloadApp: Cannot Reload Application %s, It is not running.\n",
+        -:  368:                              CFE_ES_Global.AppTable[AppID].StartParams.Name);
+        1:  369:       ReturnCode = CFE_ES_ERR_APPID; 
+        -:  370:    }    
+        -:  371:    else
+        -:  372:    {    
+        1:  373:       CFE_ES_WriteToSysLog("CFE_ES_ReloadApp: Reload Application %s Initiated. New filename = %s\n", 
+        -:  374:                             CFE_ES_Global.AppTable[AppID].StartParams.Name, AppFileName);
+        1:  375:       strncpy((char *)CFE_ES_Global.AppTable[AppID].StartParams.FileName, AppFileName, OS_MAX_PATH_LEN);
+        1:  376:       CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest = CFE_ES_SYS_RELOAD;
+        1:  377:       CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_WAITING;
+        1:  378:       CFE_ES_Global.AppTable[AppID].StateRecord.AppTimer = CFE_ES_APP_KILL_TIMEOUT;
+        -:  379:    }
+        -:  380:    
+        3:  381:    CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  382:        
+        3:  383:    return(ReturnCode);
+        -:  384:
+        -:  385:} /* End of CFE_ES_ReloadApp() */
+        -:  386:
+        -:  387:/*
+        -:  388:** Function: CFE_ES_DeleteApp
+        -:  389:**
+        -:  390:** Purpose:  Delete a cFE App.
+        -:  391:**
+        -:  392:*/
+        -:  393:int32 CFE_ES_DeleteApp(uint32 AppID)
+        3:  394:{
+        3:  395:    int32 ReturnCode = CFE_SUCCESS;
+        -:  396:
+        3:  397:    CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  398:    
+        -:  399:    /*
+        -:  400:    ** Check to see if the App is an external cFE App.
+        -:  401:    */
+        3:  402:    if ( CFE_ES_Global.AppTable[AppID].Type == CFE_ES_APP_TYPE_CORE )
+        -:  403:    {
+        1:  404:       CFE_ES_WriteToSysLog ("CFE_ES_DeleteApp: Cannot Delete a CORE Application: %s.\n", 
+        -:  405:       CFE_ES_Global.AppTable[AppID].StartParams.Name );
+        1:  406:       ReturnCode = CFE_ES_ERR_APPID; 
+        -:  407:    }
+        2:  408:    else if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppState != CFE_ES_APP_STATE_RUNNING )
+        -:  409:    {
+        1:  410:       CFE_ES_WriteToSysLog ("CFE_ES_DeleteApp: Cannot Delete Application %s, It is not running.\n",
+        -:  411:                              CFE_ES_Global.AppTable[AppID].StartParams.Name);
+        1:  412:       ReturnCode = CFE_ES_ERR_APPID; 
+        -:  413:    }
+        -:  414:    else
+        -:  415:    {
+        1:  416:       CFE_ES_WriteToSysLog("CFE_ES_DeleteApp: Delete Application %s Initiated\n",
+        -:  417:                             CFE_ES_Global.AppTable[AppID].StartParams.Name);    
+        1:  418:       CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest = CFE_ES_SYS_DELETE;
+        1:  419:       CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_WAITING;
+        1:  420:       CFE_ES_Global.AppTable[AppID].StateRecord.AppTimer = CFE_ES_APP_KILL_TIMEOUT;
+        -:  421:    }
+        -:  422:    
+        3:  423:    CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  424:        
+        3:  425:    return(ReturnCode);
+        -:  426:
+        -:  427:} /* End of CFE_ES_DeleteApp() */
+        -:  428:
+        -:  429:/*
+        -:  430:** Function: CFE_ES_ExitApp
+        -:  431:**
+        -:  432:** Purpose:  Exit a cFE App.
+        -:  433:**
+        -:  434:*/
+        -:  435:void CFE_ES_ExitApp(uint32 ExitStatus)
+        5:  436:{
+        -:  437:    int32   ReturnCode;
+        -:  438:    uint32  AppID;
+        -:  439:
+        5:  440:    CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  441:
+        -:  442:    /*
+        -:  443:    ** Get App ID - Be careful not to lock the shared data before calling GetAppID
+        -:  444:    */
+        5:  445:    ReturnCode = CFE_ES_GetAppIDInternal(&AppID);
+        5:  446:    if ( ReturnCode == CFE_SUCCESS )
+        -:  447:    {
+        -:  448:       /*
+        -:  449:       ** Check to see if the App is an external cFE App.
+        -:  450:       */
+        3:  451:       if ( CFE_ES_Global.AppTable[AppID].Type == CFE_ES_APP_TYPE_CORE )
+        -:  452:       {
+        -:  453:          /*
+        -:  454:          ** A core app should only call this function with one of two ExitStatus codes.
+        -:  455:          */
+        3:  456:          if ( ExitStatus == CFE_ES_CORE_APP_INIT_ERROR )
+        -:  457:          {
+        1:  458:              CFE_ES_WriteToSysLog ("CFE_ES_ExitApp: CORE Application %s Had an Init Error.\n",
+        -:  459:                                     CFE_ES_Global.AppTable[AppID].StartParams.Name );
+        -:  460:                                     
+        -:  461:              /*
+        -:  462:              ** Unlock the ES Shared data before calling ResetCFE 
+        -:  463:              */
+        1:  464:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  465:              
+        -:  466:              
+        -:  467:              /*
+        -:  468:              ** Do a Processor Reset the cFE
+        -:  469:              */                                                                                                          
+        1:  470:              ReturnCode = CFE_ES_ResetCFE(CFE_ES_PROCESSOR_RESET);
+        -:  471:              
+        -:  472:              /*
+        -:  473:              ** Code will not return
+        -:  474:              */
+        -:  475:              
+        -:  476:          }
+        2:  477:          else if ( ExitStatus == CFE_ES_CORE_APP_RUNTIME_ERROR )
+        -:  478:          {
+        1:  479:              CFE_ES_WriteToSysLog ("CFE_ES_ExitApp: CORE Application %s Had a Runtime Error.\n",
+        -:  480:                                     CFE_ES_Global.AppTable[AppID].StartParams.Name );  
+        -:  481:                                                                                             
+        -:  482:              /*
+        -:  483:              ** Unlock the ES Shared data before killing the main task
+        -:  484:              */
+        1:  485:              CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  486:                             
+        -:  487:              /*
+        -:  488:              ** Exit this task
+        -:  489:              */
+        1:  490:              OS_TaskExit();   
+        -:  491:              
+        -:  492:              /*
+        -:  493:              ** Code will not return
+        -:  494:              */
+        -:  495:                                                                                       
+        -:  496:          }
+        -:  497:          else 
+        -:  498:          {
+        1:  499:              CFE_ES_WriteToSysLog ("CFE_ES_ExitApp, Cannot Exit CORE Application %s\n",
+        -:  500:                                    CFE_ES_Global.AppTable[AppID].StartParams.Name );         
+        -:  501:          }
+        -:  502:                    
+        -:  503:       }
+        -:  504:       else /* It is an external App */
+        -:  505:       {
+        -:  506:          
+    #####:  507:          CFE_ES_WriteToSysLog ("Application %s called CFE_ES_ExitApp\n",
+        -:  508:                                 CFE_ES_Global.AppTable[AppID].StartParams.Name);
+    #####:  509:          CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_STOPPED;
+        -:  510:
+        -:  511:
+        -:  512:          /*
+        -:  513:          ** Unlock the ES Shared data before suspending the app 
+        -:  514:          */
+    #####:  515:          CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  516:
+        -:  517:          /*
+        -:  518:          ** Suspend the Application until ES kills it.
+        -:  519:          ** It might be better to have a way of suspending the app in the OS
+        -:  520:          */
+        -:  521:          while(1)
+        -:  522:          {
+    #####:  523:             OS_TaskDelay(500);
+    #####:  524:          }
+        -:  525:
+        -:  526:       } /* end if */
+        -:  527:   
+        -:  528:   } /* end if ReturnCode == CFE_SUCCESS */
+        -:  529:
+        5:  530:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  531:   
+        5:  532:} /* End of CFE_ES_ExitApp() */
+        -:  533:
+        -:  534:/*
+        -:  535:** Function: CFE_ES_RunLoop
+        -:  536:**
+        -:  537:** Purpose:  Check the Run Status of an Application.
+        -:  538:**
+        -:  539:*/
+        -:  540:int32 CFE_ES_RunLoop(uint32 *RunStatus)
+        6:  541:{
+        6:  542:    int32  ReturnCode = TRUE;
+        -:  543:    uint32 AppID;
+        -:  544:    uint32 TaskID;
+        -:  545:    
+        6:  546:    CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  547:
+        -:  548:    /*
+        -:  549:    ** Get App ID
+        -:  550:    */
+        6:  551:    ReturnCode = CFE_ES_GetAppIDInternal(&AppID);
+        -:  552:
+        6:  553:    if ( ReturnCode == CFE_SUCCESS )
+        -:  554:    {
+        -:  555:    
+        -:  556:       /*
+        -:  557:       ** Get the Task ID for the main task
+        -:  558:       */
+        5:  559:       TaskID = CFE_ES_Global.AppTable[AppID].TaskInfo.MainTaskId;
+        -:  560:       
+        -:  561:       /*
+        -:  562:       ** Increment the execution counter for the main task
+        -:  563:       */
+        5:  564:       CFE_ES_Global.TaskTable[TaskID].ExecutionCounter++;
+        -:  565:    
+        -:  566:       /*
+        -:  567:       ** Validate RunStatus
+        -:  568:       */
+        9:  569:       if ( *RunStatus == CFE_ES_APP_RUN || *RunStatus == CFE_ES_APP_EXIT || *RunStatus == CFE_ES_APP_ERROR )
+        -:  570:       {  
+        -:  571:          /*
+        -:  572:          ** Look up the system control request
+        -:  573:          */
+        4:  574:          if ( *RunStatus == CFE_ES_APP_RUN )
+        -:  575:          {            
+        -:  576:             /* 
+        -:  577:             ** The first time an App calls this function, change the state from 
+        -:  578:             ** INITIALIZING to RUNNING. This is for the startup syncronization code below
+        -:  579:             */
+        3:  580:             if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppState == CFE_ES_APP_STATE_INITIALIZING)
+        -:  581:             {
+        -:  582:                /* 
+        -:  583:                ** Change the state to RUNNING
+        -:  584:                */
+        1:  585:                CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_RUNNING;
+        1:  586:                ++CFE_ES_Global.AppReadyCount;
+        -:  587:                
+        -:  588:             } /* End if AppState == CFE_ES_APP_STATE_INITIALIZING */
+        -:  589:             
+        3:  590:             if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest != CFE_ES_APP_RUN )
+        -:  591:             { 
+        -:  592:                 /*
+        -:  593:                 ** We have an external request to stop
+        -:  594:                 */
+        1:  595:                 ReturnCode = FALSE;
+        -:  596:                 
+        -:  597:             }
+        -:  598:             else
+        -:  599:             {
+        -:  600:                /*
+        -:  601:                ** Everything is OK
+        -:  602:                */
+        2:  603:                ReturnCode = TRUE;
+        -:  604:             }
+        -:  605:          }
+        -:  606:          else
+        -:  607:          {
+        -:  608:             /*
+        -:  609:             ** Application wants to exit, so let it
+        -:  610:             */
+        1:  611:             CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest = *RunStatus; 
+        1:  612:             ReturnCode = FALSE;
+        -:  613:          }
+        -:  614:       }
+        -:  615:       else 
+        -:  616:       {
+        -:  617:          /*
+        -:  618:          ** Not a supported RunStatus code, the app will abort
+        -:  619:          */
+        1:  620:          CFE_ES_WriteToSysLog("CFE_ES_RunLoop Error: Invalid RunStatus:%d!\n",*RunStatus);
+        1:  621:          CFE_ES_Global.AppTable[AppID].StateRecord.AppControlRequest = CFE_ES_APP_ERROR; 
+        1:  622:          ReturnCode = FALSE;
+        -:  623:       
+        -:  624:       } /* End if *RunStatus == CFE_ES_APP_RUN .. */
+        -:  625:   
+        -:  626:    }
+        -:  627:    else
+        -:  628:    {
+        -:  629:       /*
+        -:  630:       ** Cannot do anything without the AppID
+        -:  631:       */
+        1:  632:       CFE_ES_WriteToSysLog("CFE_ES_RunLoop Error: Cannot get AppID for the caller: RC = %08X\n",ReturnCode);
+        1:  633:       ReturnCode = FALSE;
+        -:  634:         
+        -:  635:    } /* end if ReturnCode == CFE_SUCCESS */
+        -:  636:
+        6:  637:    CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  638:
+        6:  639:    return(ReturnCode);
+        -:  640:
+        -:  641:} /* End of CFE_ES_RunLoop() */
+        -:  642:
+        -:  643:/*
+        -:  644:** Function: CFE_ES_WaitForStartupSync
+        -:  645:**
+        -:  646:** Purpose:  Called by applications that need to ensure that all other apps are running
+        -:  647:**           before completing their initialization process.
+        -:  648:**
+        -:  649:**           This will also mark the calling task itself as "ready"
+        -:  650:**
+        -:  651:*/
+        -:  652:void CFE_ES_WaitForStartupSync(uint32 TimeOutMilliseconds)
+        5:  653:{
+        -:  654:    int32 Status;
+        -:  655:    uint32 AppID;
+        -:  656:    uint32 MinSystemState;
+        -:  657:
+        5:  658:    MinSystemState = CFE_ES_SYSTEM_STATE_UNDEFINED;
+        -:  659:
+        -:  660:    /*
+        -:  661:     * An application calling CFE_ES_WaitForStartupSync() is assumed to have
+        -:  662:     * completed its initialization and is ready to run.  This is required,
+        -:  663:     * or else the sync delay will end up waiting for itself, or could deadlock
+        -:  664:     * by two apps waiting for each other, etc.
+        -:  665:     */
+        5:  666:    CFE_ES_LockSharedData(__func__,__LINE__);
+        5:  667:    Status = CFE_ES_GetAppIDInternal(&AppID);
+        5:  668:    if ( Status == CFE_SUCCESS )
+        -:  669:    {
+        3:  670:        if ( CFE_ES_Global.AppTable[AppID].StateRecord.AppState == CFE_ES_APP_STATE_INITIALIZING)
+        -:  671:        {
+        1:  672:            CFE_ES_Global.AppTable[AppID].StateRecord.AppState = CFE_ES_APP_STATE_RUNNING;
+        1:  673:            ++CFE_ES_Global.AppReadyCount;
+        -:  674:        }
+        -:  675:
+        -:  676:        /*
+        -:  677:         * For core apps that call this function, these can start once the core app init
+        -:  678:         * process is done.  For everything else (external apps) wait until fully operational.
+        -:  679:         */
+        3:  680:        if ( CFE_ES_Global.AppTable[AppID].Type == CFE_ES_APP_TYPE_CORE)
+        -:  681:        {
+        2:  682:            MinSystemState = CFE_ES_SYSTEM_STATE_CORE_READY;
+        -:  683:        }
+        -:  684:        else
+        -:  685:        {
+        1:  686:            MinSystemState = CFE_ES_SYSTEM_STATE_OPERATIONAL;
+        -:  687:        }
+        -:  688:
+        -:  689:    }
+        5:  690:    CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  691:
+        -:  692:    /* Do the actual delay loop */
+        5:  693:    CFE_ES_ApplicationSyncDelay(MinSystemState, TimeOutMilliseconds);
+        -:  694:
+        5:  695:} /* End of CFE_ES_WaitForStartupSync() */
+        -:  696:
+        -:  697:
+        -:  698:/*
+        -:  699:** Function: CFE_ES_RegisterApp
+        -:  700:**
+        -:  701:** Purpose:  Register a new Application with the cFE. This
+        -:  702:**           function must be called in a cFE app before
+        -:  703:**           any other cFE function.
+        -:  704:**
+        -:  705:*/
+        -:  706:int32 CFE_ES_RegisterApp(void)
+       12:  707:{
+       12:  708:   int32 Result = CFE_SUCCESS;
+        -:  709:
+       12:  710:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  711:
+        -:  712:   /*
+        -:  713:   ** Register the task 
+        -:  714:   */
+       12:  715:   Result = OS_TaskRegister();
+        -:  716:
+       12:  717:   if (Result == OS_SUCCESS)
+        -:  718:   {
+        -:  719:       Result = CFE_SUCCESS;
+        -:  720:   }
+        -:  721:   else
+        -:  722:   {
+        -:  723:       /* 
+        -:  724:       ** Cannot create a syslog entry here because it requires the task to 
+        -:  725:       ** be registered
+        -:  726:       */
+        2:  727:       Result = CFE_ES_ERR_APP_REGISTER;
+        -:  728:   }
+        -:  729:
+        -:  730:   /*
+        -:  731:   ** Set the default exception environment
+        -:  732:   */
+       12:  733:   CFE_PSP_SetDefaultExceptionEnvironment();
+        -:  734:   
+       12:  735:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  736:
+       12:  737:   return(Result);
+        -:  738:  
+        -:  739:
+        -:  740:} /* End of CFE_ES_RegisterApp() */
+        -:  741:
+        -:  742:/*
+        -:  743:** Function: CFE_ES_GetAppIDByName
+        -:  744:**
+        -:  745:** Purpose:  Given a valid App Name, return the 
+        -:  746:**           Application ID.
+        -:  747:**
+        -:  748:*/
+        -:  749:int32 CFE_ES_GetAppIDByName(uint32 *AppIdPtr, char *AppName)
+       17:  750:{
+       17:  751:   int32 Result = CFE_ES_ERR_APPNAME;
+        -:  752:   uint32 i;
+        -:  753:
+       17:  754:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  755:
+        -:  756:   /*
+        -:  757:   ** Search the ES Application table for an app with a matching name.
+        -:  758:   */
+      241:  759:   for ( i = 0; i < CFE_ES_MAX_APPLICATIONS; i++ )
+        -:  760:   {
+      234:  761:      if ( CFE_ES_Global.AppTable[i].RecordUsed == TRUE )
+        -:  762:      {
+       28:  763:         if ( strncmp(AppName, (char *)CFE_ES_Global.AppTable[i].StartParams.Name, OS_MAX_API_NAME) == 0 )
+        -:  764:         {
+       10:  765:            *AppIdPtr = (int) i;
+       10:  766:            Result = CFE_SUCCESS;
+       10:  767:            break;
+        -:  768:         }
+        -:  769:      }
+        -:  770:   } /* end for */
+        -:  771:   
+       17:  772:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  773:      
+       17:  774:   return(Result);
+        -:  775:
+        -:  776:} /* End of CFE_ES_GetAppIDByName() */
+        -:  777:
+        -:  778:
+        -:  779:/*
+        -:  780:** Function: CFE_ES_GetAppID
+        -:  781:**
+        -:  782:** Purpose:  Return the Caller's cFE Application ID.
+        -:  783:**
+        -:  784:*/
+        -:  785:int32 CFE_ES_GetAppID(uint32 *AppIdPtr)
+       15:  786:{
+       15:  787:   int32  Result = CFE_ES_ERR_APPID;
+        -:  788:   uint32 TaskId;
+        -:  789:
+       15:  790:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  791:
+        -:  792:   /*
+        -:  793:   ** Step 1: Get the OS task ID
+        -:  794:   */
+       15:  795:   TaskId = OS_TaskGetId();
+        -:  796:
+        -:  797:   /*
+        -:  798:   ** Step 2: get the Application ID for the current task
+        -:  799:   */
+       15:  800:   if ( CFE_ES_Global.TaskTable[TaskId].RecordUsed == TRUE )
+        -:  801:   {
+       14:  802:      *AppIdPtr = CFE_ES_Global.TaskTable[TaskId].AppId;
+       14:  803:      Result = CFE_SUCCESS;
+        -:  804:   } /* end if */
+        -:  805:   
+       15:  806:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  807:      
+       15:  808:   return(Result);
+        -:  809:
+        -:  810:} /* End of CFE_ES_GetAppID() */
+        -:  811:
+        -:  812:/*
+        -:  813:** Function: CFE_ES_GetAppName
+        -:  814:**
+        -:  815:** Purpose:  Given a valid AppID, return the 
+        -:  816:**           Application name string.
+        -:  817:**
+        -:  818:*/
+        -:  819:int32 CFE_ES_GetAppName(char *AppName, uint32 AppId, uint32 BufferLength)
+       16:  820:{
+        -:  821:   int32 Result;
+        -:  822:
+       16:  823:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  824:
+       16:  825:   if ( AppId < CFE_ES_MAX_APPLICATIONS )
+        -:  826:   {
+       15:  827:      if ( CFE_ES_Global.AppTable[AppId].RecordUsed == TRUE )
+        -:  828:      {
+       13:  829:         strncpy(AppName, (char *)CFE_ES_Global.AppTable[AppId].StartParams.Name, BufferLength);
+       13:  830:         AppName[BufferLength - 1] = '\0';
+       13:  831:         Result = CFE_SUCCESS;
+        -:  832:      }
+        -:  833:      else
+        -:  834:      {
+        2:  835:         Result = CFE_ES_ERR_APPID;
+        -:  836:      }
+        -:  837:   }
+        -:  838:   else
+        -:  839:   {
+        1:  840:      Result = CFE_ES_ERR_APPID;
+        -:  841:   }
+        -:  842:   
+       16:  843:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  844:      
+       16:  845:   return(Result);
+        -:  846:
+        -:  847:} /* End of CFE_ES_GetAppName() */
+        -:  848:
+        -:  849:
+        -:  850:/*
+        -:  851:** Function: CFE_ES_GetAppInfo
+        -:  852:**
+        -:  853:** Purpose:  Get Application Information given a specified App ID
+        -:  854:**
+        -:  855:*/
+        -:  856:int32 CFE_ES_GetAppInfo(CFE_ES_AppInfo_t *AppInfo, uint32 AppId)
+        5:  857:{
+        5:  858:   int32  ReturnCode = CFE_SUCCESS;
+        -:  859:
+        5:  860:   if ( AppInfo != 0 )
+        -:  861:   {
+        4:  862:      if ( AppId < CFE_ES_MAX_APPLICATIONS )
+        -:  863:      {
+        3:  864:         if ( CFE_ES_Global.AppTable[AppId].RecordUsed == TRUE )
+        -:  865:         {
+        2:  866:            CFE_ES_GetAppInfoInternal(AppId, AppInfo);
+        2:  867:            ReturnCode = CFE_SUCCESS;
+        -:  868:         }
+        -:  869:         else
+        -:  870:         {
+        1:  871:            CFE_ES_WriteToSysLog("CFE_ES_GetAppInfo: App ID Not Active: %d\n",AppId);
+        1:  872:            ReturnCode = CFE_ES_ERR_APPID;
+        -:  873:         }
+        -:  874:      }
+        -:  875:      else
+        -:  876:      {
+        1:  877:         CFE_ES_WriteToSysLog("CFE_ES_GetAppInfo: App ID Exceeds CFE_ES_APPLICATION_MAX: %d\n",AppId);
+        1:  878:         ReturnCode = CFE_ES_ERR_APPID;
+        -:  879:      }
+        -:  880:   }
+        -:  881:   else
+        -:  882:   {
+        1:  883:      CFE_ES_WriteToSysLog("CFE_ES_GetAppInfo: Invalid Parameter ( Null Pointer )\n");
+        1:  884:      ReturnCode = CFE_ES_ERR_BUFFER;
+        -:  885:   }
+        5:  886:   return(ReturnCode);
+        -:  887:
+        -:  888:} /* End of CFE_ES_GetAppInfo() */
+        -:  889:
+        -:  890:/*
+        -:  891:** Function: CFE_ES_GetTaskInfo
+        -:  892:**
+        -:  893:** Purpose:  Get Task Information given a specified Task ID
+        -:  894:**
+        -:  895:*/
+        -:  896:int32 CFE_ES_GetTaskInfo(CFE_ES_TaskInfo_t *TaskInfo, uint32 TaskId)
+       10:  897:{
+       10:  898:   int32  ReturnCode = CFE_SUCCESS;
+        -:  899:
+       10:  900:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -:  901:
+       10:  902:   if ( TaskId < OS_MAX_TASKS )
+        -:  903:   {
+        9:  904:      if (  CFE_ES_Global.TaskTable[TaskId].RecordUsed == TRUE )
+        -:  905:      {
+        -:  906:    
+        -:  907:         /*
+        -:  908:         ** Get the Application ID and Task Name
+        -:  909:         */  
+        8:  910:         TaskInfo->AppId = CFE_ES_Global.TaskTable[TaskId].AppId;
+        8:  911:         strncpy((char *)TaskInfo->TaskName, 
+        -:  912:                 (char *)CFE_ES_Global.TaskTable[TaskId].TaskName,OS_MAX_API_NAME);
+        8:  913:         TaskInfo->TaskName[OS_MAX_API_NAME - 1] = '\0';         
+        -:  914:         /*
+        -:  915:         ** Get the Application Name
+        -:  916:         */
+        8:  917:         if ( CFE_ES_Global.AppTable[TaskInfo->AppId].RecordUsed == TRUE )
+        -:  918:         {
+        -:  919:         
+        5:  920:            strncpy((char *)TaskInfo->AppName, 
+        -:  921:                    (char *)CFE_ES_Global.AppTable[TaskInfo->AppId].StartParams.Name, 
+        -:  922:                    OS_MAX_API_NAME);
+        5:  923:            TaskInfo->AppName[OS_MAX_API_NAME - 1] = '\0';
+        -:  924:            
+        -:  925:            /*
+        -:  926:            ** Store away the Task ID ( for the QueryAllTasks Cmd )
+        -:  927:            */
+        5:  928:            TaskInfo->TaskId = TaskId;
+        -:  929: 
+        -:  930:            
+        -:  931:            /*
+        -:  932:            ** Get the Execution counter for the task
+        -:  933:            */
+        5:  934:            TaskInfo->ExecutionCounter =  CFE_ES_Global.TaskTable[TaskId].ExecutionCounter;
+        -:  935:                                             
+        5:  936:            ReturnCode = CFE_SUCCESS;
+        -:  937:         
+        -:  938:         }
+        -:  939:         else
+        -:  940:         {
+        3:  941:            CFE_ES_WriteToSysLog("CFE_ES_GetTaskInfo: Task ID:%d Parent App ID:%d not Active.\n",
+        -:  942:               TaskId,TaskInfo->AppId);
+        3:  943:            ReturnCode = CFE_ES_ERR_TASKID;
+        -:  944:         }
+        -:  945:      }
+        -:  946:      else
+        -:  947:      {
+        1:  948:         CFE_ES_WriteToSysLog("CFE_ES_GetTaskInfo: Task ID Not Active: %d\n",TaskId);
+        1:  949:         ReturnCode = CFE_ES_ERR_TASKID;
+        -:  950:      }
+        -:  951:   }
+        -:  952:   else
+        -:  953:   {
+        1:  954:         CFE_ES_WriteToSysLog("CFE_ES_GetTaskInfo: Task ID Exceeds OS MAX: %d\n",TaskId);
+        1:  955:         ReturnCode = CFE_ES_ERR_TASKID;
+        -:  956:   }
+        -:  957:   
+       10:  958:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -:  959:      
+       10:  960:   return(ReturnCode);
+        -:  961:
+        -:  962:} /* End of CFE_ES_GetAppName() */
+        -:  963:
+        -:  964:
+        -:  965:/*
+        -:  966:** Function: CFE_ES_CreateChildTask
+        -:  967:**
+        -:  968:** Purpose:  Create a Child task for the Application.
+        -:  969:**
+        -:  970:*/
+        -:  971:int32 CFE_ES_CreateChildTask(uint32 *TaskIdPtr,
+        -:  972:                        const char   *TaskName,
+        -:  973:                        CFE_ES_ChildTaskMainFuncPtr_t   FunctionPtr,
+        -:  974:                        const uint32 *StackPtr,
+        -:  975:                        uint32  StackSize,
+        -:  976:                        uint32  Priority,
+        -:  977:                        uint32  Flags)
+       11:  978:{
+        -:  979:
+        -:  980:   int32          Result;
+       11:  981:   uint32         AppId= 0xFFFFFFFF;
+        -:  982:   int32          ReturnCode;
+        -:  983:   int32          TaskId;
+        -:  984:   uint32         ParentTaskId;
+        -:  985:
+        -:  986:   /*
+        -:  987:   ** Validate some of the arguments
+        -:  988:   */
+       11:  989:   if ( TaskIdPtr == NULL )
+        -:  990:   {
+        2:  991:      if (TaskName == NULL)
+        -:  992:      {
+        1:  993:          CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Task Id and Name Pointer Parameters are NULL.\n");
+        1:  994:          ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -:  995:      }
+        -:  996:      else
+        -:  997:      {
+        1:  998:          CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Task Id Pointer Parameter is NULL for Task '%s'.\n",TaskName);
+        1:  999:          ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -: 1000:      }
+        -: 1001:   }
+        9: 1002:   else if ( TaskName == NULL )
+        -: 1003:   {
+        1: 1004:      CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: TaskName Parameter is NULL for Task ID %d.\n",*TaskIdPtr);
+        1: 1005:      ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -: 1006:   }
+        8: 1007:   else if ( FunctionPtr == NULL )
+        -: 1008:   {
+        1: 1009:      CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Function Pointer Parameter is NULL for Task '%s' (ID %d).\n",TaskName,*TaskIdPtr);
+        1: 1010:      ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -: 1011:   }
+        -: 1012:   else 
+        -: 1013:   {
+        -: 1014:   
+        7: 1015:      CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1016:   
+        -: 1017:      /*
+        -: 1018:      ** Get the AppID of the calling Application
+        -: 1019:      */
+        7: 1020:      Result = CFE_ES_GetAppIDInternal(&AppId);
+        7: 1021:      if (Result != CFE_SUCCESS)
+        -: 1022:      {
+        1: 1023:          CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Error calling CFE_ES_GetAppID for Task '%s'. RC = 0x%08X\n",TaskName,Result);
+        1: 1024:          ReturnCode = Result;
+        -: 1025:      }
+        -: 1026:      else  /* else AppId is valid */
+        -: 1027:      {
+        -: 1028:         /*
+        -: 1029:         ** First, Make sure the Calling Task is a cFE Main task.
+        -: 1030:         ** TaskID must be the same as the Parent Task ID.
+        -: 1031:         */
+        6: 1032:         TaskId = OS_TaskGetId();
+        6: 1033:         ParentTaskId = CFE_ES_Global.AppTable[AppId].TaskInfo.MainTaskId;
+        6: 1034:         if ( TaskId == ParentTaskId )
+        -: 1035:         {
+        -: 1036:            /*
+        -: 1037:            ** Truncate the priority if needed
+        -: 1038:            */                          
+        5: 1039:            if ( Priority >  255  )
+        -: 1040:            {
+        2: 1041:                Priority = 255;
+        -: 1042:            }
+        -: 1043:
+        -: 1044:            /*
+        -: 1045:            ** Step 2: Create the new task using the OS API call
+        -: 1046:            */
+        5: 1047:            Result = OS_TaskCreate(TaskIdPtr, TaskName, FunctionPtr, StackPtr,
+        -: 1048:                                StackSize, Priority, OS_FP_ENABLED );
+        -: 1049:
+        -: 1050:            /*
+        -: 1051:            ** Step 3: Record the task information in the task table
+        -: 1052:            */
+        5: 1053:            if ( Result == OS_SUCCESS )
+        -: 1054:            {
+        3: 1055:               CFE_ES_Global.TaskTable[*TaskIdPtr].RecordUsed = TRUE;
+        3: 1056:               CFE_ES_Global.TaskTable[*TaskIdPtr].AppId = AppId;
+        3: 1057:               CFE_ES_Global.TaskTable[*TaskIdPtr].TaskId = *TaskIdPtr;
+        3: 1058:               strncpy((char *)CFE_ES_Global.TaskTable[*TaskIdPtr].TaskName,TaskName,OS_MAX_API_NAME);
+        3: 1059:               CFE_ES_Global.TaskTable[*TaskIdPtr].TaskName[OS_MAX_API_NAME - 1] = '\0';
+        3: 1060:               CFE_ES_Global.RegisteredTasks++;
+        -: 1061:
+        -: 1062:               /*
+        -: 1063:               ** Increment the "Registered" child task count for the App
+        -: 1064:               */
+        3: 1065:               CFE_ES_Global.AppTable[AppId].TaskInfo.NumOfChildTasks ++;
+        -: 1066:
+        3: 1067:               ReturnCode = CFE_SUCCESS;
+        -: 1068:            }
+        -: 1069:            else
+        -: 1070:            {
+        2: 1071:               CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Error calling OS_TaskCreate for Task '%s' RC = 0x%08X\n",TaskName,Result);
+        2: 1072:               ReturnCode = CFE_ES_ERR_CHILD_TASK_CREATE;
+        -: 1073:            }
+        -: 1074:         } 
+        -: 1075:         else
+        -: 1076:         {
+        1: 1077:            CFE_ES_WriteToSysLog("CFE_ES_CreateChildTask: Error: Cannot call from a Child Task (for Task '%s').\n",TaskName);
+        1: 1078:            ReturnCode = CFE_ES_ERR_CHILD_TASK_CREATE;
+        -: 1079:         
+        -: 1080:         } /* end if Calling task is a main task */
+        -: 1081:         
+        -: 1082:      }/* end If AppID is valid */
+        -: 1083:      
+        7: 1084:      CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1085:
+        -: 1086:   } /* end if parameter checking */
+        -: 1087:   
+       11: 1088:   return(ReturnCode);
+        -: 1089:
+        -: 1090:} /* End of CFE_ES_CreateChildTask() */
+        -: 1091:
+        -: 1092:
+        -: 1093:/*
+        -: 1094:** Function: CFE_ES_RegisterChildTask
+        -: 1095:**
+        -: 1096:** Purpose:  Register a child task. This must be called by a Child Task before any
+        -: 1097:**           other cFE calls.
+        -: 1098:**
+        -: 1099:*/
+        -: 1100:int32 CFE_ES_RegisterChildTask(void)
+        4: 1101:{
+        -: 1102:   int32 Result;
+        -: 1103:   int32 ReturnCode;
+        -: 1104:
+        4: 1105:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1106:
+        -: 1107:   /*
+        -: 1108:   ** Register the task with the OS 
+        -: 1109:   */
+        4: 1110:   Result = OS_TaskRegister();
+        -: 1111:
+        4: 1112:   if (Result != OS_SUCCESS)
+        -: 1113:   {
+        -: 1114:       /* 
+        -: 1115:       ** Cannot create a syslog entry here because it requires the task to 
+        -: 1116:       ** be registered
+        -: 1117:       */
+        1: 1118:       ReturnCode = CFE_ES_ERR_CHILD_TASK_REGISTER;
+        -: 1119:   }
+        -: 1120:   else
+        -: 1121:   { 
+        3: 1122:       ReturnCode = CFE_SUCCESS;
+        -: 1123:   }
+        -: 1124:   
+        -: 1125:   /*
+        -: 1126:   ** Set the default exception environment
+        -: 1127:   */
+        4: 1128:   CFE_PSP_SetDefaultExceptionEnvironment();
+        -: 1129:
+        4: 1130:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1131:
+        4: 1132:   return(ReturnCode);
+        -: 1133:
+        -: 1134:} /* End of CFE_ES_RegisterChildTask() */
+        -: 1135:
+        -: 1136:/*
+        -: 1137:** Function: CFE_ES_IncrementTaskCounter
+        -: 1138:**
+        -: 1139:** Purpose:  Increment the Child Task Execution Counter.
+        -: 1140:**
+        -: 1141:*/
+        -: 1142:void CFE_ES_IncrementTaskCounter(void)
+        3: 1143:{
+        -: 1144:   int32 TaskId;
+        -: 1145:
+        3: 1146:   TaskId = OS_TaskGetId();
+        -: 1147:   
+        3: 1148:   CFE_ES_Global.TaskTable[TaskId].ExecutionCounter++;
+        -: 1149:   
+        3: 1150:} /* End of CFE_ES_ExitChildTask() */
+        -: 1151:
+        -: 1152:
+        -: 1153:
+        -: 1154:/*
+        -: 1155:** Function: CFE_ES_DeleteChildTask
+        -: 1156:**
+        -: 1157:** Purpose:  Remove a Child Task from the cFE system.
+        -: 1158:**
+        -: 1159:*/
+        -: 1160:int32 CFE_ES_DeleteChildTask(uint32 TaskId)
+        5: 1161:{
+        -: 1162:    uint32  i;
+        5: 1163:    uint32  TaskIsMain = FALSE;
+        5: 1164:    int32   ReturnCode = CFE_SUCCESS;
+        -: 1165:    int32   OSReturnCode;
+        -: 1166:
+        -: 1167:
+        -: 1168:    /*
+        -: 1169:    ** Make sure the task ID is within range
+        -: 1170:    */
+        5: 1171:    if ( TaskId < OS_MAX_TASKS )
+        -: 1172:    {
+        -: 1173:    
+        4: 1174:       CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1175:    
+        -: 1176:       /*
+        -: 1177:       ** Make sure the task is active/valid
+        -: 1178:       */
+        4: 1179:       if ( CFE_ES_Global.TaskTable[TaskId].RecordUsed == TRUE )
+        -: 1180:       {
+        -: 1181:          /*
+        -: 1182:          ** Search for this task ID in the ES App Table to make sure
+        -: 1183:          ** it is not a cFE App Main Task
+        -: 1184:          */
+        3: 1185:          TaskIsMain = FALSE;
+       68: 1186:          for ( i = 0; i < CFE_ES_MAX_APPLICATIONS; i++ )
+        -: 1187:          {
+       66: 1188:             if ( CFE_ES_Global.AppTable[i].RecordUsed == TRUE )
+        -: 1189:             {
+        7: 1190:                if ( CFE_ES_Global.AppTable[i].TaskInfo.MainTaskId == TaskId )
+        -: 1191:                {
+        -: 1192:                   /*
+        -: 1193:                   ** Error, the task Id is an App Main Task ID
+        -: 1194:                   */
+        1: 1195:                   TaskIsMain = TRUE;
+        1: 1196:                   break; 
+        -: 1197:                } /* end if */
+        -: 1198:             } /* end if */
+        -: 1199:          } /* end for */
+        -: 1200:          
+        3: 1201:          if ( TaskIsMain == FALSE )
+        -: 1202:          {
+        -: 1203:             /*
+        -: 1204:             ** Can delete the Task
+        -: 1205:             */
+        2: 1206:             OSReturnCode = OS_TaskDelete(TaskId);
+        2: 1207:             if ( OSReturnCode == OS_SUCCESS )
+        -: 1208:             {
+        -: 1209:                /*
+        -: 1210:                ** Invalidate the task table entry
+        -: 1211:                */
+        1: 1212:                CFE_ES_Global.TaskTable[TaskId].RecordUsed = FALSE;
+        1: 1213:                CFE_ES_Global.RegisteredTasks--;
+        -: 1214:
+        -: 1215:                /*
+        -: 1216:                ** Report the task delete
+        -: 1217:                */
+        1: 1218:                CFE_ES_WriteToSysLog("CFE_ES_DeleteChildTask Task %d Deleted\n",TaskId );
+        1: 1219:                ReturnCode = CFE_SUCCESS;
+        -: 1220:             }
+        -: 1221:             else
+        -: 1222:             {
+        1: 1223:                CFE_ES_WriteToSysLog("CFE_ES_DeleteChildTask Error: Error Calling OS_TaskDelete: Task %d, RC = 0x%08X\n",
+        -: 1224:                                     TaskId, OSReturnCode);
+        1: 1225:                ReturnCode = CFE_ES_ERR_CHILD_TASK_DELETE;
+        -: 1226:             }
+        -: 1227:          }
+        -: 1228:          else
+        -: 1229:          {
+        -: 1230:             /*
+        -: 1231:             ** Error: The task is a cFE Application Main task
+        -: 1232:             */
+        1: 1233:             CFE_ES_WriteToSysLog("CFE_ES_DeleteChildTask Error: Task %d is a cFE Main Task.\n",TaskId );
+        1: 1234:             ReturnCode = CFE_ES_ERR_CHILD_TASK_DELETE_MAIN_TASK;
+        -: 1235:          } /* end if TaskMain == FALSE */
+        -: 1236:       }
+        -: 1237:       else
+        -: 1238:       {
+        -: 1239:          /*
+        -: 1240:          ** Task ID is not in use, so it is invalid
+        -: 1241:          */
+        1: 1242:          CFE_ES_WriteToSysLog("CFE_ES_DeleteChildTask Error: Task ID is not active: %d\n",TaskId );
+        1: 1243:          ReturnCode = CFE_ES_ERR_TASKID;
+        -: 1244:   
+        -: 1245:       } /* end if */
+        -: 1246:       
+        4: 1247:       CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1248:   
+        -: 1249:    }
+        -: 1250:    else
+        -: 1251:    {
+        -: 1252:       /*
+        -: 1253:       ** Task ID is invalid ( too large )
+        -: 1254:       */
+        1: 1255:       CFE_ES_WriteToSysLog("CFE_ES_DeleteChildTask Error: Invalid Task ID: %d\n",TaskId );
+        1: 1256:       ReturnCode = CFE_ES_ERR_TASKID;
+        -: 1257:       
+        -: 1258:    }
+        5: 1259:    return(ReturnCode);
+        -: 1260:
+        -: 1261:} /* End of CFE_ES_DeleteTask() */
+        -: 1262:
+        -: 1263:/*
+        -: 1264:** Function: CFE_ES_ExitChildTask
+        -: 1265:**
+        -: 1266:** Purpose:  Stop execution of a child task.
+        -: 1267:**
+        -: 1268:*/
+        -: 1269:void CFE_ES_ExitChildTask(void)
+       14: 1270:{
+        -: 1271:   int32 TaskId;
+        -: 1272:   uint32 ParentTaskId;
+        -: 1273:   uint32 AppId; 
+        -: 1274:   uint32 ReturnCode;
+        -: 1275:
+       14: 1276:   CFE_ES_LockSharedData(__func__,__LINE__);
+        -: 1277:
+        -: 1278:   /*
+        -: 1279:   ** Check to see if this is being called from a cFE Application's 
+        -: 1280:   ** main task.
+        -: 1281:   */
+       14: 1282:   TaskId = OS_TaskGetId();
+        -: 1283:   
+       14: 1284:   ReturnCode = CFE_ES_GetAppIDInternal(&AppId);
+       14: 1285:   if ( ReturnCode == CFE_SUCCESS )
+        -: 1286:   {
+       13: 1287:      ParentTaskId = CFE_ES_Global.AppTable[AppId].TaskInfo.MainTaskId;
+       13: 1288:      if ( TaskId != ParentTaskId )
+        -: 1289:      {
+        -: 1290:         /*
+        -: 1291:         ** Invalidate the task table entry
+        -: 1292:         */
+        1: 1293:         CFE_ES_Global.TaskTable[TaskId].RecordUsed = FALSE;
+        1: 1294:         CFE_ES_Global.RegisteredTasks--;
+        -: 1295:
+        -: 1296:
+        1: 1297:         CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1298:
+        -: 1299:         
+        -: 1300:         /*
+        -: 1301:         ** Call the OS AL routine
+        -: 1302:         */
+        1: 1303:         OS_TaskExit(); 
+        -: 1304:         
+        -: 1305:         /* 
+        -: 1306:         ** Does not return from OS_TaskExit 
+        -: 1307:         */
+        -: 1308:      }
+        -: 1309:      else
+        -: 1310:      {
+       12: 1311:         CFE_ES_WriteToSysLog("CFE_ES_ExitChildTask Error: Cannot Call from a cFE App Main Task. ID = %d\n",TaskId );
+        -: 1312:      }
+        -: 1313:   }
+        -: 1314:   else
+        -: 1315:   {   
+        1: 1316:      CFE_ES_WriteToSysLog("CFE_ES_ExitChildTask Error Calling CFE_ES_GetAppID. Task ID = %d, RC = 0x%08X\n",
+        -: 1317:                           TaskId, ReturnCode );
+        -: 1318:   } /* end if GetAppId */
+        -: 1319:
+       14: 1320:   CFE_ES_UnlockSharedData(__func__,__LINE__);
+        -: 1321:   
+       14: 1322:} /* End of CFE_ES_ExitChildTask() */
+        -: 1323:
+        -: 1324:
+        -: 1325:/*
+        -: 1326:** Function: CFE_ES_WriteToSysLog
+        -: 1327:**
+        -: 1328:** Purpose:  Add a time stamped message to the cFE ES System Log.
+        -: 1329:**
+        -: 1330:*/
+        -: 1331:int32 CFE_ES_WriteToSysLog(const char *SpecStringPtr, ...)
+      669: 1332:{
+        -: 1333:    va_list       ArgPtr;
+        -: 1334:    char          TmpString[CFE_ES_MAX_SYSLOG_MSG_SIZE];
+        -: 1335:    char          MsgWithoutTime[CFE_EVS_MAX_MESSAGE_LENGTH];
+        -: 1336:    int32         TmpStringLen;
+        -: 1337:    int32         LogOverflow;
+        -: 1338:    int32         TruncTmpStringLen;
+        -: 1339:    uint32        ReturnCode;
+        -: 1340:    int32         i;
+        -: 1341:
+        -: 1342:    /* write the current time into the TmpString buffer */
+      669: 1343:    CFE_TIME_Print(TmpString, CFE_TIME_GetTime());
+        -: 1344:
+      669: 1345:    va_start(ArgPtr, SpecStringPtr);
+      669: 1346:    (void) vsnprintf(MsgWithoutTime,(size_t) CFE_EVS_MAX_MESSAGE_LENGTH, SpecStringPtr, ArgPtr);
+      669: 1347:    va_end(ArgPtr);
+        -: 1348:
+        -: 1349:    /* insert space between the time and the start of the message */
+      669: 1350:    strcat(TmpString," ");
+        -: 1351:
+        -: 1352:    /* Add the message to the time string in the TmpString buffer */
+      669: 1353:    strncat(TmpString,MsgWithoutTime,CFE_EVS_MAX_MESSAGE_LENGTH);
+        -: 1354:   
+        -: 1355:    /* Output the entry to the console. */
+      669: 1356:    OS_printf("%s",TmpString);
+      669: 1357:    TmpStringLen = strlen(TmpString);
+        -: 1358:
+        -: 1359:    /* process the log entry depending on the log type */
+      669: 1360:    if ( CFE_ES_ResetDataPtr->SystemLogMode == CFE_ES_LOG_DISCARD )
+        -: 1361:    {
+        -: 1362:        /* if the index is already out of bounds, the log is full */
+       39: 1363:        if ( CFE_ES_ResetDataPtr->SystemLogIndex >= CFE_ES_SYSTEM_LOG_SIZE )  
+        -: 1364:        {
+       15: 1365:            OS_printf("Warning: System Log full, log entry discarded.\n");
+       15: 1366:            ReturnCode = CFE_ES_ERR_SYS_LOG_FULL;
+        -: 1367:        }   
+        -: 1368:        /* if the message will not fit in the remaining space, truncate it */  
+       24: 1369:        else if ((CFE_ES_ResetDataPtr->SystemLogIndex + TmpStringLen) >= CFE_ES_SYSTEM_LOG_SIZE )
+        -: 1370:        {
+        1: 1371:            LogOverflow = CFE_ES_ResetDataPtr->SystemLogIndex + TmpStringLen - CFE_ES_SYSTEM_LOG_SIZE;
+        -: 1372:
+        -: 1373:            /* Add one for adding '/0' to the end because the message will be truncated */
+        1: 1374:            LogOverflow++;
+        -: 1375:
+        1: 1376:            TruncTmpStringLen = TmpStringLen - LogOverflow;
+        -: 1377:
+        1: 1378:            strncpy((char *)&(CFE_ES_ResetDataPtr->SystemLog[CFE_ES_ResetDataPtr->SystemLogIndex]), TmpString, TruncTmpStringLen);
+        1: 1379:            strncpy((char *)&(CFE_ES_ResetDataPtr->SystemLog[CFE_ES_ResetDataPtr->SystemLogIndex + TruncTmpStringLen]), "\0", 1 );
+        -: 1380:
+        1: 1381:            CFE_ES_ResetDataPtr->SystemLogIndex = CFE_ES_ResetDataPtr->SystemLogIndex + TruncTmpStringLen + 1;
+        1: 1382:            CFE_ES_ResetDataPtr->SystemLogEntryNum = CFE_ES_ResetDataPtr->SystemLogEntryNum + 1;
+        1: 1383:            OS_printf("Warning: Last System Log Message Truncated.\n");
+        1: 1384:            ReturnCode = CFE_SUCCESS;
+        -: 1385:        } 
+        -: 1386:        else /* the message fits */
+        -: 1387:        {
+       23: 1388:            TmpStringLen = strlen(TmpString);
+       23: 1389:            strncpy((char *)&(CFE_ES_ResetDataPtr->SystemLog[CFE_ES_ResetDataPtr->SystemLogIndex]), TmpString, TmpStringLen);
+       23: 1390:            CFE_ES_ResetDataPtr->SystemLogIndex = CFE_ES_ResetDataPtr->SystemLogIndex + TmpStringLen;
+       23: 1391:            CFE_ES_ResetDataPtr->SystemLogEntryNum = CFE_ES_ResetDataPtr->SystemLogEntryNum + 1;
+       23: 1392:            ReturnCode = CFE_SUCCESS;
+        -: 1393:        }
+        -: 1394:    }
+      630: 1395:    else if ( CFE_ES_ResetDataPtr->SystemLogMode == CFE_ES_LOG_OVERWRITE )
+        -: 1396:    {
+        -: 1397:        /* if the index is already out of bounds, reset it to zero */
+      568: 1398:        if ( CFE_ES_ResetDataPtr->SystemLogIndex >= CFE_ES_SYSTEM_LOG_SIZE )  
+        -: 1399:        {
+        1: 1400:           CFE_ES_ResetDataPtr->SystemLogIndex = 0;
+        -: 1401:        }
+        -: 1402:        /* the message will not fit in the remaining space */
+      567: 1403:        else if ((CFE_ES_ResetDataPtr->SystemLogIndex + TmpStringLen) >= CFE_ES_SYSTEM_LOG_SIZE)  
+        -: 1404:        {
+        -: 1405:            /* pad the space at the end of the log to remove any partial old messages */
+      533: 1406:            for (i = CFE_ES_ResetDataPtr->SystemLogIndex; i < CFE_ES_SYSTEM_LOG_SIZE; i++)
+        -: 1407:            {
+      515: 1408:                CFE_ES_ResetDataPtr->SystemLog[i] = ' ';
+        -: 1409:            }
+       18: 1410:            CFE_ES_ResetDataPtr->SystemLogIndex = 0;
+        -: 1411:        }
+        -: 1412:
+      568: 1413:        TmpStringLen = strlen(TmpString);
+      568: 1414:        strncpy((char *)&(CFE_ES_ResetDataPtr->SystemLog[CFE_ES_ResetDataPtr->SystemLogIndex]), TmpString, TmpStringLen);
+      568: 1415:        CFE_ES_ResetDataPtr->SystemLogIndex = CFE_ES_ResetDataPtr->SystemLogIndex + TmpStringLen;
+      568: 1416:        CFE_ES_ResetDataPtr->SystemLogEntryNum = CFE_ES_ResetDataPtr->SystemLogEntryNum + 1;
+      568: 1417:        ReturnCode = CFE_SUCCESS;
+        -: 1418:    }
+        -: 1419:    else
+        -: 1420:    {
+       62: 1421:        OS_printf("Warning: Invalid System Log mode, log entry discarded.\n");
+       62: 1422:        ReturnCode = CFE_ES_ERR_SYS_LOG_FULL;
+        -: 1423:    }    
+        -: 1424:
+      669: 1425:    return(ReturnCode);
+        -: 1426:
+        -: 1427:} /* End of CFE_ES_WriteToSysLog() */
+        -: 1428:
+        -: 1429:/*
+        -: 1430:** Function: CFE_ES_RegisterDriver
+        -: 1431:**
+        -: 1432:** Purpose:  Initialize a cFE device driver.
+        -: 1433:**
+        -: 1434:*/
+        -: 1435:int32 CFE_ES_RegisterDriver(uint32 *DriverIdPtr, CFE_ES_DeviceDriver_t *DriverPtr)
+        1: 1436:{
+        1: 1437:   CFE_ES_WriteToSysLog("CFE ES Register Driver not Implemented\n");
+        1: 1438:   return(CFE_ES_NOT_IMPLEMENTED);
+        -: 1439:
+        -: 1440:} /* End of CFE_ES_RegisterDriver() */
+        -: 1441:
+        -: 1442:
+        -: 1443:/*
+        -: 1444:** Function: CFE_ES_UnloadDriver
+        -: 1445:**
+        -: 1446:** Purpose:  Unload a cFE device driver.
+        -: 1447:**
+        -: 1448:*/
+        -: 1449:int32 CFE_ES_UnloadDriver(uint32 DriverId)
+        1: 1450:{
+        1: 1451:    CFE_ES_WriteToSysLog("CFE ES Unload Driver not Implemented\n");
+        1: 1452:    return(CFE_ES_NOT_IMPLEMENTED);
+        -: 1453:
+        -: 1454:} /* End of CFE_ES_UnloadDriver() */
+        -: 1455:
+        -: 1456:
+        -: 1457:/*
+        -: 1458:** Function: CFE_ES_CalculateCRC
+        -: 1459:**
+        -: 1460:** Purpose:  Perform a CRC calculation on a range of memory.
+        -: 1461:**
+        -: 1462:*/
+        -: 1463:uint32 CFE_ES_CalculateCRC(void *DataPtr, uint32 DataLength, uint32 InputCRC, uint32 TypeCRC)
+       12: 1464:{
+        -: 1465:    uint32  i;
+        -: 1466:    int16  Index;
+       12: 1467:    int16  Crc = 0;
+        -: 1468:    uint8 *BufPtr;
+        -: 1469:    uint8  ByteValue;
+        -: 1470:    int32  Status;
+        -: 1471:
+        -: 1472:    static const uint16 CrcTable[256]=
+        -: 1473:    {
+        -: 1474:
+        -: 1475:		    0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241,
+        -: 1476:		    0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440,
+        -: 1477:		    0xCC01, 0x0CC0, 0x0D80, 0xCD41, 0x0F00, 0xCFC1, 0xCE81, 0x0E40,
+        -: 1478:		    0x0A00, 0xCAC1, 0xCB81, 0x0B40, 0xC901, 0x09C0, 0x0880, 0xC841,
+        -: 1479:		    0xD801, 0x18C0, 0x1980, 0xD941, 0x1B00, 0xDBC1, 0xDA81, 0x1A40,
+        -: 1480:		    0x1E00, 0xDEC1, 0xDF81, 0x1F40, 0xDD01, 0x1DC0, 0x1C80, 0xDC41,
+        -: 1481:		    0x1400, 0xD4C1, 0xD581, 0x1540, 0xD701, 0x17C0, 0x1680, 0xD641,
+        -: 1482:		    0xD201, 0x12C0, 0x1380, 0xD341, 0x1100, 0xD1C1, 0xD081, 0x1040,
+        -: 1483:		    0xF001, 0x30C0, 0x3180, 0xF141, 0x3300, 0xF3C1, 0xF281, 0x3240,
+        -: 1484:		    0x3600, 0xF6C1, 0xF781, 0x3740, 0xF501, 0x35C0, 0x3480, 0xF441,
+        -: 1485:		    0x3C00, 0xFCC1, 0xFD81, 0x3D40, 0xFF01, 0x3FC0, 0x3E80, 0xFE41,
+        -: 1486:		    0xFA01, 0x3AC0, 0x3B80, 0xFB41, 0x3900, 0xF9C1, 0xF881, 0x3840,
+        -: 1487:		    0x2800, 0xE8C1, 0xE981, 0x2940, 0xEB01, 0x2BC0, 0x2A80, 0xEA41,
+        -: 1488:		    0xEE01, 0x2EC0, 0x2F80, 0xEF41, 0x2D00, 0xEDC1, 0xEC81, 0x2C40,
+        -: 1489:		    0xE401, 0x24C0, 0x2580, 0xE541, 0x2700, 0xE7C1, 0xE681, 0x2640,
+        -: 1490:		    0x2200, 0xE2C1, 0xE381, 0x2340, 0xE101, 0x21C0, 0x2080, 0xE041,
+        -: 1491:		    0xA001, 0x60C0, 0x6180, 0xA141, 0x6300, 0xA3C1, 0xA281, 0x6240,
+        -: 1492:		    0x6600, 0xA6C1, 0xA781, 0x6740, 0xA501, 0x65C0, 0x6480, 0xA441,
+        -: 1493:		    0x6C00, 0xACC1, 0xAD81, 0x6D40, 0xAF01, 0x6FC0, 0x6E80, 0xAE41,
+        -: 1494:		    0xAA01, 0x6AC0, 0x6B80, 0xAB41, 0x6900, 0xA9C1, 0xA881, 0x6840,
+        -: 1495:		    0x7800, 0xB8C1, 0xB981, 0x7940, 0xBB01, 0x7BC0, 0x7A80, 0xBA41,
+        -: 1496:		    0xBE01, 0x7EC0, 0x7F80, 0xBF41, 0x7D00, 0xBDC1, 0xBC81, 0x7C40,
+        -: 1497:		    0xB401, 0x74C0, 0x7580, 0xB541, 0x7700, 0xB7C1, 0xB681, 0x7640,
+        -: 1498:		    0x7200, 0xB2C1, 0xB381, 0x7340, 0xB101, 0x71C0, 0x7080, 0xB041,
+        -: 1499:		    0x5000, 0x90C1, 0x9181, 0x5140, 0x9301, 0x53C0, 0x5280, 0x9241,
+        -: 1500:		    0x9601, 0x56C0, 0x5780, 0x9741, 0x5500, 0x95C1, 0x9481, 0x5440,
+        -: 1501:		    0x9C01, 0x5CC0, 0x5D80, 0x9D41, 0x5F00, 0x9FC1, 0x9E81, 0x5E40,
+        -: 1502:		    0x5A00, 0x9AC1, 0x9B81, 0x5B40, 0x9901, 0x59C0, 0x5880, 0x9841,
+        -: 1503:		    0x8801, 0x48C0, 0x4980, 0x8941, 0x4B00, 0x8BC1, 0x8A81, 0x4A40,
+        -: 1504:		    0x4E00, 0x8EC1, 0x8F81, 0x4F40, 0x8D01, 0x4DC0, 0x4C80, 0x8C41,
+        -: 1505:		    0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
+        -: 1506:		    0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
+        -: 1507:
+        -: 1508:    };
+        -: 1509:
+       12: 1510:    switch(TypeCRC)
+        -: 1511:    {
+        -: 1512:      case CFE_ES_CRC_32:
+        1: 1513:           CFE_ES_WriteToSysLog("CFE ES Calculate CRC32 not Implemented\n");
+        1: 1514:           break;
+        -: 1515:
+        -: 1516:      case CFE_ES_CRC_16:
+       10: 1517:           Crc    =  (int16 )( 0xFFFF & InputCRC );
+       10: 1518:           BufPtr = (uint8 *)DataPtr;
+        -: 1519:
+     2446: 1520:           for ( i = 0 ; i < DataLength ; i++,  BufPtr++)
+        -: 1521:	        {
+     2436: 1522:                  Status = CFE_PSP_MemRead8((uint32)BufPtr, &ByteValue);
+     2436: 1523:	          Index = ( ( Crc ^ ByteValue) & 0x00FF);
+     2436: 1524:	          Crc = ( (Crc >> 8 ) & 0x00FF) ^ CrcTable[Index];
+        -: 1525:	        }
+       10: 1526:           break;
+        -: 1527:
+        -: 1528:      case CFE_ES_CRC_8:
+        1: 1529:           CFE_ES_WriteToSysLog("CFE ES Calculate CRC8 not Implemented\n");
+        -: 1530:           break;
+        -: 1531:
+        -: 1532:      default:
+        -: 1533:           break;
+        -: 1534:    }
+       12: 1535:    return(Crc);
+        -: 1536:
+        -: 1537:} /* End of CFE_ES_CalculateCRC() */
+        -: 1538:
+        -: 1539:
+        -: 1540:/*
+        -: 1541:** Function: CFE_ES_RegisterCDS
+        -: 1542:**
+        -: 1543:** Purpose:  Allocate a data block for a Critical Data Store.
+        -: 1544:**
+        -: 1545:*/
+        -: 1546:int32 CFE_ES_RegisterCDS(CFE_ES_CDSHandle_t *CDSHandlePtr, int32 BlockSize, const char *Name)
+       10: 1547:{
+       10: 1548:    int32   Status = CFE_SUCCESS;
+       10: 1549:    int32   NameLen = 0;
+       10: 1550:    uint32  ThisAppId = 0;
+        -: 1551:    
+       10: 1552:    char    AppName[OS_MAX_API_NAME] = {"UNKNOWN"};
+        -: 1553:    char    LogMsg[128];
+       10: 1554:    char    CDSName[CFE_ES_CDS_MAX_FULL_NAME_LEN] = {""};
+        -: 1555:
+        -: 1556:    /* Check to make sure calling application is legit */
+       10: 1557:    Status = CFE_ES_CDS_ValidateAppID(&ThisAppId);
+        -: 1558:    
+       10: 1559:    if ( Status != CFE_SUCCESS )  /* Application ID was invalid */
+        -: 1560:    {
+        1: 1561:         CFE_ES_WriteToSysLog("CFE_CDS:Register-Bad AppId(%d)\n", ThisAppId);
+        -: 1562:    }
+        9: 1563:    else if (CFE_ES_Global.CDSVars.MemPoolSize == 0)
+        -: 1564:    {
+        1: 1565:        CFE_ES_WriteToSysLog("CFE_CDS:Register-CDS not available\n");
+        1: 1566:        Status = CFE_ES_NOT_IMPLEMENTED;
+        -: 1567:    }
+        -: 1568:    else
+        -: 1569:    {
+        -: 1570:        /* Assume we can't make a CDS and return a bad handle for now */
+        8: 1571:        *CDSHandlePtr = CFE_ES_CDS_BAD_HANDLE;
+        -: 1572:
+        -: 1573:        /* Make sure specified CDS name is not too long or too short */
+        8: 1574:        NameLen = strlen(Name);
+        9: 1575:        if ((NameLen > CFE_ES_CDS_MAX_NAME_LENGTH) || (NameLen == 0))
+        -: 1576:        {
+        1: 1577:           Status = CFE_ES_CDS_INVALID_NAME;
+        -: 1578:
+        -: 1579:           /* Perform a buffer overrun safe copy of name for debug log message */
+        1: 1580:           strncpy(LogMsg, "CFE_CDS:Register-CDS Name (", 27);
+        1: 1581:           strncpy(&LogMsg[27], Name, 72);
+        1: 1582:           strcat(LogMsg, ") is too long\n");
+        1: 1583:           CFE_ES_WriteToSysLog(LogMsg);
+        -: 1584:
+        1: 1585:           strncpy(CDSName, Name, CFE_ES_CDS_MAX_NAME_LENGTH);
+        1: 1586:           CDSName[CFE_ES_CDS_MAX_NAME_LENGTH-1] = '\0';
+        -: 1587:        }
+        -: 1588:        else
+        -: 1589:        {
+        -: 1590:           /* Modify specified name to be processor specific name */
+        -: 1591:           /* of the form "AppName.Name"                          */
+        7: 1592:           CFE_ES_FormCDSName(CDSName, Name, ThisAppId);
+        -: 1593:
+        -: 1594:           /* Make sure the specified size is acceptable */
+        7: 1595:           if (BlockSize == 0)
+        -: 1596:           {
+        1: 1597:              Status = CFE_ES_CDS_INVALID_SIZE;
+        1: 1598:              CFE_ES_WriteToSysLog("CFE_CDS:Register-CDS %s has size of zero\n", Name);
+        -: 1599:           }
+        -: 1600:           else
+        -: 1601:           {
+        -: 1602:              /* Create CDS and designate it as NOT being a Critical Table */
+        6: 1603:              Status = CFE_ES_RegisterCDSEx(CDSHandlePtr, BlockSize, CDSName, FALSE);
+        -: 1604:           }
+        -: 1605:        }
+        -: 1606:    }
+        -: 1607:
+        -: 1608:    /* On Error conditions, notify ground of screw up */
+       10: 1609:    if (Status < 0)
+        -: 1610:    {
+        -: 1611:        /* Translate AppID of caller into App Name */
+        6: 1612:        CFE_ES_GetAppName(AppName, ThisAppId, OS_MAX_API_NAME);
+        -: 1613:
+        6: 1614:        CFE_EVS_SendEventWithAppID(CFE_ES_CDS_REGISTER_ERR_EID,
+        -: 1615:                                   CFE_EVS_ERROR,
+        -: 1616:                                   ThisAppId,
+        -: 1617:                                   "%s Failed to Register CDS '%s', Status=0x%08X",
+        -: 1618:                                   AppName, Name, Status);
+        -: 1619:    }
+        -: 1620:    
+       10: 1621:    return Status;
+        -: 1622:} /* End of CFE_ES_RegisterCDS */
+        -: 1623:
+        -: 1624:/*
+        -: 1625:** Function: CFE_ES_CopyToCDS
+        -: 1626:**
+        -: 1627:** Purpose:  Copies a data block to a Critical Data Store.
+        -: 1628:**
+        -: 1629:*/
+        -: 1630:int32 CFE_ES_CopyToCDS(CFE_ES_CDSHandle_t Handle, void *DataToCopy)
+        1: 1631:{
+        1: 1632:    int32 Status = CFE_SUCCESS;
+        -: 1633:    
+        1: 1634:    Status = CFE_ES_CDSBlockWrite(CFE_ES_Global.CDSVars.Registry[Handle].MemHandle, DataToCopy);
+        -: 1635:    
+        1: 1636:    return Status;
+        -: 1637:} /* End of CFE_ES_CopyToCDS() */
+        -: 1638:
+        -: 1639:/*
+        -: 1640:** Function: CFE_ES_RestoreFromCDS
+        -: 1641:**
+        -: 1642:** Purpose:  Restores a data block from a Critical Data Store.
+        -: 1643:**
+        -: 1644:*/
+        -: 1645:int32 CFE_ES_RestoreFromCDS(void *RestoreToMemory, CFE_ES_CDSHandle_t Handle)
+        1: 1646:{
+        1: 1647:    int32 Status = CFE_SUCCESS;
+        -: 1648:    
+        1: 1649:    Status = CFE_ES_CDSBlockRead(RestoreToMemory, CFE_ES_Global.CDSVars.Registry[Handle].MemHandle);
+        -: 1650:    
+        1: 1651:    return Status;
+        -: 1652:} /* End of CFE_ES_RestoreFromCDS() */
+        -: 1653:
+        -: 1654:/* end of file */
+        -: 1655:
+        -: 1656:
+        -: 1657:int32 CFE_ES_RegisterGenCounter(uint32 *CounterIdPtr, char *CounterName)
+       11: 1658:{
+       11: 1659:   int32 ReturnCode = CFE_ES_BAD_ARGUMENT;
+        -: 1660:   uint32 CheckPtr;
+        -: 1661:   int32 Status;
+        -: 1662:   uint32 i;
+        -: 1663:
+       11: 1664:   Status = CFE_ES_GetGenCounterIDByName(&CheckPtr, CounterName);
+        -: 1665:
+       11: 1666:   if ((CounterIdPtr != NULL) && (CounterName != NULL) && (Status != CFE_SUCCESS))
+        -: 1667:   {
+       50: 1668:      for ( i = 0; i < CFE_ES_MAX_GEN_COUNTERS; i++ )
+        -: 1669:      {
+       49: 1670:         if ( CFE_ES_Global.CounterTable[i].RecordUsed == FALSE )
+        -: 1671:         {
+        9: 1672:            strncpy((char *)CFE_ES_Global.CounterTable[i].CounterName,CounterName,OS_MAX_API_NAME);
+        -: 1673:
+        9: 1674:            CFE_ES_Global.CounterTable[i].RecordUsed = TRUE;
+        9: 1675:            CFE_ES_Global.CounterTable[i].Counter = 0;
+        9: 1676:            *CounterIdPtr = i;
+        9: 1677:            break;
+        -: 1678:         }
+        -: 1679:      }
+       10: 1680:      if (i < CFE_ES_MAX_GEN_COUNTERS)
+        -: 1681:      {
+        9: 1682:         ReturnCode = CFE_SUCCESS;
+        -: 1683:      }
+        -: 1684:   }
+        -: 1685:
+       11: 1686:   return ReturnCode;
+        -: 1687:
+        -: 1688:}
+        -: 1689:
+        -: 1690:/*
+        -: 1691:** Function: CFE_ES_DeleteGenCounter
+        -: 1692:**
+        -: 1693:** Purpose:  Delete a Generic Counter.
+        -: 1694:**
+        -: 1695:*/
+        -: 1696:int32 CFE_ES_DeleteGenCounter(uint32 CounterId)
+        2: 1697:{
+        -: 1698:
+        2: 1699:   int32 Status = CFE_ES_BAD_ARGUMENT;
+        -: 1700:
+        2: 1701:   if(CounterId < CFE_ES_MAX_GEN_COUNTERS) 
+        -: 1702:   {
+        1: 1703:      CFE_ES_Global.CounterTable[CounterId].RecordUsed = FALSE;
+        1: 1704:      CFE_ES_Global.CounterTable[CounterId].Counter = 0;
+        1: 1705:      Status = CFE_SUCCESS;
+        -: 1706:   }
+        -: 1707:
+        2: 1708:   return Status;
+        -: 1709:
+        -: 1710:} /* End of CFE_ES_DeleteGenCounter() */
+        -: 1711:
+        -: 1712:/*
+        -: 1713:** Function: CFE_ES_IncrementGenCounter
+        -: 1714:**
+        -: 1715:** Purpose:  Increment a Generic Counter.
+        -: 1716:**
+        -: 1717:*/
+        -: 1718:int32 CFE_ES_IncrementGenCounter(uint32 CounterId)
+        2: 1719:{
+        2: 1720:   int32 Status = CFE_ES_BAD_ARGUMENT;
+        -: 1721:
+        2: 1722:   if((CounterId < CFE_ES_MAX_GEN_COUNTERS) &&
+        -: 1723:      (CFE_ES_Global.CounterTable[CounterId].RecordUsed == TRUE))
+        -: 1724:   {
+        1: 1725:      CFE_ES_Global.CounterTable[CounterId].Counter++;
+        1: 1726:      Status = CFE_SUCCESS;
+        -: 1727:   }
+        2: 1728:   return Status;
+        -: 1729:   
+        -: 1730:} /* End of CFE_ES_IncrementGenCounter() */
+        -: 1731:
+        -: 1732:/*
+        -: 1733:** Function: CFE_ES_SetGenCount
+        -: 1734:**
+        -: 1735:** Purpose:  Sets a Generic Counter's count.
+        -: 1736:**
+        -: 1737:*/
+        -: 1738:int32 CFE_ES_SetGenCount(uint32 CounterId, uint32 Count)
+        2: 1739:{
+        2: 1740:   int32 Status = CFE_ES_BAD_ARGUMENT;
+        -: 1741:
+        2: 1742:   if((CounterId < CFE_ES_MAX_GEN_COUNTERS) &&
+        -: 1743:      (CFE_ES_Global.CounterTable[CounterId].RecordUsed == TRUE))
+        -: 1744:   {
+        1: 1745:      CFE_ES_Global.CounterTable[CounterId].Counter = Count;
+        1: 1746:      Status = CFE_SUCCESS;
+        -: 1747:   }
+        2: 1748:   return Status;
+        -: 1749:} /* End of CFE_ES_SetGenCount() */
+        -: 1750:
+        -: 1751:/*
+        -: 1752:** Function: CFE_ES_GetGenCount
+        -: 1753:**
+        -: 1754:** Purpose:  Gets the value of a Generic Counter.
+        -: 1755:**
+        -: 1756:*/
+        -: 1757:int32 CFE_ES_GetGenCount(uint32 CounterId, uint32 *Count)
+        3: 1758:{
+        3: 1759:   int32 Status = CFE_ES_BAD_ARGUMENT;
+        -: 1760:
+        3: 1761:   if((CounterId < CFE_ES_MAX_GEN_COUNTERS) &&
+        -: 1762:      (CFE_ES_Global.CounterTable[CounterId].RecordUsed == TRUE) &&
+        -: 1763:      (Count != NULL ))
+        -: 1764:   {
+        2: 1765:      *Count = CFE_ES_Global.CounterTable[CounterId].Counter;
+        2: 1766:      Status = CFE_SUCCESS;
+        -: 1767:   }
+        3: 1768:   return Status;
+        -: 1769:} /* End of CFE_ES_GetGenCount() */
+        -: 1770:
+        -: 1771:int32 CFE_ES_GetGenCounterIDByName(uint32 *CounterIdPtr, char *CounterName)
+       13: 1772:{
+        -: 1773:
+       13: 1774:   int32 Result = CFE_ES_BAD_ARGUMENT;
+        -: 1775:   uint32   i;
+        -: 1776:
+        -: 1777:   /*
+        -: 1778:   ** Search the ES Generic Counter table for a counter with a matching name.
+        -: 1779:   */
+      105: 1780:   for ( i = 0; i < CFE_ES_MAX_GEN_COUNTERS; i++ )
+        -: 1781:   {
+       94: 1782:      if ( CFE_ES_Global.CounterTable[i].RecordUsed == TRUE )
+        -: 1783:      {
+       57: 1784:         if ( strncmp(CounterName, (char *)CFE_ES_Global.CounterTable[i].CounterName, OS_MAX_API_NAME) == 0 )
+        -: 1785:         {
+        2: 1786:            if(CounterIdPtr != NULL)
+        -: 1787:            {
+        2: 1788:               *CounterIdPtr = (int) i;
+        2: 1789:               Result = CFE_SUCCESS;
+        -: 1790:            }
+        2: 1791:            break;
+        -: 1792:         }
+        -: 1793:      }
+        -: 1794:   } /* end for */
+        -: 1795:   
+       13: 1796:   return(Result);
+        -: 1797:
+        -: 1798:} /* End of CFE_ES_GetGenCounterIDByName() */
+        -: 1799:
+        -: 1800:
+        -: 1801:/***************************************************************************************
+        -: 1802:** Private API functions
+        -: 1803:*/
+        -: 1804:
+        -: 1805:/*
+        -: 1806:** Function: CFE_ES_GetAppIDInternal
+        -: 1807:**
+        -: 1808:** Purpose:  Return the Caller's cFE Application ID. This internal version is needed
+        -: 1809:**            so there are not nested calls to the ES Shared Data mutex lock.
+        -: 1810:**
+        -: 1811:*/
+        -: 1812:int32 CFE_ES_GetAppIDInternal(uint32 *AppIdPtr)
+       39: 1813:{
+       39: 1814:   int32  Result = CFE_ES_ERR_APPID;
+        -: 1815:   uint32 TaskId;
+        -: 1816:
+        -: 1817:   /*
+        -: 1818:   ** Step 1: Get the OS task ID
+        -: 1819:   */
+       39: 1820:   TaskId = OS_TaskGetId();
+        -: 1821:
+        -: 1822:   /*
+        -: 1823:   ** Step 2: get the Application ID for the current task
+        -: 1824:   */
+       39: 1825:   if ( CFE_ES_Global.TaskTable[TaskId].RecordUsed == TRUE )
+        -: 1826:   {
+       32: 1827:      *AppIdPtr = CFE_ES_Global.TaskTable[TaskId].AppId;
+       32: 1828:      Result = CFE_SUCCESS;
+        -: 1829:   } /* end if */
+       39: 1830:   return(Result);
+        -: 1831:
+        -: 1832:} /* End of CFE_ES_GetAppIDInternal() */
+        -: 1833:
+        -: 1834:
+        -: 1835:/******************************************************************************
+        -: 1836:**  Function:  CFE_ES_LockSharedData()
+        -: 1837:**
+        -: 1838:**  Purpose:
+        -: 1839:**    ES internal function to take the Shared Data Mutex and handle
+        -: 1840:**    error conditions.
+        -: 1841:**
+        -: 1842:**  Arguments:
+        -: 1843:**    FunctionName   - the name of the function containing the code that generated the error.
+        -: 1844:**    LineNumber     - the file line number of the code that generated the error.
+        -: 1845:**
+        -: 1846:**  Return:
+        -: 1847:**    None
+        -: 1848:*/
+        -: 1849:void CFE_ES_LockSharedData(const char *FunctionName, int32 LineNumber)
+      288: 1850:{
+        -: 1851:
+        -: 1852:    int32   Status;
+        -: 1853:    uint32  AppId;
+        -: 1854:
+      288: 1855:    Status = OS_MutSemTake(CFE_ES_Global.SharedDataMutex);
+      288: 1856:    if (Status != OS_SUCCESS) 
+        -: 1857:    {
+        1: 1858:        CFE_ES_GetAppIDInternal(&AppId);
+        -: 1859:
+        1: 1860:        CFE_ES_WriteToSysLog("ES SharedData Mutex Take Err Stat=0x%x,App=%d,Func=%s,Line=%d\n",
+        -: 1861:                 Status,AppId,FunctionName,LineNumber);
+        -: 1862:
+        -: 1863:    }/* end if */
+        -: 1864:
+        -: 1865:    return;
+        -: 1866:
+        -: 1867:}/* end CFE_ES_LockSharedData */
+        -: 1868:
+        -: 1869:/******************************************************************************
+        -: 1870:**  Function:  CFE_ES_UnlockSharedData()
+        -: 1871:**
+        -: 1872:**  Purpose:
+        -: 1873:**    ES internal function to Release the shared data mutex and handle error
+        -: 1874:**    conditions.
+        -: 1875:**
+        -: 1876:**  Arguments:
+        -: 1877:**    FunctionName   - the name of the function containing the code that generated the error.
+        -: 1878:**    LineNumber     - the file line number of the code that generated the error.
+        -: 1879:**
+        -: 1880:**  Return:
+        -: 1881:**    None
+        -: 1882:*/
+        -: 1883:void CFE_ES_UnlockSharedData(const char *FunctionName, int32 LineNumber)
+      291: 1884:{
+        -: 1885:    int32   Status;
+        -: 1886:    uint32  AppId;
+        -: 1887:
+      291: 1888:    Status = OS_MutSemGive(CFE_ES_Global.SharedDataMutex);
+      291: 1889:    if (Status != OS_SUCCESS) 
+        -: 1890:    {
+        -: 1891:
+        1: 1892:        CFE_ES_GetAppIDInternal(&AppId);
+        -: 1893:
+        1: 1894:        CFE_ES_WriteToSysLog("ES SharedData Mutex Give Err Stat=0x%x,App=%d,Func=%s,Line=%d\n",
+        -: 1895:                                Status,AppId,FunctionName,LineNumber);
+        -: 1896:
+        -: 1897:    }/* end if */
+        -: 1898:
+        -: 1899:    return;
+        -: 1900:
+        -: 1901:}/* end CFE_ES_UnlockSharedData */
+        -: 1902:
+        -: 1903:/******************************************************************************
+        -: 1904:**  Function:  CFE_ES_ProcessCoreException()
+        -: 1905:**
+        -: 1906:**  Purpose:
+        -: 1907:**    ES internal function to handle the logging and reset from a system or
+        -: 1908:**    cFE core exception
+        -: 1909:**
+        -: 1910:**  Arguments:
+        -: 1911:**    Reason String
+        -: 1912:**    Context
+        -: 1913:**    Context Size
+        -: 1914:** 
+        -: 1915:**  Return:
+        -: 1916:**    None
+        -: 1917:*/
+        -: 1918:void CFE_ES_ProcessCoreException(uint32  HostTaskId,     uint8 *ReasonString, 
+        -: 1919:                                 uint32 *ContextPointer, uint32 ContextSize)
+        3: 1920:{
+        -: 1921:    uint32                 i;
+        -: 1922:    int32                  Status;
+        -: 1923:    OS_task_prop_t         TaskProp;
+        -: 1924:    CFE_ES_TaskInfo_t      EsTaskInfo;
+        3: 1925:    int                    FoundExceptionTask = 0;
+        3: 1926:    int                    ExceptionTaskID = 0;
+        -: 1927:    
+        -: 1928:    /*
+        -: 1929:    ** If a loadable cFE Application caused the reset and it's
+        -: 1930:    ** exception action is set to Restart the App rather than cause a
+        -: 1931:    ** processor reset, then just reset the App.
+        -: 1932:    */
+        -: 1933:
+        -: 1934:    /*
+        -: 1935:    ** We have the Host Task Id ( vxWorks, RTEMS, etc ). Search
+        -: 1936:    ** the OSAPI to see if a match can be found.
+        -: 1937:    */ 
+      195: 1938:    for ( i = 0; i < OS_MAX_TASKS; i++ )
+        -: 1939:    {
+      192: 1940:       Status = OS_TaskGetInfo (i, &TaskProp);
+        -: 1941:                                                                                                                                   
+      192: 1942:       if ( Status == OS_SUCCESS )
+        -: 1943:       {
+      192: 1944:          if ( TaskProp.OStask_id == HostTaskId )
+        -: 1945:          {
+      192: 1946:             FoundExceptionTask = 1;
+      192: 1947:             ExceptionTaskID = (int) i;
+        -: 1948:          }
+        -: 1949:       }
+        -: 1950:    }
+        -: 1951:
+        -: 1952:    /*
+        -: 1953:    ** If the Task is found in the OS, see if the cFE App ID associated with it can be found.
+        -: 1954:    */
+        3: 1955:    if ( FoundExceptionTask == 1 )
+        -: 1956:    {
+        3: 1957:       Status = CFE_ES_GetTaskInfo( &EsTaskInfo, ExceptionTaskID );
+        -: 1958:       /*
+        -: 1959:       ** The App ID was found, now see if the ExceptionAction is set for a reset
+        -: 1960:       */                                                                                                                         
+        3: 1961:       if ( Status == CFE_SUCCESS )
+        -: 1962:       {
+        3: 1963:          if ( CFE_ES_Global.AppTable[EsTaskInfo.AppId].StartParams.ExceptionAction == CFE_ES_APP_EXCEPTION_RESTART_APP )
+        -: 1964:          {
+        -: 1965:
+        -: 1966:             /*
+        -: 1967:             ** Log the Application reset 
+        -: 1968:             */
+        1: 1969:             CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_APP_RESTART, 
+        -: 1970:                            CFE_ES_EXCEPTION, (char *)ReasonString,
+        -: 1971:                            ContextPointer, ContextSize );
+        -: 1972:
+        -: 1973:             /*
+        -: 1974:             ** Finally restart the App! This call is just a request
+        -: 1975:             ** to ES.
+        -: 1976:             */ 
+        1: 1977:             Status = CFE_ES_RestartApp(EsTaskInfo.AppId );
+        -: 1978:             
+        -: 1979:             /*
+        -: 1980:             ** Return to avoid the Processor Restart Logic
+        -: 1981:             */
+        1: 1982:             return;
+        -: 1983:
+        -: 1984:          } /* end if ExceptionAction */
+        -: 1985:                                                                                                                                     
+        -: 1986:       } /* end if */
+        -: 1987:                                                                                                                                   
+        -: 1988:    } /* End if FoundExceptionTask */
+        -: 1989:                                                                                                                                     
+        -: 1990:    /*
+        -: 1991:    ** If we made it here, which means that we need to do a processor reset
+        -: 1992:    */
+        -: 1993:
+        -: 1994:    /*
+        -: 1995:    ** Before doing a Processor reset, check to see 
+        -: 1996:    ** if the maximum number has been exceeded
+        -: 1997:    */
+        2: 1998:    if ( CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount >= 
+        -: 1999:         CFE_ES_ResetDataPtr->ResetVars.MaxProcessorResetCount )
+        -: 2000:    {
+        -: 2001:        /*
+        -: 2002:        ** Log the reset in the ER Log. The log will be wiped out, but it's good to have
+        -: 2003:        ** the entry just in case something fails.
+        -: 2004:        */
+        1: 2005:        CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY,  CFE_ES_POWERON_RESET, 
+        -: 2006:                            CFE_ES_EXCEPTION, (char *)ReasonString,
+        -: 2007:                            ContextPointer, ContextSize );
+        -: 2008:
+        -: 2009:        /*
+        -: 2010:        ** Call the BSP reset routine to do a Poweron Reset 
+        -: 2011:        */
+        1: 2012:        CFE_PSP_Restart(CFE_ES_POWERON_RESET); 
+        -: 2013:
+        -: 2014:    }
+        -: 2015:    else /* Do a processor reset */
+        -: 2016:    {
+        -: 2017:        /*
+        -: 2018:        ** Update the reset variables
+        -: 2019:        */
+        1: 2020:        CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount++;
+        1: 2021:        CFE_ES_ResetDataPtr->ResetVars.ES_CausedReset = TRUE;
+        -: 2022:
+        -: 2023:        /*
+        -: 2024:        ** Log the reset in the ER Log
+        -: 2025:        */
+        1: 2026:        CFE_ES_WriteToERLog(CFE_ES_CORE_LOG_ENTRY, CFE_ES_PROCESSOR_RESET, 
+        -: 2027:                            CFE_ES_EXCEPTION, (char *)ReasonString,
+        -: 2028:                            ContextPointer, ContextSize );
+        -: 2029:
+        -: 2030:        /*
+        -: 2031:        ** Need to do a processor reset
+        -: 2032:        */   
+        1: 2033:        CFE_PSP_Restart(CFE_ES_PROCESSOR_RESET);  
+        -: 2034:
+        -: 2035:    } /* end if */
+        -: 2036:           
+        -: 2037:} /* End of CFE_ES_ProcessCoreException */

@@ -1,0 +1,98 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 08 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TBL Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/11/08  SMA           : Initial
+!  2005/11/14  SMA           : Corrected for compiler byte alignment.
+!  2005/11/17  SMA           : Add Dave Kobe changes.
+!  2006/06/08  WFM           : Changes for cFE 3.3.
+!  2007/05/17  WFM           : Added the Memory Pool Handle to HK packet.
+!  2014/06/09  WFM           : Added LastLoadTblName and removed the last pad.
+!  2014/08/27  WFM           : Removed TBL_NAME_LEN #define and added comments
+!
+!==============================================================================
+!
+!! OS_MAX_PATH_LEN is defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_types.rdl file
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TBL Telemetry Data Packet",
+                        STALE = 36
+!
+#include "ccsds_header.rdl"
+!
+! Task Command Interface Counters
+!
+  UB   $sc_$cpu_TBL_CMDPC         DESC="$sc $cpu TBL Command Processed Counter",
+                                UNITS=Counts
+!
+  UB   $sc_$cpu_TBL_CMDEC         DESC="$sc $cpu TBL Command Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UI   $sc_$cpu_TBL_NumTables    DESC="$sc $cpu TBL Number of Tables Counter",
+                                UNITS=Counts
+!
+  UI   $sc_$cpu_TBL_NumUpdatesPend  DESC="$sc $cpu TBL Number of Loads Pending (i.e., number of tables activated but not updated)",
+                                UNITS=Counts
+!
+  UI   $sc_$cpu_TBL_ValCompltdCtr	DESC="$sc $cpu TBL Validation Completed Counter (whether pass or fail)",
+                                UNITS=Counts
+!
+  ULI  $sc_$cpu_TBL_LastValCRC      DESC="$sc $cpu TBL Last CRC Value from the last Table Validation"
+!
+  SLI   $sc_$cpu_TBl_LastValS       DESC="$sc $cpu TBL Last Status Value from the last Table Validation"
+!
+  UB    $sc_$cpu_TBL_LastValBuf     DESC="$sc $cpu TBL Last Buffer that was validated",
+                                    DISCRETE, DRANGE=(0,1), 
+                                    DLABEL=("Inactive", "Active")
+!
+  CHAR  $sc_$cpu_TBL_LastValTblName[TBL_NAME_LEN]  DESC="$sc $cpu Table Name from the last Table Validation"
+!
+  UB    $sc_$cpu_TBL_ValSuccessCtr  DESC="$sc $cpu TBL Validation Success Counter",
+                                    UNITS=Counts
+!
+  UB    $sc_$cpu_TBL_ValFailedCtr   DESC="$sc $cpu TBL Validation Failed Counter", 
+                                    UNITS=Counts,
+                                    YH=1, DOLIMIT
+! 
+  UB    $sc_$cpu_TBL_ValReqCtr      DESC="$sc $cpu TBL Validation Request Counter", 
+                                    UNITS=Counts
+!
+  UB    $sc_$cpu_TBL_NumFreeShrBuf  DESC="$sc $cpu TBL Number of Free Shared Buffers",
+                                    UNITS=Counts
+!
+  UB    $sc_$cpu_TBL_ByteAlign[3]  DESC="$sc $cpu TBL Byte Align Pad 1"
+!
+  ULI    $sc_$cpu_TBL_MemPoolHdl     DESC="$sc $cpu TBL Memory Pool Handle" 
+! 
+  RECORD $sc_$cpu_TBL_LastUpdTime DESC="$sc $cpu TBL Time of Last table Update"
+    ULI $sc_$cpu_TBL_SECONDS
+    ULI $sc_$cpu_TBL_SUBSECONDS
+  END
+!
+  CHAR  $sc_$cpu_TBL_LastUpdTblName[TBL_NAME_LEN]  DESC="$sc $cpu Table Name of the last Table updated"
+!
+  CHAR  $sc_$cpu_TBL_LastFileLoaded[OS_MAX_PATH_LEN]  DESC="$sc $cpu Filename of the last Table image loaded"
+!
+  CHAR  $sc_$cpu_TBL_LastFileDumped[OS_MAX_PATH_LEN]  DESC="$sc $cpu Filename of the last Table image loaded"
+!
+  CHAR  $sc_$cpu_TBL_LastLoadTblName[TBL_NAME_LEN]  DESC="$sc $cpu Table Name of the last Table Loaded"
+!
+END

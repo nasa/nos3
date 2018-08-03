@@ -1,0 +1,49 @@
+* * * * * * * * * * * * * * * * * * * * *
+* Command Input File opened for reading *
+* * * * * * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Start Dwell Tables                                *
+* * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Table 1 is enabled.
+1891 C000 0001 0000
+
+* * * ->   Start Table #1
+* * * Expected output: info event message
+1890 C000 0003 0200 0001; Start Table #1
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Table 1 is enabled.
+1891 C000 0001 0000
+
+*
+* * * ->  Start Tables #2 and #3
+* * * Expected output: info event message
+1890 C000 0003 0200 0006 ;Start Tables #2 and #3
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  1, 2, and 3 are enabled.
+1891 C000 0001 0000
+
+*
+* * * ->  Start Tables #1, #2, #3, and #4
+* * * Expected output: info event message
+1890 C000 0003 0200 000F ;Start Tables #1, #2, #3, and #4
+
+*
+* * * -> Send Housekeeping packet
+* * * Expected output:  Tables  1, 2, 3, and 4 are enabled.
+1891 C000 0001 0000
+*
+* * * -> Send two Wakeup Messages
+* * * Expected output:  dwell packet
+1892 C000 0001 0000
+1892 C000 0001 0000
+
+* * * -> Display list of tables registered with Table Services
+@DISPLAY_TABLE_REGISTRY
+

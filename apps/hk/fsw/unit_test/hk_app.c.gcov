@@ -1,0 +1,717 @@
+        -:    0:Source:/home/aschoening/pwned/apps/hk/fsw/src/hk_app.c
+        -:    0:Graph:hk_app.gcno
+        -:    0:Data:hk_app.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: hk_app.c.gcov 1.7 2012/08/23 17:11:12EDT aschoeni Exp  $
+        -:    4:**
+        -:    5:** Purpose:
+        -:    6:**  The CFS Housekeeping (HK) Application file containing the application
+        -:    7:**  initialization routines, the main routine and the command interface.
+        -:    8:**
+        -:    9:** Notes:
+        -:   10:**
+        -:   11:** $Log: hk_app.c.gcov  $
+        -:   11:** Revision 1.7 2012/08/23 17:11:12EDT aschoeni 
+        -:   11:** Updated unit tests for 2.4.0.0
+        -:   12:** Revision 1.15 2011/11/30 16:03:05EST jmdagost 
+        -:   13:** Added new-line character to syslog call.
+        -:   14:** Revision 1.14 2011/06/23 11:57:54EDT jmdagost 
+        -:   15:** Removed error counter increment in housekeeping request command error (per guidelines)
+        -:   16:** Revision 1.13 2010/06/09 12:00:49EDT jmdagost 
+        -:   17:** Update subscription error messages in HK Init.
+        -:   18:** Revision 1.12 2009/12/03 18:11:47EST jmdagost 
+        -:   19:** Modified event message arguments to use updated event definitions.
+        -:   20:** Revision 1.11 2009/12/03 15:24:57EST jmdagost 
+        -:   21:** Modified the error logic to include an else-block that processes the message.  Also added a call to syslog.
+        -:   22:** Revision 1.10 2009/12/03 15:14:49EST jmdagost 
+        -:   23:** Replaced event message call with a call to syslog as requested.
+        -:   24:** Revision 1.9 2008/09/17 15:52:18EDT rjmcgraw 
+        -:   25:** DCR4040:1 Added spaces to align text
+        -:   26:** Revision 1.8 2008/09/11 11:42:43EDT rjmcgraw 
+        -:   27:** DCR4041:1 Added hk_version.h and hk_platform_cfg.h to #include list
+        -:   28:** Revision 1.7 2008/08/08 14:34:58EDT rjmcgraw 
+        -:   29:** DCR4209:1 Added #include hk_verify.h
+        -:   30:** Revision 1.6 2008/07/16 10:01:12EDT rjmcgraw 
+        -:   31:** DCR4042:1 Displaying app version number in init event and no-op event
+        -:   32:** Revision 1.5 2008/06/19 13:21:35EDT rjmcgraw
+        -:   33:** DCR3052:1 Call to CheckStatusOfTables instead of HandleUpdateToCopyTable 
+        -:   34:**   during HK Req
+        -:   35:** Revision 1.4 2008/05/15 09:33:25EDT rjmcgraw
+        -:   36:** DCR1647:1 Fixed problem with zeroed out telemetry
+        -:   37:** Revision 1.3 2008/05/07 10:00:07EDT rjmcgraw
+        -:   38:** DCR1647:4 Removed the _CMD from HK_SEND_HK_CMD_MID
+        -:   39:** Revision 1.2 2008/05/02 12:50:57EDT rjmcgraw
+        -:   40:** DCR1647:1 Added #include hk_perfids.h
+        -:   41:** Revision 1.1 2008/04/09 16:41:22EDT rjmcgraw
+        -:   42:** Initial revision
+        -:   43:** Member added to project cfs/hk/fsw/src/project.pj
+        -:   44:**
+        -:   45:*************************************************************************/
+        -:   46:
+        -:   47:/************************************************************************
+        -:   48:** Includes
+        -:   49:*************************************************************************/
+        -:   50:#include "hk_app.h"
+        -:   51:#include "hk_events.h"
+        -:   52:#include "hk_msgids.h"
+        -:   53:#include "hk_perfids.h"
+        -:   54:#include "hk_verify.h"
+        -:   55:#include "hk_version.h"
+        -:   56:#include "hk_platform_cfg.h"
+        -:   57:#include <string.h>
+        -:   58:
+        -:   59:
+        -:   60:/************************************************************************
+        -:   61:** HK global data
+        -:   62:*************************************************************************/
+        -:   63:HK_AppData_t        HK_AppData;
+        -:   64:
+        -:   65:
+        -:   66:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   67:/*                                                                 */
+        -:   68:/* HK application entry point and main process loop                */
+        -:   69:/*                                                                 */
+        -:   70:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   71:void HK_AppMain(void)
+function HK_AppMain called 15 returned 100% blocks executed 100%
+       15:   72:{
+        -:   73:   int32 Status;
+        -:   74:
+        -:   75:   /*
+        -:   76:   ** Register the Application with Executive Services
+        -:   77:   */
+       15:   78:   CFE_ES_RegisterApp();
+call    0 returned 100%
+        -:   79:
+        -:   80:   /*
+        -:   81:   ** Create the first Performance Log entry
+        -:   82:   */
+       15:   83:   CFE_ES_PerfLogEntry(HK_APPMAIN_PERF_ID);
+call    0 returned 100%
+        -:   84:
+        -:   85:
+        -:   86:   /* Perform Application Initialization */
+       15:   87:   Status = HK_AppInit();
+call    0 returned 100%
+       15:   88:   if (Status != CFE_SUCCESS)
+branch  0 taken 93% (fallthrough)
+branch  1 taken 7%
+        -:   89:   {
+       14:   90:      HK_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:   91:   }
+        -:   92:
+        -:   93:   /*
+        -:   94:   ** Application Main Loop.
+        -:   95:   */
+       56:   96:   while(CFE_ES_RunLoop(&HK_AppData.RunStatus) == TRUE)
+call    0 returned 100%
+branch  1 taken 63%
+branch  2 taken 37% (fallthrough)
+        -:   97:   {
+        -:   98:      /*
+        -:   99:      ** Performance Log Exit Stamp.
+        -:  100:      */
+       26:  101:      CFE_ES_PerfLogExit(HK_APPMAIN_PERF_ID);
+call    0 returned 100%
+        -:  102:
+        -:  103:      /*
+        -:  104:      ** Pend on the arrival of the next Software Bus message.
+        -:  105:      */
+       26:  106:      Status = CFE_SB_RcvMsg(&HK_AppData.MsgPtr,HK_AppData.CmdPipe,CFE_SB_PEND_FOREVER);
+call    0 returned 100%
+        -:  107:
+       26:  108:      if(Status != CFE_SUCCESS)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        -:  109:      {
+        1:  110:        CFE_EVS_SendEvent(HK_RCV_MSG_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  111:               "HK_APP Exiting due to CFE_SB_RcvMsg error 0x%08X", Status);
+        -:  112:
+        -:  113:        /* Write to syslog in case there is a problem with event services */
+        1:  114:        CFE_ES_WriteToSysLog("HK_APP Exiting due to CFE_SB_RcvMsg error 0x%08X\n", Status);
+call    0 returned 100%
+        -:  115:
+        1:  116:        HK_AppData.RunStatus = CFE_ES_APP_ERROR;
+        -:  117:      }
+        -:  118:      else  /* Success */
+        -:  119:      {
+        -:  120:        /*
+        -:  121:        ** Performance Log Entry Stamp.
+        -:  122:        */
+       25:  123:        CFE_ES_PerfLogEntry(HK_APPMAIN_PERF_ID);
+call    0 returned 100%
+        -:  124:
+        -:  125:
+        -:  126:        /* Perform Message Processing */
+       25:  127:        HK_AppPipe(HK_AppData.MsgPtr);
+call    0 returned 100%
+        -:  128:      }
+        -:  129:   } /* end while */
+        -:  130:
+        -:  131:   /*
+        -:  132:    ** Performance Log Exit Stamp.
+        -:  133:    */
+       15:  134:    CFE_ES_PerfLogExit(HK_APPMAIN_PERF_ID);
+call    0 returned 100%
+        -:  135:
+        -:  136:    /*
+        -:  137:    ** Exit the Application.
+        -:  138:    */
+       15:  139:    CFE_ES_ExitApp(HK_AppData.RunStatus);
+call    0 returned 100%
+        -:  140:
+       15:  141:} /* End of HK_AppMain() */
+        -:  142:
+        -:  143:
+        -:  144:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  145:/*                                                                 */
+        -:  146:/* HK application initialization routine                           */
+        -:  147:/*                                                                 */
+        -:  148:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  149:int32 HK_AppInit(void)
+function HK_AppInit called 15 returned 100% blocks executed 100%
+       15:  150:{
+       15:  151:    int32       Status = CFE_SUCCESS;
+        -:  152:
+       15:  153:    HK_AppData.RunStatus = CFE_ES_APP_RUN;
+        -:  154:
+        -:  155:    /* Initialize housekeeping packet  */
+       15:  156:    CFE_SB_InitMsg(&HK_AppData.HkPacket,HK_HK_TLM_MID,sizeof(HK_HkPacket_t),TRUE);
+call    0 returned 100%
+        -:  157:
+        -:  158:    /* Register for event services...        */
+       15:  159:    Status = CFE_EVS_Register (NULL, 0, CFE_EVS_BINARY_FILTER);
+call    0 returned 100%
+       15:  160:    if (Status != CFE_SUCCESS)
+branch  0 taken 7% (fallthrough)
+branch  1 taken 93%
+        -:  161:    {
+        1:  162:       CFE_ES_WriteToSysLog("HK: error registering for event services: 0x%08X\n", Status);
+call    0 returned 100%
+        1:  163:       return (Status);
+        -:  164:    }
+        -:  165:
+        -:  166:
+        -:  167:    /* Create HK Command Pipe */
+       14:  168:    Status = CFE_SB_CreatePipe (&HK_AppData.CmdPipe,HK_PIPE_DEPTH,HK_PIPE_NAME);
+call    0 returned 100%
+       14:  169:    if (Status != CFE_SUCCESS)
+branch  0 taken 7% (fallthrough)
+branch  1 taken 93%
+        -:  170:    {
+        1:  171:      CFE_EVS_SendEvent(HK_CR_PIPE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  172:            "Error Creating SB Pipe,RC=0x%08X",Status);
+        1:  173:       return (Status);
+        -:  174:    }
+        -:  175:
+        -:  176:    /* Subscribe to 'Send Combined HK Pkt' Command */
+       13:  177:    Status = CFE_SB_Subscribe(HK_SEND_COMBINED_PKT_MID,HK_AppData.CmdPipe);
+call    0 returned 100%
+       13:  178:    if (Status != CFE_SUCCESS)
+branch  0 taken 8% (fallthrough)
+branch  1 taken 92%
+        -:  179:    {
+        1:  180:      CFE_EVS_SendEvent(HK_SUB_CMB_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  181:            "Error Subscribing to HK Snd Cmb Pkt, MID=0x%04X, RC=0x%08X",
+        -:  182:              HK_SEND_COMBINED_PKT_MID, Status);
+        1:  183:        return (Status);
+        -:  184:     }
+        -:  185:
+        -:  186:    /* Subscribe to Housekeeping Request */
+       12:  187:    Status = CFE_SB_Subscribe(HK_SEND_HK_MID,HK_AppData.CmdPipe);
+call    0 returned 100%
+       12:  188:    if (Status != CFE_SUCCESS)
+branch  0 taken 8% (fallthrough)
+branch  1 taken 92%
+        -:  189:    {
+        1:  190:      CFE_EVS_SendEvent(HK_SUB_REQ_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  191:            "Error Subscribing to HK Request, MID=0x%04X, RC=0x%08X",
+        -:  192:            HK_SEND_HK_MID, Status);
+        1:  193:        return (Status);
+        -:  194:     }
+        -:  195:
+        -:  196:    /* Subscribe to HK ground commands */
+       11:  197:    Status = CFE_SB_Subscribe(HK_CMD_MID,HK_AppData.CmdPipe);
+call    0 returned 100%
+       11:  198:    if (Status != CFE_SUCCESS)
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        -:  199:    {
+        1:  200:      CFE_EVS_SendEvent(HK_SUB_CMD_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  201:            "Error Subscribing to HK Gnd Cmds, MID=0x%04X, RC=0x%08X",
+        -:  202:            HK_CMD_MID, Status);
+        1:  203:        return (Status);
+        -:  204:     }
+        -:  205:
+        -:  206:
+        -:  207:    /* Create a memory pool for combined output messages */
+       10:  208:    Status = CFE_ES_PoolCreate (&HK_AppData.MemPoolHandle,
+call    0 returned 100%
+        -:  209:                                 HK_AppData.MemPoolBuffer,
+        -:  210:                                 sizeof (HK_AppData.MemPoolBuffer) );
+       10:  211:    if (Status != CFE_SUCCESS)
+branch  0 taken 10% (fallthrough)
+branch  1 taken 90%
+        -:  212:    {
+        1:  213:      CFE_EVS_SendEvent(HK_CR_POOL_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  214:            "Error Creating Memory Pool,RC=0x%08X",Status);
+        1:  215:        return (Status);
+        -:  216:     }
+        -:  217:
+        9:  218:    HK_ResetHkData ();
+call    0 returned 100%
+        -:  219:
+        -:  220:
+        -:  221:    /* Register The HK Tables */
+        9:  222:    Status = HK_TableInit();
+call    0 returned 100%
+        9:  223:    if(Status != CFE_SUCCESS)
+branch  0 taken 78% (fallthrough)
+branch  1 taken 22%
+        -:  224:    {
+        -:  225:        /* Specific failure is detailed in function HK_TableInit */
+        7:  226:      return (Status);
+        -:  227:    }
+        -:  228:
+        -:  229:
+        -:  230:    /* Application initialization event */
+        2:  231:    Status = CFE_EVS_SendEvent (HK_INIT_EID, CFE_EVS_INFORMATION,
+call    0 returned 100%
+        -:  232:               "HK Initialized.  Version %d.%d.%d.%d",
+        -:  233:                HK_MAJOR_VERSION,
+        -:  234:                HK_MINOR_VERSION, 
+        -:  235:                HK_REVISION, 
+        -:  236:                HK_MISSION_REV);               
+        -:  237:
+        2:  238:    if (Status != CFE_SUCCESS)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  239:    {
+        1:  240:      CFE_ES_WriteToSysLog(
+call    0 returned 100%
+        -:  241:         "HK App:Error Sending Initialization Event,RC=0x%08X\n", Status);
+        -:  242:     }
+        -:  243:
+        -:  244:
+        2:  245:    return (Status);
+        -:  246:
+        -:  247:} /* End of HK_AppInit() */
+        -:  248:
+        -:  249:
+        -:  250:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  251:/*                                                                 */
+        -:  252:/* HK application table initialization routine                     */
+        -:  253:/*                                                                 */
+        -:  254:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  255:int32 HK_TableInit (void)
+function HK_TableInit called 9 returned 100% blocks executed 100%
+        9:  256:{
+        9:  257:    int32       Status = CFE_SUCCESS;
+        -:  258:
+        -:  259:    /* Register The HK Copy Table */
+        9:  260:    Status = CFE_TBL_Register (&HK_AppData.CopyTableHandle,
+call    0 returned 100%
+        -:  261:                                HK_COPY_TABLE_NAME,
+        -:  262:                                (sizeof (hk_copy_table_entry_t) * HK_COPY_TABLE_ENTRIES),
+        -:  263:                                CFE_TBL_OPT_DBL_BUFFER | CFE_TBL_OPT_LOAD_DUMP,
+        -:  264:                                HK_ValidateHkCopyTable);
+        -:  265:
+        9:  266:    if (Status != CFE_SUCCESS)
+branch  0 taken 11% (fallthrough)
+branch  1 taken 89%
+        -:  267:    {
+        1:  268:      CFE_EVS_SendEvent(HK_CPTBL_REG_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  269:            "Error Registering Copy Table,RC=0x%08X",Status);
+        1:  270:        return (Status);
+        -:  271:     }
+        -:  272:
+        -:  273:
+        -:  274:    /* Register The HK Runtime Table */
+        8:  275:    Status = CFE_TBL_Register(&HK_AppData.RuntimeTableHandle,
+call    0 returned 100%
+        -:  276:                              HK_RUNTIME_TABLE_NAME,
+        -:  277:                              (sizeof (hk_runtime_tbl_entry_t) * HK_COPY_TABLE_ENTRIES),
+        -:  278:                              CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_DUMP_ONLY,
+        -:  279:                              NULL);
+        8:  280:    if (Status != CFE_SUCCESS)
+branch  0 taken 13% (fallthrough)
+branch  1 taken 88%
+        -:  281:    {
+        1:  282:      CFE_EVS_SendEvent(HK_RTTBL_REG_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  283:            "Error Registering Runtime Table,RC=0x%08X",Status);
+        1:  284:        return (Status);
+        -:  285:    }
+        -:  286:
+        -:  287:
+        7:  288:    Status = CFE_TBL_Load (HK_AppData.CopyTableHandle,
+call    0 returned 100%
+        -:  289:                           CFE_TBL_SRC_FILE,
+        -:  290:                           HK_COPY_TABLE_FILENAME);
+        7:  291:    if (Status != CFE_SUCCESS)
+branch  0 taken 14% (fallthrough)
+branch  1 taken 86%
+        -:  292:    {
+        1:  293:      CFE_EVS_SendEvent(HK_CPTBL_LD_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  294:            "Error Loading Copy Table,RC=0x%08X",Status);
+        1:  295:        return (Status);
+        -:  296:     }
+        -:  297:
+        -:  298:
+        6:  299:    Status = CFE_TBL_Manage (HK_AppData.CopyTableHandle);
+call    0 returned 100%
+        6:  300:    if (Status != CFE_SUCCESS)
+branch  0 taken 17% (fallthrough)
+branch  1 taken 83%
+        -:  301:    {
+        1:  302:      CFE_EVS_SendEvent(HK_CPTBL_MNG_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  303:            "Error from TBL Manage call for Copy Table,RC=0x%08X",Status);
+        1:  304:        return (Status);
+        -:  305:     }
+        -:  306:
+        -:  307:
+        5:  308:    Status = CFE_TBL_Manage (HK_AppData.RuntimeTableHandle);
+call    0 returned 100%
+        5:  309:    if (Status != CFE_SUCCESS)
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        -:  310:    {
+        1:  311:      CFE_EVS_SendEvent(HK_RTTBL_MNG_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  312:            "Error from TBL Manage call for Runtime Table,RC=0x%08X",Status);
+        1:  313:        return (Status);
+        -:  314:     }
+        -:  315:
+        -:  316:
+        4:  317:    Status = CFE_TBL_GetAddress ( (void *) (& HK_AppData.CopyTablePtr),
+call    0 returned 100%
+        -:  318:                                      HK_AppData.CopyTableHandle);
+        -:  319:    /* Status should be CFE_TBL_INFO_UPDATED because we loaded it above */
+        4:  320:    if (Status != CFE_TBL_INFO_UPDATED)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+        -:  321:    {
+        1:  322:      CFE_EVS_SendEvent(HK_CPTBL_GADR_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  323:            "Error Getting Adr for Cpy Tbl,RC=0x%08X",Status);
+        1:  324:        return (Status);
+        -:  325:     }
+        -:  326:
+        -:  327:
+        3:  328:    Status = CFE_TBL_GetAddress ( (void *) (& HK_AppData.RuntimeTablePtr),
+call    0 returned 100%
+        -:  329:                                  HK_AppData.RuntimeTableHandle);
+        3:  330:    if (Status != CFE_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -:  331:    {
+        1:  332:      CFE_EVS_SendEvent(HK_RTTBL_GADR_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  333:         "Error Getting Adr for Runtime Table,RC=0x%08X",Status);
+        1:  334:        return (Status);
+        -:  335:     }
+        -:  336:
+        2:  337:    HK_ProcessNewCopyTable(HK_AppData.CopyTablePtr,HK_AppData.RuntimeTablePtr);
+call    0 returned 100%
+        -:  338:
+        2:  339:    return CFE_SUCCESS;
+        -:  340:
+        -:  341:
+        -:  342:}   /* HK_TableInit */
+        -:  343:
+        -:  344:
+        -:  345:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  346:/*                                                                 */
+        -:  347:/* Process a command pipe message                                  */
+        -:  348:/*                                                                 */
+        -:  349:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  350:void HK_AppPipe (CFE_SB_MsgPtr_t MessagePtr)
+function HK_AppPipe called 25 returned 100% blocks executed 100%
+       25:  351:{
+        -:  352:    CFE_SB_MsgId_t  MessageID;
+        -:  353:    uint16          CommandCode;
+        -:  354:
+       25:  355:    MessageID = CFE_SB_GetMsgId (MessagePtr);
+call    0 returned 100%
+       25:  356:    switch (MessageID)
+branch  0 taken 16%
+branch  1 taken 36%
+branch  2 taken 20%
+branch  3 taken 28%
+        -:  357:    {
+        -:  358:
+        -:  359:        case HK_SEND_COMBINED_PKT_MID:
+        4:  360:            if (CFE_SB_GetTotalMsgLength(MessagePtr) != sizeof(HK_Send_Out_Msg_t))
+call    0 returned 100%
+branch  1 taken 25% (fallthrough)
+branch  2 taken 75%
+        -:  361:            {
+        1:  362:                CFE_EVS_SendEvent( HK_MSG_LEN_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+call    1 returned 100%
+        -:  363:                                   "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %d, Len = %d",
+        -:  364:                                   MessageID,  
+        -:  365:                                   sizeof(HK_Send_Out_Msg_t), 
+        -:  366:                                   CFE_SB_GetTotalMsgLength(MessagePtr));
+        -:  367:            }
+        -:  368:            else
+        -:  369:            {
+        3:  370:                HK_SendCombinedHKCmd(MessagePtr);
+call    0 returned 100%
+        -:  371:            }
+        4:  372:            break;
+        -:  373:
+        -:  374:        /* Request for HK's Housekeeping data...      */
+        -:  375:        case HK_SEND_HK_MID:
+        9:  376:            if (CFE_SB_GetTotalMsgLength(MessagePtr) != CFE_SB_CMD_HDR_SIZE)
+call    0 returned 100%
+branch  1 taken 11% (fallthrough)
+branch  2 taken 89%
+        -:  377:            {
+        1:  378:                CFE_EVS_SendEvent( HK_MSG_LEN_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+call    1 returned 100%
+        -:  379:                                   "Msg with Bad length Rcvd: ID = 0x%04X, Exp Len = %d, Len = %d",
+        -:  380:                                   MessageID,  
+        -:  381:                                   CFE_SB_CMD_HDR_SIZE, 
+        -:  382:                                   CFE_SB_GetTotalMsgLength(MessagePtr));
+        -:  383:            }
+        -:  384:            else
+        -:  385:            {
+        -:  386:                /* Send out HK's housekeeping data */
+        8:  387:                HK_HousekeepingCmd(MessagePtr);
+call    0 returned 100%
+        -:  388:            }
+        -:  389:            /* Check for copy table load and runtime dump request */
+        9:  390:            HK_CheckStatusOfTables();
+call    0 returned 100%
+        9:  391:            break;
+        -:  392:
+        -:  393:        /* HK ground commands   */
+        -:  394:        case HK_CMD_MID:
+        -:  395:
+        5:  396:            CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+call    0 returned 100%
+        5:  397:            switch (CommandCode)
+branch  0 taken 40%
+branch  1 taken 40%
+branch  2 taken 20%
+        -:  398:            {
+        -:  399:                case HK_NOOP_CC:
+        2:  400:                    HK_NoopCmd (MessagePtr);
+call    0 returned 100%
+        2:  401:                    break;
+        -:  402:
+        -:  403:                case HK_RESET_CC:
+        2:  404:                    HK_ResetCtrsCmd (MessagePtr);
+call    0 returned 100%
+        2:  405:                    break;
+        -:  406:
+        -:  407:                default:
+        1:  408:                    CFE_EVS_SendEvent(HK_CC_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  409:                    "Cmd Msg with Invalid command code Rcvd -- ID = 0x%04X, CC = %d",
+        -:  410:                    MessageID, CommandCode);
+        -:  411:
+        1:  412:                    HK_AppData.ErrCounter++;
+        -:  413:                    break;
+        -:  414:            }
+        5:  415:            break;
+        -:  416:
+        -:  417:        /* Incoming housekeeping data from other Subsystems...       */
+        -:  418:        default:
+        -:  419:
+        7:  420:            HK_ProcessIncomingHkData (MessagePtr);
+call    0 returned 100%
+        -:  421:            break;
+        -:  422:    }
+        -:  423:
+        -:  424:    return;
+        -:  425:
+        -:  426:} /* End of HK_AppPipe() */
+        -:  427:
+        -:  428:
+        -:  429:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  430:/*                                                                 */
+        -:  431:/* Send Combined Housekeeping Packet                               */
+        -:  432:/*                                                                 */
+        -:  433:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  434:void HK_SendCombinedHKCmd (CFE_SB_MsgPtr_t MessagePtr)
+function HK_SendCombinedHKCmd called 3 returned 100% blocks executed 100%
+        3:  435:{
+        -:  436:    CFE_SB_MsgId_t  WhichCombinedPacket;
+        -:  437:
+        3:  438:    WhichCombinedPacket = *((uint16 *)CFE_SB_GetUserData(MessagePtr));
+call    0 returned 100%
+        3:  439:    HK_SendCombinedHkPacket (WhichCombinedPacket);
+call    0 returned 100%
+        -:  440:
+        -:  441:    return;
+        -:  442:
+        -:  443:} /* end of HK_SendCombinedHKCmd() */
+        -:  444:
+        -:  445:
+        -:  446:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  447:/*                                                                 */
+        -:  448:/* Housekeeping request                                            */
+        -:  449:/*                                                                 */
+        -:  450:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  451:void HK_HousekeepingCmd (CFE_SB_MsgPtr_t MessagePtr)
+function HK_HousekeepingCmd called 8 returned 100% blocks executed 100%
+        8:  452:{
+        -:  453:
+        -:  454:    /* copy data into housekeeping packet */
+        8:  455:    HK_AppData.HkPacket.CmdCounter          = HK_AppData.CmdCounter;
+        8:  456:    HK_AppData.HkPacket.ErrCounter          = HK_AppData.ErrCounter;
+        8:  457:    HK_AppData.HkPacket.MissingDataCtr      = HK_AppData.MissingDataCtr;
+        8:  458:    HK_AppData.HkPacket.CombinedPacketsSent = HK_AppData.CombinedPacketsSent;
+        8:  459:    HK_AppData.HkPacket.MemPoolHandle       = HK_AppData.MemPoolHandle;
+        -:  460:
+        -:  461:    /* Send housekeeping telemetry packet...        */
+        8:  462:    CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &HK_AppData.HkPacket);
+call    0 returned 100%
+        8:  463:    CFE_SB_SendMsg((CFE_SB_Msg_t *) &HK_AppData.HkPacket);
+call    0 returned 100%
+        -:  464:
+        -:  465:    return;
+        -:  466:
+        -:  467:} /* End of HK_HousekeepingCmd() */
+        -:  468:
+        -:  469:
+        -:  470:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  471:/*                                                                 */
+        -:  472:/* Noop command                                                    */
+        -:  473:/*                                                                 */
+        -:  474:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  475:void HK_NoopCmd (CFE_SB_MsgPtr_t MessagePtr)
+function HK_NoopCmd called 2 returned 100% blocks executed 100%
+        2:  476:{
+        -:  477:
+        2:  478:    if(HK_VerifyCmdLength(MessagePtr,CFE_SB_CMD_HDR_SIZE)==HK_BAD_MSG_LENGTH_RC)
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -:  479:    {
+        -:  480:
+        1:  481:        HK_AppData.ErrCounter++;
+        -:  482:
+        -:  483:    }else{
+        -:  484:
+        1:  485:        CFE_EVS_SendEvent (HK_NOOP_CMD_EID, CFE_EVS_INFORMATION,
+call    0 returned 100%
+        -:  486:            "HK No-op command, Version %d.%d.%d.%d",
+        -:  487:             HK_MAJOR_VERSION,
+        -:  488:             HK_MINOR_VERSION, 
+        -:  489:             HK_REVISION, 
+        -:  490:             HK_MISSION_REV);
+        -:  491:
+        1:  492:        HK_AppData.CmdCounter++;
+        -:  493:    }
+        -:  494:
+        -:  495:    return;
+        -:  496:
+        -:  497:} /* End of HK_NoopCmd() */
+        -:  498:
+        -:  499:
+        -:  500:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  501:/*                                                                 */
+        -:  502:/* Reset counters command                                          */
+        -:  503:/*                                                                 */
+        -:  504:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  505:void HK_ResetCtrsCmd (CFE_SB_MsgPtr_t MessagePtr)
+function HK_ResetCtrsCmd called 2 returned 100% blocks executed 100%
+        2:  506:{
+        2:  507:    if(HK_VerifyCmdLength(MessagePtr,CFE_SB_CMD_HDR_SIZE)==HK_BAD_MSG_LENGTH_RC)
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -:  508:    {
+        -:  509:
+        1:  510:        HK_AppData.ErrCounter++;
+        -:  511:
+        -:  512:    }else{
+        -:  513:
+        1:  514:        HK_ResetHkData ();
+call    0 returned 100%
+        1:  515:        CFE_EVS_SendEvent (HK_RESET_CNTRS_CMD_EID, CFE_EVS_DEBUG,
+call    0 returned 100%
+        -:  516:                           "HK Reset Counters command received");
+        -:  517:    }
+        -:  518:
+        -:  519:    return;
+        -:  520:
+        -:  521:} /* End of HK_ResetCtrsCmd() */
+        -:  522:
+        -:  523:
+        -:  524:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  525:/*                                                                 */
+        -:  526:/* Reset housekeeping data                                         */
+        -:  527:/*                                                                 */
+        -:  528:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  529:void HK_ResetHkData (void)
+function HK_ResetHkData called 10 returned 100% blocks executed 100%
+       10:  530:{
+       10:  531:    HK_AppData.CmdCounter = 0;
+       10:  532:    HK_AppData.ErrCounter = 0;
+       10:  533:    HK_AppData.CombinedPacketsSent = 0;
+       10:  534:    HK_AppData.MissingDataCtr      = 0;
+        -:  535:    return;
+        -:  536:
+        -:  537:} /* End of HK_ResetHkData () */
+        -:  538:
+        -:  539:
+        -:  540:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  541:/*                                                                 */
+        -:  542:/* Verify Command Length                                           */
+        -:  543:/*                                                                 */
+        -:  544:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  545:int32 HK_VerifyCmdLength (CFE_SB_MsgPtr_t MessagePtr,uint32 ExpectedLength)
+function HK_VerifyCmdLength called 4 returned 100% blocks executed 100%
+        4:  546:{
+        4:  547:    int32               Status = HK_SUCCESS;
+        -:  548:    CFE_SB_MsgId_t      MessageID;
+        -:  549:    uint16              CommandCode;
+        -:  550:    uint16              ActualLength;
+        -:  551:
+        4:  552:    ActualLength  = CFE_SB_GetTotalMsgLength (MessagePtr);
+call    0 returned 100%
+        -:  553:
+        4:  554:    if (ExpectedLength != ActualLength)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  555:    {
+        -:  556:
+        2:  557:        MessageID   = CFE_SB_GetMsgId   (MessagePtr);
+call    0 returned 100%
+        2:  558:        CommandCode = CFE_SB_GetCmdCode (MessagePtr);
+call    0 returned 100%
+        -:  559:
+        2:  560:        CFE_EVS_SendEvent(HK_CMD_LEN_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  561:          "Cmd Msg with Bad length Rcvd: ID = 0x%X, CC = %d, Exp Len = %d, Len = %d",
+        -:  562:          MessageID, CommandCode, ExpectedLength, ActualLength);
+        -:  563:
+        2:  564:        Status = HK_BAD_MSG_LENGTH_RC;
+        -:  565:
+        -:  566:    }
+        -:  567:
+        4:  568:    return Status;
+        -:  569:
+        -:  570:} /* End of HK_VerifyCmdLength () */
+        -:  571:
+        -:  572:
+        -:  573:/************************/
+        -:  574:/*  End of File Comment */
+        -:  575:/************************/

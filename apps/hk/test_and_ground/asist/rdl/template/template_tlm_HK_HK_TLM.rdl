@@ -1,0 +1,48 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Feb 28, 2008  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu HK Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/04/21  BBM	: Initial
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu HK Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_HK_CMDPC           DESC="$sc $cpu HK Command Processed Counter",
+                                   UNITS=Counts
+!
+  UB   $sc_$cpu_HK_CMDEC           DESC="$sc $cpu HK Command Error Counter",
+                                   UNITS=Counts, YH=1, DOLIMIT
+!
+  UI   $sc_$cpu_HK_Spare           DESC="$sc $cpu Spare"
+!
+  UI   $sc_$cpu_HK_CMBPKTSSENT     DESC="$sc $cpu HK count of combined telemetry packets sent"
+!
+  UI   $sc_$cpu_HK_MISSDATACTR     DESC="$sc $cpu HK number of times missing data was detected"
+!
+  ULI  $sc_$cpu_HK_MEMPOOLHNDL     DESC="$sc $cpu HK Memory Pool Handle used to get mempool diags"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

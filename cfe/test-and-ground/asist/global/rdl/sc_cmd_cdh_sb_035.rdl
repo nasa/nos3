@@ -1,0 +1,45 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  cFE CDH SB Command Packet #0x1823
+!                  ================================
+!
+!       Packet Application ID: 35 (Hex 0x23)
+!       Packet Title:cFE C&DH Software Bus Task Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  25MAR05     SMA           : Initial
+!
+!======================================================================================================
+!
+CLASS P1823 APID=35, DESC="cFE C&DH Software Bus Task Commands"
+!
+  CMD  CFE_CDH_SB_NOOP          	FCTN=0, DESC="cFE SB no-operation command"
+!
+  CMD  CFE_CDH_SB_Reset    		FCTN=1, DESC="cFE reset SB housekeeping counters"
+!
+  CMD  CFE_CDH_SB_DumpStats		FCTN=2, DESC="cFE dump SB statistics"
+!
+  CMD  CFE_CDH_SB_SaveRout		FCTN=3, DESC="cFE save the SB routing information to a file"
+
+! FIXME: Scott, this command has a command field as follows:  FILE="sbrout11.sav".
+! I do not know the rdl syntax to code this field.
+
+!
+  CMDS  CFE_CDH_SB_EnaDisRout	FCTN=4, DESC="cFE SB enable/disable routing message ID to pipe"
+
+! FIXME: Scott, you need a new field to indicate whether it is an enable or disable. Or, maybe it is a toggle.
+
+    UI   SID            DYNAMIC, DESC="Stream ID of packets"
+    UI   PID            DYNAMIC, DESC="Pipeline ID of destination"
+  END
+!
+  CMD   CFE_CDH_SB_DumpNetwork 	FCTN=5, DESC="cFE SB dump network information"
+!	
+END       !END PACKET
+!
+!======================================================================================================

@@ -1,0 +1,35 @@
+!=============================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: May 16 2007
+
+!
+!                 cFE Pseudo Telemetry Packet # 3837 (dec)
+!                 =================================
+!
+!       Packet Application ID: 0EFD
+!       Packet Title:  Telemetry Page Pseudo Telemetry Packet
+!       Packet Length:  N/A
+!
+!	  Collect Frequency:  1 SEC
+!
+!       REFERENCES:
+!
+!       NOTES:  This pseudo telemetry packet applies to all spacecraft and CPUs
+!
+!       Change History:
+!
+!  16MAY07  WFM  : Initial release
+!=============================================================
+
+PACKET P0EFD APID=3837, DESC="Telemetry Page Pseudo Telemetry Packet"
+
+   RECORD PAGE_LIST[4095]         DESC= "Array of pages"
+      UI    PAGEINDEX             DESC= "Display page index",INIT=1
+      CHAR  PAGEERRORMSG[40]      DESC= "Error message displayed when page button would 'walk off' array"
+      UB    DUMMY		  DESC="Dummy parameter to initalize this record"
+   END ! End Record
+
+END ! PACKET P0EFD

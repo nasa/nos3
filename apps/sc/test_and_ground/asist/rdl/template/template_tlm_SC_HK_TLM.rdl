@@ -1,0 +1,223 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Jan 12, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SC Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  2011/07/05  WFM      : Updated according to fsw changes
+!  2012/01/19  WFM      : Added record and union types for the RTS Execution
+!			: status and Disabled status arrays so that discrete
+!			: values can be displayed
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "sc_platform_cfg.h"
+
+#define RTS_STATUS_SIZE (SC_NUMBER_OF_RTS/16)
+#define SC_NUMBER_OF_ATS 2
+
+TYPES
+  RECORD $sc_$cpu_SC_RTSExeStatusType  DESC="RTS Execution Status Record"
+     UNION RTSStatusEntry  DESC="$sc $cpu SC RTS Status Entry"
+       UI AllStatus     DESC="16-bit value for status of 16 RTSs"
+       UI RTS1Status    DESC="Status of the RTS represented by bit 0",
+			mask=%x0001,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS2Status    DESC="Status of the RTS represented by bit 1",
+			mask=%x0002,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS3Status    DESC="Status of the RTS represented by bit 2",
+			mask=%x0004,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS4Status    DESC="Status of the RTS represented by bit 3",
+			mask=%x0008,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS5Status    DESC="Status of the RTS represented by bit 4",
+			mask=%x0010,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS6Status    DESC="Status of the RTS represented by bit 5",
+			mask=%x0020,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS7Status    DESC="Status of the RTS represented by bit 6",
+			mask=%x0040,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS8Status    DESC="Status of the RTS represented by bit 7",
+			mask=%x0080,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS9Status    DESC="Status of the RTS represented by bit 8",
+			mask=%x0100,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS10Status   DESC="Status of the RTS represented by bit 9",
+			mask=%x0200,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS11Status   DESC="Status of the RTS represented by bit 10",
+			mask=%x0400,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS12Status   DESC="Status of the RTS represented by bit 11",
+			mask=%x0800,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS13Status   DESC="Status of the RTS represented by bit 12",
+			mask=%x1000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS14Status   DESC="Status of the RTS represented by bit 13",
+			mask=%x2000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS15Status   DESC="Status of the RTS represented by bit 14",
+			mask=%x4000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+       UI RTS16Status   DESC="Status of the RTS represented by bit 15",
+			mask=%x8000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Idle","Executing")
+     END
+  END
+
+  RECORD $sc_$cpu_SC_RTSDisStatusType  DESC="RTS Disabled Status Record"
+     UNION RTSStatusEntry  DESC="$sc $cpu SC RTS Status Entry"
+       UI AllStatus     DESC="16-bit value for status of 16 RTSs"
+       UI RTS1Status    DESC="Status of the RTS represented by bit 0",
+			mask=%x0001,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS2Status    DESC="Status of the RTS represented by bit 1",
+			mask=%x0002,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS3Status    DESC="Status of the RTS represented by bit 2",
+			mask=%x0004,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS4Status    DESC="Status of the RTS represented by bit 3",
+			mask=%x0008,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS5Status    DESC="Status of the RTS represented by bit 4",
+			mask=%x0010,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS6Status    DESC="Status of the RTS represented by bit 5",
+			mask=%x0020,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS7Status    DESC="Status of the RTS represented by bit 6",
+			mask=%x0040,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS8Status    DESC="Status of the RTS represented by bit 7",
+			mask=%x0080,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS9Status    DESC="Status of the RTS represented by bit 8",
+			mask=%x0100,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS10Status   DESC="Status of the RTS represented by bit 9",
+			mask=%x0200,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS11Status   DESC="Status of the RTS represented by bit 10",
+			mask=%x0400,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS12Status   DESC="Status of the RTS represented by bit 11",
+			mask=%x0800,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS13Status   DESC="Status of the RTS represented by bit 12",
+			mask=%x1000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS14Status   DESC="Status of the RTS represented by bit 13",
+			mask=%x2000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS15Status   DESC="Status of the RTS represented by bit 14",
+			mask=%x4000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+       UI RTS16Status   DESC="Status of the RTS represented by bit 15",
+			mask=%x8000,DISCRETE,DRANGE=(0,1),
+			DLABEL=("Enabled","Disabled")
+     END
+  END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SC Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_SC_ATSNumber   DESC="$sc $cpu SC Current ATS number",
+                               DISCRETE, DRANGE=(0,1,2),
+			       DLABEL=("None","ATS A","ATS B")
+!
+  UB   $sc_$cpu_SC_ATPState    DESC="$sc $cpu SC Current ATP State",
+                               DISCRETE, DRANGE=(0,1,2,3,4,5,6,7,8),
+			       DLABEL=("Empty","Loaded","Idle","Executed","Skipped","Executing","Failed Checksum", "Failed Distribution", "Starting")
+!
+  UB   $sc_$cpu_SC_ContATSFlag DESC="$sc $cpu SC ATS Continue on Failure Flag",
+                               DISCRETE, DRANGE=(0,1),
+			       DLABEL=("Disabled","Enabled")
+!
+  UB   $sc_$cpu_SC_CMDEC       DESC="$sc $cpu SC Command Error Counter",
+                               UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_SC_CMDPC       DESC="$sc $cpu SC Command Processed Counter",
+                               UNITS=Counts
+!
+  UB   $sc_$cpu_SC_FillByte    DESC="$sc $cpu SC spare for alignment"
+!
+  UI   $sc_$cpu_SC_SwitchPend  DESC="$sc $cpu SC ATS Switch Pending Flag",
+                               DISCRETE, DRANGE=(0,1), DLABEL=("No","Yes")
+!
+  UI   $sc_$cpu_SC_ActiveRTSs  DESC="$sc $cpu SC Active RTS count"
+!
+  UI   $sc_$cpu_SC_NextRTS     DESC="$sc $cpu SC next RTS to execute"
+!
+  UI   $sc_$cpu_SC_RTSActvCtr  DESC="$sc $cpu SC The number of RTSs started without errors"
+!
+  UI   $sc_$cpu_SC_RTSActvErr  DESC="$sc $cpu SC The number of RTSs that failed to start"
+!
+  UI   $sc_$cpu_SC_ATSCmdCtr   DESC="$sc $cpu SC The number of commands sent by the current ATS"
+!
+  UI   $sc_$cpu_SC_ATSErrCtr   DESC="$sc $cpu SC The number of command errors caused by the current ATS"
+!
+  UI   $sc_$cpu_SC_RTSCmdCtr   DESC="$sc $cpu SC The total number of commands sent by all active RTSs"
+!
+  UI   $sc_$cpu_SC_RTSErrCtr   DESC="$sc $cpu SC The number of command errors caused by all active RTSs"
+!
+  UI   $sc_$cpu_SC_LastATSErr  DESC="$sc $cpu SC The Last ATS that contained an error",
+                               DISCRETE, DRANGE=(0,1,2),
+			       DLABEL=("None","ATS A","ATS B")
+!
+  UI   $sc_$cpu_SC_LastATSCmdErr DESC="$sc $cpu SC The last ATS command that caused an error"
+!
+  UI   $sc_$cpu_SC_LastRTSErr DESC="$sc $cpu SC The last RTS that contained an error"
+!
+  UI   $sc_$cpu_SC_LastRTSCmdErr DESC="$sc $cpu SC The last RTS command that caused an error"
+!
+  UI   $sc_$cpu_SC_AppendAtsID   DESC="The ATS ID from the most recent Append ATS command",
+                               DISCRETE, DRANGE=(0,1,2),
+			       DLABEL=("None","ATS A","ATS B")
+!
+  UI   $sc_$cpu_SC_AppendCount   DESC="The number of command entries in the current Append ATS Table"
+!
+  UI   $sc_$cpu_SC_AppendSize    DESC="The size of the entries in the current Append ATS Table"
+!
+  UI   $sc_$cpu_SC_AppendLoads   DESC="The total number of Append ATS table loads performed"
+!
+  ULI  $sc_$cpu_SC_ATPCmdNumber DESC="$sc $cpu SC current ATS command number"
+!
+  ULI  $sc_$cpu_SC_FreeBytes[SC_NUMBER_OF_ATS] DESC="$sc $cpu SC The free bytes contained in each ATS"
+!
+  ULI  $sc_$cpu_SC_NextRTSTime DESC="$sc $cpu SC The absolute time of the next RTS command"
+!
+  ULI  $sc_$cpu_SC_NextATSTime DESC="$sc $cpu SC The absolute time of the next ATS command"
+!
+!  UI  $sc_$cpu_SC_RTSExeStatus[RTS_STATUS_SIZE] DESC="$sc $cpu SC The execution status (in bits) of each RTS"
+  $sc_$cpu_SC_RTSExeStatusType $sc_$cpu_SC_RTSExeStatus[RTS_STATUS_SIZE] DESC="$sc $cpu SC The execution status of each RTS"
+!
+!  UI  $sc_$cpu_SC_RTSDisableStatus[RTS_STATUS_SIZE] DESC="$sc $cpu SC The disabled status (in bits) of each RTS"
+  $sc_$cpu_SC_RTSDisStatusType $sc_$cpu_SC_RTSDisableStatus[RTS_STATUS_SIZE] DESC="$sc $cpu SC The disabled status of each RTS"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

@@ -1,0 +1,54 @@
+!==============================================================================
+!
+!                Originator: S. Jonke
+!                Responsible SC:  
+!                Responsible CSE: 
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MD Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!   Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/04/17  SJJ  : Initial
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "md_platform_cfg.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_MD_CMDEC       DESC="$sc $cpu MD Command Error Counter",
+                               UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_MD_CMDPC       DESC="$sc $cpu MD Command Processed Counter",
+                               UNITS=Counts
+!
+  UI   $sc_$cpu_MD_EnableMask  DESC="$sc $cpu MD Enable Mask"
+!
+  UI   $sc_$cpu_MD_AddrCnt[MD_NUM_DWELL_TABLES] DESC="$sc $cpu MD number of dwell addresses for each table"
+!
+  UI   $sc_$cpu_MD_Rate[MD_NUM_DWELL_TABLES] DESC="$sc $cpu MD number of delay counts for each table"
+!
+  UI   $sc_$cpu_MD_DataSize[MD_NUM_DWELL_TABLES] DESC="$sc $cpu MD number of bytes of data specified for each table"
+!
+  UI   $sc_$cpu_MD_DwPktOffset[MD_NUM_DWELL_TABLES] DESC="$sc $cpu MD current write offset within dwell pkt data region for each table"
+!
+  UI   $sc_$cpu_MD_DwTblEntry[MD_NUM_DWELL_TABLES] DESC="$sc $cpu MD next dwell table entry to be processed for each table"
+!
+  UI   $sc_$cpu_MD_CountDown[MD_NUM_DWELL_TABLES] DESC="$sc $cpu current value of countdown timer for each table"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

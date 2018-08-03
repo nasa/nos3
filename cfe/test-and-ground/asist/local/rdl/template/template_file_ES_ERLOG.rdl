@@ -1,0 +1,75 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 15 2006  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES App Log File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2006/11/15  WFM	: Initial
+!  2009/12/09  WFM	: Modified the ERLE[64] to use the cFE configuration
+!			: parameter CFE_ES_ER_LOG_ENTRIES
+!  2012/02/14  WFM	: Modified the ERLog_Context from ULI to UB
+!                                                             
+!==============================================================================
+!
+!
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+#define CONTEXT_SIZE 464
+
+TYPES
+   RECORD $sc_$cpu_ES_ERLog      DESC="ES Exception and Reset Log"
+     ULI  ERLog_EntryType        DESC="Type of Log Entry",
+				 DISCRETE, DRANGE=(1,2), DLABEL=("Core","App")
+     ULI  ERLog_ResetType        DESC="Main cause for the reset",
+				 DISCRETE, DRANGE=(1,2),
+				 DLABEL=("Processor","Power-On")
+     ULI  ERLog_ResetSubType     DESC="The sub-type for the reset",
+				 DISCRETE, DRANGE=(1,2,3,4,5,6,7),
+                                 DLABEL=("Power Cycle","Push Button",
+                                          "HW Special Command","HW Watchdog",
+                                          "Command","Exception","Undefined")
+     ULI  ERLog_BootSource       DESC="The boot source"
+     ULI  ERLog_ProcessorResetCnt DESC="The number of processor resets"
+     ULI  ERLog_MaxProcResetCnt  DESC="The number of processor resets before a Power-On reset occurs"
+     ULI  ERLog_DebugFlag	  DESC="The debug flag for this entry"
+     ULI  ERLog_WatchDogWriteFlag DESC="The watchdog write flag for this entry"
+     ULI  ERLog_PrintfEnabledFlag DESC="The printf enable flag for this entry"
+     ULI  ERLog_LastAppID	  DESC="The last Application ID for this entry"
+!Add a CFE_TIME_SysTime_t variable
+     ULI  ERLog_Seconds		DESC="Seconds of this entry"
+     ULI  ERLog_SubSeconds	DESC="Sub-seconds of this entry"
+     CHAR ERLog_Description[80] DESC="Ascii data for the event"
+     ULI ERLog_ContextPresent	DESC="Indicates whether the context data is valid"
+     ULI  ERLog_AppID		DESC="The Application ID"
+     UB  ERLog_Context[CONTEXT_SIZE] DESC="The CPU Context data"
+   END
+   
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES ER Log File", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_ES_ERLog $sc_$cpu_ES_ERLE[CFE_ES_ER_LOG_ENTRIES] DESC="$sc $cpu ES Exception and Reset Log Entry"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+ 

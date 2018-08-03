@@ -1,0 +1,128 @@
+/**
+  \page spw CFS Software Bus Network SPW Module
+
+  <UL>
+    <LI> \subpage sbnspwrevhist </LI>
+    <LI> \subpage sbnspwovr </LI>
+    <LI> \subpage sbnspwopr </LI>
+    <LI> \subpage sbnspwcfg </LI>
+    <LI> \subpage sbnspwcons </LI>
+  </UL>
+**/
+
+/**
+  \page sbnspwrevhist SBN SPW Module User's Guide Revision History
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="15%"><B>Date</B></TD> <TD WIDTH="15%"><B>Author</B></TD> <TD WIDTH="30%"><B>Comments</B></TD></TR>
+  <TR><TD WIDTH="15%">6/02/2014</TD> <TD WIDTH="15%">ejtimmon</TD> <TD WIDTH="30%">Content template from similar module</TD></TR>
+  <TR><TD WIDTH="15%">7/18/2014</TD> <TD WIDTH="15%">jurriste</TD> <TD WIDTH="30%">Initial revision</TD></TR>
+  </TABLE>
+
+  Next: \ref sbnspwovr
+**/
+
+/**
+  \page sbnspwovr SBN SPW Module Overview
+
+  The SPW plugin for the Software Bus Network (SBN) allows two CPUs 
+  running cFE to send software bus (SB) messages to each other through a 
+  Spacewire connection. This plugin is never used directly by a user cFE app; 
+  instead it is used by the SBN to make message passing across CPUs transparent 
+  to other apps.
+
+  SBN uses this module by internally calling a set of functions:
+  <UL>
+    <LI>#SBN_ParseSPWFileEntry         (Reads module setup from SBN peer data file)
+    <LI>#SBN_InitSPWIF                 (Initializes SPW interface)
+    <LI>#SBN_SendSPWNetMsg             (Sends SB or SBN messages to other CPU)
+    <LI>#SBN_CheckForSPWNetProtoMsg    (Checks for SBN protocol messages)
+    <LI>#SBN_SPWRcvMsg                 (Reads software bus messages from other CPU)
+    <LI>#SPW_VerifyPeerInterface       (Makes sure peer entry has matching host)
+    <LI>#SPW_VerifyHostInterface       (Makes sure host entry has matching peer)
+  </UL>
+
+  These functions then use SPW-specific read/write operations to 
+  pass messages. 
+
+  Next: \ref sbnspwopr <BR>
+  Prev: \ref sbnspwrevhist
+**/
+
+/**
+  \page sbnspwopr SBN SPW Module Operation
+  
+
+  Next: \ref sbnspwcfg <BR>
+  Prev: \ref sbnspwovr
+**/
+
+/**
+  \page sbnspwcfg SBN SPW Module Configuration
+
+  <H1>SBN Peer Data File Entry</H1>
+
+  The file entry in SbnPeerData.dat for a SPW interface requires 6 fields.
+  The first 4 fields are the fields required of all interface modules:
+  <UL>
+    <LI>Peer Name
+    <LI>Processor ID
+    <LI>Protocol ID (? for SPW)
+    <LI>Spacecraft ID
+  </UL>
+
+  The remaining fields are the interface specific fields that are determined by the device driver's behavior:
+  <UL>
+    <LI>Device Class, as populated on the filesystem by the driver (e.g. 'spw' in '/sys/class')
+    <LI>Device Instance, as populated on the filesystem by the driver (e.g. 'spw0' in '/dev')
+  </UL>
+
+  The SPW interface does not require any kind of "matching" pairs. An example of SPW entries 
+  is below. The Spacewire Device Class and Device Instance values are defined by the device driver
+  and are used by SBN as a description of how the driver initialized the interface on that particular spacecraft.
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR>
+    <TD WIDTH="5%"><B>Name</B></TD> 
+    <TD WIDTH="10%"><B>Processor ID</B></TD>
+    <TD WIDTH="10%"><B>Protocol ID</B></TD>
+    <TD WIDTH="10%"><B>Spacecraft ID</B></TD>
+    <TD WIDTH="10%"><B>Device Class</B></TD>
+    <TD WIDTH="10%"><B>Device Instance</B></TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU1</TD> 
+    <TD WIDTH="10%">1</TD> 
+    <TD WIDTH="10%">?</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">spw</TD>
+    <TD WIDTH="10%">spw0</TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU2</TD> 
+    <TD WIDTH="10%">2</TD> 
+    <TD WIDTH="10%">?</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">spw</TD>
+    <TD WIDTH="10%">spw0</TD>
+  </TR>
+  </TABLE>  
+
+  Next: \ref sbnspwcons <BR>
+  Prev: \ref sbnspwopr
+**/
+
+/**
+  \page sbnspwcons SBN SPW Module Constraints
+
+  <UL>
+    <LI>This module is dependent on the Spacewire implementation of the FPGA 
+        core used at Goddard/587 and character device driver behavior of the
+        CHREC/Gauvin kernel module.
+	<LI>Data transfers have error conditions that currently only check whether
+	    the Spacewire link is down, or if the data copies to the buffer were unsuccessful.
+	    
+  </UL>
+
+  Prev: \ref sbnspwcfg
+**/

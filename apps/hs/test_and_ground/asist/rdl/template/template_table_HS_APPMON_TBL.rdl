@@ -1,0 +1,53 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: June 16, 2009
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu HS Application Monitor Table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!	If the HS_MAX_MSG_ACT_TYPES is changed from 8, the ActionType mnemonic
+!	will need to change to correspond to the number it is set to.
+!
+!       HISTORY: 
+!	10/18/11	W. Moleski	Added the Message Action Types to the
+!					ActionType mnemonic.
+!       01/04/12	W. Moleski	Removed VARYING from Packet definition
+!==============================================================================
+!
+#include "osconfig.h"
+#include "lc_platform_cfg.h"
+
+TYPES
+   RECORD $sc_$cpu_HS_AMTEntry  DESC="$sc $cpu HS Application Monitor Table Entry"
+     CHAR  AppName[OS_MAX_API_NAME] DESC="The name of the application to monitor"
+     UI    NullTerm      DESC="Terminator for the above app name"
+     UI    CycleCnt      DESC="The number of cycles before the app is missing"
+     UI    ActionType    DESC="The action to take if the app is missing",
+			 DISCRETE, DRANGE=(0,1,2,3,4,5,6,7,8,9,10,11),
+			 DLABEL=("None","Proc Reset","App Restart","Event",
+			 "SB Msg1","SB Msg2","SB Msg3","SB Msg4","SB_Msg5",
+			 "SB Msg6","SB Msg7","SB Msg8")
+   END
+END_TYPES
+
+! HS App Monitor Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu HS AMT Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_HS_AMTEntry $sc_$cpu_HS_AMT[HS_MAX_CRITICAL_APPS]  DESC="$sc $cpu HS Application Monitor Table"
+!
+END
+

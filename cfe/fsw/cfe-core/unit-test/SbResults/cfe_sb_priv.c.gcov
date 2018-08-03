@@ -1,0 +1,871 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_priv.c
+        -:    0:Graph:cfe_sb_priv.gcno
+        -:    0:Data:cfe_sb_priv.gcda
+        -:    0:Runs:1
+        -:    0:Programs:4
+        -:    1:/******************************************************************************
+        -:    2:** File: cfe_sb_priv.c
+        -:    3:**
+        -:    4:**      Copyright (c) 2004-2012, United States government as represented by the
+        -:    5:**      administrator of the National Aeronautics Space Administration.
+        -:    6:**      All rights reserved. This software(cFE) was created at NASA's Goddard
+        -:    7:**      Space Flight Center pursuant to government contracts.
+        -:    8:**
+        -:    9:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   10:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   11:**
+        -:   12:**
+        -:   13:**
+        -:   14:** Purpose:
+        -:   15:**   This header file contains prototypes for private functions and type
+        -:   16:**   definitions for cFE internal use.
+        -:   17:**
+        -:   18:** Author:   R.McGraw/SSI
+        -:   19:**
+        -:   20:** Notes:
+        -:   21:**
+        -:   22:** $Log: cfe_sb_priv.c  $
+        -:   23:** Revision 1.18 2014/06/17 12:42:34GMT-05:00 rmcgraw 
+        -:   24:** DCR18686:1 Initialized all AppId and CallerID's with 0xFFFFFFFF
+        -:   25:** Revision 1.17 2012/02/29 17:21:50EST lwalling
+        -:   26:** Check result of call to CFE_SB_GetAppTskName()
+        -:   27:** Revision 1.16 2012/01/13 12:15:13EST acudmore
+        -:   28:** Changed license text to reflect open source
+        -:   29:** Revision 1.15 2011/12/07 19:19:00EST aschoeni
+        -:   30:** Removed returns for TIME and SB for cleaning up apps
+        -:   31:** Revision 1.14 2011/09/08 12:17:12EDT aschoeni
+        -:   32:** Added newline to syslog calls on mutex failures
+        -:   33:** Revision 1.13 2010/11/03 15:08:24EDT jmdagost
+        -:   34:** Added cfe.h include file.
+        -:   35:** Revision 1.12 2009/07/24 18:24:48EDT aschoeni
+        -:   36:** Added Zero Copy Mode
+        -:   37:** Revision 1.11 2009/07/20 14:10:14EDT aschoeni
+        -:   38:** Made GetAppTskName reentrant
+        -:   39:** Revision 1.10 2009/07/17 17:58:22EDT aschoeni
+        -:   40:** Updated MsgMap (and associated variables) from a uint16 to an CFE_SB_MsgId_t
+        -:   41:** Revision 1.9 2009/06/26 17:02:05EDT aschoeni
+        -:   42:** Updated SB to use __func__ instead of __FILE__ for lock and unlock errors
+        -:   43:** Revision 1.8 2009/05/08 11:28:07EDT rmcgraw
+        -:   44:** DCR7631:1 Removed commented out utility to print routing info
+        -:   45:** Revision 1.7 2009/05/06 09:34:09EDT rmcgraw
+        -:   46:** DCR5801:12 Removed unused function GetRoutingPtr
+        -:   47:** Revision 1.6 2009/04/06 10:21:09EDT rmcgraw
+        -:   48:** DCR5801:2 Fixed problem with list, unsubscribing to all, then subscribing again
+        -:   49:** Revision 1.5 2009/03/31 09:25:22EDT rmcgraw
+        -:   50:** DCR5801:2 Fixed problem with removing a node in linked list
+        -:   51:** Revision 1.4 2009/02/06 11:29:05EST rmcgraw
+        -:   52:** DCR5801:2 General Cleanup
+        -:   53:** Revision 1.3 2009/02/03 11:06:59EST rmcgraw
+        -:   54:** DCR5801:2 Changed destination descriptors from array based to linked list
+        -:   55:** Revision 1.2 2009/01/30 10:36:37EST rmcgraw
+        -:   56:** DCR5801:1 Removed function CFE_SB_GetNumberOfSubscribers
+        -:   57:** Revision 1.1 2008/04/17 08:05:31EDT ruperera
+        -:   58:** Initial revision
+        -:   59:** Member added to cfe project on tlserver3
+        -:   60:** Revision 1.40 2007/09/13 09:39:58EDT rjmcgraw
+        -:   61:** DCR4861 New function def for CFE_SB_RequestToSendEvent
+        -:   62:** Revision 1.39 2007/07/12 16:59:38EDT rjmcgraw
+        -:   63:** DCR4680:1 Removed SB event log related items
+        -:   64:** Revision 1.38 2007/05/21 14:34:40EDT rjmcgraw
+        -:   65:** Fixed compiler warnings in CFE_SB_GetAppTskName
+        -:   66:** Revision 1.37 2007/03/28 14:22:02EST rjmcgraw
+        -:   67:** DCR2654:displaying app.tsk name in events
+        -:   68:** Revision 1.36 2007/03/19 14:38:03EST rjmcgraw
+        -:   69:** Removed duplicate pipename check, it exists in OS_QueueCreate
+        -:   70:** Revision 1.35 2007/03/16 15:29:29EST rjmcgraw
+        -:   71:** Added code for duplicate pipe name check
+        -:   72:** Revision 1.34 2007/03/16 10:06:18EST rjmcgraw
+        -:   73:** Changed DeletePipe call to DeletePipeWithAppId in cleanup function
+        -:   74:** Revision 1.33 2007/03/13 14:10:19EST rjmcgraw
+        -:   75:** Added CFE_SB_CleanUpApp
+        -:   76:** Revision 1.32 2006/10/16 14:30:56EDT rjmcgraw
+        -:   77:** Minor changes to comply with MISRA standard
+        -:   78:** Revision 1.31 2006/09/01 11:09:51EDT kkaudra
+        -:   79:** IV&V:Removed cfe_evs.h,cfe_fs.h,cfe_sbp.h
+        -:   80:**
+        -:   81:******************************************************************************/
+        -:   82:
+        -:   83:/*
+        -:   84:** Include Files
+        -:   85:*/
+        -:   86:
+        -:   87:#include "common_types.h"
+        -:   88:#include "osapi.h"
+        -:   89:#include "private/cfe_private.h"
+        -:   90:#include "cfe_sb_priv.h"
+        -:   91:#include "cfe_sb.h"
+        -:   92:#include "ccsds.h"
+        -:   93:#include "cfe_error.h"
+        -:   94:#include "cfe_es.h"
+        -:   95:#include <string.h>
+        -:   96:
+        -:   97:
+        -:   98:/******************************************************************************
+        -:   99:**  Function:  CFE_SB_CleanUpApp()
+        -:  100:**
+        -:  101:**  Purpose:
+        -:  102:**
+        -:  103:**  Arguments:
+        -:  104:**
+        -:  105:**  Return:
+        -:  106:**    None
+        -:  107:*/
+        2:  108:int32 CFE_SB_CleanUpApp(uint32 AppId){
+        -:  109:
+        -:  110:  uint32 i;
+        -:  111:
+        -:  112:  /* loop through the pipe table looking for pipes owned by AppId */
+      130:  113:  for(i=0;i<CFE_SB_MAX_PIPES;i++){
+      128:  114:    if((CFE_SB.PipeTbl[i].InUse == CFE_SB_IN_USE)&&
+        -:  115:       (CFE_SB.PipeTbl[i].AppId == AppId))
+        -:  116:    {
+        2:  117:      CFE_SB_DeletePipeWithAppId(CFE_SB.PipeTbl[i].PipeId,AppId);
+        -:  118:    }/* end if */
+        -:  119:  }/* end for */
+        -:  120:
+        -:  121:  /* Release any zero copy buffers */
+        2:  122:  CFE_SB_ZeroCopyReleaseAppId(AppId);
+        -:  123:
+        2:  124:  return CFE_SUCCESS;
+        -:  125:
+        -:  126:}/* end CFE_SB_CleanUpApp */
+        -:  127:
+        -:  128:
+        -:  129:/******************************************************************************
+        -:  130:**  Function:  CFE_SB_GetAvailPipeIdx()
+        -:  131:**
+        -:  132:**  Purpose:
+        -:  133:**    SB internal function to get the next available Pipe descriptor. Typically
+        -:  134:**    called when a pipe is being created.
+        -:  135:**
+        -:  136:**  Arguments:
+        -:  137:**    None
+        -:  138:**
+        -:  139:**  Return:
+        -:  140:**    Returns the index of an empty pipe descriptor (which is also the PipeId)
+        -:  141:**    or CFE_SB_INVALID_PIPE if there are no pipe descriptors available.
+        -:  142:*/
+      179:  143:CFE_SB_PipeId_t CFE_SB_GetAvailPipeIdx(void){
+        -:  144:
+        -:  145:    uint8 i;
+        -:  146:
+        -:  147:    /* search for next available pipe entry */
+     2429:  148:    for(i=0;i<CFE_SB_MAX_PIPES;i++){
+        -:  149:
+     2428:  150:        if(CFE_SB.PipeTbl[i].InUse == CFE_SB_NOT_IN_USE){
+      178:  151:            return i;
+        -:  152:        }/* end if */
+        -:  153:
+        -:  154:    }/* end for */
+        -:  155:
+        1:  156:    return CFE_SB_INVALID_PIPE;
+        -:  157:
+        -:  158:}/* end CFE_SB_GetAvailPipeIdx */
+        -:  159:
+        -:  160:
+        -:  161:/******************************************************************************
+        -:  162:**  Function:  CFE_SB_GetAvailRoutingIdx()
+        -:  163:**
+        -:  164:**  Purpose:
+        -:  165:**    SB internal function to get the next available Routing Table element
+        -:  166:**    (CFE_SB_RouteEntry_t). Typically called when an application subscribes
+        -:  167:**    to a message.
+        -:  168:**
+        -:  169:**  Arguments:
+        -:  170:**    None
+        -:  171:**
+        -:  172:**  Return:
+        -:  173:**    Returns the index of an empty Routing Table element or
+        -:  174:**    CFE_SB_NO_ROUTING_IDX if there are no more elements available.
+        -:  175:*/
+      399:  176:uint16 CFE_SB_GetAvailRoutingIdx(void){
+        -:  177:
+        -:  178:    uint16 i;
+        -:  179:
+        -:  180:    /* search for next available routing table entry */
+    35121:  181:    for(i=0;i<CFE_SB_MAX_MSG_IDS;i++){
+        -:  182:
+    35120:  183:        if(CFE_SB.RoutingTbl[i].MsgId == CFE_SB_INVALID_MSG_ID){
+      398:  184:            return i;
+        -:  185:        }/* end if */
+        -:  186:
+        -:  187:    }/* end for */
+        -:  188:
+        -:  189:    /* error event indicating no more entries available */
+        1:  190:    return CFE_SB_NO_ROUTING_IDX;
+        -:  191:
+        -:  192:}/* end CFE_SB_GetAvailRoutingIdx */
+        -:  193:
+        -:  194:
+        -:  195:/******************************************************************************
+        -:  196:**  Function:  CFE_SB_GetPipeIdx()
+        -:  197:**
+        -:  198:**  Purpose:
+        -:  199:**    SB internal function to get the pipe table index for the given pipe id.
+        -:  200:**
+        -:  201:**  Arguments:
+        -:  202:**    PipeId
+        -:  203:**
+        -:  204:**  Return:
+        -:  205:**    Returns the pipe table index of the given pipe id or CFE_SB_INVALID_PIPE if
+        -:  206:*     there was not an entry for the given pipe id.
+        -:  207:*/
+     1051:  208:uint8 CFE_SB_GetPipeIdx(CFE_SB_PipeId_t PipeId){
+        -:  209:
+        -:  210:    uint8  i;
+        -:  211:
+        -:  212:    /* search the pipe table for the for the given pipe id */
+     5035:  213:    for(i=0;i<CFE_SB_MAX_PIPES;i++){
+        -:  214:
+     5028:  215:        if((CFE_SB.PipeTbl[i].PipeId == PipeId)&&(CFE_SB.PipeTbl[i].InUse == 1)){
+     1044:  216:            return i;
+        -:  217:        }/* end if */
+        -:  218:
+        -:  219:    }/* end for */
+        -:  220:
+        7:  221:    return CFE_SB_INVALID_PIPE;
+        -:  222:
+        -:  223:}/* end CFE_SB_GetPipeIdx */
+        -:  224:
+        -:  225:
+        -:  226:/******************************************************************************
+        -:  227:**  Function:  CFE_SB_LockSharedData()
+        -:  228:**
+        -:  229:**  Purpose:
+        -:  230:**    SB internal function to handle a semaphore take failure for the Shared
+        -:  231:**    Data Mutex
+        -:  232:**
+        -:  233:**  Arguments:
+        -:  234:**    FuncName   - the function name containing the code that generated the error.
+        -:  235:**    LineNumber - the line number in the file of the code that generated the error.
+        -:  236:**
+        -:  237:**  Return:
+        -:  238:**    None
+        -:  239:*/
+     2132:  240:void CFE_SB_LockSharedData(const char *FuncName, int32 LineNumber){
+        -:  241:
+        -:  242:    int32   Status;
+     2132:  243:    uint32  AppId = 0xFFFFFFFF;
+        -:  244:
+     2132:  245:    Status = OS_MutSemTake(CFE_SB.SharedDataMutexId);
+     2132:  246:    if (Status != OS_SUCCESS) {
+        -:  247:
+        1:  248:        CFE_ES_GetAppID(&AppId);
+        -:  249:
+        1:  250:        CFE_ES_WriteToSysLog("SB SharedData Mutex Take Err Stat=0x%x,App=%d,Func=%s,Line=%d\n",
+        -:  251:                (unsigned int)Status,(int)AppId,FuncName,(int)LineNumber);
+        -:  252:
+        -:  253:    }/* end if */
+        -:  254:
+        -:  255:    return;
+        -:  256:
+        -:  257:}/* end CFE_SB_LockSharedData */
+        -:  258:
+        -:  259:
+        -:  260:
+        -:  261:/******************************************************************************
+        -:  262:**  Function:  CFE_SB_UnlockSharedData()
+        -:  263:**
+        -:  264:**  Purpose:
+        -:  265:**    SB internal function to handle a semaphore give failure  for the Shared
+        -:  266:**    Data Mutex
+        -:  267:**
+        -:  268:**  Arguments:
+        -:  269:**    FuncName   - the function name containing the code that generated the error.
+        -:  270:**    LineNumber - the line number in the file of the code that generated the error.
+        -:  271:**
+        -:  272:**  Return:
+        -:  273:**    None
+        -:  274:*/
+     2132:  275:void CFE_SB_UnlockSharedData(const char *FuncName, int32 LineNumber){
+        -:  276:
+        -:  277:   int32   Status;
+     2132:  278:   uint32  AppId = 0xFFFFFFFF;
+        -:  279:
+     2132:  280:    Status = OS_MutSemGive(CFE_SB.SharedDataMutexId);
+     2132:  281:    if (Status != OS_SUCCESS) {
+        -:  282:
+        1:  283:        CFE_ES_GetAppID(&AppId);
+        -:  284:
+        1:  285:        CFE_ES_WriteToSysLog("SB SharedData Mutex Give Err Stat=0x%x,App=%d,Func=%s,Line=%d\n",
+        -:  286:                (unsigned int)Status,(int)AppId,FuncName,(int)LineNumber);
+        -:  287:
+        -:  288:    }/* end if */
+        -:  289:
+        -:  290:    return;
+        -:  291:
+        -:  292:}/* end CFE_SB_UnlockSharedData */
+        -:  293:
+        -:  294:
+        -:  295:/******************************************************************************
+        -:  296:**  Function:  CFE_SB_GetPipePtr()
+        -:  297:**
+        -:  298:**  Purpose:
+        -:  299:**    SB internal function to get a pointer to the pipe descriptor associated
+        -:  300:**    with the given pipe id.
+        -:  301:**
+        -:  302:**  Arguments:
+        -:  303:**    PipeId
+        -:  304:**
+        -:  305:**  Return:
+        -:  306:**    Pointer to the descriptor for the pipe.  If the pipe ID is not valid,
+        -:  307:**    a NULL pointer is returned.
+        -:  308:*/
+        -:  309:
+      202:  310:CFE_SB_PipeD_t *CFE_SB_GetPipePtr(CFE_SB_PipeId_t PipeId) {
+        -:  311:
+        -:  312:   /*
+        -:  313:   ** Verify that the pipeId is in the valid range and being used.
+        -:  314:   ** If so, return the pointer to the pipe descriptor.
+        -:  315:   */
+        -:  316:
+      202:  317:    if(CFE_SB_ValidatePipeId(PipeId) != CFE_SUCCESS){
+        1:  318:        return NULL;
+        -:  319:    }else{
+      201:  320:        return &CFE_SB.PipeTbl[PipeId];
+        -:  321:    }/* end if */
+        -:  322:
+        -:  323:}/* end CFE_SB_GetPipePtr */
+        -:  324:
+        -:  325:
+        -:  326:
+        -:  327:/******************************************************************************
+        -:  328:**  Function:  CFE_SB_GetDestPtr()
+        -:  329:**
+        -:  330:**  Purpose:
+        -:  331:**    SB internal function to get a pointer to the destination descriptor
+        -:  332:**    associated with the given message id/pipe id combination.
+        -:  333:**
+        -:  334:**  Arguments:
+        -:  335:**    MsgId  : ID of the message
+        -:  336:**    PipeId : Pipe ID for the destination.
+        -:  337:**
+        -:  338:**  Return:
+        -:  339:**    Pointer to the destination descriptor that corresponds to the msg/pipe
+        -:  340:**    combination. If the destination does not exist, return NULL.
+        -:  341:*/
+        -:  342:CFE_SB_DestinationD_t  *CFE_SB_GetDestPtr(CFE_SB_MsgId_t MsgId,
+       21:  343:                                          CFE_SB_PipeId_t PipeId){
+        -:  344:
+        -:  345:    uint16                  Idx;
+        -:  346:    CFE_SB_DestinationD_t   *DestPtr;
+        -:  347:
+       21:  348:    Idx = CFE_SB_GetRoutingTblIdx(MsgId);
+        -:  349:
+       21:  350:    if(Idx==CFE_SB_AVAILABLE){
+        8:  351:        return NULL;
+        -:  352:    }/* end if */
+        -:  353:
+       13:  354:    DestPtr = CFE_SB.RoutingTbl[Idx].ListHeadPtr;
+        -:  355:
+       29:  356:    while(DestPtr != NULL){
+        -:  357:
+       13:  358:        if(DestPtr -> PipeId == PipeId){
+       10:  359:            return DestPtr;
+        -:  360:        }/* end if */
+        -:  361:
+        3:  362:        DestPtr = DestPtr->Next;
+        -:  363:
+        -:  364:    }/* end while */
+        -:  365:
+        3:  366:    return NULL;
+        -:  367:
+        -:  368:}/* end CFE_SB_GetDestPtr */
+        -:  369:
+        -:  370:
+        -:  371:
+        -:  372:/******************************************************************************
+        -:  373:**  Function:  CFE_SB_GetRoutingTblIdx()
+        -:  374:**
+        -:  375:**  Purpose:
+        -:  376:**    SB internal function to get the index of the routing table element
+        -:  377:**    associated with the given message id.
+        -:  378:**
+        -:  379:**  Arguments:
+        -:  380:**    MsgId  : ID of the message
+        -:  381:**    PipeId : Pipe ID for the destination.
+        -:  382:**
+        -:  383:**  Return:
+        -:  384:**    Will return the index of the routing table element for the given message ID
+        -:  385:**    or 0xFFFF if message does not exist.
+        -:  386:*/
+     1351:  387:CFE_SB_MsgId_t CFE_SB_GetRoutingTblIdx(CFE_SB_MsgId_t MsgId){
+        -:  388:
+        -:  389:#ifdef MESSAGE_FORMAT_IS_CCSDS
+        -:  390:
+        -:  391:    /* mask out the ccsds version number to   */
+        -:  392:    /* ensure we don't read beyond end of array */
+     1351:  393:    MsgId &= 0x1FFF;
+        -:  394:
+     1351:  395:    return CFE_SB.MsgMap[MsgId];
+        -:  396:#else
+        -:  397:    return 0;
+        -:  398:#endif
+        -:  399:
+        -:  400:}/* end CFE_SB_GetRoutingTblIdx */
+        -:  401:
+        -:  402:
+        -:  403:
+        -:  404:/******************************************************************************
+        -:  405:**  Function:  CFE_SB_SetRoutingTblIdx()
+        -:  406:**
+        -:  407:**  Purpose:
+        -:  408:**    SB internal function to set a value in the message map. The "Value" is
+        -:  409:**    the routing table index of the given message ID. The message map is used
+        -:  410:**    for quick routing table index lookups of a given message ID. The cost of
+        -:  411:**    this quick lookup is 8K bytes of memory(for CCSDS).
+        -:  412:**
+        -:  413:**  Arguments:
+        -:  414:**    MsgId  : ID of the message
+        -:  415:**    Value  : value to set.
+        -:  416:**
+        -:  417:**  Return:
+        -:  418:**    Will return CFE_SUCCESS or CFE_INVALID_MSGID if MsgId is invalid
+        -:  419:*/
+      791:  420:int32 CFE_SB_SetRoutingTblIdx(CFE_SB_MsgId_t MsgId, CFE_SB_MsgId_t Value){
+        -:  421:
+        -:  422:#ifdef MESSAGE_FORMAT_IS_CCSDS
+        -:  423:
+        -:  424:    /* mask out the ccsds version number to   */
+        -:  425:    /* ensure we don't write beyond end of array */
+      791:  426:    MsgId &= 0x1FFF;
+        -:  427:
+      791:  428:    CFE_SB.MsgMap[MsgId] = Value;
+        -:  429:
+        -:  430:#endif
+        -:  431:
+      791:  432:    return CFE_SUCCESS;
+        -:  433:
+        -:  434:}/* end CFE_SB_SetRoutingTblIdx */
+        -:  435:
+        -:  436:
+        -:  437:/******************************************************************************
+        -:  438:**  Function:  CFE_SB_GetPipeName()
+        -:  439:**
+        -:  440:**  Purpose:
+        -:  441:**    SB internal function to get the string of the pipe name of the given
+        -:  442:**    Pipe ID.
+        -:  443:**
+        -:  444:**  Arguments:
+        -:  445:**    MsgId  : ID of the message
+        -:  446:**
+        -:  447:**  Return:
+        -:  448:**    Will return a pointer to the PipeName array in the pipe table if the the pipeid
+        -:  449:**    is in range. Otherwise this function returns a pointer to the
+        -:  450:**    PipeName4ErrCase[0], which is initialized with a null terminator.
+        -:  451:**
+        -:  452:*/
+      620:  453:char *CFE_SB_GetPipeName(CFE_SB_PipeId_t PipeId){
+        -:  454:
+        -:  455:    static char PipeName4ErrCase[1] = {'\0'};
+        -:  456:
+      620:  457:    if(PipeId >= CFE_SB_MAX_PIPES){
+        1:  458:        return &PipeName4ErrCase[0];
+        -:  459:    }else{
+      619:  460:        return &CFE_SB.PipeTbl[PipeId].PipeName[0];
+        -:  461:    }/* end if */
+        -:  462:
+        -:  463:}/* end CFE_SB_GetPipeName */
+        -:  464:
+        -:  465:
+        -:  466:
+        -:  467:/******************************************************************************
+        -:  468:**  Function:  CFE_SB_DuplicateSubscribeCheck()
+        -:  469:**
+        -:  470:**  Purpose:
+        -:  471:**    SB internal function to check for a duplicate subscription.
+        -:  472:**
+        -:  473:**  Arguments:
+        -:  474:**    MsgId  : ID of the message
+        -:  475:**    PipeId : ID of the pipe
+        -:  476:**
+        -:  477:**  Return:
+        -:  478:**    Will return CFE_SB_DUPLICATE if the given MsgId/PipeId subscription
+        -:  479:**    exists in SB routing tables, otherwise will return CFE_SB_NO_DUPLICATE.
+        -:  480:*/
+        -:  481:int32 CFE_SB_DuplicateSubscribeCheck(CFE_SB_MsgId_t MsgId,
+      433:  482:                                       CFE_SB_PipeId_t PipeId){
+        -:  483:
+        -:  484:    uint16                  Idx;
+        -:  485:    CFE_SB_DestinationD_t   *DestPtr;
+        -:  486:
+      433:  487:    Idx = CFE_SB_GetRoutingTblIdx(MsgId);
+        -:  488:
+      433:  489:    if(Idx==CFE_SB_AVAILABLE){
+      399:  490:        return CFE_SB_NO_DUPLICATE;
+        -:  491:    }/* end if */
+        -:  492:
+       34:  493:    DestPtr = CFE_SB.RoutingTbl[Idx].ListHeadPtr;
+        -:  494:
+      224:  495:    while(DestPtr != NULL){
+        -:  496:
+      158:  497:        if(DestPtr -> PipeId == PipeId){
+        2:  498:            return CFE_SB_DUPLICATE;
+        -:  499:        }/* end if */
+        -:  500:
+      156:  501:        DestPtr = DestPtr->Next;
+        -:  502:
+        -:  503:    }/* end while */
+        -:  504:
+       32:  505:    return CFE_SB_NO_DUPLICATE;
+        -:  506:
+        -:  507:}/* end CFE_SB_DuplicateSubscribeCheck */
+        -:  508:
+        -:  509:
+        -:  510:
+        -:  511:/******************************************************************************
+        -:  512:**  Function:  CFE_SB_SetMsgSeqCnt()
+        -:  513:**
+        -:  514:**  Purpose:
+        -:  515:**    SB internal function to set the sequence count of a message to a
+        -:  516:**    particular value.
+        -:  517:**
+        -:  518:**  Arguments:
+        -:  519:**    MsgPtr  : pointer to the message
+        -:  520:**    Count   : sets the sequence count to this value
+        -:  521:**
+        -:  522:**  Return:
+        -:  523:**    None
+        -:  524:*/
+       18:  525:void CFE_SB_SetMsgSeqCnt(CFE_SB_MsgPtr_t MsgPtr,uint32 Count){
+        -:  526:
+        -:  527:#ifdef MESSAGE_FORMAT_IS_CCSDS
+       18:  528:    CCSDS_WR_SEQ(MsgPtr->Hdr,Count);
+        -:  529:#endif
+        -:  530:
+       18:  531:}/* end CFE_SB_SetMsgSeqCnt */
+        -:  532:
+        -:  533:
+        -:  534:/******************************************************************************
+        -:  535:**  Function:  CFE_SB_ValidateMsgId()
+        -:  536:**
+        -:  537:**  Purpose:
+        -:  538:**    SB internal function to validate a given MsgId.
+        -:  539:**
+        -:  540:**  Arguments:
+        -:  541:**
+        -:  542:**  Return:
+        -:  543:**    None
+        -:  544:*/
+      917:  545:int32 CFE_SB_ValidateMsgId(CFE_SB_MsgId_t MsgId){
+        -:  546:
+        -:  547:    /* ensure the ccsds version number in MsgId is 0 */
+        -:  548:    /* cppcheck-suppress redundantCondition */
+      917:  549:    if((MsgId > CFE_SB_HIGHEST_VALID_MSGID)||
+        -:  550:       (MsgId == CFE_SB_INVALID_MSG_ID))
+        -:  551:    {
+        8:  552:        return CFE_SB_FAILED;
+        -:  553:    }else{
+      909:  554:        return CFE_SUCCESS;
+        -:  555:    }/* end if */
+        -:  556:
+        -:  557:}/* end CFE_SB_ValidateMsgId */
+        -:  558:
+        -:  559:
+        -:  560:/******************************************************************************
+        -:  561:**  Function:  CFE_SB_ValidatePipeId()
+        -:  562:**
+        -:  563:**  Purpose:
+        -:  564:**    This function checks that the pipe id does not have an index larger than the
+        -:  565:**    array and that the pipe is in use.
+        -:  566:**
+        -:  567:**  Arguments:
+        -:  568:**
+        -:  569:**  Return:
+        -:  570:**    None
+        -:  571:*/
+      820:  572:int32 CFE_SB_ValidatePipeId(CFE_SB_PipeId_t PipeId){
+        -:  573:
+      820:  574:    if((PipeId >= CFE_SB_MAX_PIPES)||
+        -:  575:       (CFE_SB.PipeTbl[PipeId].InUse == CFE_SB_NOT_IN_USE))
+        -:  576:    {
+        8:  577:        return CFE_SB_FAILED;
+        -:  578:    }else{
+      812:  579:        return CFE_SUCCESS;
+        -:  580:    }/* end if */
+        -:  581:
+        -:  582:}/* end CFE_SB_ValidatePipeId */
+        -:  583:
+        -:  584:
+        -:  585:/******************************************************************************
+        -:  586:**  Function:  CFE_SB_GetAppTskName()
+        -:  587:**
+        -:  588:**  Purpose:
+        -:  589:**    This function returns a pointer to the app.tsk name string
+        -:  590:**
+        -:  591:**  Arguments:
+        -:  592:**    TaskId - the task id of the app.task name desired
+        -:  593:**    FullName - string buffer to store name
+        -:  594:**
+        -:  595:**  Return:
+        -:  596:**    Pointer to App.Tsk Name
+        -:  597:**
+        -:  598:**  Note: With taskId, Parent App name and Child Task name can be queried from ES
+        -:  599:**
+        -:  600:*/
+     1284:  601:char *CFE_SB_GetAppTskName(uint32 TaskId,char *FullName){
+        -:  602:
+        -:  603:    CFE_ES_TaskInfo_t  TaskInfo;
+     1284:  604:    CFE_ES_TaskInfo_t  *ptr = &TaskInfo;
+        -:  605:    char               AppName[OS_MAX_API_NAME];
+        -:  606:    char               TskName[OS_MAX_API_NAME];
+        -:  607:
+     1284:  608:    if(CFE_ES_GetTaskInfo(ptr, TaskId) != CFE_SUCCESS){
+        -:  609:
+        -:  610:      /* unlikely, but possible if TaskId is bogus */
+        1:  611:      strncpy(FullName,"Unknown",OS_MAX_API_NAME-1);
+        1:  612:      FullName[OS_MAX_API_NAME-1] = '\0';
+        -:  613:
+     1283:  614:    }else if(strncmp((char *)ptr->AppName,(char *)ptr->TaskName,OS_MAX_API_NAME-1) == 0){
+        -:  615:
+        -:  616:      /* if app name and task name are the same */
+      642:  617:      strncpy(FullName,(char *)ptr->AppName,OS_MAX_API_NAME-1);
+      642:  618:      FullName[OS_MAX_API_NAME-1] = '\0';
+        -:  619:
+        -:  620:    }else{
+        -:  621:
+        -:  622:      /* AppName and TskName buffers and strncpy are needed to limit string sizes */
+      641:  623:      strncpy(AppName,(char *)ptr->AppName,OS_MAX_API_NAME-1);
+      641:  624:      AppName[OS_MAX_API_NAME-1] = '\0';
+      641:  625:      strncpy(TskName,(char *)ptr->TaskName,OS_MAX_API_NAME-1);
+      641:  626:      TskName[OS_MAX_API_NAME-1] = '\0';
+        -:  627:
+      641:  628:      sprintf(FullName,"%s.%s",AppName,TskName);
+        -:  629:
+        -:  630:    }/* end if */
+        -:  631:
+     1284:  632:    return FullName;
+        -:  633:
+        -:  634:}/* end CFE_SB_GetAppTskName */
+        -:  635:
+        -:  636:
+        -:  637:/******************************************************************************
+        -:  638:**  Function:  CFE_SB_GetPktType()
+        -:  639:**
+        -:  640:**  Purpose:
+        -:  641:**    For CCSDS packets, this function returns the state of the cmd/tlm bit(12).
+        -:  642:**    For cmd pkts, the state is 1. For tlm pkts, the state is 0.
+        -:  643:**
+        -:  644:**  Arguments:
+        -:  645:**
+        -:  646:**  Return:
+        -:  647:**    None
+        -:  648:*/
+       22:  649:int32 CFE_SB_GetPktType(CFE_SB_MsgId_t MsgId){
+        -:  650:
+        -:  651:#ifdef MESSAGE_FORMAT_IS_CCSDS
+        -:  652:
+       22:  653:        return CFE_TST(MsgId,12);
+        -:  654:
+        -:  655:#endif
+        -:  656:
+        -:  657:}/* end CFE_SB_GetPktType */
+        -:  658:
+        -:  659:
+        -:  660:/******************************************************************************
+        -:  661:**  Function:  CFE_SB_RequestToSendEvent()
+        -:  662:**
+        -:  663:**  Purpose:
+        -:  664:**    This function will test the given bit for the given task. If the bit is set
+        -:  665:**    this function will return CFE_SB_DENIED. If bit is not set, this function set
+        -:  666:**    the bit and return CFE_SB_GRANTED. This will prevent recursive events from
+        -:  667:**    occurring.
+        -:  668:**
+        -:  669:**  Arguments:
+        -:  670:**
+        -:  671:**  Return:
+        -:  672:**    If the bit is set this function will return CFE_SB_DENIED.
+        -:  673:**    If bit is not set, this function set the bit and return CFE_SB_GRANTED.
+        -:  674:*/
+       26:  675:uint32 CFE_SB_RequestToSendEvent(uint32 TaskId, uint32 Bit){
+        -:  676:
+       26:  677:    OS_ConvertToArrayIndex(TaskId, &TaskId);
+        -:  678:
+        -:  679:    /* if bit is set... */
+       26:  680:    if(CFE_TST(CFE_SB.StopRecurseFlags[TaskId],Bit)==TRUE)
+        -:  681:    {
+        -:  682:
+        6:  683:      return CFE_SB_DENIED;
+        -:  684:
+        -:  685:    }else{
+        -:  686:
+       20:  687:      CFE_SET(CFE_SB.StopRecurseFlags[TaskId],Bit);
+       20:  688:      return CFE_SB_GRANTED;
+        -:  689:
+        -:  690:    }/* end if */
+        -:  691:
+        -:  692:}/* end CFE_SB_RequestToSendEvent */
+        -:  693:
+        -:  694:/******************************************************************************
+        -:  695:**  Function:  CFE_SB_FinishSendEvent()
+        -:  696:**
+        -:  697:**  Purpose:
+        -:  698:**    This function will clear the given bit for the given task. Called after
+        -:  699:**    a successful CFE_SB_RequestToSendEvent()
+        -:  700:**
+        -:  701:**  Arguments:
+        -:  702:**
+        -:  703:**  Return:
+        -:  704:**    If the bit is set this function will return CFE_SB_DENIED.
+        -:  705:**    If bit is not set, this function set the bit and return CFE_SB_GRANTED.
+        -:  706:*/
+       19:  707:void CFE_SB_FinishSendEvent(uint32 TaskId, uint32 Bit){
+        -:  708:
+       19:  709:    OS_ConvertToArrayIndex(TaskId, &TaskId);
+        -:  710:
+        -:  711:    /* clear the bit so the task may send this event again */
+       19:  712:    CFE_CLR(CFE_SB.StopRecurseFlags[TaskId],Bit);
+       19:  713:}/* end CFE_SB_RequestToSendEvent */
+        -:  714:
+        -:  715:
+        -:  716:
+        -:  717:/******************************************************************************
+        -:  718:**  Function:  CFE_SB_AddDest()
+        -:  719:**
+        -:  720:**  Purpose:
+        -:  721:**      This function will add the given node to the head of the list.
+        -:  722:**
+        -:  723:**  Arguments:
+        -:  724:**      RtgTblIdx - Routing table index
+        -:  725:**      Dest - Pointer to the destination block to add to the list
+        -:  726:**
+        -:  727:**  Return:
+        -:  728:**
+        -:  729:*/
+      427:  730:int32 CFE_SB_AddDest(uint16 RtgTblIdx, CFE_SB_DestinationD_t *NewNode){
+        -:  731:
+        -:  732:    CFE_SB_DestinationD_t *WBS;/* Will Be Second (WBS) node */
+        -:  733:
+        -:  734:    /* if first node in list */
+      427:  735:    if(CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr == NULL){
+        -:  736:
+        -:  737:        /* initialize the new node */
+      396:  738:        NewNode->Next = NULL;
+      396:  739:        NewNode->Prev = NULL;
+        -:  740:
+        -:  741:        /* insert the new node */
+      396:  742:        CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr = NewNode;
+        -:  743:
+        -:  744:    }else{
+        -:  745:
+       31:  746:        WBS = CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr;
+        -:  747:
+        -:  748:        /* initialize the new node */
+       31:  749:        NewNode->Next = WBS;
+       31:  750:        NewNode->Prev = NULL;
+        -:  751:
+        -:  752:        /* insert the new node */
+       31:  753:        WBS -> Prev = NewNode;
+       31:  754:        CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr = NewNode;
+        -:  755:
+        -:  756:    }/* end if */
+        -:  757:
+      427:  758:    return CFE_SUCCESS;
+        -:  759:
+        -:  760:}/* CFE_SB_AddDest */
+        -:  761:
+        -:  762:
+        -:  763:
+        -:  764:/******************************************************************************
+        -:  765:**  Function:  CFE_SB_RemoveDest()
+        -:  766:**
+        -:  767:**  Purpose:
+        -:  768:**      This function will remove the given node from the list.
+        -:  769:**      This function assumes there is at least one node in the list.
+        -:  770:**
+        -:  771:**  Arguments:
+        -:  772:**      RtgTblIdx - Routing table index
+        -:  773:**      Dest - Pointer to the destination block to remove from the list
+        -:  774:**
+        -:  775:**  Return:
+        -:  776:**
+        -:  777:*/
+      422:  778:int32 CFE_SB_RemoveDest(uint16 RtgTblIdx, CFE_SB_DestinationD_t *NodeToRemove){
+        -:  779:
+        -:  780:    CFE_SB_DestinationD_t *PrevNode;
+        -:  781:    CFE_SB_DestinationD_t *NextNode;
+        -:  782:
+        -:  783:    /* if this is the only node in the list */
+      815:  784:    if((NodeToRemove->Prev == NULL) && (NodeToRemove->Next == NULL)){
+        -:  785:
+      393:  786:        CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr = NULL;
+        -:  787:
+        -:  788:    /* if first node in the list and list has more than one */
+       29:  789:    }else if(NodeToRemove->Prev == NULL){
+        -:  790:
+        1:  791:        NextNode = NodeToRemove->Next;
+        -:  792:
+        1:  793:        NextNode -> Prev = NULL;
+        -:  794:
+        1:  795:        CFE_SB.RoutingTbl[RtgTblIdx].ListHeadPtr = NextNode;
+        -:  796:
+        -:  797:    /* if last node in the list and list has more than one */
+       28:  798:    }else if(NodeToRemove->Next == NULL){
+        -:  799:
+       27:  800:        PrevNode = NodeToRemove->Prev;
+        -:  801:
+       27:  802:        PrevNode -> Next = NULL;
+        -:  803:
+        -:  804:    /* NodeToRemove has node(s) before and node(s) after */
+        -:  805:    }else{
+        -:  806:
+        1:  807:        PrevNode = NodeToRemove->Prev;
+        1:  808:        NextNode = NodeToRemove->Next;
+        -:  809:
+        1:  810:        PrevNode -> Next = NextNode;
+        1:  811:        NextNode -> Prev = PrevNode;
+        -:  812:
+        -:  813:    }/* end if */
+        -:  814:
+        -:  815:
+        -:  816:    /* initialize the node before returning it to the heap */
+      422:  817:    NodeToRemove -> Next = NULL;
+      422:  818:    NodeToRemove -> Prev = NULL;
+        -:  819:
+      422:  820:    return CFE_SUCCESS;
+        -:  821:
+        -:  822:}/* CFE_SB_RemoveDest */
+        -:  823:
+        -:  824:
+        -:  825:/******************************************************************************
+        -:  826:** Name:    CFE_SB_ZeroCopyReleaseAppId
+        -:  827:**
+        -:  828:** Purpose: API used for releasing all pointers to a buffers (for zero copy mode
+        -:  829:**          only) for a specific Application. This function is used for cleaning
+        -:  830:**          up when an application crashes.
+        -:  831:**
+        -:  832:** Assumptions, External Events, and Notes:
+        -:  833:**          None
+        -:  834:**
+        -:  835:** Date Written:
+        -:  836:**          07/23/2009
+        -:  837:**
+        -:  838:** Input Arguments:
+        -:  839:**          AppId
+        -:  840:**
+        -:  841:** Output Arguments:
+        -:  842:**          None
+        -:  843:**
+        -:  844:** Return Values:
+        -:  845:**          Status
+        -:  846:**
+        -:  847:******************************************************************************/
+        -:  848:int32 CFE_SB_ZeroCopyReleaseAppId(uint32         AppId)
+        2:  849:{
+        2:  850:    CFE_SB_ZeroCopyD_t *prev = NULL;
+        2:  851:    CFE_SB_ZeroCopyD_t *zcd = (CFE_SB_ZeroCopyD_t *) (CFE_SB.ZeroCopyTail);
+        -:  852:
+        8:  853:    while(zcd != NULL){
+        4:  854:        prev = (CFE_SB_ZeroCopyD_t *) (zcd->Prev);
+        4:  855:        if(zcd->AppID == AppId){
+        2:  856:            CFE_SB_ZeroCopyReleasePtr((CFE_SB_Msg_t *) zcd->Buffer, (CFE_SB_ZeroCopyHandle_t) zcd);
+        -:  857:        }
+        4:  858:        zcd = prev;
+        -:  859:    }
+        -:  860:
+        2:  861:    return CFE_SUCCESS;
+        -:  862:
+        -:  863:}/* end CFE_SB_ZeroCopyReleasePtr */
+        -:  864:
+        -:  865:/*****************************************************************************/
+        -:  866:

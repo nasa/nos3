@@ -1,0 +1,40 @@
+; File ttscript1.in
+; Created on 10/5/05
+; Revised 1/20/06 Labels added for information.
+* Input file ttscript1.in is being read from test2 directory.
+*
+* 0 Simulate Empty Pipe
+* Initial table values should be: 5,10,15,20
+! 
+180e cccc 0001 b7cc ; Housekeeping Request 
+*
+* ^Load file /tt_table_values1.dat
+* Following load, table values should be: 25,30,35,40
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values1.dat
+!
+180e cccc 0001 b7cc ; Housekeeping Request 
+*
+* 0 Simulate Empty Pipe
+!
+180e cccc 0001 b7cc ; Housekeeping Request  
+*
+* ^Load file /tt_table_values2.dat
+* Following load, table values should be: 45,50,55,60
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values2.dat 
+!
+180e cccc 0001 b7cc ; Housekeeping Request
+*
+* ^Load file /tt_table_values3.dat
+* Following load, table values should be: 65,70,75,80
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values3.dat
+! 
+180e cccc 0001 b7cc ; Housekeeping Request
+*
+* ^Load file /tt_table_values.dat
+* Following load, table values should be: 1,2,3,4
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values.dat
+! 
+*
+* 0 Simulate Empty Pipe
+!  
+180e cccc 0001 b7cc ; Housekeeping Request

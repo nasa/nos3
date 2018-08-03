@@ -1,0 +1,72 @@
+!This file supports the I&T Telemetry database for SDO S/C Simulator
+!       Date of last change: 22 July 2004
+!  INITIAL DRAFT CREATION                                     EJB    06JAN04
+!  MODIFY S/C SIM APID NUMBERS                                EJB    16APR04
+!  ADD INSTRUMENT PROVIDED RDL DEFINITIONS                    EJB    04MAY04
+!  ADD SIMULATOR ANALOG DATA PACKET                           EJB    06MAY04
+!  ADD COMMON SDN DATA PACKETS                                EJB    11MAY04
+!  REMOVE HMI FILES IN ORDER TO COMPLIER COMMON SDN PACKETS   EJB    13MAY04
+!  ADD COMMON SDN SLOW DATA PACKET                            EJB    25MAY04
+!  Add memory dwell packets.                                  PK     07JUN04
+!  Added pseudo packet 3300 for event decoding                CMF    16JUL04
+!  Added user defined data types                              CMF    16JUL04
+!  Added sdo_types.rdl include                                MDM    22JUL04
+!  Included data_center_tlm.rdl for ASIST UDP msging          MOB    18AUG04
+!  Included cfe_tlm_csdn_024.rdl for cfe event messaging      SLS    07SEP04
+!  Included cfe_ptlm_csdn_024.rdl for efe event messaging     SLS    07SEP04
+!  Replaced cfe_ptlm_csdn_3e8.rdl with cfe_event_pseudo       MOB    21SEP04
+!  Replaced sdo_tlm_csdn_020.rdl with cfe_tlm_cdh_054         MOB    21SEP04
+!  Added APID 25                                              EIS    22SEP04 
+!  Added cfe_tlm_cdh_057.rdl and cfe_tlm_pse_089.rdl          TGC    27SEP04    
+!  Added cfe_pseudo_tlm_cdh_057.rdl                           TGC    04OCT04
+!  Modified the order of ULI                                  TGC    04OCT04
+!  Added cfe_pseudo_tlm_scstat_1001.rdl                       TGC    14OCT04
+!  Added cfe_pseudo_tlm_ace_1025.rdl                          TGC    15OCT04
+!  Added cfe_pseudo_tlm_pse_1089.rdl                          TGC    15OCT04
+
+MODIFY UTC ABSOLUTE=TAI
+MODIFY SUTC ABSOLUTE=TAI
+MODIFY ULI ORDER=(1,2,3,4)
+
+#include "data_center_tlm.rdl"
+
+!CMF 7/16/04
+#include "sdo_types.rdl"
+#include "user_defs.rdl"
+#include "mac_typesa.rdl"
+#include "route_type.rdl"
+!
+#include "cfe_tlm_ace_010.rdl"
+#include "cfe_tlm_ace_011.rdl"
+#include "cfe_tlm_ace_012.rdl"
+#include "cfe_tlm_ace_025.rdl"
+#include "sc_tlm_cdh_sb_035.rdl"
+#include "cfe_tlm_cdh_042.rdl"
+#include "cfe_tlm_cdh_043.rdl"
+#include "cfe_tlm_cdh_044.rdl"
+#include "cfe_tlm_cdh_057.rdl"
+#include "cfe_tlm_pse_074.rdl"
+#include "cfe_tlm_pse_075.rdl"
+#include "cfe_tlm_pse_076.rdl"
+#include "cfe_tlm_pse_089.rdl"
+#include "sdo_tlm_csdn_017.rdl"
+#include "sdo_tlm_csdn_018.rdl"
+#include "cfe_tlm_cdh_054.rdl"
+#include "cfe_tlm_csdn_024.rdl"
+!
+#include "sdotlm75.rdl"
+!
+#include "sdo_ptlm_csdn_1013.rdl"
+#include "sdo_ptlm_csdn_1020.rdl"
+#include "sdo_ptlm_csdn_1021.rdl"
+#include "sdo_ptlm_csdn_1022.rdl"
+#include "sdo_ptlm_csdn_1023.rdl"
+#include "sdo_ptlm_csdn_1024.rdl"
+#include "cfe_event_pseudo.rdl"
+#include "cfe_pseudo_tlm_scstat_1001.rdl"
+#include "cfe_pseudo_tlm_ace_1025.rdl"
+#include "cfe_pseudo_tlm_cdh_1057.rdl"
+#include "cfe_pseudo_tlm_pse_1089.rdl"
+!
+!
+!#include "sdo_ptlm_gse_3300.rdl"

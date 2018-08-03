@@ -1,0 +1,520 @@
+/**
+  \page cfeevsovr cFE Event Services Overview
+  
+  Event Services (EVS)  provides centralized control for the processing of event messages 
+  originating from the EVS task itself, other cFE core applications (ES, SB, TIME, and TBL), 
+  and from cFE applications.  Event messages are asynchronous messages that are used to 
+  inform the operator of a significant event.  EVS provides various ways to filter event 
+  messages in order to manage event message generation.
+  
+  For more information on cFE Event Services, see the following sections:
+  
+  <UL>
+    <LI> \subpage cfeevsugmsgformat <BR>
+    <LI> \subpage cfeevsuglog <BR>
+    <LI> \subpage cfeevsugmsgcntrl <BR>
+    <LI> \subpage cfeevsugmsgfilter <BR>
+    <LI> \subpage cfeevsugregistry <BR>
+    <LI> \subpage cfeevsugcounters <BR>
+    <LI> \subpage cfeevsugresetctrs <BR>
+    <LI> \subpage cfeevsugprocreset <BR>
+    <LI> \subpage cfeevsugfaq <BR> 
+  </UL>
+  
+  \subpage cfeevsrevhist <BR>
+  
+**/
+
+/**
+  \page cfeevsugmsgformat Event Message Format  
+  
+  Event messages are software bus messages that contain the following fields: <BR>
+
+  <UL>
+    <LI> Application Name <BR>
+    <LI> Event ID         <BR>
+    <LI> EventType        <BR>
+    <LI> Spacecraft ID    <BR>
+    <LI> Processor ID     <BR>                                      
+    <LI> Message          <BR>
+  </UL>
+
+  The <i>Application Name</i> refers to the Application that issued the event message.  
+  The <i>Event ID</i>  is an Application unique number that identifies the event.  The 
+  Event Type can be one of four types:  DEBUG, INFO, ERROR or CRITICAL.  The 
+  <i>Spacecraft ID</i> and <i>Processor ID</i> identify the spacecraft and processor from 
+  which the event was generated.  Note that the <i>Spacecraft ID</i> is defined in the 
+  cfe_mission_cfg.h file; The <i>Processor ID</i> is defined in the appropriate 
+  cfe_platform_cfg.h file.  The <i>Message</i> is an ASCII text string describing the 
+  event.  Event messages may have parameters associated with the event message. 
+  EVS formats the parameters such that they are part of the ASCII text string 
+  that make up the event message.
+
+  In order to accommodate missions that have limited telemetry bandwidth, EVS 
+  can be configured such that the ASCII text string part of the event message 
+  is omitted, thus reducing the size of each event message.  This is referred 
+  to as <i>Short Format</i>;  Event messages including the ASCII text string are referred 
+  to as <i>Long Format</i>.  The default setting is specified in the cfe_platform_cfg.h file.  
+  EVS also provides commands in order to set the mode (short or long).
+
+  Since the design of the cFE's Software Bus is based on run-time registration, no 
+  predetermined message routing is defined, hence it is not truly correct to say 
+  that events are generated as telemetry.  Technically, EVS generates events in 
+  the form of software bus messages.  Applications such as Telemetry Output and 
+  Data Storage can then subscribe to these messages making them telemetry.  For 
+  the purposes of this document, any references to telemetry assumes that a telemetry 
+  application subscribes to the EVS event software bus message and routes it to the 
+  ground as telemetry.
+
+  The EVS can be configured via ground command to send event messages out one or 
+  more message ports.  These message ports may include ports such as debug, console, 
+  and UART.  Messages sent out of the message ports will be in ASCII text format.  
+  This is generally used for lab purposes.
+
+
+  Next: \ref cfeevsuglog <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsuglog Local Event Log
+  
+  In addition to generating a software bus message, EVS logs the event message to a 
+  Local Event Log.  Note that this is an optional feature that must be enabled via 
+  the cfe_platform_cfg.h file.  The Local Event Log resides on the same processor 
+  as the EVS which is used to store events without relying on an external bus.  In 
+  multi-processor cFE configurations the Local Event Buffer preserves event messages 
+  during non-deterministic processor initialization sequences and during failure 
+  scenarios.  In order to obtain the contents of the Local Event Log, a command must 
+  be sent to write the contents of the buffer to a file which can then be sent to the 
+  ground via a file transfer mechanism.  
+
+  EVS provides a command in order to \link #CFE_EVS_CLEAR_LOG_CC clear the Local Event Log \endlink.  
+
+  <CENTER><H2> Local Event Log Mode </H2></CENTER>
+
+  EVS can be configured to control the Local Event Log to either discard or overwrite 
+  the contents of the log when it becomes full.  If the mode is set to overwrite, the 
+  log is treated like a circular buffer, overwriting the oldest event message contained 
+  in the log first.  This control is configured by default in the cfe_platform_cfg.h 
+  file but can be modified by \link #CFE_EVS_SET_LOG_MODE_CC a command \endlink.  
+
+
+  Next: \ref cfeevsugmsgcntrl <BR>
+  Prev: \ref cfeevsugmsgformat <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugmsgcntrl Event Message Control
+  
+  In order for an application to be serviced by EVS, it must be registered with EVS.  
+  EVS provides various commands in order to control the event messages that are 
+  generated as software bus messages.  
+
+  <CENTER><H2> Event Message Control - By Type </H2></CENTER>
+
+  The highest level of event message control that EVS provides is the ability to 
+  enable and disable event message types.  As mentioned above, there are four event 
+  types.  They are:
+
+  <OL>
+    <LI> DEBUG         <BR>
+    <LI> INFORMATION   <BR>
+    <LI> ERROR         <BR>
+    <LI> CRITICAL      <BR>
+  </OL>
+
+  When commands are sent to \link #CFE_EVS_ENABLE_EVENT_TYPE_CC enable \endlink 
+  or \link #CFE_EVS_DISABLE_EVENT_TYPE_CC disable \endlink a particular type of event 
+  message, ALL event messages of the specified type are affected.  Typically, event 
+  meesages of type DEBUG are disabled on-orbit.  Note that EVS provides the capability 
+  to affect multiple types within one command using a bit mask.  Note also that the 
+  configuration parameter #CFE_EVS_DEFAULT_TYPE_FLAG in the cfe_platform_cfg.h file 
+  specifies which event message types are enabled/disabled by default.  
+
+  <CENTER><H2> Event Message Control - By Application </H2></CENTER>
+
+  Commands are available to \link #CFE_EVS_ENABLE_APP_EVENTS_CC enable \endlink and 
+  \link #CFE_EVS_DISABLE_APP_EVENTS_CC disable \endlink the generation of event messages 
+  for a particular application.  The result is that ALL event messages for the specified 
+  Application are affected (i.e. enabled or disabled).
+
+  <CENTER><H2> Event Message Control - By Event Type for an Application </H2></CENTER> 
+
+  EVS also provides the capability to \link #CFE_EVS_ENABLE_APP_EVENT_TYPE_CC enable \endlink
+  / \link #CFE_EVS_DISABLE_APP_EVENT_TYPE_CC disable \endlink an event type for a particular 
+  application.  Note that EVS provides the capability to affect multiple event types 
+  within one command using a bit mask.
+
+  <CENTER><H2> Event Message Control - Individual Events </H2></CENTER>
+                                                                   
+  There are two ways to control the generation of individual events depending on 
+  whether the application's event message has been registered with EVS or not.  
+
+  <CENTER><H3> Modifying a registered event message filter </H3></CENTER>
+
+  When an application registers with EVS, the application has the option of specifying 
+  the events that it wants to register for filtering along with the 
+  \ref cfeevsugmsgfilter (only the Binary Filtering Scheme 
+  exists currently).   Note that applications are limited in the number of events that 
+  they can register for filtering (see #CFE_EVS_MAX_EVENT_FILTERS in cfe_platform_cfg.h 
+  for the mission defined limit).  The filtering method uses a mask to determine if the 
+  message is forwarded to the software bus, making it available in telemetry (see 
+  \ref cfeevsugmsgfilter for a description on filtering).  Commands are available to 
+  \link #CFE_EVS_SET_FILTER_CC modify the filter mask \endlink for any registered event.   
+
+  An on-orbit mission, for example, might be experiencing a problem resulting in an 
+  application's event message being repeatedly issued,  flooding the downlink.  If the 
+  event message for the application is registered with EVS, then a command can be issued 
+  to set the event message filter to the specified value in order to prevent flooding of 
+  the downlink.  
+
+  <CENTER><H3> Adding/Removing an event message for filtering </H3></CENTER>
+
+  Commands are also available to add filtering for those events that are not registered 
+  for filtering.  Once an event is \link #CFE_EVS_ADD_EVENT_FILTER_CC registered for filtering \endlink,
+  the filter can be modified (see above) or \link #CFE_EVS_DELETE_EVENT_FILTER_CC removed \endlink.
+
+  An on-orbit mission, for example, might be experiencing a problem resulting in a event 
+  message being repeatedly issued,  flooding the downlink. If the event message was not 
+  registered with EVS for filtering then the ground can add (i.e. register) the offending 
+  application's event for filtering (much like an application registers the event during 
+  initialization).  
+
+  EVS also supports the ability to \link #CFE_EVS_DELETE_EVENT_FILTER_CC remove \endlink 
+  (i.e. unregister) an application's event message.  Once it is removed, the event will no 
+  longer be filtered.  Note that commands issued to disable events by event type, by application 
+  or by event type for an application are still valid and could affect this particular event.
+
+
+  Next: \ref cfeevsugmsgfilter <BR>
+  Prev: \ref cfeevsuglog <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugmsgfilter Event Message Filtering
+  
+  EVS uses a hexadecimal bit mask that controls how often a message is filtered.  An event's 
+  filter mask is bit-wise ANDed with the event's event counter.  There is one event counter 
+  for each event ID.  If the result of the ANDing is zero then the message is sent. 
+
+  Filter masks can be set so that one out of 1, 2, 4, 8
+ events are sent.  Some examples of 
+  masks that use this pattern are: (0x0000, Every one), (0x0001, One of every 2), (0x0003, 
+  One of every 4), and (0x0007, One of every 8.  
+
+  Filter masks can also be set so that only the first n events are sent.  For example, the 
+  mask 0xFFFF generates one event message and then stops.  Note that when the filter counter 
+  is reset to zero by command, this will restart the counting and enable n more events to be sent.
+
+  Event messages will be filtered until #CFE_EVS_MAX_FILTER_COUNT events of the filtered
+  event ID from the application have been received. After this, the filtering will become locked
+  (no more of that event will be received by the ground) until the filter is either reset or 
+  deleted by ground command. This is to prevent the counter from rolling over, which would cause
+  some filters to behave improperly. An event message will be sent when this maximum count is
+  reached.
+
+  The following shows an example of how filtering works using a filter mask of x'0001', resulting 
+  in sending every other event:
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="100%">
+  <TR>
+    <TD> &nbsp;
+    <TD> <B>packet x</B>  
+    <TD> <B>packet X+1</B>
+    <TD> <B>packet X+2</B>
+    <TD> <B>packet X+3</B>
+    <TD> <B>packet X+4</B>
+    <TD> <B>...</B>
+  <TR>
+    <TD> <B>Event ID counter</B>
+    <TD> x'0000'
+    <TD> x'0001'
+    <TD> x'0002'
+    <TD> x'0003'
+    <TD> x'0004'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Event Filter mask</B>
+    <TD> x'0001'
+    <TD> x'0001'
+    <TD> x'0001'
+    <TD> x'0001'
+    <TD> x'0001'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Bitwise AND results</B>
+    <TD> x'0000'
+    <TD> x'0001'
+    <TD> x'0000'
+    <TD> x'0001'
+    <TD> x'0000'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Send event?</B>
+    <TD> Yes
+    <TD> No
+    <TD> Yes
+    <TD> No
+    <TD> Yes
+    <TD> &nbsp;
+  </TABLE> 
+
+  In this example, the ground uses a filter mask of x'FFFE' resulting in the first two 
+  events being sent and then no more.
+
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="100%">
+  <TR>
+    <TD> &nbsp;
+    <TD> <B>packet x</B>  
+    <TD> <B>packet X+1</B>
+    <TD> <B>packet X+2</B>
+    <TD> <B>packet X+3</B>
+    <TD> <B>packet X+4</B>
+    <TD> <B>...</B>
+  <TR>
+    <TD> <B>Event ID counter</B>
+    <TD> x'0000'
+    <TD> x'0001'
+    <TD> x'0002'
+    <TD> x'0003'
+    <TD> x'0004'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Event Filter mask</B>
+    <TD> x'FFFE'
+    <TD> x'FFFE'
+    <TD> x'FFFE'
+    <TD> x'FFFE'
+    <TD> x'FFFE'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Bitwise AND results</B>
+    <TD> x'0000'
+    <TD> x'0000'
+    <TD> x'0002'
+    <TD> x'0002'
+    <TD> x'0004'
+    <TD> &nbsp;
+  <TR>
+    <TD> <B>Send event?</B>
+    <TD> Yes
+    <TD> Yes
+    <TD> No
+    <TD> No
+    <TD> No
+    <TD> &nbsp;
+  </TABLE> 
+
+  See cfe_evs.h for predefined macro values which can be used for masks.
+
+  Next: \ref cfeevsugregistry <BR>
+  Prev: \ref cfeevsugmsgcntrl <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugregistry EVS Registry
+  
+  EVS maintains information on each registered application and all events registered 
+  for an application.  
+  
+  The registry contains the following information for each Registered Application:
+  
+  <UL>
+     <LI> Active Flag - If equal to FALSE (0), all events from this Application are Filtered <BR>
+     <LI> Event Count - Total number of events issued by this Application.  Note that this value
+     stop incrementing at 65535. <BR>
+     <BR>The following information for each Filtered Event (up to #CFE_EVS_MAX_EVENT_FILTERS): <BR><BR>
+     <LI> Event ID - Event ID for event whose filter has been defined <BR>
+     <LI> Mask - Binary Filter mask value (see \ref cfeevsugmsgfilter for an explanation) <BR>
+     <LI> Count - Current number of times this Event ID has been issued by this Application <BR>
+  </UL>
+  
+  
+  Next: \ref cfeevsugcounters <BR>
+  Prev: \ref cfeevsugmsgfilter <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugcounters EVS Counters
+  
+  There are 2 types of counters in EVS housekeeping telemetry:
+  
+  <UL>
+    <LI> Total events sent counter <BR>
+    <LI> Number of events sent for each Application <BR>
+  </UL>
+
+  The difference is that the first one is the sum of all of the event messages sent.  Both of these 
+  represent events that are actually sent (by EVS to the software bus).  If an event message is 
+  filtered or disabled, neither counter is incremented.
+  
+  There are other counters available that show how many event messages were generated by an App, 
+  however, these are only available for those events that are registered for filtering hence if you 
+  have a message that is not registered for filtering and the message type (e.g. DEBUG) is disabled 
+  then you won't know if the event was ever issued by an application.  These counters are available 
+  by sending a command to \link #CFE_EVS_FILE_WRITE_APP_DATA_CC write the EVS Application Data \endlink
+  and transferring the file to the ground. 
+
+
+  Next: \ref cfeevsugresetctrs <BR>
+  Prev: \ref cfeevsugregistry <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugresetctrs Resetting EVS Counters
+  
+  As far as reset commands, there are 4 commands available:
+  
+  <OL>
+    <LI>  \link #CFE_EVS_RESET_COUNTERS_CC Reset the total events sent counter \endlink <BR>
+    <LI>  \link #CFE_EVS_RESET_APP_COUNTER_CC Reset the events sent counter for a particular Application \endlink - 
+          e.g. reset the LC application events counter  <BR>
+    <LI>  \link #CFE_EVS_RESET_FILTER_CC Reset all of the event counters for a particular registered event for a 
+          particular Application \endlink - e.g. Reset event counter for Event ID 5 for the LC Application.<BR>
+    <LI>  \link #CFE_EVS_RESET_ALL_FILTERS_CC Reset all of the event counters for ALL registered events for 
+          a particular App \endlink - e.g.  Reset all registered event counters for LC.<BR>  
+  </OL>
+  
+  Note that there is currently no way to reset ALL of the events sent counters for all of the Apps with one command.
+
+
+  Next: \ref cfeevsugprocreset <BR>
+  Prev: \ref cfeevsugcounters <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugprocreset Effects of a Processor Reset on EVS
+  
+  On a processor reset, the EVS Registry is cleared such that applications must re-register 
+  with EVS in order to use EVS services.  All counters are also cleared with the exceptions 
+  of those listed below.  
+
+  On a processor reset, the following EVS data is preserved (if the cFE is configured to 
+  include an \ref cfeevsuglog):
+
+
+  <UL>
+     <LI> Local Event Log if the Local Event Log Mode is configured to Discard (1).  If the Local Event Log Mode is configured to Overwrite (0), the
+          contents of the log may be overwritten depending on the size and contents of the log prior to the reset. <BR>
+     <LI> Local Event Log Full Flag <BR>
+     <LI> Local Event Log overflow counter <BR>
+  </UL>
+
+  The Local Event Log Mode (overwrite/discard) is set to the configured value specified in the 
+  cfe_platform_cfg.h file.  The default value is Discard (1).  Discard mode will guarantee the contents
+  of the event log are preserved over a processor restart.
+
+  This provides the ground with the capability to write the Local Event Log to a file and 
+  transfer it to the ground in order to help debug a reset.
+  
+
+  Next: \ref cfeevsugfaq <BR>
+  Prev: \ref cfeevsugresetctrs <BR>
+  Up To: \ref cfeevsovr
+**/
+
+/**
+  \page cfeevsugfaq Frequently Asked Questions about Event Services
+
+    <TABLE BORDER="0" CELLPADDING="2" WIDTH="100%">
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           My telemetry stream is being flooded with the same event message.  How do I
+           make it stop?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           The most direct way to stop an event message from flooding your downlink 
+           stream is to send a command to EVS to filter the offending event (see 
+           \ref cfeevsugmsgcntrl or \link #CFE_EVS_SET_FILTER_CC \EVS_SETBINFLTRMASK \endlink).  
+           In order to stop the event message from being sent, a bit mask of \c '0xFFFF' should 
+           be used.  If the event is not currently registered for filtering, the event message 
+           must be added using the command \link #CFE_EVS_ADD_EVENT_FILTER_CC \EVS_ADDEVTFLTR \endlink.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           I filtered an event message and would now like to see it again.  What do I do in
+           order to see those events again?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           If the event message that you are interested is registered with EVS for filtering, 
+           then you have 2 options:
+      
+           <OL>
+              <LI>  You can use the \link #CFE_EVS_SET_FILTER_CC \EVS_SETBINFLTRMASK \endlink command 
+                    using a bit mask of \c '0x0000' which will result in getting all of the events for 
+                    that Event Id <BR>
+                    <BR> <B>or</B> <BR> <BR>
+              <LI>  You can remove the registration of that event with EVS 
+                    (see \link #CFE_EVS_DELETE_EVENT_FILTER_CC \EVS_DELEVTFLTR \endlink).<BR>  
+                    Note that option (1) is the preferred method. <BR>
+           </OL>
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           What is the purpose of DEBUG event messages?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           Event message of type "DEBUG" are primarily used during flight software development 
+           in order to provide information that is most likely not needed on orbit.  Some commands 
+           send debug event messages as verification that a command request was received.  When 
+           writing the EVS local event log to a file, for example, an event message of type DEBUG 
+           is issued.  On orbit, this event message is probably not needed.  Instead, the command 
+           counter is used for command verification.
+        <TR><TD COLSPAN=2 WIDTH="100%"> <B>(Q)
+           How do I find out which events are registered for filtering?
+        </B><TR><TD WIDTH="5%"> &nbsp; <TD WIDTH="95%">
+           EVS provides a command (\link #CFE_EVS_FILE_WRITE_APP_DATA_CC \EVS_WRITEAPPDATA2FILE \endlink)
+           which generates a file containing all of the applications that have registered with EVS and 
+           all of the filters that are registered for each application.  Note that EVS merely generates 
+           the file.  The file must be transferred to the ground in order to view it.
+    </TABLE>
+
+
+  Prev: \ref cfeevsugprocreset <BR>
+  Up To: \ref cfeevsovr
+**/
+  
+/**  
+**  \page cfeevscmds cFE Event Services Commands
+**
+**  The following is a list of commands that are processed by the cFE Event Services Task. 
+**/
+
+/**
+**  \page cfeevstlm  cFE Event Services Telemetry
+**
+**  The following are telemetry packets generated by the cFE Event Services Task.
+**/
+
+/**
+**  \page cfeevscfg  cFE Event Services Configuration Parameters
+**
+**  The following are configuration parameters used to configure the cFE Event Services
+**  either for each platform or for a mission as a whole.
+**/
+
+
+/**
+  \page cfeevsrevhist cFE Event Services Documentation Revision History
+  
+  \verbatim
+  $Log: cfe_evs.dox  $
+  Revision 1.7 2014/05/20 13:44:13GMT-05:00 sstrege 
+  Added clarification on event log preservation following a processor reset
+  Revision 1.6 2010/10/27 16:38:17EDT jmdagost 
+  Updated processor reset effects to describe LogMode behavior.
+  Revision 1.5 2009/07/31 20:08:34EDT aschoeni 
+  Updated comment on event message filtering maximum
+  Revision 1.4 2009/07/28 17:31:51EDT aschoeni 
+  Added information on filter count maximum
+  Revision 1.3 2008/12/08 12:07:12EST dkobe 
+  Updates to correct doxygen errors
+  Revision 1.2 2008/12/06 15:34:31EST dkobe 
+  Corrected formatting of revision history
+  Revision 1.1 2008/12/06 10:19:48EST dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
+  \endverbatim
+
+  Up To: \ref cfeevsovr
+**/

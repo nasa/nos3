@@ -1,0 +1,2424 @@
+##############################################################################
+## $Id: cs_test_log.txt 1.7 2017/03/29 19:30:33EDT mdeschu Exp  $
+##
+## Purpose: CFS CS application unit test baseline output log
+##
+## Author: Charles Zogby
+##
+##############################################################################
+
+CS 2.4.0.0 Unit Test Output:
+
+./cs_testrunner.exe
+
+Running Test: CS_App_TestCmdTlmAlign
+PASS: CS_HkPacket_t is 32-bit aligned
+PASS: CS_NoArgsCmd_t is 32-bit aligned
+PASS: CS_GetEntryIDCmd_t is 32-bit aligned
+PASS: CS_EntryCmd_t is 32-bit aligned
+PASS: CS_TableNameCmd_t is 32-bit aligned
+PASS: CS_AppNameCmd_t is 32-bit aligned
+PASS: CS_OneShotCmd_t is 32-bit aligned
+
+Running Test: CS_AppMain_Test_Nominal
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+ERROR EVENT ID=33 Invalid command pipe message ID: 0x0063
+INFO EVENT ID=146 App terminating, RunStatus:0x00000001
+SYSTEM LOG: CS App terminating, RunStatus:0x00000001, RC:0x00000000
+
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 3
+PASS: App terminating, RunStatus:0x00000001
+PASS: CS App terminating, RunStatus:0x00000001, RC:0x00000000
+
+
+Running Test: CS_AppMain_Test_RegisterAppError
+ERROR EVENT ID=35 App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+SYSTEM LOG: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: CS_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+PASS: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: CS_AppMain_Test_AppInitError
+ERROR EVENT ID=112 Software Bus Create Pipe for command returned: 0xFFFFFFFF
+ERROR EVENT ID=35 App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+SYSTEM LOG: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: CS_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: CS_AppMain_Test_RcvMsgError
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+ERROR EVENT ID=35 App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+SYSTEM LOG: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: CS_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+PASS: CS App terminating, RunStatus:0x00000003, RC:0xFFFFFFFF
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: CS_AppMain_Test_AppPipeError
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+PKT: 08 A4 C0 00 00 41 00 00 00 00 00 00 00 00 01 01 01 01 01 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Eeprom
+ERROR EVENT ID=123 Table update failed for Eeprom: 0xFFFFFFFF, checksumming Eeprom is disabled
+ERROR EVENT ID=35 App terminating, RunStatus:0x00000003, RC:0xCA000001
+SYSTEM LOG: CS App terminating, RunStatus:0x00000003, RC:0xCA000001
+
+PASS: CS_AppData.RunStatus == CFE_ES_APP_ERROR
+PASS: App terminating, RunStatus:0x00000003, RC:0xCA000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 4
+PASS: CS App terminating, RunStatus:0x00000003, RC:0xCA000001
+
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_Nominal
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+PASS: CS Initialized. Version 2.4.0.0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_EVSRegisterError
+SYSTEM LOG: CS App: Error Registering For Event Services, RC = 0xFFFFFFFF
+
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+PASS: CS App: Error Registering For Event Services, RC = 0xFFFFFFFF
+PASS: Ut_CFE_ES_GetSysLogQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_SBCreatePipeError
+ERROR EVENT ID=112 Software Bus Create Pipe for command returned: 0xFFFFFFFF
+PASS: Software Bus Create Pipe for command returned: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_SBSubscribeHKError
+ERROR EVENT ID=113 Software Bus subscribe to housekeeping returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to housekeeping returned: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_SBSubscribeBackgroundCycleError
+ERROR EVENT ID=114 Software Bus subscribe to background cycle returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to background cycle returned: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_SBSubscribeCmdError
+ERROR EVENT ID=115 Software Bus subscribe to command returned: 0xFFFFFFFF
+PASS: Software Bus subscribe to command returned: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_TableInitErrorEEPROM
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Eeprom
+ERROR EVENT ID=116 Table initialization failed for Eeprom: 0xFFFFFFFF
+PASS: Table initialization failed for Eeprom: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_AppInit_Test_TableInitErrorMemory
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Memory
+ERROR EVENT ID=117 Table initialization failed for Memory: 0xFFFFFFFF
+PASS: Table initialization failed for Memory: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_AppInit_Test_TableInitErrorApps
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Apps
+ERROR EVENT ID=119 Table initialization failed for Apps: 0xFFFFFFFF
+PASS: Table initialization failed for Apps: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_AppInit_Test_TableInitErrorTables
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Tables
+ERROR EVENT ID=118 Table initialization failed for Tables: 0xFFFFFFFF
+PASS: Table initialization failed for Tables: 0xFFFFFFFF
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_AppInit_Test_TextSegmentInfoError
+INFO EVENT ID=127 OS Text Segment disabled due to platform
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+PASS: OS Text Segment disabled due to platform
+PASS: CS Initialized. Version 2.4.0.0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_AppPipe_Test_TableUpdateErrors
+ERROR EVENT ID=36 Invalid msg length: ID = 0x18A0, CC = 0, Len = 72, Expected = 8
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table Eeprom
+ERROR EVENT ID=123 Table update failed for Eeprom: 0xCC000001, checksumming Eeprom is disabled
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table Memory
+ERROR EVENT ID=124 Table update failed for Memory: 0xCC000001, checksumming Memory is disabled
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table App
+ERROR EVENT ID=126 Table update failed for Apps: 0xCC000001, checksumming Apps is disabled
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table Table
+ERROR EVENT ID=125 Table update failed for Tables: 0xCC000001, checksumming Tables is disabled
+PASS: Result == CFE_SUCCESS
+PASS: Table update failed for Eeprom: 0xCC000001, checksumming Eeprom is disabled
+PASS: CS_AppData.EepromCSState == CS_STATE_DISABLED
+PASS: Table update failed for Memory: 0xCC000001, checksumming Memory is disabled
+PASS: CS_AppData.MemoryCSState == CS_STATE_DISABLED
+PASS: Table update failed for Apps: 0xCC000001, checksumming Apps is disabled
+PASS: CS_AppData.AppCSState == CS_STATE_DISABLED
+PASS: Table update failed for Tables: 0xCC000001, checksumming Tables is disabled
+PASS: CS_AppData.TablesCSState == CS_STATE_DISABLED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 9
+
+Running Test: CS_AppPipe_Test_BackgroundCycle
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_AppPipe_Test_NoopCmd
+INFO EVENT ID=2 No-op command. Version 2.4.0.0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ResetCmd
+DEBUG EVENT ID=3 Reset Counters command recieved
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_OneShotCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 2, Len = 8, Expected = 20
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_CancelOneShotCmd
+ERROR EVENT ID=26 Cancel OneShot checksum failed. No OneShot active
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableAllCSCmd
+INFO EVENT ID=5 Background Checksumming Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableAllCSCmd
+INFO EVENT ID=4 Background Checksumming Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableCfeCoreCmd
+INFO EVENT ID=7 Checksumming of cFE Core is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableCfeCoreCmd
+INFO EVENT ID=6 Checksumming of cFE Core is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineCfeCoreCmd
+INFO EVENT ID=11 Baseline of cFE Core has not been computed yet
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineCfeCoreCmd
+DEBUG EVENT ID=14 Recompute of cFE core started
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableOSCmd
+INFO EVENT ID=9 Checksumming of OS code segment is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableOSCmd
+INFO EVENT ID=8 Checksumming of OS code segment is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineOSCmd
+INFO EVENT ID=13 Baseline of OS code segment has not been computed yet
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineOSCmd
+DEBUG EVENT ID=17 Recompute of OS code segment started
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableEepromCmd
+INFO EVENT ID=38 Checksumming of Eeprom is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableEepromCmd
+INFO EVENT ID=37 Checksumming of Eeprom is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineEntryIDEepromCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 16, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineEepromCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 17, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableEntryIDEepromCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 18, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableEntryIDEepromCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 19, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_GetEntryIDEepromCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 20, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableMemoryCmd
+INFO EVENT ID=53 Checksumming of Memory is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableMemoryCmd
+INFO EVENT ID=52 Checksumming of Memory is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineEntryIDMemoryCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 23, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineMemoryCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 24, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableEntryIDMemoryCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 25, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableEntryIDMemoryCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 26, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_GetEntryIDMemoryCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 27, Len = 8, Expected = 12
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableTablesCmd
+INFO EVENT ID=68 Checksumming of Tables is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableTablesCmd
+INFO EVENT ID=67 Checksumming of Tables is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineTablesCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 30, Len = 8, Expected = 48
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineTablesCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 31, Len = 8, Expected = 48
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableNameTablesCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 32, Len = 8, Expected = 48
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableNameTablesCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 33, Len = 8, Expected = 48
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableAppCmd
+INFO EVENT ID=81 Checksumming of App is Enabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableAppCmd
+INFO EVENT ID=80 Checksumming of App is Disabled
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_ReportBaselineAppCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 36, Len = 8, Expected = 28
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_RecomputeBaselineAppCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 37, Len = 8, Expected = 28
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_EnableNameAppCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 38, Len = 8, Expected = 28
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_DisableNameAppCmd
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 39, Len = 8, Expected = 28
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_InvalidCCError
+ERROR EVENT ID=34 Invalid ground command code: ID = 0x189F, CC = 99
+PASS: Result == CFE_SUCCESS
+PASS: Invalid ground command code: ID = 0x189F, CC = 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppPipe_Test_InvalidMIDError
+ERROR EVENT ID=33 Invalid command pipe message ID: 0x0099
+PASS: Result == CFE_SUCCESS
+PASS: Invalid command pipe message ID: 0x0099
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HousekeepingCmd_Test_Nominal
+PKT: 00 00 00 00 00 00 00 
+PASS: CS_AppData.HkPacket.CmdCounter == 1
+PASS: CS_AppData.HkPacket.CmdErrCounter == 2
+PASS: CS_AppData.HkPacket.ChecksumState == 3
+PASS: CS_AppData.HkPacket.EepromCSState == 4
+PASS: CS_AppData.HkPacket.MemoryCSState == 5
+PASS: CS_AppData.HkPacket.AppCSState == 6
+PASS: CS_AppData.HkPacket.TablesCSState == 7
+PASS: CS_AppData.HkPacket.OSCSState == 8
+PASS: CS_AppData.HkPacket.CfeCoreCSState == 9
+PASS: CS_AppData.HkPacket.ChildTaskInUse == 10
+PASS: CS_AppData.HkPacket.OneShotInProgress == 11
+PASS: CS_AppData.HkPacket.EepromCSErrCounter == 12
+PASS: CS_AppData.HkPacket.MemoryCSErrCounter == 13
+PASS: CS_AppData.HkPacket.AppCSErrCounter == 14
+PASS: CS_AppData.HkPacket.TablesCSErrCounter == 15
+PASS: CS_AppData.HkPacket.CfeCoreCSErrCounter == 16
+PASS: CS_AppData.HkPacket.OSCSErrCounter == 17
+PASS: CS_AppData.HkPacket.CurrentCSTable == 18
+PASS: CS_AppData.HkPacket.CurrentEntryInTable == 19
+PASS: CS_AppData.HkPacket.EepromBaseline == 20
+PASS: CS_AppData.HkPacket.OSBaseline == 21
+PASS: CS_AppData.HkPacket.CfeCoreBaseline == 22
+PASS: CS_AppData.HkPacket.LastOneShotAddress == 23
+PASS: CS_AppData.HkPacket.LastOneShotSize == 24
+PASS: CS_AppData.HkPacket.LastOneShotChecksum == 25
+PASS: CS_AppData.HkPacket.PassCounter == 26
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_HousekeepingCmd_Test_InvalidMsgLength
+ERROR EVENT ID=36 Invalid msg length: ID = 0x18A0, CC = 99, Len = 1, Expected = 8
+PASS: Invalid msg length: ID = 0x18A0, CC = 99, Len = 1, Expected = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_NominalPowerOnReset
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+PASS: CS Initialized. Version 2.4.0.0
+PASS: Result == CFE_SUCCESS
+PASS: CS_AppData.EepromCSState == CS_EEPROM_TBL_POWERON_STATE
+PASS: CS_AppData.MemoryCSState == CS_MEMORY_TBL_POWERON_STATE
+PASS: CS_AppData.AppCSState    == CS_APPS_TBL_POWERON_STATE
+PASS: CS_AppData.TablesCSState == CS_TABLES_TBL_POWERON_STATE
+PASS: CS_AppData.OSCSState == CS_OSCS_CHECKSUM_STATE
+PASS: CS_AppData.CfeCoreCSState == CS_CFECORE_CHECKSUM_STATE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_AppInit_Test_NominalProcReset
+INFO EVENT ID=1 CS Initialized. Version 2.4.0.0
+PASS: CS Initialized. Version 2.4.0.0
+PASS: Result == CFE_SUCCESS
+PASS: CS_AppData.EepromCSState == CS_STATE_ENABLED
+PASS: CS_AppData.MemoryCSState == CS_STATE_ENABLED
+PASS: CS_AppData.AppCSState    == CS_STATE_ENABLED
+PASS: CS_AppData.TablesCSState == CS_STATE_ENABLED
+PASS: CS_AppData.OSCSState == CS_STATE_ENABLED
+PASS: CS_AppData.CfeCoreCSState == CS_STATE_ENABLED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_CreateRestoreStatesFromCDS_Test_NoExistingCDS
+PASS: Result == CFE_SUCCESS
+PASS: CS_AppData.EepromCSState == CS_STATE_ENABLED
+PASS: CS_AppData.MemoryCSState == CS_STATE_ENABLED
+PASS: CS_AppData.AppCSState  == CS_STATE_ENABLED
+PASS: CS_AppData.TablesCSState == CS_STATE_ENABLED
+PASS: CS_AppData.OSCSState == CS_OSCS_CHECKSUM_STATE
+PASS: CS_AppData.CfeCoreCSState == CS_CFECORE_CHECKSUM_STATE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_CreateRestoreStatesFromCDS_Test_CDSSuccess
+PASS: Result == CFE_SUCCESS
+PASS: CS_AppData.EepromCSState == CS_STATE_ENABLED
+PASS: CS_AppData.MemoryCSState == CS_STATE_ENABLED
+PASS: CS_AppData.AppCSState    == CS_STATE_ENABLED
+PASS: CS_AppData.TablesCSState == CS_STATE_ENABLED
+PASS: CS_AppData.OSCSState == CS_STATE_ENABLED
+PASS: CS_AppData.CfeCoreCSState == CS_STATE_ENABLED
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_CreateRestoreStatesFromCDS_Test_CDSFail
+ERROR EVENT ID=145 Critical Data Store access error = 0xFFFFFFFF
+PASS: Result == CFE_SUCCESS
+PASS: CS_AppData.EepromCSState == CS_EEPROM_TBL_POWERON_STATE
+PASS: CS_AppData.MemoryCSState == CS_MEMORY_TBL_POWERON_STATE
+PASS: CS_AppData.AppCSState    == CS_APPS_TBL_POWERON_STATE
+PASS: CS_AppData.TablesCSState == CS_TABLES_TBL_POWERON_STATE
+PASS: CS_AppData.OSCSState == CS_OSCS_CHECKSUM_STATE
+PASS: CS_AppData.CfeCoreCSState == CS_CFECORE_CHECKSUM_STATE
+PASS: Critical Data Store access error = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_UpdateCDS_Test_Nominal
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_UpdateCDS_Test_CopyToCDSFail
+ERROR EVENT ID=145 Critical Data Store access error = 0xFFFFFFFF
+PASS: Critical Data Store access error = 0xFFFFFFFF
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_UpdateCDS_Test_NullCDSHandle
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_DisableAppCmd_Test
+INFO EVENT ID=80 Checksumming of App is Disabled
+PASS: CS_AppData.AppCSState == CS_STATE_DISABLED
+PASS: Checksumming of App is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableAppCmd_Test
+INFO EVENT ID=81 Checksumming of App is Enabled
+PASS: CS_AppData.AppCSState == CS_STATE_ENABLED
+PASS: Checksumming of App is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineAppCmd_Test_Baseline
+INFO EVENT ID=82 Report baseline of app App1 is 0x00000001
+PASS: Report baseline of app App1 is 0x00000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineAppCmd_Test_NoBaseline
+INFO EVENT ID=83 Report baseline of app App1 has not been computed yet
+PASS: Report baseline of app App1 has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineAppCmd_Test_BaselineInvalidName
+ERROR EVENT ID=84 App report baseline failed, app App1 not found
+PASS: App report baseline failed, app App1 not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineAppCmd_Test_Nominal
+DEBUG EVENT ID=85 Recompute baseline of app App1 started
+PASS: CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr
+PASS: Recompute baseline of app App1 started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineAppCmd_Test_CreateChildTaskError
+ERROR EVENT ID=86 Recompute baseline of app App1 failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.ResAppTblPtr == CS_AppData.RecomputeAppEntryPtr
+PASS: Recompute baseline of app App1 failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineAppCmd_Test_UnknownNameError
+ERROR EVENT ID=87 App recompute baseline failed, app App1 not found
+PASS: App recompute baseline failed, app App1 not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineAppCmd_Test_RecomputeInProgress
+ERROR EVENT ID=88 App recompute baseline for app App1 failed: child task in use
+PASS: App recompute baseline for app App1 failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableNameAppCmd_Test_Nominal
+INFO EVENT ID=91 Checksumming of app App1 is Disabled
+PASS: Checksumming of app App1 is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableNameAppCmd_Test_UpdateAppsDefinitionTableError
+INFO EVENT ID=91 Checksumming of app App1 is Disabled
+DEBUG EVENT ID=132 CS unable to update apps definition table for entry App1
+PASS: Checksumming of app App1 is Disabled
+PASS: CS unable to update apps definition table for entry App1
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_DisableNameAppCmd_Test_UnknownNameError
+ERROR EVENT ID=92 App disable app command failed, app App1 not found
+PASS: App disable app command failed, app App1 not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableNameAppCmd_Test_Nominal
+INFO EVENT ID=89 Checksumming of app App1 is Enabled
+PASS: Checksumming of app App1 is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableNameAppCmd_Test_UpdateAppsDefinitionTableError
+INFO EVENT ID=89 Checksumming of app App1 is Enabled
+DEBUG EVENT ID=131 CS unable to update apps definition table for entry App1
+PASS: Checksumming of app App1 is Enabled
+PASS: CS unable to update apps definition table for entry App1
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_EnableNameAppCmd_Test_UnknownNameError
+ERROR EVENT ID=90 App enable app command failed, app App1 not found
+PASS: App enable app command failed, app App1 not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_NoopCmd_Test
+INFO EVENT ID=2 No-op command. Version 2.4.0.0
+PASS: No-op command. Version 2.4.0.0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ResetCmd_Test
+DEBUG EVENT ID=3 Reset Counters command recieved
+PASS: CS_AppData.CmdCounter == 0
+PASS: CS_AppData.CmdErrCounter == 0
+PASS: CS_AppData.EepromCSErrCounter == 0
+PASS: CS_AppData.MemoryCSErrCounter == 0
+PASS: CS_AppData.TablesCSErrCounter == 0
+PASS: CS_AppData.AppCSErrCounter == 0
+PASS: CS_AppData.CfeCoreCSErrCounter == 0
+PASS: CS_AppData.OSCSErrCounter == 0
+PASS: CS_AppData.PassCounter == 0
+PASS: Reset Counters command recieved
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundCheckCmd_Test_InvalidMsgLength
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 1, Len = 10, Expected = 8
+PASS: Invalid msg length: ID = 0x189F, CC = 1, Len = 10, Expected = 8
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundCfeCore
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundOS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundEeprom
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundMemory
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundTables
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_BackgroundApp
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_Default
+PASS: CS_AppData.CurrentCSTable == 0
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.PassCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCheckCmd_Test_Disabled
+PASS: CS_AppData.PassCounter == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_DisableAllCSCmd_Test
+INFO EVENT ID=4 Background Checksumming Disabled
+PASS: CS_AppData.ChecksumState == CS_STATE_DISABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Background Checksumming Disabled
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableAllCSCmd_Test
+INFO EVENT ID=5 Background Checksumming Enabled
+PASS: CS_AppData.ChecksumState == CS_STATE_ENABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Background Checksumming Enabled
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableCfeCoreCmd_Test
+INFO EVENT ID=6 Checksumming of cFE Core is Disabled
+PASS: CS_AppData.CfeCoreCSState == CS_STATE_DISABLED
+PASS: Checksumming of cFE Core is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableCfeCoreCmd_Test
+INFO EVENT ID=7 Checksumming of cFE Core is Enabled
+PASS: CS_AppData.CfeCoreCSState == CS_STATE_ENABLED
+PASS: Checksumming of cFE Core is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableOSCmd_Test
+INFO EVENT ID=8 Checksumming of OS code segment is Disabled
+PASS: CS_AppData.OSCSState == CS_STATE_DISABLED
+PASS: Checksumming of OS code segment is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableOSCmd_Test
+INFO EVENT ID=9 Checksumming of OS code segment is Enabled
+PASS: CS_AppData.OSCSState == CS_STATE_ENABLED
+PASS: Checksumming of OS code segment is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineCfeCoreCmd_Test_Nominal
+INFO EVENT ID=10 Baseline of cFE Core is 0xFFFFFFFF
+PASS: Baseline of cFE Core is 0xFFFFFFFF
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineCfeCoreCmd_Test_NotComputedYet
+INFO EVENT ID=11 Baseline of cFE Core has not been computed yet
+PASS: Baseline of cFE Core has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineOSCmd_Test_Nominal
+INFO EVENT ID=12 Baseline of OS code segment is 0xFFFFFFFF
+PASS: Baseline of OS code segment is 0xFFFFFFFF
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineOSCmd_Test_NotComputedYet
+INFO EVENT ID=13 Baseline of OS code segment has not been computed yet
+PASS: Baseline of OS code segment has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineCfeCoreCmd_Test_Nominal
+DEBUG EVENT ID=14 Recompute of cFE core started
+PASS: CS_AppData.RecomputeInProgress == TRUE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_CFECORE
+PASS: CS_AppData.ChildTaskEntryID == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.CfeCoreCodeSeg
+PASS: Recompute of cFE core started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineCfeCoreCmd_Test_CreateChildTaskError
+ERROR EVENT ID=15 Recompute cFE core failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_CFECORE
+PASS: CS_AppData.ChildTaskEntryID == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.CfeCoreCodeSeg
+PASS: Recompute cFE core failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineCfeCoreCmd_Test_ChildTaskError
+ERROR EVENT ID=16 Recompute cFE core failed: child task in use
+PASS: Recompute cFE core failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineOSCmd_Test_Nominal
+DEBUG EVENT ID=17 Recompute of OS code segment started
+PASS: CS_AppData.RecomputeInProgress == TRUE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_OSCORE
+PASS: CS_AppData.OSCodeSeg == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.OSCodeSeg
+PASS: Recompute of OS code segment started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineOSCmd_Test_CreateChildTaskError
+ERROR EVENT ID=18 Recompute OS code segment failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_OSCORE
+PASS: CS_AppData.OSCodeSeg == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.OSCodeSeg
+PASS: Recompute OS code segment failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineOSCmd_Test_ChildTaskError
+ERROR EVENT ID=19 Recompute OS code segment failed: child task in use
+PASS: Recompute OS code segment failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotCmd_Test_Nominal
+DEBUG EVENT ID=20 OneShot checksum started on address: 0x00000001, size: 2
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == TRUE
+PASS: CS_AppData.LastOneShotAddress == CmdPacket.Address
+PASS: CS_AppData.LastOneShotSize == CmdPacket.Size
+PASS: CS_AppData.LastOneShotChecksum == 0
+PASS: CS_AppData.LastOneShotMaxBytesPerCycle == CS_AppData.MaxBytesPerCycle
+PASS: OneShot checksum started on address: 0x00000001, size: 2
+PASS: CS_AppData.ChildTaskID == 5
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotCmd_Test_MaxBytesPerCycleNonZero
+DEBUG EVENT ID=20 OneShot checksum started on address: 0x00000001, size: 2
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == TRUE
+PASS: CS_AppData.LastOneShotAddress == CmdPacket.Address
+PASS: CS_AppData.LastOneShotSize == CmdPacket.Size
+PASS: CS_AppData.LastOneShotChecksum == 0
+PASS: CS_AppData.LastOneShotMaxBytesPerCycle == CmdPacket.MaxBytesPerCycle
+PASS: OneShot checksum started on address: 0x00000001, size: 2
+PASS: CS_AppData.ChildTaskID == 5
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotCmd_Test_CreateChildTaskError
+ERROR EVENT ID=21 OneShot checkum failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.LastOneShotAddress == CmdPacket.Address
+PASS: CS_AppData.LastOneShotSize == CmdPacket.Size
+PASS: CS_AppData.LastOneShotChecksum == 0
+PASS: OneShot checkum failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotCmd_Test_ChildTaskError
+ERROR EVENT ID=22 OneShot checksum failed: child task in use
+PASS: OneShot checksum failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotCmd_Test_MemValidateRangeError
+ERROR EVENT ID=23 OneShot checksum failed, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: OneShot checksum failed, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_CancelOneShotCmd_Test_Nominal
+INFO EVENT ID=24 OneShot checksum calculation has been cancelled
+PASS: CS_AppData.ChildTaskID == 0
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.CmdCounter == 1
+PASS: OneShot checksum calculation has been cancelled
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_CancelOneShotCmd_Test_DeleteChildTaskError
+ERROR EVENT ID=25 Cancel OneShot checksum failed, CFE_ES_DeleteChildTask returned:  0xFFFFFFFF
+PASS: Cancel OneShot checksum failed, CFE_ES_DeleteChildTask returned:  0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_CancelOneShotCmd_Test_NoChildTaskError
+ERROR EVENT ID=26 Cancel OneShot checksum failed. No OneShot active
+PASS: Cancel OneShot checksum failed. No OneShot active
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeEepromMemory_Test_Nominal
+PASS: DoneWithEntry == TRUE
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeEepromMemory_Test_Error
+PASS: DoneWithEntry == TRUE
+PASS: Result == CS_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeEepromMemory_Test_FirstTimeThrough
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.ComputedYet == TRUE
+PASS: ResultsEntry.ComparisonValue == 1
+PASS: ComputedCSValue == 1
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeEepromMemory_Test_NotFinished
+PASS: ResultsEntry.ByteOffset == 1
+PASS: ResultsEntry.TempChecksumValue == 1
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_TableNeverLoaded
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xCC000005
+PASS: DoneWithEntry == FALSE
+PASS: CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xCC000005
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeTables_Test_TableUnregisteredAndNeverLoaded
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xCC000005
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.TblHandle == 99
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: ResultsEntry.ComputedYet == FALSE
+PASS: ResultsEntry.ComparisonValue == 0
+PASS: ResultsEntry.StartAddress == 0
+PASS: ResultsEntry.NumBytesToChecksum == 0
+PASS: CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xCC000005
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeTables_Test_ResultShareNotSuccess
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0xFFFFFFFF, GetInfo: 0xCC000009, GetAddress: 0xCC000009
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.TblHandle == CFE_TBL_BAD_TABLE_HANDLE
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: ResultsEntry.ComputedYet == FALSE
+PASS: ResultsEntry.ComparisonValue == 0
+PASS: ResultsEntry.StartAddress == 0
+PASS: ResultsEntry.NumBytesToChecksum == 0
+PASS: CS Tables: Problem Getting table name info Share: 0xFFFFFFFF, GetInfo: 0xCC000009, GetAddress: 0xCC000009
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeTables_Test_TblInfoUpdated
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ComputedCSValue == 0
+PASS: ResultsEntry.ComputedYet == FALSE
+PASS: ResultsEntry.ComparisonValue == 0
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_CSError
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ComputedCSValue == 2
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CS_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_NominalBadTableHandle
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.TblHandle == 99
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ComputedCSValue == 2
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_FirstTimeThrough
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.TblHandle == 99
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ResultsEntry.ComputedYet == TRUE
+PASS: ResultsEntry.ComparisonValue == 3
+PASS: ComputedCSValue == 3
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_EntryNotFinished
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.TblHandle == 99
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ResultsEntry.ByteOffset == 3
+PASS: ResultsEntry.TempChecksumValue == 3
+PASS: ComputedCSValue == 3
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeTables_Test_ComputeTablesReleaseError
+ERROR EVENT ID=120 CS Tables: Could not release addresss for table name, returned: 0xFFFFFFFF
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.TblHandle == 99
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 0
+PASS: ResultsEntry.ByteOffset == 3
+PASS: ResultsEntry.TempChecksumValue == 3
+PASS: ComputedCSValue == 3
+PASS: CS Tables: Could not release addresss for table name, returned: 0xFFFFFFFF
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeTables_Test_ComputeTablesError
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xFFFFFFFF
+PASS: DoneWithEntry == FALSE
+PASS: CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xFFFFFFFF
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeApp_Test_Nominal
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 1
+PASS: ComputedCSValue == 2
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeApp_Test_GetAppIDByNameError
+ERROR EVENT ID=122 CS Apps: Problems getting app name info, GetAppID: 0xFFFFFFFF, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+PASS: DoneWithEntry == FALSE
+PASS: CS Apps: Problems getting app name info, GetAppID: 0xFFFFFFFF, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeApp_Test_GetAppInfoError
+ERROR EVENT ID=122 CS Apps: Problems getting app name info, GetAppID: 0x00000000, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+PASS: DoneWithEntry == FALSE
+PASS: CS Apps: Problems getting app name info, GetAppID: 0x00000000, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ComputeApp_Test_ComputeAppPlatformError
+DEBUG EVENT ID=128 CS cannot get a valid address for name, due to the platform
+ERROR EVENT ID=122 CS Apps: Problems getting app name info, GetAppID: 0x00000000, GetAppInfo: 0x00000000, AddressValid: 0
+PASS: DoneWithEntry == FALSE
+PASS: CS cannot get a valid address for name, due to the platform
+PASS: CS Apps: Problems getting app name info, GetAppID: 0x00000000, GetAppInfo: 0x00000000, AddressValid: 0
+PASS: Result == CS_ERR_NOT_FOUND
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ComputeApp_Test_DifferFromSavedValue
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 1
+PASS: ComputedCSValue == 2
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CS_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeApp_Test_FirstTimeThrough
+PASS: DoneWithEntry == TRUE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 1
+PASS: ResultsEntry.ComputedYet == TRUE
+PASS: ResultsEntry.ComparisonValue == 2
+PASS: ComputedCSValue == 2
+PASS: ResultsEntry.ByteOffset == 0
+PASS: ResultsEntry.TempChecksumValue == 0
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ComputeApp_Test_EntryNotFinished
+PASS: DoneWithEntry == FALSE
+PASS: ResultsEntry.NumBytesToChecksum == 5
+PASS: ResultsEntry.StartAddress == 1
+PASS: ResultsEntry.ByteOffset == 3
+PASS: ResultsEntry.TempChecksumValue == 2
+PASS: ComputedCSValue == 2
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_RecomputeEepromMemoryChildTask_Test_EEPROMTable
+INFO EVENT ID=95 Eeprom entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ComputedYet == TRUE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->State == 99
+PASS: CS_AppData.DefEepromTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: Eeprom entry 1 recompute finished. New baseline is 0X00000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeEepromMemoryChildTask_Test_MemoryTable
+INFO EVENT ID=95 Memory entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ComputedYet == TRUE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->State == 99
+PASS: CS_AppData.DefMemoryTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: Memory entry 1 recompute finished. New baseline is 0X00000001
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeEepromMemoryChildTask_Test_CFECore
+INFO EVENT ID=95 cFE Core entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ComputedYet == TRUE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->State == 99
+PASS: CS_AppData.DefMemoryTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: cFE Core entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.CfeCoreBaseline == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeEepromMemoryChildTask_Test_OSCore
+INFO EVENT ID=95 OS entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->ComputedYet == TRUE
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr->State == 99
+PASS: CS_AppData.DefMemoryTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: OS entry 1 recompute finished. New baseline is 0X00000001
+PASS: CS_AppData.OSBaseline == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeEepromMemoryChildTask_Test_RegisterChildTaskError
+Recompute for Eeprom or Memory Child Task Registration failed!
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_RecomputeAppChildTask_Test_Nominal
+INFO EVENT ID=99 App name recompute finished. New baseline is 0x00000001
+PASS: CS_AppData.RecomputeAppEntryPtr->State == 99
+PASS: CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: CS_AppData.RecomputeAppEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeAppEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeAppEntryPtr->ComputedYet == TRUE
+PASS: App name recompute finished. New baseline is 0x00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeAppChildTask_Test_CouldNotGetAddress
+ERROR EVENT ID=122 CS Apps: Problems getting app name info, GetAppID: 0xFFFFFFFF, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+ERROR EVENT ID=97 App name recompute failed. Could not get address
+PASS: CS_AppData.RecomputeAppEntryPtr->State == 99
+PASS: CS_AppData.DefAppTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: CS_AppData.RecomputeAppEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeAppEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeAppEntryPtr->ComputedYet == FALSE
+PASS: App name recompute failed. Could not get address
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_RecomputeAppChildTask_Test_RegisterChildTaskError
+Recompute for App Child Task Registration failed!
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_RecomputeTablesChildTask_Test_Nominal
+INFO EVENT ID=98 Table name recompute finished. New baseline is 0x00000001
+PASS: CS_AppData.RecomputeTablesEntryPtr->State == 99
+PASS: CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: CS_AppData.RecomputeTablesEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeTablesEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeTablesEntryPtr->ComputedYet == TRUE
+PASS: Table name recompute finished. New baseline is 0x00000001
+PASS: CS_AppData.ChildTaskInUse == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeTablesChildTask_Test_CouldNotGetAddress
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xCC000001
+ERROR EVENT ID=96 Table name recompute failed. Could not get address
+PASS: CS_AppData.RecomputeTablesEntryPtr->State == 99
+PASS: CS_AppData.DefTablesTblPtr[CS_AppData.ChildTaskEntryID].State == 1
+PASS: CS_AppData.RecomputeTablesEntryPtr->TempChecksumValue == 0
+PASS: CS_AppData.RecomputeTablesEntryPtr->ByteOffset == 0
+PASS: CS_AppData.RecomputeTablesEntryPtr->ComputedYet == FALSE
+PASS: Table name recompute failed. Could not get address
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_RecomputeTablesChildTask_Test_RegisterChildTaskError
+Recompute Tables Child Task Registration failed!
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_OneShotChildTask_Test_Nominal
+INFO EVENT ID=100 OneShot checksum on Address: 0x00000000, size 1 completed. Checksum =  0x00000001
+PASS: CS_AppData.LastOneShotChecksum == 1
+PASS: OneShot checksum on Address: 0x00000000, size 1 completed. Checksum =  0x00000001
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskID == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_OneShotChildTask_Test_RegisterChildTaskError
+OneShot Child Task Registration failed!
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskID == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_DisableEepromCmd_Test
+INFO EVENT ID=37 Checksumming of Eeprom is Disabled
+PASS: CS_AppData.EepromCSState = CS_STATE_DISABLED
+PASS: Checksumming of Eeprom is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEepromCmd_Test
+INFO EVENT ID=38 Checksumming of Eeprom is Enabled
+PASS: CS_AppData.EepromCSState = CS_STATE_ENABLED
+PASS: Checksumming of Eeprom is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDEepromCmd_Test_Computed
+INFO EVENT ID=39 Report baseline of Eeprom Entry 1 is 0x00000001
+PASS: Report baseline of Eeprom Entry 1 is 0x00000001
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDEepromCmd_Test_NotYetComputed
+INFO EVENT ID=40 Report baseline of Eeprom Entry 1 has not been computed yet
+PASS: Report baseline of Eeprom Entry 1 has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDEepromCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=41 Eeprom report baseline failed, Entry ID invalid: 16, State: 3 Max ID: 15
+PASS: Eeprom report baseline failed, Entry ID invalid: 16, State: 3 Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDEepromCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=41 Eeprom report baseline failed, Entry ID invalid: 1, State: 0 Max ID: 15
+PASS: Eeprom report baseline failed, Entry ID invalid: 1, State: 0 Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineEepromCmd_Test_Nominal
+DEBUG EVENT ID=42 Recompute baseline of Eeprom Entry ID 1 started
+PASS: CS_AppData.RecomputeInProgress == TRUE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_EEPROM_TABLE
+PASS: CS_AppData.ChildTaskEntryID == CmdPacket.EntryID
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.ResEepromTblPtr[CmdPacket.EntryID]
+PASS: Recompute baseline of Eeprom Entry ID 1 started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineEepromCmd_Test_CreateChildTaskError
+ERROR EVENT ID=43 Recompute baseline of Eeprom Entry ID 1 failed, CFE_ES_CreateChildTask returned:  0xFFFFFFFF
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_EEPROM_TABLE
+PASS: CS_AppData.ChildTaskEntryID == CmdPacket.EntryID
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.ResEepromTblPtr[CmdPacket.EntryID]
+PASS: Recompute baseline of Eeprom Entry ID 1 failed, CFE_ES_CreateChildTask returned:  0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineEepromCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=44 Eeprom recompute baseline of entry failed, Entry ID invalid: 16, State: 3, Max ID: 15
+PASS: Eeprom recompute baseline of entry failed, Entry ID invalid: 16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineEepromCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=44 Eeprom recompute baseline of entry failed, Entry ID invalid: 1, State: 0, Max ID: 15
+PASS: Eeprom recompute baseline of entry failed, Entry ID invalid: 1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineEepromCmd_Test_RecomputeInProgress
+ERROR EVENT ID=45 Recompute baseline of Eeprom Entry ID 1 failed: child task in use
+PASS: Recompute baseline of Eeprom Entry ID 1 failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDEepromCmd_Test_Nominal
+INFO EVENT ID=46 Checksumming of Eeprom Entry ID 1 is Enabled
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: Checksumming of Eeprom Entry ID 1 is Enabled
+PASS: CS_AppData.DefEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDEepromCmd_Test_DefEepromTblPtrStateEmpty
+INFO EVENT ID=46 Checksumming of Eeprom Entry ID 1 is Enabled
+DEBUG EVENT ID=136 CS unable to update Eeprom definition table for entry 1, State: 0
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: Checksumming of Eeprom Entry ID 1 is Enabled
+PASS: CS unable to update Eeprom definition table for entry 1, State: 0
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_EnableEntryIDEepromCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=47 Enable Eeprom entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: Enable Eeprom entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDEepromCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=47 Enable Eeprom entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: Enable Eeprom entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDEepromCmd_Test_Nominal
+INFO EVENT ID=48 Checksumming of Eeprom Entry ID 1 is Disabled
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].ByteOffset == 0
+PASS: Checksumming of Eeprom Entry ID 1 is Disabled
+PASS: CS_AppData.DefEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDEepromCmd_Test_DefEepromTblPtrStateEmpty
+INFO EVENT ID=48 Checksumming of Eeprom Entry ID 1 is Disabled
+DEBUG EVENT ID=135 CS unable to update Eeprom definition table for entry 1, State: 0
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[CmdPacket.EntryID].ByteOffset == 0
+PASS: Checksumming of Eeprom Entry ID 1 is Disabled
+PASS: CS unable to update Eeprom definition table for entry 1, State: 0
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_DisableEntryIDEepromCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=49 Disable Eeprom entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: Disable Eeprom entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDEepromCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=49 Disable Eeprom entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: Disable Eeprom entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_GetEntryIDEepromCmd_Test_Nominal
+INFO EVENT ID=50 Eeprom Found Address 0x00000001 in Entry ID 1
+PASS: Eeprom Found Address 0x00000001 in Entry ID 1
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_GetEntryIDEepromCmd_Test_AddressNotFound
+INFO EVENT ID=51 Address 0xFFFFFFFF was not found in Eeprom table
+PASS: Address 0xFFFFFFFF was not found in Eeprom table
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableMemoryCmd_Test
+INFO EVENT ID=52 Checksumming of Memory is Disabled
+PASS: CS_AppData.MemoryCSState = CS_STATE_DISABLED
+PASS: Checksumming of Memory is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableMemoryCmd_Test
+INFO EVENT ID=53 Checksumming of Memory is Enabled
+PASS: CS_AppData.MemoryCSState = CS_STATE_ENABLED
+PASS: Checksumming of Memory is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDMemoryCmd_Test_Computed
+INFO EVENT ID=54 Report baseline of Memory Entry 1 is 0x00000001
+PASS: Report baseline of Memory Entry 1 is 0x00000001
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDMemoryCmd_Test_NotYetComputed
+INFO EVENT ID=55 Report baseline of Memory Entry 1 has not been computed yet
+PASS: Report baseline of Memory Entry 1 has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDMemoryCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=56 Memory report baseline failed, Entry ID invalid: 16, State: 3 Max ID: 15
+PASS: Memory report baseline failed, Entry ID invalid: 16, State: 3 Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineEntryIDMemoryCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=56 Memory report baseline failed, Entry ID invalid: 1, State: 0 Max ID: 15
+PASS: Memory report baseline failed, Entry ID invalid: 1, State: 0 Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineMemoryCmd_Test_Nominal
+DEBUG EVENT ID=57 Recompute baseline of Memory Entry ID 1 started
+PASS: CS_AppData.RecomputeInProgress == TRUE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_MEMORY_TABLE
+PASS: CS_AppData.ChildTaskEntryID == CmdPacket.EntryID
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID]
+PASS: Recompute baseline of Memory Entry ID 1 started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineMemoryCmd_Test_CreateChildTaskError
+ERROR EVENT ID=58 Recompute baseline of Memory Entry ID 1 failed, ES_CreateChildTask returned:  0xFFFFFFFF
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_MEMORY_TABLE
+PASS: CS_AppData.ChildTaskEntryID == CmdPacket.EntryID
+PASS: CS_AppData.RecomputeEepromMemoryEntryPtr == &CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID]
+PASS: Recompute baseline of Memory Entry ID 1 failed, ES_CreateChildTask returned:  0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineMemoryCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=59 Memory recompute baseline of entry failed, Entry ID invalid: 16, State: 3, Max ID: 15
+PASS: Memory recompute baseline of entry failed, Entry ID invalid: 16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineMemoryCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=59 Memory recompute baseline of entry failed, Entry ID invalid: 1, State: 0, Max ID: 15
+PASS: Memory recompute baseline of entry failed, Entry ID invalid: 1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineMemoryCmd_Test_RecomputeInProgress
+ERROR EVENT ID=60 Recompute baseline of Memory Entry ID 1 failed: child task in use
+PASS: Recompute baseline of Memory Entry ID 1 failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDMemoryCmd_Test_Nominal
+INFO EVENT ID=61 Checksumming of Memory Entry ID 1 is Enabled
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: Checksumming of Memory Entry ID 1 is Enabled
+PASS: CS_AppData.DefMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDMemoryCmd_Test_DefMemoryTblPtrStateEmpty
+INFO EVENT ID=61 Checksumming of Memory Entry ID 1 is Enabled
+DEBUG EVENT ID=134 CS unable to update memory definition table for entry 1, State: 0
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_ENABLED
+PASS: Checksumming of Memory Entry ID 1 is Enabled
+PASS: CS unable to update memory definition table for entry 1, State: 0
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_EnableEntryIDMemoryCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=62 Enable Memory entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: Enable Memory entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableEntryIDMemoryCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=62 Enable Memory entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: Enable Memory entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDMemoryCmd_Test_Nominal
+INFO EVENT ID=63 Checksumming of Memory Entry ID 1 is Disabled
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].ByteOffset == 0
+PASS: Checksumming of Memory Entry ID 1 is Disabled
+PASS: CS_AppData.DefMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDMemoryCmd_Test_DefMemoryTblPtrStateEmpty
+INFO EVENT ID=63 Checksumming of Memory Entry ID 1 is Disabled
+DEBUG EVENT ID=133 CS unable to update memory definition table for entry 1, State: 0
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[CmdPacket.EntryID].ByteOffset == 0
+PASS: Checksumming of Memory Entry ID 1 is Disabled
+PASS: CS unable to update memory definition table for entry 1, State: 0
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_DisableEntryIDMemoryCmd_Test_InvalidEntryErrorEntryIDTooHigh
+ERROR EVENT ID=64 Disable Memory entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: Disable Memory entry failed, invalid Entry ID:  16, State: 3, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableEntryIDMemoryCmd_Test_InvalidEntryErrorStateEmpty
+ERROR EVENT ID=64 Disable Memory entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: Disable Memory entry failed, invalid Entry ID:  1, State: 0, Max ID: 15
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_GetEntryIDMemoryCmd_Test_Nominal
+INFO EVENT ID=65 Memory Found Address 0x00000001 in Entry ID 1
+PASS: Memory Found Address 0x00000001 in Entry ID 1
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_GetEntryIDMemoryCmd_Test_AddressNotFound
+INFO EVENT ID=66 Address 0xFFFFFFFF was not found in Memory table
+PASS: Address 0xFFFFFFFF was not found in Memory table
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableTablesCmd_Test
+INFO EVENT ID=67 Checksumming of Tables is Disabled
+PASS: CS_AppData.TablesCSState = CS_STATE_DISABLED
+PASS: Checksumming of Tables is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableTablesCmd_Test
+INFO EVENT ID=68 Checksumming of Tables is Enabled
+PASS: CS_AppData.TablesCSState = CS_STATE_ENABLED
+PASS: Checksumming of Tables is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineTablesCmd_Test_Computed
+INFO EVENT ID=69 Report baseline of table name is 0x00000001
+PASS: Report baseline of table name is 0x00000001
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineTablesCmd_Test_NotYetComputed
+INFO EVENT ID=70 Report baseline of table name has not been computed yet
+PASS: Report baseline of table name has not been computed yet
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ReportBaselineTablesCmd_Test_TableNotFound
+ERROR EVENT ID=71 Tables report baseline failed, table name2 not found
+PASS: Tables report baseline failed, table name2 not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineTablesCmd_Test_Nominal
+DEBUG EVENT ID=72 Recompute baseline of table name started
+PASS: CS_AppData.RecomputeInProgress == TRUE
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_TABLES_TABLE
+PASS: Recompute baseline of table name started
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineTablesCmd_Test_CreateChildTaskError
+ERROR EVENT ID=73 Recompute baseline of table name failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.OneShotInProgress == FALSE
+PASS: CS_AppData.ChildTaskTable == CS_TABLES_TABLE
+PASS: Recompute baseline of table name failed, CFE_ES_CreateChildTask returned: 0xFFFFFFFF
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: CS_AppData.RecomputeInProgress == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineTablesCmd_Test_TableNotFound
+ERROR EVENT ID=74 Tables recompute baseline failed, table name not found
+PASS: Tables recompute baseline failed, table name not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_RecomputeBaselineTablesCmd_Test_RecomputeInProgress
+ERROR EVENT ID=75 Tables recompute baseline for table name failed: child task in use
+PASS: Tables recompute baseline for table name failed: child task in use
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableNameTablesCmd_Test_Nominal
+INFO EVENT ID=78 Checksumming of table name is Disabled
+PASS: CS_AppData.ResTablesTblPtr[0].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.DefTablesTblPtr[0].State == CS_STATE_DISABLED
+PASS: Checksumming of table name is Disabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_DisableNameTablesCmd_Test_TableDefNotFound
+INFO EVENT ID=78 Checksumming of table name is Disabled
+DEBUG EVENT ID=130 CS unable to update tables definition table for entry name
+PASS: CS_AppData.ResTablesTblPtr[0].State == CS_STATE_DISABLED
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: Checksumming of table name is Disabled
+PASS: CS unable to update tables definition table for entry name
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_DisableNameTablesCmd_Test_TableNotFound
+ERROR EVENT ID=79 Tables disable table command failed, table name not found
+PASS: Tables disable table command failed, table name not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableNameTablesCmd_Test_Nominal
+INFO EVENT ID=76 Checksumming of table name is Enabled
+PASS: CS_AppData.ResTablesTblPtr[0].State == CS_STATE_ENABLED
+PASS: CS_AppData.DefTablesTblPtr[0].State == CS_STATE_ENABLED
+PASS: Checksumming of table name is Enabled
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_EnableNameTablesCmd_Test_TableDefNotFound
+INFO EVENT ID=76 Checksumming of table name is Enabled
+DEBUG EVENT ID=129 CS unable to update tables definition table for entry name
+PASS: CS_AppData.ResTablesTblPtr[0].State == CS_STATE_ENABLED
+PASS: Checksumming of table name is Enabled
+PASS: CS unable to update tables definition table for entry name
+PASS: CS_AppData.CmdCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_EnableNameTablesCmd_Test_TableNotFound
+ERROR EVENT ID=77 Tables enable table command failed, table name not found
+PASS: Tables enable table command failed, table name not found
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ValidateEepromChecksumDefinitionTable_Test_Nominal
+INFO EVENT ID=144 CS Eeprom Table verification results: good = 1, bad = 0, unused = 15
+PASS: CS Eeprom Table verification results: good = 1, bad = 0, unused = 15
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ValidateEepromChecksumDefinitionTable_Test_IllegalChecksumRangeStateEnabled
+ERROR EVENT ID=102 Eeprom Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+INFO EVENT ID=144 CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: Eeprom Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateEepromChecksumDefinitionTable_Test_IllegalChecksumRangeStateDisabled
+ERROR EVENT ID=102 Eeprom Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+INFO EVENT ID=144 CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: Eeprom Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateEepromChecksumDefinitionTable_Test_IllegalStateField
+ERROR EVENT ID=101 Eeprom Table Validate: Illegal State Field (0xFFFF) found in Entry ID 0
+INFO EVENT ID=144 CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: CS Eeprom Table verification results: good = 0, bad = 1, unused = 15
+PASS: Eeprom Table Validate: Illegal State Field (0xFFFF) found in Entry ID 0
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateMemoryChecksumDefinitionTable_Test_Nominal
+INFO EVENT ID=143 CS Memory Table verification results: good = 1, bad = 0, unused = 15
+PASS: CS Memory Table verification results: good = 1, bad = 0, unused = 15
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ValidateMemoryChecksumDefinitionTable_Test_IllegalChecksumRangeStateEnabled
+ERROR EVENT ID=104 Memory Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+INFO EVENT ID=143 CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: Memory Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateMemoryChecksumDefinitionTable_Test_IllegalChecksumRangeStateDisabled
+ERROR EVENT ID=104 Memory Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+INFO EVENT ID=143 CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: Memory Table Validate: Illegal checksum range found in Entry ID 0, CFE_PSP_MemValidateRange returned: 0xFFFFFFFF
+PASS: CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateMemoryChecksumDefinitionTable_Test_IllegalStateField
+ERROR EVENT ID=103 Memory Table Validate: Illegal State Field (0xFFFF) found in Entry ID 0
+INFO EVENT ID=143 CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: CS Memory Table verification results: good = 0, bad = 1, unused = 15
+PASS: Memory Table Validate: Illegal State Field (0xFFFF) found in Entry ID 0
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_Nominal
+INFO EVENT ID=139 CS Tables Table verification results: good = 1, bad = 0, unused = 23
+PASS: CS Tables Table verification results: good = 1, bad = 0, unused = 23
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_DuplicateNameStateEmpty
+ERROR EVENT ID=137 CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=139 CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_DuplicateNameStateEnabled
+ERROR EVENT ID=137 CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=139 CS Tables Table verification results: good = 1, bad = 1, unused = 22
+PASS: CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Tables Table verification results: good = 1, bad = 1, unused = 22
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_DuplicateNameStateDisabled
+ERROR EVENT ID=137 CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=139 CS Tables Table verification results: good = 1, bad = 1, unused = 22
+PASS: CS Tables Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Tables Table verification results: good = 1, bad = 1, unused = 22
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_IllegalStateField
+ERROR EVENT ID=105 CS Tables Table Validate: Illegal State Field (0xFFFF) found with name name
+INFO EVENT ID=139 CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Tables Table Validate: Illegal State Field (0xFFFF) found with name name
+PASS: CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateTablesChecksumDefinitionTable_Test_IllegalStateEmptyName
+ERROR EVENT ID=138 CS Tables Table Validate: Illegal State (0x0001) with empty name at entry 0
+INFO EVENT ID=139 CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Tables Table Validate: Illegal State (0x0001) with empty name at entry 0
+PASS: CS Tables Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_Nominal
+INFO EVENT ID=142 CS Apps Table verification results: good = 1, bad = 0, unused = 23
+PASS: CS Apps Table verification results: good = 1, bad = 0, unused = 23
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_DuplicateNameStateEmpty
+ERROR EVENT ID=140 CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=142 CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_DuplicateNameStateEnabled
+ERROR EVENT ID=140 CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=142 CS Apps Table verification results: good = 1, bad = 1, unused = 22
+PASS: CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Apps Table verification results: good = 1, bad = 1, unused = 22
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_DuplicateNameStateDisabled
+ERROR EVENT ID=140 CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+INFO EVENT ID=142 CS Apps Table verification results: good = 1, bad = 1, unused = 22
+PASS: CS Apps Table Validate: Duplicate Name (name) found at entries 1 and 0
+PASS: CS Apps Table verification results: good = 1, bad = 1, unused = 22
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_IllegalStateField
+ERROR EVENT ID=106 CS Apps Table Validate: Illegal State Field (0xFFFF) found with name name
+INFO EVENT ID=142 CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Apps Table Validate: Illegal State Field (0xFFFF) found with name name
+PASS: CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ValidateAppChecksumDefinitionTable_Test_IllegalStateEmptyName
+ERROR EVENT ID=141 CS Apps Table Validate: Illegal State (0x0001) with empty name at entry 0
+INFO EVENT ID=142 CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: CS Apps Table Validate: Illegal State (0x0001) with empty name at entry 0
+PASS: CS Apps Table verification results: good = 0, bad = 1, unused = 23
+PASS: Result == CS_TABLE_ERROR
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNominal
+PASS: CS_AppData.EepromCSState == 99
+PASS: CS_AppData.ResEepromTblPtr[0].State == 1
+PASS: CS_AppData.ResEepromTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResEepromTblPtr[0].NumBytesToChecksum == 2
+PASS: CS_AppData.ResEepromTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResEepromTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResEepromTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[0].StartAddress == 3
+PASS: CS_AppData.ResEepromTblPtr[1].State == CS_STATE_EMPTY
+PASS: CS_AppData.ResEepromTblPtr[1].ComputedYet == FALSE
+PASS: CS_AppData.ResEepromTblPtr[1].NumBytesToChecksum == 0
+PASS: CS_AppData.ResEepromTblPtr[1].ComparisonValue == 0
+PASS: CS_AppData.ResEepromTblPtr[1].ByteOffset == 0
+PASS: CS_AppData.ResEepromTblPtr[1].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[1].StartAddress == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNominal
+PASS: CS_AppData.MemoryCSState == 99
+PASS: CS_AppData.ResMemoryTblPtr[0].State == 1
+PASS: CS_AppData.ResMemoryTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResMemoryTblPtr[0].NumBytesToChecksum == 2
+PASS: CS_AppData.ResMemoryTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResMemoryTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[0].StartAddress == 3
+PASS: CS_AppData.ResMemoryTblPtr[1].State == CS_STATE_EMPTY
+PASS: CS_AppData.ResMemoryTblPtr[1].ComputedYet == FALSE
+PASS: CS_AppData.ResMemoryTblPtr[1].NumBytesToChecksum == 0
+PASS: CS_AppData.ResMemoryTblPtr[1].ComparisonValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[1].ByteOffset == 0
+PASS: CS_AppData.ResMemoryTblPtr[1].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[1].StartAddress == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewEepromMemoryDefinitionTable_Test_EEPROMTableNoValidEntries
+INFO EVENT ID=107 CS Eeprom Table: No valid entries in the table
+PASS: CS_AppData.MemoryCSState == 99
+PASS: CS Eeprom Table: No valid entries in the table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ProcessNewEepromMemoryDefinitionTable_Test_MemoryTableNoValidEntries
+INFO EVENT ID=107 CS Memory Table: No valid entries in the table
+PASS: CS_AppData.MemoryCSState == 99
+PASS: CS Memory Table: No valid entries in the table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_DefEepromTableHandle
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.EepResTablesTblPtr == CS_AppData.ResTablesTblPtr
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefEepromTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_DefMemoryTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == CS_AppData.ResTablesTblPtr
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefMemoryTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_DefTablesTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == CS_AppData.ResTablesTblPtr
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefTablesTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_DefAppTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == CS_AppData.ResTablesTblPtr
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.DefAppTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_ResEepromTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResEepromTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_ResMemoryTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResMemoryTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_ResTablesTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResTablesTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_ResAppTableHandle
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.ResTablesTblPtr[0].State == 88
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == 11
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == TRUE
+PASS: strncmp(CS_AppData.ResTablesTblPtr[0].Name, 'CS.ResAppTbl', 20) == 0
+PASS: CS_AppData.TablesCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_StateEmptyNoValidEntries
+INFO EVENT ID=109 CS Tables Table: No valid entries in the table
+PASS: CS_AppData.EepResTablesTblPtr == NULL
+PASS: CS_AppData.MemResTablesTblPtr == NULL
+PASS: CS_AppData.AppResTablesTblPtr == NULL
+PASS: CS_AppData.TblResTablesTblPtr == NULL
+PASS: CS_AppData.ResTablesTblPtr[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TblHandle == CFE_TBL_BAD_TABLE_HANDLE
+PASS: CS_AppData.ResTablesTblPtr[0].IsCSOwner == FALSE
+PASS: CS_AppData.ResTablesTblPtr[0].Name[0] == '
+PASS: CS_AppData.TablesCSState == 99
+PASS: CS Tables Table: No valid entries in the table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_LimitApplicationNameLength
+PASS: CS_AppData.EepResTablesTblPtr != CS_AppData.ResTablesTblPtr
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewTablesDefinitionTable_Test_LimitTableNameLength
+PASS: CS_AppData.EepResTablesTblPtr != CS_AppData.ResTablesTblPtr
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewAppDefinitionTable_Test_Nominal
+PASS: CS_AppData.ResAppTblPtr[0].State == 88
+PASS: CS_AppData.ResAppTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResAppTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResAppTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResAppTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResAppTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResAppTblPtr[0].StartAddress == 0
+PASS: strncmp(CS_AppData.ResAppTblPtr[0].Name, 'name', 20) == 0
+PASS: CS_AppData.AppCSState == 99
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ProcessNewAppDefinitionTable_Test_StateEmptyNoValidEntries
+INFO EVENT ID=108 CS Apps Table: No valid entries in the table
+PASS: CS_AppData.ResAppTblPtr[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.ResAppTblPtr[0].ComputedYet == FALSE
+PASS: CS_AppData.ResAppTblPtr[0].NumBytesToChecksum == 0
+PASS: CS_AppData.ResAppTblPtr[0].ComparisonValue == 0
+PASS: CS_AppData.ResAppTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResAppTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResAppTblPtr[0].StartAddress == 0
+PASS: CS_AppData.ResAppTblPtr[0].Name[0] == '
+PASS: CS_AppData.AppCSState == 99
+PASS: CS Apps Table: No valid entries in the table
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_DefaultDefinitionTableLoadErrorEEPROM
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Eeprom
+PASS: CS received error 0xFFFFFFFF initializing Definition table for Eeprom
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_DefinitionTableGetAddressErrorEEPROM
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Eeprom
+PASS: CS received error 0xFFFFFFFF initializing Definition table for Eeprom
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_DefinitionTableGetAddressErrorMemory
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Memory
+PASS: CS received error 0xFFFFFFFF initializing Definition table for Memory
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_DefinitionTableGetAddressErrorTables
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Tables
+PASS: CS received error 0xFFFFFFFF initializing Definition table for Tables
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_DefinitionTableGetAddressErrorApps
+ERROR EVENT ID=110 CS received error 0xFFFFFFFF initializing Definition table for Apps
+PASS: CS received error 0xFFFFFFFF initializing Definition table for Apps
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_EepromTableAndNotLoadedFromMemory
+INFO EVENT ID=107 CS Eeprom Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableRegisterError
+PASS: CS_AppData.EepromCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterResultsTableGetAddressError
+PASS: CS_AppData.EepromCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableRegisterError
+PASS: CS_AppData.EepromCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_EepromTableAndLoadedFromMemoryAfterDefinitionTableFileLoadError
+PASS: CS_AppData.EepromCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_MemoryTableAndNotLoadedFromMemory
+INFO EVENT ID=107 CS Memory Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_MemoryTableAndLoadedFromMemory
+PASS: CS_AppData.MemoryCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_AppTableAndNotLoadedFromMemory
+INFO EVENT ID=108 CS Apps Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_AppTableAndLoadedFromMemory
+PASS: CS_AppData.AppCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_TableInit_Test_TablesTableAndNotLoadedFromMemory
+INFO EVENT ID=109 CS Tables Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_TableInit_Test_TablesTableAndLoadedFromMemory
+PASS: CS_AppData.TablesCSState == CS_STATE_DISABLED
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_HandleTableUpdate_Test_ProcessNewTablesDefinitionTable
+INFO EVENT ID=109 CS Tables Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_ProcessNewAppDefinitionTable
+INFO EVENT ID=108 CS Apps Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_ProcessNewEepromMemoryDefinitionTable
+INFO EVENT ID=107 CS Eeprom Table: No valid entries in the table
+PASS: Result == CFE_SUCCESS
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_ResultsTableGetAddressErrorEEPROM
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table Eeprom
+PASS: CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0x00000000 for table Eeprom
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorEEPROM
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Eeprom
+PASS: CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Eeprom
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorMemory
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Memory
+PASS: CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Memory
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorTables
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Table
+PASS: CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table Table
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_HandleTableUpdate_Test_DefinitionTableGetAddressErrorApps
+ERROR EVENT ID=111 CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table App
+PASS: CS had problems updating table. Release:0x00000000 Manage:0x00000000 Get:0xFFFFFFFF for table App
+PASS: Result == -1
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_ZeroEepromTempValues_Test
+PASS: CS_AppData.ResEepromTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES/2].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES/2].ByteOffset == 0
+PASS: CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES-1].TempChecksumValue == 0
+PASS: CS_AppData.ResEepromTblPtr[CS_MAX_NUM_EEPROM_TABLE_ENTRIES-1].ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ZeroMemoryTempValues_Test
+PASS: CS_AppData.ResMemoryTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES/2].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES/2].ByteOffset == 0
+PASS: CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES-1].TempChecksumValue == 0
+PASS: CS_AppData.ResMemoryTblPtr[CS_MAX_NUM_MEMORY_TABLE_ENTRIES-1].ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ZeroTablesTempValues_Test
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES/2].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES/2].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES-1].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[CS_MAX_NUM_TABLES_TABLE_ENTRIES-1].ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ZeroAppTempValues_Test
+PASS: CS_AppData.ResAppTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResAppTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES/2].TempChecksumValue == 0
+PASS: CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES/2].ByteOffset == 0
+PASS: CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES-1].TempChecksumValue == 0
+PASS: CS_AppData.ResAppTblPtr[CS_MAX_NUM_APP_TABLE_ENTRIES-1].ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ZeroCfeCoreTempValues_Test
+PASS: CS_AppData.CfeCoreCodeSeg.TempChecksumValue == 0
+PASS: CS_AppData.CfeCoreCodeSeg.ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ZeroOSTempValues_Test
+PASS: CS_AppData.OSCodeSeg.TempChecksumValue == 0
+PASS: CS_AppData.OSCodeSeg.ByteOffset == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_InitializeDefaultTables_Test
+PASS: CS_AppData.DefaultEepromDefTable[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultEepromDefTable[0].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultEepromDefTable[0].StartAddress == 0
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].StartAddress == 0
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultEepromDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].StartAddress == 0
+PASS: CS_AppData.DefaultMemoryDefTable[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultMemoryDefTable[0].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultMemoryDefTable[0].StartAddress == 0
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].StartAddress == 0
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].NumBytesToChecksum == 0
+PASS: CS_AppData.DefaultMemoryDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].StartAddress == 0
+PASS: CS_AppData.DefaultAppDefTable[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultAppDefTable[0].Name[0] == '
+PASS: CS_AppData.DefaultAppDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultAppDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].Name[0] == '
+PASS: CS_AppData.DefaultAppDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultAppDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].Name[0] == '
+PASS: CS_AppData.DefaultTablesDefTable[0].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultTablesDefTable[0].Name[0] == '
+PASS: CS_AppData.DefaultTablesDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultTablesDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES/2].Name[0] == '
+PASS: CS_AppData.DefaultTablesDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].State == CS_STATE_EMPTY
+PASS: CS_AppData.DefaultTablesDefTable[CS_MAX_NUM_APP_TABLE_ENTRIES-1].Name[0] == '
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GoToNextTable_Test_Nominal
+PASS: CS_AppData.CurrentCSTable == CS_NUM_TABLES - 1
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GoToNextTable_Test_UpdatePassCounter
+PASS: CS_AppData.CurrentCSTable == 0
+PASS: CS_AppData.PassCounter == 1
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GetTableResTblEntryByName_Test
+PASS: EntryPtr == CS_AppData.ResTablesTblPtr
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GetTableDefTblEntryByName_Test
+PASS: EntryPtr == CS_AppData.DefTablesTblPtr
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GetAppResTblEntryByName_Test
+PASS: EntryPtr == CS_AppData.ResAppTblPtr
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_GetAppDefTblEntryByName_Test
+PASS: EntryPtr == CS_AppData.ResAppTblPtr
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_FindEnabledEepromEntry_Test
+PASS: CS_AppData.CurrentEntryInTable == 16
+PASS: memcmp(&CS_AppData.ResEepromTblPtr[0], &CS_AppData.ResEepromTblPtr[15], CS_MAX_NUM_EEPROM_TABLE_ENTRIES*sizeof(CS_Res_EepromMemory_Table_Entry_t))
+PASS: EnabledEntry == 16
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_FindEnabledMemoryEntry_Test
+PASS: CS_AppData.CurrentEntryInTable == 16
+PASS: memcmp(&CS_AppData.ResMemoryTblPtr[0], &CS_AppData.ResMemoryTblPtr[15], CS_MAX_NUM_MEMORY_TABLE_ENTRIES*sizeof(CS_Res_EepromMemory_Table_Entry_t))
+PASS: EnabledEntry == 16
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_FindEnabledTablesEntry_Test
+PASS: CS_AppData.CurrentEntryInTable == 24
+PASS: memcmp(&CS_AppData.ResTablesTblPtr[0], &CS_AppData.ResTablesTblPtr[23], CS_MAX_NUM_TABLES_TABLE_ENTRIES*sizeof(CS_Res_Tables_Table_Entry_t))
+PASS: EnabledEntry == 24
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_FindEnabledAppEntry_Test
+PASS: CS_AppData.CurrentEntryInTable == 24
+PASS: memcmp(&CS_AppData.ResAppTblPtr[0], &CS_AppData.ResAppTblPtr[23], CS_MAX_NUM_APP_TABLE_ENTRIES*sizeof(CS_Res_App_Table_Entry_t))
+PASS: EnabledEntry == 24
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_VerifyCmdLength_Test_Nominal
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_VerifyCmdLength_Test_InvalidMsgLength
+ERROR EVENT ID=36 Invalid msg length: ID = 0x189F, CC = 88, Len = 20, Expected = 99
+PASS: Invalid msg length: ID = 0x189F, CC = 88, Len = 20, Expected = 99
+PASS: CS_AppData.CmdErrCounter == 1
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundCfeCore_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.CfeCoreBaseline == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCfeCore_Test_Miscompare
+ERROR EVENT ID=31 Checksum Failure: cFE Core, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.CfeCoreCSErrCounter == 1
+PASS: Checksum Failure: cFE Core, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.CfeCoreBaseline == 5
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundCfeCore_Test_ResultsEntryDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundCfeCore_Test_CfeCoreCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundOS_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.OSBaseline == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundOS_Test_Miscompare
+ERROR EVENT ID=32 Checksum Failure: OS code segment, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.OSCSErrCounter == 1
+PASS: Checksum Failure: cFE Core, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.OSBaseline == 5
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundOS_Test_ResultsEntryDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundOS_Test_OSCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundEeprom_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.EepromBaseline == 1
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundEeprom_Test_Miscompare
+ERROR EVENT ID=27 Checksum Failure: Entry 16 in Eeprom Table, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.EepromCSErrCounter == 1
+PASS: Checksum Failure: Entry 16 in Eeprom Table, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: CS_AppData.EepromBaseline == 5
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundEeprom_Test_FindEnabledEepromEntryFalse
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundEeprom_Test_EepromCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundMemory_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundMemory_Test_Miscompare
+ERROR EVENT ID=28 Checksum Failure: Entry 16 in Memory Table, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.MemoryCSErrCounter == 1
+PASS: Checksum Failure: Entry 16 in Memory Table, Expected: 0x00000005, Calculated: 0x00000001
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundMemory_Test_FindEnabledMemoryEntryFalse
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundMemory_Test_MemoryCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundTables_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundTables_Test_Miscompare
+ERROR EVENT ID=29 Checksum Failure: Table name, Expected: 0x00000001, Calculated: 0x00000002
+PASS: CS_AppData.TablesCSErrCounter == 1
+PASS: Checksum Failure: Table name, Expected: 0x00000001, Calculated: 0x00000002
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundTables_Test_TablesNotFound
+ERROR EVENT ID=121 CS Tables: Problem Getting table name info Share: 0x00000000, GetInfo: 0x00000000, GetAddress: 0xFFFFFFFF
+ERROR EVENT ID=94 Tables table computing: Table name could not be found, skipping
+PASS: Tables table computing: Table name could not be found, skipping
+PASS: CS_AppData.CurrentEntryInTable == 1
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_BackgroundTables_Test_FindEnabledTablesEntryFalse
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundTables_Test_TablesCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundApp_Test_Nominal
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundApp_Test_Miscompare
+ERROR EVENT ID=30 Checksum Failure: Application name, Expected: 0x00000003, Calculated: 0x00000002
+PASS: CS_AppData.AppCSErrCounter == 1
+PASS: Checksum Failure: Application name, Expected: 0x00000003, Calculated: 0x00000002
+PASS: CS_AppData.CurrentEntryInTable == 0
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 1
+
+Running Test: CS_BackgroundApp_Test_AppNotFound
+ERROR EVENT ID=122 CS Apps: Problems getting app name info, GetAppID: 0xFFFFFFFF, GetAppInfo: 0xFFFFFFFF, AddressValid: 0
+ERROR EVENT ID=93 App table computing: App name could not be found, skipping
+PASS: App table computing: App name could not be found, skipping
+PASS: CS_AppData.CurrentEntryInTable == 1
+PASS: Result == TRUE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 2
+
+Running Test: CS_BackgroundApp_Test_FindEnabledAppEntryFalse
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_BackgroundApp_Test_AppCSStateDisabled
+PASS: Result == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Running Test: CS_ResetTablesTblResultEntry_Test
+PASS: CS_AppData.ResTablesTblPtr[0].ByteOffset == 0
+PASS: CS_AppData.ResTablesTblPtr[0].TempChecksumValue == 0
+PASS: CS_AppData.ResTablesTblPtr[0].ComputedYet == FALSE
+PASS: Ut_CFE_EVS_GetEventQueueDepth() == 0
+
+Tests Executed:    319
+Assert Pass Count: 1458
+Assert Fail Count: 0
+
+gcov: '../src/cs_table_processing.c' 100.00%  449
+gcov: '../src/cs_memory_cmds.c' 100.00%  150
+gcov: '../src/cs_compute.c' 100.00%  371
+gcov: '../src/cs_app_cmds.c' 100.00%  89
+gcov: '../src/cs_app.c' 100.00%  324
+gcov: '../src/cs_cmds.c' 100.00%  208
+gcov: '../src/cs_eeprom_cmds.c' 100.00%  148
+gcov: '../src/cs_table_cmds.c' 100.00%  89
+gcov: '../src/cs_utils.c' 100.00%  321
+

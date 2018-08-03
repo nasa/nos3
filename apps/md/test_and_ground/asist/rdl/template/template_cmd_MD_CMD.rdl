@@ -1,0 +1,55 @@
+!==============================================================================
+!                Originator: S. Jonke
+!                Responsible SC:  ??
+!                Responsible CSE: ??
+!
+!                  $sc $cpu MD Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Memory Dwell App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  24APR08     SJJ           : Initial
+!  12DEC11     WFM           : Replaced Memory Manager reference with Dwell
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "md_platform_cfg.h"
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Memory Dwell App Commands"
+!
+  CMD  $sc_$cpu_MD_NOOP         FCTN=0, DESC="$sc $cpu MD no-op command code"
+!
+  CMD  $sc_$cpu_MD_ResetCtrs    FCTN=1, DESC="$sc $cpu MD reset counters command code"
+!
+  CMDS $sc_$cpu_MD_StartDwell   FCTN=2, DESC="$sc $cpu MD start dwell command code"
+      UI TableMask  DESC="table mask"
+  END
+!
+  CMDS $sc_$cpu_MD_StopDwell    FCTN=3, DESC="$sc $cpu MD stop dwell command code"
+      UI TableMask  DESC="table mask"
+  END
+!
+  CMDS $sc_$cpu_MD_JamDwell     FCTN=4, DESC="$sc $cpu MD jam dwell command code"
+      UI TableId RANGE=(1,MD_NUM_DWELL_TABLES+1), DESC="id of the table"
+      UI EntryId RANGE=(1,MD_DWELL_TABLE_SIZE), DESC="dwell table entry index"
+      UI FieldLength RANGE=(0,4), DESC="length of dwell field"
+      UI DwellDelay UNITS=Counts, DESC="dwell delay"
+      ULI Offset   DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+  END
+!
+  CMDS $sc_$cpu_MD_SetSignature FCTN=5, DESC="$sc $cpu MD set signature command code"
+      UI TableId RANGE=(1,MD_NUM_DWELL_TABLES), DESC="id of the table"
+      UB Pad[2] INVISIBLE, DEFAULT=0
+      char Signature[MD_SIGNATURE_FIELD_LENGTH] DESC="signature to set"
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

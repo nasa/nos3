@@ -1,0 +1,63 @@
+!=============================================================
+!
+!                Originator: M. Bartholomew
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                 cFE Telemetry Packet # 
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu EVS Housekeeping Message
+!       Packet Length:  ??? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  31MAR05  MOB             ; Initial release
+!  12APR05  MOB             ; Added a byte to 32 bit align)
+!  28APR05  JWW             : Removed $sc_cpu in record element names
+!                           : Added DLABEL for boolean type indicators
+!  28APR05  MOB             : Corrected Logmode label
+!  02MAY05  TGC             : Changed APPID to APPNAME
+!  03MAY05  TGC             : Changed APPNAME back to APPID
+!  08JUN05  SMA             : Changed DISCRETE values for LOGMODE
+!  05JUL05  SMA             : Changed DISCRETE values for LOGFULL
+!  12OCT05  SMA             : Updates per S. Strege email (DCR 183)
+!
+!=============================================================
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu EVS Housekeeping Packet", STALE = 36
+#include "ccsds_header.rdl"
+#include "cfe_platform_cfg.h"
+
+   UB   $sc_$cpu_EVS_CMDPC         DESC= "$sc $cpu EVS Commands Processed Counter"
+   UB   $sc_$cpu_EVS_CMDEC         DESC= "$sc $cpu EVS Command Error Counter"
+   UB   $sc_$cpu_EVS_MSGFMTMODE    DESC= "$sc $cpu  EVS Mesage Format Mode",
+                                   DISCRETE, DRANGE =(0,1), DLABEL=("SHORT","LONG")
+   UB   $sc_$cpu_EVS_MSGTRUNC      DESC= "$sc $cpu  EVS Total Event Messages Truncated Counter"
+   UB   $sc_$cpu_EVS_UNREGAPPC     DESC= "$sc $cpu EVS Total Number of Unregistered Event Messages Counter"
+   UB   $sc_$cpu_EVS_OUTPUTPORT    DESC= "Bit mask of the enabled ports"
+   UB   $sc_$cpu_EVS_LOGFULL       DESC= "Indication if the local event flag is full",
+                                   DISCRETE, DRANGE =(0,1), DLABEL=("FALSE","TRUE")
+   UB   $sc_$cpu_EVS_LOGMODE       DESC= "Indication if the local even flag is in overwrite or discard",
+                                   DISCRETE, DRANGE =(0,1), DLABEL=("OVERWRITE","DISCARD")
+   UI   $sc_$cpu_EVS_MSGSENTC      DESC= "$sc $cpu EVS Total Event Mesages Sent Counter"
+   UI   $sc_$cpu_EVS_LOGOVERFLOWC  DESC= "Local log Overflow counter"
+   UB   $sc_$cpu_EVS_LogState      DESC= "State of the EVS Event Log",DISCRETE,
+				   DRANGE=(0,1), DLABEL=("Disabled","Enabled")
+   UB   $sc_$cpu_EVS_Spare[3]      DESC= "Spares for alignment"
+   RECORD $sc_$cpu_EVS_APP[CFE_ES_MAX_APPLICATIONS]     DESC= "$sc $cpu EVS Application Information"
+      ULI   APPID             DESC= "Application Identifier"
+      UI    APPMSGSENTC       DESC= "Application Message Sent Counter"
+      UB    APPENASTAT        DESC= "Application Enable Status",
+                              DISCRETE, DRANGE =(0,1), DLABEL=("DIS","ENA")
+      UB    EVS_Spare2Align3  DESC= "EVS fill bytes for 32-bit alignment"
+   END ! End Record
+
+END

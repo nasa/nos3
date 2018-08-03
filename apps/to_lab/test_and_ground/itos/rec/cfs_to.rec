@@ -1,0 +1,83 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System TelemetryOutput {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  prototype CfsCommand TOCommand {
+    secondary { range=1 }
+    applicationId { range=0x80 }
+  }
+
+  /** TO NOOP */
+  TOCommand noop {
+    commandCode { range=0 }
+  }
+
+  /** TO Reset Status */
+  TOCommand reset_status {
+    commandCode { range=1 }
+  }
+
+  /** TO Add pkt */
+  TOCommand add_pkt {
+    commandCode { range=2 }
+    cfs.U16 stream {}
+    cfs.U16 pktsize {}
+    /** CFE_SB_QoS_t flags */
+    Structure qos {
+      cfs.U8 priority {}
+      cfs.U8 reliability {}
+    }
+    cfs.U8 buf_limit {}
+  }
+
+  /** TO Send Data types */
+  TOCommand send_data_types {
+    commandCode { range=3 }
+  }
+
+  /** TO Remove pkt */
+  TOCommand remove_pkt {
+    commandCode { range=4 }
+    cfs.U16 stream {}
+  }
+
+  /** To Remove all pkts */
+  TOCommand remove_all_pkts {
+    commandCode { range=5 }
+  }
+
+  /** TO Output Enable Cmd */
+  TOCommand output_enable {
+    commandCode { range=6 }
+    cfs.S8 dest_ip_addr { lengthInCharacters=16, defaultValue="127.0.0.1" }
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x80 } }
+
+    /** TO command accepted counter */
+    cfs.U8 cmdpc {}
+
+    /** TO command error counter */
+    cfs.U8 cmdec {}
+  }
+}
+

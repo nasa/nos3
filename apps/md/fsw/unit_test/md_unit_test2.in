@@ -1,0 +1,41 @@
+* * * * * * * * * * * * * * * * * * * * *
+* Command Input File md_unit_test2.in opened for reading *
+* * * * * * * * * * * * * * * * * * * * *
+*
+* * * -> Send Housekeeping packet
+1891 C000 0001 0000
+
+*
+* * * * * * * * * * * * * * * * * * * * *
+* * * -> Set simulator to return pipe read error
+* * * on CFE_SB_RcvMsg call.
+* * * * * * * * * * * * * * * * * * * * *
+@SET_PIPE_READ_ERROR
+ 
+*
+* * * * * * * * * * * * * * * * * * * * *
+* * * -> Send Housekeeping packet
+* * * Expected Output: 1) Housekeeping packet followed by
+* * * 2) Pipe Read error message which in turn triggers
+* * * 3) Application termination.
+* * * * * * * * * * * * * * * * * * * * *
+1891 C000 0001 0000
+
+*@SET_SB_RETURN_CODE 5 0xca000009L
+*@USE_DEFAULT_SB_RETURN_CODE 5
+* * * * * * * * * * * * * * * * * * * * *
+* Execute nominal Noop and Reset Commands *
+* * * * * * * * * * * * * * * * * * * * *
+*
+* * * ->  Noop command
+* * * Expected output: event message
+1890 C000 0001 0000 ; Noop command
+
+*
+* * * ->  Reset command
+* * * Expected output: event message
+1890 C000 0001 0100; Reset command
+
+*
+* * * -> Send Housekeeping packet
+1891 C000 0001 0000

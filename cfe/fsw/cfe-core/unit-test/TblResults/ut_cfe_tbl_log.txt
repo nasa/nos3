@@ -1,0 +1,1596 @@
+Compiling tbl tests using Baseline cFE version with following flags: -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE
+
+>>> [CLEAN] - REMOVE <CFS_MISSION_INC> HEADER FILES <<<
+
+rm -f /home/sstrege/cFE650/build/mission_inc/*
+
+>>> [CLEAN] REMOVE BUILD/INC HEADER FILES <<<
+
+rm -f ./inc/*
+make -C cfe/unit-test/tbl clean
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'
+rm -f cfe_tbl_internal.o cfe_tbl_api.o cfe_tbl_task.o cfe_tbl_task_cmds.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_evs_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_time_stubs.o tbl_UT.o tbl_UT
+rm -f *.lis
+rm -f *.g*
+rm -f *.d
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'
+
+>>> [PRE-BUILD] CONFIGURING OSAL <<<
+
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/osal/build'
+test -d inc || mkdir inc
+cp -f ../src/bsp/pc-linux/config/osconfig.h inc/osconfig.h
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/osal/build'
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_MISSION> CORE <<<
+
+Copying <CFE_FSW>/mission_inc/*.h to <CFS_MISSION_INC>
+Copying <CFE_FSW>/platform_inc/<CFE_CORE_PLATFORM_INC_SRC>/cfe_platform_cfg.h to ./inc
+Copying <OSAL>/build/inc/osconfig.h to ./inc
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_APP_SRC>/INC <<<
+
+Copying <CFS_APP_SRC>/inc/*.h to <CFS_MISSION_INC>
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PUBLIC_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_lib/fsw/public_inc/sample_lib.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/MISSION_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/mission_inc/sample_app_perfids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/mission_inc/ci_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/mission_inc/to_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/mission_inc/sch_lab_perfids.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PLATFORM_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/platform_inc/sample_app_msgids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/platform_inc/ci_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_sub_table.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/platform_inc/sch_lab_sched_tab.h
+
+>>> [PRE-BUILD] CREATING <APP> BUILD DIRECTORY <<<
+
+
+>>> [PRE-BUILD] COPYING MAKEFILES FROM <APP>/FOR_BUILD <<<
+
+Copying <CFS_APP_SRC>/sample_lib/fsw/for_build/* to ./sample_lib
+Copying <CFS_APP_SRC>/sample_app/fsw/for_build/* to ./sample_app
+Copying <CFS_APP_SRC>/ci_lab/fsw/for_build/* to ./ci_lab
+Copying <CFS_APP_SRC>/to_lab/fsw/for_build/* to ./to_lab
+Copying <CFS_APP_SRC>/sch_lab/fsw/for_build/* to ./sch_lab
+make -C cfe/unit-test/tbl
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_tbl_internal.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_internal.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_tbl_api.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_api.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_tbl_task.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_task.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_tbl_task_cmds.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_task_cmds.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_bsp_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_bsp_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_osprintf_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_osprintf_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_evs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_evs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_es_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_es_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_sb_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_sb_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_fs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_fs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_time_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_time_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o tbl_UT.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/tbl_UT.c
+gcc -o tbl_UT cfe_tbl_internal.o cfe_tbl_api.o cfe_tbl_task.o cfe_tbl_task_cmds.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_evs_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_time_stubs.o tbl_UT.o -pg -fprofile-arcs -ftest-coverage -m32 ../libut_osapi_stubs/libut_osapi_stubs.a ../libut_bsp/libut_bsp.a ../libut_assert/libut_assert.a
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'
+make -C cfe/unit-test/tbl gcov
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'
+
+Running unit test: gcov
+
+./tbl_UT
+
+[BEGIN] PC-LINUX UNIT TEST
+Making directories: ram0, ram1, eeprom1 for OSAL mount points
+[ INFO] cFE TBL Unit Test Output File
+
+
+
+
+[BEGIN] 01 Test_CFE_TBL_TaskInit
+[ INFO] Begin Test Task Init
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6156
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6148
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TBL Initialized.  cFE Version 6.4.2.0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0000
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   TBL:Error reading cmd pipe,RC=0xCA000001
+
+
+[ PASS] 01.001 tbl_UT.c:233 - CFE_TBL_TaskMain - Success
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   TBL:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   TBL:Application Init Failed,RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 01.002 tbl_UT.c:245 - CFE_TBL_TaskMain - Application register fail
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6156
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6148
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TBL Initialized.  cFE Version 6.4.2.0
+
+[ PASS] 01.003 tbl_UT.c:254 - CFE_TBL_TaskInit - Success
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called: -2
+
+[ INFO]   TBL:Error creating cmd pipe:RC=0xFFFFFFFE
+
+
+[ PASS] 01.004 tbl_UT.c:264 - CFE_TBL_TaskInit - Create pipe fail
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: -3
+
+[ INFO]   TBL:Error subscribing to HK Request:RC=0xFFFFFFFD
+
+
+[ PASS] 01.005 tbl_UT.c:274 - CFE_TBL_TaskInit - Housekeeping request subscribe fail
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6156
+
+[ INFO]   CFE_SB_Subscribe called: -4
+
+[ INFO]   TBL:Error subscribing to gnd cmds:RC=0xFFFFFFFC
+
+
+[ PASS] 01.006 tbl_UT.c:284 - CFE_TBL_TaskInit - Ground command subscribe fail
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6156
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6148
+
+[ INFO]   TBL:Error sending init event:RC=0xFFFFFFFB
+
+
+[ PASS] 01.007 tbl_UT.c:294 - CFE_TBL_TaskInit - Send initialization event fail
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_EVS_Register called: -6
+
+[ INFO]   TBL:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFA
+
+
+[ PASS] 01.008 tbl_UT.c:304 - CFE_TBL_TaskInit - EVS register fail
+[ INFO]   CFE_EVS_SendEvent: 10, 2 - No-op command. cFE Version 6.4.2.0
+
+[ PASS] 01.009 tbl_UT.c:315 - CFE_TBL_TaskPipe - Valid command (no-op) - success
+[ INFO]   CFE_EVS_SendEvent: 52, 3 - Invalid msg length -- ID = 0x1804, CC = 0, Len = 7 (!= 8)
+
+[ PASS] 01.010 tbl_UT.c:328 - CFE_TBL_TaskPipe - Invalid message length
+[ INFO]   CFE_EVS_SendEvent: 51, 3 - Invalid command code -- ID = 0x1804, CC = 103
+
+[ PASS] 01.011 tbl_UT.c:341 - CFE_TBL_TaskPipe - Invalid command code
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0804
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x080C
+
+[ PASS] 01.012 tbl_UT.c:354 - CFE_TBL_TaskPipe - 'Message' type message
+[ INFO]   CFE_EVS_SendEvent: 11, 1 - Reset Counters command
+
+[ PASS] 01.013 tbl_UT.c:367 - CFE_TBL_TaskPipe - 'Command' type message
+[  END] 01 Test_CFE_TBL_TaskInit TOTAL::13    PASS::13    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 02 Test_CFE_TBL_InitData
+[ INFO] Begin Test Init Data
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ PASS] 02.001 tbl_UT.c:387 - CFE_TBL_SearchCmdHndlrTbl - Initialize data
+[  END] 02 Test_CFE_TBL_InitData TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 03 Test_CFE_TBL_SearchCmdHndlrTbl
+[ INFO] Begin Test Search Command Handler Table
+
+
+[ PASS] 03.001 tbl_UT.c:411 - CFE_TBL_SearchCmdHndlrTbl - Found matching message ID and command code
+[ PASS] 03.002 tbl_UT.c:422 - CFE_TBL_SearchCmdHndlrTbl - Message is not a command message with specific command code
+[ PASS] 03.003 tbl_UT.c:434 - CFE_TBL_SearchCmdHndlrTbl - Message ID matches, command code must does not match
+[ PASS] 03.004 tbl_UT.c:443 - CFE_TBL_SearchCmdHndlrTbl - Message ID does not match
+[  END] 03 Test_CFE_TBL_SearchCmdHndlrTbl TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 04 Test_CFE_TBL_DeleteCDSCmd
+[ INFO] Begin Test Delete CDS Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 82, 3 - '0' found in Table Registry. CDS cannot be deleted until table is unregistered
+
+[ PASS] 04.001 tbl_UT.c:465 - CFE_TBL_DeleteCDSCmd - Table name found in table registry
+[ INFO]   CFE_EVS_SendEvent: 84, 3 - Table '-1' is not found in Critical Table Registry
+
+[ PASS] 04.002 tbl_UT.c:483 - CFE_TBL_DeleteCDSCmd - Table not found in critical table registry
+[ INFO]   CFE_EVS_SendEvent: 83, 3 - Table '159' is in Critical Table Registry but CDS is not tagged as a table
+
+[ PASS] 04.003 tbl_UT.c:496 - CFE_TBL_DeleteCDSCmd - Table is in critical table registry but CDS is not tagged as a table
+[ INFO]   CFE_EVS_SendEvent: 87, 3 - CDS '159' owning app is still active
+
+[ PASS] 04.004 tbl_UT.c:506 - CFE_TBL_DeleteCDSCmd - CDS owning application is still active
+[ INFO]   CFE_EVS_SendEvent: 85, 3 - Unable to locate '159' in CDS Registry
+
+[ PASS] 04.005 tbl_UT.c:515 - CFE_TBL_DeleteCDSCmd - Unable to locate table in CDS registry
+[ INFO]   CFE_EVS_SendEvent: 86, 3 - Error while deleting '159' from CDS, See SysLog.(Err=0xFFFFFFFF)
+
+[ PASS] 04.006 tbl_UT.c:524 - CFE_TBL_DeleteCDSCmd - Error while deleting table from CDS
+[ INFO]   CFE_EVS_SendEvent: 38, 2 - Successfully removed '159' from CDS
+
+[ PASS] 04.007 tbl_UT.c:533 - CFE_TBL_DeleteCDSCmd - Successfully removed table from CDS
+[  END] 04 Test_CFE_TBL_DeleteCDSCmd TOTAL::7     PASS::7     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 05 Test_CFE_TBL_TlmRegCmd
+[ INFO] Begin Test Telemetry Registry Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 18, 1 - Table Registry entry for '0' will be telemetered
+
+[ PASS] 05.001 tbl_UT.c:559 - CFE_TBL_TlmRegCmd - Table registry entry for telemetry does exist
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '129' in Table Registry
+
+[ PASS] 05.002 tbl_UT.c:570 - CFE_TBL_TlmRegCmd - Table registry entry for telemetry doesn't exist
+[  END] 05 Test_CFE_TBL_TlmRegCmd TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 06 Test_CFE_TBL_AbortLoadCmd
+[ INFO] Begin Test Abort Load Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 21, 2 - Table Load Aborted for '0'
+
+[ PASS] 06.001 tbl_UT.c:598 - CFE_TBL_AbortLoadCmd - Table registry entry exists & load in progress
+[ INFO]   CFE_EVS_SendEvent: 69, 3 - Cannot abort load of '0'. No load started.
+
+[ PASS] 06.002 tbl_UT.c:607 - CFE_TBL_AbortLoadCmd - Table registry entry exists but no load in progress
+[ INFO]   CFE_EVS_SendEvent: 69, 3 - Cannot abort load of '0'. No load started.
+
+[ PASS] 06.003 tbl_UT.c:619 - CFE_TBL_AbortLoadCmd - Table registry entry exists, load in progress, dump only
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '129' in Table Registry
+
+[ PASS] 06.004 tbl_UT.c:629 - CFE_TBL_AbortLoadCmd - Table registry entry doesn't exist
+[ INFO]   CFE_EVS_SendEvent: 21, 2 - Table Load Aborted for '0'
+
+[ PASS] 06.005 tbl_UT.c:640 - CFE_TBL_AbortLoad - Table is double buffered
+[  END] 06 Test_CFE_TBL_AbortLoadCmd TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 07 Test_CFE_TBL_ActivateCmd
+[ INFO] Begin Test Activate Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 78, 3 - Illegal attempt to activate dump-only table '0'
+
+[ PASS] 07.001 tbl_UT.c:672 - CFE_TBL_ActivateCmd - Table registry exists, but dump-only table attempted to load
+[ INFO]   CFE_EVS_SendEvent: 81, 3 - Cannot activate table '0'. Inactive image not Validated
+
+[ PASS] 07.002 tbl_UT.c:685 - CFE_TBL_ActivateCmd - Table registry exists, not a dump-only tbl, and a load in progress: Table is double
+[ INFO]   CFE_EVS_SendEvent: 17, 1 - Tbl Services notifying App that '0' has a load pending
+
+[ PASS] 07.003 tbl_UT.c:698 - CFE_TBL_ActivateCmd - Table registry exists, not a dump-only tbl, and a load in progress: Table isn't dou
+[ INFO]   CFE_EVS_SendEvent: 70, 3 - Cannot activate table '0'. No Inactive image available
+
+[ PASS] 07.004 tbl_UT.c:711 - CFE_TBL_ActivateCmd - Table registry exists, not a dump-only tbl, no load in progress, no notification me
+[ INFO]   CFE_SB_InitMsg called: initialized msg 0
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 89, 3 - Manage Notification Pkt Error(Status=0xCA00000C)
+
+[ PASS] 07.005 tbl_UT.c:725 - CFE_TBL_ActivateCmd - Table registry exists, not a dump-only tbl, no load in progress, send notification 
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '129' in Table Registry
+
+[ PASS] 07.006 tbl_UT.c:736 - CFE_TBL_ActivateCmd - Table registry entry doesn't exist
+[  END] 07 Test_CFE_TBL_ActivateCmd TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 08 Test_CFE_TBL_DumpToFile
+[ INFO] Begin Test Dump to File
+
+
+[ INFO]   CFE_EVS_SendEvent: 62, 3 - Error creating dump file 'filename', Status=0xFFFFFFFF
+
+[ PASS] 08.001 tbl_UT.c:761 - CFE_TBL_DumpToFile - Error creating dump file
+[ INFO]   CFE_EVS_SendEvent: 63, 3 - Error writing cFE File Header to 'filename', Status=0x0000003F
+
+[ PASS] 08.002 tbl_UT.c:771 - CFE_TBL_DumpToFile - Error writing cFE file header
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 64, 3 - Error writing Tbl image File Header to 'filename', Status=0x00000033
+
+[ PASS] 08.003 tbl_UT.c:785 - CFE_TBL_DumpToFile - Error writing cFE file header
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 65, 3 - Error writing Tbl image to 'filename', Status=0x00000008
+
+[ PASS] 08.004 tbl_UT.c:794 - CFE_TBL_DumpToFile - Error writing cFE file header
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 14, 2 - Successfully dumped Table 'tablename' to 'filename'
+
+[ PASS] 08.005 tbl_UT.c:803 - CFE_TBL_DumpToFile - File created and data dumped
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 13, 2 - Successfully overwrote 'filename' with Table 'tablename'
+
+[ PASS] 08.006 tbl_UT.c:812 - CFE_TBL_DumpToFile - File existed previously => data overwritten
+[  END] 08 Test_CFE_TBL_DumpToFile TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 09 Test_CFE_TBL_ResetCmd
+[ INFO] Begin Test Reset Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 11, 1 - Reset Counters command
+
+[ PASS] 09.001 tbl_UT.c:830 - CFE_TBL_ResetCmd - Function run and completed
+[  END] 09 Test_CFE_TBL_ResetCmd TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 10 Test_CFE_TBL_ValidateCmd
+[ INFO] Begin Test Validate Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '129' in Table Registry
+
+[ PASS] 10.001 tbl_UT.c:857 - CFE_TBL_ValidateCmd - Table registry entry doesn't exist
+[ INFO]   CFE_EVS_SendEvent: 67, 3 - Too many Table Validations have been requested
+
+[ PASS] 10.002 tbl_UT.c:880 - CFE_TBL_ValidateCmd - Active buffer with data: too many table validations have been requested
+[ INFO]   CFE_EVS_SendEvent: 23, 2 - Tbl Services assumes '0' is valid. No Validation Function has been registered
+
+[ PASS] 10.003 tbl_UT.c:893 - CFE_TBL_ValidateCmd - Active buffer with data: No validation function pointer
+[ INFO]   CFE_SB_InitMsg called: initialized msg 0
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0000
+
+[ INFO]   CFE_EVS_SendEvent: 16, 1 - Tbl Services issued validation request for '0'
+
+[ PASS] 10.004 tbl_UT.c:906 - CFE_TBL_ValidateCmd - Active buffer with data: validation function pointer and active table flag
+[ INFO]   CFE_SB_InitMsg called: initialized msg 0
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0000
+
+[ INFO]   CFE_EVS_SendEvent: 16, 1 - Tbl Services issued validation request for '0'
+
+[ PASS] 10.005 tbl_UT.c:922 - CFE_TBL_ValidateCmd - Inactive buffer: double buffered table : validation function pointer
+[ INFO]   CFE_EVS_SendEvent: 16, 1 - Tbl Services issued validation request for '0'
+
+[ PASS] 10.006 tbl_UT.c:940 - CFE_TBL_ValidateCmd - Inactive buffer: single buffered table with load in progress: validation function p
+[ INFO]   CFE_SB_InitMsg called: initialized msg 0
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 89, 3 - Manage Notification Pkt Error(Status=0xCA00000C)
+
+[ PASS] 10.007 tbl_UT.c:959 - CFE_TBL_ValidateCmd - Inactive buffer: single buffered table with load in progress: validation function p
+[ INFO]   CFE_EVS_SendEvent: 66, 3 - No Inactive Buffer for Table '0' present
+
+[ PASS] 10.008 tbl_UT.c:971 - CFE_TBL_ValidateCmd - Inactive buffer: single buffered table with load in progress
+[ INFO]   CFE_EVS_SendEvent: 80, 3 - Cmd for Table '0' had illegal buffer parameter (0x0000FFFF)
+
+[ PASS] 10.009 tbl_UT.c:980 - CFE_TBL_ValidateCmd - Illegal buffer
+[  END] 10 Test_CFE_TBL_ValidateCmd TOTAL::9     PASS::9     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 11 Test_CFE_TBL_NoopCmd
+[ INFO] Begin Test No-Op Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 10, 2 - No-op command. cFE Version 6.4.2.0
+
+[ PASS] 11.001 tbl_UT.c:999 - CFE_TBL_NoopCmd - Function run and completed
+[  END] 11 Test_CFE_TBL_NoopCmd TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 12 Test_CFE_TBL_GetTblRegData
+[ INFO] Begin Test Get Table Registry Command
+
+
+[ PASS] 12.001 tbl_UT.c:1020 - CFE_TBL_GetTblRegData - Double buffered table
+[ PASS] 12.002 tbl_UT.c:1033 - CFE_TBL_GetTblRegData - Single buffered table - inactive buffer
+[ PASS] 12.003 tbl_UT.c:1045 - CFE_TBL_GetTblRegData - No inactive buffer
+[  END] 12 Test_CFE_TBL_GetTblRegData TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 13 Test_CFE_TBL_GetHkData
+[ INFO] Begin Test Get Housekeeping Data
+
+
+[ PASS] 13.001 tbl_UT.c:1076 - CFE_TBL_GetHkData - Raise load pending table count
+[ PASS] 13.002 tbl_UT.c:1085 - CFE_TBL_GetHkData - Lower free shared buffer count
+[ PASS] 13.003 tbl_UT.c:1098 - CFE_TBL_GetHkData - ValPtr result CFE_SUCCESS
+[ PASS] 13.004 tbl_UT.c:1110 - CFE_TBL_GetHkData - ValPtr result != CFE_SUCCESS
+[ PASS] 13.005 tbl_UT.c:1120 - CFE_TBL_GetHkData - Invalid registry entry
+[ PASS] 13.006 tbl_UT.c:1130 - CFE_TBL_GetHkData - Last valid table updated out of range (low)
+[ PASS] 13.007 tbl_UT.c:1140 - CFE_TBL_GetHkData - Last valid table updated out of range (high)
+[  END] 13 Test_CFE_TBL_GetHkData TOTAL::7     PASS::7     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 14 Test_CFE_TBL_DumpRegCmd
+[ INFO] Begin Test Dump Register Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 62, 3 - Error creating dump file '/ram/cfe_tbl_reg.log', Status=0xFFFFFFFF
+
+[ PASS] 14.001 tbl_UT.c:1169 - CFE_TBL_DumpRegCmd - Error creating dump file
+[ INFO]   CFE_EVS_SendEvent: 63, 3 - Error writing cFE File Header to '/ram/cfe_tbl_reg.log', Status=0x0000003F
+
+[ PASS] 14.002 tbl_UT.c:1179 - CFE_TBL_DumpRegCmd - Error writing cFE File header
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 22, 1 - Successfully dumped Table Registry to '/ram/cfe_tbl_reg.log':Size=20892,Entries=127
+
+[ PASS] 14.003 tbl_UT.c:1196 - CFE_TBL_DumpRegCmd - Table is owned, file didn't exist previously: successfully dumped table
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 15, 1 - Successfully overwrote '/ram/cfe_tbl_reg.log' with Table Registry:Size=20892,Entries=127
+
+[ PASS] 14.004 tbl_UT.c:1209 - CFE_TBL_DumpRegCmd - File did exist previously: successfully overwritten table
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 68, 3 - Error writing Registry to '/ram/cfe_tbl_reg.log', Status=0x000000A3
+
+[ PASS] 14.005 tbl_UT.c:1223 - CFE_TBL_DumpRegCmd - Table is not owned, OS_write fails: Error writing Registry
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 15, 1 - Successfully overwrote 'X' with Table Registry:Size=20892,Entries=127
+
+[ PASS] 14.006 tbl_UT.c:1232 - CFE_TBL_DumpRegCmd - Default dump file name
+[  END] 14 Test_CFE_TBL_DumpRegCmd TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 15 Test_CFE_TBL_DumpCmd
+[ INFO] Begin Test Dump Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '129' in Table Registry
+
+[ PASS] 15.001 tbl_UT.c:1258 - CFE_TBL_DumpCmd - Table registry entry doesn't exist
+[ INFO]   CFE_SB_InitMsg called: initialized msg 0
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 89, 3 - Manage Notification Pkt Error(Status=0xCA00000C)
+
+[ PASS] 15.002 tbl_UT.c:1291 - CFE_TBL_DumpCmd - Active buffer, pointer created, validation passes, is a dump only table, no dump alrea
+[ INFO]   CFE_TBL:GetWorkingBuffer-All shared buffers are locked
+
+
+[ INFO]   CFE_EVS_SendEvent: 60, 3 - No working buffers available for table 'DumpCmdTest'
+
+[ PASS] 15.003 tbl_UT.c:1316 - CFE_TBL_DumpCmd - Active buffer, pointer created, is a dump only table, no dump already in progress, fai
+[ INFO]   CFE_EVS_SendEvent: 76, 3 - Too many Dump Only Table Dumps have been requested
+
+[ PASS] 15.004 tbl_UT.c:1337 - CFE_TBL_DumpCmd - Active buffer, pointer created, is dump only table, fails to find a free dump control 
+[ INFO]   CFE_EVS_SendEvent: 77, 3 - A dump for 'DumpCmdTest' is already pending
+
+[ PASS] 15.005 tbl_UT.c:1354 - CFE_TBL_DumpCmd - Inactive buffer, double-buffered, dump already in progress: dump is already pending
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 13, 2 - Successfully overwrote '' with Table 'DumpCmdTest'
+
+[ PASS] 15.006 tbl_UT.c:1371 - CFE_TBL_DumpCmd - Inactive buffer, single-buffered, pointer created, is a dump only table
+[ INFO]   CFE_EVS_SendEvent: 66, 3 - No Inactive Buffer for Table 'DumpCmdTest' present
+
+[ PASS] 15.007 tbl_UT.c:1383 - CFE_TBL_DumpCmd - Inactive buffer, single-buffered: no inactive buffer for table due to load in progress
+[ INFO]   CFE_EVS_SendEvent: 66, 3 - No Inactive Buffer for Table 'DumpCmdTest' present
+
+[ PASS] 15.008 tbl_UT.c:1396 - CFE_TBL_DumpCmd - Inactive buffer, single-buffered: no inactive buffer for table due to user defined add
+[ INFO]   CFE_EVS_SendEvent: 80, 3 - Cmd for Table 'DumpCmdTest' had illegal buffer parameter (0x00000002)
+
+[ PASS] 15.009 tbl_UT.c:1406 - CFE_TBL_DumpCmd - Illegal buffer parameter
+[  END] 15 Test_CFE_TBL_DumpCmd TOTAL::9     PASS::9     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 16 Test_CFE_TBL_LoadCmd
+[ INFO] Begin Test Load Command
+
+
+[ INFO]   CFE_EVS_SendEvent: 53, 3 - Unable to open file 'LoadFileName' for table load, Status = 0xFFFFFFFF
+
+[ PASS] 16.001 tbl_UT.c:1437 - CFE_TBL_LoadCmd - Unable to open file
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 57, 3 - Unable to locate '0' in Table Registry
+
+[ PASS] 16.002 tbl_UT.c:1462 - CFE_TBL_LoadCmd - Table registry entry doesn't exist
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 79, 3 - Attempted to load DUMP-ONLY table '0' from 'LoadFileName'
+
+[ PASS] 16.003 tbl_UT.c:1475 - CFE_TBL_LoadCmd - Attempting to load a dump only table
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 88, 3 - Attempted to load table '0' while previous load is still pending
+
+[ PASS] 16.004 tbl_UT.c:1489 - CFE_TBL_LoadCmd - Attempting to load a table with load already pending
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 75, 3 - File 'LoadFileName' has more data than Tbl Hdr indicates (52)
+
+[ PASS] 16.005 tbl_UT.c:1518 - CFE_TBL_LoadCmd - There is more data than the file indicates
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 12, 2 - Successful load of 'LoadFileName' into '0' working buffer
+
+[ PASS] 16.006 tbl_UT.c:1538 - CFE_TBL_LoadCmd - Successful load
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 71, 3 - Incomplete load of 'LoadFileName' into '0' working buffer
+
+[ PASS] 16.007 tbl_UT.c:1558 - CFE_TBL_LoadCmd - Incomplete load of file into the working buffer
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_TBL:GetWorkingBuffer-All shared buffers are locked
+
+
+[ INFO]   CFE_EVS_SendEvent: 60, 3 - No working buffers available for table '0'
+
+[ PASS] 16.008 tbl_UT.c:1580 - CFE_TBL_LoadCmd - No working buffers available
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 72, 3 - Cannot load 'LoadFileName' (52) at offset 0 in '0' (51)
+
+[ PASS] 16.009 tbl_UT.c:1600 - CFE_TBL_LoadCmd - Table header indicates data beyond size of the table
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 73, 3 - Table Hdr in 'LoadFileName' indicates no data in file
+
+[ PASS] 16.010 tbl_UT.c:1619 - CFE_TBL_LoadCmd - Table header indicates no data in file
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent: 74, 3 - 'LoadFileName' has partial load for uninitialized table '0'
+
+[ PASS] 16.011 tbl_UT.c:1645 - CFE_TBL_LoadCmd - File has partial load for uninitialized table and offset is non-zero
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_TBL:GetWorkingBuffer-All shared buffers are locked
+
+
+[ INFO]   CFE_EVS_SendEvent: 60, 3 - No working buffers available for table '0'
+
+[ PASS] 16.012 tbl_UT.c:1672 - CFE_TBL_LoadCmd - File has partial load for uninitialized table and offset is zero
+[ INFO]   CFE_EVS_SendEvent from app 0: 54, 3 - Unable to read std header for 'LoadFileName', Status = 0x0000003F
+
+[ PASS] 16.013 tbl_UT.c:1684 - CFE_TBL_LoadCmd - Unable to read file header
+[  END] 16 Test_CFE_TBL_LoadCmd TOTAL::13    PASS::13    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 17 Test_CFE_TBL_HousekeepingCmd
+[ INFO] Begin Test Housekeeping Command
+
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 56, 3 - Unable to send Hk Packet (Status=0xFFFFFFFF)
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x080C
+
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 13, 2 - Successfully overwrote 'hkSource' with Table 'housekeepingtest'
+
+[ INFO]   CFE_FS_SetTimeStamp called
+
+[ PASS] 17.001 tbl_UT.c:1738 - CFE_TBL_HousekeepingCmd - Able to open dump file
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0804
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x080C
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 14, 2 - Successfully dumped Table 'housekeepingtest' to 'hkSource'
+
+[ INFO]   CFE_TBL:HkCmd-Unable to open dump file 'hkSource' to update timestamp
+
+
+[ PASS] 17.002 tbl_UT.c:1756 - CFE_TBL_HousekeepingCmd - Unable to open dump file
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0804
+
+[ INFO]   CFE_EVS_SendEvent: 62, 3 - Error creating dump file 'hkSource', Status=0xFFFFFFFF
+
+[ PASS] 17.003 tbl_UT.c:1766 - CFE_TBL_HousekeepingCmd - Invalid table and dump file create failure
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO]   CFE_EVS_SendEvent: 50, 3 - Invalid message ID -- ID = 0x0804
+
+[ INFO]   CFE_FS_WriteHeader called: 2; 
+
+[ INFO]   CFE_EVS_SendEvent: 13, 2 - Successfully overwrote 'hkSource' with Table 'housekeepingtest'
+
+[ INFO]   CFE_TBL:HkCmd-Unable to update timestamp in dump file 'hkSource'
+
+
+[ PASS] 17.004 tbl_UT.c:1775 - CFE_TBL_HousekeepingCmd - Time stamp file failure
+[  END] 17 Test_CFE_TBL_HousekeepingCmd TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 18 Test_CFE_TBL_ApiInit
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[  END] 00 Test_CFE_TBL_ApiInit TOTAL::0     PASS::0     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 18 Test_CFE_TBL_Register
+[ INFO] Begin Test Register
+
+
+[ INFO]   CFE_TBL:ValidateAppID-GetAppID failed (Stat=0xC4000001)
+
+
+[ INFO]   CFE_TBL:Register-Bad AppId(1)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register '', Status=0xC4000001
+
+[ PASS] 18.001 tbl_UT.c:1821 - CFE_TBL_Register - Invalid application ID
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:Register-Bad AppId(32)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register '', Status=0xCC00000A
+
+[ PASS] 18.002 tbl_UT.c:1835 - CFE_TBL_Register - Application ID > maximum allowed
+[ INFO]   CFE_TBL:Register-Table Name (AAAAAAAAAAAAAAA) is bad length (17)
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'AAAAAAAAAAAAAAA', Status=0xCC000002
+
+[ PASS] 18.003 tbl_UT.c:1856 - CFE_TBL_Register - Table name too long
+[ INFO]   CFE_TBL:Register-Table Name () is bad length (0)
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register '', Status=0xCC000002
+
+[ PASS] 18.004 tbl_UT.c:1867 - CFE_TBL_Register - Table name too short
+[ INFO]   CFE_TBL:Register-Table UT_Table1 has size of zero
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000003
+
+[ PASS] 18.005 tbl_UT.c:1878 - CFE_TBL_Register - Size of table = 0
+[ INFO]   CFE_TBL:Register-Single Buffered Table 'UT_Table1' has size 16385 > 16384
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000003
+
+[ PASS] 18.006 tbl_UT.c:1890 - CFE_TBL_Register - Table size too large
+[ INFO]   CFE_TBL:Register-Dbl Buffered Table 'UT_Table1' has size 16385 > 16384
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000003
+
+[ PASS] 18.007 tbl_UT.c:1904 - CFE_TBL_Register - Double-buffered table size too large
+[ INFO]   CFE_TBL:Register-User Def tbl 'UT_Table1' cannot be dbl buff, load/dump or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.008 tbl_UT.c:1920 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_USR_DEF_ADDR | CFE_TBL_OPT_DBL_BUFFER)
+[ INFO]   CFE_TBL:Register-User Def tbl 'UT_Table1' cannot be dbl buff, load/dump or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.009 tbl_UT.c:1936 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_USR_DEF_ADDR | CFE_TBL_OPT_LOAD_DUMP)
+[ INFO]   CFE_TBL:Register-User Def tbl 'UT_Table1' cannot be dbl buff, load/dump or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.010 tbl_UT.c:1953 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_USR_DEF_ADDR | CFE_TBL_OPT_CRITICAL)
+[ INFO]   CFE_TBL:Register-Dump Only tbl 'UT_Table1' cannot be double buffered or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.011 tbl_UT.c:1969 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_DUMP_ONLY | CFE_TBL_OPT_DBL_BUFFER)
+[ INFO]   CFE_TBL:Register-1st Buf Alloc GetPool fail Stat=0xC4000007 MemPoolHndl=0x00000000
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xC4000007
+
+[ PASS] 18.012 tbl_UT.c:1983 - CFE_TBL_Register - Memory handle error
+[ INFO]   CFE_TBL:Register-1st Buf Alloc GetPool fail Stat=0xC4000008 MemPoolHndl=0x00000000
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xC4000008
+
+[ PASS] 18.013 tbl_UT.c:1996 - CFE_TBL_Register - Memory block size error
+[ INFO]   CFE_TBL:Register-2nd Buf Alloc GetPool fail Stat=0xC4000008 MemPoolHndl=0x00000000
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xC4000008
+
+[ PASS] 18.014 tbl_UT.c:2009 - CFE_TBL_Register - Memory block size error (for second buffer)
+[ PASS] 18.015 tbl_UT.c:2021 - CFE_TBL_Register - Get a double buffered table - successful
+[ INFO]   CFE_TBL:Register-App(2) Registering Duplicate Table 'ut_cfe_tbl.UT_Table1' owned by App(1)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC00000D
+
+[ PASS] 18.016 tbl_UT.c:2034 - CFE_TBL_Register - Table owned by another application
+[ INFO]   CFE_TBL:Register-Attempt to register existing table ('ut_cfe_tbl.UT_Table1') with different size(12!=8)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC00000C
+
+[ PASS] 18.017 tbl_UT.c:2047 - CFE_TBL_Register - Table size mismatch
+[ PASS] 18.018 tbl_UT.c:2058 - CFE_TBL_Register - Table with same size and name (setup)
+[ PASS] 18.019 tbl_UT.c:2070 - CFE_TBL_Register - Table with same size and name
+[ PASS] 18.020 tbl_UT.c:2083 - CFE_TBL_Unregister - Table with same size and name (cleanup)
+[ PASS] 18.021 tbl_UT.c:2098 - CFE_TBL_Register - Register single buffered table
+[ PASS] 18.022 tbl_UT.c:2107 - CFE_TBL_Unregister - Register single buffered table (cleanup)
+[ PASS] 18.023 tbl_UT.c:2121 - CFE_TBL_Register - Register single buffered dump-only table
+[ PASS] 18.024 tbl_UT.c:2130 - CFE_TBL_Unregister - Register single buffered dump-only table (cleanup)
+[ PASS] 18.025 tbl_UT.c:2143 - CFE_TBL_Register - Register user defined address table
+[ PASS] 18.026 tbl_UT.c:2152 - CFE_TBL_Unregister - Register user defined address table (cleanup)
+[ PASS] 18.027 tbl_UT.c:2165 - CFE_TBL_Register - Register critical table
+[ PASS] 18.028 tbl_UT.c:2174 - CFE_TBL_Unregister - Register critical table (cleanup)
+[ PASS] 18.029 tbl_UT.c:2190 - CFE_TBL_Register - Register critical table that already has an allocated CDS
+[ PASS] 18.030 tbl_UT.c:2199 - CFE_TBL_Unregister - Register critical table that already has an allocated CDS (cleanup)
+[ INFO]   CFE_TBL:Register-Failed to recover 'ut_cfe_tbl.UT_Table1' info from CDS TblReg
+
+
+[ PASS] 18.031 tbl_UT.c:2218 - CFE_TBL_Register - Register critical table that already has an allocated CDS where recovery fails
+[ PASS] 18.032 tbl_UT.c:2228 - CFE_TBL_Unregister - Register critical table that already has an allocated CDS where recovery fails (cle
+[ INFO]   CFE_TBL:Register-Failed to recover 'ut_cfe_tbl.UT_Table1' from CDS (ErrCode=0xC4000007)
+
+
+[ PASS] 18.033 tbl_UT.c:2246 - CFE_TBL_Register - Register critical table that already has an allocated CDS but fails recovery
+[ PASS] 18.034 tbl_UT.c:2256 - CFE_TBL_Unregister - Register critical table that already has an allocated CDS but fails recovery (clean
+[ INFO]   CFE_TBL:Register-Failed to recover 'ut_cfe_tbl.UT_Table1' info from CDS TblReg
+
+
+[ PASS] 18.035 tbl_UT.c:2280 - CFE_TBL_Register - Register Critical table that already has an allocated CDS but no critical table regis
+[ PASS] 18.036 tbl_UT.c:2290 - CFE_TBL_Unregister - Register Critical table that already has an allocated CDS but no critical table reg
+[ INFO]   CFE_TBL:Register-Failed to find a free Crit Tbl Reg Rec for 'ut_cfe_tbl.UT_Table1'
+
+
+[ PASS] 18.037 tbl_UT.c:2314 - CFE_TBL_Register - Register Critical table but no critical table registry entry is free
+[ PASS] 18.038 tbl_UT.c:2324 - CFE_TBL_Unregister - Register Critical table but no critical table registry entry is free (cleanup)
+[ INFO]   CFE_TBL:Register-Failed to register 'UNKNOWN.UT_Table1' as a CDS (ErrCode=0xC4000011)
+
+
+[ PASS] 18.039 tbl_UT.c:2340 - CFE_TBL_Register - Register critical table when CDS registry is full
+[ PASS] 18.040 tbl_UT.c:2361 - CFE_TBL_Register - Registry full (setup)
+[ INFO]   CFE_TBL:Register-Registry full
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table129', Status=0xCC000006
+
+[ PASS] 18.041 tbl_UT.c:2375 - CFE_TBL_Register - Registry full
+[ PASS] 18.042 tbl_UT.c:2385 - CFE_TBL_Unregister - Registry full (cleanup)
+[ PASS] 18.043 tbl_UT.c:2400 - CFE_TBL_Share - No available handles (setup)
+[ INFO]   CFE_TBL:Register-No more free handles
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table128', Status=0xCC00000B
+
+[ PASS] 18.044 tbl_UT.c:2417 - CFE_TBL_Register - No available handles
+[ INFO]   CFE_TBL:Register-User Def tbl 'UT_Table1' cannot be dbl buff, load/dump or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.045 tbl_UT.c:2432 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_USR_DEF_ADDR |CFE_TBL_OPT_CRITICAL)
+[ INFO]   CFE_TBL:Register-Dump Only tbl 'UT_Table1' cannot be double buffered or critical
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table1', Status=0xCC000025
+
+[ PASS] 18.046 tbl_UT.c:2448 - CFE_TBL_Register - Invalid table option combination (CFE_TBL_OPT_DUMP_ONLY |CFE_TBL_OPT_CRITICAL)
+[ PASS] 18.047 tbl_UT.c:2461 - CFE_TBL_Register - UsedFlag is false
+[ PASS] 18.048 tbl_UT.c:2475 - CFE_TBL_Register - Invalid registry index
+[ PASS] 18.049 tbl_UT.c:2493 - CFE_TBL_Register - Access index at end of list
+[ INFO]   CFE_TBL:Register-1st Buf Alloc GetPool fail Stat=0xC0000000 MemPoolHndl=0x00000000
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 90, 3 - ut_cfe_tbl Failed to Register 'ut_cfe_tbl.UT_Table128', Status=0xC0000000
+
+[ PASS] 18.050 tbl_UT.c:2514 - CFE_TBL_Register - Register a double buffered table with pool buffer error
+[  END] 18 Test_CFE_TBL_Register TOTAL::50    PASS::50    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 19 Test_CFE_TBL_Share
+[ INFO] Begin Test Share
+
+
+[ INFO]   CFE_TBL:ValidateAppID-GetAppID failed (Stat=0xC4000001)
+
+
+[ INFO]   CFE_TBL:Share-Bad AppId(1)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 91, 3 - ut_cfe_tbl Failed to Share 'ut_cfe_tbl.UT_Table2', Status=0xC4000001
+
+[ PASS] 19.001 tbl_UT.c:2545 - CFE_TBL_Share - Invalid application ID
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:Share-Bad AppId(32)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 91, 3 - ut_cfe_tbl Failed to Share 'ut_cfe_tbl.UT_Table2', Status=0xCC00000A
+
+[ PASS] 19.002 tbl_UT.c:2557 - CFE_TBL_Share - Application ID > maximum allowed
+[ INFO]   CFE_TBL:Share-Table 'ut_cfe_tbl.NOT_Table2' not found in Registry
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 91, 3 - ut_cfe_tbl Failed to Share 'ut_cfe_tbl.NOT_Table2', Status=0xCC000002
+
+[ PASS] 19.003 tbl_UT.c:2568 - CFE_TBL_Share - Table name not in registry
+[ INFO]   CFE_TBL:Share-No more free handles
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 91, 3 - ut_cfe_tbl Failed to Share 'ut_cfe_tbl.UT_Table3', Status=0xCC00000B
+
+[ PASS] 19.004 tbl_UT.c:2578 - CFE_TBL_Share - No available table handles
+[ PASS] 19.005 tbl_UT.c:2587 - CFE_TBL_Unregister - Free handles
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[0] Fail Stat=0xC4000007, Hndl=0x00000000, Buf=0x00000000
+
+
+[ PASS] 19.006 tbl_UT.c:2597 - CFE_TBL_Unregister - PutPoolBuf error
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table4' from 'TblSrcFileName.dat'
+
+[ PASS] 19.007 tbl_UT.c:2627 - CFE_TBL_Load - First load of a table - successful
+[ PASS] 19.008 tbl_UT.c:2637 - CFE_TBL_Share - Share of table that has not been loaded - successful
+[ PASS] 19.009 tbl_UT.c:2646 - CFE_TBL_Share - Share of table that has been loaded - successful
+[  END] 19 Test_CFE_TBL_Share   TOTAL::9     PASS::9     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 20 Test_CFE_TBL_Unregister
+[ INFO] Begin Test Unregister
+
+
+[ INFO]   CFE_TBL:ValidateHandle-Table Handle=256 is > 256
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Invalid Tbl Handle=256
+
+
+[ INFO]   CFE_TBL:Unregister-App(1) does not have access to Tbl Handle=256
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 92, 3 - ut_cfe_tbl Failed to Unregister '?', Status=0xCC000001
+
+[ PASS] 20.001 tbl_UT.c:2671 - CFE_TBL_Unregister - Invalid handle
+[ PASS] 20.002 tbl_UT.c:2680 - CFE_TBL_Unregister - Unregister shared table to make it unowned
+[ PASS] 20.003 tbl_UT.c:2692 - CFE_TBL_Unregister - Unregister unowned table
+[  END] 20 Test_CFE_TBL_Unregister TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 21 Test_CFE_TBL_NotifyByMessage
+[ INFO] Begin Test Notify by Message
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ PASS] 21.001 tbl_UT.c:2722 - CFE_TBL_Register - Notify by message (setup)
+[ PASS] 21.002 tbl_UT.c:2731 - CFE_TBL_NotifyByMessage - Notify - success
+[ INFO]   CFE_TBL:NotifyByMsg-App(1) does not own Tbl Handle=0
+
+
+[ PASS] 21.003 tbl_UT.c:2743 - CFE_TBL_NotifyByMessage - Notify - no access
+[ INFO]   CFE_TBL:ValidateAppID-GetAppID failed (Stat=0xC4000001)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=1
+
+
+[ PASS] 21.004 tbl_UT.c:2753 - CFE_TBL_NotifyByMessage - Notify - bad application ID
+[  END] 21 Test_CFE_TBL_NotifyByMessage TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 22 Test_CFE_TBL_Load
+[ INFO] Begin Test Load
+
+
+[ PASS] 22.001 tbl_UT.c:2793 - CFE_TBL_Register - Load setup - single buffered table
+[ INFO]   CFE_FS_ReadHeader called: 1; Test description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat', Status=0xC
+[ PASS] 22.002 tbl_UT.c:2824 - CFE_TBL_Load - Attempt to perform partial INITIAL load
+[ INFO]   CFE_FS_ReadHeader called: 1; Test description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat'
+
+[ PASS] 22.003 tbl_UT.c:2845 - CFE_TBL_Load - Attempt to perform partial INITIAL load with table already loaded
+[ INFO]   CFE_FS_ReadHeader called: 1; Test description
+
+[ INFO]   CFE_TBL:Load-App(1) Fail to load Tbl 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat' (Stat=0xCC000020)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat', Status=0xC
+[ PASS] 22.004 tbl_UT.c:2877 - CFE_TBL_Load - File data incompatible with table
+[ PASS] 22.005 tbl_UT.c:2893 - CFE_TBL_Register - CFE_TBL_Load setup - register a double buffered table
+[ INFO]   CFE_FS_ReadHeader called: 1; Test description
+
+[ INFO]   CFE_TBL:Load-App(1) Fail to load Tbl 'ut_cfe_tbl.UT_Table2x' from 'TblSrcFileName.dat' (Stat=0xCC000020)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table2x' from 'TblSrcFileName.dat', Status=0x
+[ PASS] 22.006 tbl_UT.c:2929 - CFE_TBL_Load - File data incompatible with table, double buffered, already loaded
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table1' from 'Addr 0xBFEBAFBC'
+
+[ PASS] 22.007 tbl_UT.c:2941 - CFE_TBL_Load - Perform load from memory
+[ INFO]   CFE_TBL:Load-App(1) attempt to load from illegal source type=99
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 94, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' (Invalid Source Type)
+
+[ PASS] 22.008 tbl_UT.c:2955 - CFE_TBL_Load - Attempt to load from illegal source type
+[ INFO]   CFE_TBL:Load-App(1) reports load invalid (Stat=0xFFFFFFFF) for 'ut_cfe_tbl.UT_Table1'
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' from Addr 0xBFEBAFBC, Status=0xFFFFFF
+[ PASS] 22.009 tbl_UT.c:2968 - CFE_TBL_Load - Fail validation function on table load (negative return code)
+[ INFO]   CFE_TBL:Load-App(1) Validation func return code invalid (Stat=0x00000001) for 'ut_cfe_tbl.UT_Table1'
+
+
+[ INFO]   CFE_TBL:Load-App(1) reports load invalid (Stat=0xFFFFFFFF) for 'ut_cfe_tbl.UT_Table1'
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' from Addr 0xBFEBAFBC, Status=0xFFFFFF
+[ PASS] 22.010 tbl_UT.c:2981 - CFE_TBL_Load - Fail validation function on table load (positive return code)
+[ INFO]   CFE_TBL:ValidateHandle-Table Handle=256 is > 256
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Invalid Tbl Handle=256
+
+
+[ INFO]   CFE_TBL:Load-App(1) does not have access to Tbl Handle=256
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load '?', Status=0xCC000001
+
+[ PASS] 22.011 tbl_UT.c:2993 - CFE_TBL_Load - Attempt to load table with bad handle
+[ PASS] 22.012 tbl_UT.c:3006 - CFE_TBL_Register - Attempt to load a dump-only table (setup)
+[ INFO]   CFE_TBL:Load-App(1) attempted to load Dump Only Tbl 'ut_cfe_tbl.UT_Table2'
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table2' from Addr 0xBFEBAFBC, Status=0xCC0000
+[ PASS] 22.013 tbl_UT.c:3018 - CFE_TBL_Load - Attempt to load a dump-only table
+[ INFO]   CFE_TBL:Load-App(1) attempted to load Dump Only Tbl 'ut_cfe_tbl.UT_Table2'
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table2' from Addr 0xBFEBAFBC, Status=0xCC0000
+[ PASS] 22.014 tbl_UT.c:3034 - CFE_TBL_Load - Attempt to load a dump-only table with table already loaded
+[ PASS] 22.015 tbl_UT.c:3046 - CFE_TBL_Register - Specify table address for a user defined table
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table3' from 'Addr 0xBFEBAFBC'
+
+[ PASS] 22.016 tbl_UT.c:3057 - CFE_TBL_Load - Specify table address for a user defined table
+[ PASS] 22.017 tbl_UT.c:3068 - CFE_TBL_Share - Attempt to load locked shared table (setup part 1)
+[ PASS] 22.018 tbl_UT.c:3077 - CFE_TBL_GetAddress - Attempt to load locked shared table (setup part 2)
+[ INFO]   CFE_TBL:UpdateInternal-Unable to update locked table Handle=0
+
+
+[ INFO]   CFE_TBL:Load-App(1) fail to update 'ut_cfe_tbl.UT_Table1' (Stat=0x4C000018)
+
+
+[ PASS] 22.019 tbl_UT.c:3087 - CFE_TBL_Load - Attempt to load locked shared table
+[ PASS] 22.020 tbl_UT.c:3097 - CFE_TBL_ReleaseAddress - Attempt to load locked shared table (cleanup)
+[  END] 22 Test_CFE_TBL_Load    TOTAL::20    PASS::20    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 23 Test_CFE_TBL_GetAddress
+[ INFO] Begin Test Get Address
+
+
+[ INFO]   CFE_TBL:GetAddressInternal-App(3) does not have access to Tbl Handle=4
+
+
+[ PASS] 23.001 tbl_UT.c:3125 - CFE_TBL_GetAddress - Application does not have access to table
+[ INFO]   CFE_TBL:ValidateAppID-GetAppID failed (Stat=0xC4000001)
+
+
+[ INFO]   CFE_TBL:GetAddress-Bad AppId=3
+
+
+[ PASS] 23.002 tbl_UT.c:3135 - CFE_TBL_GetAddress - Invalid application ID
+[ INFO]   CFE_TBL:ValidateHandle-Table Handle=256 is > 256
+
+
+[ INFO]   CFE_TBL:GetAddressInternal-App(3) using invalid Tbl Handle=256
+
+
+[ PASS] 23.003 tbl_UT.c:3145 - CFE_TBL_GetAddress - Invalid table handle
+[ PASS] 23.004 tbl_UT.c:3156 - CFE_TBL_Unregister - Attempt to get address of unregistered table (setup)
+[ INFO]   CFE_TBL:GetAddressInternal-App(2) attempt to access unowned Tbl Handle=4
+
+
+[ PASS] 23.005 tbl_UT.c:3166 - CFE_TBL_GetAddress - Attempt to get address of unregistered table
+[  END] 23 Test_CFE_TBL_GetAddress TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 24 Test_CFE_TBL_ReleaseAddress
+[ INFO] Begin Test Release Address
+
+
+[ PASS] 24.001 tbl_UT.c:3196 - CFE_TBL_Register - Attempt to release address with invalid application ID (setup)
+[ INFO]   CFE_TBL:ValidateAppID-GetAppID failed (Stat=0xC4000001)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=1
+
+
+[ INFO]   CFE_TBL:ReleaseAddress-App(1) does not have access to Tbl Handle=0
+
+
+[ PASS] 24.002 tbl_UT.c:3206 - CFE_TBL_GetAddress - Attempt to release address with invalid application ID
+[  END] 24 Test_CFE_TBL_ReleaseAddress TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 25 Test_CFE_TBL_GetAddresses
+[ INFO] Begin Test Get Addresses
+
+
+[ PASS] 25.001 tbl_UT.c:3235 - CFE_TBL_Register - CFE_TBL_GetAddresses setup - register a double buffered table
+[ PASS] 25.002 tbl_UT.c:3251 - CFE_TBL_GetAddresses - Get addresses of two tables (neither of which have been loaded)
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:GetAddresses-Bad AppId=32
+
+
+[ PASS] 25.003 tbl_UT.c:3265 - CFE_TBL_Validate - Attempt to get addresses of tables that application is not allowed to see
+[  END] 25 Test_CFE_TBL_GetAddresses TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 26 Test_CFE_TBL_ReleaseAddresses
+[ INFO] Begin Test Release Addresses
+
+
+[ PASS] 26.001 tbl_UT.c:3290 - CFE_TBL_ReleaseAddresses - Release addresses of two tables (neither of which have been loaded)
+[  END] 26 Test_CFE_TBL_ReleaseAddresses TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 27 Test_CFE_TBL_Validate
+[ INFO] Begin Test Validate
+
+
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=32
+
+
+[ INFO]   CFE_TBL:Validate-App(32) does not have access to Tbl Handle=0
+
+
+[ PASS] 27.001 tbl_UT.c:3316 - CFE_TBL_Validate - Attempt to validate table that application is not allowed to see
+[ PASS] 27.002 tbl_UT.c:3329 - CFE_TBL_Validate - Attempt to validate table when no validation is pending
+[  END] 27 Test_CFE_TBL_Validate TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 28 Test_CFE_TBL_Manage
+[ INFO] Begin Test Manage
+
+
+[ PASS] 28.001 tbl_UT.c:3360 - CFE_TBL_Manage - Manage table that doesn't need managing
+[ INFO]   CFE_TBL:Load-Tbl Load already in progress for 'ut_cfe_tbl.UT_Table1'
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table1' from Addr 0xBFEBAFB4, Status=0xCC0000
+[ PASS] 28.002 tbl_UT.c:3376 - CFE_TBL_Load - Attempt to load while a load is in progress
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Inactive 'ut_cfe_tbl.UT_Table1', Status=0xFFFFFFFF
+
+[ PASS] 28.003 tbl_UT.c:3400 - CFE_TBL_Manage - Manage table that has a failed validation pending on inactive buffer (valid function re
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Inactive 'ut_cfe_tbl.UT_Table1', Status=0x00000001
+
+[ INFO]   CFE_TBL:Validate-App(10) Validation func return code invalid (Stat=0x00000001) for 'ut_cfe_tbl.UT_Table1'
+
+
+[ PASS] 28.004 tbl_UT.c:3426 - CFE_TBL_Manage - Manage table that has a failed validation pending on inactive buffer (invalid function 
+[ INFO]   CFE_EVS_SendEvent from app 10: 36, 2 - ut_cfe_tbl validation successful for Inactive 'ut_cfe_tbl.UT_Table1'
+
+[ PASS] 28.005 tbl_UT.c:3452 - CFE_TBL_Manage - Manage table that has a successful validation pending on an inactive buffer
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Active 'ut_cfe_tbl.UT_Table1', Status=0xFFFFFFFF
+
+[ PASS] 28.006 tbl_UT.c:3478 - CFE_TBL_Manage - Manage table that has an unsuccessful validation pending on an active buffer
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Active 'ut_cfe_tbl.UT_Table1', Status=0x00000001
+
+[ INFO]   CFE_TBL:Validate-App(10) Validation func return code invalid (Stat=0x00000001) for 'ut_cfe_tbl.UT_Table1'
+
+
+[ PASS] 28.007 tbl_UT.c:3504 - CFE_TBL_Manage - Manage table that has an unsuccessful validation pending on an active buffer
+[ INFO]   CFE_EVS_SendEvent from app 10: 36, 2 - ut_cfe_tbl validation successful for Active 'ut_cfe_tbl.UT_Table1'
+
+[ PASS] 28.008 tbl_UT.c:3530 - CFE_TBL_Manage - Manage table that has a successful validation pending on an active buffer
+[ PASS] 28.009 tbl_UT.c:3543 - CFE_TBL_Share - Process an update request on a locked table (setup - part 1)
+[ PASS] 28.010 tbl_UT.c:3552 - CFE_TBL_GetAddress - Process an update request on a locked table (setup - part 2)
+[ INFO]   CFE_TBL:UpdateInternal-Unable to update locked table Handle=0
+
+
+[ INFO]   CFE_TBL:Update-App(1) fail to update Tbl 'ut_cfe_tbl.UT_Table1' (Stat=0x4C000018)
+
+
+[ PASS] 28.011 tbl_UT.c:3565 - CFE_TBL_Manage - Process an update request on a locked table
+[ PASS] 28.012 tbl_UT.c:3580 - CFE_TBL_ReleaseAddress - Release address to unlock shared table
+[ INFO]   CFE_EVS_SendEvent from app 10: 37, 2 - ut_cfe_tbl Successfully Updated 'ut_cfe_tbl.UT_Table1'
+
+[ PASS] 28.013 tbl_UT.c:3597 - CFE_TBL_Manage - Process an update request on a single buffered table
+[ INFO]   CFE_TBL:GetWorkingBuffer-Inactive Dbl Buff Locked for 'ut_cfe_tbl.UT_Table2' by AppId=2
+
+
+[ PASS] 28.014 tbl_UT.c:3622 - CFE_TBL_GetWorkingBuffer - No buffer available
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Inactive 'ut_cfe_tbl.UT_Table2', Status=0xFFFFFFFF
+
+[ PASS] 28.015 tbl_UT.c:3648 - CFE_TBL_Manage - Manage table that has a failed validation pending on an inactive buffer (double buffere
+[ INFO]   CFE_EVS_SendEvent from app 10: 36, 2 - ut_cfe_tbl validation successful for Inactive 'ut_cfe_tbl.UT_Table2'
+
+[ PASS] 28.016 tbl_UT.c:3674 - CFE_TBL_Manage - Manage table that has a successful validation pending on an inactive buffer (double buf
+[ INFO]   CFE_EVS_SendEvent from app 10: 96, 3 - ut_cfe_tbl validation failed for Active 'ut_cfe_tbl.UT_Table2', Status=0xFFFFFFFF
+
+[ PASS] 28.017 tbl_UT.c:3700 - CFE_TBL_Manage - Manage table that has an unsuccessful validation pending on an active buffer (double bu
+[ INFO]   CFE_EVS_SendEvent from app 10: 36, 2 - ut_cfe_tbl validation successful for Active 'ut_cfe_tbl.UT_Table2'
+
+[ PASS] 28.018 tbl_UT.c:3726 - CFE_TBL_Manage - Manage table that has a successful validation pending on an active buffer (double buffe
+[ PASS] 28.019 tbl_UT.c:3752 - CFE_TBL_Manage - Manage table that has a dump request pending
+[  END] 28 Test_CFE_TBL_Manage  TOTAL::19    PASS::19    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 29 Test_CFE_TBL_Update
+[ INFO] Begin Test Update
+
+
+[ INFO]   CFE_TBL:ValidateAccess-App(2) no access to Tbl Handle=0 (Stat=0xCC000008)
+
+
+[ INFO]   CFE_TBL:Update-App(2) does not have access to Tbl Handle=0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 95, 3 - ut_cfe_tbl Failed to Update '?', Status=0xCC000008
+
+[ PASS] 29.001 tbl_UT.c:3778 - CFE_TBL_Update - Process an update on a single buffered table without privileges
+[ INFO]   CFE_TBL:Update-App(1) fail to update Tbl 'ut_cfe_tbl.UT_Table1' (Stat=0x4C000017)
+
+
+[ PASS] 29.002 tbl_UT.c:3791 - CFE_TBL_Update - Process an update on a single buffered table when no update is pending
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=32
+
+
+[ INFO]   CFE_TBL:Update-App(32) does not have access to Tbl Handle=0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 95, 3 - UNKNOWN Failed to Update '?', Status=0xCC00000A
+
+[ PASS] 29.003 tbl_UT.c:3803 - CFE_TBL_Update - Bad application ID
+[  END] 29 Test_CFE_TBL_Update  TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 30 Test_CFE_TBL_GetStatus
+[ INFO] Begin Test Get Status
+
+
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=32
+
+
+[ INFO]   CFE_TBL:GetStatus-App(32) does not have access to Tbl Handle=0
+
+
+[ PASS] 30.001 tbl_UT.c:3828 - CFE_TBL_GetStatus - Attempt to get status on a table that the application is not allowed to see
+[ INFO]   CFE_TBL:ValidateAppID-AppId=32 > Max Apps (32)
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Bad AppId=32
+
+
+[ INFO]   CFE_TBL:GetStatus-App(32) does not have access to Tbl Handle=0
+
+
+[ PASS] 30.002 tbl_UT.c:3841 - CFE_TBL_GetStatus - Attempt to to dump the buffer on a table that the application is not allowed to see
+[  END] 30 Test_CFE_TBL_GetStatus TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 31 Test_CFE_TBL_GetInfo
+[ INFO] Begin Test Get Info
+
+
+[ PASS] 31.001 tbl_UT.c:3866 - CFE_TBL_GetInfo - Get information on UT_Table1
+[ PASS] 31.002 tbl_UT.c:3875 - CFE_TBL_GetInfo - Get information on non-existent table
+[  END] 31 Test_CFE_TBL_GetInfo TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 32 Test_CFE_TBL_TblMod
+[ INFO] Begin Test Table Modified
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ PASS] 32.001 tbl_UT.c:3922 - CFE_TBL_Register - Add TBL API for notifying table services that table has been updated by application (
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table1' from 'MyInputFile'
+
+[ PASS] 32.002 tbl_UT.c:3977 - CFE_TBL_Modified - Add TBL API for notifying table services that table has been updated by application
+[ PASS] 32.003 tbl_UT.c:4008 - CFE_TBL_Register - Add TBL API for notifying table services that table has been updated by application (
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+[ PASS] 32.004 tbl_UT.c:4062 - CFE_TBL_Modified - Add TBL API for notifying table services that table has been updated by application
+[ INFO]   CFE_TBL:ValidateHandle-Table Handle=-1 is for unused Table Handle
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Invalid Tbl Handle=-1
+
+
+[ INFO]   CFE_TBL:Modified-App(1) does not have access to Tbl Handle=-1
+
+
+[ PASS] 32.005 tbl_UT.c:4078 - CFE_TBL_Modified - Invalid table handle
+[  END] 32 Test_CFE_TBL_TblMod  TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 33 Test_CFE_TBL_Internal
+[ INFO] Begin Test Internal
+
+
+[ PASS] 33.001 tbl_UT.c:4119 - CFE_TBL_Register - CFE_TBL_GetWorkingBuffer setup - register a double buffered table
+[ PASS] 33.002 tbl_UT.c:4135 - CFE_TBL_GetWorkingBuffer - Initial load of double buffered table
+[ INFO]   CFE_TBL:GetWorkBuf-Internal error taking WorkBuf Mutex (Status=0xFFFFFFFF)
+
+
+[ PASS] 33.003 tbl_UT.c:4151 - CFE_TBL_GetWorkingBuffer - Single buffered table has mutex sem take failure
+[ PASS] 33.004 tbl_UT.c:4167 - CFE_TBL_LoadFromFile - Filename too long
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ PASS] 33.005 tbl_UT.c:4197 - CFE_TBL_LoadFromFile - File content too large (according to header)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ PASS] 33.006 tbl_UT.c:4225 - CFE_TBL_LoadFromFile - File content too large (too much content)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ PASS] 33.007 tbl_UT.c:4254 - CFE_TBL_LoadFromFile - File content incomplete
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ PASS] 33.008 tbl_UT.c:4282 - CFE_TBL_LoadFromFile - File for wrong table
+[ PASS] 33.009 tbl_UT.c:4309 - CFE_TBL_LoadFromFile - OS open error
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ PASS] 33.010 tbl_UT.c:4336 - CFE_TBL_LoadFromFile - File too short warning
+[ INFO]   CFE_EVS_SendEvent from app 10: 54, 3 - Unable to read std header for 'MyTestInputFilename', Status = 0x0000003F
+
+[ PASS] 33.011 tbl_UT.c:4369 - CFE_TBL_ReadHeaders - Failure reading standard cFE file header
+[ INFO]   CFE_FS_ReadHeader called: 0; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 58, 3 - File 'MyTestInputFilename' is not a cFE file type, ContentType = 0x63464530
+
+[ PASS] 33.012 tbl_UT.c:4398 - CFE_TBL_ReadHeaders - Bad magic number in cFE standard header
+[ INFO]   CFE_FS_ReadHeader called: 0; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 59, 3 - File subtype for 'MyTestInputFilename' is wrong. Subtype = 0x00000007
+
+[ PASS] 33.013 tbl_UT.c:4426 - CFE_TBL_ReadHeaders - Wrong cFE file subType
+[ INFO]   CFE_FS_ReadHeader called: 0; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 55, 3 - Unable to read tbl header for 'MyTestInputFilename', Status = 0x00000033
+
+[ PASS] 33.014 tbl_UT.c:4457 - CFE_TBL_ReadHeaders - Failure reading cFE table header
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[1] Fail Stat=0xC4000007, Hndl=0x00000000, Buf=0x00000000
+
+
+[ PASS] 33.015 tbl_UT.c:4469 - CFE_TBL_RemoveAccessLink - Fail to put back memory buffer for double buffered table
+[ INFO]   CFE_TBL:Registry mutex creation failed! RC=0xffffffff
+
+
+[ PASS] 33.016 tbl_UT.c:4480 - CFE_TBL_EarlyInit - Table registry mutex create failure
+[ INFO]   CFE_TBL:Working buffer mutex creation failed! RC=0xffffffff
+
+
+[ PASS] 33.017 tbl_UT.c:4491 - CFE_TBL_EarlyInit - Work buffer mutex create failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ INFO]   CFE_TBL:InitBuffers PoolCreate fail Status=0xC400000A
+
+
+[ PASS] 33.018 tbl_UT.c:4502 - CFE_TBL_EarlyInit - Memory pool create failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ INFO]   CFE_TBL:InitBuffers GetPoolBuf Fail Index=0, Status=0xC4000007
+
+
+[ PASS] 33.019 tbl_UT.c:4513 - CFE_TBL_EarlyInit - Get pool buffer failure
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ INFO]   CFE_TBL:EarlyInit-Failed to recover Critical Table Registry (Err=0xC400001A)
+
+
+[ PASS] 33.020 tbl_UT.c:4527 - CFE_TBL_EarlyInit - CDS already exists but restore fails
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ INFO]   CFE_TBL:EarlyInit-Failed to create Critical Table Registry (Err=0xC400FFFF)
+
+
+[ PASS] 33.021 tbl_UT.c:4538 - CFE_TBL_EarlyInit - No CDS available
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ INFO]   CFE_TBL:EarlyInit-Failed to save Critical Table Registry (Err=0xC4000007)
+
+
+[ PASS] 33.022 tbl_UT.c:4551 - CFE_TBL_EarlyInit - Fail to save critical table registry to CDS
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ PASS] 33.023 tbl_UT.c:4562 - CFE_TBL_EarlyInit - Reset (setup - part 1)
+[ PASS] 33.024 tbl_UT.c:4573 - CFE_TBL_Register - Critical single buffered table (setup - part 2)
+[ PASS] 33.025 tbl_UT.c:4584 - CFE_TBL_Register - Critical double buffered table (setup - part 3)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat'
+
+[ PASS] 33.026 tbl_UT.c:4612 - CFE_TBL_Load - Critical single buffered table (setup - part 4)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table1' from 'TblSrcFileName.dat'
+
+[ PASS] 33.027 tbl_UT.c:4640 - CFE_TBL_Load - Update CDS for single buffered table (setup - part 5)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 1 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat'
+
+[ PASS] 33.028 tbl_UT.c:4668 - CFE_TBL_Load - Critical single buffered table (setup - part 6)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat'
+
+[ PASS] 33.029 tbl_UT.c:4697 - CFE_TBL_Load - Update CDS for single buffered table (setup - part 7)
+[ INFO]   CFE_TBL:GetWorkingBuffer-Inactive Dbl Buff Locked for 'ut_cfe_tbl.UT_Table2' by AppId=1
+
+
+[ INFO]   CFE_TBL:Load-App(1) Failed to get Working Buffer (Stat=0xCC00000F)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat', Status=0xC
+[ PASS] 33.030 tbl_UT.c:4727 - CFE_TBL_Load - Both double buffered table buffers locked
+[ PASS] 33.031 tbl_UT.c:4737 - CFE_TBL_GetAddress - Error writing to CDS (setup - part 1)
+[ PASS] 33.032 tbl_UT.c:4746 - CFE_TBL_ReleaseAddress - Error writing to CDS (setup - part 2)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_TBL:UpdateCritTbl-Unable to update Critical Table 'ut_cfe_tbl.UT_Table2' in CDS (Err=0xC4000007)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat'
+
+[ PASS] 33.033 tbl_UT.c:4775 - CFE_TBL_Load - Error writing to CDS
+[ PASS] 33.034 tbl_UT.c:4785 - CFE_TBL_GetAddress - Error writing to CDS second time (setup - part 1)
+[ PASS] 33.035 tbl_UT.c:4794 - CFE_TBL_ReleaseAddress - Error writing to CDS second time (setup - part 2)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_TBL:UpdateCritTbl-Unable to update Critical Table Registry in CDS (Err=0xC4000007)
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat'
+
+[ PASS] 33.036 tbl_UT.c:4823 - CFE_TBL_Load - Error writing to CDS (second time)
+[ PASS] 33.037 tbl_UT.c:4835 - CFE_TBL_GetAddress - Failure to find CDS handle in CDS registry (setup - part 1)
+[ PASS] 33.038 tbl_UT.c:4844 - CFE_TBL_ReleaseAddress - Failure to find CDS handle in CDS registry (setup - part 2)
+[ INFO]   CFE_FS_ReadHeader called: 1; FS header description
+
+[ INFO]   CFE_TBL:UpdateCritTbl-Error finding 'ut_cfe_tbl.UT_Table2' in Critical Table Registry
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 35, 2 - Successfully loaded 'ut_cfe_tbl.UT_Table2' from 'TblSrcFileName.dat'
+
+[ PASS] 33.039 tbl_UT.c:4884 - CFE_TBL_Load - Failure to find CDS handle in CDS registry
+[ PASS] 33.040 tbl_UT.c:4895 - CFE_TBL_Share - Unregister shared table (setup)
+[ PASS] 33.041 tbl_UT.c:4904 - CFE_TBL_Unregister - Unregister shared table
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[0] Fail Stat=0xFFFFFFFF, Hndl=0x00000000, Buf=0x00000000
+
+
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[0] Fail Stat=0xFFFFFFFF, Hndl=0x00000000, Buf=0x00000000
+
+
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[1] Fail Stat=0xFFFFFFFF, Hndl=0x00000000, Buf=0x00000000
+
+
+[ PASS] 33.042 tbl_UT.c:4920 - CFE_TBL_CleanUpApp - Execute clean up - success
+[ INFO]   CFE_TBL:ValidateHandle-Table Handle=1 is for unused Table Handle
+
+
+[ INFO]   CFE_TBL:ValidateAccess-Invalid Tbl Handle=1
+
+
+[ INFO]   CFE_TBL:Load-App(1) does not have access to Tbl Handle=1
+
+
+[ INFO]   CFE_EVS_SendEvent from app 10: 93, 3 - ut_cfe_tbl Failed to Load '?', Status=0xCC000001
+
+[ PASS] 33.043 tbl_UT.c:4953 - CFE_TBL_Load - Attempt to use an invalid handle
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2052
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2060
+
+[ INFO]   CFE_ES_PoolCreate called
+
+[ PASS] 33.044 tbl_UT.c:4966 - CFE_TBL_EarlyInit - CDS already exists and restore succeeds
+[ PASS] 33.045 tbl_UT.c:4978 - CFE_TBL_EarlyInit - Application ID matches table task application ID
+[ PASS] 33.046 tbl_UT.c:4991 - CFE_TBL_FindFreeRegistryEntry - Registry entry not owned but not at end of list
+[ PASS] 33.047 tbl_UT.c:5002 - CFE_TBL_LockRegistry - Mutex take error
+[ PASS] 33.048 tbl_UT.c:5014 - CFE_TBL_UnlockRegistry - Mutex give error
+[ INFO]   CFE_EVS_SendEvent from app 1: 54, 3 - Unable to read std header for 'MyTestInputFilename', Status = 0x0000003F
+
+[ PASS] 33.049 tbl_UT.c:5024 - CFE_TBL_LoadFromFile - No standard header
+[ PASS] 33.050 tbl_UT.c:5039 - CFE_TBL_LoadFromFile - Inactive buffer ready while load in progress
+[ PASS] 33.051 tbl_UT.c:5057 - CFE_TBL_LoadFromFile - Active buffer ready, no load in progress, double buffered non-critical table
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[0] Fail Stat=0xFFFFFFFF, Hndl=0x00000000, Buf=0x00000000
+
+
+[ INFO]   CFE_TBL:RemoveAccessLink-PutPoolBuf[1] Fail Stat=0xFFFFFFFF, Hndl=0x00000000, Buf=0x00000000
+
+
+[ PASS] 33.052 tbl_UT.c:5076 - CFE_TBL_CleanUpApp - Execute clean up - no dumped tables to delete, application doesn't own table
+[ PASS] 33.053 tbl_UT.c:5117 - CFE_TBL_ReadHeaders - *Not tested* Invalid spacecraft ID 
+[ PASS] 33.054 tbl_UT.c:5156 - CFE_TBL_ReadHeaders - *Not tested* Invalid processor ID 
+[  END] 33 Test_CFE_TBL_Internal TOTAL::54    PASS::54    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+[  END] 33 SUMMARY              TOTAL::281   PASS::281   FAIL::0      MIR::0      TSF::0      N/A::0   
+
+COMPLETE: 33 tests Segment(s) executed
+
+
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_api.c' 99.20%  499
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_internal.c' 100.00%  438
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_task_cmds.c' 99.76%  419
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_task.c' 100.00%  93
+
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/tbl'

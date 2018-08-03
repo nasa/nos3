@@ -1,0 +1,49 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Aug 25 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SB Message Map File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/08/25  SMA      : Initial
+!  2005/10/19  SMA      : Changes per RJ
+!  2009/12/09  WFMi	: Modified the MsgMapEntry[1024] to use the cFE
+!			: configuration parameter CFE_SB_HIGHEST_VALID_MSGID
+!==============================================================================
+!
+#include "cfe_platform_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_SB_MsgMap_File	DESC="SB Message Map File"
+      UI  SB_MM_MID	DESC="Message ID"
+      UI  SB_MM_INDEX	DESC="Index"
+   END
+END_TYPES
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu SB Message Map File", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+$sc_$cpu_SB_MsgMap_File $sc_$cpu_SB_MsgMapEntry[CFE_SB_HIGHEST_VALID_MSGID] DESC="$sc $cpu SB Message Map Entry"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+
+ 

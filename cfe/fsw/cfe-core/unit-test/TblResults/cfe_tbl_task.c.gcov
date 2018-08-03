@@ -1,0 +1,405 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl/cfe_tbl_task.c
+        -:    0:Graph:cfe_tbl_task.gcno
+        -:    0:Data:cfe_tbl_task.gcda
+        -:    0:Runs:1
+        -:    0:Programs:4
+        -:    1:/*
+        -:    2:** $Id: cfe_tbl_task.c 1.5 2012/01/18 16:32:58GMT-05:00 jmdagost Exp  $
+        -:    3:**
+        -:    4:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    5:**      administrator of the National Aeronautics Space Administration.  
+        -:    6:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:    7:**      Space Flight Center pursuant to government contracts.
+        -:    8:**
+        -:    9:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   10:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   11:**  
+        -:   12:**
+        -:   13:** Subsystem: cFE TBL Task
+        -:   14:**
+        -:   15:** Author: David Kobe (the Hammers Company, Inc.)
+        -:   16:**
+        -:   17:** Notes:
+        -:   18:**
+        -:   19:** $Log: cfe_tbl_task.c  $
+        -:   20:** Revision 1.5 2012/01/18 16:32:58GMT-05:00 jmdagost 
+        -:   21:** Updated init event msg to include cFE version numbers.
+        -:   22:** Revision 1.4 2012/01/13 12:17:41EST acudmore 
+        -:   23:** Changed license text to reflect open source
+        -:   24:** Revision 1.3 2010/10/04 17:05:21EDT jmdagost 
+        -:   25:** Cleaned up copyright symbol.
+        -:   26:** Revision 1.2 2008/07/31 15:41:30EDT apcudmore 
+        -:   27:** Added execution counter API:
+        -:   28:**   -- Added execution counter to ES internal task data
+        -:   29:**   -- Added code to increment counter in RunLoop
+        -:   30:**   -- Added code to report counter in GetInfo APIs
+        -:   31:**   -- Added API to increment counter for child tasks
+        -:   32:**   -- Added code to cFE Core apps to increment counters.
+        -:   33:** Revision 1.1 2008/04/17 08:05:35EDT ruperera 
+        -:   34:** Initial revision
+        -:   35:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/tbl/project.pj
+        -:   36:** Revision 1.21 2007/05/15 10:58:04EDT rjmcgraw 
+        -:   37:** Exit main loop for CFE_SB_RcvMsg errors
+        -:   38:** Revision 1.20 2007/05/09 12:49:49EDT dlkobe 
+        -:   39:** Added SysLog message to indicate SB error on Command Pipe
+        -:   40:** Revision 1.19 2007/05/04 15:56:22EDT dlkobe 
+        -:   41:** Added Delete CDS command
+        -:   42:** Revision 1.18 2007/04/30 14:13:44EDT rjmcgraw 
+        -:   43:** Standardized task initialization
+        -:   44:** Revision 1.17 2007/04/09 14:45:59EDT rjmcgraw 
+        -:   45:** Changed names of performance ids to include CFE_
+        -:   46:** Revision 1.16 2006/10/31 12:21:43EST dlkobe 
+        -:   47:** Removed all references to the TBL_MOD_DUMP_ONLY option command
+        -:   48:** Revision 1.15 2006/06/21 12:23:22GMT-05:00 kkaudra 
+        -:   49:** Removed cfe_es_perf.h
+        -:   50:**
+        -:   51:*/
+        -:   52:
+        -:   53:
+        -:   54:/*
+        -:   55:** Required header files
+        -:   56:*/
+        -:   57:#include "private/cfe_private.h"
+        -:   58:#include "cfe_version.h"
+        -:   59:#include "cfe_tbl_internal.h"
+        -:   60:#include "cfe_tbl_events.h"
+        -:   61:#include "cfe_tbl_msg.h"
+        -:   62:#include "cfe_tbl_task_cmds.h"
+        -:   63:#include "cfe_tbl_verify.h"
+        -:   64:#include <string.h>
+        -:   65:
+        -:   66:
+        -:   67:/*
+        -:   68:** Table task global data
+        -:   69:*/
+        -:   70:CFE_TBL_TaskData_t    CFE_TBL_TaskData;
+        -:   71:
+        -:   72:
+        -:   73:/* Constant Data */
+        -:   74:
+        -:   75:const CFE_TBL_CmdHandlerTblRec_t CFE_TBL_CmdHandlerTbl[] = {
+        -:   76:/*        Message ID,    Command Code,                     Msg Size,            Function Ptr,  Msg/Cmd/Terminator */
+        -:   77:{CFE_TBL_SEND_HK_MID,                      0,  sizeof(CFE_TBL_NoArgsCmd_t),CFE_TBL_HousekeepingCmd,CFE_TBL_MSG_MSGTYPE},
+        -:   78:{    CFE_TBL_CMD_MID,        CFE_TBL_NOOP_CC,  sizeof(CFE_TBL_NoArgsCmd_t),        CFE_TBL_NoopCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   79:{    CFE_TBL_CMD_MID,       CFE_TBL_RESET_CC,  sizeof(CFE_TBL_NoArgsCmd_t),       CFE_TBL_ResetCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   80:{    CFE_TBL_CMD_MID,        CFE_TBL_LOAD_CC,    sizeof(CFE_TBL_LoadCmd_t),        CFE_TBL_LoadCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   81:{    CFE_TBL_CMD_MID,        CFE_TBL_DUMP_CC,    sizeof(CFE_TBL_DumpCmd_t),        CFE_TBL_DumpCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   82:{    CFE_TBL_CMD_MID,    CFE_TBL_VALIDATE_CC,sizeof(CFE_TBL_ValidateCmd_t),    CFE_TBL_ValidateCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   83:{    CFE_TBL_CMD_MID,    CFE_TBL_ACTIVATE_CC,sizeof(CFE_TBL_ActivateCmd_t),    CFE_TBL_ActivateCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   84:{    CFE_TBL_CMD_MID,    CFE_TBL_DUMP_REG_CC, sizeof(CFE_TBL_DumpRegCmd_t),     CFE_TBL_DumpRegCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   85:{    CFE_TBL_CMD_MID,     CFE_TBL_TLM_REG_CC,  sizeof(CFE_TBL_TlmRegCmd_t),      CFE_TBL_TlmRegCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   86:{    CFE_TBL_CMD_MID,  CFE_TBL_DELETE_CDS_CC,  sizeof(CFE_TBL_DelCDSCmd_t),   CFE_TBL_DeleteCDSCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   87:{    CFE_TBL_CMD_MID,  CFE_TBL_ABORT_LOAD_CC, sizeof(CFE_TBL_AbortLdCmd_t),   CFE_TBL_AbortLoadCmd,CFE_TBL_CMD_MSGTYPE},
+        -:   88:{                  0,                      0,                            0,                   NULL,CFE_TBL_TERM_MSGTYPE}
+        -:   89:};
+        -:   90:
+        -:   91:
+        -:   92:/******************************************************************************/
+        -:   93:
+        -:   94:void CFE_TBL_TaskMain(void)
+        2:   95:{
+        -:   96:    int32  Status;
+        -:   97:
+        2:   98:    CFE_ES_PerfLogEntry(CFE_TBL_MAIN_PERF_ID);
+        -:   99:
+        2:  100:    Status = CFE_TBL_TaskInit();
+        -:  101:    
+        2:  102:    if(Status != CFE_SUCCESS)
+        -:  103:    {
+        1:  104:      CFE_ES_WriteToSysLog("TBL:Application Init Failed,RC=0x%08X\n", (unsigned int)Status);
+        1:  105:      CFE_ES_PerfLogExit(CFE_TBL_MAIN_PERF_ID);      
+        -:  106:      /* Note: CFE_ES_ExitApp will not return */
+        1:  107:      CFE_ES_ExitApp(CFE_ES_RUNSTATUS_CORE_APP_INIT_ERROR);
+        -:  108:    }/* end if */
+        -:  109:
+        -:  110:    /*
+        -:  111:     * Wait for other apps to start.
+        -:  112:     * It is important that the core apps are present before this starts receiving
+        -:  113:     * messages from the command pipe, as some of those handlers might depend on
+        -:  114:     * the other core apps.
+        -:  115:     */
+        2:  116:    CFE_ES_WaitForStartupSync(CFE_CORE_MAX_STARTUP_MSEC);
+        -:  117:
+        -:  118:    /* Main loop */
+        6:  119:    while (Status == CFE_SUCCESS)
+        -:  120:    {
+        -:  121:        /* Increment the Main task Execution Counter */
+        2:  122:        CFE_ES_IncrementTaskCounter();
+        -:  123:
+        2:  124:        CFE_ES_PerfLogExit(CFE_TBL_MAIN_PERF_ID);
+        -:  125:
+        -:  126:        /* Pend on receipt of packet */
+        2:  127:        Status = CFE_SB_RcvMsg( &CFE_TBL_TaskData.MsgPtr,
+        -:  128:                                CFE_TBL_TaskData.CmdPipe,
+        -:  129:                                CFE_SB_PEND_FOREVER);
+        -:  130:
+        2:  131:        CFE_ES_PerfLogEntry(CFE_TBL_MAIN_PERF_ID);
+        -:  132:
+        2:  133:        if (Status == CFE_SUCCESS)
+        -:  134:        {
+        -:  135:            /* Process cmd pipe msg */
+        1:  136:            CFE_TBL_TaskPipe(CFE_TBL_TaskData.MsgPtr);
+        -:  137:        }else{
+        1:  138:            CFE_ES_WriteToSysLog("TBL:Error reading cmd pipe,RC=0x%08X\n",(unsigned int)Status);
+        -:  139:        }/* end if */
+        -:  140:
+        -:  141:    }/* end while */
+        -:  142:
+        -:  143:    /* while loop exits only if CFE_SB_RcvMsg returns error */
+        2:  144:    CFE_ES_ExitApp(CFE_ES_RUNSTATUS_CORE_APP_RUNTIME_ERROR);
+        -:  145:
+        2:  146:} /* end CFE_TBL_TaskMain() */
+        -:  147:
+        -:  148:
+        -:  149:/******************************************************************************/
+        -:  150:
+        -:  151:int32 CFE_TBL_TaskInit(void)
+        8:  152:{
+        8:  153:    int32 Status = CFE_SUCCESS;
+        -:  154:
+        -:  155:    /*
+        -:  156:    ** Register Table Services with ES
+        -:  157:    */
+        8:  158:    Status = CFE_ES_RegisterApp();
+        -:  159:
+        8:  160:    if(Status != CFE_SUCCESS)
+        -:  161:    {
+        1:  162:      CFE_ES_WriteToSysLog("TBL:Call to CFE_ES_RegisterApp Failed:RC=0x%08X\n",(unsigned int)Status);
+        1:  163:      return Status;
+        -:  164:    }/* end if */
+        -:  165:    
+        -:  166:    /*
+        -:  167:    ** Initialize global Table Services data
+        -:  168:    */
+        7:  169:    CFE_TBL_InitData();
+        -:  170:
+        -:  171:    /*
+        -:  172:    ** Register event filter table
+        -:  173:    */
+        7:  174:    Status = CFE_EVS_Register(NULL, 0, 0);
+        -:  175:
+        7:  176:    if(Status != CFE_SUCCESS)
+        -:  177:    {
+        1:  178:      CFE_ES_WriteToSysLog("TBL:Call to CFE_EVS_Register Failed:RC=0x%08X\n",(unsigned int)Status);
+        1:  179:      return Status;
+        -:  180:    }/* end if */
+        -:  181:    
+        -:  182:    /*
+        -:  183:    ** Create Software Bus message pipe
+        -:  184:    */
+        6:  185:    Status = CFE_SB_CreatePipe(&CFE_TBL_TaskData.CmdPipe,
+        -:  186:                                CFE_TBL_TaskData.PipeDepth,
+        -:  187:                                CFE_TBL_TaskData.PipeName);
+        6:  188:    if(Status != CFE_SUCCESS)
+        -:  189:    {
+        1:  190:      CFE_ES_WriteToSysLog("TBL:Error creating cmd pipe:RC=0x%08X\n",(unsigned int)Status);
+        1:  191:      return Status;
+        -:  192:    }/* end if */                                                                
+        -:  193:
+        -:  194:    /*
+        -:  195:    ** Subscribe to Housekeeping request commands
+        -:  196:    */
+        5:  197:    Status = CFE_SB_Subscribe(CFE_TBL_SEND_HK_MID, CFE_TBL_TaskData.CmdPipe);
+        -:  198:
+        5:  199:    if(Status != CFE_SUCCESS)
+        -:  200:    {
+        1:  201:      CFE_ES_WriteToSysLog("TBL:Error subscribing to HK Request:RC=0x%08X\n",(unsigned int)Status);
+        1:  202:      return Status;
+        -:  203:    }/* end if */
+        -:  204:
+        -:  205:    /*
+        -:  206:    ** Subscribe to Table task ground command packets
+        -:  207:    */
+        4:  208:    Status = CFE_SB_Subscribe(CFE_TBL_CMD_MID, CFE_TBL_TaskData.CmdPipe);
+        -:  209:
+        4:  210:    if(Status != CFE_SUCCESS)
+        -:  211:    {
+        1:  212:      CFE_ES_WriteToSysLog("TBL:Error subscribing to gnd cmds:RC=0x%08X\n",(unsigned int)Status);
+        1:  213:      return Status;
+        -:  214:    }/* end if */
+        -:  215:    
+        -:  216:    /*
+        -:  217:    ** Task startup event message
+        -:  218:    */
+        3:  219:    Status = CFE_EVS_SendEvent(CFE_TBL_INIT_INF_EID, CFE_EVS_INFORMATION, "cFE TBL Initialized.  cFE Version %d.%d.%d.%d",
+        -:  220:                               CFE_MAJOR_VERSION,CFE_MINOR_VERSION,CFE_REVISION,CFE_MISSION_REV);
+        -:  221:
+        3:  222:    if(Status != CFE_SUCCESS)
+        -:  223:    {
+        1:  224:      CFE_ES_WriteToSysLog("TBL:Error sending init event:RC=0x%08X\n",(unsigned int)Status);
+        1:  225:      return Status;
+        -:  226:    }/* end if */
+        -:  227:
+        2:  228:    return CFE_SUCCESS;
+        -:  229:
+        -:  230:} /* End of CFE_TBL_TaskInit() */
+        -:  231:
+        -:  232:
+        -:  233:/******************************************************************************/
+        -:  234:
+        -:  235:void CFE_TBL_InitData(void)
+        8:  236:{
+        -:  237:    /* Initialize Counters */
+        8:  238:    CFE_TBL_TaskData.CmdCounter = 0;
+        8:  239:    CFE_TBL_TaskData.ErrCounter = 0;
+        8:  240:    CFE_TBL_TaskData.SuccessValCtr = 0;
+        8:  241:    CFE_TBL_TaskData.FailedValCtr = 0;
+        -:  242:
+        -:  243:    /* Get the assigned Application ID for the Table Services Task */
+        8:  244:    CFE_ES_GetAppID(&CFE_TBL_TaskData.TableTaskAppId);
+        -:  245:
+        -:  246:    /* Initialize Command Pipe Parameters */
+        8:  247:    CFE_TBL_TaskData.PipeDepth = CFE_TBL_TASK_PIPE_DEPTH;
+        8:  248:    strncpy(CFE_TBL_TaskData.PipeName, CFE_TBL_TASK_PIPE_NAME, 16);
+        -:  249:
+        -:  250:    /* Initialize Packet Headers */
+        8:  251:    CFE_SB_InitMsg(&CFE_TBL_TaskData.HkPacket,
+        -:  252:                   CFE_TBL_HK_TLM_MID,
+        -:  253:                   sizeof(CFE_TBL_HkPacket_t),
+        -:  254:                   TRUE);
+        -:  255:
+        8:  256:    CFE_SB_InitMsg(&CFE_TBL_TaskData.TblRegPacket,
+        -:  257:                   CFE_TBL_REG_TLM_MID,
+        -:  258:                   sizeof(CFE_TBL_TblRegPacket_t),
+        -:  259:                   TRUE);
+        -:  260:
+        8:  261:} /* End of CFE_TBL_InitData() */
+        -:  262:
+        -:  263:
+        -:  264:/******************************************************************************/
+        -:  265:
+        -:  266:void CFE_TBL_TaskPipe(CFE_SB_Msg_t *MessagePtr)
+       15:  267:{
+       15:  268:    CFE_SB_MsgId_t       MessageID = CFE_SB_GetMsgId(MessagePtr);
+       15:  269:    uint16               CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+        -:  270:    int16                CmdIndx;
+        -:  271:    uint32               ActualLength;
+       15:  272:    CFE_TBL_CmdProcRet_t CmdStatus = CFE_TBL_INC_ERR_CTR; /* Assume a failed command */
+        -:  273:
+        -:  274:    /* Search the Command Handler Table for a matching message */
+       15:  275:    CmdIndx = CFE_TBL_SearchCmdHndlrTbl(MessageID, CommandCode);
+        -:  276:
+        -:  277:    /* Check to see if a matching command was found */
+       15:  278:    if (CmdIndx >= 0)
+        -:  279:    {
+        -:  280:        /* Verify Message Length before processing */
+        4:  281:        ActualLength = CFE_SB_GetTotalMsgLength(MessagePtr);
+        4:  282:        if (ActualLength == CFE_TBL_CmdHandlerTbl[CmdIndx].ExpectedLength)
+        -:  283:        {
+        -:  284:            /* All checks have passed, call the appropriate message handler */
+        3:  285:            CmdStatus = (CFE_TBL_CmdHandlerTbl[CmdIndx].MsgProcFuncPtr)(&MessagePtr->Byte[CFE_SB_CMD_HDR_SIZE]);
+        -:  286:        }
+        -:  287:        else /* Bad Message Length */
+        -:  288:        {
+        1:  289:            CFE_EVS_SendEvent( CFE_TBL_LEN_ERR_EID, CFE_EVS_ERROR,
+        -:  290:                               "Invalid msg length -- ID = 0x%04X, CC = %d, Len = %d (!= %d)",
+        -:  291:                               (unsigned int)MessageID, (int)CommandCode, (int)ActualLength,
+        -:  292:                               (int)CFE_TBL_CmdHandlerTbl[CmdIndx].ExpectedLength );
+        -:  293:        }
+        -:  294:
+        -:  295:        /* Only update command counters when message has a command code */
+        4:  296:        if (CFE_TBL_CmdHandlerTbl[CmdIndx].MsgTypes == CFE_TBL_CMD_MSGTYPE)
+        -:  297:        {
+        3:  298:            if (CmdStatus == CFE_TBL_INC_CMD_CTR)
+        -:  299:            {
+        1:  300:                CFE_TBL_TaskData.CmdCounter++;
+        -:  301:            }
+        2:  302:            else if (CmdStatus == CFE_TBL_INC_ERR_CTR)
+        -:  303:            {
+        1:  304:                CFE_TBL_TaskData.ErrCounter++;
+        -:  305:            }
+        -:  306:        }
+        -:  307:    }
+        -:  308:    else
+        -:  309:    {
+        -:  310:        /* Determine whether event message should be */
+        -:  311:        /* "Bad Command Code" or "Bad Message ID"    */
+       11:  312:        if (CmdIndx == CFE_TBL_BAD_CMD_CODE)
+        -:  313:        {
+        1:  314:            CFE_EVS_SendEvent(CFE_TBL_CC1_ERR_EID, CFE_EVS_ERROR,
+        -:  315:                              "Invalid command code -- ID = 0x%04X, CC = %d",
+        -:  316:                              (unsigned int)MessageID, (int)CommandCode);
+        -:  317:
+        -:  318:            /* Update the command error counter */
+        1:  319:            CFE_TBL_TaskData.ErrCounter++;
+        -:  320:        }
+        -:  321:        else  /* CmdIndx == CFE_TBL_BAD_MSG_ID */
+        -:  322:        {
+       10:  323:            CFE_EVS_SendEvent(CFE_TBL_MID_ERR_EID, CFE_EVS_ERROR,
+        -:  324:                             "Invalid message ID -- ID = 0x%04X",
+        -:  325:                              (unsigned int)MessageID);
+        -:  326:            /*
+        -:  327:            ** Note: we only increment the command error counter when
+        -:  328:            **    processing messages with command codes
+        -:  329:            */
+        -:  330:        }
+        -:  331:    }
+        -:  332:
+        -:  333:    return;
+        -:  334:
+        -:  335:} /* End of CFE_TBL_TaskPipe() */
+        -:  336:
+        -:  337:
+        -:  338:/******************************************************************************/
+        -:  339:
+        -:  340:int16 CFE_TBL_SearchCmdHndlrTbl( CFE_SB_MsgId_t MessageID, uint16 CommandCode )
+       19:  341:{
+       19:  342:    int16     TblIndx = CFE_TBL_BAD_CMD_CODE;
+       19:  343:    boolean   FoundMsg = FALSE;
+       19:  344:    boolean   FoundMatch = FALSE;
+        -:  345:
+        -:  346:    do
+        -:  347:    {
+        -:  348:        /* Point to next entry in Command Handler Table */
+      167:  349:        TblIndx++;
+        -:  350:
+        -:  351:        /* Check to see if we found a matching Message ID */
+      167:  352:        if ((CFE_TBL_CmdHandlerTbl[TblIndx].MsgId == MessageID) &&
+        -:  353:            (CFE_TBL_CmdHandlerTbl[TblIndx].MsgTypes != CFE_TBL_TERM_MSGTYPE))
+        -:  354:        {
+        -:  355:            /* Flag any found message IDs so that if there is an error,        */
+        -:  356:            /* we can determine if it was a bad message ID or bad command code */
+       27:  357:            FoundMsg = TRUE;
+        -:  358:
+        -:  359:            /* If entry in the Command Handler Table is a command entry, */
+        -:  360:            /* then check for a matching command code                    */
+       27:  361:            if (CFE_TBL_CmdHandlerTbl[TblIndx].MsgTypes == CFE_TBL_CMD_MSGTYPE)
+        -:  362:            {
+       25:  363:                if (CFE_TBL_CmdHandlerTbl[TblIndx].CmdCode == CommandCode)
+        -:  364:                {
+        -:  365:                    /* Found matching message ID and Command Code */
+        4:  366:                    FoundMatch = TRUE;
+        -:  367:                }
+        -:  368:            }
+        -:  369:            else /* Message is not a command message with specific command code */
+        -:  370:            {
+        -:  371:                /* Automatically assume a match when legit */
+        -:  372:                /* Message ID is all that is required      */
+        2:  373:                FoundMatch = TRUE;
+        -:  374:            }
+        -:  375:        }
+      167:  376:    } while ((!FoundMatch) && (CFE_TBL_CmdHandlerTbl[TblIndx].MsgTypes != CFE_TBL_TERM_MSGTYPE));
+        -:  377:
+        -:  378:    /* If we failed to find a match, return a negative index */
+       19:  379:    if (!FoundMatch)
+        -:  380:    {
+        -:  381:        /* Determine if the message ID was bad or the command code */
+       13:  382:        if (FoundMsg)
+        -:  383:        {
+        -:  384:            /* A matching message ID was found, so the command code must be bad */
+        2:  385:            TblIndx = CFE_TBL_BAD_CMD_CODE;
+        -:  386:        }
+        -:  387:        else /* No matching message ID was found */
+        -:  388:        {
+       11:  389:            TblIndx = CFE_TBL_BAD_MSG_ID;
+        -:  390:        }
+        -:  391:    }
+        -:  392:
+       19:  393:    return TblIndx;
+        -:  394:}   /* End of CFE_TBL_SearchCmdHndlrTbl() */
+        -:  395:
+        -:  396:
+        -:  397:/************************/
+        -:  398:/*  End of File Comment */
+        -:  399:/************************/
+        -:  400:

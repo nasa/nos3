@@ -1,0 +1,18 @@
+#include "table_defs.scp"
+
+CMDN=1
+wait until START+140
+/$sc_$cpu_es_noop
+wait 5
+/$sc_$cpu_sb_noop
+CMDN=2
+wait 5
+/$sc_$cpu_time_noop
+CMDN=1
+wait 50
+/$sc_$cpu_sc_noop
+CMDN=3
+wait 10
+/$sc_$cpu_tbl_noop
+wait 10
+/$sc_$cpu_evs_noop

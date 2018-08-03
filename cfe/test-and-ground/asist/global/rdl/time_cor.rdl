@@ -1,0 +1,16 @@
+PACKET P860 APID=%x860
+   
+#include "feds_ccsds_header.rdl"
+
+   CHAR TC1_Station[8]
+   INTEGER TC1_Sequence SIZE=4,ORDER=(1,2,3,4)
+   INTEGER TC1_UNIX_seconds SIZE=4, ORDER=(1,2,3,4)
+
+   UNION UNION_TC01
+     INTEGER TC1_reserved	SIZE=4, MASK=%xf0000000
+     INTEGER TC1_status		SIZE=4, MASK=%x0f000000
+     INTEGER TC1_100ns		SIZE=4, MASK=%x00f00000
+     INTEGER TC1_microseconds   SIZE=4, MASK=%x000fffff
+   END
+
+END

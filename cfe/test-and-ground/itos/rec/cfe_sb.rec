@@ -1,0 +1,271 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System SoftwareBus {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand SBCommand {
+    verification=Verifier {}
+    applicationId { range=0x03 }
+  }
+
+  /** SB no-operation command */
+  SBCommand noop {
+    commandCode { range=0 }
+  }
+
+  /** SB reset counters command */
+  SBCommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  /** SB dump statistics */
+  SBCommand dump_stats {
+    commandCode { range=2 }
+  }
+
+  /** SB save routing info to a file */
+  SBCommand write_routing2file {
+    commandCode { range=3 }
+    cfs.FileName name {}
+  }
+
+  /** SB enable routing command */
+  SBCommand enable_route {
+    commandCode { range=4 }
+    cfs.U16 msgid { range=0x0000..0xFFFF }
+    cfs.U8 pipe { range=0x00..0xFF }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** SB disable routing command */
+  SBCommand disable_route {
+    commandCode { range=5 }
+    cfs.U16 msgid { range=0x0000..0xFFFF }
+    cfs.U8 pipe { range=0x00..0xFF }
+    cfs.U8 spare { range=0 }
+  }
+
+  SBCommand dump_network {
+    commandCode { range=6 }
+  }
+
+  SBCommand write_pipeinfo2file {
+    commandCode { range=7 }
+    cfs.FileName name {}
+  }
+
+  SBCommand write_map2file {
+    commandCode { range=8 }
+    cfs.FileName name {}
+  }
+
+
+  /** SB Enable Subscription Reporting command */
+  SBCommand enable_subs_report {
+    commandCode { range=9 }
+  }
+
+  /** SB Disable Subscription Reporting command */
+  SBCommand disable_subs_report {
+    commandCode { range=10 }
+  }
+
+  /** SB Send Previous Subscriptions command */
+  SBCommand send_prev_subs {
+    commandCode { range=11 }
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x03 } }
+
+    /** SB Command Processed Counter */
+    cfs.U8 cmdpc {}
+
+    /** SB Command Error Counter */
+    cfs.U8 cmdec {}
+
+    /** SB No Subscribers Error Counter */
+    cfs.U8 nosubec {}
+
+    /** SB Message Send Error Counter */
+    cfs.U8 msgsndec {}
+
+    /** SB Message Receive Error Counter */
+    cfs.U8 msgrecec {}
+
+    /** SB Internal Error Counter */
+    cfs.U8 internalec {}
+
+    /** SB Create Pipe Error Counter */
+    cfs.U8 newpipeec {}
+
+    /** SB Subscribe Error Counter */
+    cfs.U8 subscrec {}
+
+    /** SB Duplicate Subscription Counter */
+    cfs.U32 dupsubcnt { prePadding=8, lengthInBits=8, postPadding=16 }
+
+    /** SB Pipe Overflow Error Counter */
+    cfs.U16 pipeovrec {}
+
+    /** SB Message ID to Pipe Limit Error Counter */
+    cfs.U16 msglimec {}
+
+    /** SB Memory Pool handle */
+    cfs.U32 memPoolHandle {}
+
+    /** SB Memory bytets currently in use */
+    cfs.U32 memInUse {}
+
+    /** SB Memory Buffer Bytes minus Peak Memory in use */
+    cfs.U32 unmarkedMem {}
+  }
+
+  /** Pipe Depth Stats */
+  prototype Structure PipeDepthStats {
+    cfs.U16 pipeid { lengthInBits=8, postPadding=8 }
+    cfs.U16 depth {}
+    cfs.U16 inuse {}
+    cfs.U16 peakinuse {}
+  }
+
+  CfsTelemetryPacket status {
+    applyWhen = { FieldInRange { field=applicationId, range=0x0A } }
+
+    cfs.U32 midiu {}          /**<-- Message Ids In Use */
+    cfs.U32 pmidiu {}         /**<-- Peak Message Ids In Use */
+    cfs.U32 mmidalw {}        /**<-- Max Message Ids Allowed */
+    cfs.U32 piu {}            /**<-- Pipes In Use */
+    cfs.U32 ppiu {}           /**<-- Peak Pipes In Use */
+    cfs.U32 mpalw {}          /**<-- Max Pipes Allowed */
+    cfs.U32 bmiu {}           /**<-- Buffer Memory In Use */
+    cfs.U32 pbmiu {}          /**<-- Peak Buffer Memory In Use */
+    cfs.U32 mbmalw {}         /**<-- Max Buffer Memory Allowed */
+    cfs.U32 siu {}            /**<-- Subscriptions In Use */
+    cfs.U32 psiu {}           /**<-- Peak Subscriptions In Use */
+    cfs.U32 msalw {}          /**<-- Max Subscriptions Allowed */
+    cfs.U32 sbbiu {}          /**<-- SB Buffers In Use */
+    cfs.U32 psbbiu {}         /**<-- Peak SB Buffers In Use */
+    cfs.U32 mpdalw {}         /**<-- Max Pipe Depth Allowed */
+    PipeDepthStats pds[64] {} /**<-- Pipe Depth Stats */
+  }
+
+  /** SB Peer Telemetry -- this may not be defined in SB, but is in the accompanying RDL ...
+  CfsTelemetryPacket network {
+    Structure peer[5] {
+      cfs.S8 name { lengthInCharacters=4 }
+      cfs.U16 state {}
+      cfs.U16 subscriptions {}
+      cfs.U16 recvPktCount { units="Counts" }
+      cfs.U16 xmitPktCount { units="Counts" }
+    }
+  } */
+
+  prototype Structure Qos {
+    cfs.U8 priority {}
+    cfs.U8 reliability {}
+  }
+
+  prototype Structure SubsEntry {
+    cfs.U16 msgid {} /**<-- message ID */
+    Qos qos {}       /**<-- quality of service */
+    cfs.U8 pipe {}   /**<-- pipe ID */
+  }
+
+  CfsTelemetryPacket allsubs {
+    applyWhen = { FieldInRange { field=applicationId, range=0x0D } }
+    cfs.U32 pktSegment {}    /**<-- packet number in series generated for this request */
+    cfs.U32 totalSegments {} /**<-- total number of packet needed to complete the request */
+    cfs.U32 entries {}       /**<-- number of entries in this packet */
+    SubsEntry info[20] {}    /**<-- array of subscription entries for this packet */
+  }
+
+  CfsTelemetryPacket subscription {
+    applyWhen = { FieldInRange { field=applicationId, range=0x0E } }
+    cfs.U8 stype {}   /**<-- subscribe or unsubscribe */
+    SubsEntry info {} /**<-- subscription information */
+  }
+
+  System file {
+    System cnv {
+      DiscreteConversion state {
+        Dsc DIS { range=0, fgColor=white, bgColor=black }
+        Dsc ENA { range=1, fgColor=white, bgColor=black }
+      }
+    }
+
+    System sources {
+      TelemetrySource messageMap {}
+      TelemetrySource pipes {}
+      TelemetrySource routing {}
+    }
+
+    /** Message Map File */
+    cfs.File messageMap {
+      source=sources.messageMap
+      Structure entry[0x1fff] {
+        cfs.U16 msgid {}
+        cfs.U16 index {}
+      }
+    }
+
+    /** Pipes File */
+    cfs.File pipes {
+      source=sources.pipes
+      Structure entry[64] {
+	cfs.U8 inuse {}         /**<-- In Use */
+	cfs.U8 pipeid {}        /**<-- Pipe Id */
+	cfs.AppName pipename {} /**<-- Pipe Name */
+	cfs.AppName appname {}  /**<-- Application Name */
+	cfs.U16 spare {}
+	cfs.U32 taskid {}       /**<-- $sc $cpu Task Id */
+	cfs.U32 sysqid {}       /**<-- $sc $cpu System Queue Id */
+	cfs.U32 lastSender {}   /**<-- $sc $cpu Last Sender */
+	cfs.U16 qdepth {}       /**<-- $sc $cpu Queue Depth */
+	cfs.U16 senderrs {}     /**<-- $sc $cpu Send Errors */
+	cfs.U32 buffer {}       /**<-- $sc $cpu Current Buffer */
+	cfs.U32 buffer2 {}      /**<-- $sc $cpu Trash Buffer */
+      }
+    }
+
+    /** SB Routing File */
+    cfs.File routing {
+      source=sources.routing
+      Structure entry[0x1fff] {
+	cfs.U16 msgid {}        /**<-- Message Id */
+	cfs.U8 pipeid {}        /**<-- Pipe Id */
+	cfs.U8 state {}         /**<-- State */
+	cfs.U16 msgcnt { units="Counts" } /**<-- Message Counter */
+	cfs.AppName appname {}  /**<-- Application Name */
+	cfs.AppName pipename {} /**<-- Pipe Name */
+      }
+    }
+  }
+}
+

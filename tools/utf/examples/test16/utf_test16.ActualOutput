@@ -1,0 +1,292 @@
+
+***Initialize UTF ***
+
+***Add tasks to ES list of tasks ***
+UTF Info: Task <Owner1> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Owner1 loaded and created
+UTF Info: App <Owner1> added to App Tbl.
+UTF Info: Task <Owner2> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Owner2 loaded and created
+UTF Info: App <Owner2> added to App Tbl.
+UTF Info: Task <NN> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: NN loaded and created
+UTF Info: App <NN> added to App Tbl.
+
+***Register local task with ES***
+
+***Test CFE_TBL_Register API***
+
+* Test Case 1: Call TBL_Register with valid arguments.*
+* Expect: UTF info msg that table has been registered.*
+
+-->Current App switched to Name/AppId <Owner1>/5.
+UTF INFO: CFE_TBL_Register called for new table Owner1.MagSettings.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+UTF INFO: CFE_TBL_Register called for new table Owner1.GyroSettings.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+-->Current App switched to Name/AppId <Owner2>/6.
+UTF INFO: CFE_TBL_Register called for new table Owner2.FilterTbl1.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+UTF INFO: CFE_TBL_Register called for new table Owner2.FilterTbl2.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+* Test Case 2: Call TBL_Register with name argument which is too long.*
+* Expect: SysLog error message.*
+SysLog:1980-001-00:00:01.50000 CFE_TBL:Register-Table Name (TableOfImportantNumbers) is too long
+ERROR EVENT ID=90 Owner2 Failed to Register 'TableOfImportan', Status=0xCC000002
+* Return value is cc000002.  Expected cc000002.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+* Test Case 3: Call TBL_Register for a Critical Table.*
+UTF INFO: CFE_TBL_Register called for new table Owner2.CriticalTable.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=37 Owner2 Successfully Updated 'Owner2.CriticalTable'
+* CFE_TBL_Manage returned 4c00000e.  Expected 0.*
+
+***Test CFE_TBL_Unregister API***
+
+* Test Case 1: Call CFE_TBL_Unregister from non-owner app.*
+SysLog:1980-001-00:00:01.50000 CFE_TBL:ValidateAccess-App(6) no access to Tbl Handle=0 (Stat=0xCC000008)
+SysLog:1980-001-00:00:01.50000 CFE_TBL:Unregister-App(6) does not have access to Tbl Handle=0
+ERROR EVENT ID=92 Owner2 Failed to Unregister '?', Status=0xCC000008
+* Return value is cc000008.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings       10   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+* Test Case 2: Call CFE_TBL_Unregister from owner app.*
+
+-->Current App switched to Name/AppId <Owner1>/5.
+UTF Info: Valid CFE_TBL_Unregister call made from owner app.
+* Return value is 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+****************************
+***Shared table scenarios***
+****************************
+
+* Shared table scenario 1: App Owner1 registers table.  App NN shares it.*
+* Expect: UTF info msg that table has been registered.*
+
+-->Current App switched to Name/AppId <Owner1>/5.
+UTF INFO: CFE_TBL_Register called for new table Owner1.MagSettings.
+* CFE_TBL_Register returned 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings     1024   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=37 Owner1 Successfully Updated 'Owner1.MagSettings'
+* CFE_TBL_Manage returned 4c00000e.  Expected 4c00000e.*
+* CFE_TBL_GetAddress returned 4c00000e.*
+* Table now contains value 5735.
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+
+-->Current App switched to Name/AppId <NN>/15.
+* Initiate Shared access of table Owner1.MagSettings for App <NN>
+.UTF INFO: AppId <15> issued shared access to Table <Owner1.MagSettings>.
+* CFE_TBL_Share returned 0.  Expected 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0       Owner1.MagSettings     1024  15 ,   5 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+* CFE_TBL_Manage returned 0.  Expected 4c00000e.*
+* CFE_TBL_GetAddress returned 4c00000e.*
+ 4c00000e value indicates CFE_TBL_INFO_UPDATED
+* Table now contains value 5735.
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+
+Now NN accesses table and Owner1 accesses table before NN releases it.
+* CFE_TBL_Manage returned 0.  Expected CFE_SUCCESS(0).*
+* CFE_TBL_GetAddress returned 0.Expected CFE_SUCCESS(0).*
+* Table now contains value 5735.
+
+-->Current App switched to Name/AppId <Owner1>/5.
+* CFE_TBL_Manage returned 0.  Expected CFE_SUCCESS(0).*
+* CFE_TBL_GetAddress returned 0.  Expected CFE_SUCCESS(0)*
+* Table now contains value 5735.
+* Both applications will now release table.. *
+
+-->Current App switched to Name/AppId <NN>/15.
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+
+-->Current App switched to Name/AppId <Owner1>/5.
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+* Load even number to table. *
+
+-->Current App switched to Name/AppId <Owner1>/5.
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=37 Owner1 Successfully Updated 'Owner1.MagSettings'
+* CFE_TBL_Manage returned 4c00000e.  Expected CFE_SUCCESS(0).*
+* CFE_TBL_GetAddress returned 4c00000e.  Expected CFE_SUCCESS(0)*
+* Table now contains value 4868.
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+
+* Owner of table unregisters. *
+UTF Info: Valid CFE_TBL_Unregister call made from owner app.
+* CFE_TBL_Unregister returned 0.*
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   0                              1024  15 
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+* App with shared access attempts to access table. *
+
+-->Current App switched to Name/AppId <NN>/15.
+* CFE_TBL_Manage returned 0.*
+SysLog:1980-001-00:00:01.50000 CFE_TBL:GetAddressInternal-App(15) attempt to access unowned Tbl Handle=5
+* CFE_TBL_GetAddress returned cc000009.  Expect cc000009*
+* CFE_TBL_ReleaseAddress returned 0.  Expected 0.*
+
+* App with shared access unregisters. *
+UTF Info: Valid CFE_TBL_Unregister call made from non-owner app.
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+***Test CFE_TBL_GetInfo API***
+* Looking for table named 'Owner2.FilterTbl1'.
+* CFE_TBL_GetInfo returned 0.
+* Table info returned:
+*     Size:              10
+*     NumUsers:          1
+*     FileCreateSecs:    0
+*     FileCreateSubSecs: 0
+*     LastUpdateSecs:    0
+*     LastUpdateSubSecs: 0
+*     LoadedOnce flag:   0
+*     DumpOnly flag:     0
+*     Double Buffered:   1
+*     User Defined Addr: 0
+*     Critical flag:     0
+*     Last File Loaded  ''
+
+***Test CFE_TBL_GetInfo API with a Critical Table ***
+* Looking for table named 'Owner2.CriticalTable'.
+* CFE_TBL_GetInfo returned 0.
+* Table info returned:
+*     Size:              10
+*     NumUsers:          1
+*     FileCreateSecs:    0
+*     FileCreateSubSecs: 0
+*     LastUpdateSecs:    0
+*     LastUpdateSubSecs: 0
+*     LoadedOnce flag:   1
+*     DumpOnly flag:     0
+*     Double Buffered:   1
+*     User Defined Addr: 0
+*     Critical flag:     1
+*     Last File Loaded  ''
+
+-->Current App switched to Name/AppId <Owner2>/6.
+
+***Test CFE_TBL_Modified API***
+CFE_TBL_Modified called for 'FilterTbl2' returned 0
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 (*)
+   4     Owner2.CriticalTable       10   6 
+(*) indicates the Table was updated via CFE_TBL_Modified API
+CFE_TBL_Modified called for 'CriticalTable' returned 0
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+   1      Owner1.GyroSettings       10   5 
+   2        Owner2.FilterTbl1       10   6 
+   3        Owner2.FilterTbl2       10   6 (*)
+   4     Owner2.CriticalTable       10   6 (*)
+(*) indicates the Table was updated via CFE_TBL_Modified API
+
+***Function Hook Tests***
+Register Hook Return Code 0
+Register Hook Return Code cc000003
+Register Hook Return Code 0
+Register Hook Return Code cc000003
+Load Hook Return Code 0
+Load Hook Return Code cc000010
+Load Hook Return Code 0
+Load Hook Return Code cc000010
+Manage Hook Return Code 0
+Manage Hook Return Code 4c000019
+Manage Hook Return Code 0
+Manage Hook Return Code 4c000019
+Returning Table 1 handle.
+GetAddress Hook Return Code 0
+Table Pointer returned = 134724768. Expected 134724768.
+Returning Table 2 handle.
+GetAddress Hook Return Code 0
+Table Pointer returned = 134724776. Expected 134724776.
+Returning Table 3 handle.
+GetAddress Hook Return Code 0
+Table Pointer returned = 134724784. Expected 134724784.
+GetAddress Hook Return Code cc000009
+GetAddresses Hook Return Code 0
+GetAddresses Hook Return Code cc000009
+GetAddresses Hook Return Code 0
+GetAddresses Hook Return Code cc000009

@@ -1,0 +1,462 @@
+/**
+    \mainpage Health and Safety (HS) User's Guide    
+
+       <UL>
+           <LI> \subpage cfshsrevhist
+           <LI> \subpage cfshsintro
+           <LI> \subpage cfshsovr
+           <LI> \subpage cfshsopr
+           <LI> \subpage cfshsreq
+           <LI> \subpage cfshsdg
+           <LI> \subpage cfshscmds
+           <LI> \subpage cfshstlm
+           <LI> \subpage cfshstbl
+           <LI> \subpage cfshscfg
+           <LI> \subpage cfshscons
+           <LI> \subpage cfshsfaqs
+           <LI> \subpage hs_events.h "Health and Safety Event Message Reference" <BR>
+       </UL>
+**/
+
+/**
+  \page cfshsrevhist Health and Safety User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_hs.dox  $
+  Revision 1.2 2015/11/12 14:25:18EST wmoleski 
+  Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
+  Revision 1.3 2015/05/04 16:08:39EDT lwalling 
+  Remove references to critical from application and event monitors
+  Revision 1.2 2010/11/23 18:24:35EST aschoeni 
+  Updated Users Guide for CPU Utilization
+  Revision 1.2 2009/08/26 18:56:40EDT aschoeni 
+  updated users guide to initial version
+  Revision 1.1 2009/04/17 14:18:43EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/docs/dox_src/users_guide/project.pj
+  Revision 1.1 2009/04/17 13:55:13EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-apps/template/docs/dox_src/detailed_design/project.pj
+  \endverbatim
+  
+**/
+
+/**
+        \page cfshsintro Health and Safety Introduction
+        
+  <H2> Scope </H2>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the Health and Safety (HS) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personnel).  
+  The last section of the document, the deployment guide section, is intended for mission 
+  developers when deploying and configuring the HS application software for a mission 
+  flight software build environment. 
+
+  <H2> Applicable Documents </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> 582-2008-037 </TD> 
+      <TD WIDTH="40%"> Health and Safety Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> 582-2007-029 </TD> 
+      <TD WIDTH="40%"> Health and Safety and Housekeeping Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> Health and Safety Design Document </TD>
+  </TABLE>
+
+
+  <H2> Acronyms </H2>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HS      </TD> <TD WIDTH="40%"> Health and Safety                               </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TDM     </TD> <TD WIDTH="40%"> Time Data Multiplex                             </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Prev: \ref cfshsrevhist <BR>
+  Next: \ref cfshsovr
+**/
+
+/**
+        \page cfshsovr Health and Safety Overview
+        
+        The CFS Health and Safety (HS) application provides functionality for Application Monitoring,
+        Event Monitoring, Hardware Watchdog Servicing, Execution Counter Reporting (optional), and CPU
+        Aliveness Indication (via UART).<BR>
+        
+        Application Monitoring, Event Monitoring, and Execution Counter Reporting are configurable by
+        table while the application is running. Application Monitoring, Event Monitoring and CPU
+        Aliveness Indication can be disabled or enabled by ground command, and can be configured to
+        be disabled or enabled (if a table is provided) on startup.<BR>
+        
+        \section HS Design Overview
+        
+        The Health and Safety application nominally runs once per second. First, it makes updates based
+        on any table loads during the previous second. Next, it performs Application Monitoring, if
+        enabled, in the order listed in the table, taking actions if necessary. Next, the Aliveness
+        Indicator (to the UART) is output if enabled and it is time to do so. After that, all events
+        received during the previous cycle are checked, in order, if enabled, against the Event Monitor
+        Table (in the order listed in the table) and actions are taken if necessary. Next, all commands
+        and housekeeping requests received during the previous cycle are processed. Finally, the hardware
+        watchdog is serviced after which the HS application waits until the next cycle to begin the 
+        process again.
+         
+    Prev: \ref cfshsintro <BR>
+        Next: \ref cfshsopr
+**/
+
+/**
+  \page cfshsopr Health and Safety Operation
+  
+         The Health and Safety Application consists of several mostly independent components. The following describes these components and their potential uses.<BR>
+
+         <H2> Application Monitor </H2>
+
+         The HS Application Application Monitor (AppMon), sometimes referred to as the Applications Monitor, is used to take action when a table defined application fails to increment its Execution Counter for the table defined number of cycles. The HS Application will not start monitoring applications until system startup has been completed (#CFE_ES_WaitForStartupSync returns, whether because the system is finished starting up, or because it timed out).<BR>
+
+         AppMon checks the execution count each cycle for each application defined in the Application Monitor Table. If the current value of the execution counter matches the value of the counter during the previous cycle then the "missing" count is decremented, otherwise the "missing" count is reset to the table defined threshold count value. If the "missing" count reaches zero, then the table defined action is taken.<BR>
+
+         Once the "missing" count reaches zero and the action is taken, that table entry is disabled until Application Monitoring (as a whole) is commanded to be enabled (it does not matter if Application Monitoring is disabled first), or a new Application Monitor Table is loaded. <BR>
+
+         An application may appear in the Application Monitor Table more than once, allowing it to have multiple actions. This might be used to attempt to restart an application, and failing that (having a larger timeout threshold) perform a processor reset. Another use might be to take another action (perhaps a Message Action causing a Power-On Reset) if the HS Max Processor Reset limit has been reached. This ability also might be used for sending multiple Message Actions. <BR>
+
+         If an application is not currently running on the system, then it is considered to not be incrementing its counter (which does not exist). The HS Application itself does not know whether the Application is legitimately missing, or was incorrectly specified in the table, so it assumes that it is a real, missing application. If Processor Reset Limiting is not set properly, such an application missing at startup could even lead to an infinite reset loop. <BR><BR>
+
+
+         <H2> Event Monitor </H2>
+
+         The HS Application Event Monitor (EventMon), sometimes referred to as the Events Monitor, is used to take action when a table defined application generates an event with a table defined Event ID number. The HS Application will not start monitoring events until system startup has been completed (#CFE_ES_WaitForStartupSync returns, whether because the system is finished starting up, or because it timed out). Note that EventMon does not monitor the contents of events, only the generation of them (by Event ID number). <BR>
+
+         EventMon can only monitor events that have not been filtered by Event Services (EVS). If EVS filters out an event, it will not be sent out, and so HS will never receive it.<BR>
+
+         EventMon checks all generated events once each cycle, checking the events generated during the previous cycle. For each event received, the Event ID number is checked against the each Event ID number in the Event Monitor Table; if the Event ID number matches, then the Application Name is compared, and if it too matches, then the event monitor takes the table specified action. If the Event Monitor Table contains multiple instances of an Application Name/Event ID number pair, then multiple actions will be taken in the order listed in the table. If one of the multiple actions is a Processor Reset action, and the HS Application has not reached its maximum number of Processor Reset attempts (and so a reset occurs), then no further actions would be taken. <BR><BR>
+
+
+         <H2> Message Actions </H2>
+
+         Message Actions allow the HS Application to send a message on the software bus by an action type from the Application Monitor or Event Monitor. While this would typically be used to send a command, it is also possible to send a telemetry message. Each Message Action only sends a single message, but Application Monitoring or Event Monitoring tables can be set up to perform multiple actions for the same application or event if multiple messages are needed. Each Message Action has its own action type. <BR>
+
+         The Message Actions table can specify a cooldown for each message it can send; the cooldown determines how many cycles must be waited before the message can be sent again. For example, if a message has a cooldown value of 4, and is sent due to a monitored event, then if the same event is received again in the next three cycles, no message would be sent; if it is received again on the 4th cycle or later, the message will be sent again. A cooldown value of 1 means the message can be sent once per cycle. A cooldown value of 0 means the message can be sent multiple times per cycle. <BR><BR>
+
+
+         <H2> Processor Reset Limiting </H2>
+
+         The HS Application limits the number of Processor Resets that it will perform to prevent the system from getting into an infinite reset loop. HS keeps track of how many processor resets it has performed in a Critical Data Store; if this CDS is corrupt or does not exist (due to design or Power-On reset) then it assumes 0 resets have been performed by HS. Because Executive Services (ES) will perform a Power-On reset after a defined threshold of Processor Resets have occured, the threshold value for HS Processor Resets should be set to less than this, if the developer wants to use HS Processor Reset Limiting (conversely, it should be set higher if the developer does not want to use limiting). A Max HS Processor Reset value of 0 means that HS will never attempt to perform a processor reset. <BR>
+
+         If there is the desire to bypass Reset Limiting for some but not all situations (especially if a Power-On reset might be necessary), then Message Actions can be used to command a reset via ES. HS will not consider this an HS caused Processor Reset and will not increment its counter for this. <BR><BR>
+
+         <H2> Watchdog Management </H2>
+
+         The HS Application enables and initializes the timeout value of the hardware watchdog once at startup. Note that this is the only time that the HS Application will set the watchdog timeout via the #CFE_PSP_WatchdogSet() function. <BR>
+
+         The HS Application nominally services the hardware watchdog once every cycle using #CFE_PSP_WatchdogService(). The HS Application will only disable this periodic servicing of the watchdog when it attempts to perform a processor reset (in response to Event or Application monitoring) as a contingency against #CFE_ES_ResetCFE() failing; nominally the processor reset will re-initialize HS which will once again initialize and service the watchdog. <BR>
+
+         If the developer wishes to occassionally set a longer watchdog timeout in situations where HS may be prevented from running by a higher priority task for extended periods of time, this may be accomplished using the #CFE_PSP_WatchdogSet() API with a larger timeout value. As the HS Application only sets the timeout value at startup, if it does run during that time the watchdog will be reset to larger value. After setting the new timeout value, the developer should service using the watchdog using #CFE_PSP_WatchdogService() to ensure that the new timeout value is being used. Prior to setting the new timeout value, the developer should get the current timeout value using #CFE_PSP_WatchdogGet(), and restore this value after the larger value is no longer needed. <BR><BR>
+
+
+         <H2> Execution Counter Reporting </H2>
+
+         The HS Application provides the ability to report execution counter data in telemetry. Execution counter data can be reported for both applications and child tasks. <BR>
+
+         If the application or task specified in the a table entry fails to be found (either due to absence or improper naming), or if no application or task is specified, the telemetry associated with with that entry will read 0xFFFFFFFF. If no table is present, then all associated telemetry will read 0xFFFFFFFF. <BR>
+
+         The Execution Counter Telemetry reporting functionality is optional, and is not included in the build process if no counters will be reported (the Execution Counter Table to support this functionality would also not exist in such a case). <BR><BR>
+
+
+         <H2> Aliveness Indication </H2>
+
+         The Aliveness indicator will, if enabled (either by command or by configuration parameter), output the predefined configuration parameter string using #OS_printf() at the configuration parameter determined rate. <BR>
+
+         <H2> CPU Utilization Monitoring and Hogging Detection </H2>
+
+         The HS Application creates an Idle Child Task at a low priority, that is used to determine the portion of CPU utilization not being used by other applications. The Idle Child Task continually increments a counter while running; and this counter is recorded at 1 Hz by a TIME 1 Hz callback function. When the HS application runs each cycle, it will compute the non-Idle Child Task utilization that occurred during the previous cycle and report the average utilization, peak utilization, and determine if the processor is being hogged. The frequency at which the count is recorded and at which the HS application computes utilization can be configured to be other than 1 Hz or 1 cycle if necessary. <BR>
+
+         If the utilization is in excess of a configurable amount for a configurable period of time, then the CPU Hogging event message will be sent. This message can be used to by HS Event Monitoring to perform whatever action the user desires. <BR>
+
+         The Idle Child Task requires calibration to perform properly, and provides the ability to perform the necessary calibrations using the software itself. See the deployment portion of this guide for more information on calibration. <BR>
+
+
+  Next: \ref cfshsreq <BR>
+  Prev: \ref cfshsovr
+**/
+
+/**
+  \page cfshsreq Health and Safety Requirements
+    
+    The following are HS subsystem requirements. Detailed requirements can be found in the Health and Safety Application Requirements Document.  
+    
+    CFS-510: The CFS shall monitor application execution and take the appropriate action if one or more monitored applications fails to execute.<BR>
+    CFS-511: The CFS shall monitor all event messages, looking for monitored events and taking the appropriate action.<BR>
+    CFS-512: The CFS shall maintain the watchdog timer.<BR>
+    CFS-513: The CFS shall monitor and report the CPU Aliveness.<BR>
+
+  Next: \ref cfshsdg <BR>
+  Prev: \ref cfshsopr 
+**/
+
+/**
+  \page cfshsdg  Health and Safety Deployment Guide
+  
+         The Health and Safety application cycle may be any length of time, but typically 1 Hz is chosen as the desired rate. The cycle time is important when considering all of the configuration parameters and directly affects the values that should be chosen for Application Monitoring. The cycle is initiated by pending on a Software Bus pipe for a packet with the #HS_WAKEUP_MID Message ID. This pend may be forever, or may be set to a specific timeout value using the #HS_WAKEUP_TIMEOUT configuration parameter to make sure HS runs even if no message is received. This configuration parameter can even be used to make HS run independently if no wakeup message is expected. Additionally, there is a configuration parameter called #HS_POST_PROCESSING_DELAY which will cause a task delay for the configured number of milliseconds after the HS processing cycle is over, before it pends on the Software Bus for the next packet. Just as a general note, configuration of how HS should run should be carefully considered in the context of the system it will be run on and the desires of the project. As some examples: <BR>
+ 
+         On a system with a fairly reliable schedule, the easiest method for setting up HS to run could be to add the HS_WAKEUP_MID to the Scheduler (SCH) Application to be sent once per second, setting HS_POST_PROCESSING_DELAY to 0 and HS_WAKEUP_TIMEOUT to #CFE_SB_PEND_FOREVER (or to greater than a second if assurance that HS runs is desired). <BR>
+
+         On a subsystem where scheduling may be reset by an outside source or delayed by a resource intensive task, this design may not be as desirable as it could interfere with Application Monitoring. In such a case, either an alternate, more reliable, source could be used for 1 Hz delivery, or HS_POST_PROCESSING_DELAY can be used to assure that the cycle time is not too short in cases of a reset. <BR>
+
+         If more independence of HS is desired, HS_POST_PROCESSING_DELAY could be used for scheduling with HS_WAKEUP_TIMEOUT set to #CFE_SB_POLL (though this method would not have high timing accuracy). <BR>
+
+         Each of the Health and Safety Application tables is sized by a configuration parameter. It is probably a good idea to leave a reasonable number of spare entries. Remember that applications can appear in the Application Monitor Table more than once, and events can appear in the Event Monitor Table more than once as well, making complex actions possible (provided there are enough table entries to use). <BR>
+
+         Special consideration needs to be given to several configuration parameters: <BR>
+            <UL>
+                <LI> #HS_EVENT_PIPE_DEPTH - This parameter determines how many events can be stored for Event Monitoring each cycle, and so should be deep enough to capture the maximum number of expected events. <BR>
+                <LI> #HS_STARTUP_SYNC_TIMEOUT - This parameter needs to be set so that HS will start after all applications being monitored. <BR>
+                <LI> #HS_MAX_RESTART_ACTIONS - This parameter needs to be set with consideration to #CFE_ES_MAX_PROCESSOR_RESETS as if Executive Services performs a Power-On Reset, the count of resets stored by HS will be reset. (This may be desirable if HS reset limiting is not desired) <BR>
+            </UL>
+
+
+         <H3>Health and Safety CPU Utilization Monitoring Customization</H3>
+         The Health and Safety application contains the file \c hs_custom.c which can be adapted to take advantage of platform specific functionality concerning CPU Utilization Monitoring. The delivered implementation contains a generic version which should work well on a variety of platforms, however it may be possible to obtain better accuracy or increase processing efficiency by modifying the contents. As the custom utilization monitoring function is called every HS cycle, and an interface to add additional commands is included, it could even be used as a way to add other capabilities to the HS application (e.g. offboard watchdog servicing, or floating point exception testing) instead of creating an entirely separate application. <BR>
+
+  This customizable section of code includes five required functions for interface purposes:
+  <UL>
+    <LI> #HS_CustomInit
+    <LI> #HS_CustomCommands
+    <LI> #HS_CustomMonitorUtilization
+    <LI> #HS_CustomGetUtil
+    <LI> #HS_CustomCleanup
+  </UL>
+
+        The remainder of this guide assumes that the generic hs_custom.c is being used when describing how to use and calibrate CPU Utilization Monitoring. <BR>
+
+         <H3>Health and Safety CPU Utilization Monitoring Calibration</H3>
+         
+
+
+         The first step in CPU Utilization Monitoring Calibration is to determine how many Idle Child Task cycles there are in a second (in the default case: one interval is one second). This is done by setting the Utilization Diagnostics Mask by command: for example a command parameter of 0xFF would record the time every 256 cycles. These times are stored in a circular buffer of a size determined by #HS_UTIL_TIME_DIAG_ARRAY_POWER (increasing this parameter will provide more samples, but use more memory). The Report Diagnostics command can then be sent (after a sufficient time to let the circular buffer perform a full cycle) to generate an event message containing the mask, and the four shortest intervals between time records, as well as how frequently those timed intervals occurred. Usually the desired value is the weighted average (based on frequencies) of the two lowest times, though common sense should be used as a sanity check. The Report Diagnostics command can be used multiple times to report additional captured times (the capturing continually runs through the circular buffer). The recorded time uses the microseconds field of #CFE_PSP_GetTime to determine the time, so the source of that timer will determine the precision and accuracy of the timing data. To calibrate the time properly, two values must be used so that the overhead associated with recording the time is cancelled out (so for example, capturing time at 256 and 128 cycles, and then finding the difference will give the real time for performing 128 cycles). When done collecting data, reset the mask to 0xFFFFFFFF. This makes sure that no timing data is captured, and so all cycles are of equal length.<BR>
+
+         Good rates at which to record depend on the timing resolution and platform speed. Time is recorded when the mask value is all 1s, so the mask values used should be of the form 2^n - 1 (e.g. 255 (0xFF), 2047 (Ox7FF)) to capture once out of 2^n cycles. As the calibration is occurring while the system is running, it is necessary to have large enough chunks of idle time to capture several times within a chunk; with high resolution timers on a fast platform, collecting good data may be possible even when the processor is mostly utilized, but with lower time resolution special testing may have to be done with other applications absent. Reported times of 0 imply that the mask is much too small relative to the resolution (though if all times are 0, the mask may be too large such that no times have been recorded, or that #CFE_PSP_GetTime was not configured properly for the platform). If the frequencies of all the lowest times are relatively low, it may imply that the mask is too large relative to the idle time blocks, or that CFE_PSP_GetTime is not running in constant time and the resolution is high enough to be affected by that (in which case either the lowest, or average of several lowest times can be used). Once the timing information has been acquired, it can be used to determine the time per Idle Child Task cycle, and from there, the number of Idle Child Task cycles per second.<BR>
+
+         On some platforms calibration can also be done using a logic analyzer with the performance monitor using ID #HS_IDLETASK_PERF_ID, potentially supplying much higher time resolution. In addition this marker can also be used by dumping performance data with different masks set which may (or may not) provide higher resolution timing data as the performance monitor uses a different timer.<BR>
+
+         The second step is to choose the #HS_UTIL_PER_INTERVAL_TOTAL value: this is equivalent to one full interval of CPU utilization, so if a value of 100 was used, then the value reported in telemetry would be the percentage. Alternatively a higher value (10000 or 100000) could provide higher resolution information if the calibration is of high enough precision and accuracy. The calibration is then configured using the following equation: <BR>
+
+         HS_UTIL_PER_INTERVAL_TOTAL =  (((Max Number of Idle Task Cycles per Second * #HS_UTIL_CONV_MULT1 ) / #HS_UTIL_CONV_DIV ) * #HS_UTIL_CONV_MULT2) <BR>
+
+         The multiplication and division parameters should be set so as to prevent overflows (of 32 bit values) and using any other platform considerations. These values can be set by command, but they also exist as configuration parameters so that if the values are known at compile time for a specific platform, no further calibration would be necessary.<BR>
+
+         Also, please be aware that HS has a performance ID, #HS_APPMAIN_PERF_ID, that keeps track of the performance of the HS app.    
+  
+   Next: \ref cfshscmds <BR>
+   Prev: \ref cfshsreq
+**/
+
+/**
+  \page cfshscmds Health and Safety Commands
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscfg</B></TD>
+  </TABLE>
+  
+  The following is a list of Commands that are processed by the Health and Safety Application. 
+
+**/
+
+/**
+  \page cfshstlm  Health and Safety Telemetry
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscfg</B></TD>
+  </TABLE>
+  
+  The following are telemetry packets generated by the Health and Safety 
+  Application.
+
+**/
+
+/**
+  \page cfshstbl Health and Safety Table Definitions
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscfg</B></TD>
+  </TABLE>
+  
+        The CFS Health and Safety application utilizes three (if not using Execution Counter Reporting) or four tables.<BR>
+        
+        <H2> Application Monitor Table (AMT) </H2>
+        
+        The AMT is the configuration table for the HS Application Monitor, defining when to take action and what action to take.<BR>
+        
+        The AMT consists of an array of records numbering #HS_MAX_MONITORED_APPS . Each record contains field for: Application Name, Null Terminator, Cycle Count, and Action Type.<BR>
+        
+        <UL>
+          <LI> The Application Name should be the name of the application as the system knows it: up to OS_MAX_API_NAME in length.
+          <LI> The Null Terminator must be 0: this exists as quick method making sure that the strings in the table are no longer than the maximum length.
+          <LI> The Cycle Count is the number of HS cycles that the named application's execution counter must not be incremented before the defined action is taken.
+          <LI> The Action Type is the action to take: 
+          <UL>
+              <LI> #HS_AMT_ACT_NOACT for a disabled entry.      
+              <LI> #HS_AMT_ACT_PROC_RESET for an entry that causes a processor reset.
+              <LI> #HS_AMT_ACT_APP_RESTART for an entry that restarts the named application.
+              <LI> #HS_AMT_ACT_EVENT for an entry that only generates an event message.
+              <LI> HS_AMT_ACT_MSG(num) for an entry that generates a message action, where 'num' is the index into the Message Actions Table.
+          </UL>  
+        </UL>
+
+        While there is no valid AMT loaded, the HS Application Monitor will be disabled (it will be disabled again if an attempt to enable it is made).<BR>
+
+
+        <H2> Event Monitor Table (EMT) </H2>
+        
+        The EMT is the configuration table for the HS Event Monitor, defining when to take action and what action to take.<BR>
+        
+        The EMT consists of an array of records numbering #HS_MAX_MONITORED_EVENTS . Each record contains field for: Application Name, Null Terminator, Event ID, and Action Type.<BR>
+        
+        <UL>
+          <LI> The Application Name should be the name of the application as the system knows it: up to OS_MAX_API_NAME in length.
+          <LI> The Null Terminator must be 0: this exists as quick method making sure that the strings in the table are no longer than the maximum length.
+          <LI> The Event ID is the number of the event being monitored for.
+          <LI> The Action Type is the action to take: 
+          <UL>
+              <LI> #HS_EMT_ACT_NOACT for a disabled entry.      
+              <LI> #HS_EMT_ACT_PROC_RESET for an entry that causes a processor reset.
+              <LI> #HS_EMT_ACT_APP_RESTART for an entry that restarts the named application.
+              <LI> #HS_EMT_ACT_APP_DELETE for an entry that deletes the named application.
+              <LI> HS_EMT_ACT_MSG(num) for an entry that generates a message action, where 'num' is the index into the Message Actions Table.
+          </UL>
+        </UL>
+        While there is no valid EMT loaded, the HS Event Monitor will be disabled (it will be disabled again if an attempt to enable it is made).<BR>
+        
+        
+        <H2> Message Actions Table (MAT) </H2>
+        
+        The MAT stores the messages sent by the HS Application Monitor or HS Event Monitor Message Action Type.<BR>
+        
+        The MAT consists of an array of records numbering #HS_MAX_MSG_ACT_TYPES . Each record contains field for: Enable State, Cooldown, and Message.<BR>
+        
+        <UL>
+          <LI> The Cooldown value determines how many cycles must be waited before a message can be sent again; a value of 0 means the message can be sent multiple times in one cycle, a value of 1 means the message can only be sent once per cycle, a value of 2 means the message could only be sent every other cycle, etc.
+          <LI> The Message is an array of bytes of length #HS_MAX_MSG_ACT_SIZE which contains the message to be sent. Keep byte-swapping issues in mind when populating this field.
+          <LI> The Enable State determines whether the message action in that record can be sent:
+          <UL> 
+              <LI> #HS_MAT_STATE_DISABLED for a disabled entry.
+              <LI> #HS_MAT_STATE_ENABLED for an enabled entry which will generate an event when sent.
+              <LI> #HS_MAT_STATE_NOEVENT for an enabled entry which will not generate an event when sent.
+          </UL>
+        </UL>
+       
+        While there is no valid MAT loaded, no Message Actions will be sent.<BR>
+        
+        
+        <H2> Execution Counter Table (XCT) </H2>
+
+        The EMT is the configuration table for the HS Execution Counter reporting, defining which counters are reported in telemetry.<BR>
+        
+        The XCT consists of an array of records numbering #HS_MAX_EXEC_CNT_SLOTS. This table only exists if HS_MAX_EXEC_CNT_SLOTS is not equal to 0. Each record contains field for: Resource Name, Null Terminator, and Resource Type.<BR>
+        <UL>
+          <LI> The Resource Name should be the name of the application or child task as the system knows it: up to OS_MAX_API_NAME in length.
+          <LI> The Null Terminator must be 0: this exists as quick method making sure that the strings in the table are no longer than the maximum length.
+          <LI> The Resource Type is the type of resource being monitored: 
+          <UL> 
+            <LI> #HS_XCT_TYPE_NOTYPE for a disabled entry.      
+            <LI> #HS_XCT_TYPE_APP_MAIN for an Application Main Task.
+            <LI> #HS_XCT_TYPE_APP_CHILD for a Child Task.
+            <LI> #HS_XCT_TYPE_ISR for an ISR counter.
+            <LI> #HS_XCT_TYPE_DEVICE for a Device Driver counter.
+          </UL>
+        </UL>
+        
+        While there is no valid XCT loaded, all Execution Counters in telemetry will be reported as invalid (0xFFFFFFFF).
+**/
+
+/**
+  \page cfshscfg Health and Safety Configuration Parameters
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshscmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfshstbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the Health and Safety
+  Application either for each platform or for a mission as a whole.
+
+**/
+
+/**
+  \page cfshscons Health and Safety Operational Constraints
+
+        The Health and Safety application is very robust and will only fail to run or stop running if certain cFE failures occur. At start-up, this includes registering tables with Table Services, subscribing to Event Services, and creating pipes and subscribing with Software Bus. While running, this only occurs of if the Software Bus Receive API generates an error.<BR>
+
+        While the typical operational scenario for changing the Application Monitor Table or Event Monitor Table would probably involve disabling the respective Monitoring type, the software does support loading while running (although this will reset the Application Monitoring even if the same or a similar table is loaded).<BR>
+
+  Next: \ref cfshsfaqs <BR>
+  Prev: \ref cfshstbl
+**/
+
+/**
+  \page cfshsfaqs Health and Safety Frequently Asked Questions
+
+  <B> (Q)
+     Why is there no option to start an RTS in response to Application Monitor failure or Event Monitor detection?
+  </B> <BR> <BR> <I>
+     RTSes may still be started using Message Actions, provided your system is using the Stored Command (SC) Application. Message Actions were added in favor of retaining RTS capabilities as they provide a more generic solution (such as systems without SC or with an alternative type of SC). 
+  </I>
+
+  <B> (Q)
+     What if no events need to be monitored?
+  </B> <BR> <BR> <I>
+     The Event Monitor Table must exist (and so must be of non-zero length), but Event Monitoring can be disabled by default. Event Monitoring may always be useful at some point in the future life of a mission, so be sure that enough spare entries are available (even if all entries are spares).
+  </I>
+
+  <B> (Q)
+     What if no Message Actions are needed?
+  </B> <BR> <BR> <I>
+     The Message Actions Table must exist (and so must be of non-zero length), but all entries in it can be disabled. Message Actions may always be useful at some point in the future life of a mission, so be sure that enough spare entries are available (even if all entries are spares).
+  </I>
+  
+  Prev: \ref cfshscons
+**/

@@ -1,0 +1,51 @@
+;
+; File:
+;   $Id: sbsim.in 1.2 2009/12/07 13:40:40EST lwalling Exp  $
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS Data Storage (DS) Application.
+;
+;   This file is used in conjunction with the ds_utest.c
+;   unit test driver and handles high level testing of command 
+;   processing through the DS application's software bus pipe.
+; 
+;   These tests assume the following Message and Command ID
+;   settings in the DS code:
+;
+;   DS_CMD_MID        =  0x18BB
+;   DS_SEND_HK_MID    =  0x18BC
+;
+;   $Log: sbsim.in  $
+;   Revision 1.2 2009/12/07 13:40:40EST lwalling 
+;   Update DS unit tests, add unit test results files to MKS
+;   Revision 1.1 2009/09/01 15:25:00EDT lwalling 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/unit_test/project.pj
+;
+*
+* ***START DS SB COMMAND TESTING***
+* ---------------------------------
+*
+* Housekeeping Request
+* --------------------
+18BC C000 0001 0000    ; Housekeeping Request
+!
+*
+* Housekeeping Request
+* --------------------
+18BC C000 0001 0000    ; Housekeeping Request
+!
+*
+* NOOP Ground Command
+* --------------------
+18BB C000 0001 0000    ; NOOP Ground Command
+*
+*
+* Housekeeping Request
+* --------------------
+18BC C000 0001 0000    ; Housekeeping Request
+!
+!
+* ***END DS SB COMMAND TESTING***
+*-------------------------------

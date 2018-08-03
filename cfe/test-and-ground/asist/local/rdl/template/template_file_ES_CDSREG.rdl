@@ -1,0 +1,51 @@
+!==============================================================================
+!
+!                Originator: W. Moleski	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: May 11, 2007  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TBL Registry File
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2007/05/11  WFM             : Initial
+!                                                             
+!==============================================================================
+!
+!CDS_NAME_LEN is defined in the cfe_tlm_types.rdl
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+
+TYPES
+   RECORD $sc_$cpu_ES_CDSRegistry  DESC="Critical Data Store Registry File"
+     ULI  CDSHandle	DESC="CDS Handle"
+     ULI  CDSSize	DESC="CDS Size in bytes", UNITS=Bytes
+     UB   CriticalTBL	DESC="Critical Table CDS Flag",
+			DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+     CHAR CDSName[CDS_NAME_LEN] DESC="Unique Name of the Critical Data Store"
+     UB   CDSSpare1	DESC="Spare for Byte Align"
+END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES Critical Data Store Registry File", VARYING
+!
+#include "cfe_file_header.rdl"
+
+$sc_$cpu_ES_CDSRegistry   $sc_$cpu_ES_CDSReg[CFE_ES_CDS_MAX_NUM_ENTRIES] DESC="$sc $cpu CDS Registry File"
+
+!
+!
+!
+END

@@ -1,0 +1,675 @@
+        -:    0:Source:../src/fm_cmd_utils.c
+        -:    0:Graph:fm_cmd_utils.gcno
+        -:    0:Data:fm_cmd_utils.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:** $Id: fm_cmd_utils.c.gcov 1.7 2009/11/20 15:40:37EST lwalling Exp  $
+        -:    3:**
+        -:    4:** Title: File Manager (FM) Command Utility Functions
+        -:    5:**
+        -:    6:** Purpose: Provides file manager utility function definitions for
+        -:    7:**          processing file manager commands
+        -:    8:**
+        -:    9:** Author: Susanne L. Strege, Code 582 NASA GSFC
+        -:   10:**
+        -:   11:** Notes:
+        -:   12:**
+        -:   13:** $Log: fm_cmd_utils.c.gcov  $
+        -:   13:** Revision 1.7 2009/11/20 15:40:37EST lwalling 
+        -:   13:** Unit test updates
+        -:   14:** Revision 1.27 2009/11/20 15:32:27EST lwalling 
+        -:   15:** Remove return code and error events from FM_AppendPathSep
+        -:   16:** Revision 1.26 2009/11/17 13:40:51EST lwalling 
+        -:   17:** Remove global open files list data structure
+        -:   18:** Revision 1.25 2009/11/13 16:32:46EST lwalling 
+        -:   19:** Modify macro names, remove VerifyFileOpen function
+        -:   20:** Revision 1.24 2009/11/09 16:54:53EST lwalling 
+        -:   21:** Add FileInfo arg to GetState func, add test for lost semaphore to VerifyChild func
+        -:   22:** Revision 1.23 2009/10/30 14:02:34EDT lwalling 
+        -:   23:** Remove trailing white space from all lines
+        -:   24:** Revision 1.22 2009/10/30 10:44:01EDT lwalling
+        -:   25:** Remove detail from function prologs, modify directory list structure field names
+        -:   26:** Revision 1.21 2009/10/29 11:42:25EDT lwalling
+        -:   27:** Make common structure for open files list and open file telemetry packet, change open file to open files
+        -:   28:** Revision 1.20 2009/10/26 16:43:34EDT lwalling
+        -:   29:** Change some structure and variable names
+        -:   30:** Revision 1.19 2009/10/26 11:31:02EDT lwalling
+        -:   31:** Remove Close File command from FM application
+        -:   32:** Revision 1.18 2009/10/23 14:40:05EDT lwalling
+        -:   33:** Create FM child task to process slow commands, update event text, move slow util fncs to fm_child.c
+        -:   34:** Revision 1.17 2009/10/16 15:43:46EDT lwalling
+        -:   35:** Update event text, function names, arg names, comments, add no dir verify function
+        -:   36:** Revision 1.16 2009/10/06 11:06:10EDT lwalling
+        -:   37:** Clean up after create common filename verify functions
+        -:   38:** Revision 1.15 2009/09/29 13:41:24EDT lwalling
+        -:   39:** Perform tests for file open against current system list of open files, allow open files for copy/move/rename commands
+        -:   40:** Revision 1.14 2009/09/28 15:29:56EDT lwalling
+        -:   41:** Review and modify event text
+        -:   42:** Revision 1.13 2009/09/28 14:15:27EDT lwalling
+        -:   43:** Create common filename verification functions
+        -:   44:** Revision 1.12 2009/09/14 16:58:35EDT lwalling
+        -:   45:** Modify FM_DirListFileInit() to reference FM_DIRLIST_SUBTYPE from platform config file
+        -:   46:** Revision 1.11 2009/09/14 16:08:12EDT lwalling
+        -:   47:** Modified FM_IsValidPathname() to find string terminator or fail verification
+        -:   48:** Revision 1.10 2009/09/10 13:04:01EDT lwalling
+        -:   49:** Modified FM_GetOpenFileList() to remove call to OS_NameChange()
+        -:   50:** Revision 1.9 2009/06/12 14:16:26EDT rmcgraw
+        -:   51:** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   52:** Revision 1.8 2009/01/07 12:39:52EST sstrege
+        -:   53:** Fixed bug in DirListFileInit event
+        -:   54:** Revision 1.7 2008/12/24 16:20:40EST sstrege
+        -:   55:** Added directory check in IsValidDeleteFile function
+        -:   56:** Revision 1.6 2008/12/22 15:45:46EST sstrege
+        -:   57:** Updated IsValidDeleteFile utility function to accept Event Type as an input parameter
+        -:   58:** Revision 1.5 2008/12/12 12:59:25EST sstrege
+        -:   59:** Fixed bug in FM utility function FM_GetOpenFileList
+        -:   60:** Revision 1.4 2008/10/06 11:32:04EDT sstrege
+        -:   61:** Updated DirListFileInit function to write the directory listing statistics structure
+        -:   62:** Revision 1.3 2008/09/30 18:36:30EDT sstrege
+        -:   63:** Replaced Directory Listing File Header initialization code with call to CFS_FS_WriteHeader
+        -:   64:** Revision 1.2 2008/06/20 16:21:24EDT slstrege
+        -:   65:** Member moved from fsw/src/fm_cmd_utils.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_cmd_utils.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
+        -:   66:** Revision 1.1 2008/06/20 15:21:24ACT slstrege
+        -:   67:** Initial revision
+        -:   68:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
+        -:   69:*/
+        -:   70:
+        -:   71:#include "cfe.h"
+        -:   72:#include "osapi-os-filesys.h"
+        -:   73:#include "fm_msg.h"
+        -:   74:#include "fm_cmd_utils.h"
+        -:   75:#include "fm_child.h"
+        -:   76:#include "fm_perfids.h"
+        -:   77:#include "fm_events.h"
+        -:   78:#include "cfs_utils.h"
+        -:   79:
+        -:   80:#include <string.h>
+        -:   81:#include <ctype.h>
+        -:   82:
+        -:   83:
+        -:   84:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   85:/*                                                                 */
+        -:   86:/* FM utility function -- verify command packet length             */
+        -:   87:/*                                                                 */
+        -:   88:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   89:
+        -:   90:boolean FM_IsValidCmdPktLength(CFE_SB_MsgPtr_t CmdPacket, uint16 ExpectedLength,
+        -:   91:                                uint32 EventID, char *CmdText)
+function FM_IsValidCmdPktLength called 98 returned 100% blocks executed 100%
+       98:   92:{
+       98:   93:    boolean FunctionResult = TRUE;
+       98:   94:    uint16 ActualLength = CFE_SB_GetTotalMsgLength(CmdPacket);
+        -:   95:
+        -:   96:    /* Verify command packet length */
+       98:   97:    if (ActualLength != ExpectedLength)
+        -:   98:    {
+       38:   99:        FunctionResult = FALSE;
+        -:  100:
+       38:  101:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  102:                         "%s error: invalid command packet length: expected = %d, actual = %d",
+        -:  103:                          CmdText, ExpectedLength, ActualLength);
+        -:  104:    }
+        -:  105:
+       98:  106:    return(FunctionResult);
+        -:  107:
+        -:  108:} /* FM_IsValidCmdPktLength */
+        -:  109:
+        -:  110:
+        -:  111:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  112:/*                                                                 */
+        -:  113:/* FM utility function -- get open files data                      */
+        -:  114:/*                                                                 */
+        -:  115:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  116:
+        -:  117:uint32 FM_GetOpenFilesData(FM_OpenFilesEntry_t *OpenFilesData)
+function FM_GetOpenFilesData called 6 returned 100% blocks executed 46%
+        6:  118:{
+        6:  119:    uint32 OpenFilesCount = 0;
+        6:  120:    int32 FDTableIndex;
+        6:  121:    OS_FDTableEntry FDTableEntry;
+        6:  122:    CFE_ES_TaskInfo_t TaskInfo;
+        -:  123:
+        -:  124:    /* Get system info for each file descriptor table entry */
+      306:  125:    for (FDTableIndex = 0; FDTableIndex < OS_MAX_NUM_OPEN_FILES; FDTableIndex++)
+        -:  126:    {
+      300:  127:        OS_FDGetInfo(FDTableIndex, &FDTableEntry);
+        -:  128:
+        -:  129:        /* If FD table entry is valid - then file is open */
+      300:  130:        if (FDTableEntry.IsValid == TRUE)
+        -:  131:        {
+        -:  132:            /* Getting the list of filenames is optional */
+    #####:  133:            if (OpenFilesData != (FM_OpenFilesEntry_t *) NULL)
+        -:  134:            {
+        -:  135:                /* FDTableEntry.Path has logical filename saved when file was opened */
+    #####:  136:                strcpy(OpenFilesData[OpenFilesCount].LogicalName, FDTableEntry.Path);
+        -:  137:
+        -:  138:                /* Get the name of the application that opened the file */
+    #####:  139:                CFE_PSP_MemSet(&TaskInfo, 0, sizeof(CFE_ES_TaskInfo_t));
+    #####:  140:                if (CFE_ES_GetTaskInfo(&TaskInfo, FDTableEntry.User) == CFE_SUCCESS)
+        -:  141:                {
+    #####:  142:                    strcpy(OpenFilesData[OpenFilesCount].AppName, TaskInfo.AppName);
+        -:  143:                }
+        -:  144:            }
+        -:  145:
+        -:  146:            /* File count is not optional */
+    #####:  147:            OpenFilesCount++;
+        -:  148:        }
+        -:  149:    }
+        -:  150:
+        6:  151:    return(OpenFilesCount);
+        -:  152:
+        -:  153:} /* End FM_GetOpenFilesData */
+        -:  154:
+        -:  155:
+        -:  156:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  157:/*                                                                 */
+        -:  158:/* FM utility function -- query filename state                     */
+        -:  159:/*                                                                 */
+        -:  160:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  161:
+        -:  162:uint32 FM_GetFilenameState(char *Filename, uint32 BufferSize, boolean FileInfoCmd)
+function FM_GetFilenameState called 113 returned 100% blocks executed 92%
+      113:  163:{
+      113:  164:    OS_FDTableEntry FDTableEntry;
+      113:  165:    os_fstat_t FileStatus;
+      113:  166:    uint32     FilenameState = FM_NAME_IS_INVALID;
+      113:  167:    boolean    FilenameIsValid = FALSE;
+      113:  168:    int32      StringLength = 0;
+      113:  169:    uint32     i;
+        -:  170:
+        -:  171:
+        -:  172:    /* Search Filename for a string terminator */
+     1691:  173:    for (StringLength = 0; StringLength < BufferSize; StringLength++)
+        -:  174:    {
+     1690:  175:        if (Filename[StringLength] == '\0')
+        -:  176:        {
+      112:  177:            break;
+        -:  178:        }
+        -:  179:    }
+        -:  180:
+        -:  181:    /* Verify that Filename is not empty and has a terminator */
+      113:  182:    if ((StringLength > 0) && (StringLength < BufferSize))
+        -:  183:    {
+        -:  184:        /* Verify that the string characters are OK for a filename */
+      112:  185:        FilenameIsValid = CFS_IsValidFilename(Filename, StringLength);
+        -:  186:    }
+        -:  187:
+        -:  188:    /* If Filename is valid, then determine its state */
+      113:  189:    if (FilenameIsValid)
+        -:  190:    {
+        -:  191:        /* Check to see if Filename is in use */
+      103:  192:        if (OS_stat(Filename, &FileStatus) == OS_SUCCESS)
+        -:  193:        {
+        -:  194:            /* Filename is in use, is it also a directory? */
+       72:  195:            if (S_ISDIR(FileStatus.st_mode))
+        -:  196:            {
+        -:  197:                /* Filename is a directory */
+       20:  198:                FilenameState = FM_NAME_IS_DIRECTORY;
+        -:  199:            }
+        -:  200:            else
+        -:  201:            {
+        -:  202:                /* Filename is a file, but is it open? */
+       52:  203:                FilenameState = FM_NAME_IS_FILE_CLOSED;
+        -:  204:
+        -:  205:                /* Search for Filename in current list of open files */
+     2652:  206:                for (i = 0; i < OS_MAX_NUM_OPEN_FILES; i++)
+        -:  207:                {
+        -:  208:                    /* Get system info for each file descriptor table entry */
+     2600:  209:                    OS_FDGetInfo(i, &FDTableEntry);
+        -:  210:
+        -:  211:                    /* If the FD table entry is valid - then the file is open */
+     2600:  212:                    if (FDTableEntry.IsValid == TRUE)
+        -:  213:                    {
+    #####:  214:                        if (strcmp(FDTableEntry.Path, Filename) == 0)
+        -:  215:                        {
+    #####:  216:                            FilenameState = FM_NAME_IS_FILE_OPEN;
+    #####:  217:                            break;
+        -:  218:                        }
+        -:  219:                    }
+        -:  220:                }
+        -:  221:            }
+        -:  222:
+        -:  223:            /* Save the last modify time and file size for File Info commands */
+       72:  224:            if (FileInfoCmd)
+        -:  225:            {
+        7:  226:                FM_GlobalData.FileStatTime = FileStatus.st_mtime;
+        7:  227:                FM_GlobalData.FileStatSize = FileStatus.st_size;
+        -:  228:            }
+        -:  229:        }
+        -:  230:        else
+        -:  231:        {
+        -:  232:            /* Cannot get file stat - therefore does not exist */
+       31:  233:            FilenameState = FM_NAME_IS_NOT_IN_USE;
+        -:  234:
+        -:  235:            /* Save the last modify time and file size for File Info commands */
+       31:  236:            if (FileInfoCmd)
+        -:  237:            {
+        2:  238:                FM_GlobalData.FileStatSize = 0;
+        2:  239:                FM_GlobalData.FileStatTime = 0;
+        -:  240:            }
+        -:  241:        }
+        -:  242:    }
+        -:  243:
+      113:  244:    return(FilenameState);
+        -:  245:
+        -:  246:} /* End FM_GetFilenameState */
+        -:  247:
+        -:  248:
+        -:  249:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  250:/*                                                                 */
+        -:  251:/* FM utility function -- verify state is not invalid              */
+        -:  252:/*                                                                 */
+        -:  253:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  254:
+        -:  255:uint32 FM_VerifyNameValid(char *Name, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyNameValid called 9 returned 100% blocks executed 100%
+        9:  256:{
+        9:  257:    uint32  FilenameState;
+        -:  258:
+        -:  259:    /* Looking for filename state != FM_NAME_IS_INVALID */
+        9:  260:    FilenameState = FM_GetFilenameState(Name, BufferSize, TRUE);
+        -:  261:
+        9:  262:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  263:    {
+        -:  264:        /* Insert a terminator in case the invalid string did not have one */
+        2:  265:        Name[BufferSize - 1] = '\0';
+        2:  266:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  267:                         "%s error: invalid name: name = %s", CmdText, Name);
+        -:  268:    }
+        -:  269:
+        9:  270:    return(FilenameState);
+        -:  271:
+        -:  272:} /* End FM_VerifyNameValid */
+        -:  273:
+        -:  274:
+        -:  275:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  276:/*                                                                 */
+        -:  277:/* FM utility function -- verify state is closed file              */
+        -:  278:/*                                                                 */
+        -:  279:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  280:
+        -:  281:boolean FM_VerifyFileClosed(char *Filename, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyFileClosed called 18 returned 100% blocks executed 87%
+       18:  282:{
+       18:  283:    boolean Result = FALSE;
+       18:  284:    uint32  FilenameState;
+        -:  285:
+        -:  286:    /* Looking for filename state = file (closed) */
+       18:  287:    FilenameState = FM_GetFilenameState(Filename, BufferSize, FALSE);
+        -:  288:
+       18:  289:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  290:    {
+        -:  291:        /* Insert a terminator in case the invalid string did not have one */
+        1:  292:        Filename[BufferSize - 1] = '\0';
+        1:  293:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  294:                         "%s error: filename is invalid: name = %s", CmdText, Filename);
+        -:  295:    }
+       17:  296:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  297:    {
+        4:  298:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  299:                         "%s error: file does not exist: name = %s", CmdText, Filename);
+        -:  300:    }
+       13:  301:    else if (FilenameState == FM_NAME_IS_FILE_OPEN)
+        -:  302:    {
+    #####:  303:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  304:                         "%s error: file is already open: name = %s", CmdText, Filename);
+        -:  305:    }
+       13:  306:    else if (FilenameState == FM_NAME_IS_FILE_CLOSED)
+        -:  307:    {
+       12:  308:        Result = TRUE;
+        -:  309:    }
+        1:  310:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  311:    {
+        1:  312:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  313:                         "%s error: filename is a directory: name = %s", CmdText, Filename);
+        -:  314:    }
+        -:  315:
+       18:  316:    return(Result);
+        -:  317:
+        -:  318:} /* End FM_VerifyFileClosed */
+        -:  319:
+        -:  320:
+        -:  321:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  322:/*                                                                 */
+        -:  323:/* FM utility function -- verify state is open or closed file      */
+        -:  324:/*                                                                 */
+        -:  325:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  326:
+        -:  327:boolean FM_VerifyFileExists(char *Filename, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyFileExists called 16 returned 100% blocks executed 100%
+       16:  328:{
+       16:  329:    boolean Result = FALSE;
+       16:  330:    uint32  FilenameState;
+        -:  331:
+        -:  332:    /* Looking for filename state = file (open or closed) */
+       16:  333:    FilenameState = FM_GetFilenameState(Filename, BufferSize, FALSE);
+        -:  334:
+       16:  335:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  336:    {
+        -:  337:        /* Insert a terminator in case the invalid string did not have one */
+        1:  338:        Filename[BufferSize - 1] = '\0';
+        1:  339:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  340:                         "%s error: filename is invalid: name = %s", CmdText, Filename);
+        -:  341:    }
+       15:  342:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  343:    {
+        4:  344:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  345:                         "%s error: file does not exist: name = %s", CmdText, Filename);
+        -:  346:    }
+       11:  347:    else if ((FilenameState == FM_NAME_IS_FILE_OPEN) ||
+        -:  348:             (FilenameState == FM_NAME_IS_FILE_CLOSED))
+        -:  349:    {
+       10:  350:        Result = TRUE;
+        -:  351:    }
+        1:  352:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  353:    {
+        1:  354:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  355:                         "%s error: filename is a directory: name = %s", CmdText, Filename);
+        -:  356:    }
+        -:  357:
+       16:  358:    return(Result);
+        -:  359:
+        -:  360:} /* End FM_VerifyFileExists */
+        -:  361:
+        -:  362:
+        -:  363:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  364:/*                                                                 */
+        -:  365:/* FM utility function -- verify state is unused                   */
+        -:  366:/*                                                                 */
+        -:  367:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  368:
+        -:  369:boolean FM_VerifyFileNoExist(char *Filename, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyFileNoExist called 17 returned 100% blocks executed 100%
+       17:  370:{
+       17:  371:    boolean Result = FALSE;
+       17:  372:    uint32  FilenameState;
+        -:  373:
+        -:  374:    /* Looking for filename state = not in use */
+       17:  375:    FilenameState = FM_GetFilenameState(Filename, BufferSize, FALSE);
+        -:  376:
+       17:  377:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  378:    {
+        -:  379:        /* Insert a terminator in case the invalid string did not have one */
+        1:  380:        Filename[BufferSize - 1] = '\0';
+        1:  381:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  382:                         "%s error: filename is invalid: name = %s", CmdText, Filename);
+        -:  383:    }
+       16:  384:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  385:    {
+        9:  386:        Result = TRUE;
+        -:  387:    }
+        7:  388:    else if ((FilenameState == FM_NAME_IS_FILE_OPEN) ||
+        -:  389:             (FilenameState == FM_NAME_IS_FILE_CLOSED))
+        -:  390:    {
+        6:  391:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  392:                         "%s error: file already exists: name = %s", CmdText, Filename);
+        -:  393:    }
+        1:  394:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  395:    {
+        1:  396:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  397:                         "%s error: filename is a directory: name = %s", CmdText, Filename);
+        -:  398:    }
+        -:  399:
+       17:  400:    return(Result);
+        -:  401:
+        -:  402:} /* End FM_VerifyFileNoExist */
+        -:  403:
+        -:  404:
+        -:  405:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  406:/*                                                                 */
+        -:  407:/* FM utility function -- verify state is unused or closed file    */
+        -:  408:/*                                                                 */
+        -:  409:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  410:
+        -:  411:boolean FM_VerifyFileNotOpen(char *Filename, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyFileNotOpen called 7 returned 100% blocks executed 86%
+        7:  412:{
+        7:  413:    boolean Result = FALSE;
+        7:  414:    uint32  FilenameState;
+        -:  415:
+        -:  416:    /* Looking for filename state = file (closed) or name not in use */
+        7:  417:    FilenameState = FM_GetFilenameState(Filename, BufferSize, FALSE);
+        -:  418:
+        7:  419:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  420:    {
+        -:  421:        /* Insert a terminator in case the invalid string did not have one */
+        1:  422:        Filename[BufferSize - 1] = '\0';
+        1:  423:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  424:                         "%s error: filename is invalid: name = %s", CmdText, Filename);
+        -:  425:    }
+        6:  426:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  427:    {
+        2:  428:        Result = TRUE;
+        -:  429:    }
+        4:  430:    else if (FilenameState == FM_NAME_IS_FILE_OPEN)
+        -:  431:    {
+    #####:  432:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  433:                         "%s error: file exists as an open file: name = %s", CmdText, Filename);
+        -:  434:    }
+        4:  435:    else if (FilenameState == FM_NAME_IS_FILE_CLOSED)
+        -:  436:    {
+        3:  437:        Result = TRUE;
+        -:  438:    }
+        1:  439:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  440:    {
+        1:  441:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  442:                         "%s error: filename is a directory: name = %s", CmdText, Filename);
+        -:  443:    }
+        -:  444:
+        7:  445:    return(Result);
+        -:  446:
+        -:  447:} /* End FM_VerifyFileNotOpen */
+        -:  448:
+        -:  449:
+        -:  450:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  451:/*                                                                 */
+        -:  452:/* FM utility function -- verify state is directory                */
+        -:  453:/*                                                                 */
+        -:  454:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  455:
+        -:  456:boolean FM_VerifyDirExists(char *Directory, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyDirExists called 18 returned 100% blocks executed 100%
+       18:  457:{
+       18:  458:    boolean Result = FALSE;
+       18:  459:    uint32  FilenameState;
+        -:  460:
+        -:  461:    /* Looking for filename state = directory */
+       18:  462:    FilenameState = FM_GetFilenameState(Directory, BufferSize, FALSE);
+        -:  463:
+       18:  464:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  465:    {
+        -:  466:        /* Insert a terminator in case the invalid string did not have one */
+        1:  467:        Directory[BufferSize - 1] = '\0';
+        1:  468:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  469:                         "%s error: directory name is invalid: name = %s", CmdText, Directory);
+        -:  470:    }
+       17:  471:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  472:    {
+        5:  473:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  474:                         "%s error: directory does not exist: name = %s", CmdText, Directory);
+        -:  475:    }
+       12:  476:    else if ((FilenameState == FM_NAME_IS_FILE_OPEN) ||
+        -:  477:             (FilenameState == FM_NAME_IS_FILE_CLOSED))
+        -:  478:    {
+        2:  479:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  480:                         "%s error: directory name exists as a file: name %s", CmdText, Directory);
+        -:  481:    }
+       10:  482:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  483:    {
+       10:  484:        Result = TRUE;
+        -:  485:    }
+        -:  486:
+       18:  487:    return(Result);
+        -:  488:
+        -:  489:} /* End FM_VerifyDirExists */
+        -:  490:
+        -:  491:
+        -:  492:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  493:/*                                                                 */
+        -:  494:/* FM utility function -- verify state is unused                   */
+        -:  495:/*                                                                 */
+        -:  496:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  497:
+        -:  498:boolean FM_VerifyDirNoExist(char *Name, uint32 BufferSize, uint32 EventID, char *CmdText)
+function FM_VerifyDirNoExist called 8 returned 100% blocks executed 100%
+        8:  499:{
+        8:  500:    boolean Result = FALSE;
+        8:  501:    uint32  FilenameState;
+        -:  502:
+        -:  503:    /* Looking for filename state = unused */
+        8:  504:    FilenameState = FM_GetFilenameState(Name, BufferSize, FALSE);
+        -:  505:
+        8:  506:    if (FilenameState == FM_NAME_IS_INVALID)
+        -:  507:    {
+        -:  508:        /* Insert a terminator in case the invalid string did not have one */
+        1:  509:        Name[BufferSize - 1] = '\0';
+        1:  510:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  511:                         "%s error: directory name is invalid: name = %s", CmdText, Name);
+        -:  512:    }
+        7:  513:    else if (FilenameState == FM_NAME_IS_NOT_IN_USE)
+        -:  514:    {
+        3:  515:        Result = TRUE;
+        -:  516:    }
+        4:  517:    else if ((FilenameState == FM_NAME_IS_FILE_OPEN) ||
+        -:  518:             (FilenameState == FM_NAME_IS_FILE_CLOSED))
+        -:  519:    {
+        2:  520:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  521:                         "%s error: directory name exists as a file: name = %s", CmdText, Name);
+        -:  522:    }
+        2:  523:    else if (FilenameState == FM_NAME_IS_DIRECTORY)
+        -:  524:    {
+        2:  525:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  526:                         "%s error: directory already exists: name = %s", CmdText, Name);
+        -:  527:    }
+        -:  528:
+        8:  529:    return(Result);
+        -:  530:
+        -:  531:} /* End FM_VerifyDirNoExist */
+        -:  532:
+        -:  533:
+        -:  534:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  535:/*                                                                 */
+        -:  536:/* FM utility function -- verify child task interface is alive     */
+        -:  537:/*                                                                 */
+        -:  538:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  539:
+        -:  540:boolean FM_VerifyChildTask(uint32 EventID, char *CmdText)
+function FM_VerifyChildTask called 20 returned 100% blocks executed 100%
+       20:  541:{
+       20:  542:    boolean Result = FALSE;
+        -:  543:
+        -:  544:    /* Reset handshake interface if child task is disabled */
+        -:  545:    /*   (in case queue was in use when child task died)   */
+       20:  546:    if (FM_GlobalData.ChildSemaphore == 0)
+        -:  547:    {
+       17:  548:        FM_GlobalData.ChildQueueCount = 0;
+       17:  549:        FM_GlobalData.ChildReadIndex  = 0;
+       17:  550:        FM_GlobalData.ChildWriteIndex = 0;
+        -:  551:    }
+        -:  552:
+       20:  553:    if (FM_GlobalData.ChildQueueCount == FM_CHILD_QUEUE_DEPTH)
+        -:  554:    {
+        1:  555:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  556:                         "%s error: child task queue is full", CmdText);
+        -:  557:
+        -:  558:        /* Queue full - cannot add another command */
+        1:  559:        Result = FALSE;
+        -:  560:    }
+       19:  561:    else if ((FM_GlobalData.ChildQueueCount > FM_CHILD_QUEUE_DEPTH) ||
+        -:  562:             (FM_GlobalData.ChildWriteIndex >= FM_CHILD_QUEUE_DEPTH))
+        -:  563:    {
+        2:  564:        CFE_EVS_SendEvent(EventID, CFE_EVS_ERROR,
+        -:  565:                         "%s error: child task interface is broken: count = %d, index = %d",
+        -:  566:                          CmdText, FM_GlobalData.ChildQueueCount, FM_GlobalData.ChildWriteIndex);
+        -:  567:
+        -:  568:        /* Queue broken - cannot add another command */
+        2:  569:        Result = FALSE;
+        -:  570:    }
+        -:  571:    else
+        -:  572:    {
+       17:  573:        CFE_PSP_MemSet(&FM_GlobalData.ChildQueue[FM_GlobalData.ChildWriteIndex],
+        -:  574:                       0, sizeof(FM_ChildQueueEntry_t));
+        -:  575:
+        -:  576:        /* OK to add another command to the queue */
+       17:  577:        Result = TRUE;
+        -:  578:    }
+        -:  579:
+       20:  580:    return(Result);
+        -:  581:
+        -:  582:} /* End FM_VerifyChildTask */
+        -:  583:
+        -:  584:
+        -:  585:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  586:/*                                                                 */
+        -:  587:/* FM utility function -- invoke child task command processor      */
+        -:  588:/*                                                                 */
+        -:  589:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  590:
+        -:  591:void FM_InvokeChildTask(void)
+function FM_InvokeChildTask called 18 returned 100% blocks executed 100%
+       18:  592:{
+        -:  593:
+        -:  594:    /* Update callers queue index */
+       18:  595:    FM_GlobalData.ChildWriteIndex++;
+        -:  596:
+       18:  597:    if (FM_GlobalData.ChildWriteIndex >= FM_CHILD_QUEUE_DEPTH)
+        -:  598:    {
+        1:  599:        FM_GlobalData.ChildWriteIndex = 0;
+        -:  600:    }
+       18:  601:    FM_GlobalData.ChildQueueCount++;
+        -:  602:
+        -:  603:    /* Does the child task have a semaphore? */
+       18:  604:    if (FM_GlobalData.ChildSemaphore != 0)
+        -:  605:    {
+        -:  606:        /* Signal child task to call command handler */
+        1:  607:        OS_CountSemGive(FM_GlobalData.ChildSemaphore);
+        -:  608:    }
+        -:  609:    else
+        -:  610:    {
+        -:  611:        /* Call child command handler from this task */
+       17:  612:        FM_ChildProcess();
+        -:  613:    }
+        -:  614:
+       18:  615:    return;
+        -:  616:
+        -:  617:} /* End of FM_InvokeChildTask */
+        -:  618:
+        -:  619:
+        -:  620:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  621:/*                                                                 */
+        -:  622:/* FM utility function -- add path separator to directory name     */
+        -:  623:/*                                                                 */
+        -:  624:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  625:
+        -:  626:void FM_AppendPathSep(char *Directory, uint32 BufferSize)
+function FM_AppendPathSep called 8 returned 100% blocks executed 100%
+        8:  627:{
+        8:  628:    boolean Result = TRUE;
+        8:  629:    uint32 StringLength;
+        -:  630:
+        -:  631:    /*
+        -:  632:    **  Previous verification tests ensure that the length of
+        -:  633:    **   the string is both non-zero and less than the size
+        -:  634:    **   of the string buffer.
+        -:  635:    */
+        8:  636:    StringLength = strlen(Directory);
+        -:  637:
+        -:  638:    /* Do nothing if string already ends with a path separator */
+        8:  639:    if (Directory[StringLength - 1] != '/')
+        -:  640:    {
+        -:  641:        /* Verify that string buffer has room for a path separator */
+        8:  642:        if (StringLength < (BufferSize - 1))
+        -:  643:        {
+        7:  644:            strcat(Directory, "/");
+        -:  645:        }
+        -:  646:    }
+        -:  647:
+        8:  648:    return;
+        -:  649:
+        -:  650:} /* End of FM_AppendPathSep */
+        -:  651:
+        -:  652:
+        -:  653:/************************/
+        -:  654:/*  End of File Comment */
+        -:  655:/************************/

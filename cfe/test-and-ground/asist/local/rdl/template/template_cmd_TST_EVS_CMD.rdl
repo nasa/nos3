@@ -1,0 +1,62 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu EVS Test App Commands
+!                  ================================
+!
+!       Packet Application ID: nnnn
+!       Packet Title: $sc $cpu EVS Test App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  05MAY05     SMA          : Initial
+!  06MAY05     SMA          : Corrected to naming convention. Added command function codes 4 and 5.
+!  09MAY05     MOB          : Removed FC 4 and 5 as per Kathy Audra's direction
+!  11MAY05     TGC          : Renamed mnemonics to comply with cFE naming convention
+!  13MAY05     SMA          : Make Unregister application command a CRITICAL command
+!  23MAY05     SMA          : Add Re-register command.
+!  24MAY05     SMA          : Rename re-register command to register command
+!  27MAR06     WFM          : Added ResetFilter and ResetAllFilters commands
+!  21AUG06     WFM          : Added 2 parameters to the SendEvtMsg command
+!
+!======================================================================================================
+#include "osconfig.h"
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu EVS Test App Commands"
+!
+  CMD  $sc_$cpu_TST_EVS_NOOP        	FCTN=0, DESC="$sc $cpu EVS Test App no-operation command code"
+!
+  CMD  $sc_$cpu_TST_EVS_RESETCTRS    	FCTN=1, DESC="$sc $cpu EVS Test App reset counters command code"
+!
+  CMDS  $sc_$cpu_TST_EVS_SendEvtMsg    FCTN=2, DESC="$sc $cpu EVS Test App send event message command code"
+     UNION  EventType	   	       DESC="Event Type"
+       UI  Debug    STATIC, DEFAULT=1, DESC= "Debug messages"
+       UI  Info     STATIC, DEFAULT=2, DESC= "Informational messages"
+       UI  Error    STATIC, DEFAULT=3, DESC= "Error messages"
+       UI  Crit     STATIC, DEFAULT=4, DESC= "Critical messages"
+     END 
+    UI    EventId                      DESC="Event ID"
+    UI    Iters                        DESC="Number of iterations"
+    UI    Pad			       INVISIBLE=0,DEFAULT=0
+    ULI   Milliseconds		       DESC="Milliseconds to delay"
+  END
+!
+  CMD  $sc_$cpu_TST_EVS_Unregister        FCTN=3, DESC="$sc $cpu EVS Test App unregister command code"
+
+  CMD   $sc_$cpu_TST_EVS_Register     FCTN=4, DESC="$sc $cpu EVS Test App register command code"
+!
+  CMDS   $sc_$cpu_TST_EVS_ResetFilter  FCTN=5, DESC="$sc $cpu EVS Test App reset filter command code"
+    CHAR RAppName[OS_MAX_API_NAME]	DESC="App Name to reset the filter for."
+    UI REventID				DESC="The Event ID to reset."
+  END
+!
+  CMDS   $sc_$cpu_TST_EVS_ResetAllFilters FCTN=6, DESC="$sc $cpu EVS Test App reset all filters command code"
+    CHAR AAppName[OS_MAX_API_NAME]	DESC="App Name to reset all filters."
+  END
+!
+END       !END PACKET
+!
+!======================================================================================================

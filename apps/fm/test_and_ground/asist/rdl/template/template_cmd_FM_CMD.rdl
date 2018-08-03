@@ -1,0 +1,102 @@
+!==============================================================================
+!                Originator:      D. Stewart
+!                Responsible SC:  ??
+!                Responsible CSE: ??
+!
+!                  $sc $cpu FM Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu File Manager App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  08APRIL08     DDS	: Initial
+!  17MAY10       WFM	: Removed the Close command and added the GetFreeSpace
+!			: and SetTblState commands
+!  30AUG11       WFM	: Added the Overwrite argument to the Copy and Move cmds
+!  15MAY12       WFM	: Removed the ForceDelete command
+!
+!=============================================================================
+!
+#include "osconfig.h"
+
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu File Manager App Commands"
+!
+  CMD  $sc_$cpu_FM_NOOP              FCTN=0, DESC="$sc $cpu FM no-op command code"
+!
+  CMD  $sc_$cpu_FM_ResetCtrs         FCTN=1, DESC="$sc $cpu FM reset counters command code"
+!
+  CMDS  $sc_$cpu_FM_FileCopy         FCTN=2, DESC="$sc $cpu FM File Copy command code"
+      UI Overwrite			DESC="Allow overwrite flag"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of File to be Copied"
+      char DestName[OS_MAX_PATH_LEN]    DESC="Destination File or Directory name"
+  END
+!
+  CMDS  $sc_$cpu_FM_FileMove         FCTN=3, DESC="$sc $cpu FM File Move command code"
+      UI Overwrite			DESC="Allow overwrite flag"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of File to be Moved"
+      char DestName[OS_MAX_PATH_LEN]    DESC="Destination File or Directory name"
+  END
+!
+  CMDS  $sc_$cpu_FM_FileRename       FCTN=4, DESC="$sc $cpu FM File Rename command code"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of File to be Renamed"
+      char DestName[OS_MAX_PATH_LEN]    DESC="Destination File or Directory name"
+  END
+!
+  CMDS  $sc_$cpu_FM_Delete           FCTN=5, DESC="$sc $cpu FM File Delete command code"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of File to be Deleted"
+  END
+!
+  CMDS  $sc_$cpu_FM_DeleteAll        FCTN=7, DESC="$sc $cpu FM Delete all Files in a Directory command code"
+      char DirName[OS_MAX_PATH_LEN]     DESC="Name of Directory to Delete All Files from"
+  END
+!
+  CMDS  $sc_$cpu_FM_Decompress       FCTN=8, DESC="$sc $cpu FM File Decompress command code"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of File to be Decompressed"
+      char DestName[OS_MAX_PATH_LEN]    DESC="Destination File name"
+  END
+!
+  CMDS  $sc_$cpu_FM_FileCat          FCTN=9, DESC="$sc $cpu FM File Concatenate command code"
+      char File1[OS_MAX_PATH_LEN]       DESC="Name of File to begin the new file"
+      char File2[OS_MAX_PATH_LEN]       DESC="Name of File to Concatenated to File1"
+      char DestName[OS_MAX_PATH_LEN]    DESC="Destination File name"
+  END
+!
+  CMDS  $sc_$cpu_FM_FileInfo         FCTN=10, DESC="$sc $cpu FM Generates a telemetry packet with details on the specified File"
+      char File[OS_MAX_PATH_LEN]        DESC="Name of the File to get the Status of"
+      ULI CRC_Method			DESC="The algorithm to use to calculate the File CRC"
+  END
+!
+  CMD  $sc_$cpu_FM_ListOpenFiles     FCTN=11, DESC="$sc $cpu FM List Open Files command code"
+!
+  CMDS  $sc_$cpu_FM_DirCreate        FCTN=12, DESC="$sc $cpu FM Dircectory Create command code"
+      char DirName[OS_MAX_PATH_LEN]     DESC="Directory name to be created"
+  END
+!
+  CMDS  $sc_$cpu_FM_DirDelete        FCTN=13, DESC="$sc $cpu FM Directory Remove command code"
+      char DirName[OS_MAX_PATH_LEN]     DESC="Directory name to be Removed"
+  END
+!
+  CMDS  $sc_$cpu_FM_DirListFile      FCTN=14, DESC="$sc $cpu FM Directory Listing to File command code"
+      char DirName[OS_MAX_PATH_LEN]     DESC="Name of Directory to List files of"
+      char File[OS_MAX_PATH_LEN]        DESC="Destination File Name for Directory List"
+  END
+!
+  CMDS  $sc_$cpu_FM_DirListTlm       FCTN=15, DESC="$sc $cpu FM Directory Listing to Telemetry command code"
+      char DirName[OS_MAX_PATH_LEN]     DESC="Name of Directory to List files of"
+      ULI   Offset                      DESC="# of files in the Dir to skip before collecting filenames to send to the ground"
+  END
+!
+  CMD  $sc_$cpu_FM_GetFreeSpace      FCTN=16, DESC="$sc $cpu FM Get Free Space command"
+!
+  CMDS  $sc_$cpu_FM_SetTblState      FCTN=17, DESC="$sc $cpu FM Set Table State command"
+      ULI tblEntry	DESC="The index of the table entry whose state is being set"
+      ULI newState	DESC="The State to set the table entry to"
+  END
+!
+END       !END COMMANDS
+!
+!=============================================================================

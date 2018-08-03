@@ -1,0 +1,66 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Sep 20 2006  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TBL Registry Info Packet
+!       Packet Length:  ? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2006/09/20  WFM           : Initial
+!  2007/05/14  WFM           : Added Name item and spare
+!  2014/08/27  WFM           : Removed TBL_NAME_LEN #define and added comments
+!
+!==============================================================================
+!
+!! OS_MAX_PATH_LEN is defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_types.rdl file
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST TBL Info Packet"
+!
+#include "ccsds_header.rdl"
+! 
+  ULI  $sc_$cpu_TST_TBL_SIZE        DESC="$sc $cpu TST TBL Size (bytes)"
+!
+  ULI  $sc_$cpu_TST_TBL_NumUsers    DESC="$sc $cpu TST TBL Number of users"
+!
+  ULI $sc_$cpu_TST_TBL_FILECSECONDS	DESC="$sc $cpu TBL File Create Time (seconds)"
+  ULI $sc_$cpu_TST_TBL_FILECSUBSECONDS DESC="$sc $cpu TBL File Create Time (subseconds)"
+!
+  ULI $sc_$cpu_TST_TBL_TLUSECONDS	DESC="Time of last update seconds"
+  ULI $sc_$cpu_TST_TBL_TLUSUBSECONDS	DESC="Time of last update subseconds"
+!
+  UB   $sc_$cpu_TST_TBL_LoadedOnce  DESC="$sc $cpu TBL Loaded at Least Once Flag", DISCRETE, 
+                                DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TST_TBL_DumpOnly    DESC="$sc $cpu TBL Dump Only Indicator",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  UB   $sc_$cpu_TST_TBL_DblBuffered DESC="$sc $cpu TBL Double buffered Indicator",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!  
+  UB   $sc_$cpu_TST_TBL_UsrDefAddr DESC="$sc $cpu TBL Double buffered Indicator",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!  
+  UB   $sc_$cpu_TST_TBL_Critical 	DESC="$sc $cpu TBL Double buffered Indicator",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!  
+  CHAR  $sc_$cpu_TST_TBL_LastFileUpd[OS_MAX_PATH_LEN]   DESC="$sc $cpu Filename of last file updated"
+!
+  CHAR  $sc_$cpu_TST_TBL_NAME[TBL_NAME_LEN]   DESC="$sc $cpu Name of the Table whose info was requested"
+!
+  UB   $sc_$cpu_TST_TBL_Spare1 	DESC="$sc $cpu TST_TBL Spare"
+!
+END

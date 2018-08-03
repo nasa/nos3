@@ -1,0 +1,107 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system. 
+*/
+
+prototype System CommandIngest {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand CIcommand {
+    verification=Verifier {}
+    applicationId { range=0x084 }
+  }
+
+  /** CI NOOP */
+  CIcommand noop {
+    commandCode { range=0 }
+  }
+
+
+  /** CI Reset Counters */
+  CIcommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  System cnv {
+    DiscreteConversion xsumsena {
+      Dsc Disabled { range=0, fgColor=black, bgColor=white }
+      Dsc Enabled  { range=1, fgColor=black, bgColor=white }
+    }
+
+    DiscreteConversion socketconnect {
+      Dsc No  { range=0, fgColor=white, bgColor=red }
+      Dsc Yes { range=1, fgColor=black, bgColor=green }
+    }
+  }
+
+  /** Command Ingest Housekeeping Telemetry Packet */
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x84 } }
+
+    /** Command error counter */
+    cfs.U8 cmdec {}
+
+    /** Commands processed counter */
+    cfs.U8 cmdpc {}
+
+    /** Checksums Enabled */
+    cfs.U8 xsumsena { conversion=cnv.xsumsena }
+
+    /** Socket Connected */
+    cfs.U8 socketconnect { conversion=cnv.socketconnect }
+
+    /** The number of CFDP File Data PDUs dropped */
+    cfs.U8 fdPdusDropped {}
+
+    /** The number of CFDP EOF PDUs dropped */
+    cfs.U8 eofPdusDropped {}
+
+    /** The number of CFDP FIN PDUs dropped */
+    cfs.U8 finPdusDropped {}
+
+    /** The number of CFDP ACK PDUs dropped */
+    cfs.U8 ackPdusDropped {}
+
+    /** The number of CFDP Meta Data PDUs dropped */
+    cfs.U8 mdPdusDropped {}
+
+    /** The number of NAK PDUs dropped */
+    cfs.U8 nakPdusDropped {}
+
+    /** $sc $cpu CI Spare */
+    cfs.U8 spare[2] {}
+
+    /** $sc $cpu CI Ingest Packets */
+    cfs.U32 ingestPkts {}
+
+    /** $sc $cpu CI Ingest Errors */
+    cfs.U32 ingestErrors {}
+
+    /** The total number of CFDP PDUs captured */
+    cfs.U32 pdusCaptured {}
+  }
+}
+

@@ -1,0 +1,91 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 27 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu Time Service Housekeeping Telemetry Packet
+!       Packet Length:  ?? Bytes (Including 14 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/06  SMA             : Initial
+!  2005/04/28  JWW             : Added DLABELs for flags
+!  2007/04/03  SMA             : Change per FOT naming conventions.
+!  2007/06/13  WFM             : Changed typo in description of 1HzAdjSecs and
+!				 1HzAdjSSecs from SCTF to STCF.
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Time Service Housekeeping Telemetry Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+!****************************************
+!               Time Data
+!****************************************
+!
+  UB   $sc_$cpu_TIME_CMDPC       DESC="$sc $cpu Time Command Execution Counter",
+                                UNITS=Counts
+!
+  UB   $sc_$cpu_TIME_CMDEC       DESC="$sc $cpu Time Command Error Counter",
+                                UNITS=Counts,
+                                YH=1, DOLIMIT
+!
+  UNION $sc_$cpu_TIME_StateFlg  DESC="$sc $cpu Time State Flags"
+    UI    $sc_$cpu_TIME_FlagSet  mask=%x8000,DESC="Clock set state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOT SET","SET")
+    UI    $sc_$cpu_TIME_FlagFly  mask=%x4000,DESC="Clock flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOFLY","FLY")
+    UI    $sc_$cpu_TIME_FlagSrc  mask=%x2000,DESC="Clock source internal/external flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("EXT","INT")
+    UI    $sc_$cpu_TIME_FlagPri  mask=%x1000,DESC="Clock source primary/redundant flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("RED","PRI")
+    UI    $sc_$cpu_TIME_FlagSfly mask=%x0800,DESC="Time server flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOFLY","FLY")
+    UI    $sc_$cpu_TIME_FlagCfly mask=%x0400,DESC="Commanded into flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NO","YES")
+    UI    $sc_$cpu_TIME_FlagAdjd mask=%x0200,DESC="Previous one time STCF adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_Flag1Hzd mask=%x0100,DESC="Current 1Hz STCF adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_FlagClat mask=%x0080,DESC="Time Client latency adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_FlagSorC mask=%x0040,DESC="Time Server or Client",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("CLIENT","SERVER")
+    UI    $sc_$cpu_TIME_FlagToneIsGood mask=%x0020,DESC="Time Tone (Good/Bad)",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("BAD","GOOD")
+    UI    $sc_$cpu_TIME_FlagNIU  mask=%x001F,DESC="Unused Values"
+  END
+!
+  SI   $sc_$cpu_TIME_APIState	    DESC="$sc $cpu Time API State",
+                                  DISCRETE, DRANGE=(-1,0,1), 
+                                  DLABEL=("INVALID", "VALID", "FLYWHEEL")
+!
+  SI   $sc_$cpu_TIME_LeapSecs	    DESC="$sc $cpu Time Current Leaps Seconds"
+!
+  ULI  $sc_$cpu_TIME_METSecs      DESC="$sc $cpu Time Current MET (seconds)"
+!
+  ULI  $sc_$cpu_TIME_METSubsecs   DESC="$sc $cpu Time Current MET (sub-seconds)"
+!
+  ULI  $sc_$cpu_TIME_STCFSecs     DESC="$sc $cpu Time Current STCF (seconds)"
+!
+  ULI  $sc_$cpu_TIME_STCFSubsecs  DESC="$sc $cpu Time Current STCF (sub-seconds)"
+!
+  ULI  $sc_$cpu_TIME_1HzAdjSecs     DESC="$sc $cpu Time Current 1 Hz STCF adjustment (seconds)"
+!
+  ULI  $sc_$cpu_TIME_1HzAdjSSecs    DESC="$sc $cpu Time Current 1 Hz STCF adjustment (sub-seconds)"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

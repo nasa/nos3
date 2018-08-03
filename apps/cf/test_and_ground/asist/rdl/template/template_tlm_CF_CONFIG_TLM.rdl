@@ -1,0 +1,59 @@
+!==============================================================================
+!
+!                Originator: R. McGraw
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: December 8, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CF Config Parameters Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cf_platform_cfg.h"
+!
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CFDP Platform Config Telemetry Packet"
+#include "ccsds_header.rdl"
+!
+      ULI $sc_$cpu_CF_CyclesPerWake	DESC="Engine Cycles Per Wakeup"
+      ULI $sc_$cpu_CF_AckLimit          DESC="Engine Ack Limit"
+      ULI $sc_$cpu_CF_AckTimeOut        DESC="Engine Ack Timeout"
+      ULI $sc_$cpu_CF_NakLimit          DESC="Engine Nak Limit"
+      ULI $sc_$cpu_CF_NakTimeOut        DESC="Engine Nak Timeout"
+      ULI $sc_$cpu_CF_InactivityTO      DESC="Engine Inactivity Timeout"
+      ULI $sc_$cpu_CF_OutGoingChunk     DESC="Engine Outgoing Chunk Size"
+      ULI $sc_$cpu_CF_PipeDepth         DESC="Pipe Depth"
+      ULI $sc_$cpu_CF_MaxSimulTrans     DESC="Max Simulataneous Transactions"
+      ULI $sc_$cpu_CF_UplinkPduSize     DESC="Data buffer size of the Uplink PDU"
+      ULI $sc_$cpu_CF_DnlinkPduSize     DESC="Data buffer size of the Downlink PDU"
+      ULI $sc_$cpu_CF_NumInputChans     DESC="Number of input/uplink Channels"
+      ULI $sc_$cpu_CF_MaxPbChans        DESC="Max Playback Channels"
+      ULI $sc_$cpu_CF_MaxPolDirsPerChan DESC="Max Polling Directories Per Channel"
+      ULI $sc_$cpu_CF_MemPoolBytes      DESC="Memory Pool Bytes"
+      ULI $sc_$cpu_CF_DebugCompiledIn   DESC="Debug Flag",DISCRETE,
+					DRANGE=(0,1),DLABEL=("No","Yes")
+      char $sc_$cpu_CF_SaveIncFiles[8]  DESC="Save Incomplete Files"
+      char $sc_$cpu_CF_Pipename[OS_MAX_API_NAME]         DESC="CF Command Pipe Name"
+      char $sc_$cpu_CF_TmpFilePrefix[OS_MAX_PATH_LEN]    DESC="Temporary File Prefix"
+      char $sc_$cpu_CF_CfgTblName[OS_MAX_PATH_LEN]       DESC="Configuration Table Name"
+      char $sc_$cpu_CF_CfgTblFilename[OS_MAX_PATH_LEN]   DESC="Configuration Table Filename"
+      char $sc_$cpu_CF_DefQInfoFilename[OS_MAX_PATH_LEN] DESC="Default Queue Info Filename"
+ 
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+

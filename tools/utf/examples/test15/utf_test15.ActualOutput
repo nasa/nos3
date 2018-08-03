@@ -1,0 +1,84 @@
+
+***Test CFE_ES_PoolCreate API***
+
+***CFE_ES_PoolCreate Return Code Setting Test ***
+UTF Info: Return value for CFE ES Api #23 set to c400000a
+CFE_ES_PoolCreate Return Code c400000a
+UTF Info: Return code for CFE ES Api #23 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES:poolCreate Pool size(80) too small for management structure, need >=(324)
+CFE_ES_PoolCreate Return Code c400000a
+
+Test Case #1: Call CFE_ES_PoolCreate called with size not multiple of 4B.
+SysLog:1980-001-00:00:01.50000 CFE_ES:poolCreate Pool size(80) too small for management structure, need >=(324)
+CFE_ES_PoolCreate returned c400000a. Expected error return c400000a.
+
+Test Case #2: Call CFE_ES_PoolCreate called with HandlePtr1 and valid size 1088.
+CFE_ES_PoolCreate returned 0. Expected 0.
+
+Test Case #3: Call CFE_ES_PoolCreate called with size (100) too small to be useful.
+SysLog:1980-001-00:00:01.50000 CFE_ES:poolCreate Pool size(100) too small for management structure, need >=(324)
+CFE_ES_PoolCreate returned c400000a. Expected c400000a.  Expect UTF warning.
+
+HandlePtr1 (hex) = 9a01170; HandlePtr2 (hex) = 9a015b8; HandlePtr3 (hex) = 9a01170.
+
+***Test CFE_ES_GetPoolBuf API***
+
+***CFE_ES_GetPoolBuf Return Code Setting Test ***
+UTF Info: Return value for CFE ES Api #25 set to c4000008
+CFE_ES_GetPoolBuf Return Code c4000008
+UTF Info: Return code for CFE ES Api #25 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES:getPoolBuf err:Bad handle.AppId=0
+CFE_ES_GetPoolBuf Return Code c4000007
+
+Test Case #1: Call CFE_ES_GetPoolBuf with invalid HandlePtr argument
+SysLog:1980-001-00:00:01.50000 CFE_ES:getPoolBuf err:Bad handle.AppId=0
+CFE_ES_GetPoolBuf returned c4000007. Expected c4000007
+
+Test Case #2: Call CFE_ES_GetPoolBuf with size argument which exceeds max allowed
+SysLog:1980-001-00:00:01.50000 CFE_ES:getPoolBuf err:Request won't fit in remaining memory
+CFE_ES_GetPoolBuf returned c4000008. Expected c4000008
+
+Test Case #3: Call CFE_ES_GetPoolBuf with HandlePtr1 and valid size=32.
+CFE_ES_GetPoolBuf returned 32. Expected 32
+
+Test Case #4: Call CFE_ES_GetPoolBuf with HandlePtr1 and valid size=20.
+CFE_ES_GetPoolBuf returned 32. Expected 32
+
+Test Case #5: Call CFE_ES_GetPoolBuf with HandlePtr1 and size > remaining pool resources (size=2000).
+SysLog:1980-001-00:00:01.50000 CFE_ES:getPoolBuf err:Request won't fit in remaining memory
+CFE_ES_GetPoolBuf returned c4000008. Expected c4000008
+
+BufPtr1 (hex) = 9a012ac; BufPtr2 (hex) = 9a012d8; BufPtr3 (hex) = 0.
+
+***Test CFE_ES_PutPoolBuf API***
+
+***CFE_ES_PutPoolBuf Return Code Setting Test ***
+UTF Info: Return value for CFE ES Api #26 set to c4000008
+CFE_ES_PutPoolBuf Return Code c4000008
+UTF Info: Return code for CFE ES Api #26 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES:putPool-Invalid Memory Handle (0x09A01170) or memory block (0xFFFFFFF4).
+CFE_ES_PutPoolBuf Return Code c4000007
+
+Test Case #1: Call CFE_ES_PutPoolBuf with HandlePtr1 and BufPtr1
+CFE_ES_PutPoolBuf returned 32. Expected 32.
+
+Test Case #2: Call CFE_ES_PutPoolBuf with HandlePtr2 (invalid)
+SysLog:1980-001-00:00:01.50000 CFE_ES:putPool-Invalid Memory Handle (0x09A015D8) or memory block (0x09A012CC).
+CFE_ES_PutPoolBuf returned c4000007. Expected c4000007.
+
+Test Case #3: Call CFE_ES_GetPoolBuf following buffer release with HandlePtr1 and valid size=32.
+CFE_ES_GetPoolBuf returned 32. Expected 32
+
+***Function Hook Tests***
+PoolCreate Hook Return Code 0
+PoolCreate Hook Return Code c400000a
+PoolCreate Hook Return Code 0
+PoolCreate Hook Return Code c400000a
+GetPoolBuf Hook Return Code 0
+GetPoolBuf Hook Return Code c4000008
+GetPoolBuf Hook Return Code 0
+GetPoolBuf Hook Return Code c4000008
+PutPoolBuf Hook Return Code 0
+PutPoolBuf Hook Return Code c4000008
+PutPoolBuf Hook Return Code 0
+PutPoolBuf Hook Return Code c4000008

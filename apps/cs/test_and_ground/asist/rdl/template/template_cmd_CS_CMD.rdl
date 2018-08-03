@@ -1,0 +1,147 @@
+!==============================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  ??
+!                Responsible CSE: ??
+!
+!                  $sc $cpu CS Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Checksum App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  27FEB08     WFM           : Initial
+!  02MAR17     WFM           : Updated OneShot command to add rate argument
+!
+!=============================================================================
+!
+!! OS_MAX_PATH_LEN is defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_cmd_types.rdl file
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Checksum App Commands"
+!
+  CMD  $sc_$cpu_CS_NOOP        	    FCTN=0, DESC="$sc $cpu CS no-op command code"
+!
+  CMD  $sc_$cpu_CS_ResetCtrs        FCTN=1, DESC="$sc $cpu CS reset counters command code"
+!
+  CMDS  $sc_$cpu_CS_OneShot         FCTN=2, DESC="$sc $cpu CS One Shot command code"
+      ULI Address	DESC="The memory address where to start checksumming"
+      ULI RegionSize	DESC="The size (in bytes) of the region to caclulate the checksum"
+      ULI MaxBytes	DESC="The maximum number of bytes to compute per cycle. "
+  END
+!
+  CMD  $sc_$cpu_CS_CancelOneShot    FCTN=3, DESC="$sc $cpu CS Cancel One Shot command code"
+!
+  CMD  $sc_$cpu_CS_EnableAll        FCTN=4, DESC="$sc $cpu CS Enable All Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableAll       FCTN=5, DESC="$sc $cpu CS Disable All Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_EnableCFECore    FCTN=6, DESC="$sc $cpu CS Enable cFE Core Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableCFECore   FCTN=7, DESC="$sc $cpu CS Disable cFE Core Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_ReportCFECore    FCTN=8, DESC="$sc $cpu CS Report cFE Core Checksum command code"
+!
+  CMD  $sc_$cpu_CS_RecomputeCFECore FCTN=9, DESC="$sc $cpu CS Recompute cFE Core Checksum command code"
+!
+  CMD  $sc_$cpu_CS_EnableOS         FCTN=10, DESC="$sc $cpu CS Enable OS Code Segment Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableOS        FCTN=11, DESC="$sc $cpu CS Disable OS Code Segment Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_ReportOS         FCTN=12, DESC="$sc $cpu CS Report OS Code Segment Checksum command code"
+!
+  CMD  $sc_$cpu_CS_RecomputeOS      FCTN=13, DESC="$sc $cpu CS Recompute OS Code Segment Checksum command code"
+!
+  CMD  $sc_$cpu_CS_EnableEeprom     FCTN=14, DESC="$sc $cpu CS Enable All Eeprom Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableEeprom    FCTN=15, DESC="$sc $cpu CS Disable All Eeprom Checksumming command code"
+!
+  CMDS  $sc_$cpu_CS_ReportEeprom    FCTN=16, DESC="$sc $cpu Report EEPROM Segment Checksum command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_RecomputeEeprom FCTN=17, DESC="$sc $cpu Recompute EEPROM Segment Checksum command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_EnableEepromEntry FCTN=18, DESC="$sc $cpu Enable EEPROM Segment Checksumming command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_DisableEepromEntry FCTN=19, DESC="$sc $cpu Disable EEPROM Segment Checksumming command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_GetEepromEntryID FCTN=20, DESC="$sc $cpu Get EEPROM Entry ID command code"
+      ULI Address	DESC="The address in Eeprom to find the entry ID for"
+  END
+!
+  CMD  $sc_$cpu_CS_EnableMemory     FCTN=21, DESC="$sc $cpu CS Enable All User-Defined Memory Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableMemory    FCTN=22, DESC="$sc $cpu CS Disable All User-Defined Memory Checksumming command code"
+!
+  CMDS  $sc_$cpu_CS_ReportMemory    FCTN=23, DESC="$sc $cpu Report User-defined Memory Segment Checksum command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_RecomputeMemory FCTN=24, DESC="$sc $cpu Recompute User-defined Memory Segment Checksum command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_EnableMemoryEntry FCTN=25, DESC="$sc $cpu Enable User-defined Memory Segment Checksumming command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_DisableMemoryEntry FCTN=26, DESC="$sc $cpu Disable User-defined Memory Segment Checksumming command code"
+      ULI EntryID	DESC="The ID of the entry to perform this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_GetMemoryEntryID FCTN=27, DESC="$sc $cpu Get User-defined Memory Entry ID command code"
+      ULI Address	DESC="The address in Eeprom to find the entry ID for"
+  END
+!
+  CMD  $sc_$cpu_CS_EnableTables     FCTN=28, DESC="$sc $cpu CS Enable All Table Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableTables    FCTN=29, DESC="$sc $cpu CS Disable All Table Checksumming command code"
+!
+  CMDS  $sc_$cpu_CS_ReportTableName FCTN=30, DESC="$sc $cpu Report Table Checksum command code"
+      char TableName[TBL_NAME_LEN] 	DESC="The name of the table to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_RecomputeTableName FCTN=31, DESC="$sc $cpu Report Table Checksum command code"
+      char TableName[TBL_NAME_LEN] 	DESC="The name of the table to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_EnableTableName FCTN=32, DESC="$sc $cpu Enable Table Name Checksumming command code"
+      char TableName[TBL_NAME_LEN] 	DESC="The name of the table to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_DisableTableName FCTN=33, DESC="$sc $cpu Disable Table Name Checksumming command code"
+      char TableName[TBL_NAME_LEN] 	DESC="The name of the table to issue this command on"
+  END
+!
+  CMD  $sc_$cpu_CS_EnableApps       FCTN=34, DESC="$sc $cpu CS Enable All Application Checksumming command code"
+!
+  CMD  $sc_$cpu_CS_DisableApps      FCTN=35, DESC="$sc $cpu CS Disable All Application Checksumming command code"
+!
+  CMDS  $sc_$cpu_CS_ReportAppName   FCTN=36, DESC="$sc $cpu Report Application Code Segment Checksum command code"
+      char AppName[OS_MAX_API_NAME] DESC="The name of the application to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_RecomputeAppName FCTN=37, DESC="$sc $cpu Report Application Code Segment Checksum command code"
+      char AppName[OS_MAX_API_NAME] 	DESC="The name of the application to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_EnableAppName   FCTN=38, DESC="$sc $cpu Enable Application Code Segment Checksumming command code"
+      char AppName[OS_MAX_API_NAME] 	DESC="The name of the application to issue this command on"
+  END
+!
+  CMDS  $sc_$cpu_CS_DisableAppName  FCTN=39, DESC="$sc $cpu Disable Application Code Segment Checksumming command code"
+      char AppName[OS_MAX_API_NAME] 	DESC="The name of the application to issue this command on"
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

@@ -1,0 +1,364 @@
+;
+; File:
+;   $Id: utf_test_cmds_sc.in 1.2 2009/02/19 10:07:16EST nyanchik Exp  $
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS Stored Command (SC) Application.
+;
+;   This file is used in conjunction with the utf_test_cs.c
+;   unit test driver and handles high level testing of command 
+;   processing through the SC application's software bus pipe.
+; 
+;   These tests assume the following Message and Command ID
+;   settings in the SC code:
+;
+;    SC_CMD_MID          = 0x18A9    
+;    SC_SEND_HK_MID  	 = 0x18AA
+;    SC_1HZ_WAKEUP_MID   = 0x18AB
+;
+;   $Log: utf_test_cmds_sc.in  $
+;   Revision 1.2 2009/02/19 10:07:16EST nyanchik 
+;   Update SC To work with cFE 5.2 Config parameters
+;   Revision 1.1 2009/01/26 14:20:14EST nyanchik 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/sc/fsw/unit_test/project.pj
+
+; Test generic commands
+18A9 C000 0001 0000  ; Noop Cmd
+18A9 C000 0001 0100  ; Reset Counter Cmd
+18AA C000 0001 0000  ; Hk Request
+18A9 C000 0001 FF00  ; Invalid Command Code
+
+
+; Test Invalid Length
+18A9 C000 000F 0400 0001; Start RTS #1 Cmd with invalid length
+
+; Start RTS command test
+18A9 C000 0003 0400 0001 ; Start RTS # 1
+18A9 C000 0003 0500 0001 ; Stop  RTS # 1
+18A9 C000 0003 0600 0001 ; Disable RTS # 1
+18A9 C000 0003 0700 0001 ; Enable  RTS # 1
+
+; Restart RTS#1 to do basic RTS processing
+18A9 C000 0003 0400 0001 ; Start RTS # 1
+
+18AA C000 0001 0000  ; Hk Request while an RTS is executing
+
+
+* Do processing where checksum will fail
+18A9 C000 0005 0700 0005 0000; Enable  RTS # 5
+18A9 C000 0005 0400 0005 0000; Start RTS # 5
+
+; Do multiple 1Hz to get the RTS commands sent out and finished
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+; Try to Start an RTS that is not loaded
+18A9 C000 0003 0400 000A ; Start RTS # 10
+
+; Try to Start a Disabled RTS
+18A9 C000 0003 0600 0001 ; Disable RTS # 1
+18A9 C000 0003 0400 0001 ; Start RTS # 1
+18A9 C000 0003 0700 0001 ; Enable  RTS # 1
+
+; Try to start an RTS that's beyond the limit
+; for sending out info events on starts/stops
+18A9 C000 0003 0700 0040 ; Enable  RTS #64
+18A9 C000 0003 0400 0040 ; Start RTS #64
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18A9 C000 0003 0600 0040 ; Disable RTS #64
+
+; Try RTS Cmds with an invalid RTS ID
+
+18A9 C000 0003 0400 FFFF ; Start RTS #FFFF
+18A9 C000 0003 0500 FFFF ; Stop  RTS #FFFF
+18A9 C000 0003 0600 FFFF ; Disable RTS #FFFF
+18A9 C000 0003 0700 FFFF ; Enable  RTS #FFFF
+
+; Try to start an RTS that is enabled, but not loaded 
+18A9 C000 0003 0700 000B ; Enable  RTS #11
+18A9 C000 0003 0400 000B ; Start RTS #11
+18A9 C000 0003 0600 000B ; Disable RTS #11
+
+
+; Try to start an RTS that's exactly the size of the buffer
+18A9 C000 0003 0700 0006 ; Enable  RTS #6
+18A9 C000 0003 0400 0006 ; Start RTS #6
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18A9 C000 0003 0600 0006 ; Disable RTS #6
+
+
+18AA C000 0001 0000  ; Hk Request
+18AA C000 0001 0000  ; Hk Request
+
+*  ***************************************************************************
+*  Send ATS commands when no tables are loaded to get error conditions out of 
+*  the way.
+18A9 C000 0003 0200 0001 ; Start ATS #1
+18A9 C000 0001 0300 ; Stop ATS
+18A9 C000 0001 0800 ; Switch ATS
+18A9 C000 0005 0900 5678 1234 ; Jump ATS to time 0x12345678
+18A9 C000 0003 0A00 0001 ; Set Continue on Failure Flag to TRUE (1)
+18A9 C000 0003 0A00 0002 ; Set Continue on Failure Flag to INVALID (2)
+
+* ***************************************************************************
+*  Load ATS 'a' tables from the ground
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1a.tbl
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+
+; * Start an ATS and try to switch before the other one is loaded
+18A9 C000 0003 0200 0001 ; Start ATS #1
+18A9 C000 0001 0800 ; Switch ATS
+
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2a.tbl
+
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+
+*  ***************************************************************************
+*  Send ATS commands when the 'a'tables are loaded
+
+18A9 C000 0003 0A00 0000 ; Set Continue on Failure Flag to FALSE (0)
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+
+18A9 C000 0001 0300 ; Stop ATS
+
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+18A9 C000 0003 0200 0001 ; Start ATS #1
+
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+* Switching ATS back to 1, which will be skipped over
+* because ATS 1 has 'passed in time'
+18A9 C000 0001 0800 ; Switch ATS
+18AA C000 0001 0000  ; Hk Request
+18AB C000 0001 0000  ; 1 Hz Wakeup
+* Restarting ATS 2
+18A9 C000 0003 0200 0002 ; Start ATS #2
+18AA C000 0001 0000  ; Hk Request
+18AB C000 0001 0000  ; 1 Hz Wakeup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+* Start ATS 1 over again, to get the case of ATP in use
+18A9 C000 0003 0200 0001 ; Start ATS #1
+
+* Start ATS 1 over again, to get the case of invalid ATS number
+18A9 C000 0003 0200 000F ; Start ATS #1
+
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18A9 C000 0005 0900 0008 0000 ; Jump ATS to time 0x00000008
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+* Stop ATS #2 to reach the Stooping 'B' , then restart ATS #2
+18A9 C000 0001 0300 ; Stop ATS
+18A9 C000 0003 0200 0002 ; Start ATS #2
+
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+* Start ATS 1 over again, to get the case of all commands
+* being skipped
+18A9 C000 0003 0200 0001 ; Start ATS #1
+
+@ SET_TIME 125
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+*  Load ATS 'a' tables from the ground again
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1a.tbl
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2a.tbl
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+18A9 C000 0003 0200 0001 ; Start ATS #1
+
+
+18A9 C000 0005 0900 0090 0000 ; Jump ATS to time 0x0090
+
+
+@ SET_TIME 125
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+*  Load ATS 'a' tables from the ground again
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1a.tbl
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2a.tbl
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+
+* Start the ATS, then send the Switch command so the SwitchPend Flag gets serviced
+18A9 C000 0003 0200 0001   ; Start ATS #1
+
+*Jump ahead to skip a command in the ATS to get the event message
+18A9 C000 0005 0900 0084 0000 ; Jump ATS to time 0x0084
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18A9 C000 0001 0800 ; Switch ATS
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AA C000 0001 0000  ; Hk Request
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+18A9 C000 0001 0300 ; Stop ATS
+
+
+
+
+
+
+
+* ***************************************************************************
+*  Load ATS 'd' tables from the ground
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1d.tbl
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2d.tbl
+
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+* ***************************************************************************
+*  Load ATS 'c' tables from the ground
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1c.tbl
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2c.tbl
+
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+
+* ***************************************************************************
+*  Load ATS 'b' tables from the ground
+@ SET_TIME 0
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL1 /cf/apps/ATS/ATS_TBL1b.tbl
+@ LOAD_TABLE_FROM_GROUND SC_APP.ATS_TBL2 /cf/apps/ATS/ATS_TBL2b.tbl
+
+; Send HK request to get tables to update
+18AA C000 0001 0000  ; Hk Request
+18AA C000 0001 0000  ; Hk Request
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18A9 C000 0003 0200 0001 ; Start ATS #1
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+
+; Force CFE_SB_RcvMsg to return CFE_SB_PIPE_RD_ERR 
+; that will exit app (SHOULD BE LAST IN SCRIPT)
+:
+; Note: Need to issue a command after setting the return
+; value to make the return happen
+*
+* SB error\app exit test
+*-----------------------------------------------------------------------
+@ SET_SB_RETURN_CODE 5 0xca000006
+18AB C000 0001 0000  ; 1 Hz Wakeup
+
+
+

@@ -1,0 +1,200 @@
+!===============================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu EVS Command Packet #xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Event Services Task Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  11APR05     SMA   : Initial
+!  21APR05     MOB   : Modifed to match changes in FSW commands to correct
+!                      alignments
+!  27APR05     MOB   : Modified command arguments to accept APP Name instead of
+!                      APP ID
+!  13MAY05     EIS   : Modified nomenclature of commands to match EVS Gen Test
+!  20MAY05     SMA   : Changed UN_App_Type to UN_Event_Type
+!  29AUG05     SMA   : Modifed to support cFE Build 3
+!  31AUG05     SMA   : Overloading cmd rdl to support old event message
+!                    : ena/dis and port ena/dis functionality. 
+!  17NOV05     SMA   : Standardize File Write Commands.
+!  05AUG09     WFM   : Added spares to commands that were not even byte lengths
+!  12JAN12     WFM   : Modified the function codes to match the fsw
+!
+!===============================================================================
+
+#include "osconfig.h"
+
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Event Services Task Commands"
+!
+  CMD  $sc_$cpu_EVS_NOOP        	     FCTN=0, DESC="$sc $cpu EVS no-operation command"
+!
+  CMD  $sc_$cpu_EVS_ResetCtrs   	     FCTN=1, DESC="$sc $cpu EVS reset counters command"
+!
+  CMDS $sc_$cpu_EVS_EnaEventType	     FCTN=2, DESC="$sc $cpu EVS Enable Event Type command"
+     UNION Ena_Type
+       UB  Debug    STATIC, DEFAULT=1, DESC= "Debug messages"
+       UB  Info     STATIC, DEFAULT=2, DESC= "Informational messages"
+       UB  Error    STATIC, DEFAULT=4, DESC= "Error messages"
+       UB  Crit     STATIC, DEFAULT=8, DESC= "Critical messages"
+     END          
+     UB Spare	DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+
+  CMDS $sc_$cpu_EVS_EnaEventTypeMask     FCTN=2, DESC="$sc $cpu EVS Enable Event Type (mask) command"
+     UB  BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_DisEventType	     FCTN=3, DESC="$sc $cpu EVS Disable Event Type command"
+     UNION Dis_Type
+       UB  Debug    STATIC, DEFAULT=1, DESC= "Debug messages"
+       UB  Info     STATIC, DEFAULT=2, DESC= "Informational messages"
+       UB  Error    STATIC, DEFAULT=4, DESC= "Error messages"
+       UB  Crit     STATIC, DEFAULT=8, DESC= "Critical messages"
+     END
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_DisEventTypeMask    FCTN=3, DESC="$sc $cpu EVS Disable Event Type (mask) command"
+     UB  BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_SetEvtFmt         FCTN=4, DESC="$sc $cpu EVS Set Event Format Mode"
+     UNION UN_Fmt
+       UB  Short    STATIC, DEFAULT=0, DESC= "Short format"
+       UB  Long     STATIC, DEFAULT=1, DESC= "long format"
+     END 
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_EnaAppEvtType     FCTN=5, DESC="$sc $cpu EVS Enable Event Type for the App"
+     Char  Application[20] DESC="Application name"
+     UNION Event_Type
+        UB  Debug    STATIC, DEFAULT=1, DESC= "Debug messages"
+        UB  Info     STATIC, DEFAULT=2, DESC= "Informational messages"
+        UB  Error    STATIC, DEFAULT=4, DESC= "Error messages"
+        UB  Crit     STATIC, DEFAULT=8, DESC= "Critical messages"
+     END
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+   END
+!
+  CMDS  $sc_$cpu_EVS_EnaAppEvtTypeMask     FCTN=5, DESC="$sc $cpu EVS Enable Event Type for the App (mask)"
+     Char  Application[OS_MAX_API_NAME] DESC="Application name"
+     UB  BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+   END
+!
+  CMDS  $sc_$cpu_EVS_DisAppEvtType     FCTN=6, DESC="$sc $cpu EVS Disable Event Type for the App"
+     Char  Application[20] DESC="Application name"
+     UNION Event_Type
+        UB  Debug    STATIC, DEFAULT=1, DESC= "Debug messages"
+        UB  Info     STATIC, DEFAULT=2, DESC= "Informational messages"
+        UB  Error    STATIC, DEFAULT=4, DESC= "Error messages"
+        UB  Crit     STATIC, DEFAULT=8, DESC= "Critical messages"
+     END
+     UB  Spare	     DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_DisAppEvtTypeMask     FCTN=6, DESC="$sc $cpu EVS Disable Event Type for the App (mask)"
+     Char  Application[OS_MAX_API_NAME] DESC="Application name"
+     UB    BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB    Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_EnaAppEvGen        FCTN=7, DESC="$sc $cpu EVS Enable App Events"
+       Char  Application[OS_MAX_API_NAME] DESC="Application Name"
+  END
+! 
+  CMDS  $sc_$cpu_EVS_DisAppEvGen        FCTN=8, DESC="$sc $cpu EVS Disable App Events"
+       Char  Application[OS_MAX_API_NAME] DESC="Application Name"
+  END
+!
+  CMDS  $sc_$cpu_EVS_RstAppCtrs       FCTN=9, DESC="$sc $cpu EVS Reset App Counters"
+       Char  Application[OS_MAX_API_NAME]  DESC="Application Name"
+  END
+!
+  CMDS  $sc_$cpu_EVS_SetBinFltrMask   FCTN=10, DESC="$sc $cpu EVS Set Binary Filter Mask"
+       Char Application[OS_MAX_API_NAME] DESC= "Application Name"
+       UI   Event_ID    DESC= "Event ID"
+       UI   FilterMask  DESC= "Mask"
+  END
+! 
+  CMDS  $sc_$cpu_EVS_EnaPort           FCTN=11, DESC="$sc $cpu EVS Enable Port"
+     UNION UN_Port
+       UB  Port_One       STATIC, DEFAULT=1, DESC= "Port 1"
+       UB  Port_Two       STATIC, DEFAULT=2, DESC= "Port 2"
+       UB  Port_Three     STATIC, DEFAULT=4, DESC= "Port 3"
+       UB  Port_Four      STATIC, DEFAULT=8, DESC= "Port 4"
+     END
+     UB    Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_EnaPortMask           FCTN=11, DESC="$sc $cpu EVS Enable Port (mask)"  
+     UB   BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB   Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_DisPort           FCTN=12, DESC="$sc $cpu EVS Disable Port"
+     UNION UN_Port
+       UB  Port_One       STATIC, DEFAULT=1, DESC= "Port 1"
+       UB  Port_Two       STATIC, DEFAULT=2, DESC= "Port 2"
+       UB  Port_Three     STATIC, DEFAULT=4, DESC= "Port 3"
+       UB  Port_Four      STATIC, DEFAULT=8, DESC= "Port 4"
+     END
+     UB   Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_DisPortMask           FCTN=12, DESC="$sc $cpu EVS Disable Port (mask)"  
+     UB   BitMask     RANGE=(0,15), DESC="Bit Mask" // mask=%b00001111
+     UB   Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_EVS_RstBinFltrCtr     FCTN=13, DESC="$sc $cpu EVS Reset Binary Filter Ctr "
+       Char Application[OS_MAX_API_NAME] DESC="Application Name"
+       UI Event_ID    DESC="Event ID"
+  END
+!
+  CMDS  $sc_$cpu_EVS_RstAllFltrs      FCTN=14, DESC="$sc $cpu EVS Reset All Filters for Specified App"
+       Char  Application[OS_MAX_API_NAME] DESC = "Application Name"
+  END
+!
+  CMDS  $sc_$cpu_EVS_AddEvtFltr       FCTN=15, DESC="$sc $cpu EVS Add Event Filter"
+       Char Application[OS_MAX_API_NAME] DESC="Application Name"
+       UI Event_ID    DESC="Event ID"
+       UI Event_Mask  DESC= "Mask"
+  END
+!
+  CMDS  $sc_$cpu_EVS_DelEvtFltr       FCTN=16, DESC="$sc $cpu EVS Delete Event Filter"
+       Char Application[OS_MAX_API_NAME] DESC="Application Name"
+       UI Event_ID    DESC="Event ID"
+  END
+!
+  CMDS $sc_$cpu_EVS_WriteAppData2File FCTN=17, DESC="$sc $cpu EVS File Write App Data for All registered applications"
+       Char AppDataFileName[OS_MAX_PATH_LEN] DESC="App Data Filename"
+  END
+!
+  CMDs $sc_$cpu_EVS_WriteLog2File     FCTN=18, DESC="$sc $cpu EVS File Write Log Data"
+       Char LogFileName[OS_MAX_PATH_LEN] OPTIONAL="", DESC="Log Filename"
+  END
+!
+  CMDS  $sc_$cpu_EVS_SetLogMode        FCTN=19, DESC="$sc $cpu EVS File Set Log Mode"
+     UNION UN_Log_Mode
+       UB  Overwrite    STATIC, DEFAULT=0, DESC= "Overwrite event messages when log is full"
+       UB  Discard      STATIC, DEFAULT=1, DESC= "Discard new event messages (preserve events)"
+     END
+     UB   Spare       DESC="spare byte", INVISIBLE, DEFAULT=0
+  END       
+!
+  CMD  $sc_$cpu_EVS_ClrLog            FCTN=20, DESC="$sc $cpu EVS Clear Log"
+!
+END       !END PACKET
+!
+!==============================================================================

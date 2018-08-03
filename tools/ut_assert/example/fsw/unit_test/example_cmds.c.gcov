@@ -1,0 +1,48 @@
+        -:    0:Source:../src/example_cmds.c
+        -:    0:Programs:2
+        -:    1: /*************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: example_cmds.c.gcov 1.1 2016/06/14 16:47:22EDT czogby Exp  $
+        -:    4: **
+        -:    5: ** Purpose: 
+        -:    6: **   The UT-Assert example application exists in order to be used by the UT-Assert example unit tests.
+        -:    7: **   The UT-Assert example unit tests exist in order to serve as an introduction for how to write a 
+        -:    8: **   unit test using UT-Assert
+        -:    9: **
+        -:   10: ** References:
+        -:   11: **   Flight Software Branch C Coding Standard Version 1.2
+        -:   12: **   CFS Development Standards Document
+        -:   13: ** Notes:
+        -:   14: **
+        -:   15: **   $Log: example_cmds.c.gcov  $
+        -:   15: **   Revision 1.1 2016/06/14 16:47:22EDT czogby 
+        -:   15: **   Initial revision
+        -:   15: **   Member added to project /FSW-TOOLs-REPOSITORY/ut-assert/example/fsw/unit_test/project.pj
+        -:   16: *************************************************************************/
+        -:   17:
+        -:   18:#include "cfe.h"
+        -:   19:#include "example_cmds.h"
+        -:   20:
+        3:   21:uint32 Example_Function2(void)
+        -:   22:{
+        3:   23:    if (Example_GlobalData.Variable3 == 3)
+        -:   24:    {
+        2:   25:        Example_GlobalData.Variable4 = 4;
+        -:   26:
+        2:   27:        if (CFE_SB_Subscribe(0, 0) == 5)  /* Input values don't matter in this example */
+        -:   28:        {
+        1:   29:            return 25;
+        -:   30:        }
+        -:   31:    }
+        -:   32:    else
+        -:   33:    {
+        1:   34:        Example_GlobalData.Variable4 = 99;
+        -:   35:    }
+        -:   36:
+        2:   37:        return 10;
+        -:   38:
+        -:   39:} /* End Example_Function1 */
+        -:   40:
+        -:   41:/************************/
+        -:   42:/*  End of File Comment */
+        -:   43:/************************/

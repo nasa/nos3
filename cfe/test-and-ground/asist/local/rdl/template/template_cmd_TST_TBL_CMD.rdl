@@ -1,0 +1,102 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TBL Test App Commands
+!                  ================================
+!
+!       Packet Application ID: nnnn
+!       Packet Title: $sc $cpu TBL Test App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  05NOV05     SMA          : Initial
+!  01MAR06     WFM          : Mods for new test application
+!  20SEP06     WFM          : Added 3 new commands based on DCRs & Rqmt changes
+!  20JUL07     WFM          : Added GetStatus command to test rqmt TBL6310
+!  27AUG14     WFM	    : Removed TBL_NAME_LEN #define and added comments
+!
+!======================================================================================================
+
+!! OS_MAX_PATH_LEN is defined in the osconfig.h file
+!! TBL_NAME_LEN is defined in the cfe_cmd_types.rdl file
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu TBL Test App Commands"
+!
+  CMD  $sc_$cpu_TST_TBL_NOOP        	FCTN=0, DESC="$sc $cpu TBL Test App no-operation command code"
+!
+  CMD  $sc_$cpu_TST_TBL_RESETCTRS    	FCTN=1, DESC="$sc $cpu TBL Test App reset counters command code"
+!
+  CMDS  $sc_$cpu_TST_TBL_TblRegister    FCTN=2, DESC="$sc $cpu TBL Test App table register command code"
+    CHAR  RTablename[TBL_NAME_LEN]    DESC="Full name of table being registered"
+    UI  TblOpts                         DESC="Table Options"
+    UI  pad				INVISIBLE, DEFAULT=0
+    ULI TblSize                         DESC="Size in bytes of the table"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_GetTblAddr     FCTN=3, DESC="$sc $cpu TBL Test App get table address command code"
+    CHAR  GTablename[TBL_NAME_LEN]    DESC="Full name of table being registered"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_RelTblAddr     FCTN=4, DESC="$sc $cpu TBL Test App release table address command code"
+    CHAR  RLTablename[TBL_NAME_LEN]    DESC="Full name of table being registered"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_GetTblHandle   FCTN=5, DESC="$sc $cpu TBL Test App get table handle command code"
+    CHAR  GHTablename[TBL_NAME_LEN]    DESC="Full name of table being registered"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_LoadFile       FCTN=6, DESC="$sc $cpu TBL Test App load file command"
+    CHAR  LTablename[TBL_NAME_LEN]    DESC="Full name of table being Loaded"
+    CHAR  LFilename[OS_MAX_PATH_LEN]              DESC="Full name of table being Loaded"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_UnregTbl       FCTN=7, DESC="$sc $cpu TBL Test App unregister table command code"
+    CHAR  UTablename[TBL_NAME_LEN]    DESC="Full name of table being unregistered"
+  END
+!
+  CMD   $sc_$cpu_TST_TBL_RegMaxTbls     FCTN=8, DESC="$sc $cpu TBL Test App register max tables command code"
+!
+  CMDS   $sc_$cpu_TST_TBL_GetInfo	FCTN=9, DESC="$sc $cpu TBL Test App Get Info command code"
+    CHAR  Tablename[TBL_NAME_LEN]    DESC="Full name of table whose info is being requested"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_GetAddrs	FCTN=10, DESC="$sc $cpu TBL Test App Get Multiple Table Addresses command code"
+    ULI   NumTables	DESC="The number of table addresses being requested",
+			MIN=1,MAX=5
+    CHAR TableName1[TBL_NAME_LEN] DESC="The first table name"
+    CHAR TableName2[TBL_NAME_LEN] DESC="The second table name"
+    CHAR TableName3[TBL_NAME_LEN] DESC="The third table name"
+    CHAR TableName4[TBL_NAME_LEN] DESC="The fourth table name"
+    CHAR TableName5[TBL_NAME_LEN] DESC="The fifth table name"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_RelAddrs	FCTN=11, DESC="$sc $cpu TBL Test App Release Multiple Table Addresses command code"
+    ULI   NumTables	DESC="The number of table addresses being requested",
+			MIN=1,MAX=5
+    CHAR TableName1[TBL_NAME_LEN] DESC="The first table name"
+    CHAR TableName2[TBL_NAME_LEN] DESC="The second table name"
+    CHAR TableName3[TBL_NAME_LEN] DESC="The third table name"
+    CHAR TableName4[TBL_NAME_LEN] DESC="The fourth table name"
+    CHAR TableName5[TBL_NAME_LEN] DESC="The fifth table name"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_GetAddrs2	FCTN=12, DESC="$sc $cpu TBL Test App Get Multiple table addresses by index command code"
+    ULI   NumTables	DESC="The number of table addresses being requested"
+    ULI   StartIndex	DESC="The index of the first table address being requested"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_RelAddrs2	FCTN=13, DESC="$sc $cpu TBL Test App Release Multiple table addresses by index command code"
+    ULI   NumTables	DESC="The number of table addresses being released"
+    ULI   StartIndex	DESC="The index of the first table address to release"
+  END
+!
+  CMDS   $sc_$cpu_TST_TBL_GetStatus	FCTN=14, DESC="$sc $cpu TBL Test App Get Status command code"
+    CHAR  Tablename[TBL_NAME_LEN]    DESC="Full name of table whose info is being requested"
+  END
+!
+END       !END PACKET
+!
+!======================================================================================================

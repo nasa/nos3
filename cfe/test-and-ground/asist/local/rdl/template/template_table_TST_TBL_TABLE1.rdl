@@ -1,0 +1,53 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Jan 11 2007
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!                              nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TST TBL App table 1 & 2
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  	2006/02/02 WFM	: Initial implementation
+!  	2007/01/11 WFM	: Changed element type from ULI to SLI
+!  	2007/05/02 WFM	: Added Table 2 Packet specification
+!==============================================================================
+!
+!
+TYPES
+   RECORD $sc_$cpu_TST_TBL_TYPE  DESC="$sc $cpu Tst App Table Type"
+      SLI    element[10]	 DESC="Ten integer elements"
+   END
+END_TYPES
+
+! Table 1 packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST_TBL App Table 1 File", VARYING
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_TST_TBL_TYPE $sc_$cpu_TST_TBL_TABLE1  DESC="$sc $cpu TST_TBL Table 1"
+!
+END
+
+! Table 2 packet
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu TST_TBL App Table 2 File", VARYING
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_TST_TBL_TYPE $sc_$cpu_TST_TBL_TABLE2  DESC="$sc $cpu TST_TBL Table 2"
+!
+END

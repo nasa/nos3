@@ -1,0 +1,59 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Feb 28, 2008  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MM Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/02/28  WFM	: Initial
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MM Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_MM_CMDPC       DESC="$sc $cpu MM Command Processed Counter",
+                               UNITS=Counts
+!
+  UB   $sc_$cpu_MM_CMDEC       DESC="$sc $cpu MM Command Error Counter",
+                               UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_MM_LastActn  DESC="$sc $cpu MM Last command Action taken",
+                             DISCRETE, DRANGE=(0,1,2,3,4,5,6,7,8,9,10,11,12,13),
+                             DLABEL=("No Action","Peek","Poke","Load File",
+                             "Load WID","Dump File","Dump Event","Fill",
+                             "Symbol Lookup","Symbol Dump","Write Enable",
+			     "Write Disable","NOOP","Reset")
+!
+  UB   $sc_$cpu_MM_MemType     DESC="$sc $cpu MM Memory Type for last command",
+                               DISCRETE, DRANGE=(0,1,2,3,4,5), DLABEL=("None",
+                               "RAM","EEPROM","MEM8","MEM16","MEM32")
+!
+  ULI  $sc_$cpu_MM_Address     DESC="$sc $cpu MM address used for last command"
+!
+  ULI  $sc_$cpu_MM_DataValue  DESC="$sc $cpu MM Data Value used with the last command"
+!
+  ULI  $sc_$cpu_MM_BytesProc   DESC="$sc $cpu MM the number of bytes processed for the last command"
+!
+  char  $sc_$cpu_MM_LastFile[OS_MAX_PATH_LEN] DESC="$sc $cpu MM data file name used for the last command"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

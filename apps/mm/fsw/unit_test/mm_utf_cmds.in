@@ -1,0 +1,236 @@
+;
+; File:
+;   $Id: mm_utf_cmds.in 1.3 2010/11/29 08:50:05EST jmdagost Exp  $
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS Memory Manager (MM) Application.
+;
+;   This file is used in conjunction with the utf_test_mm.c
+;   unit test driver and handles high level testing of command 
+;   processing through the MM application's software bus pipe.
+; 
+;   These tests assume the following Message and Command ID
+;   settings in the MM code:
+;
+;    MM_CMD_MID      = 0x1888    
+;    MM_SEND_HK_MID  = 0x1889
+;
+;   $Log: mm_utf_cmds.in  $
+;   Revision 1.3 2010/11/29 08:50:05EST jmdagost 
+;   Added unit tests for EEPROM write-enable/disable commands.
+;   Revision 1.2 2008/09/22 14:29:35EDT dahardison 
+;   Updated for cFE 5.2/OSAL 2.12 and MM v1.0.0.0
+;   Revision 1.1 2008/05/19 15:28:08EDT dahardison 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/mm/fsw/unit_test/project.pj
+; 
+*
+* <mm_utf_cmds.in> ***START MM SB COMMAND TESTING***
+* --------------------------------------------------
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> NOOP Command Test
+* ----------------------------------
+1888 C000 0001 0000    ; NOOP Command
+1888 C000 0001 0000    ; NOOP Command
+1888 C000 0001 0000    ; NOOP Command
+1888 C000 0001 0000    ; NOOP Command
+1888 C000 0001 0000    ; NOOP Command
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> NOOP Command With Invalid Length Test
+* ------------------------------------------------------
+1888 C000 0007 0000 1234 FFFF 7FFF  ; Bad NOOP Command
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Housekeeping Request With Invalid Length Test
+* --------------------------------------------------------------
+1889 C000 0007 0000 1234 FFFF 7FFF  ; Bad Housekeeping Request
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Reset Counters Command Test
+* --------------------------------------------
+1888 C000 0001 0100    ; Reset Counters Command
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Reset Counters Command With Invalid Length Test
+* ----------------------------------------------------------------
+1888 C000 0007 0100 1234 FFFF 7FFF  ; Bad Reset Counters Command
+*
+* <mm_utf_cmds.in> Peek Command With Invalid Length Test
+* ------------------------------------------------------
+1888 C000 0001 0200    ; Bad Memory Peek
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Poke Command With Invalid Length Test
+* ------------------------------------------------------
+1888 C000 0001 0300    ; Bad Memory Poke
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Load With Interrupts Disabled Command With Invalid Length Test
+* -------------------------------------------------------------------------------
+1888 C000 0001 0400    ; Bad Load WID
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Load From File Command With Invalid Length Test
+* ----------------------------------------------------------------
+1888 C000 0001 0500    ; Bad Load From File
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Dump To File Command With Invalid Length Test
+* --------------------------------------------------------------
+1888 C000 0001 0600    ; Bad Dump To File
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Dump In Event Message Command With Invalid Length Test
+* -----------------------------------------------------------------------
+1888 C000 0001 0700    ; Bad Dump In Event
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Memory Fill Command With Invalid Length Test
+* -------------------------------------------------------------
+1888 C000 0001 0800    ; Bad Memory Fill
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Symbol Lookup Command With Invalid Length Test
+* ---------------------------------------------------------------
+1888 C000 0001 0900    ; Bad Symbol Lookup
+*
+* <mm_utf_cmds.in> Symbol Table Dump Command With Invalid Length Test
+* -------------------------------------------------------------------
+1888 C000 0001 0A00    ; Bad Symbol Table Dump
+*
+* <mm_utf_cmds.in> EEPROM Write Enable Command With Invalid Length Test
+* ---------------------------------------------------------------------
+1888 C000 0001 0B00    ; Bad EEPROM Write Enable
+*
+* <mm_utf_cmds.in> EEPROM Write Disable Command With Invalid Length Test
+* ----------------------------------------------------------------------
+1888 C000 0001 0C00    ; Bad EEPROM Write Disable
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Invalid Command ID Tests
+* --------------------------------------------
+1888 C000 0001 0A00    ; Bad Command ID
+1888 C000 0001 0B00    ; Bad Command ID
+1888 C000 0001 0C00    ; Bad Command ID
+1888 C000 0001 0D00    ; Bad Command ID
+1888 C000 0001 0E00    ; Bad Command ID
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+*
+* <mm_utf_cmds.in> Invalid Message ID Test
+* --------------------------------------------
+00FF C000 0001 0100    ; Bad Message ID
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+* <mm_utf_cmds.in> EEPROM Write Enable Command With Bank = 1
+* ----------------------------------------------------------
+1888 C000 0005 0B00 0001 0000    ; EEPROM Bank 1 Write Enable
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* --------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+*
+* <mm_utf_cmds.in> EEPROM Write Disable Command With Bank = 1
+* -----------------------------------------------------------
+1888 C000 0005 0C00 0001 0000    ; EEPROM Bank 1 Write Disable
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+*
+* <mm_utf_cmds.in> Set PSP Write Enable/Disable to error
+* ------------------------------------------------------
+@ SET_PSP_RETURN_CODE 5 0xffffffff
+@ SET_PSP_RETURN_CODE 6 0xffffffff
+;
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+*
+* <mm_utf_cmds.in> EEPROM Write Enable Command With Bank = 1
+* ----------------------------------------------------------
+1888 C000 0005 0B00 0001 0000    ; EEPROM Bank 1 Write Enable
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* --------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+*
+* <mm_utf_cmds.in> EEPROM Write Disable Command With Bank = 1
+* -----------------------------------------------------------
+1888 C000 0005 0C00 0001 0000    ; EEPROM Bank 1 Write Disable
+*
+* <mm_utf_cmds.in> Housekeeping Request
+* -------------------------------------
+1889 C000 0001 0000    ; Housekeeping Request
+;
+*
+* <mm_utf_cmds.in> Restore return codes to success
+* ------------------------------------------------
+@ SET_PSP_RETURN_CODE 4 0
+@ SET_PSP_RETURN_CODE 5 0
+;
+; <mm_utf_cmds.in> Force CFE_SB_RcvMsg to return CFE_SB_PIPE_RD_ERR 
+; that will exit app (SHOULD BE LAST IN SCRIPT)
+:
+; Note: Need to issue a command after setting the return
+; value to make the return happen
+*
+* <mm_utf_cmds.in> SB error\app exit test
+* -----------------------------------------
+@ SET_SB_RETURN_CODE 5 0xca000006
+1888 C000 0001 0000    ; NOOP Command
+*
+* <mm_utf_cmds.in> ***END MM SB COMMAND TESTING***
+*-------------------------------------------------

@@ -1,0 +1,160 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System TableServices {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  System enum {
+    Enumeration activeTableFlag {
+      EnumerationValue inactive { value=0 }
+      EnumerationValue active   { value=1 }
+    }
+  }
+
+  prototype cfs.S8 TableName { lengthInCharacters=40 }
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand TBLcommand {
+    verification=Verifier {}
+    applicationId { range=0x04 }
+  }
+
+  TBLcommand noop {
+    commandCode { range=0 }
+  }
+
+  TBLcommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  TBLcommand load {
+    commandCode { range=2 }
+    cfs.FileName filename {}
+  }
+
+  TBLcommand dump {
+    commandCode { range=3 }
+    cfs.U16 activeTableFlag { enumeration=enum.activeTableFlag }
+    TableName tableName {}
+    cfs.FileName filename {}
+  }
+
+  TBLcommand validate {
+    commandCode { range=4 }
+    cfs.U16 activeTableFlag { enumeration=enum.activeTableFlag }
+    TableName tableName {}
+  }
+
+  TBLcommand activate {
+    commandCode { range=5 }
+    TableName tableName {}
+  }
+
+  TBLcommand dump_reg {
+    commandCode { range=6 }
+    cfs.FileName filename { lengthInCharacters=64 }
+  }
+
+  TBLcommand tlm_reg {
+    commandCode { range=7 }
+    TableName tableName {}
+  }
+
+  TBLcommand delete_cds {
+    commandCode { range=8 }
+    TableName tableName {}
+  }
+
+  TBLcommand abort_load {
+    commandCode { range=9 }
+    TableName tableName {}
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  System cnv {
+    DiscreteConversion tf {
+      Dsc FALSE { range=0, fgColor=white, bgColor=black }
+      Dsc TRUE  { range=1, fgColor=white, bgColor=black }
+    }
+  }
+
+  /** TBL Housekeeping Packet */
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x04 } }
+    cfs.U8 cmdpc {}
+    cfs.U8 cmdec {}
+    cfs.U16 numtables {}
+    cfs.U16 numupdatespend {}
+    cfs.U16 valcompltdctr {}
+    cfs.U32 lastvalcrc {}
+    cfs.I32 lastvals {}
+    cfs.U8 lastactivebuf {}
+    TableName lastvaltblname {}
+    cfs.U8 valsuccessctr {}
+    cfs.U8 valfailedctr {}
+    cfs.U8 valreqctr {}
+    cfs.U8 numfreeshrbuf {}
+    cfs.U8 bytealignpad[3] {}
+    cfs.U32 mempoolhandle {}
+    Structure last {
+      cfs.Date64 updtime { clock=cfsTime }
+      TableName updtblname {}
+      cfs.FileName fileloaded {}
+      cfs.FileName filedumped {}
+      TableName loadTblName {}
+    }
+  }
+
+  /** TBL Registry Info Packet */
+  CfsTelemetryPacket registry {
+    applyWhen = { FieldInRange { field=applicationId, range=0x0C } }
+    cfs.U32 size {}             /**<-- Size (bytes) */
+    cfs.U32 crc {}              /**<-- CRC */
+    cfs.U32 actBufAddr {}       /**<-- Active Buffer Address */
+    cfs.U32 inactBufAddr {}     /**<-- Inactive Buffer Address */
+    cfs.U32 valFuncPtr {}       /**<-- Validation Function Pointer */
+    Structure timeLastUpd {
+      cfs.U32 seconds {}
+      cfs.U32 subseconds {}
+    }                           /**<-- Time of Last Update */
+    cfs.U32 filecseconds {}     /**<-- File Create Time (seconds) */
+    cfs.U32 filecsubseconds {}  /**<-- File Create Time (subseconds) */
+    cfs.U8 loadedOnce { conversion=cnv.tf } /**<-- Loaded at Least Once Flag */
+    cfs.U8 updatePending { conversion=cnv.tf } /**<-- Activated but Not Yet Updated */
+    cfs.U8 dumpOnly { conversion=cnv.tf } /**<-- Dump Only Indicator */
+    cfs.U8 dblBuffered { conversion=cnv.tf } /**<-- Double buffered Indicator */
+    TableName tableName {}      /**<-- Table Name */
+    cfs.FileName lastFileUpd {} /**<-- Filename of last file updated */
+    cfs.AppName ownerApp {}     /**<-- Owning Application Name */
+    cfs.U32 critical {
+      conversion=cnv.tf
+      lengthInBits=8, postPadding=24
+    }                           /**<-- Critical Flag */
+  }
+
+  /* Need to add the definition for "registry" file */
+}
+

@@ -1,0 +1,101 @@
+ 
+ {
+ 
+    #
+    # This table defines all of the packets that can be created using the cmd() function.  Each entry in the
+    # table defines a different packet with the following fields:
+    #   NAME = Name of the command in quotes. ex NAME=>"NOOP"
+    #   APID = apid of the command packet. ex APID=>0x1807
+    #   SEQ = starting sequence number of the packet, each packet will have it's own counting sequence number.
+    #   FC = function code of the command packet. ex FC=>0
+    #   PARAMS = list each parameter type enclosed in square brackets.  Empty brackets indicate that the command
+    #            has no parameters.  The supported parameter types are:
+    #       "BYTE"      = 8 bit byte
+    #       "WORD"      = 16 bit word
+    #       "DWORD"     = 32 bit dword
+    #       "FLOAT"     = 32 bit single precision float
+    #       "DOUBLE"    = 64 bit double precision float
+    #       "STRING"    = literal string, can be used where a command has too many parameters and it is easier to
+    #                     format a hex string.
+    #       "TEXT:size" = ASCII text string, where size is the max size in bytes of the string 
+    #
+    #       ex PARAMS=>["BYTE", "WORD", "DWORD", "FLOAT", "DOUBLE", "STRING", "TEXT:10"]
+    #
+    #   DESC = text description of the command that is output as a comment on the same line as the command.
+    #       ex DESC=>"Change Filter Table(table_id)"
+    #
+    @cmd_packet_table = (
+        {NAME=>"NOOP",              APID=>0x0000, SEQ=>1, FC=>0, PARAMS=>[ ], DESC=>"NOOP"},
+        {NAME=>"RESET_STATS",       APID=>0x0000, SEQ=>1, FC=>1, PARAMS=>[ ], DESC=>"Reset Statistics"},
+        {NAME=>"INVALID_FC",        APID=>0x0000, SEQ=>1, FC=>2, PARAMS=>[ ], DESC=>"Invalid Function Code"},
+        {NAME=>"INVALID_APID",      APID=>0,      SEQ=>1, FC=>0, PARAMS=>[ ], DESC=>"Invalid Apid"},
+
+        {NAME=>"HS_HOUSEKEEPING",   APID=>0x0000, SEQ=>1, FC=>0, PARAMS=>[ ], DESC=>"HS Housekeeping Request"},
+        {NAME=>"TIME_1_HZ",         APID=>0x0000, SEQ=>1, FC=>0, PARAMS=>[ ], DESC=>"TC 1 Hz Packet"},
+    );
+
+    #
+    # This table defines all of the packets that can be created using the tlm() function.  Each entry in the
+    # table defines a different packet with the following fields:
+    #   NAME = Name of the telemetry packet in quotes. ex NAME=>"TLM1"
+    #   APID = apid of the telemetry packet. ex APID=>0x1807
+    #   SEQ = starting sequence number of the packet, each packet will have it's own counting sequence number.
+    #   SEC = Add secondary header (0 = no secondary header, 1 = yes secondary header). ex SEC=>0
+    #   TIME = Starting timestamp in the format (seconds . fraction_of_a_second). ex TIME=>0
+    #   INCREMENT = Amount to increment the timestamp for each packet in the format (seconds . fraction_of_a_second). 
+    #       ex INCREMENT=>1.5   for a packet generated every one and a half seconds
+    #          INCREMENT=>0.25  for a packet generated four times a second
+    #   LENGTH = Length of the data portion of the packet in bytes. ex LENGTH=>66
+    #   DATA = Determines the type of data pattern in the file.  The supported data patterns are:
+    #       "AA"     = filled with 0xAA's
+    #       "BB"     = filled with 0xBB's
+    #       "CC"     = filled with 0xCC's
+    #       "DD"     = filled with 0xDD's
+    #       "EE"     = filled with 0xEE's
+    #       "FF"     = filled with 0xFF's
+    #       "COUNT"  = filled with a byte count
+    #       "STRING" = hex data as a string passed as a parameter to the tlm() function call
+    #       "TEXT"   = literal string passed as a parameter to the tlm() function call, used to ASCII encode a event message
+    #
+    #       ex DATA=>"AA" or DATA=>"MHS100WARM Reset"
+    #
+    #   DESC = text description of the telemetry that is output as a comment on the same line as the packet.
+    #       ex DESC=>"Event Packet"
+    #
+    @tlm_packet_table = (
+        {NAME=>"HK_TLM",      APID=>0x0000, SEQ=>1, SEC=>1, TIME=>0, INCREMENT=>1.0, LENGTH=>1000, DATA=>"COUNT", DESC=>"Housekeeping Telemetry"},
+    );
+
+    #
+    # This table defines all of the packets that can be created using the tlm2() function.  Each entry in the
+    # table defines a different packet with the following fields:
+    #   NAME = Name of the telemetry in quotes. ex NAME=>"HS_HK_TLM"
+    #   APID = apid of the telemetry packet. ex APID=>0x1807
+    #   SEQ = starting sequence number of the packet, each packet will have it's own counting sequence number.
+    #   SEC = Add secondary header (0 = no secondary header, 1 = yes secondary header). ex SEC=>0
+    #   TIME = Starting timestamp in the format (seconds . fraction_of_a_second). ex TIME=>0
+    #   INCREMENT = Amount to increment the timestamp for each packet in the format (seconds . fraction_of_a_second). 
+    #       ex INCREMENT=>1.5   for a packet generated every one and a half seconds
+    #          INCREMENT=>0.25  for a packet generated four times a second
+    #   PARAMS = list each parameter type enclosed in square brackets.  Empty brackets indicate that the packet
+    #            has no parameters.  The supported parameter types are:
+    #       "BYTE"   = 8 bit byte
+    #       "WORD"   = 16 bit word
+    #       "DWORD"  = 32 bit dword
+    #       "FLOAT"  = 32 bit single precision float
+    #       "DOUBLE" = 64 bit double precision float
+    #       "STRING" = literal string, can be used where a command has too many parameters and it is easier to
+    #                  format a hex string.
+    #
+    #       ex PARAMS=>["BYTE", "WORD", "DWORD", "FLOAT", "DOUBLE", "STRING"]
+    #
+    #   DESC = text description of the packet that is output as a comment on the same line as the command.
+    #       ex DESC=>"HS Housekeeping Telemetry"
+    #
+    @tlm2_packet_table = (
+        {NAME=>"HK_TLM",       APID=>0x0000, SEQ=>1, SEC=>1, TIME=>0, INCREMENT=>1.0, PARAMS=>[ ], DESC=>"Housekeeping Telemetry"},
+    );
+}
+
+1;
+

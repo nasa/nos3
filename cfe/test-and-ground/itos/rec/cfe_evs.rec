@@ -1,0 +1,268 @@
+/* Copyright 2016, the Hammers Company, Inc.
+   7500 Greenway Center Drive Suite 1500, Greenbelt MD 20770
+   telephone:301-345-5300 http://www.hammers.com/ email:galaxy@hammers.com
+
+   This file is distributed as part of NASA's Core Flight System under
+   the terms of the NASA Open Source Agreement v1.3.
+
+   Note: It is believed this record file is substantially correct and 
+   complete however, it is recommended for each project to test and 
+   verify the record file in their project's database and ITOS system.
+*/
+
+prototype System EventServices {
+
+  /* ------------------- */
+  /* COMMAND DEFINITIONS */
+  /* ------------------- */
+
+  System enum {
+    Enumeration port {
+      EnumerationValue one   { value=0x0001 }
+      EnumerationValue two   { value=0x0002 }
+      EnumerationValue three { value=0x0004 }
+      EnumerationValue four  { value=0x0008 }
+    }
+
+    Enumeration etype {
+      EnumerationValue debug { value=0x01 }
+      EnumerationValue info  { value=0x02 }
+      EnumerationValue error { value=0x04 }
+      EnumerationValue crit  { value=0x08 }
+    }
+
+    Enumeration fmt {
+      EnumerationValue long  { value=0x01 }
+      EnumerationValue short { value=0x00 }
+    }
+
+    /** duplicate of one defined in cfe_es.rec */
+    Enumeration log_mode {
+      EnumerationValue discard   { value=0x0001 }
+      EnumerationValue overwrite { value=0x0000 }
+    }
+  }
+
+  prototype CommandVerification Verifier {
+    timeout=10
+    commandCounter=hk.cmdpc
+  }
+
+  prototype CfsCommand EVSCommand {
+    verification=Verifier {}
+    applicationId { range=0x01 }
+  }
+
+  /** EVS no-operation */
+  EVSCommand noop {
+      commandCode { range=0 }
+  }
+
+  /** EVS reset counters */
+  EVSCommand reset_cntrs {
+    verification=CommandVerification {
+      timeout=10
+      completionExpression = { hk.cmdpc " .eq. 0 .and. " hk.cmdec " .eq. 0" }
+    }
+    commandCode { range=1 }
+  }
+
+  /** EVS Enable Event Type */
+  EVSCommand enable_type {
+    commandCode { range=2 }
+    cfs.U8 etype { enumeration=enum.etype, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Disable Event Type */
+  EVSCommand disable_type {
+    commandCode { range=3 }
+    cfs.U8 etype { enumeration=enum.etype, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Set Event Format Mode */
+  EVSCommand set_format {
+    commandCode { range=4 }
+    cfs.U8 fmt { enumeration=enum.fmt }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Enable Event Type for the App */
+  EVSCommand app_enable_type {
+    commandCode { range=5 }
+    cfs.AppName application {}
+    cfs.U8 etype { enumeration=enum.etype, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Disable Event Type for the App */
+  EVSCommand app_disable_type {
+    commandCode { range=6 }
+    cfs.AppName application {}
+    cfs.U8 etype { enumeration=enum.etype, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Enable App Events */
+  EVSCommand app_enable {
+    commandCode { range=7 }
+    cfs.AppName application {}
+  }
+
+  /** EVS Disable App Events */
+  EVSCommand app_disable {
+    commandCode { range=8 }
+    cfs.AppName application {}
+  }
+
+  /** EVS Reset App Counters */
+  EVSCommand app_reset {
+    commandCode { range=9 }
+    cfs.AppName application {}
+  }
+
+  /** EVS Set Binary Filter Mask */
+  EVSCommand app_set_filter {
+    commandCode { range=10 }
+    cfs.AppName application {}
+    cfs.U16 event_id {}
+    cfs.U16 mask {}
+  }
+
+  /** EVS Enable Port */
+  EVSCommand enable_port {
+    commandCode { range=11 }
+    cfs.U8 port { enumeration=enum.port, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Disable Port */
+  EVSCommand disable_port {
+    commandCode { range=12 }
+    cfs.U8 port { enumeration=enum.port, range=0..15 }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Reset Binary Filter Ctr */
+  EVSCommand reset_filter_counter {
+    commandCode { range=13 }
+    cfs.AppName application {}
+    cfs.U16 event_id {}
+  }
+
+  /** EVS Reset All Filters for Specified App */
+  EVSCommand app_reset_filters {
+    commandCode { range=14 }
+    cfs.AppName application {}
+  }
+
+  /** EVS Add Event Filter */
+  EVSCommand app_add_filter {
+    commandCode { range=15 }
+    cfs.AppName application {}
+    cfs.U16 event_id {}
+    cfs.U16 event_mask {}
+  }
+
+  /** EVS Delete Event Filter */
+  EVSCommand app_delete_filter {
+    commandCode { range=16 }
+    cfs.AppName application {}
+    cfs.U16 event_id {}
+  }
+
+  /** EVS File Write App Data for All registered applications */
+  EVSCommand write_appdata2file {
+    commandCode { range=17 }
+    cfs.FileName name {}
+  }
+
+  /** EVS File Write Log Data */
+  EVSCommand write_log2file {
+    commandCode { range=18 }
+    cfs.FileName name {}
+  }
+
+  /** EVS File Set Log Mode */
+  EVSCommand set_log_mode {
+    commandCode { range=19 }
+    cfs.U8 log_mode { enumeration=enum.log_mode }
+    cfs.U8 spare { range=0 }
+  }
+
+  /** EVS Clear Log */
+  EVSCommand clear_log {
+    commandCode { range=20 }
+  }
+
+  /* --------------------- */
+  /* TELEMETRY DEFINITIONS */
+  /* --------------------- */
+
+  System cnv {
+     DiscreteConversion logstate {
+       Dsc Disabled { range=0, fgColor=red, bgColor=black }
+       Dsc Enabled  { range=1, fgColor=green, bgColor=black }
+    }
+  }
+
+  CfsTelemetryPacket hk {
+    applyWhen = { FieldInRange { field=applicationId, range=0x01 } }
+
+    /** EVS Commands Processed Counter */
+    cfs.U8 cmdpc {}
+
+    /** EVS Command Error Counter */
+    cfs.U8 cmdec {}
+
+    /** EVS Mesage Format Mode */
+    cfs.U8 msgfmtmode {}
+
+    /** EVS Total Event Messages Truncated Counter */
+    cfs.U8 msgtrunc {}
+
+    /** EVS Total Number of Unregistered Event Messages Counter */
+    cfs.U8 unregappc {}
+
+    /** Bit mask of the enabled ports */
+    cfs.U8 outputport {}
+
+    /** Indication if the local event flag is full */
+    cfs.U8 logfull {}
+
+    /** Indication if the local even flag is in overwrite or discard */
+    cfs.U8 logmode {}
+
+    /** EVS Total Event Mesages Sent Counter */
+    cfs.U16 msgsentc {}
+
+    /** Local log Overflow counter */
+    cfs.U16 logoverflowc {}
+
+    /** State of the EVS Event Log */
+    cfs.U8 logstate { conversion=cnv.logstate }
+
+    /** spare */
+    cfs.U8 tlmspare[3] {}
+
+    /** EVS Application Information */
+    Structure app[32] {
+      cfs.U32 appID {}
+      cfs.U16 messageSentCounter {}
+      cfs.U16 enableStatus { lengthInBits=8, postPadding=8 }
+    }
+  }
+
+  CfsTelemetryPacket event {
+    applyWhen = { FieldInRange { field=applicationId, range=0x08 } }
+    cfs.AppName appName {}
+    cfs.U16 id {}
+    cfs.U16 etype {}
+    cfs.U32 spacecraftID {}
+    cfs.U32 processorID {}
+    cfs.S8 msg { lengthInCharacters=122 }
+    cfs.U16 spare {}
+  }
+}
+

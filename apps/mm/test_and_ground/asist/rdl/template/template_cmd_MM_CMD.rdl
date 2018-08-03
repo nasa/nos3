@@ -1,0 +1,135 @@
+!==============================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  ??
+!                Responsible CSE: ??
+!
+!                  $sc $cpu MM Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Memory Manager App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  27FEB08     WFM      Initial
+!  26MAY10     WFM      Updated the MemType argument to be a union of the
+!			valid memory types
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "mm_platform_cfg.h"
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Memory Manager App Commands"
+!
+  CMD  $sc_$cpu_MM_NOOP        	FCTN=0, DESC="$sc $cpu MM no-op command code"
+!
+  CMD  $sc_$cpu_MM_ResetCtrs    FCTN=1, DESC="$sc $cpu MM reset counters command code"
+!
+  CMDS $sc_$cpu_MM_Peek         FCTN=2, DESC="$sc $cpu MM peek command code"
+      UB DataSize  DESC="Size of the data to read in bits (8,16 or 32)"
+      UNION MemType
+        UB RAM     STATIC, DEFAULT=1, DESC="RAM Memory Type"
+        UB EEPROM  STATIC, DEFAULT=2, DESC="EEPROM Memory Type"
+        UB MEM8    STATIC, DEFAULT=3, DESC="MEM8 Memory Type"
+        UB MEM16   STATIC, DEFAULT=4, DESC="MEM16 Memory Type"
+        UB MEM32   STATIC, DEFAULT=5, DESC="MEM32 Memory Type"
+      END
+      UB pad[2] INVISIBLE, DEFAULT=0
+      ULI Offset   DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to read"
+  END
+!
+  CMDS $sc_$cpu_MM_Poke         FCTN=3, DESC="$sc $cpu MM poke command code"
+      UB DataSize  DESC="Size of the data to read in bits (8, 16 or 32)"
+      UNION MemType
+        UB RAM     STATIC, DEFAULT=1, DESC="RAM Memory Type"
+        UB EEPROM  STATIC, DEFAULT=2, DESC="EEPROM Memory Type"
+        UB MEM8    STATIC, DEFAULT=3, DESC="MEM8 Memory Type"
+        UB MEM16   STATIC, DEFAULT=4, DESC="MEM16 Memory Type"
+        UB MEM32   STATIC, DEFAULT=5, DESC="MEM32 Memory Type"
+      END
+      UI pad INVISIBLE, DEFAULT=0
+      ULI data  DESC="Data to write"
+      ULI Offset   DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+  END
+!
+  CMDS $sc_$cpu_MM_LoadWID      FCTN=4, DESC="$sc $cpu MM Load with interrupts disabled command code"
+      UB DataSize  DESC="The number of bytes to load from data array"
+      UB pad[3] INVISIBLE, DEFAULT=0
+      ULI Crc  DESC="Data check value"
+      ULI Offset   DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+      UB Data[MM_MAX_UNINTERRUPTABLE_DATA] DESC="The data to load"
+  END
+!
+  CMDS $sc_$cpu_MM_LoadFile     FCTN=5, DESC="$sc $cpu MM Load File command code"
+      char FileName[OS_MAX_PATH_LEN] DESC="The data to load"
+  END
+!
+  CMDS $sc_$cpu_MM_Dump2File    FCTN=6, DESC="$sc $cpu MM Dump memory to a file command code"
+      UNION MemType
+        UB RAM     STATIC, DEFAULT=1, DESC="RAM Memory Type"
+        UB EEPROM  STATIC, DEFAULT=2, DESC="EEPROM Memory Type"
+        UB MEM8    STATIC, DEFAULT=3, DESC="MEM8 Memory Type"
+        UB MEM16   STATIC, DEFAULT=4, DESC="MEM16 Memory Type"
+        UB MEM32   STATIC, DEFAULT=5, DESC="MEM32 Memory Type"
+      END
+      UB pad[3] INVISIBLE, DEFAULT=0
+      ULI DataSize DESC="The number of bytes to dump"
+      ULI Offset  DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+      char FileName[OS_MAX_PATH_LEN] DESC="The data to load"
+  END
+!
+  CMDS $sc_$cpu_MM_DumpInEvent  FCTN=7, DESC="$sc $cpu MM Dump memory in an event command code"
+      UNION MemType
+        UB RAM     STATIC, DEFAULT=1, DESC="RAM Memory Type"
+        UB EEPROM  STATIC, DEFAULT=2, DESC="EEPROM Memory Type"
+        UB MEM8    STATIC, DEFAULT=3, DESC="MEM8 Memory Type"
+        UB MEM16   STATIC, DEFAULT=4, DESC="MEM16 Memory Type"
+        UB MEM32   STATIC, DEFAULT=5, DESC="MEM32 Memory Type"
+      END
+      UB DataSize DESC="The number of bytes to dump"
+      UI pad INVISIBLE, DEFAULT=0
+      ULI Offset  DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+  END
+!
+  CMDS $sc_$cpu_MM_Fill         FCTN=8, DESC="$sc $cpu MM Fill memory command code"
+      UNION MemType
+        UB RAM     STATIC, DEFAULT=1, DESC="RAM Memory Type"
+        UB EEPROM  STATIC, DEFAULT=2, DESC="EEPROM Memory Type"
+        UB MEM8    STATIC, DEFAULT=3, DESC="MEM8 Memory Type"
+        UB MEM16   STATIC, DEFAULT=4, DESC="MEM16 Memory Type"
+        UB MEM32   STATIC, DEFAULT=5, DESC="MEM32 Memory Type"
+      END
+      UB pad[3] INVISIBLE, DEFAULT=0
+      ULI DataSize DESC="The number of bytes to fill"
+      ULI Pattern  DESC="The to pattern to write to each fill byte"
+      ULI Offset   DESC="Offset from symbol or absolute address"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name of address to write"
+  END
+!
+  CMDS $sc_$cpu_MM_LookupSymbol FCTN=9, DESC="$sc $cpu MM Lookup symbol address command code"
+      char SymName[OS_MAX_SYM_LEN] DESC="Symbol Name to lookup"
+  END
+!
+  CMDS  $sc_$cpu_MM_SymTbl2File  FCTN=10, DESC="$sc $cpu MM Dump Symbol Table to a File command code"
+      char FileName[OS_MAX_PATH_LEN] DESC="The name of the symbol file"
+  END
+!
+  CMDS  $sc_$cpu_MM_EnableEEWrite  FCTN=11, DESC="$sc $cpu MM Enable EEPROM write command code"
+      ULI Bank	DESC="The EEPROM bank to enable"
+  END
+!
+  CMDS  $sc_$cpu_MM_DisableEEWrite  FCTN=12, DESC="$sc $cpu MM Enable EEPROM write command code"
+      ULI Bank	DESC="The EEPROM bank to disable"
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

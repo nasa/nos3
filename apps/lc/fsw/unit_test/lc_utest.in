@@ -1,0 +1,215 @@
+;
+; File:
+;   $Id: lc_utest.in 1.1 2012/07/31 16:53:43EDT nschweis Exp  $
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS Limit Checker (LC) Application.
+;
+;   This file is used in conjunction with the lc_utest.c
+;   unit test driver and handles high level testing of command 
+;   processing through the LC application's software bus pipe.
+; 
+;   These tests assume the following Message and Command ID
+;   settings in the LC code:
+;
+;   LC_CMD_MID        =  0x18A4
+;   LC_SEND_HK_MID    =  0x18A5
+;   LC_SAMPLE_AP_MID  =  0x18A6
+;
+;   $Log: lc_utest.in  $
+;   Revision 1.1 2012/07/31 16:53:43EDT nschweis 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lcx/fsw/unit_test/project.pj
+;   Revision 1.1 2009/01/15 15:24:31EST dahardis 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/lc/fsw/unit_test/project.pj
+*
+* ***START LC SB COMMAND TESTING***
+* ---------------------------------
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* NOOP Command Test
+* -----------------
+18A4 C000 0001 0000    ; NOOP Command
+18A4 C000 0001 0000    ; NOOP Command
+18A4 C000 0001 0000    ; NOOP Command
+18A4 C000 0001 0000    ; NOOP Command
+18A4 C000 0001 0000    ; NOOP Command
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* NOOP Command With Invalid Length Test
+* -------------------------------------
+18A4 C000 0007 0000 1234 FFFF 7FFF  ; Bad NOOP Command
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Housekeeping Request With Invalid Length Test
+* ---------------------------------------------
+18A5 C000 0007 0000 1234 FFFF 7FFF  ; Bad Housekeeping Request
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset Counters Command Test
+* ---------------------------
+18A4 C000 0001 0100    ; Reset Counters Command
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset Counters Command With Invalid Length Test
+* -----------------------------------------------
+18A4 C000 0007 0100 1234 FFFF 7FFF  ; Bad Reset Counters Command
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set LC Application State Command With Invalid Length Test
+* ---------------------------------------------------------
+18A4 C000 0001 0200    ; Bad Set LC Application State
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set LC Application State To LC_STATE_PASSIVE Command Test
+* ---------------------------------------------------------
+18A4 C000 0005 0200 0002 0000   ; Set LC Application State To LC_STATE_PASSIVE
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set LC Application State Command With Invalid State Test
+* --------------------------------------------------------
+18A4 C000 0005 0200 00FF 0000   ; Bad Set LC Application State State Argument
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set LC Application State To LC_STATE_DISABLED Command Test
+* ---------------------------------------------------------
+18A4 C000 0005 0200 0003 0000   ; Set LC Application State To LC_STATE_DISABLED
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set AP State Command With Invalid Length Test
+* ---------------------------------------------
+18A4 C000 0001 0300    ; Bad Set AP State
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Set AP Permanently Off Command With Invalid Length Test
+* -------------------------------------------------------
+18A4 C000 0001 0400    ; Bad Set AP Permanently Off
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Sample Actionpoints Request With Invalid Length Test
+* ----------------------------------------------------
+18A6 C000 0001 0000    ; Bad Sample Actionpoints Request
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset AP Statistics for AP 0 Command Test
+* -----------------------------------------
+18A4 C000 0005 0500 0000 0000  ; Reset AP Statistics for AP 0
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset WP Statistics for WP 0 Command Test
+* -----------------------------------------
+18A4 C000 0005 0600 0000 0000  ; Reset WP Statistics for WP 0
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset AP Statistics for all APs Command Test
+* --------------------------------------------
+18A4 C000 0005 0500 FFFF 0000  ; Reset AP Statistics for all APs
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset WP Statistics for all WPs Command Test
+* --------------------------------------------
+18A4 C000 0005 0600 FFFF 0000  ; Reset WP Statistics for all WPs
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset AP Statistics With Invalid AP Number Command Test
+* -------------------------------------------------------
+18A4 C000 0005 0500 0FFF 0000  ; Reset AP Statistics With Invalid AP Number
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Reset WP Statistics With Invalid WP Number Command Test
+* -------------------------------------------------------
+18A4 C000 0005 0600 0FFF 0000  ; Reset WP Statistics With Invalid WP Number
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Invalid Command ID Tests
+* ------------------------
+18A4 C000 0001 0A00    ; Bad Command ID
+18A4 C000 0001 0B00    ; Bad Command ID
+18A4 C000 0001 0C00    ; Bad Command ID
+18A4 C000 0001 0D00    ; Bad Command ID
+18A4 C000 0001 0E00    ; Bad Command ID
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+*
+* Invalid Message ID (while LC is disabled) Test
+* ----------------------------------------------
+00FF C000 0001 0100    ; Bad Message ID
+*
+* Housekeeping Request
+* --------------------
+18A5 C000 0001 0000    ; Housekeeping Request
+;
+; Force CFE_SB_RcvMsg to return CFE_SB_PIPE_RD_ERR 
+; that will exit app (SHOULD BE LAST IN SCRIPT)
+:
+; Note: Need to issue a command after setting the return
+; value to make the return happen
+*
+* SB error\app exit test
+* -----------------------------------------
+@ SET_SB_RETURN_CODE 5 0xca000006
+18A4 C000 0001 0000    ; NOOP Command
+*
+* ***END LC SB COMMAND TESTING***
+*-------------------------------

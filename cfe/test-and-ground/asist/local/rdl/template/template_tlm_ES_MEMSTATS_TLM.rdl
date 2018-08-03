@@ -1,0 +1,55 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: May 14, 2007  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2007/05/14  WFM	: Initial
+!
+!==============================================================================
+!
+#include "cfe_platform_cfg.h"
+#define BLK_SIZES 17
+
+TYPES
+  RECORD $sc_$cpu_ES_BlockStats	DESC="$sc $cpu Memory Pool Block Statistics"
+    ULI  BlockSize	DESC="Size of this memory block"
+    ULI  BlocksCreated	DESC="Memory blocks created of this size"
+    ULI  BlocksFree	DESC="Memory blocks of this size that are free"
+  END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES Mem Pool Statistics Telemetry Data Packet"
+
+#include "ccsds_header.rdl"
+!
+  ULI  $sc_$cpu_ES_PoolHandle DESC="$sc $cpu Memory Pool Handle"
+!
+  ULI  $sc_$cpu_ES_PoolSize   DESC="$sc $cpu Memory Pool Size (in bytes)"
+!
+  ULI  $sc_$cpu_ES_BlksREQ   DESC="$sc $cpu Blocks Requested"
+!
+  ULI  $sc_$cpu_ES_BlkErrCTR   DESC="$sc $cpu Errors detected when freeing a memory block"
+!
+  ULI  $sc_$cpu_ES_FreeBytes   DESC="$sc $cpu Bytes remaining in the Memory Pool"
+!
+  $sc_$cpu_ES_BlockStats  $sc_$cpu_ES_BlkStats[BLK_SIZES] DESC="$sc $cpu Memory Pool Block Statistics array"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

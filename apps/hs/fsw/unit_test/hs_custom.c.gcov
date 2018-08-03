@@ -1,0 +1,509 @@
+        -:    0:Source:../src/hs_custom.c
+        -:    0:Programs:4
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: hs_custom.c.gcov 1.4 2016/09/07 19:17:43EDT mdeschu Exp  $
+        -:    4:**
+        -:    5:**   Copyright © 2007-2014 United States Government as represented by the 
+        -:    6:**   Administrator of the National Aeronautics and Space Administration. 
+        -:    7:**   All Other Rights Reserved.  
+        -:    8:**
+        -:    9:**   This software was created at NASA's Goddard Space Flight Center.
+        -:   10:**   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11:**   used, distributed and modified only pursuant to the terms of that 
+        -:   12:**   agreement.
+        -:   13:**
+        -:   14:**   Purpose: Health and Safety (HS) application custom component.
+        -:   15:**   This custom code is designed to work without modification; however the
+        -:   16:**   nature of specific platforms may make it desirable to modify this code
+        -:   17:**   to work in a more efficient way, or to provide greater functionality.
+        -:   18:**
+        -:   19:**   $Log: hs_custom.c.gcov  $
+        -:   19:**   Revision 1.4 2016/09/07 19:17:43EDT mdeschu 
+        -:   19:**   Update gcov results
+        -:   20:**   Revision 1.5 2016/08/05 09:43:30EDT mdeschu 
+        -:   21:**   Ticket #26: Fix HS build errors with strict settings
+        -:   22:**   
+        -:   23:**       Fix minor issues causing build to fail:
+        -:   24:**   
+        -:   25:**           Extra argument in CFE_SendEvent() call
+        -:   26:**           Unused variable in HS_CustomCleanup()
+        -:   27:**   Revision 1.4 2016/07/22 21:13:44EDT czogby 
+        -:   28:**   Function HS_CustomGetUtil Does Not Protect Against Divide-By-Zero
+        -:   29:**   Revision 1.3 2016/05/16 17:40:01EDT czogby 
+        -:   30:**   Move function prototypes and constants from hs_custom.c file to hs_custom.h file
+        -:   31:**   Revision 1.2 2015/11/12 14:25:19EST wmoleski 
+        -:   32:**   Checking in changes found with 2010 vs 2009 MKS files for the cFS HS Application
+        -:   33:**   Revision 1.4 2015/04/27 15:39:49EDT lwalling 
+        -:   34:**   Fix typos -- UtilMult2=HS_UTIL_CONV_DIV and UtilDiv=HS_UTIL_CONV_MULT2
+        -:   35:**   Revision 1.3 2015/03/03 12:16:07EST sstrege 
+        -:   36:**   Added copyright information
+        -:   37:**   Revision 1.2 2011/10/17 16:45:21EDT aschoeni 
+        -:   38:**   paramters are now signed integers
+        -:   39:**   Revision 1.1 2011/10/13 18:48:59EDT aschoeni 
+        -:   40:**   Initial revision
+        -:   41:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
+        -:   42:**   Revision 1.6 2011/08/08 14:56:08EDT aschoeni 
+        -:   43:**   Moved idle task execution counter increment outside of nominal loop
+        -:   44:**   Revision 1.5 2010/11/17 17:05:08EST aschoeni 
+        -:   45:**   minor fixes for CPU utilization
+        -:   46:**   Revision 1.4 2010/10/14 17:45:57EDT aschoeni 
+        -:   47:**   Removed assumptions of rate of utilization measurement
+        -:   48:**   Revision 1.3 2010/10/14 15:32:40EDT aschoeni 
+        -:   49:**   Add skipping of 'first' match for calibration to avoid 0xFFFFFFFF match
+        -:   50:**   Revision 1.2 2010/09/29 18:28:23EDT aschoeni 
+        -:   51:**   Added Utilization Monitoring
+        -:   52:**   Revision 1.1 2010/09/13 16:34:37EDT aschoeni 
+        -:   53:**   Initial revision
+        -:   54:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hs/fsw/src/project.pj
+        -:   55:**   Revision 1.1 2010/07/19 11:49:54EDT aschoeni 
+        -:   56:**   Initial revision
+        -:   57:**   Member added to project c:/MKSDATA/MKS-REPOSITORY/MMS-REPOSITORY/dev/eeprom-fsw/apps/hs/fsw/src/project.pj
+        -:   58:**
+        -:   59:*************************************************************************/
+        -:   60:
+        -:   61:/*************************************************************************
+        -:   62:** Includes
+        -:   63:*************************************************************************/
+        -:   64:#include "cfe.h"
+        -:   65:#include "cfe_psp.h"
+        -:   66:#include "osapi.h"
+        -:   67:#include "hs_app.h"
+        -:   68:#include "hs_cmds.h"
+        -:   69:#include "hs_msg.h"
+        -:   70:#include "hs_custom.h"
+        -:   71:#include "hs_events.h"
+        -:   72:#include "hs_monitors.h"
+        -:   73:#include "hs_perfids.h"
+        -:   74:
+        -:   75:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   76:/*                                                                 */
+        -:   77:/* Idle Task Main Process Loop                                     */
+        -:   78:/*                                                                 */
+        -:   79:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   80:
+        1:   81:void HS_IdleTask(void)
+        -:   82:{
+        1:   83:    OS_time_t PSPTime = {0,0};
+        -:   84:
+        1:   85:    HS_CustomData.IdleTaskRunStatus = CFE_ES_RegisterChildTask();
+        -:   86:
+        4:   87:    while (HS_CustomData.IdleTaskRunStatus == CFE_SUCCESS)
+        -:   88:    {
+        -:   89:
+        -:   90:        /* Check to see if we are to mark the time. */
+        3:   91:        if(((HS_CustomData.ThisIdleTaskExec & HS_CustomData.UtilMask) == HS_CustomData.UtilMask) &&
+        1:   92:           (HS_CustomData.ThisIdleTaskExec > HS_CustomData.UtilMask))
+        -:   93:        {
+        -:   94:            /* Entry and Exit markers are for easy time marking only; not performance */
+        1:   95:            CFE_ES_PerfLogEntry(HS_IDLETASK_PERF_ID);
+        -:   96:
+        -:   97:            /* Increment the child task Execution Counter */
+        1:   98:            CFE_ES_IncrementTaskCounter();
+        -:   99:
+        -:  100:            /* update stamp and array */
+        1:  101:            CFE_PSP_GetTime(&PSPTime);
+        1:  102:            HS_CustomData.UtilArray[HS_CustomData.UtilArrayIndex & HS_CustomData.UtilArrayMask] = (uint32) PSPTime.microsecs;
+        1:  103:            HS_CustomData.UtilArrayIndex++;
+        -:  104:
+        1:  105:            CFE_ES_PerfLogExit(HS_IDLETASK_PERF_ID);
+        -:  106:        }
+        -:  107:
+        -:  108:        /* Call the Utilization Tracking function */
+        2:  109:        HS_UtilizationIncrement();
+        -:  110:
+        -:  111:    }
+        -:  112:
+        -:  113:    /*
+        -:  114:    ** If the run status is externally set to something else
+        -:  115:    */
+        1:  116:    return;
+        -:  117:
+        -:  118:} /* End of HS_IdleTask() */
+        -:  119:
+        -:  120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  121:/*                                                                 */
+        -:  122:/* Initialize The Idle Task                                        */
+        -:  123:/*                                                                 */
+        -:  124:/* NOTE: For complete prolog information, see 'hs_custom.h'        */
+        -:  125:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  126:int32 HS_CustomInit(void)
+        -:  127:{
+        3:  128:    int32 Status = CFE_SUCCESS;
+        -:  129:
+        -:  130:    /*
+        -:  131:    ** Spawn the Idle Task
+        -:  132:    */
+        3:  133:    Status = CFE_ES_CreateChildTask(&HS_CustomData.IdleTaskID,      
+        -:  134:                                     HS_IDLE_TASK_NAME,       
+        -:  135:                                     HS_IdleTask,         
+        -:  136:                                     HS_IDLE_TASK_STACK_PTR,  
+        -:  137:                                     HS_IDLE_TASK_STACK_SIZE, 
+        -:  138:                                     HS_IDLE_TASK_PRIORITY,   
+        -:  139:                                     HS_IDLE_TASK_FLAGS);     
+        -:  140:     
+        3:  141:    if(Status != CFE_SUCCESS)
+        -:  142:    {
+        1:  143:        CFE_EVS_SendEvent(HS_CR_CHILD_TASK_ERR_EID, CFE_EVS_ERROR,
+        -:  144:                          "Error Creating Child Task for CPU Utilization Monitoring,RC=0x%08X",
+        -:  145:                          (unsigned int)Status);
+        1:  146:        return (Status);
+        -:  147:    }
+        -:  148:
+        -:  149:    /*
+        -:  150:    ** Connect to CFE TIME's time reference marker (typically 1 Hz) for Idle Task Marking
+        -:  151:    */
+        2:  152:    Status = CFE_TIME_RegisterSynchCallback((CFE_TIME_SynchCallbackPtr_t)&HS_MarkIdleCallback);
+        2:  153:    if (Status != CFE_SUCCESS)
+        -:  154:    {
+        1:  155:        CFE_EVS_SendEvent(HS_CR_SYNC_CALLBACK_ERR_EID, CFE_EVS_ERROR,
+        -:  156:                          "Error Registering Sync Callback for CPU Utilization Monitoring,RC=0x%08X",
+        -:  157:                          (unsigned int)Status);
+        -:  158:    }
+        -:  159:
+        2:  160:    HS_CustomData.UtilMult1 = HS_UTIL_CONV_MULT1;
+        2:  161:    HS_CustomData.UtilMult2 = HS_UTIL_CONV_MULT2;
+        2:  162:    HS_CustomData.UtilDiv   = HS_UTIL_CONV_DIV;
+        2:  163:    HS_CustomData.UtilMask  = HS_UTIL_DIAG_MASK;
+        2:  164:    HS_CustomData.UtilCycleCounter = 0;
+        2:  165:    HS_CustomData.UtilArrayIndex = 0;
+        2:  166:    HS_CustomData.UtilArrayMask = HS_UTIL_TIME_DIAG_ARRAY_MASK;
+        2:  167:    HS_CustomData.ThisIdleTaskExec = 0;
+        2:  168:    HS_CustomData.LastIdleTaskExec = 0;
+        2:  169:    HS_CustomData.LastIdleTaskInterval = 0;
+        -:  170:
+        2:  171:    return(Status);
+        -:  172:
+        -:  173:} /* end HS_CustomInit */
+        -:  174:
+        -:  175:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  176:/*                                                                 */
+        -:  177:/* Terminate The Idle Task                                         */
+        -:  178:/*                                                                 */
+        -:  179:/* NOTE: For complete prolog information, see 'hs_custom.h'        */
+        -:  180:/*                                                                 */
+        -:  181:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  182:void HS_CustomCleanup(void)
+        -:  183:{
+        -:  184:    /*
+        -:  185:    ** Unregister the Sync Callback for CPU Monitoring
+        -:  186:    */
+        1:  187:    CFE_TIME_UnregisterSynchCallback((CFE_TIME_SynchCallbackPtr_t)&HS_MarkIdleCallback);
+        -:  188:
+        -:  189:    /*
+        -:  190:    ** Force the Idle Task to stop running
+        -:  191:    */
+        1:  192:    HS_CustomData.IdleTaskRunStatus = !CFE_SUCCESS;
+        -:  193:
+        -:  194:    /*
+        -:  195:    ** Delete the Idle Task
+        -:  196:    */
+        1:  197:    CFE_ES_DeleteChildTask(HS_CustomData.IdleTaskID);
+        -:  198:
+        1:  199:} /* end HS_CustomCleanup */
+        -:  200:
+        -:  201:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  202:/*                                                                 */
+        -:  203:/* Increment the Utilization Counter                               */
+        -:  204:/*                                                                 */
+        -:  205:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  206:void HS_UtilizationIncrement(void)
+        -:  207:{
+        3:  208:    HS_CustomData.ThisIdleTaskExec++;
+        -:  209:
+        3:  210:    return;
+        -:  211:
+        -:  212:} /* end HS_UtilizationIncrement */
+        -:  213:
+        -:  214:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  215:/*                                                                 */
+        -:  216:/* Mark the Utilization Counter                                    */
+        -:  217:/*                                                                 */
+        -:  218:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  219:void HS_UtilizationMark(void)
+        -:  220:{
+        -:  221:    static uint32 CycleCount = 0;
+        -:  222:
+        2:  223:    CycleCount++;
+        -:  224:
+        2:  225:    if(CycleCount >= HS_UTIL_CALLS_PER_MARK)
+        -:  226:    {
+        2:  227:       HS_CustomData.LastIdleTaskInterval = HS_CustomData.ThisIdleTaskExec - HS_CustomData.LastIdleTaskExec;
+        2:  228:       HS_CustomData.LastIdleTaskExec = HS_CustomData.ThisIdleTaskExec;
+        2:  229:       CycleCount = 0;
+        -:  230:    }
+        -:  231:
+        2:  232:    return;
+        -:  233:
+        -:  234:} /* end HS_UtilizationMark */
+        -:  235:
+        -:  236:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  237:/*                                                                 */
+        -:  238:/* Callback function that marks the Idle time                      */
+        -:  239:/*                                                                 */
+        -:  240:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        1:  241:void HS_MarkIdleCallback(void)
+        -:  242:{
+        -:  243:    /*
+        -:  244:    ** Capture the CPU Utilization (at a consistant time)
+        -:  245:    */
+        1:  246:    HS_UtilizationMark();
+        -:  247:
+        1:  248:    return;
+        -:  249:
+        -:  250:} /* End of HS_MarkIdleCallback() */
+        -:  251:
+        -:  252:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  253:/*                                                                 */
+        -:  254:/* Performs Utilization Monitoring and reporting                   */
+        -:  255:/*                                                                 */
+        -:  256:/* NOTE: For complete prolog information, see 'hs_custom.h'        */
+        -:  257:/*                                                                 */
+        -:  258:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  259:void HS_CustomMonitorUtilization(void)
+        -:  260:{
+        2:  261:    HS_CustomData.UtilCycleCounter++;
+        2:  262:    if (HS_CustomData.UtilCycleCounter >= HS_UTIL_CYCLES_PER_INTERVAL)
+        -:  263:    {
+        2:  264:        HS_MonitorUtilization();
+        2:  265:        HS_CustomData.UtilCycleCounter = 0;
+        -:  266:    }
+        -:  267:
+        2:  268:} /* End of HS_CustomMonitorUtilization() */
+        -:  269:
+        -:  270:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  271:/*                                                                 */
+        -:  272:/* Processes any additional commands                               */
+        -:  273:/*                                                                 */
+        -:  274:/* NOTE: For complete prolog information, see 'hs_custom.h'        */
+        -:  275:/*                                                                 */
+        -:  276:/* This function MUST return CFE_SUCCESS if any command is found   */
+        -:  277:/* and must NOT return CFE_SUCCESS if no command was found         */
+        -:  278:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  279:int32 HS_CustomCommands(CFE_SB_MsgPtr_t MessagePtr)
+        -:  280:{
+        5:  281:    int32 Status = CFE_SUCCESS;
+        -:  282:
+        5:  283:    uint16          CommandCode = 0;
+        -:  284:
+        5:  285:    CommandCode = CFE_SB_GetCmdCode(MessagePtr);
+        5:  286:    switch (CommandCode)
+        -:  287:    {
+        -:  288:        case HS_REPORT_DIAG_CC:
+        1:  289:            HS_UtilDiagReport();
+        1:  290:            break;
+        -:  291:
+        -:  292:        case HS_SET_UTIL_PARAMS_CC:
+        1:  293:            HS_SetUtilParamsCmd(MessagePtr);
+        1:  294:            break;
+        -:  295:
+        -:  296:        case HS_SET_UTIL_DIAG_CC:
+        1:  297:            HS_SetUtilDiagCmd(MessagePtr);
+        1:  298:            break;
+        -:  299:
+        -:  300:        default:
+        2:  301:            Status = !CFE_SUCCESS;
+        -:  302:            break;
+        -:  303:
+        -:  304:    } /* end CommandCode switch */
+        -:  305:
+        5:  306:    return Status;
+        -:  307:
+        -:  308:} /* End of HS_CustomCommands() */
+        -:  309:
+        -:  310:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  311:/*                                                                 */
+        -:  312:/* Report Utilization Diagnostics Information                      */
+        -:  313:/*                                                                 */
+        -:  314:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  315:void HS_UtilDiagReport(void)
+        -:  316:{
+        -:  317:    uint32 DiagValue[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
+        -:  318:    uint32 DiagCount[HS_UTIL_TIME_DIAG_ARRAY_LENGTH];
+        2:  319:    uint32 i = 0;
+        2:  320:    uint32 j = 0;
+        2:  321:    uint32 ThisValue = 0;
+        2:  322:    boolean MatchFound = FALSE;
+        -:  323:    
+        2:  324:    uint32 Ordinal = 0;
+        2:  325:    uint32 NewOrdinalIndex = 0;
+        -:  326:    uint32 OutputValue[HS_UTIL_DIAG_REPORTS];
+        -:  327:    uint32 OutputCount[HS_UTIL_DIAG_REPORTS];
+        -:  328:    uint32 OutputOrdinal[HS_UTIL_DIAG_REPORTS];
+        -:  329:
+        -:  330:    /* Initialize the arrays */
+       34:  331:    for(i=0; i < HS_UTIL_TIME_DIAG_ARRAY_LENGTH; i++)
+        -:  332:    {
+       32:  333:        DiagValue[i] = 0xFFFFFFFF;
+       32:  334:        DiagCount[i] = 0;
+        -:  335:    }
+       10:  336:    for(i=0; i < HS_UTIL_DIAG_REPORTS; i++)
+        -:  337:    {
+        8:  338:        OutputValue[i] = 0xFFFFFFFF;
+        8:  339:        OutputCount[i] = 0;
+        8:  340:        OutputOrdinal[i] = i;
+        -:  341:    }
+        -:  342:
+        -:  343:    /* Populate the arrays */
+       34:  344:    for(i = 0; i < HS_UTIL_TIME_DIAG_ARRAY_LENGTH; i++)
+        -:  345:    {
+       32:  346:        if(i == 0)
+        -:  347:        {
+        2:  348:            ThisValue = HS_CustomData.UtilArray[i] - HS_CustomData.UtilArray[HS_UTIL_TIME_DIAG_ARRAY_LENGTH - 1];
+        -:  349:        }
+        -:  350:        else
+        -:  351:        {
+       30:  352:            ThisValue = HS_CustomData.UtilArray[i] - HS_CustomData.UtilArray[i - 1];
+        -:  353:        }
+        -:  354:        
+       32:  355:        j = 0;
+       32:  356:        MatchFound = FALSE;
+      123:  357:        while((MatchFound == FALSE) && (j < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
+        -:  358:        {
+       59:  359:            if(ThisValue == DiagValue[j])
+        -:  360:            {
+       28:  361:                DiagCount[j]++;
+       28:  362:                MatchFound = TRUE;
+        -:  363:            }
+       31:  364:            else if (DiagValue[j] == 0xFFFFFFFF)
+        -:  365:            {
+        4:  366:                DiagValue[j] = ThisValue;
+        4:  367:                DiagCount[j]++;
+        4:  368:                MatchFound = TRUE;
+        -:  369:            }
+        -:  370:            else
+        -:  371:            {
+       27:  372:                j++;
+        -:  373:            }
+        -:  374:        }
+        -:  375:
+        -:  376:    }
+        -:  377:
+        -:  378:    /* Calculate the lowest time jumps */
+        2:  379:    i = 0;
+        8:  380:    while((DiagValue[i] != 0xFFFFFFFF) && (i < HS_UTIL_TIME_DIAG_ARRAY_LENGTH))
+        -:  381:    {
+        4:  382:        Ordinal = 0;
+       20:  383:        for(j = 0; j < HS_UTIL_DIAG_REPORTS; j++)
+        -:  384:        {
+       16:  385:            if (OutputValue[j] < DiagValue[i])
+        -:  386:            {
+        1:  387:                Ordinal++;
+        -:  388:            }
+        -:  389:        }
+        4:  390:        if(Ordinal < HS_UTIL_DIAG_REPORTS)
+        -:  391:        {
+        -:  392:            /* Take over the outputs occupied by the current last */
+        4:  393:            NewOrdinalIndex = OutputOrdinal[HS_UTIL_DIAG_REPORTS - 1];
+        4:  394:            OutputValue[NewOrdinalIndex] = DiagValue[i];
+        4:  395:            OutputCount[NewOrdinalIndex] = DiagCount[i];
+        -:  396:            
+        -:  397:            /* Slide everything else down */
+       15:  398:            for(j = HS_UTIL_DIAG_REPORTS - 1; j > Ordinal; j--)
+        -:  399:            {
+       11:  400:                 OutputOrdinal[j] = OutputOrdinal[j - 1];
+        -:  401:            }
+        -:  402:
+        -:  403:            /* Point to the new output */
+        4:  404:            OutputOrdinal[Ordinal] = NewOrdinalIndex;
+        -:  405:
+        -:  406:        }
+        -:  407:
+        4:  408:        i++;
+        -:  409:    }
+        -:  410:    
+        -:  411:    /* Output the HS_UTIL_DIAG_REPORTS as en event */
+       16:  412:    CFE_EVS_SendEvent(HS_UTIL_DIAG_REPORT_EID, CFE_EVS_INFORMATION,
+        -:  413:                      "Mask 0x%08X Base Time Ticks per Idle Ticks (frequency): %i(%i), %i(%i), %i(%i), %i(%i)", (unsigned int)HS_CustomData.UtilMask,
+        8:  414:                       (int)OutputValue[OutputOrdinal[0]], (int)OutputCount[OutputOrdinal[0]], (int)OutputValue[OutputOrdinal[1]], (int)OutputCount[OutputOrdinal[1]], 
+        8:  415:                       (int)OutputValue[OutputOrdinal[2]], (int)OutputCount[OutputOrdinal[2]], (int)OutputValue[OutputOrdinal[3]], (int)OutputCount[OutputOrdinal[3]]);
+        -:  416:
+        2:  417:    return;
+        -:  418:
+        -:  419:} /* end HS_UtilDiagReport */
+        -:  420:
+        -:  421:
+        -:  422:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  423:/*                                                                 */
+        -:  424:/* Report Utilization                                              */
+        -:  425:/*                                                                 */
+        -:  426:/* NOTE: For complete prolog information, see 'hs_custom.h'        */
+        -:  427:/*                                                                 */
+        -:  428:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        9:  429:int32 HS_CustomGetUtil(void)
+        -:  430:{
+        9:  431:   int32 CurrentUtil = 0;
+        -:  432:
+        9:  433:   if (HS_CustomData.UtilDiv != 0)
+        -:  434:   {
+        8:  435:      CurrentUtil = HS_UTIL_PER_INTERVAL_TOTAL - (((HS_CustomData.LastIdleTaskInterval * HS_CustomData.UtilMult1) 
+        -:  436:                                                  / HS_CustomData.UtilDiv) 
+        -:  437:                                                 * HS_CustomData.UtilMult2);
+        -:  438:   }
+        -:  439:
+        9:  440:   return CurrentUtil;
+        -:  441:}
+        -:  442:
+        3:  443:void HS_SetUtilParamsCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  444:{
+        3:  445:    uint16            ExpectedLength = sizeof(HS_SetUtilParamsCmd_t);
+        -:  446:    HS_SetUtilParamsCmd_t  *CmdPtr;
+        -:  447:
+        -:  448:    /*
+        -:  449:    ** Verify message packet length
+        -:  450:    */
+        3:  451:    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  452:    {
+        2:  453:        CmdPtr = ((HS_SetUtilParamsCmd_t *)MessagePtr);
+        -:  454:
+        5:  455:        if((CmdPtr->Mult1 != 0) &&
+        1:  456:           (CmdPtr->Mult2 != 0) &&
+        1:  457:           (CmdPtr->Div != 0))
+        -:  458:        {
+        1:  459:            HS_CustomData.UtilMult1 = CmdPtr->Mult1;
+        1:  460:            HS_CustomData.UtilMult2 = CmdPtr->Mult2;
+        1:  461:            HS_CustomData.UtilDiv   = CmdPtr->Div;
+        1:  462:            HS_AppData.CmdCount++;
+        1:  463:            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_DBG_EID, CFE_EVS_DEBUG,
+        -:  464:                               "Utilization Parms set: Mult1: %d Div: %d Mult2: %d", 
+        -:  465:                               (int)HS_CustomData.UtilMult1, (int)HS_CustomData.UtilDiv, (int)HS_CustomData.UtilMult2);
+        -:  466:        }
+        -:  467:        else
+        -:  468:        {
+        1:  469:            HS_AppData.CmdErrCount++;
+        1:  470:            CFE_EVS_SendEvent (HS_SET_UTIL_PARAMS_ERR_EID, CFE_EVS_ERROR,
+        -:  471:                               "Utilization Parms Error: No parameter may be 0: Mult1: %d Div: %d Mult2: %d", 
+        -:  472:                               (int)CmdPtr->Mult1, (int)CmdPtr->Div, (int)CmdPtr->Mult2);
+        -:  473:        }
+        -:  474:    }
+        -:  475:
+        3:  476:    return;
+        -:  477:
+        -:  478:} /* end HS_SetUtilParamsCmd */
+        -:  479:
+        2:  480:void HS_SetUtilDiagCmd(CFE_SB_MsgPtr_t MessagePtr)
+        -:  481:{
+        2:  482:    uint16            ExpectedLength = sizeof(HS_SetUtilDiagCmd_t);
+        -:  483:    HS_SetUtilDiagCmd_t  *CmdPtr;
+        -:  484:
+        -:  485:    /*
+        -:  486:    ** Verify message packet length
+        -:  487:    */
+        2:  488:    if(HS_VerifyMsgLength(MessagePtr, ExpectedLength))
+        -:  489:    {
+        1:  490:        HS_AppData.CmdCount++;
+        1:  491:        CmdPtr = ((HS_SetUtilDiagCmd_t *)MessagePtr);
+        -:  492:
+        1:  493:        HS_CustomData.UtilMask  = CmdPtr->Mask;
+        1:  494:        CFE_EVS_SendEvent (HS_SET_UTIL_DIAG_DBG_EID, CFE_EVS_DEBUG,
+        -:  495:                           "Utilization Diagnostics Mask has been set to %08X", 
+        -:  496:                           (unsigned int)HS_CustomData.UtilMask);
+        -:  497:    }
+        -:  498:
+        2:  499:    return;
+        -:  500:
+        -:  501:} /* end HS_SetUtilDiagCmd */
+        -:  502:
+        -:  503:/************************/
+        -:  504:/*  End of File Comment */
+        -:  505:/************************/

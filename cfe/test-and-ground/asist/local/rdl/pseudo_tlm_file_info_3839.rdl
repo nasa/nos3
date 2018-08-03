@@ -1,0 +1,41 @@
+!=============================================================
+!
+!                Originator: T.  Clement
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Jun 28 2005
+
+!
+!                 cFE Pseudo Telemetry Packet # 3592 (dec)
+!                 =================================
+!
+!       Packet Application ID: 0EFF
+!       Packet Title:  File Information Pseudo Telemetry Packet
+!       Packet Length:  N/A
+!
+!	  Collect Frequency:  1 SEC
+!
+!       REFERENCES:
+!
+!       NOTES:  This pseudo telemetry packet applies to all spacecraft and CPUs
+!
+!       Change History:
+!
+!  28JUN05  TGC             ; Initial release
+!  03JUN05  SMA             ; Change file_write_time to char
+!  20JUN06  SMA             ; Add index for display pages
+!  17AUG06  SMA             ; Add error message to support 'walking off' an
+!                           ; array warning.
+!=============================================================
+
+PACKET P0EFF APID=3839, DESC="File Information Pseudo Telemetry Packet"
+
+   RECORD FILE_LIST[4095]          DESC= "Array of files"
+      CHAR  file_write_name[128]  DESC= "Name of the file being written to"
+      CHAR  file_write_time[16]   DESC= "Time that the  file was written to"
+      UI    PAGEINDEX             DESC= "Display page index",INIT=1
+      CHAR  PAGEERRORMSG[40]      DESC= "Error message displayed when page button would 'walk off' array"
+      UI   EVSAPPINDEX            DESC= "EVS APP DATA INDEX"
+   END ! End Record
+
+END ! PACKET P0EFF

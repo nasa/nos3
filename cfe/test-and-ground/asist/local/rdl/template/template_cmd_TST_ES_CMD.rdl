@@ -1,0 +1,151 @@
+!======================================================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu ES Test App Commands
+!                  ================================
+!
+!       Packet Application ID: nnnn
+!       Packet Title: $sc $cpu ES Test App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  13NOV06     WFM          : Initial
+!  27MAR07     WFM          : Added new command
+!  12JUN07     WFM          : Added new command (FCTN=30)
+!  18JUN07     WFM          : Added new command (FCTN=31)
+!
+!======================================================================================================
+#include "osconfig.h"
+!#include "cfe_mission_cfg.h"
+#define TST_ES_MAX_SYSLOG_MSG 275
+#define TST_ES_MAX_ERLOG_MSG 80
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu ES Test App Commands"
+!
+  CMD  $sc_$cpu_TST_ES_NOOP        	FCTN=0, DESC="$sc $cpu ES Test App no-operation command code"
+!
+  CMD  $sc_$cpu_TST_ES_RESETCTRS 	FCTN=1, DESC="$sc $cpu ES Test App reset counters command code"
+!
+  CMD  $sc_$cpu_TST_ES_GetProcessorID   FCTN=2, DESC="$sc $cpu ES Test App Get Processor ID command code"
+!
+  CMD  $sc_$cpu_TST_ES_GetSCID          FCTN=3, DESC="$sc $cpu ES Test App Get Spacecraft ID command code"
+!
+  CMD  $sc_$cpu_TST_ES_GetCallingAppID  FCTN=4, DESC="$sc $cpu ES Test App Get Calling Application ID command code"
+!
+  CMDS  $sc_$cpu_TST_ES_GetAppTaskNames FCTN=5, DESC="$sc $cpu ES Test App Get the Application and Task Names command code"
+     ULI TaskID				DESC="Task ID to retrieve the Names for"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_GetAppID        FCTN=6, DESC="$sc $cpu ES Test App Get the Application ID command code"
+     CHAR AppName[OS_MAX_API_NAME]	DESC="The name of the application whose ID is being requested"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_GetAppName 	FCTN=7, DESC="$sc $cpu ES Test App Get the Application Name command code"
+     ULI AppID				DESC="Application ID to retrieve the Name of"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_DeleteApp 	FCTN=8, DESC="$sc $cpu ES Test App Delete Application command code"
+     ULI APPID				DESC="The ID of the application to delete"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_RestartApp 	FCTN=9, DESC="$sc $cpu ES Test App Restart Application command code"
+     CHAR AppName[OS_MAX_API_NAME]	DESC="The name of the application to restart"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_CreateChildTask	FCTN=10, DESC="$sc $cpu ES Test App Create Child Task command code"
+     CHAR TaskName[OS_MAX_API_NAME]	DESC="The name of the child task"
+     UNION ErrorFlag    DESC="Error Generation Flag"
+        ULI Error    STATIC, DEFAULT=0, DESC="Generate an error on command."
+        ULI NoError  STATIC, DEFAULT=1, DESC="Issue the command normally."
+      END
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_DeleteChildTask	FCTN=11, DESC="$sc $cpu ES Test App Delete Child Task command code"
+     ULI TaskID				DESC="The ID of the child task to delete"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_RegisterChild	FCTN=12, DESC="$sc $cpu ES Test App Register Child Task command code"
+     CHAR TaskName[OS_MAX_API_NAME]	DESC="The name of the child task"
+  END
+!
+  CMD  $sc_$cpu_TST_ES_StopChildTask	FCTN=13, DESC="$sc $cpu ES Test App Stop execution of Child Task command code"
+!
+  CMDS  $sc_$cpu_TST_ES_ReserveCDS	FCTN=14, DESC="$sc $cpu ES Test App Reserve CDS command code"
+     CHAR CDSName[CDS_NAME_LEN]	DESC="The name of the CDS to create"
+     UB   spares[2]		DESC="Spares for alignment",INVISIBLE,STATIC,DEFAULT=0
+     ULI CDSSize		DESC="The Size (in bytes) to reserve for the CDS"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_GetCDSData  FCTN=15, DESC="$sc $cpu ES Test App Get CDS Data command code"
+     CHAR CDSName[CDS_NAME_LEN]	DESC="The name of the CDS to retrieve data from"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_ResetCFE	FCTN=16, DESC="$sc $cpu ES Test Reset command code"
+     UNION ResetType			DESC="The Type of Reset to Perform"
+       ULI Processor			STATIC, DEFAULT=1, DESC="Processor Reset"
+       ULI PowerOn			STATIC, DEFAULT=2, DESC="Power On Reset"
+     END
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_GetMemPool	FCTN=17, DESC="$sc $cpu ES Test App Create Memory Pool command code"
+     ULI PoolSize			DESC="The size of the memory pool to create"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_GetMemBlock	FCTN=18, DESC="$sc $cpu ES Test App Allocate Memory Pool Block command code"
+     ULI PoolID				DESC="The Memory Pool Handle ID to use"
+     ULI BlkSize			DESC="The size of the Block to create"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_DeleteMemBlock	FCTN=19, DESC="$sc $cpu ES Test App De-Allocate Memory Pool Block command code"
+     ULI PoolID				DESC="The Memory Pool Handle ID to use"
+     ULI BlockID			DESC="The Block Handle ID to delete"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_LoadDriver	FCTN=20, DESC="$sc $cpu ES Test App Load Device Driver command code"
+     CHAR DriverName[OS_MAX_PATH_LEN]	DESC="The full path name of the device driver to load"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_UnLoadDriver	FCTN=21, DESC="$sc $cpu ES Test App UnLoad Device Driver command code"
+     CHAR DriverName[OS_MAX_PATH_LEN]	DESC="The full path name of the device driver to unload"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_DisableDriver	FCTN=22, DESC="$sc $cpu ES Test App Disable Device Driver command code"
+     CHAR DriverName[OS_MAX_PATH_LEN]	DESC="The full path name of the device driver to disable"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_EnableDriver	FCTN=23, DESC="$sc $cpu ES Test App Enable Device Driver command code"
+     CHAR DriverName[OS_MAX_PATH_LEN]	DESC="The full path name of the device driver to enable"
+  END
+!
+  CMD  $sc_$cpu_TST_ES_GetLastResetType FCTN=24, DESC="$sc $cpu ES Test App Get the last Reset Type command code"
+!
+  CMD  $sc_$cpu_TST_ES_ModifyCDSVars  	FCTN=25, DESC="$sc $cpu ES Test App CDS Variable modification command code"
+!
+  CMDS  $sc_$cpu_TST_ES_Write2SysLog  	FCTN=26, DESC="$sc $cpu ES Test App Write msg to Sys Log command code"
+     CHAR Message[TST_ES_MAX_SYSLOG_MSG] DESC="The message to write to the Sys Log"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_Write2ERLog  	FCTN=27, DESC="$sc $cpu ES Test App Write msg to ER Log command code"
+     CHAR Message[TST_ES_MAX_ERLOG_MSG] DESC="The message to write to the Sys Log"
+  END
+!
+  CMDS  $sc_$cpu_TST_ES_ChildCreateChild FCTN=28, DESC="$sc $cpu ES Test App Child Task Create Child command code"
+     CHAR TaskName[OS_MAX_API_NAME]	DESC="The name of the child task"
+  END
+!
+  CMD  $sc_$cpu_TST_ES_BadAddrMemPool    FCTN=29, DESC="$sc $cpu ES Test App Create Memory Pool on a Bad Address command code"
+!
+  CMD  $sc_$cpu_TST_ES_STARTNSTOPCHILD   FCTN=30, DESC="$sc $cpu ES Test App Start and Stop a child task command code"
+!
+  CMD  $sc_$cpu_TST_ES_GenException	 FCTN=31, DESC="$sc $cpu ES Test App Generate Exception command code"
+!
+  CMDS  $sc_$cpu_TST_ES_WriteCDSData     FCTN=32, DESC="$sc $cpu ES Test App Write CDS Data command code"
+     CHAR CDSName[CDS_NAME_LEN]	DESC="The name of the CDS to write dummy data to"
+  END
+!
+END       !END PACKET
+!
+!======================================================================================================

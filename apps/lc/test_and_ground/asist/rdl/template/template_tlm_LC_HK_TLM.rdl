@@ -1,0 +1,108 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 15, 2008  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu LC Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/11/15  BBM	: Initial
+!  2011/07/05  WFM	: Updated according to fsw changes
+!  2012/01/18  WFM	: Added record and unions for the WP and AP Packed
+!			: status arrays in order to display discrete status
+!==============================================================================
+!
+#include "osconfig.h"
+#include "lc_msgdefs.h"
+#include "lc_platform_cfg.h"
+
+#define WPACKED (LC_MAX_WATCHPOINTS + 3) / 4
+#define APACKED (LC_MAX_ACTIONPOINTS + 1)/2
+
+TYPES
+  RECORD $sc_$cpu_LC_WPPackedType	DESC="Watchpoint packed entry Record"
+     UNION WPByteEntry	DESC="$sc $cpu LC WP Packed Results data, 2 bits per WP"
+       UB AllStatus	DESC="Byte Value for all 4 Watchpoints"
+       UB WP0Result	DESC="Result of WP in bits 0 and 1",mask=%x03,DISCRETE,
+			DRANGE=(0,1,2,3),DLABEL=("False","True","Error","Stale")
+       UB WP1Result	DESC="Result of WP in bits 2 and 3",mask=%x0C,DISCRETE,
+			DRANGE=(0,1,2,3),DLABEL=("False","True","Error","Stale")
+       UB WP2Result	DESC="Result of WP in bits 4 and 5",mask=%x30,DISCRETE,
+			DRANGE=(0,1,2,3),DLABEL=("False","True","Error","Stale")
+       UB WP3Result	DESC="Result of WP in bits 6 and 7",mask=%xC0,DISCRETE,
+			DRANGE=(0,1,2,3),DLABEL=("False","True","Error","Stale")
+     END
+  END
+
+  RECORD $sc_$cpu_LC_APPackedType	DESC="Actionpoint packed entry Record"
+     UNION APByteEntry	DESC="$sc $cpu LC AP Packed Results data, 4 bits per AP"
+       UB AllStatus	DESC="Byte Value for all 4 Watchpoints"
+       UB AP0Result	DESC="Result of AP in lower 4 bits (0-3)",mask=%x03,
+			DISCRETE, DRANGE=(0,1,2,3),DLABEL=("Pass","Fail",
+			"Error","Stale")
+       UB AP0State	DESC="State of AP in lower 4 bits (0-3)",mask=%x0C,
+			DISCRETE,DRANGE=(0,1,2,3),DLABEL=("Not Used","Active",
+			"Passive","Disabled")
+       UB AP1Result	DESC="Result of AP in upper 4 bits (4-7)",mask=%x30,
+			DISCRETE, DRANGE=(0,1,2,3),DLABEL=("Pass","Fail",
+			"Error","Stale")
+       UB AP1State	DESC="State of AP in upper 4 bits (4-7)",mask=%xC0,
+			DISCRETE,DRANGE=(0,1,2,3),DLABEL=("Not Used","Active",
+			"Passive","Disabled")
+     END
+  END
+END_TYPES
+
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu LC Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_LC_CMDPC                  DESC="$sc $cpu LC Command Processed Counter",
+                                          UNITS=Counts
+!
+  UB   $sc_$cpu_LC_CMDEC                  DESC="$sc $cpu LC Command Error Counter",
+                                          UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_LC_CURLCSTATE             DESC="$sc $cpu LC Current LC application operating state",
+                                          DISCRETE, DRANGE=(1,2,3,4),
+                                          DLABEL=("Active","Passive","Disabled","Recover from CDS")
+!
+  UB   $sc_$cpu_LC_PAD1                   DESC="$sc $cpu padding"
+!
+!  UB   $sc_$cpu_LC_WRRESULTS[WPACKED]     DESC="$sc $cpu LC WP Packed Results data, 2 bits per WP"
+  $sc_$cpu_LC_WPPackedType $sc_$cpu_LC_WRRESULTS[WPACKED] DESC="$sc $cpu LC WP Packed Results data, 2 bits per WP"
+!
+!  UB   $sc_$cpu_LC_ARRESULTS[APACKED]     DESC="$sc $cpu LC AP Packed Results data, 4 bits per AP"
+  $sc_$cpu_LC_APPackedType $sc_$cpu_LC_ARRESULTS[APACKED]     DESC="$sc $cpu LC AP Packed Results data, 4 bits per AP"
+!
+  UI   $sc_$cpu_LC_PASSRTSCNT             DESC="$sc $cpu LC Total Count of RTS sequences not initiated because application state is passive"
+!
+  UI   $sc_$cpu_LC_WPSINUSE               DESC="$sc $cpu LC How many WPs are currently in effect"
+!
+  UI   $sc_$cpu_LC_ACTIVEAPS              DESC="$sc $cpu LC How many APs are currently active"
+!
+  UI $sc_$cpu_LC_PAD2                     DESC = "$sc $cpu padding"
+!
+  ULI  $sc_$cpu_LC_APSAMPLECNT            DESC="$sc $cpu LC Total Count of APs Sampled"
+!
+  ULI  $sc_$cpu_LC_MONMSGCNT              DESC="$sc $cpu LC Total Count of Messages Monitored"
+!
+  ULI  $sc_$cpu_LC_RTSCNT                 DESC="$sc $cpu LC Total Count of RTS Sequences Initiated"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

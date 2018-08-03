@@ -1,0 +1,1087 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_api.c
+        -:    0:Graph:cfe_time_api.gcno
+        -:    0:Data:cfe_time_api.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:** $Id: cfe_time_api.c 1.7 2012/01/13 12:21:34GMT-05:00 acudmore Exp  $
+        -:    3:**
+        -:    4:**
+        -:    5:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    6:**      administrator of the National Aeronautics Space Administration.  
+        -:    7:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:    8:**      Space Flight Center pursuant to government contracts.
+        -:    9:**
+        -:   10:**      This is governed by the NASA Open Source Agreement and may be used, 
+        -:   11:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   12:** 
+        -:   13:**
+        -:   14:**
+        -:   15:** Purpose:  cFE Time Services (TIME) library API source file
+        -:   16:**
+        -:   17:** Author:   S.Walling/Microtel
+        -:   18:**
+        -:   19:** Notes:    Partially derived from SDO source code
+        -:   20:**
+        -:   21:** $Log: cfe_time_api.c  $
+        -:   22:** Revision 1.7 2012/01/13 12:21:34GMT-05:00 acudmore 
+        -:   23:** Changed license text to reflect open source
+        -:   24:** Revision 1.6 2011/11/30 15:10:03EST jmdagost 
+        -:   25:** Replaced ifdef/ifndef preprocessor tests with if...==TRUE/if...!=TRUE tests
+        -:   26:** Revision 1.5 2010/10/25 15:00:06EDT jmdagost 
+        -:   27:** Corrected bad apostrophe in prologue.
+        -:   28:** Revision 1.4 2010/10/04 15:16:32EDT jmdagost 
+        -:   29:** Cleaned up copyright symbol.
+        -:   30:** Revision 1.3 2009/06/10 09:23:03EDT acudmore 
+        -:   31:** Changed OS_Mem* and OS_BSP* calls to CFE_PSP_* calls
+        -:   32:** Revision 1.2 2008/08/06 22:42:27EDT dkobe 
+        -:   33:** Added CFE_TIME_RegisterSynchCallback, CFE_TIME_UnregisterSynchCallback and CFE_TIME_CleanUpApp
+        -:   34:** Revision 1.1 2008/04/17 08:05:38EDT ruperera 
+        -:   35:** Initial revision
+        -:   36:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/time/project.pj
+        -:   37:** Revision 1.9 2007/03/07 10:54:24EST njyanchik 
+        -:   38:** I added a IsToneGood bit to the information that CFE_TIME_GetClockInfo function returns. The decison on a 'good' tone is made in the 1Hz ISR. If the tone is about
+        -:   39:** 1 second after the previous one, it is still considered good, otherwise, the tone is not good.
+        -:   40:** Revision 1.8 2007/03/07 10:43:47EST njyanchik 
+        -:   41:** I made a new API called CFE_TIME_GetClockInfo that is functionally equivilant to CFE_TIME_GetStateFlags. The reason I made a new function is because this function
+        -:   42:** will get changed in a future DCR (3191).
+        -:   43:** Revision 1.7 2006/07/28 10:17:12EDT njyanchik 
+        -:   44:** Fix of LDRA errors
+        -:   45:** Revision 1.6 2006/06/08 14:15:50EDT njyanchik 
+        -:   46:** I added the appropriate legal headers to all of the time files
+        -:   47:** Revision 1.5 2006/05/18 13:34:22EDT njyanchik 
+        -:   48:** The conversions between microsecs and sub secs left 999999 us as 0xFFFFE000 subseconds,
+        -:   49:** when 0xFFFFF000 is expected, causing the additions in the frequency to be off. Tthis change
+        -:   50:** adds an extra factor that bumps the output so that 999999 meets 0xFFFFF000.
+        -:   51:** Revision 1.4 2006/05/04 09:29:02EDT njyanchik 
+        -:   52:** Added MET to default spacecraft time conversion
+        -:   53:** API is CFE_TIME_SysTime_t CFE_TIME_MET2SCTime (CFE_TIME_SysTime_t METTime)
+        -:   54:** Revision 1.3 2006/01/27 07:51:19EST njyanchik 
+        -:   55:** modified CFE_TIME_Sub2MicroSecs to stop drift. If the Subseconds % 0x4000000 != 0 then we
+        -:   56:**  will need to add 1 to the result. This will prevent the drift. Also, added in a check that prevents
+        -:   57:** the number of microseconds from ever getting to 1000000.
+        -:   58:** Revision 1.2 2005/07/21 15:28:30EDT lswalling 
+        -:   59:** Add Time print API function
+        -:   60:** Revision 1.1 2005/06/09 10:57:56EDT rperera 
+        -:   61:** Initial revision
+        -:   62:** Member added to project d:/mksdata/MKS-CFE-REPOSITORY/cfe-core/time/project.pj
+        -:   63:*/
+        -:   64:
+        -:   65:
+        -:   66:/*
+        -:   67:** Required header files...
+        -:   68:*/
+        -:   69:#include "cfe_time_utils.h"
+        -:   70:
+        -:   71:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   72:/*                                                                         */
+        -:   73:/* CFE_TIME_GetTime() -- get time in default format (TAI vs UTC)           */
+        -:   74:/*                                                                         */
+        -:   75:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   76:
+        -:   77:CFE_TIME_SysTime_t   CFE_TIME_GetTime(void)
+        1:   78:{
+        -:   79:    CFE_TIME_SysTime_t CurrentTime;
+        -:   80:
+        -:   81:#if (CFE_TIME_CFG_DEFAULT_TAI == TRUE)
+        -:   82:
+        1:   83:    CurrentTime = CFE_TIME_GetTAI();
+        -:   84:
+        -:   85:#else
+        -:   86:
+        -:   87:    CurrentTime = CFE_TIME_GetUTC();
+        -:   88:
+        -:   89:#endif
+        -:   90:
+        1:   91:    return(CurrentTime);
+        -:   92:
+        -:   93:} /* End of CFE_TIME_GetTime() */
+        -:   94:
+        -:   95:
+        -:   96:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   97:/*                                                                         */
+        -:   98:/* CFE_TIME_GetTAI() -- get time in TAI format (TAI vs UTC)                */
+        -:   99:/*                                                                         */
+        -:  100:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  101:
+        -:  102:CFE_TIME_SysTime_t   CFE_TIME_GetTAI(void)
+        2:  103:{
+        -:  104:    CFE_TIME_Reference_t Reference;
+        -:  105:    CFE_TIME_SysTime_t tai;
+        -:  106:
+        -:  107:    /* Zero out the Reference variable because we pass it into
+        -:  108:     * a function before using it
+        -:  109:     * */
+        2:  110:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  111:    
+        -:  112:    /*
+        -:  113:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  114:    */
+        2:  115:    CFE_TIME_GetReference(&Reference);
+        -:  116:
+        -:  117:    /*
+        -:  118:    ** Calculate current TAI...
+        -:  119:    */
+        2:  120:    tai = CFE_TIME_CalculateTAI(&Reference);
+        -:  121:
+        2:  122:    return(tai);
+        -:  123:
+        -:  124:} /* End of CFE_TIME_GetTAI() */
+        -:  125:
+        -:  126:
+        -:  127:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  128:/*                                                                         */
+        -:  129:/* CFE_TIME_GetUTC() -- get time in UTC format (TAI vs UTC)                */
+        -:  130:/*                                                                         */
+        -:  131:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  132:
+        -:  133:CFE_TIME_SysTime_t   CFE_TIME_GetUTC(void)
+        1:  134:{
+        -:  135:    CFE_TIME_Reference_t Reference;
+        -:  136:    CFE_TIME_SysTime_t utc;
+        -:  137:
+        -:  138:    /* Zero out the Reference variable because we pass it into
+        -:  139:     * a function before using it
+        -:  140:     * */
+        1:  141:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  142:    /*
+        -:  143:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  144:    */
+        1:  145:    CFE_TIME_GetReference(&Reference);
+        -:  146:
+        -:  147:    /*
+        -:  148:    ** Calculate current UTC...
+        -:  149:    */
+        1:  150:    utc = CFE_TIME_CalculateUTC(&Reference);
+        -:  151:
+        1:  152:    return(utc);
+        -:  153:
+        -:  154:} /* End of CFE_TIME_GetUTC() */
+        -:  155:
+        -:  156:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  157:/*                                                                         */
+        -:  158:/* CFE_TIME_METtoSCTime() -- convert MET Time to default spacecraft time   */
+        -:  159:/*                                                                         */
+        -:  160:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  161:
+        -:  162:CFE_TIME_SysTime_t CFE_TIME_MET2SCTime (CFE_TIME_SysTime_t METTime)
+        1:  163:{
+        -:  164:
+        -:  165:    CFE_TIME_SysTime_t STCF;
+        -:  166:    CFE_TIME_SysTime_t TIATime;
+        -:  167:    CFE_TIME_SysTime_t ReturnTime;
+        -:  168:#if (CFE_TIME_CFG_DEFAULT_TAI != TRUE)
+        -:  169:    CFE_TIME_SysTime_t LeapSecsAsSysTime;
+        -:  170:#endif
+        -:  171:    
+        1:  172:    STCF = CFE_TIME_GetSTCF();
+        -:  173:
+        -:  174:    /* TIA = MET + STCF */
+        1:  175:    TIATime = CFE_TIME_Add(METTime, STCF);
+        -:  176:
+        -:  177:#if (CFE_TIME_CFG_DEFAULT_TAI == TRUE)
+        -:  178:
+        1:  179:    ReturnTime = TIATime;
+        -:  180:
+        -:  181:#else
+        -:  182:
+        -:  183:    /* Put leap seconds in correct format */
+        -:  184:    LeapSecsAsSysTime.Seconds       = CFE_TIME_GetLeapSeconds();
+        -:  185:    LeapSecsAsSysTime.Subseconds    = 0;
+        -:  186:    
+        -:  187:    /* UTC Time = TIA Time - Leap Seconds */
+        -:  188:    ReturnTime = CFE_TIME_Subtract(TIATime, LeapSecsAsSysTime);
+        -:  189:
+        -:  190:#endif
+        -:  191:
+        1:  192:    return (ReturnTime);
+        -:  193:}/* end CFE_TIME_MET2SCTime() */
+        -:  194:
+        -:  195:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  196:/*                                                                         */
+        -:  197:/* CFE_TIME_GetClockState() -- get time data (status)                      */
+        -:  198:/*                                                                         */
+        -:  199:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  200:
+        -:  201:CFE_TIME_ClockState_t   CFE_TIME_GetClockState(void)
+        1:  202:{
+        -:  203:    CFE_TIME_Reference_t Reference;
+        -:  204:    CFE_TIME_ClockState_t state;
+        -:  205:    
+        -:  206:    /* Zero out the Reference variable because we pass it into
+        -:  207:     * a function before using it
+        -:  208:     * */
+        1:  209:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  210:    /*
+        -:  211:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  212:    */
+        1:  213:    CFE_TIME_GetReference(&Reference);
+        -:  214:
+        -:  215:    /*
+        -:  216:    ** Determine the current clock state...
+        -:  217:    */
+        1:  218:    state = (CFE_TIME_ClockState_t) CFE_TIME_CalculateState(&Reference);
+        -:  219:
+        1:  220:    return(state);
+        -:  221:
+        -:  222:} /* End of CFE_TIME_GetClockState() */
+        -:  223:
+        -:  224:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  225:/*                                                                 */
+        -:  226:/* CFE_TIME_GetClockInfo() -- Convert state data to flag values    */
+        -:  227:/*                                                                 */
+        -:  228:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  229:
+        -:  230:uint16 CFE_TIME_GetClockInfo(void)
+        4:  231:{
+        4:  232:    uint16 StateFlags = 0;
+        -:  233:
+        -:  234:    /*
+        -:  235:    ** Spacecraft time has been set...
+        -:  236:    */
+        4:  237:    if (CFE_TIME_TaskData.ClockSetState == CFE_TIME_WAS_SET)
+        -:  238:    {
+        2:  239:        StateFlags |= CFE_TIME_FLAG_CLKSET;
+        -:  240:    }
+        -:  241:    /*
+        -:  242:    ** This instance of Time Service is in FLYWHEEL mode...
+        -:  243:    */
+        4:  244:    if (CFE_TIME_TaskData.ClockFlyState == CFE_TIME_IS_FLY)
+        -:  245:    {
+        2:  246:        StateFlags |= CFE_TIME_FLAG_FLYING;
+        -:  247:    }
+        -:  248:    /*
+        -:  249:    ** Clock source set to "internal"...
+        -:  250:    */
+        4:  251:    if (CFE_TIME_TaskData.ClockSource == CFE_TIME_USE_INTERN)
+        -:  252:    {
+        2:  253:        StateFlags |= CFE_TIME_FLAG_SRCINT;
+        -:  254:    }
+        -:  255:    /*
+        -:  256:    ** Clock signal set to "primary"...
+        -:  257:    */
+        4:  258:    if (CFE_TIME_TaskData.ClockSignal == CFE_TIME_TONE_PRI)
+        -:  259:    {
+        2:  260:        StateFlags |= CFE_TIME_FLAG_SIGPRI;
+        -:  261:    }
+        -:  262:    /*
+        -:  263:    ** Time Server is in FLYWHEEL mode...
+        -:  264:    */
+        4:  265:    if (CFE_TIME_TaskData.ServerFlyState == CFE_TIME_IS_FLY)
+        -:  266:    {
+        2:  267:        StateFlags |= CFE_TIME_FLAG_SRVFLY;
+        -:  268:    }
+        -:  269:    /*
+        -:  270:    ** This instance of Time Services commanded into FLYWHEEL...
+        -:  271:    */
+        4:  272:    if (CFE_TIME_TaskData.Forced2Fly)
+        -:  273:    {
+        2:  274:        StateFlags |= CFE_TIME_FLAG_CMDFLY;
+        -:  275:    }
+        -:  276:    /*
+        -:  277:    ** One time STCF adjustment direction...
+        -:  278:    */
+        4:  279:    if (CFE_TIME_TaskData.OneTimeDirection == CFE_TIME_ADD_ADJUST)
+        -:  280:    {
+        1:  281:        StateFlags |= CFE_TIME_FLAG_ADDADJ;
+        -:  282:    }
+        -:  283:    /*
+        -:  284:    ** 1 Hz STCF adjustment direction...
+        -:  285:    */
+        4:  286:    if (CFE_TIME_TaskData.OneHzDirection == CFE_TIME_ADD_ADJUST)
+        -:  287:    {
+        1:  288:        StateFlags |= CFE_TIME_FLAG_ADD1HZ;
+        -:  289:    }
+        -:  290:    /*
+        -:  291:    ** Time Client Latency adjustment direction...
+        -:  292:    */
+        4:  293:    if (CFE_TIME_TaskData.DelayDirection == CFE_TIME_ADD_ADJUST)
+        -:  294:    {
+        2:  295:        StateFlags |= CFE_TIME_FLAG_ADDTCL;
+        -:  296:    }
+        -:  297:    /*
+        -:  298:    ** This instance of Time Service is a "server"...
+        -:  299:    */
+        -:  300:    #if (CFE_TIME_CFG_SERVER == TRUE)
+        4:  301:    StateFlags |= CFE_TIME_FLAG_SERVER;
+        -:  302:    #endif
+        -:  303:
+        -:  304:    /* 
+        -:  305:    ** The tone is good 
+        -:  306:    */
+        4:  307:    if (CFE_TIME_TaskData.IsToneGood == TRUE)
+        -:  308:    {
+        1:  309:        StateFlags |= CFE_TIME_FLAG_GDTONE;
+        -:  310:    }   
+        -:  311:
+        4:  312:    return(StateFlags);
+        -:  313:
+        -:  314:} /* End of CFE_TIME_GetClockInfo() */
+        -:  315:
+        -:  316:
+        -:  317:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  318:/*                                                                         */
+        -:  319:/* CFE_TIME_GetLeapSeconds() -- get time data (leap seconds)               */
+        -:  320:/*                                                                         */
+        -:  321:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  322:
+        -:  323:int16   CFE_TIME_GetLeapSeconds(void)
+        1:  324:{
+        -:  325:    CFE_TIME_Reference_t Reference;
+        -:  326:
+        -:  327:    /* Zero out the Reference variable because we pass it into
+        -:  328:     * a function before using it
+        -:  329:     * */
+        1:  330:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  331:
+        -:  332:    /*
+        -:  333:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  334:    */
+        1:  335:    CFE_TIME_GetReference(&Reference);
+        -:  336:
+        1:  337:    return(Reference.AtToneLeaps);
+        -:  338:
+        -:  339:} /* End of CFE_TIME_GetLeapSeconds() */
+        -:  340:
+        -:  341:
+        -:  342:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  343:/*                                                                         */
+        -:  344:/* CFE_TIME_GetSTCF() -- get time data (Spacecraft Time Correlation Factor)*/
+        -:  345:/*                                                                         */
+        -:  346:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  347:
+        -:  348:CFE_TIME_SysTime_t   CFE_TIME_GetSTCF(void)
+        2:  349:{
+        -:  350:    CFE_TIME_Reference_t Reference;
+        -:  351:    
+        -:  352:    /* Zero out the Reference variable because we pass it into
+        -:  353:     * a function before using it
+        -:  354:     * */
+        2:  355:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  356:    
+        -:  357:    /*
+        -:  358:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  359:    */
+        2:  360:    CFE_TIME_GetReference(&Reference);
+        -:  361:
+        2:  362:    return(Reference.AtToneSTCF);
+        -:  363:
+        -:  364:} /* End of CFE_TIME_GetSTCF() */
+        -:  365:
+        -:  366:
+        -:  367:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  368:/*                                                                         */
+        -:  369:/* CFE_TIME_GetMET() -- get time data (Mission Elapsed Timer)              */
+        -:  370:/*                                                                         */
+        -:  371:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  372:
+        -:  373:CFE_TIME_SysTime_t   CFE_TIME_GetMET(void)
+        1:  374:{
+        -:  375:    CFE_TIME_Reference_t Reference;
+        -:  376:    
+        -:  377:     /* Zero out the Reference variable because we pass it into
+        -:  378:     * a function before using it
+        -:  379:     */
+        1:  380:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  381:
+        -:  382:
+        -:  383:    /*
+        -:  384:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  385:    */
+        1:  386:    CFE_TIME_GetReference(&Reference);
+        -:  387:
+        1:  388:    return(Reference.CurrentMET);
+        -:  389:
+        -:  390:} /* End of CFE_TIME_GetMET() */
+        -:  391:
+        -:  392:
+        -:  393:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  394:/*                                                                         */
+        -:  395:/* CFE_TIME_GetMETseconds() -- get time data (seconds portion of MET)      */
+        -:  396:/*                                                                         */
+        -:  397:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  398:
+        -:  399:uint32   CFE_TIME_GetMETseconds(void)
+        1:  400:{
+        -:  401:    CFE_TIME_Reference_t Reference;
+        -:  402:
+        -:  403:    /* Zero out the Reference variable because we pass it into
+        -:  404:     * a function before using it
+        -:  405:     * */
+        1:  406:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  407:
+        -:  408:    
+        -:  409:    /*
+        -:  410:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  411:    */
+        1:  412:    CFE_TIME_GetReference(&Reference);
+        -:  413:
+        1:  414:    return(Reference.CurrentMET.Seconds);
+        -:  415:
+        -:  416:} /* End of CFE_TIME_GetMETseconds() */
+        -:  417:
+        -:  418:
+        -:  419:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  420:/*                                                                         */
+        -:  421:/* CFE_TIME_GetMETsubsecs() -- get time data (sub-seconds portion of MET)  */
+        -:  422:/*                                                                         */
+        -:  423:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  424:
+        -:  425:uint32   CFE_TIME_GetMETsubsecs(void)
+        1:  426:{
+        -:  427:    CFE_TIME_Reference_t Reference;
+        -:  428:
+        -:  429:    /* Zero out the Reference variable because we pass it into
+        -:  430:     * a function before using it
+        -:  431:     * */
+        1:  432:    CFE_PSP_MemSet(&Reference, 0 , sizeof(CFE_TIME_Reference_t));
+        -:  433:    
+        -:  434:    /*
+        -:  435:    ** Get reference time values (local time, time at tone, etc.)...
+        -:  436:    */
+        1:  437:    CFE_TIME_GetReference(&Reference);
+        -:  438:
+        1:  439:    return(Reference.CurrentMET.Subseconds);
+        -:  440:
+        -:  441:} /* End of CFE_TIME_GetMETsubsecs() */
+        -:  442:
+        -:  443:
+        -:  444:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  445:/*                                                                         */
+        -:  446:/* CFE_TIME_Add() -- add two CFE_TIME_SysTime_t values                     */
+        -:  447:/*                                                                         */
+        -:  448:/*   result = time1 + time2                                                */
+        -:  449:/*                                                                         */
+        -:  450:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  451:
+        -:  452:CFE_TIME_SysTime_t  CFE_TIME_Add(CFE_TIME_SysTime_t Time1, CFE_TIME_SysTime_t Time2)
+       52:  453:{
+        -:  454:    CFE_TIME_SysTime_t Result;
+        -:  455:
+       52:  456:    Result.Subseconds = Time1.Subseconds + Time2.Subseconds;
+        -:  457:
+        -:  458:    /*
+        -:  459:    ** Check for sub-seconds roll-over
+        -:  460:    */
+       52:  461:    if (Result.Subseconds < Time1.Subseconds)
+        -:  462:    {
+        3:  463:        Result.Seconds = (Time1.Seconds + Time2.Seconds) + 1;
+        -:  464:    }
+        -:  465:    else
+        -:  466:    {
+       49:  467:        Result.Seconds = Time1.Seconds + Time2.Seconds;
+        -:  468:    }
+        -:  469:
+       52:  470:    return(Result);
+        -:  471:
+        -:  472:} /* End of CFE_TIME_Add() */
+        -:  473:
+        -:  474:
+        -:  475:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  476:/*                                                                         */
+        -:  477:/* CFE_TIME_Subtract() -- subtract a CFE_TIME_SysTime_t value from another */
+        -:  478:/*                                                                         */
+        -:  479:/*   result = time1 - time2                                                */
+        -:  480:/*                                                                         */
+        -:  481:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  482:
+        -:  483:CFE_TIME_SysTime_t  CFE_TIME_Subtract(CFE_TIME_SysTime_t Time1, CFE_TIME_SysTime_t Time2)
+       58:  484:{
+        -:  485:    CFE_TIME_SysTime_t Result;
+        -:  486:
+       58:  487:    Result.Subseconds = Time1.Subseconds - Time2.Subseconds;
+        -:  488:
+       58:  489:    if (Result.Subseconds > Time1.Subseconds)
+        -:  490:    {
+        3:  491:        Result.Seconds = (Time1.Seconds - Time2.Seconds) - 1;
+        -:  492:    }
+        -:  493:    else
+        -:  494:    {
+       55:  495:        Result.Seconds = Time1.Seconds - Time2.Seconds;
+        -:  496:    }
+        -:  497:
+       58:  498:    return(Result);
+        -:  499:
+        -:  500:} /* End of CFE_TIME_Subtract() */
+        -:  501:
+        -:  502:
+        -:  503:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  504:/*                                                                         */
+        -:  505:/* CFE_TIME_Compare() -- compare two CFE_TIME_SysTime_t values             */
+        -:  506:/*                                                                         */
+        -:  507:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  508:
+        -:  509:CFE_TIME_Compare_t  CFE_TIME_Compare(CFE_TIME_SysTime_t TimeA, CFE_TIME_SysTime_t TimeB)
+       75:  510:{
+        -:  511:    CFE_TIME_Compare_t Result;
+        -:  512:
+       75:  513:    if (TimeA.Seconds > TimeB.Seconds)
+        -:  514:    {
+        -:  515:        /*
+        -:  516:        ** Assume rollover if difference is too large...
+        -:  517:        */
+       37:  518:        if ((TimeA.Seconds - TimeB.Seconds) > CFE_TIME_NEGATIVE)
+        -:  519:        {
+        1:  520:            Result = CFE_TIME_A_LT_B;
+        -:  521:        }
+        -:  522:        else
+        -:  523:        {
+       36:  524:            Result = CFE_TIME_A_GT_B;
+        -:  525:        }
+        -:  526:    }
+       38:  527:    else if (TimeA.Seconds < TimeB.Seconds)
+        -:  528:    {
+        -:  529:        /*
+        -:  530:        ** Assume rollover if difference is too large...
+        -:  531:        */
+       15:  532:        if ((TimeB.Seconds - TimeA.Seconds) > CFE_TIME_NEGATIVE)
+        -:  533:        {
+        1:  534:            Result = CFE_TIME_A_GT_B;
+        -:  535:        }
+        -:  536:        else
+        -:  537:        {
+       14:  538:            Result = CFE_TIME_A_LT_B;
+        -:  539:        }
+        -:  540:    }
+        -:  541:    else
+        -:  542:    {
+        -:  543:        /*
+        -:  544:        ** Seconds are equal, check sub-seconds
+        -:  545:        */
+       23:  546:        if (TimeA.Subseconds > TimeB.Subseconds)
+        -:  547:        {
+        3:  548:            Result = CFE_TIME_A_GT_B;
+        -:  549:        }
+       20:  550:        else if (TimeA.Subseconds < TimeB.Subseconds)
+        -:  551:        {
+        7:  552:            Result = CFE_TIME_A_LT_B;
+        -:  553:        }
+        -:  554:        else
+        -:  555:        {
+       13:  556:            Result = CFE_TIME_EQUAL;
+        -:  557:        }
+        -:  558:    }
+        -:  559:
+       75:  560:    return(Result);
+        -:  561:
+        -:  562:} /* End of CFE_TIME_Compare() */
+        -:  563:
+        -:  564:
+        -:  565:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  566:/*                                                                         */
+        -:  567:/* CFE_TIME_Sub2MicroSecs() -- convert sub-seconds to micro-seconds        */
+        -:  568:/*                                                                         */
+        -:  569:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  570:
+        -:  571:uint32  CFE_TIME_Sub2MicroSecs(uint32 SubSeconds)
+       18:  572:{
+        -:  573:    uint32 MicroSeconds;
+        -:  574:	
+        -:  575:    /* 0xffffdf00 subseconds = 999999 microseconds, so anything greater 
+        -:  576:     * than that we set to 999999 microseconds, so it doesn't get to
+        -:  577:     * a million microseconds */
+        -:  578:    
+       18:  579:	if (SubSeconds > 0xffffdf00)
+        -:  580:	{
+        2:  581:			MicroSeconds = 999999;
+        -:  582:	}
+        -:  583:    else
+        -:  584:    {
+        -:  585:        /*
+        -:  586:        **  Convert a 1/2^32 clock tick count to a microseconds count
+        -:  587:        **
+        -:  588:        **  Conversion factor is  ( ( 2 ** -32 ) / ( 10 ** -6 ) ).
+        -:  589:        **
+        -:  590:        **  Logic is as follows:
+        -:  591:        **    x * ( ( 2 ** -32 ) / ( 10 ** -6 ) )
+        -:  592:        **  = x * ( ( 10 ** 6  ) / (  2 ** 32 ) )
+        -:  593:        **  = x * ( ( 5 ** 6 ) ( 2 ** 6 ) / ( 2 ** 26 ) ( 2 ** 6) )
+        -:  594:        **  = x * ( ( 5 ** 6 ) / ( 2 ** 26 ) )
+        -:  595:        **  = x * ( ( 5 ** 3 ) ( 5 ** 3 ) / ( 2 ** 7 ) ( 2 ** 7 ) (2 ** 12) )
+        -:  596:        **
+        -:  597:        **  C code equivalent:
+        -:  598:        **  = ( ( ( ( ( x >> 7) * 125) >> 7) * 125) >> 12 )
+        -:  599:        */   
+        -:  600:
+       16:  601:    	MicroSeconds = (((((SubSeconds >> 7) * 125) >> 7) * 125) >> 12);
+        -:  602:    
+        -:  603:
+        -:  604:        /* if the Subseconds % 0x4000000 != 0 then we will need to
+        -:  605:         * add 1 to the result. the & is a faster way of doing the % */  
+       16:  606:	    if ((SubSeconds & 0x3ffffff) != 0)
+        -:  607:    	{
+       10:  608:	    	MicroSeconds++;
+        -:  609:    	}
+        -:  610:    
+        -:  611:        /* In the Micro2SubSecs conversion, we added an extra anomaly
+        -:  612:         * to get the subseconds to bump up against the end point,
+        -:  613:         * 0xFFFFF000. This must be accounted for here. Since we bumped
+        -:  614:         * at the half way mark, we must "unbump" at the same mark 
+        -:  615:         */
+       16:  616:        if (MicroSeconds > 500000)
+        -:  617:        {
+        7:  618:            MicroSeconds --;
+        -:  619:        }
+        -:  620:        
+        -:  621:    } /* end else */
+        -:  622:    
+       18:  623:    return(MicroSeconds);
+        -:  624:
+        -:  625:} /* End of CFE_TIME_Sub2MicroSecs() */
+        -:  626:
+        -:  627:
+        -:  628:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  629:/*                                                                         */
+        -:  630:/* CFE_TIME_Micro2SubSecs() -- convert micro-seconds to sub-seconds        */
+        -:  631:/*                                                                         */
+        -:  632:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  633:
+        -:  634:uint32  CFE_TIME_Micro2SubSecs(uint32 MicroSeconds)
+       72:  635:{
+        -:  636:    uint32 SubSeconds;
+        -:  637:
+        -:  638:    /*
+        -:  639:    ** Conversion amount must be less than one second
+        -:  640:    */
+       72:  641:    if (MicroSeconds > 999999)
+        -:  642:    {
+        1:  643:        SubSeconds = 0xFFFFFFFF;
+        -:  644:    }
+        -:  645:    else
+        -:  646:    {
+        -:  647:    /*
+        -:  648:    **  Convert micro-seconds count to sub-seconds (1/2^32) count
+        -:  649:    **
+        -:  650:    **  Conversion factor is  ( ( 10 ** -6 ) / ( 2 ** -20 ).
+        -:  651:    **
+        -:  652:    **  Logic is as follows:
+        -:  653:    **    x * ( ( 10 ** -6 ) / ( 2 ** -32 ) )
+        -:  654:    **  = x * ( ( 2 ** 32 ) / ( 10 ** 6 ) )
+        -:  655:    **  = x * ( ( ( 2 ** 26 ) ( 2 ** 6) ) / ( ( 5 ** 6 ) ( 2 ** 6 ) ) )
+        -:  656:    **  = x * ( ( 2 ** 26 ) / ( 5 ** 6 ) )
+        -:  657:    **  = x * ( ( ( 2 ** 11) ( 2 ** 3) (2 ** 12) ) / ( 5( 5 ** 5 ) ) )
+        -:  658:    **  = x * ( ( ( ( ( 2 ** 11 ) / 5 ) * ( 2 ** 3 ) ) / ( 5 ** 5 ) ) * (2 ** 12) )
+        -:  659:    **
+        -:  660:    **  C code equivalent:
+        -:  661:    **  = ( ( ( ( ( x << 11 ) / 5 ) << 3 ) / 3125 ) << 12 )
+        -:  662:    **
+        -:  663:    **  Conversion factor was reduced and factored accordingly
+        -:  664:    **  to minimize precision loss and register overflow.
+        -:  665:    */
+       71:  666:        SubSeconds = ( ( ( ( MicroSeconds << 11 ) / 5 ) << 3 ) / 3125 ) << 12;
+        -:  667:
+        -:  668:        /* To get the SubSeconds to "bump up" against 0xFFFFF000 when 
+        -:  669:         * MicroSeconds = 9999999, we add in another anomaly to the 
+        -:  670:         * conversion at the half-way point  (500000 us). This will bump
+        -:  671:         * all of the subseconds up by 0x1000, so 999999 us == 0xFFFFF00,
+        -:  672:         * 999998 == 0xFFFFE000, etc. This extra anomaly is accounted for
+        -:  673:         * in the Sub2MicroSecs conversion as well.
+        -:  674:         */
+        -:  675:        
+       71:  676:        if (SubSeconds > 0x80001000)
+        -:  677:        {
+       16:  678:           SubSeconds += 0x1000;
+        -:  679:        }
+        -:  680:
+        -:  681:    }
+        -:  682:
+       72:  683:    return(SubSeconds);
+        -:  684:
+        -:  685:} /* End of CFE_TIME_Micro2SubSecs() */
+        -:  686:
+        -:  687:
+        -:  688:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  689:/*                                                                         */
+        -:  690:/* CFE_TIME_CFE2FSSeconds() --  convert cFE seconds to file system seconds */
+        -:  691:/*                                                                         */
+        -:  692:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  693:
+        -:  694:uint32 CFE_TIME_CFE2FSSeconds(uint32 SecondsCFE)
+        3:  695:{
+        -:  696:    /*
+        -:  697:    ** Using a signed integer allows the factor to be negative...
+        -:  698:    */
+        3:  699:    int32 ConvertFactor = CFE_TIME_FS_FACTOR;
+        -:  700:
+        -:  701:    /*
+        -:  702:    ** File system time = cFE time + conversion factor...
+        -:  703:    */
+        3:  704:    uint32 SecondsFS = SecondsCFE + (uint32) ConvertFactor;
+        -:  705:
+        -:  706:    /*
+        -:  707:    ** Prevent file system time from going below zero...
+        -:  708:    */
+        3:  709:    if (ConvertFactor < 0)
+        -:  710:    {
+    #####:  711:        if (-ConvertFactor > SecondsCFE)
+        -:  712:        {
+    #####:  713:            SecondsFS = 0;
+        -:  714:        }
+        -:  715:    }
+        -:  716:
+        3:  717:    return(SecondsFS);
+        -:  718:
+        -:  719:} /* End of CFE_TIME_CFE2FSSeconds() */
+        -:  720:
+        -:  721:
+        -:  722:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  723:/*                                                                         */
+        -:  724:/* CFE_TIME_FS2CFESeconds() --  convert file system seconds to cFE seconds */
+        -:  725:/*                                                                         */
+        -:  726:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  727:
+        -:  728:uint32 CFE_TIME_FS2CFESeconds(uint32 SecondsFS)
+        4:  729:{
+        -:  730:    /*
+        -:  731:    ** Using a signed integer allows the factor to be negative...
+        -:  732:    */
+        4:  733:    int32 ConvertFactor = CFE_TIME_FS_FACTOR;
+        -:  734:
+        -:  735:    /*
+        -:  736:    ** cFE time = file system time - conversion factor...
+        -:  737:    */
+        4:  738:    uint32 SecondsCFE = SecondsFS - (uint32) ConvertFactor;
+        -:  739:
+        -:  740:    /*
+        -:  741:    ** Prevent cFE time from going below zero...
+        -:  742:    */
+        4:  743:    if (ConvertFactor > SecondsFS)
+        -:  744:    {
+        2:  745:        SecondsCFE = 0;
+        -:  746:    }
+        -:  747:
+        4:  748:    return(SecondsCFE);
+        -:  749:
+        -:  750:} /* End of CFE_TIME_FS2CFESeconds() */
+        -:  751:
+        -:  752:
+        -:  753:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  754:/*                                                                         */
+        -:  755:/* CFE_TIME_Print() --  create text string representing date and time      */
+        -:  756:/*                                                                         */
+        -:  757:/* Notes:                                                                  */
+        -:  758:/*                                                                         */
+        -:  759:/*  1) The value of the time argument is simply added to the configuration */
+        -:  760:/*     definitions for the ground epoch and converted into a fixed length  */
+        -:  761:/*     string in the buffer provided by the caller.                        */
+        -:  762:/*                                                                         */
+        -:  763:/*  2) A loss of data during the string conversion will occur if the       */
+        -:  764:/*     computed year exceeds 9999.  However, a year that large would       */
+        -:  765:/*     require an unrealistic definition for the ground epoch since        */
+        -:  766:/*     the maximum amount of time represented by a CFE_TIME_SysTime        */
+        -:  767:/*     structure is approximately 136 years.                               */
+        -:  768:/*                                                                         */
+        -:  769:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  770:
+        -:  771:void CFE_TIME_Print(char *PrintBuffer, CFE_TIME_SysTime_t TimeToPrint)
+       10:  772:{
+        -:  773:    uint32 NumberOfYears;
+        -:  774:    uint32 NumberOfDays;
+        -:  775:    uint32 NumberOfHours;
+        -:  776:    uint32 NumberOfMinutes;
+        -:  777:    uint32 NumberOfSeconds;
+        -:  778:    uint32 NumberOfMicros;
+        -:  779:    uint32 DaysInThisYear;
+        -:  780:
+       10:  781:    boolean StillCountingYears = TRUE;
+        -:  782:
+        -:  783:    /*
+        -:  784:    ** Convert the cFE time (offset from epoch) into calendar time...
+        -:  785:    */
+       10:  786:    NumberOfMinutes = (TimeToPrint.Seconds / 60) + CFE_TIME_EPOCH_MINUTE;
+       10:  787:    NumberOfSeconds = (TimeToPrint.Seconds % 60) + CFE_TIME_EPOCH_SECOND;
+        -:  788:
+        -:  789:    /*
+        -:  790:    ** Adding the epoch "seconds" after computing the minutes avoids
+        -:  791:    **    overflow problems when the input time value (seconds) is
+        -:  792:    **    at, or near, 0xFFFFFFFF...
+        -:  793:    */
+       20:  794:    while (NumberOfSeconds >= 60)
+        -:  795:    {
+    #####:  796:        NumberOfMinutes++;
+    #####:  797:        NumberOfSeconds -= 60;
+        -:  798:    }
+        -:  799:
+        -:  800:    /*
+        -:  801:    ** Compute the years/days/hours/minutes...
+        -:  802:    */
+       10:  803:    NumberOfHours   = (NumberOfMinutes / 60) + CFE_TIME_EPOCH_HOUR;
+       10:  804:    NumberOfMinutes = (NumberOfMinutes % 60);
+        -:  805:
+        -:  806:    /*
+        -:  807:    ** Unlike hours and minutes, epoch days are counted as Jan 1 = day 1...
+        -:  808:    */
+       10:  809:    NumberOfDays  = (NumberOfHours / 24) + (CFE_TIME_EPOCH_DAY - 1);
+       10:  810:    NumberOfHours = (NumberOfHours % 24);
+        -:  811:
+       10:  812:    NumberOfYears = CFE_TIME_EPOCH_YEAR;
+        -:  813:
+        -:  814:    /*
+        -:  815:    ** Convert total number of days into years and remainder days...
+        -:  816:    */
+      331:  817:    while (StillCountingYears)
+        -:  818:    {
+        -:  819:        /*
+        -:  820:        ** Set number of days in this year (leap year?)...
+        -:  821:        */
+      311:  822:        DaysInThisYear = 365;
+        -:  823:
+      311:  824:        if ((NumberOfYears % 4) == 0)
+        -:  825:        {
+       84:  826:            if ((NumberOfYears % 100) != 0)
+        -:  827:            {
+       77:  828:                DaysInThisYear = 366;
+        -:  829:            }
+        7:  830:            else if ((NumberOfYears % 400) == 0)
+        -:  831:            {
+        6:  832:                DaysInThisYear = 366;
+        -:  833:            }
+        -:  834:            else
+        -:  835:            {
+        -:  836:                /* Do Nothing. Non-leap year. */ 
+        -:  837:            }
+        -:  838:        }
+        -:  839:
+        -:  840:        /*
+        -:  841:        ** When we have less than a years worth of days, we're done...
+        -:  842:        */
+      311:  843:        if (NumberOfDays < DaysInThisYear)
+        -:  844:        {
+       10:  845:            StillCountingYears = FALSE;
+        -:  846:        }
+        -:  847:        else
+        -:  848:        {
+        -:  849:            /*
+        -:  850:            ** Add a year and remove the number of days in that year...
+        -:  851:            */
+      301:  852:            NumberOfYears++;
+      301:  853:            NumberOfDays -= DaysInThisYear;
+        -:  854:        }
+        -:  855:    }
+        -:  856:
+        -:  857:    /*
+        -:  858:    ** Unlike hours and minutes, days are displayed as Jan 1 = day 1...
+        -:  859:    */
+       10:  860:    NumberOfDays++;
+        -:  861:
+        -:  862:    /*
+        -:  863:    ** After computing microseconds, convert to 5 digits from 6 digits...
+        -:  864:    */
+       10:  865:    NumberOfMicros = CFE_TIME_Sub2MicroSecs(TimeToPrint.Subseconds) / 10;
+        -:  866:
+        -:  867:    /*
+        -:  868:    ** Build formatted output string (yyyy-ddd-hh:mm:ss.xxxxx)...
+        -:  869:    */
+       10:  870:    *PrintBuffer++ = '0' + (char) (NumberOfYears / 1000); NumberOfYears = NumberOfYears % 1000;
+       10:  871:    *PrintBuffer++ = '0' + (char) (NumberOfYears / 100);  NumberOfYears = NumberOfYears % 100;
+       10:  872:    *PrintBuffer++ = '0' + (char) (NumberOfYears / 10);
+       10:  873:    *PrintBuffer++ = '0' + (char) (NumberOfYears % 10);
+       10:  874:    *PrintBuffer++ = '-';
+        -:  875:
+       10:  876:    *PrintBuffer++ = '0' + (char) (NumberOfDays / 100); NumberOfDays = NumberOfDays % 100;
+       10:  877:    *PrintBuffer++ = '0' + (char) (NumberOfDays / 10);
+       10:  878:    *PrintBuffer++ = '0' + (char) (NumberOfDays % 10);
+       10:  879:    *PrintBuffer++ = '-';
+        -:  880:
+       10:  881:    *PrintBuffer++ = '0' + (char) (NumberOfHours / 10);
+       10:  882:    *PrintBuffer++ = '0' + (char) (NumberOfHours % 10);
+       10:  883:    *PrintBuffer++ = ':';
+        -:  884:
+       10:  885:    *PrintBuffer++ = '0' + (char) (NumberOfMinutes / 10);
+       10:  886:    *PrintBuffer++ = '0' + (char) (NumberOfMinutes % 10);
+       10:  887:    *PrintBuffer++ = ':';
+        -:  888:
+       10:  889:    *PrintBuffer++ = '0' + (char) (NumberOfSeconds / 10);
+       10:  890:    *PrintBuffer++ = '0' + (char) (NumberOfSeconds % 10);
+       10:  891:    *PrintBuffer++ = '.';
+        -:  892:
+       10:  893:    *PrintBuffer++ = '0' + (char) (NumberOfMicros / 10000); NumberOfMicros = NumberOfMicros % 10000;
+       10:  894:    *PrintBuffer++ = '0' + (char) (NumberOfMicros / 1000);  NumberOfMicros = NumberOfMicros % 1000;
+       10:  895:    *PrintBuffer++ = '0' + (char) (NumberOfMicros / 100);   NumberOfMicros = NumberOfMicros % 100;
+       10:  896:    *PrintBuffer++ = '0' + (char) (NumberOfMicros / 10);
+       10:  897:    *PrintBuffer++ = '0' + (char) (NumberOfMicros % 10);
+       10:  898:    *PrintBuffer++ = '\0';
+        -:  899:
+        -:  900:    return;
+        -:  901:
+        -:  902:} /* End of CFE_TIME_Print() */
+        -:  903:
+        -:  904:
+        -:  905:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  906:/*                                                                         */
+        -:  907:/* CFE_TIME_ExternalTone() --  external tone signal was detected           */
+        -:  908:/*                                                                         */
+        -:  909:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  910:
+        -:  911:void CFE_TIME_ExternalTone(void)
+        1:  912:{
+        -:  913:    /*
+        -:  914:    ** Call tone signal ISR (OK if called from non-ISR context)...
+        -:  915:    */
+        1:  916:    CFE_TIME_Tone1HzISR();
+        -:  917:
+        -:  918:    return;
+        -:  919:
+        -:  920:} /* End of CFE_TIME_ExternalTone() */
+        -:  921:
+        -:  922:
+        -:  923:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  924:/*                                                                         */
+        -:  925:/* CFE_TIME_RegisterSynchCallback() --  register synch callback func       */
+        -:  926:/*                                                                         */
+        -:  927:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  928:
+        -:  929:int32  CFE_TIME_RegisterSynchCallback(CFE_TIME_SynchCallbackPtr_t CallbackFuncPtr)   
+       11:  930:{
+       11:  931:    int32  Status = CFE_SUCCESS;
+       11:  932:    uint32 i = 0;
+        -:  933:
+       42:  934:    while ((i<CFE_TIME_MAX_NUM_SYNCH_FUNCS) && (CFE_TIME_TaskData.SynchCallback[i].Ptr != NULL))
+        -:  935:    {
+       20:  936:        i++;
+        -:  937:    }
+        -:  938:    
+       11:  939:    if (i<CFE_TIME_MAX_NUM_SYNCH_FUNCS)
+        -:  940:    {
+        9:  941:        Status = CFE_ES_GetAppID(&CFE_TIME_TaskData.SynchCallback[i].App);
+        9:  942:        if (Status == CFE_SUCCESS)
+        -:  943:        {
+        8:  944:            CFE_TIME_TaskData.SynchCallback[i].Ptr = CallbackFuncPtr;
+        -:  945:        }
+        -:  946:    }
+        -:  947:    else
+        -:  948:    {
+        2:  949:        Status = CFE_TIME_TOO_MANY_SYNCH_CALLBACKS;
+        -:  950:    }
+        -:  951:    
+       11:  952:    return Status;
+        -:  953:} /* End of CFE_TIME_RegisterSynchCallback() */
+        -:  954:
+        -:  955:
+        -:  956:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  957:/*                                                                         */
+        -:  958:/* CFE_TIME_UnregisterSynchCallback() --  unregister synch callback func   */
+        -:  959:/*                                                                         */
+        -:  960:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  961:
+        -:  962:int32  CFE_TIME_UnregisterSynchCallback(CFE_TIME_SynchCallbackPtr_t CallbackFuncPtr)   
+        8:  963:{
+        8:  964:    int32  Status = CFE_SUCCESS;
+        8:  965:    uint32 i = 0;
+        -:  966:    uint32 AppId;
+        -:  967:    
+        8:  968:    Status = CFE_ES_GetAppID(&AppId);
+        -:  969:    
+        8:  970:    if (Status == CFE_SUCCESS)
+        -:  971:    {
+       32:  972:        while (i<CFE_TIME_MAX_NUM_SYNCH_FUNCS) 
+        -:  973:        {
+       22:  974:            if ((CFE_TIME_TaskData.SynchCallback[i].App == AppId) &&
+        -:  975:                (CFE_TIME_TaskData.SynchCallback[i].Ptr == CallbackFuncPtr))
+        -:  976:            {
+        4:  977:                break;
+        -:  978:            }
+        -:  979:            
+       18:  980:            i++;
+        -:  981:        }
+        -:  982:        
+        7:  983:        if (i<CFE_TIME_MAX_NUM_SYNCH_FUNCS)
+        -:  984:        {
+        4:  985:            CFE_TIME_TaskData.SynchCallback[i].App = 0;
+        4:  986:            CFE_TIME_TaskData.SynchCallback[i].Ptr = NULL;
+        -:  987:        }
+        -:  988:        else
+        -:  989:        {
+        3:  990:            Status = CFE_TIME_CALLBACK_NOT_REGISTERED;
+        -:  991:        }
+        -:  992:            
+        -:  993:    }
+        -:  994:    
+        8:  995:    return Status;
+        -:  996:} /* End of CFE_TIME_UnregisterSynchCallback() */
+        -:  997:
+        -:  998:
+        -:  999:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1000:/*                                                                         */
+        -: 1001:/* CFE_TIME_ExternalMET() -- time data from external source (MET)          */
+        -: 1002:/*                                                                         */
+        -: 1003:/* Notes: 1) Time Servers use this call as the signal to send the          */
+        -: 1004:/*           "time at the tone" command packet.                            */
+        -: 1005:/*                                                                         */
+        -: 1006:/*        2) This function is only included in the API if the Time         */
+        -: 1007:/*           Server has been configured to accept time data from an        */
+        -: 1008:/*           external source (MET).                                        */
+        -: 1009:/*                                                                         */
+        -: 1010:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1011:
+        -: 1012:#if (CFE_TIME_CFG_SRC_MET == TRUE)
+        -: 1013:void CFE_TIME_ExternalMET(CFE_TIME_SysTime_t NewMET)
+        -: 1014:{
+        -: 1015:    /*
+        -: 1016:    ** Process external MET data...
+        -: 1017:    */
+        -: 1018:    CFE_TIME_ToneSendMET(NewMET);
+        -: 1019:
+        -: 1020:    return;
+        -: 1021:
+        -: 1022:} /* End of CFE_TIME_ExternalMET() */
+        -: 1023:#endif /* CFE_TIME_CFG_SRC_MET  */
+        -: 1024:
+        -: 1025:
+        -: 1026:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1027:/*                                                                         */
+        -: 1028:/* CFE_TIME_ExternalGPS() -- time data from external source (GPS)          */
+        -: 1029:/*                                                                         */
+        -: 1030:/* Notes: 1) Time Servers use this call as the signal to send the          */
+        -: 1031:/*           "time at the tone" command packet.                            */
+        -: 1032:/*                                                                         */
+        -: 1033:/*        2) This function is only included in the API if the Time         */
+        -: 1034:/*           Server has been configured to accept time data from an        */
+        -: 1035:/*           external source (GPS).                                        */
+        -: 1036:/*                                                                         */
+        -: 1037:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1038:
+        -: 1039:#if (CFE_TIME_CFG_SRC_GPS == TRUE)
+        -: 1040:void CFE_TIME_ExternalGPS(CFE_TIME_SysTime_t NewTime, int16 NewLeaps)
+        -: 1041:{
+        -: 1042:    /*
+        -: 1043:    ** Process external GPS time data...
+        -: 1044:    */
+        -: 1045:    CFE_TIME_ToneSendGPS(NewTime, NewLeaps);
+        -: 1046:
+        -: 1047:    return;
+        -: 1048:
+        -: 1049:} /* End of CFE_TIME_ExternalGPS() */
+        -: 1050:#endif /* CFE_TIME_CFG_SRC_GPS */
+        -: 1051:
+        -: 1052:
+        -: 1053:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1054:/*                                                                         */
+        -: 1055:/* CFE_TIME_ExternalTime() -- time data from external source (S/C, etc.)   */
+        -: 1056:/*                                                                         */
+        -: 1057:/* Notes: 1) Time Servers use this call as the signal to send the          */
+        -: 1058:/*           "time at the tone" command packet.                            */
+        -: 1059:/*                                                                         */
+        -: 1060:/*        2) This function is only included in the API if the Time         */
+        -: 1061:/*           Server has been configured to accept time data from an        */
+        -: 1062:/*           external source (spacecraft time).                            */
+        -: 1063:/*                                                                         */
+        -: 1064:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1065:
+        -: 1066:#if (CFE_TIME_CFG_SRC_TIME == TRUE)
+        -: 1067:void CFE_TIME_ExternalTime(CFE_TIME_SysTime_t NewTime)
+        -: 1068:{
+        -: 1069:    /*
+        -: 1070:    ** Process external time data...
+        -: 1071:    */
+        -: 1072:    CFE_TIME_ToneSendTime(NewTime);
+        -: 1073:
+        -: 1074:    return;
+        -: 1075:
+        -: 1076:} /* End of CFE_TIME_ExternalTime() */
+        -: 1077:#endif /* CFE_TIME_CFG_SRC_TIME */
+        -: 1078:
+        -: 1079:
+        -: 1080:/************************/
+        -: 1081:/*  End of File Comment */
+        -: 1082:/************************/

@@ -1,0 +1,42 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 28 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu EVS App Data 
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/04/28  SMA      : Initial
+!  2005/05/04  SMA      : Remove type definitions
+!  2009/12/09  WFM	: Modified AppData[64] to use the cFE configuration
+!			: parameter CFE_ES_MAX_APPLICATIONS
+! 
+!==============================================================================
+!
+#include "cfe_platform_cfg.h"
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu EVS Application Data", VARYING
+!
+#include "cfe_file_header.rdl"
+!
+CFE_EVS_APP_DATA_TYPE 	$sc_$cpu_EVS_AppData[CFE_ES_MAX_APPLICATIONS] DESC="$sc $cpu EVS Application Data"
+!
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END
+ 

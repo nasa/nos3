@@ -1,0 +1,35 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  LaST Change: Jun 02 2005  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu TEST TIME Convert SS to MS Data Packet
+!       Packet Length:  ?? Bytes (Including 14 Bytes Of Header)
+!	  Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/06/02  SMA             : Initial
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC=" $sc $cpu TEST TIME Convert SS to MS Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl" 
+!
+  ULI   $sc_$cpu_TT_SStoMS    DESC="$sc $cpu TEST TIME Subeconds to Microseconds",
+                                UNITS=Microseconds
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

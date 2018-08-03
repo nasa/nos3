@@ -1,0 +1,68 @@
+
+Running the cFE Unit tests
+
+The cFE Core unit tests are run from the mission/build/"cpuX" directory, where 
+cpuX is either cpu1 or the name of the mission specific cpu set by the user. The 
+unit test source code resides in the mission/cfe/fsw/cfe-core/unit-test directory. 
+The mission/build/cpuX directory contains a script, make_cfe_ut, for building and 
+executing these tests. The default script uses pc-linux for the baseline platform. 
+The script may be modified accordingly for running the tests on alternate platforms 
+(i.e.,ARINC653). This script allows for running a subset of the tests by service
+(ES,EVS,etc.). The usage is make_cfe_ut <service>, where service is es, evs, fs,
+sb,tbl or time. If no service is specified, all tests are compiled and executed.
+In addition, there are several cFE Unit Test Compiler Flags that may be set to 
+display/log various test results. These flags are defined and set in the 
+make_cfe_ut script file and may be modified in accordance with the users
+needs.
+
+1. Setup the Mission Build environment
+2. Edit the mission/build/cpuX/cfe/cfe-config.mak for the linux platform
+3. Go to the mission/build/cpuX directory
+4. Run the desired unit test(s) using the make_cfe_ut script as described above
+5. View Results
+6. Check-in results (if applicable)
+
+------ Details ------------------------------------
+
+1. Setup the Mission Build environment by going to the mission/ directory.  Edit
+the setvars.sh file and make sure that the environment variables specify the 
+proper directories. Make any updates as needed. After verifying the contents of 
+the setvars.sh file, type ". ./setvars.sh" to execute and set these variables.
+This sets up the required environment variables used to build and execute the
+cFE Unit Tests.
+
+2. Edit the mission/build/cpuX/cfe/cfe-config.mak for the linux platform. The OS
+setting should be "posix" and the PSP setting should be "pc-linux" for the
+default platform. NOTE: the cfe-config.mak file identifies additional settings
+for supported OS and platforms.
+
+3. Go to the mission/build/cpuX directory
+
+4. Run the desired unit test(s) by typing "./make_cfe_ut <service>"
+   where service is es,evs,fs,sb,tbl or time. If no service is specified, all
+   tests are compiled and executed.
+   
+5. View results
+Pass/Fail/Informational and coverage results will be displayed in the terminal where it 
+has run.  It is recommended to capture these results to a ut_cfe_xx_log.txt file.
+see  mission/build/cpuX/cfe/unit-test/xx/cfe_xx_???.c.gcov for detailed coverage results.
+ ##### in file means the line has not been executed.
+
+see mission/cfe/fsw/cfe-core/unit-test/xxResults/ut_cfe_xx_log.txt for the baselined unit 
+test output.
+
+see mission/cfe/fsw/cfe-core/unit-test/xxResults/README.txt for the details on the expected
+coverage
+
+6. To check-in results (if applicable)
+Each subsystem should have a ut_cfe_XX_log.txt file that contains the expected baselined 
+results captured from the console output.  All pass/fail/info/coverage results are printed to 
+the console when the test is executed.
+
+If any file is not covered 100%, we need to check in the corresponding *.gcov file to show 
+exactly what lines have not been covered. In most cases, at a minimum this should be the 
+cfe_xx_task.c.gov file since the forever loop will not have coverage.
+
+All files specifying results should be checked into the corresponding subproject
+under the unit-test subproject. (i.e., SbResults subproject in 
+mission/cfe/fsw/cfe-core/unit-test/)

@@ -1,0 +1,57 @@
+!==============================================================================
+!                Originator:      B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  Nov 15, 2008
+!
+!                  $sc $cpu LC Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Limit Checker App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  15NOV08     BBM           : Initial
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "lc_msgdefs.h"
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Limit Checker App Commands"
+!
+  CMD  $sc_$cpu_LC_NOOP        	   FCTN=LC_NOOP_CC, DESC="$sc $cpu LC no-op command code"
+!
+  CMD  $sc_$cpu_LC_RESETCTRS       FCTN=LC_RESET_CC, DESC="$sc $cpu LC reset counters command code"
+!
+  CMDS  $sc_$cpu_LC_SETLCSTATE     FCTN=LC_SET_LC_STATE_CC, DESC="$sc $cpu LC Set Application State command code, 1=Active, 2= Passive, 3=Disabled"
+        UI NewLCState        DESC="New LC Application State"
+        UI Padding           INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS $sc_$cpu_LC_SETAPSTATE      FCTN=LC_SET_AP_STATE_CC, DESC="$sc $cpu LC Set AP State command code"
+        UI APNumber          DESC="Which AP(s) to change, 0xFFFF specifies all APs"
+        UI NewAPState        DESC="New AP state, 1=Active, 2=Passive, 3=Disabled"
+  END
+!
+  CMDS $sc_$cpu_LC_SETAPPERMOFF    FCTN=LC_SET_AP_PERMOFF_CC, DESC="$sc $cpu LC Set AP to Permanently Disabled command code"
+        UI APNumber          DESC="Which AP(s) to change"
+        UI Padding           INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS $sc_$cpu_LC_RESETAPSTATS    FCTN=LC_RESET_AP_STATS_CC, DESC="$sc $cpu LC Reset AP Statistics command code"
+        UI APNumber          DESC="Which AP(s) to change, 0xFFFF specifies all APs"
+        UI Padding           INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS $sc_$cpu_LC_RESETWPSTATS    FCTN=LC_RESET_WP_STATS_CC, DESC="$sc $cpu LC Reset WP Statistics code"
+        UI WPNumber          DESC="Which WP(s) to change, 0xFFFF specifies all WPs"
+        UI Padding          INVISIBLE, DEFAULT=0
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

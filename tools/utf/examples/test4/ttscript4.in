@@ -1,0 +1,38 @@
+; File ttscript.in
+; Created on  12/16/05
+* Input file ttscript is being read from test4 directory.
+*
+* 0 Simulate Empty Pipe
+! 
+181a cccc 0001 b7cc ; Housekeeping Request 
+*
+* ^Load file /tt_table_values1.dat
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values1.dat
+;!
+181a cccc 0001 b7cc ; Housekeeping Request 
+*
+* 0 Simulate Empty Pipe
+!
+181a cccc 0001 b7cc ; Housekeeping Request  
+*
+* ^Load file /tt_table_values2.dat
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values2.dat 
+!
+181a cccc 0001 b7cc ; Housekeeping Request
+*
+* ^Load file /tt_table_values3.dat
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values3.dat
+! 
+181a cccc 0001 b7cc ; Housekeeping Request
+*
+* ^Load file /tt_table_values4.dat
+* This is an invalid file
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values4.dat
+! 
+181a cccc 0001 b7cc ; Housekeeping Request
+*
+* ^Load file /tt_table_values5.dat
+@ LOAD_TABLE_FROM_GROUND  TT.FourNumbers /ram/tt_table_values5.dat
+! 
+181a cccc 0001 b7cc ; Housekeeping Request
+

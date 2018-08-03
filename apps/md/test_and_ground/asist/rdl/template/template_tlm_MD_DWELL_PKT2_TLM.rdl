@@ -1,0 +1,48 @@
+!==============================================================================
+!
+!                Originator: S. Jonke
+!                Responsible SC:  
+!                Responsible CSE: 
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu MD Dwell Packet 2
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!   Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/05/01  SJJ  : Initial
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "md_platform_cfg.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu MD Dwell Packet 2",
+                        STALE = 36, VARYING
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_MD_DwlPkt2TableId DESC="$sc $cpu MD dwell packet 2 table id"
+!
+  UB   $sc_$cpu_MD_DwlPkt2NumAddresses DESC="$sc $cpu MD dwell packet 2 number of dwell addresses"
+!
+  UI   $sc_$cpu_MD_DwlPkt2PktDataSize DESC="$sc $cpu MD dwell packet 2 number of bytes of dwell data"
+!
+  ULI  $sc_$cpu_MD_DwlPkt2Rate DESC="$sc $cpu MD dwell packet 2 counts between sends"
+!
+#if MD_SIGNATURE_OPTION == 1   
+  char $sc_$cpu_MD_DwlPkt2Signature[MD_SIGNATURE_FIELD_LENGTH] DESC="$sc $cpu MD dwell packet 2 signature"
+#endif
+!
+  UB   $sc_$cpu_MD_DwlPkt2DwellData[MD_DWELL_TABLE_SIZE*4] DESC="$sc $cpu MD dwell packet 2 dwell data"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

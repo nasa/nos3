@@ -1,0 +1,186 @@
+
+***UTF Version Test***
+UTF Version: 0.0.0.a
+
+#
+# Test OS File System calls
+#
+
+#
+# Create file, 'utf_test6_newfile.dat'
+#
+# 
+***OS_creat Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #0 set to fffffffe
+OS_Creat Return Code fffffffe
+UTF Info: Return code for OSFILEAPI Api #0 returned to default
+->Call to OS_creat for file </cf/utf_test6_file.dat>
+->Expect non-negative return value
+OS_creat returned 0
+
+#
+# Write to file
+#
+# wbuffer contains [darling, I love you but give me Park Avenue!]
+
+***OS_write Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #4 set to ffffffff
+OS_write Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #4 returned to default
+->Call OS_write with wbuffer
+->Expect return value of 44
+OS_write returned 44
+
+#
+# Go  to the beginning of the file and write 'D'.
+#
+# 
+***OS_lseek Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #7 set to ffffffff
+OS_lseek Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #7 returned to default
+->Call OS_lseek with OS_SEEK_SET
+->Expect 0.
+OS_lseek returned 0
+->Call OS_write with <D>
+->Expect 1.
+OS_write returned 1
+
+***OS_close Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #2 set to ffffffff
+OS_close Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #2 returned to default
+->Call OS_close
+OS_close returned 0
+
+#                          #
+# Open file for r+w.       #
+#                          #
+
+***OS_open Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #1 set to ffffffff
+OS_open Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #1 returned to default
+->Call OS_open for fullpathname= </cf/utf_test6_file.dat> with OS_READ_WRITE
+OS_open returned 0
+->Call OS_lseek with OS_SEEK_END
+OS_lseek returned 44
+wbuffer contains [Oh Danny boy, the pipes, the pipes are calling]
+->Call OS_write with wbuffer
+OS_write returned 46
+
+#                               #
+# Move to beginning of file,    #
+# read into buffer, close file. #
+#                               #
+->Call OS_lseek with OS_SEEK_SET
+->Expect 0.
+OS_lseek returned 0
+
+***OS_read Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #3 set to fffffffe
+OS_read Return Code fffffffe
+UTF Info: Return code for OSFILEAPI Api #3 returned to default
+->Call OS_read with rbuffer
+OS_read returned 39
+rbuffer contains [Darling, I love you but give me Park Av]
+->Call OS_read with rbuffer
+OS_read returned 39
+rbuffer contains [enue!Oh Danny boy, the pipes, the pipes]
+->Call OS_close
+OS_close returned 0
+
+***OS_stat Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #6 set to fffffff8
+OS_stat Return Code fffffff8
+UTF Info: Return code for OSFILEAPI Api #6 returned to default
+->Call OS_stat
+OS_stat returned 0
+Print out the file size from the stat structure 90
+
+***OS_rename Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #9 set to fffffffd
+OS_rename Return Code fffffffd
+UTF Info: Return code for OSFILEAPI Api #9 returned to default
+->Call OS_rename /cf/utf_test6_file.dat to '/cf/utf_test6_ren.dat'
+OS_rename returned 0
+
+***OS_remove Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #8 set to fffffffe
+OS_remove Return Code fffffffe
+UTF Info: Return code for OSFILEAPI Api #8 returned to default
+->Call OS_remove with '/cf/utf_test6_ren.dat'
+OS_remove returned 0
+
+***OS_mkdir Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #12 set to ffffffff
+OS_mkdir Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #12 returned to default
+->Call OS_mkdir to make a steve directory
+OS_mkdir returned 0
+->Create 2 files in the new directory
+OS_FDGetInfo Return Code 0
+EntryInfo->OSfd = 4
+EntryInfo->path = /cf/steve/utf_test1.dat
+EntryInfo->User = 0
+EntryInfo->IsValid = TRUE
+OS_FDGetInfo Return Code 0
+EntryInfo->OSfd = 5
+EntryInfo->path = /cf/steve/utf_test2.dat
+EntryInfo->User = 0
+EntryInfo->IsValid = TRUE
+->Call OS_opendir to open the steve directory
+->Call OS_readdir to read all files in the steve directory
+File in steve directory .
+File in steve directory ..
+File in steve directory utf_test1.dat
+File in steve directory utf_test2.dat
+
+***OS_closedir Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #13 set to fffffffe
+OS_closedir Return Code fffffffe
+UTF Info: Return code for OSFILEAPI Api #13 returned to default
+->Call OS_closedir to close the steve directory
+OS_closedir returned 0
+->Call OS_remove to remove the files in the steve directory
+OS_remove returned 0 for utf_test1.dat
+OS_remove returned 0 for utf_test2.dat
+
+***OS_rmdir Return Code Setting Test ***
+UTF Info: Return value for OSFILEAPI Api #14 set to ffffffff
+OS_rmdir Return Code ffffffff
+UTF Info: Return code for OSFILEAPI Api #14 returned to default
+->Call OS_rmdir to remove the steve directory
+OS_rmdir returned 0
+
+**** Testing OS_FS_GetPhysDriveName using '/cf' ****
+OS_FS_GetPhysDriveName returned 0
+PhysDriveName returned 'tmp/nonvol0'
+**** Testing OS_FS_GetPhysDriveName using '/ram' ****
+OS_FS_GetPhysDriveName returned -1
+'/ram' was not mounted!!!
+**** Testing OS_FS_GetPhysDriveName using an invalid pointer ****
+OS_FS_GetPhysDriveName returned -2
+Status indicates an invalid pointer was passed
+OS_FS_GetPhysDriveName returned -2
+Status indicates an invalid pointer was passed
+
+***Function Hook Tests***
+creat Hook Return Code 0
+creat Hook Return Code fffffffe
+creat Hook Return Code 0
+creat Hook Return Code fffffffe
+write Hook Return Code 0
+write Hook Return Code ffffffff
+write Hook Return Code 0
+write Hook Return Code ffffffff
+read Hook Return Code 0
+read Hook Return Code fffffffe
+read Hook Return Code 0
+read Hook Return Code fffffffe
+close Hook Return Code 0
+close Hook Return Code fffffff6
+close Hook Return Code 0
+close Hook Return Code fffffff6
+opendir Hook function returned NULL as expected
+readdir Hook function returned NULL as expected

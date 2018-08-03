@@ -1,0 +1,190 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_erlog.c
+        -:    0:Graph:cfe_es_erlog.gcno
+        -:    0:Data:cfe_es_erlog.gcda
+        -:    0:Runs:1
+        -:    0:Programs:5
+        -:    1:/*
+        -:    2:**  File:  
+        -:    3:**    cfe_es_erlog.c
+        -:    4:**
+        -:    5:**      Copyright (c) 2004-2012, United States government as represented by the 
+        -:    6:**      administrator of the National Aeronautics Space Administration.  
+        -:    7:**      All rights reserved. This software(cFE) was created at NASA's Goddard 
+        -:    8:**      Space Flight Center pursuant to government contracts.
+        -:    9:**
+        -:   10:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   11:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   12:**
+        -:   13:**  Purpose:  
+        -:   14:**    This file implements the cFE Executive Services Exception and Reset Log functions.
+        -:   15:**
+        -:   16:**  References:
+        -:   17:**     Flight Software Branch C Coding Standard Version 1.0a
+        -:   18:**     cFE Flight Software Application Developers Guide
+        -:   19:**
+        -:   20:**  Notes:
+        -:   21:** 
+        -:   22:**  Modification History:
+        -:   23:**
+        -:   24:** $Log: cfe_es_erlog.c.gcov  $
+        -:   24:** Revision 1.6 2015/06/24 12:19:51EDT wmoleski 
+        -:   24:** Checking in the unit-test results for cFE 6.4.2.0
+        -:   25:** Revision 1.3 2012/01/13 11:50:02GMT-05:00 acudmore 
+        -:   26:** Changed license text to reflect open source
+        -:   27:** Revision 1.2 2009/06/10 09:08:56EDT acudmore 
+        -:   28:** Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   29:** Revision 1.1 2008/04/17 08:05:05EDT ruperera 
+        -:   30:** Initial revision
+        -:   31:** Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   32:** Revision 1.5 2007/05/30 10:26:06EDT apcudmore 
+        -:   33:** Added Exception handler support:
+        -:   34:**  - BSP routine to attach processor exceptions
+        -:   35:**  - context datatype and size define
+        -:   36:**  - added default exception init for each app+task
+        -:   37:** Revision 1.4 2007/03/22 10:26:22EST apcudmore 
+        -:   38:** Implemented all code walkthrough items related to ES Application logic, commands, and telemetry.
+        -:   39:** Revision 1.3 2007/03/13 16:10:54EST apcudmore 
+        -:   40:** Implemented all ERLog and ES API code walkthrough items.
+        -:   41:** Revision 1.2 2006/11/13 16:56:48EST apcudmore 
+        -:   42:** Added call to get time in ER Log.
+        -:   43:** Revision 1.1 2006/11/13 16:35:24EST apcudmore 
+        -:   44:** Initial revision
+        -:   45:** Member added to project d:/mksdata/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   46:**
+        -:   47:*/
+        -:   48:
+        -:   49:/*
+        -:   50:** Required header files.
+        -:   51:*/
+        -:   52:#include "cfe.h"
+        -:   53:#include "cfe_es.h"
+        -:   54:#include "cfe_es_apps.h"
+        -:   55:#include "cfe_es_global.h"
+        -:   56:#include "cfe_es_log.h"
+        -:   57:#include "cfe_psp.h"
+        -:   58:
+        -:   59:#include <string.h>
+        -:   60:#include <stdio.h>
+        -:   61:#include <stdarg.h>
+        -:   62:
+        -:   63:/*
+        -:   64:** Function: CFE_ES_WriteToERLog
+        -:   65:**
+        -:   66:** Purpose:  Create an entry in the ES Exception and Reset Log. 
+        -:   67:**
+        -:   68:*/
+        -:   69:int32 CFE_ES_WriteToERLog( uint32 EntryType,   uint32  ResetType, uint32 ResetSubtype,
+        -:   70:                           char  *Description, uint32 *Context,   uint32 ContextSize )
+       22:   71:{
+        -:   72:   uint32 LogIdx;
+        -:   73:
+        -:   74:   /*
+        -:   75:   ** Code
+        -:   76:   */
+        -:   77:
+        -:   78:   /*
+        -:   79:   ** Try to clean up an invalid ER log index variable.
+        -:   80:   */
+       22:   81:   if ( CFE_ES_ResetDataPtr->ERLogIndex >= CFE_ES_ER_LOG_ENTRIES )
+        -:   82:   {
+        1:   83:      CFE_ES_ResetDataPtr->ERLogIndex = 0;
+        -:   84:   }
+       22:   85:   LogIdx = CFE_ES_ResetDataPtr->ERLogIndex;
+        -:   86:
+        -:   87:   /*
+        -:   88:   ** Now that the Local Index variable is set, increment the index for the next entry.
+        -:   89:   */
+       22:   90:   CFE_ES_ResetDataPtr->ERLogIndex++;
+       22:   91:   if ( CFE_ES_ResetDataPtr->ERLogIndex >= CFE_ES_ER_LOG_ENTRIES )
+        -:   92:   {
+        1:   93:      CFE_ES_ResetDataPtr->ERLogIndex = 0;
+        -:   94:   }
+        -:   95:
+        -:   96:
+        -:   97:   /*
+        -:   98:   ** Clear out the log entry we are about to use.
+        -:   99:   */
+       22:  100:   CFE_PSP_MemSet( (void *)&(CFE_ES_ResetDataPtr->ERLog[LogIdx]), 0, 
+        -:  101:            sizeof (CFE_ES_ERLog_t));
+        -:  102:
+        -:  103:   /*
+        -:  104:   ** Fill out the log fields
+        -:  105:   */
+       22:  106:   CFE_ES_ResetDataPtr->ERLog[LogIdx].LogEntryType = EntryType;
+       22:  107:   CFE_ES_ResetDataPtr->ERLog[LogIdx].ResetType    = ResetType;
+       22:  108:   CFE_ES_ResetDataPtr->ERLog[LogIdx].ResetSubtype = ResetSubtype;
+       22:  109:   CFE_ES_ResetDataPtr->ERLog[LogIdx].BootSource   = CFE_ES_ResetDataPtr->ResetVars.BootSource;
+       22:  110:   CFE_ES_ResetDataPtr->ERLog[LogIdx].ProcessorResetCount = 
+        -:  111:                               CFE_ES_ResetDataPtr->ResetVars.ProcessorResetCount;
+       22:  112:   CFE_ES_ResetDataPtr->ERLog[LogIdx].MaxProcessorResetCount = 
+        -:  113:                               CFE_ES_ResetDataPtr->ResetVars.MaxProcessorResetCount;
+        -:  114:
+        -:  115:   /*
+        -:  116:   ** Copy the ES Reset variables to the log (before they are modified by the log entry).
+        -:  117:   */
+       22:  118:   CFE_PSP_MemCpy((void *)&(CFE_ES_ResetDataPtr->ERLog[LogIdx].DebugVars), 
+        -:  119:          (void *)&(CFE_ES_Global.DebugVars), 
+        -:  120:          sizeof(CFE_ES_DebugVariables_t ));
+        -:  121:
+        -:  122:   /*
+        -:  123:   ** Time Stamp the log entry with the system time 
+        -:  124:   */
+       22:  125:   CFE_ES_ResetDataPtr->ERLog[LogIdx].TimeCode = CFE_TIME_GetTime(); 
+        -:  126:
+        -:  127:   /*
+        -:  128:   ** Copy the Description string to the log.
+        -:  129:   */
+       22:  130:   if ( Description  == NULL)
+        -:  131:   {
+        2:  132:      strncpy(CFE_ES_ResetDataPtr->ERLog[LogIdx].Description, "No Description String Given.", 80);
+        -:  133:   }
+        -:  134:   else
+        -:  135:   {
+       20:  136:      strncpy(CFE_ES_ResetDataPtr->ERLog[LogIdx].Description, Description, 80);
+        -:  137:   }
+        -:  138:
+        -:  139:   /*
+        -:  140:   ** In the case of an exception, copy the processor context data to the log.
+        -:  141:   */
+       22:  142:   if (Context != NULL )
+        -:  143:   {
+        -:  144:      /*
+        -:  145:      ** Copy the processor context data (i.e. register dump).  Make sure that
+        -:  146:      ** the passed-in context_size is not greater than the declared size in
+        -:  147:      ** the ER Log log entry.
+        -:  148:      */
+        5:  149:      if ( ContextSize <= CFE_PSP_CPU_CONTEXT_SIZE )
+        -:  150:      {
+        4:  151:         CFE_PSP_MemCpy ( (void *)(CFE_ES_ResetDataPtr->ERLog[LogIdx].Context),
+        -:  152:                  (void *)Context,
+        -:  153:                  ContextSize);
+        -:  154:      }
+        -:  155:      else
+        -:  156:      {
+        1:  157:         CFE_PSP_MemCpy ( (void *)(CFE_ES_ResetDataPtr->ERLog[LogIdx].Context),
+        -:  158:                  (void *)Context,
+        -:  159:                  CFE_PSP_CPU_CONTEXT_SIZE);
+        -:  160:      }   
+        -:  161:      /*
+        -:  162:      ** Indicate that context is valid.
+        -:  163:      */
+        5:  164:      CFE_ES_ResetDataPtr->ERLog[LogIdx].ContextIsPresent = TRUE;
+        -:  165:   }
+        -:  166:   else
+        -:  167:   {
+        -:  168:      /*
+        -:  169:      ** Context is not valid
+        -:  170:      */
+       17:  171:      CFE_ES_ResetDataPtr->ERLog[LogIdx].ContextIsPresent = FALSE;
+        -:  172:   } /* end if */
+        -:  173:
+        -:  174:   /*
+        -:  175:   ** Increment the number of ER log entries made
+        -:  176:   */
+       22:  177:   CFE_ES_ResetDataPtr->ERLogEntries++;
+        -:  178:
+       22:  179:   return(CFE_SUCCESS);
+        -:  180:    
+        -:  181:} /* End of CFE_ES_WriteToERLog() */
+        -:  182:
+        -:  183:/* end of file */

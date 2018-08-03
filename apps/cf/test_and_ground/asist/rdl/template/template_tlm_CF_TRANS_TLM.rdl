@@ -1,0 +1,98 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: November 19, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CF Transaction Diagnostics Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cf_platform_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_CF_EngineStats_Type	DESC="Engine Transaction Statistics Record"
+      UB  TransLen	DESC=""
+      UB  TransVal	DESC=""
+      UB  Naks		DESC=""
+      UB  PartLen	DESC=""
+      UB  PartVal	DESC=""
+      UB  Phase		DESC=""
+      UB  Spare1[2]	DESC=""
+      UNION Flags	DESC=""
+        ULI Frozen	DESC="Frozen Flag",mask=%x00000010,DISCRETE,
+			DRANGE=(0,1),DLABEL=("No","Yes")
+        ULI Suspended	DESC="Suspended Flag",mask=%x00000040,DISCRETE,
+			DRANGE=(0,1),DLABEL=("No","Yes")
+        ULI AllFlags	DESC="Flags",mask=%xffffffff
+      END
+      ULI TransNum	DESC=""
+      ULI Attempts	DESC=""
+      ULI CondCode	DESC=""
+      ULI DeliCode	DESC=""
+      ULI FdOffset	DESC=""
+      ULI FdLength	DESC=""
+      ULI Checksum	DESC=""
+      ULI FinalStat	DESC=""
+      ULI FileSize	DESC=""
+      ULI RcvdFileSize	DESC=""
+      ULI Role		DESC="",DISCRETE,DRANGE=(0,1,2,3,4),
+			DLABEL=("Undefined","C-1 Sender","C-1 Rcvr",
+			"C-2 Sender","C-2 Rcvr")
+      ULI State		DESC="",DISCRETE,DRANGE=(0,1,2,3,4,5,6,7),
+			DLABEL=("Uninitialized","S1","S2","S3","S4","S5","S6",
+			"Finished")
+      ULI StartTime	DESC=""
+      char SrcFile[OS_MAX_PATH_LEN] DESC="Source Filename"
+      char DstFile[OS_MAX_PATH_LEN] DESC="Destination Filename"
+      char TmpFile[OS_MAX_PATH_LEN] DESC="Temporary Filename"
+   END
+
+   RECORD $sc_$cpu_CF_AppStats_Type	DESC="Application Transaction Statistics Record"
+      ULI Status	DESC="",DISCRETE,DRANGE=(0,1,2,3,4,5,6,7,8,9),
+                        DLABEL=("Unknown","Success","Cancelled","Abandoned",
+			"No Meta","Pending","Already Active","Put Issued",
+			"Put Failed","Active")
+      ULI CondCode	DESC="",DISCRETE,DRANGE=(0,1,4,5,6,7,8,14,15),
+			DLABEL=("No Error","Pos Ack Limit","Filestore Error",
+			"Checksum Failure","File Size Error","NAK Limit",
+			"Inactivity Detected","Suspend Req Rcvd",
+			"Cancel Req Rcvd")
+      ULI Priority	DESC="For playback files only"
+      ULI Class		DESC=""
+      ULI ChanNum	DESC=""
+      ULI Source	DESC="",DISCRETE, DRANGE=(1,2,3),
+			DLABEL=("Playback File Cmd","Playback Dir Cmd",
+			"Poll Directory")
+      ULI NodeType	DESC="Node type",DISCRETE, DRANGE=(1,2),
+			DLABEL=("Uplink","Playback")
+      ULI TransNum	DESC=""
+      char SrcEntityId[CF_MAX_CFG_VALUE_CHARS]	DESC=""
+      char SrcFile[OS_MAX_PATH_LEN] DESC="Source Filename"
+      char DstFile[OS_MAX_PATH_LEN] DESC="Source Filename"
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CFDP Telemetry Data Packet"
+#include "ccsds_header.rdl"
+!
+  $sc_$cpu_CF_EngineStats_Type $sc_$cpu_CF_EngTransStat	DESC="Engine Transactio n Statistics"
+  $sc_$cpu_CF_AppStats_Type $sc_$cpu_CF_AppTransStat	DESC="Application Transactio n Statistics"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

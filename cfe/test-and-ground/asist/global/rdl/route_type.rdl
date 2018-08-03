@@ -1,0 +1,117 @@
+!=============================================================
+!
+!                Originator: Jeff Condron
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                 cFE Routing Packet Type Definition
+!                 ==================================
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  2004/10/18  JXC             :Created 
+!  2004/10/19  TGC             :Cleaned up
+!=============================================================
+TYPES
+   RECORD ROUTE_TYPE desc="Routing Data"
+     UI   NSBSTREAM   desc="Message ID", DISCRETE, 
+                         OPEN, EXCLUSIVE, YL=%x0849, YH=%x084A,
+                         DRANGE=(0,1,2,3,4,5,6,7,8,9,
+                                 %x0021,%x0022,%x0023,%x0024,%x0025,%x0026,
+                                 %x0027,%x0028,%x0029,
+                                 %x0041,%x0042,%x0043,%x0044,%x0045,%x0046,
+                                 %x0047,%x0048,%x0049,
+                                 %x080A,%x080B,%x080C,%x080D,
+                                 %X0814,%x0815,%x0816,%x0817,
+                                 %x0818,%x0819,%x081A,
+                                 %x082A,%x082B,%x082C,%x082D,
+                                 %x0834,%x0835,%x0836,%x0837,
+                                 %x0838,%x0839,%x083A,%x084A,
+                                 %x084B,%x084C,%x084D,
+                                 %x0854,%x0855,%x0856,%x0857,
+                                 %x0858,%x0859,%x085A,
+                                 %x1801,%x1802,%x1803,
+                                 %x1804,%x1805,%x1806,
+                                 %x1807,%x180A,%x180B,
+                                 %x180C,%x180D,%x180F,%x1810,
+                                 %x1821,%x1822,%x1823,%x1824,%x1825,%x1826,
+                                 %x1827,%x182A,%x182B,%x182C,%x182D,%x182F,
+                                 %x1830,
+                                 %x1841,%x1842,%x1843,%x1844,%x1845,%x1846,
+                                 %x1847,%x184A,%x184B,%x184C,%x184D,%x184F), 
+                          DLABEL=("NA","ACE SB Housekeeping TLM",
+                                  "ACE HS Housekeeping TLM","NA",
+                                  "ACE TIME Housekeeping TLM","NA",
+                                  "ACE CI Housekeeping TLM",
+                                  "ACE TO Housekeeping TLM",
+                                  "ACE NB Housekeeping TLM","NA",
+                                  "CDH SB Housekeeping TLM",
+                                  "CDH HS Housekeeping TLM","NA",
+                                  "CDH TIME Housekeeping TLM","NA",
+                                  "CDH CI Housekeeping TLM",
+                                  "CDH TO Housekeeping TLM",
+                                  "CDH NB Housekeeping TLM","NA",
+                                  "PSE SB Housekeeping TLM",
+                                  "PSE HS Housekeeping TLM","NA",
+                                  "PSE TIME Housekeeping TLM","NA",
+                                  "PSE CI Housekeeping TLM",
+                                  "PSE TO Housekeeping TLM",
+                                  "PSE NB Housekeeping TLM","NA",
+                                  "ACE Event",
+                                  "ACE HS Fast Data Packet",
+                                  "ACE HS Slow Packet","NA",
+                                  "ACE HS Data Types",
+                                  "ACE CI CLCW",
+                                  "ACE TO Data Types",
+                                  "ACE TO TLM",
+                                  "ACE EVM TLM",
+                                  "ACE Routing Packet","NA",
+                                  "CDH Event",
+                                  "CDH HS Fast Data Packet",
+                                  "CDH HS Slow Packet","NA",
+                                  "CDH HS Data Types",
+                                  "CDH CI CLCW",
+                                  "CDH TO Data Types",
+                                  "CDH TO TLM",
+                                  "CDH EVM TLM",
+                                  "CDH Routing Packet","NA",
+                                  "PSE Event",
+                                  "PSE HS Fast Data Packet",
+                                  "PSE HS Slow Packet","NA",
+                                  "PSE HS Data Types",
+                                  "PSE CI CLCW",
+                                  "PSE TO Data Types",
+                                  "PSE TO TLM",
+                                  "PSE EVM TLM",
+                                  "PSE Routing Packet","NA",
+                                  "ACE SB CMD","ACE HS CMD",
+                                  "ACE CI CMD","ACE TO CMD",
+                                  "ACE NB CMD","ACE TIME CMD","NA",
+                                  "ACE HS SEND Housekeeping PKT",
+                                  "ACE TIME 1HZ","ACE TIME time","NA",
+                                  "ACE TO Dump RQ","NA",
+                                  "CDH SB CMD","CDH HS CMD",
+                                  "CDH CI CMD","CDH TO CMD",
+                                  "CDH NB CMD","CDH Time Command", "NA",
+                                  "CDH HS SEND Housekeeping PKT",
+                                  "CDH TIME 1HZ","CDH TIME time","NA",
+                                  "CDH TO Dump RQ","NA",
+                                  "PSE SB CMD","PSE HS CMD",
+                                  "PSE CI CMD","PSE TO CMD",
+                                  "PSE NB CMD","PSE TIME CMD","NA",
+                                  "PSE HS SEND Housekeeping PKT",
+                                  "PSE TIME 1HZ","PSE TIME time","NA",
+                                  "PSE TO Dump RQ")
+     UB   NSBPKTCTR     desc="Packet Counter"
+     UB   NSBRECEIVER desc="Receiver", DISCRETE,
+                          DRANGE=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14),
+                          DLABEL=("UNKNOWN","SB","HS","TIME","CI","TO","NB","FM",
+                                  "DS","WC","CA","T1HZ","IT","SB","OffCrd")
+
+   END
+END_TYPES

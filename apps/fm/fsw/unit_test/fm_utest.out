@@ -1,0 +1,500 @@
+UTF Info: Task <FM> added to Task Tbl.
+SysLog:1980-001-00:00:00.00000 ES Startup: FM loaded and created
+UTF Info: App <FM> added to App Tbl.
+
+ERROR CREATING TEST FILE /ram/closed4.bin
+
+ERROR CREATING TEST FILE /ram/closed5.bin
+
+*** FM -- Testing fm_app.c ***
+UTF Info: Return value for CFE ES Api #1 set to ffffffff
+ERROR EVENT ID=8 Application terminating: result = 0xFFFFFFFF
+SysLog:1980-001-00:00:00.00000 FM application terminating: result = 0xFFFFFFFF
+SysLog:1980-001-00:00:00.00000 Application FM called CFE_ES_ExitApp
+UTF Info: Return code for CFE ES Api #1 returned to default
+UTF Info: Return value for CFE EVS Api #0 set to ffffffff
+ERROR EVENT ID=2 Initialization error: register for event services: result = 0xFFFFFFFF
+UTF Info: Return code for CFE EVS Api #0 returned to default
+UTF Info: Return value for CFE SB Api #0 set to ffffffff
+ERROR EVENT ID=3 Initialization error: create SB input pipe: result = 0xFFFFFFFF
+UTF Info: Return code for CFE SB Api #0 returned to default
+ERROR EVENT ID=4 Initialization error: subscribe to HK request: result = 0xFFFFFFFF
+ERROR EVENT ID=5 Initialization error: subscribe to FM commands: result = 0xFFFFFFFF
+UTF Info: Return value for CFE TBL Api #0 set to ffffffff
+ERROR EVENT ID=6 Initialization error: register free space table: result = 0xFFFFFFFF
+UTF Info: Return code for CFE TBL Api #0 returned to default
+UTF INFO: CFE_TBL_Register called for new table FM.FreeSpace.
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned fffffff8
+UTF Info: Task <FM_CHILD_TASK> added to Task Tbl.
+INFO EVENT ID=1 Initialization complete: version 0.0.0.0
+ERROR EVENT ID=9 Main loop error: invalid message ID: mid = 0x1800
+ERROR EVENT ID=10 Main loop error: invalid command code: cc = 99
+ERROR EVENT ID=12 HK Request error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=12 HK Request error: invalid command packet length: expected = 8, actual = 9
+
+FM HOUSEKEEPING DATA:
+CommandCounter = 0
+CommandErrCounter = 1
+CommandWarnCounter = 0
+NumOpenFiles = 1
+ChildCmdCounter = 0
+ChildCmdErrCounter = 0
+ChildCmdWarnCounter = 0
+ChildQueueCount = 0
+
+fm_app.c -- test count = 11, test errors = 0
+
+*** FM -- Testing fm_cmds.c ***
+ERROR EVENT ID=14 No-op error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=14 No-op error: invalid command packet length: expected = 8, actual = 9
+INFO EVENT ID=13 No-op command: FM version 0.0.0.0
+ERROR EVENT ID=16 Reset Counters error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=16 Reset Counters error: invalid command packet length: expected = 8, actual = 9
+DEBUG EVENT ID=15 Reset Counters command
+ERROR EVENT ID=18 Copy File error: invalid command packet length: expected = 136, actual = 135
+ERROR EVENT ID=18 Copy File error: invalid command packet length: expected = 136, actual = 137
+ERROR EVENT ID=19 Copy File error: file does not exist: name = /ram/doesnotexist.bin
+ERROR EVENT ID=20 Copy File error: file already exists: name = /ram/closed2.bin
+INFO EVENT ID=17 Copy File command: src = /ram/closed1.bin, tgt = /ram/sub/copy1.bin
+ERROR EVENT ID=24 Move File error: invalid command packet length: expected = 136, actual = 135
+ERROR EVENT ID=24 Move File error: invalid command packet length: expected = 136, actual = 137
+ERROR EVENT ID=25 Move File error: file does not exist: name = /ram/doesnotexist.bin
+ERROR EVENT ID=26 Move File error: file already exists: name = /ram/closed2.bin
+UTF Info: Return value for OSFILEAPI Api #11 set to ffffffff
+ERROR EVENT ID=27 Move File error: OS_mv failed: result = -1, src = /ram/closed1.bin, tgt = /ram/sub/move1.bin
+UTF Info: Return code for OSFILEAPI Api #11 returned to default
+INFO EVENT ID=23 Move File command: src = /ram/closed1.bin, tgt = /ram/sub/move1.bin
+ERROR EVENT ID=29 Rename File error: invalid command packet length: expected = 136, actual = 135
+ERROR EVENT ID=29 Rename File error: invalid command packet length: expected = 136, actual = 137
+ERROR EVENT ID=30 Rename File error: file does not exist: name = /ram/doesnotexist.bin
+ERROR EVENT ID=31 Rename File error: file already exists: name = /ram/closed3.bin
+UTF Info: Return value for OSFILEAPI Api #9 set to ffffffff
+ERROR EVENT ID=32 Rename File error: OS_rename failed: result = -1, src = /ram/closed2.bin, tgt = /ram/sub/rename1.bin
+UTF Info: Return code for OSFILEAPI Api #9 returned to default
+INFO EVENT ID=28 Rename File command: /ram/closed2.bin to /ram/sub/rename1.bin
+ERROR EVENT ID=34 Delete File error: invalid command packet length: expected = 72, actual = 71
+ERROR EVENT ID=34 Delete File error: invalid command packet length: expected = 72, actual = 73
+ERROR EVENT ID=35 Delete File error: file is already open: name = /ram/open1.bin
+UTF Info: Return value for OSFILEAPI Api #8 set to ffffffff
+ERROR EVENT ID=36 Delete File error: OS_remove failed: result = -1, file = /ram/closed3.bin
+UTF Info: Return code for OSFILEAPI Api #8 returned to default
+INFO EVENT ID=33 Delete File command: file = /ram/closed3.bin
+ERROR EVENT ID=39 Delete All Files error: invalid command packet length: expected = 72, actual = 71
+ERROR EVENT ID=39 Delete All Files error: invalid command packet length: expected = 72, actual = 73
+ERROR EVENT ID=40 Delete All Files error: directory name exists as a file: name /ram/open1.bin
+INFO EVENT ID=37 Delete All Files command: deleted 10 of 10 dir entries: dir = /ram/sub
+ERROR EVENT ID=45 Decompress File error: invalid command packet length: expected = 136, actual = 135
+ERROR EVENT ID=45 Decompress File error: invalid command packet length: expected = 136, actual = 137
+ERROR EVENT ID=46 Decompress File error: file is already open: name = /ram/open1.bin
+ERROR EVENT ID=47 Decompress File error: file already exists: name = /ram/closed5.bin
+INFO EVENT ID=44 Decompress File command: src = /ram/closed4.bin, tgt = /ram/sub/unzip1.bin
+ERROR EVENT ID=51 Concat Files error: invalid command packet length: expected = 200, actual = 199
+ERROR EVENT ID=51 Concat Files error: invalid command packet length: expected = 200, actual = 201
+ERROR EVENT ID=52 Concat Files error: file is already open: name = /ram/open1.bin
+ERROR EVENT ID=53 Concat Files error: file is already open: name = /ram/open1.bin
+ERROR EVENT ID=54 Concat Files error: file already exists: name = /ram/open1.bin
+INFO EVENT ID=50 Concat Files command: src1 = /ram/closed4.bin, src2 = /ram/closed5.bin, tgt = /ram/sub/concat1.bin
+ERROR EVENT ID=58 Get File Info error: invalid command packet length: expected = 76, actual = 75
+ERROR EVENT ID=58 Get File Info error: invalid command packet length: expected = 76, actual = 77
+ERROR EVENT ID=59 Get File Info error: invalid name: name = /~!@#$%^/&*()-+
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 1, does not exist
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 0
+LastModifiedTime = 0
+Filename = /bad/boy.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /bad/boy.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 4, directory
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 0
+LastModifiedTime = 469747919
+Filename = /ram/sub
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/sub
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 4, directory
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 0
+LastModifiedTime = 469747919
+Filename = /ram/sub
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/sub
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 2, open file
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 16384
+LastModifiedTime = 469747918
+Filename = /ram/open1.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/open1.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 16384
+LastModifiedTime = 469738598
+Filename = /ram/closed5.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/closed5.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 1
+CRC = 0xFFFFBC01
+FileSize = 16384
+LastModifiedTime = 469738598
+Filename = /ram/closed5.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/closed5.bin
+ERROR EVENT ID=63 Get Open Files error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=63 Get Open Files error: invalid command packet length: expected = 8, actual = 9
+
+FM OPEN FILE LIST PACKET:
+NumOpenFiles = 1
+App = FM, File = /ram/open1.bin
+
+DEBUG EVENT ID=62 Get Open Files command
+ERROR EVENT ID=65 Create Directory error: invalid command packet length: expected = 72, actual = 71
+ERROR EVENT ID=65 Create Directory error: invalid command packet length: expected = 72, actual = 73
+ERROR EVENT ID=66 Create Directory error: directory already exists: name = /ram/sub
+UTF Info: Return value for OSFILEAPI Api #12 set to ffffffff
+ERROR EVENT ID=67 Create Directory error: OS_mkdir failed: result = -1, dir = /ram/newsub
+UTF Info: Return code for OSFILEAPI Api #12 returned to default
+INFO EVENT ID=64 Create Directory command: dir = /ram/newsub
+ERROR EVENT ID=69 Delete Directory error: invalid command packet length: expected = 72, actual = 71
+ERROR EVENT ID=69 Delete Directory error: invalid command packet length: expected = 72, actual = 73
+ERROR EVENT ID=70 Delete Directory error: directory does not exist: name = /ram/closed1.bin
+ERROR EVENT ID=71 Delete Directory error: directory is not empty: dir = /ram/newsub
+UTF Info: Return value for OSFILEAPI Api #14 set to ffffffff
+ERROR EVENT ID=72 Delete Directory error: OS_rmdir failed: result = -1, dir = /ram/newsub
+UTF Info: Return code for OSFILEAPI Api #14 returned to default
+INFO EVENT ID=68 Delete Directory command: dir = /ram/newsub
+ERROR EVENT ID=74 Directory List to File error: invalid command packet length: expected = 136, actual = 135
+ERROR EVENT ID=74 Directory List to File error: invalid command packet length: expected = 136, actual = 137
+ERROR EVENT ID=75 Directory List to File error: directory does not exist: name = /ram/badsub
+ERROR EVENT ID=76 Directory List to File error: file exists as an open file: name = /ram/open1.bin
+INFO EVENT ID=73 Directory List to File command: wrote 1 of 1 names: dir = /ram/sub, filename = /ram/fm_dirlist.out
+INFO EVENT ID=73 Directory List to File command: dir = /ram/sub, file = /ram/fm_dirlist.out
+ERROR EVENT ID=83 Directory List to Packet error: invalid command packet length: expected = 76, actual = 75
+ERROR EVENT ID=83 Directory List to Packet error: invalid command packet length: expected = 76, actual = 77
+ERROR EVENT ID=84 Directory List to Packet error: directory does not exist: name = /ram/badsub
+
+FM DIRECTORY LIST PACKET:
+DirName = /ram/sub
+TotalFiles = 1
+PacketFiles = 0
+FirstFile = 10
+
+INFO EVENT ID=81 Directory List to Packet command: offset = 10, dir = /ram/sub
+
+FM DIRECTORY LIST PACKET:
+DirName = /ram/sub
+TotalFiles = 1
+PacketFiles = 1
+FirstFile = 0
+File = concat1.bin, Size = 32768, Time = 469747919
+
+INFO EVENT ID=81 Directory List to Packet command: offset = 0, dir = /ram/sub
+
+FM DIRECTORY LIST PACKET:
+DirName = /ram/sub
+TotalFiles = 1
+PacketFiles = 0
+FirstFile = 1
+
+INFO EVENT ID=81 Directory List to Packet command: offset = 1, dir = /ram/sub
+ERROR EVENT ID=89 Get Free Space error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=89 Get Free Space error: invalid command packet length: expected = 8, actual = 9
+ERROR EVENT ID=90 Get Free Space error: file system free space table is not loaded
+
+FM FREE SPACE PACKET:
+Name = /ram, S1 = 0, S2 = 0
+
+DEBUG EVENT ID=88 Get Free Space command
+ERROR EVENT ID=92 Set Table State error: invalid command packet length: expected = 16, actual = 15
+ERROR EVENT ID=92 Set Table State error: invalid command packet length: expected = 16, actual = 17
+ERROR EVENT ID=93 Set Table State error: file system free space table is not loaded
+ERROR EVENT ID=94 Set Table State error: invalid command argument: index = 8
+ERROR EVENT ID=94 Set Table State error: invalid command argument: state = 0
+ERROR EVENT ID=95 Set Table State error: cannot modify unused table entry: index = 7
+INFO EVENT ID=91 Set Table State command: index = 1, state = 1
+fm_cmds.c -- test count = 88, test errors = 0
+
+*** FM -- Testing fm_cmd_utils.c ***
+ERROR EVENT ID=101 FM_IsValidCmdPktLength error: invalid command packet length: expected = 8, actual = 7
+ERROR EVENT ID=102 FM_IsValidCmdPktLength error: invalid command packet length: expected = 8, actual = 9
+ERROR EVENT ID=101 FM_VerifyNameValid error: invalid name: name = /a123/b456/c78
+ERROR EVENT ID=101 FM_VerifyFileClosed error: filename is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=102 FM_VerifyFileClosed error: file does not exist: name = /none/none.no
+ERROR EVENT ID=103 FM_VerifyFileClosed error: file is already open: name = /ram/open1.bin
+ERROR EVENT ID=105 FM_VerifyFileClosed error: filename is a directory: name = /ram
+ERROR EVENT ID=101 FM_VerifyFileExists error: filename is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=102 FM_VerifyFileExists error: file does not exist: name = /none/none.no
+ERROR EVENT ID=105 FM_VerifyFileExists error: filename is a directory: name = /ram
+ERROR EVENT ID=101 FM_VerifyFileNoExist error: filename is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=103 FM_VerifyFileNoExist error: file already exists: name = /ram/open1.bin
+ERROR EVENT ID=104 FM_VerifyFileNoExist error: file already exists: name = /ram/closed4.bin
+ERROR EVENT ID=105 FM_VerifyFileNoExist error: filename is a directory: name = /ram
+ERROR EVENT ID=101 FM_VerifyFileNotOpen error: filename is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=103 FM_VerifyFileNotOpen error: file exists as an open file: name = /ram/open1.bin
+ERROR EVENT ID=105 FM_VerifyFileNotOpen error: filename is a directory: name = /ram
+ERROR EVENT ID=101 FM_VerifyDirExists error: directory name is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=102 FM_VerifyDirExists error: directory does not exist: name = /none/none.no
+ERROR EVENT ID=103 FM_VerifyDirExists error: directory name exists as a file: name /ram/open1.bin
+ERROR EVENT ID=104 FM_VerifyDirExists error: directory name exists as a file: name /ram/closed4.bin
+ERROR EVENT ID=101 FM_VerifyDirNoExist error: directory name is invalid: name = ~!@#$%^&*()_+
+ERROR EVENT ID=103 FM_VerifyDirNoExist error: directory name exists as a file: name = /ram/open1.bin
+ERROR EVENT ID=104 FM_VerifyDirNoExist error: directory name exists as a file: name = /ram/closed4.bin
+ERROR EVENT ID=105 FM_VerifyDirNoExist error: directory already exists: name = /ram
+ERROR EVENT ID=101 FM_VerifyChildTask error: child task queue is full
+ERROR EVENT ID=102 FM_VerifyChildTask error: child task interface is broken: count = 4, index = 0
+ERROR EVENT ID=103 FM_VerifyChildTask error: child task interface is broken: count = 0, index = 3
+ERROR EVENT ID=100 Child Task execution error: invalid command code: cc = 0
+fm_cmd_utils.c -- test count = 49, test errors = 0
+
+*** FM -- Testing fm_child.c ***
+UTF Info: Return value for CFE ES Api #5 set to ffffffff
+ERROR EVENT ID=98 Child Task initialization error: create task failed: result = -1
+UTF Info: Return code for CFE ES Api #5 returned to default
+UTF Info: Return value for CFE ES Api #15 set to ffffffff
+ERROR EVENT ID=98 Child Task initialization error: register child failed: result = -1
+SysLog:1980-001-00:00:00.00000 CFE_ES_DeleteChildTask Error: Task 0 is a cFE Main Task.
+UTF Info: Return code for CFE ES Api #15 returned to default
+BinSemCreate Parameter failure
+ERROR EVENT ID=98 Child Task initialization error: create semaphore failed: result = -1
+SysLog:1980-001-00:00:00.00000 CFE_ES_DeleteChildTask Error: Task 0 is a cFE Main Task.
+INFO EVENT ID=97 Child Task initialization complete
+ERROR EVENT ID=99 Child Task termination error: semaphore take failed: result = -16
+SysLog:1980-001-00:00:00.00000 CFE_ES_DeleteChildTask Error: Task 0 is a cFE Main Task.
+ERROR EVENT ID=100 Child Task execution error: empty queue
+ERROR EVENT ID=100 Child Task execution error: invalid queue index: index = 3
+UTF Info: Return value for OSFILEAPI Api #10 set to ffffffff
+ERROR EVENT ID=22 Copy File error: OS_cp failed: result = -1, src = /ram/doesnotexist.bin, tgt = /ram/sub/copy99.bin
+UTF Info: Return code for OSFILEAPI Api #10 returned to default
+ERROR EVENT ID=43 Delete All Files error: OS_opendir failed: dir = /ram/doesnotexist
+ERROR EVENT ID=49 Decompress File error: CFE_FS_Decompress failed: result = -1, src = /ram/doesnotexist, tgt = /ram/sub/zip1.bin
+UTF Info: Return value for OSFILEAPI Api #10 set to ffffffff
+ERROR EVENT ID=56 Concat Files error: OS_cp failed: result = -1, src = /ram/doesnotexist, tgt = /ram/sub/cc1.bin
+UTF Info: Return code for OSFILEAPI Api #10 returned to default
+ERROR EVENT ID=56 Concat Files error: OS_open failed: result = -1, src2 = /ram/doesnotexist
+UTF Info: Return value for OSFILEAPI Api #3 set to ffffffff
+ERROR EVENT ID=56 Concat Files error: OS_read failed: result = -1, file = /ram/closed5.bin
+UTF Info: Return code for OSFILEAPI Api #3 returned to default
+UTF Info: Return value for OSFILEAPI Api #4 set to ffffffff
+ERROR EVENT ID=56 Concat Files error: OS_write failed: result = -1, expected = 2048
+UTF Info: Return code for OSFILEAPI Api #4 returned to default
+INFO EVENT ID=50 Concat Files command: src1 = /ram/closed5.bin, src2 = /ram/closed5.bin, tgt = /ram/sub/cc5.bin
+INFO EVENT ID=50 Concat Files command: src1 = /ram/sub/cc5.bin, src2 = /ram/sub/cc5.bin, tgt = /ram/sub/cc6.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 0, invalid name
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 1
+LastModifiedTime = 1
+Filename = /ram/doesnotexist1
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/doesnotexist1
+INFO EVENT ID=61 Get File Info warning: unable to compute CRC: invalid file state = 0, file = /ram/doesnotexist2
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 0, invalid name
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 2
+LastModifiedTime = 2
+Filename = /ram/doesnotexist2
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/doesnotexist2
+INFO EVENT ID=61 Get File Info warning: unable to compute CRC: invalid file state = 0, file = /ram/doesnotexist3
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 0, invalid name
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 3
+LastModifiedTime = 3
+Filename = /ram/doesnotexist3
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/doesnotexist3
+INFO EVENT ID=61 Get File Info warning: unable to compute CRC: invalid CRC type = 999, file = /ram/closed5.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 4
+LastModifiedTime = 4
+Filename = /ram/closed5.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/closed5.bin
+ERROR EVENT ID=61 Get File Info warning: unable to compute CRC: OS_open result = -1, file = /ram/xxx.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 5
+LastModifiedTime = 5
+Filename = /ram/xxx.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/xxx.bin
+UTF Info: Return value for OSFILEAPI Api #3 set to ffffffff
+INFO EVENT ID=61 Get File Info warning: unable to compute CRC: OS_read result = -1, file = /ram/sub/cc6.bin
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 0
+CRC = 0x00000000
+FileSize = 6
+LastModifiedTime = 6
+Filename = /ram/sub/cc6.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/sub/cc6.bin
+UTF Info: Return code for OSFILEAPI Api #3 returned to default
+
+FM FILE INFO STATUS PACKET:
+FileStatus = 3, closed file
+CRC_Computed = 1
+CRC = 0x00002BBB
+FileSize = 7
+LastModifiedTime = 7
+Filename = /ram/sub/cc6.bin
+
+DEBUG EVENT ID=57 Get File Info command: file = /ram/sub/cc6.bin
+ERROR EVENT ID=80 Directory List to File error: OS_opendir failed: dir = /ramxyz
+ERROR EVENT ID=87 Directory List to Packet error: OS_opendir failed: dir = /ramxyz
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=82 Directory List to Packet warning: dir + entry is too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+FM DIRECTORY LIST PACKET:
+DirName = /ram
+TotalFiles = 11
+PacketFiles = 0
+FirstFile = 0
+
+INFO EVENT ID=81 Directory List to Packet command: offset = 0, dir = /ram
+ERROR EVENT ID=80 Directory List to File error: OS_creat failed: result = -8, file = /ramxxx/outfile.bin
+UTF Info: Return value for OSFILEAPI Api #4 set to ffffffff
+ERROR EVENT ID=80 Directory List to File error: CFE_FS_WriteHeader failed: result = -1, expected = 64
+UTF Info: Return code for OSFILEAPI Api #4 returned to default
+ERROR EVENT ID=80 Directory List to File error: OS_write entry failed: result = -10, expected = 72
+INFO EVENT ID=78 Directory List to File error: combined directory and entry name too long: dir = directory, entry = cc5.bin
+INFO EVENT ID=78 Directory List to File error: combined directory and entry name too long: dir = directory, entry = cc6.bin
+INFO EVENT ID=78 Directory List to File error: combined directory and entry name too long: dir = directory, entry = list2.bin
+ERROR EVENT ID=80 Directory List to File error: OS_write update stats failed: result = -10, expected = 72
+Max Event Message Size Exceeded. Permitted 122; Actual 123
+INFO EVENT ID=38 Cmd Text warning: combined directory and entry name too long: dir = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+INFO EVENT ID=38 Cmd Text warning: entry is invalid: entry = /ram/!@#$%^&*()_+
+INFO EVENT ID=38 Cmd Text warning: entry no longer exists: entry = /ram/xxx.bin
+INFO EVENT ID=38 Cmd Text warning: cannot delete open file: file = /ram/open1.bin
+INFO EVENT ID=38 Cmd Text warning: cannot delete sub-directory: sub = /ram/sub
+UTF Info: Return value for OSFILEAPI Api #8 set to ffffffff
+INFO EVENT ID=38 Cmd Text warning: OS_remove failed: result = -1, file = /ram/sub/cc6.bin
+UTF Info: Return code for OSFILEAPI Api #8 returned to default
+fm_child.c -- test count = 37, test errors = 0
+
+*** FM -- Testing fm_tbl.c ***
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned fffffff8
+ERROR EVENT ID=96 Table verify error: index = 7, invalid state = 999
+ERROR EVENT ID=96 Table verify error: index = 7, empty name string
+ERROR EVENT ID=96 Table verify error: index = 7, name too long
+ERROR EVENT ID=96 Table verify error: index = 7, invalid name = ~!@#$%^&*()_+
+fm_tbl.c -- test count = 6, test errors = 0
+
+*** FM -- Total test count = 191, total test errors = 0
+
+UTF Info: Return value for CFE ES Api #22 set to 1
+Call to CFE_TBL_ValidateAccess returned 0
+Call to CFE_TBL_LoadFromFile returned fffffff8
+UTF Info: Task <FM_CHILD_TASK> added to Task Tbl.
+INFO EVENT ID=1 Initialization complete: version 0.0.0.0
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:008d SEQ:0 LEN:8 FC:0 PKT:188d c000 0001 0000 
+
+FM HOUSEKEEPING DATA:
+CommandCounter = 0
+CommandErrCounter = 0
+CommandWarnCounter = 0
+NumOpenFiles = 1
+ChildCmdCounter = 0
+ChildCmdErrCounter = 0
+ChildCmdWarnCounter = 0
+ChildQueueCount = 0
+
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xCA000002
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xCA000002
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:008d SEQ:0 LEN:8 FC:0 PKT:188d c000 0001 0000 
+
+FM HOUSEKEEPING DATA:
+CommandCounter = 0
+CommandErrCounter = 0
+CommandWarnCounter = 0
+NumOpenFiles = 1
+ChildCmdCounter = 0
+ChildCmdErrCounter = 0
+ChildCmdWarnCounter = 0
+ChildQueueCount = 0
+
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xCA000002
+
+ NOOP
+ ----
+< CMD: APID:008c SEQ:0 LEN:8 FC:0 PKT:188c c000 0001 0000 
+INFO EVENT ID=13 No-op command: FM version 0.0.0.0
+
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:008d SEQ:0 LEN:8 FC:0 PKT:188d c000 0001 0000 
+
+FM HOUSEKEEPING DATA:
+CommandCounter = 1
+CommandErrCounter = 0
+CommandWarnCounter = 0
+NumOpenFiles = 1
+ChildCmdCounter = 0
+ChildCmdErrCounter = 0
+ChildCmdWarnCounter = 0
+ChildQueueCount = 0
+
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xCA000002
+ERROR EVENT ID=7 Main loop error: SB receive: result = 0xCA000002

@@ -1,0 +1,74 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TIME Test App Commands
+!                  ================================
+!
+!       Packet Application ID: nnnn
+!       Packet Title: $sc $cpu TIME Test App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  01JUN05     SMA          : Initial
+!
+!======================================================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu TIME Test App Commands"
+!
+  CMD  $sc_$cpu_TST_TIME_NOOP       FCTN=0, DESC="$sc $cpu TIME Test App no-operation command code"
+!
+  CMD  $sc_$cpu_TST_TIME_RESETCTRS  FCTN=1, DESC="$sc $cpu TIME Test App reset counters command code"
+!
+  CMD  $sc_$cpu_TST_TIME_TAI        FCTN=2, DESC="$sc $cpu TIME Test App TAI time format"
+!
+  CMD  $sc_$cpu_TST_TIME_UTC        FCTN=3, DESC="$sc $cpu TIME Test App UTC time format"
+!
+  CMD  $sc_$cpu_TST_TIME_SPACETIME  FCTN=4, DESC="$sc $cpu TIME Test App default time format"
+!
+  CMD  $sc_$cpu_TST_TIME_MET        FCTN=5, DESC="$sc $cpu TIME Test App MET"
+!
+  CMD  $sc_$cpu_TST_TIME_METSEC     FCTN=6, DESC="$sc $cpu TIME Test App MET seconds"
+!
+  CMD  $sc_$cpu_TST_TIME_METSUBSEC  FCTN=7, DESC="$sc $cpu TIME Test App MET sub seconds"
+!
+  CMD  $sc_$cpu_TST_TIME_STCF       FCTN=8, DESC="$sc $cpu TIME Test App STCF"
+!
+  CMD  $sc_$cpu_TST_TIME_LEAPSEC    FCTN=9, DESC="$sc $cpu TIME Test App leap seconds"
+!
+  CMD  $sc_$cpu_TST_TIME_CLKSTATE   FCTN=10, DESC="$sc $cpu TIME Test App clock state"
+!
+  CMDS $sc_$cpu_TST_TIME_TIMEADD    FCTN=11, DESC="$sc $cpu TIME Test App add two time values"
+     ULI   Add_Time1_Seconds	DESC="First time value to be added (seconds)"
+     ULI   Add_Time1_Subsecs    DESC="First time value to be added (subseconds)"
+     ULI   Add_Time2_Seconds	DESC="Second time value to be added (seconds)"
+     ULI   Add_Time2_Subsecs    DESC="Second time value to be added (subseconds)"
+  END
+!
+  CMDS $sc_$cpu_TST_TIME_TIMESUB    FCTN=12, DESC="$sc $cpu TIME Test App subtract two time values"
+     ULI   Sub_Time1_Seconds	DESC="First time value to be subtracted (seconds)"
+     ULI   Sub_Time1_Subsecs    DESC="First time value to be subtracted (subseconds)"
+     ULI   Sub_Time2_Seconds	DESC="Second time value to be subtracted (seconds)"
+     ULI   Sub_Time2_Subsecs    DESC="Second time value to be subtracted (subseconds)"
+  END
+!
+  CMDS $sc_$cpu_TST_TIME_COMPARE    FCTN=13, DESC="$sc $cpu TIME Test App compare two time values"
+     ULI   Comp_Time1_Seconds	DESC="First time value to be compared (seconds)"
+     ULI   Comp_Time1_Subsecs    DESC="First time value to be compared (subseconds)"
+     ULI   Comp_Time2_Seconds	DESC="Second time value to be compared (seconds)"
+     ULI   Comp_Time2_Subsecs    DESC="Second time value to be compared (subseconds)"
+  END
+!
+  CMDS $sc_$cpu_TST_TIME_SUBTOMICROSEC  FCTN=14, DESC="$sc $cpu TIME Test App convert subseconds to microseconds"
+     ULI   Subseconds_to_convert      DESC="Subseconds to convert to microseconds"
+  END
+!
+  CMDS $sc_$cpu_TST_TIME_MICROTOSUBSEC  FCTN=15, DESC="$sc $cpu TIME Test App convert microseconds to subseconds"
+     ULI   Microseconds_to_convert    DESC="Microseconds to convert to subseconds"
+  END
+!
+END       !END PACKET
+!
+!======================================================================================================

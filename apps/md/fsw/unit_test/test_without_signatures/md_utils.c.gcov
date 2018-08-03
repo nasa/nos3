@@ -1,0 +1,174 @@
+		/*************************************************************************
+		** File:
+		**   $Id: md_utils.c.gcov 1.3 2012/01/09 19:28:16EST aschoeni Exp  $
+		**
+		** Purpose: 
+		**   Utility functions used for processing CFS Memory Dwell commands
+		**
+		**   $Log: md_utils.c.gcov  $
+		**   Revision 1.3 2012/01/09 19:28:16EST aschoeni 
+		**   Updated to support newest versions
+		**   Revision 1.6 2012/01/09 18:14:23EST aschoeni 
+		**   Fixed buffer overflow issue
+		**   Revision 1.5 2009/06/18 10:11:53EDT rmcgraw 
+		**   DCR8291:1 Changed #defines from OS_MEM_ to CFE_PSP_MEM_
+		**   Revision 1.4 2009/06/12 14:19:05EDT rmcgraw 
+		**   DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+		**   Revision 1.3 2009/01/12 14:33:35EST nschweis 
+		**   Removed debug statements from source code.  CPID 4688:1.
+		**   Revision 1.2 2008/07/02 13:53:39EDT nsschweiss 
+		**   CFS MD Post Code Review Version
+		**   Date: 08/05/09
+		**   CPID: 1653:2
+		** 
+		*************************************************************************/
+		
+		/*************************************************************************
+		** Includes
+		*************************************************************************/
+		#include "cfe.h"
+		#include "md_utils.h"
+		#include "md_app.h"
+		#include <string.h>
+		extern MD_AppData_t MD_AppData;
+		
+		
+		/******************************************************************************/
+		
+		boolean MD_TableIsInMask(int16 TableId, uint16 TableMask)
+         104    {
+         104       uint16  LocalMask = TableMask;
+         104       boolean Status;
+		   
+		   /* Shift TableId - 1 times */
+         104       if (TableId - 1)
+		   {
+          78          LocalMask = LocalMask >> (TableId -1);
+		   }
+		   
+		   /* If result is odd, */
+		   /* then table is in mask. */
+         104       if ( (LocalMask & (uint16) 1) == (uint16) 1)
+          40          Status = TRUE;
+		   else
+          64          Status = FALSE;
+		    
+         104       return Status;
+		   
+		} /* End MD_TableIsInMask */
+		
+		/******************************************************************************/
+		
+		void MD_UpdateDwellControlInfo (uint16 TableIndex)
+          39    {
+		    /* Initialize local data */
+          39        uint16 EntryIndex               = 0;
+          39        uint16 NumDwellAddresses        = 0;
+          39        uint16 NumDwellDataBytes        = 0;
+          39        uint32 NumDwellDelayCounts      = 0;
+          39        MD_DwellPacketControl_t *TblPtr = &MD_AppData.MD_DwellTables[TableIndex]; 
+		    
+		    /* 
+		    ** Sum Address Count, Data Size, and Rate from Dwell Entries 
+		    */
+          84        while ((EntryIndex <  MD_DWELL_TABLE_SIZE) &&
+		            (TblPtr->Entry[EntryIndex].Length != 0))
+		    {
+          45            NumDwellAddresses++;
+          45            NumDwellDataBytes   += TblPtr->Entry[EntryIndex].Length;
+          45            NumDwellDelayCounts += TblPtr->Entry[EntryIndex].Delay;
+          45            EntryIndex++;
+		    }
+		    
+		    /* Copy totals to dwell control structure. */
+          39        TblPtr->AddrCount = NumDwellAddresses;
+          39        TblPtr->DataSize  = NumDwellDataBytes;
+          39        TblPtr->Rate      = NumDwellDelayCounts;
+		    
+		    return;
+		} /* MD_UpdateDwellControlInfo */
+		
+		/******************************************************************************/
+		
+		/*
+		**  Data Validation Functions
+		*/
+		/******************************************************************************/
+		boolean MD_ValidEntryId            ( uint16 EntryId )
+          21    {
+          21        boolean IsValid;
+		    
+          21        if ((EntryId >= 1) && ( EntryId <= MD_DWELL_TABLE_SIZE ))  
+		    {
+		        /* validate  value (1..MD_DWELL_TABLE_SIZE ) */
+          20            IsValid = TRUE;
+		    }
+		    else
+		    {
+           1            IsValid = FALSE;
+		    }
+          21        return IsValid;
+		}
+		
+		
+		/******************************************************************************/
+		
+		boolean MD_ValidAddrRange( uint32 Addr, uint32 Size )
+          34    {
+          34        boolean IsValid;
+		
+          34        if ( CFE_PSP_MemValidateRange (Addr,Size, CFE_PSP_MEM_ANY) == OS_SUCCESS ) 
+		    {
+          31            IsValid = TRUE;
+		    }
+		   else                                         
+		    { 
+           3            IsValid = FALSE;
+		    }  
+		    
+          34        return IsValid;
+		}
+		/******************************************************************************/
+		boolean MD_ValidTableId( uint16 TableId)
+          22    {
+          22        boolean IsValid;
+		    
+          22        if ((TableId >= 1) && (TableId <= MD_NUM_DWELL_TABLES)) 
+		    {
+          21           IsValid=TRUE;
+		    }
+		    else
+		    {
+           1           IsValid=FALSE;
+		    }
+		      
+          22        return IsValid;
+		}
+		
+		/******************************************************************************/
+		
+		boolean MD_ValidFieldLength( uint16 FieldLength)
+          33    {
+		
+          33        boolean IsValid;
+		
+          33        if ( (FieldLength == 0)  || 
+		         (FieldLength == 1)  ||
+		         (FieldLength == 2)  || 
+		         (FieldLength == 4) )
+		    {
+          31            IsValid= TRUE;
+		    }
+		    else
+		    {
+           2            IsValid= FALSE;
+		    }
+		    
+          33        return IsValid;
+		}
+		
+		/******************************************************************************/
+		
+		/************************/
+		/*  End of File Comment */
+		/************************/

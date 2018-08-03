@@ -1,0 +1,1001 @@
+/**
+  \page cfeesovr cFE Executive Services Overview
+
+  Executive Services (ES) is one of the five core Flight Executive components. 
+  ES is the primary interface to the underlying Operating System, providing a 
+  high level interface to system control facilities. The ES component is 
+  responsible for starting up and restarting the cFE, starting up, shutting 
+  down, and restarting cFE Applications, logging errors and performance data, 
+  managing device driver services, and providing a persistent memory store 
+  for cFE Applications.  
+
+  The interfaces to the ES task include the Ground Interface (commands and 
+  telemetry) and the Application Programmer Interfaces (APIs). The ES task 
+  interfaces to the OS through the OS Abstraction Layer and interfaces to 
+  the BSP through the BSP Abstraction Layer. 
+
+  The services provided by the ES task include the Software Reset Service, 
+  Application and Child Task Service, File System Service, Performance Data 
+  Collection Service, Critical Data Store Service, Memory Pool Service, 
+  System Log Service, Shell Command Service and Device Service. Each of these 
+  services provide a full range of features that have been used on past missions.
+
+  For additional detail on Executive Services, see the following sections:
+
+  <UL>
+    <LI> \subpage cfeesugterm <BR>
+    <UL>
+       <LI> \subpage cfeesugappterm <BR>
+       <LI> \subpage cfeesugtaskterm <BR>
+       <LI> \subpage cfeesugstartupterm <BR>
+    </UL>
+    <LI> \subpage cfeesugswreset <BR>
+    <UL>
+       <LI> \subpage cfeesugresettype <BR>
+       <LI> \subpage cfeesugresetlog <BR>
+    </UL>
+    <LI> \subpage cfeesugappsrv <BR>
+    <UL>
+       <LI> \subpage cfeesugappstart <BR>
+       <LI> \subpage cfeesugappstop <BR>
+       <LI> \subpage cfeesugapprestart <BR>
+       <LI> \subpage cfeesugappreload <BR>
+       <LI> \subpage cfeesugapplist <BR>
+       <LI> \subpage cfeesugtasklist <BR>
+       <LI> \subpage cfeesugloadlibs <BR>
+       <LI> \subpage cfeesugloaddevs <BR>
+    </UL>
+    <LI> \subpage cfeesugfilesrv <BR>
+    <UL>
+       <LI> \subpage cfeesugfsdef <BR>
+       <LI> \subpage cfeesugfsinit <BR>
+       <LI> \subpage cfeesugfslist <BR>
+    </UL>
+    <LI> \subpage cfeesugperfsrv <BR>
+    <UL>
+       <LI> \subpage cfeesugperftrig <BR>
+       <LI> \subpage cfeesugperfmodes <BR>
+       <LI> \subpage cfeesugperfstart <BR>
+       <LI> \subpage cfeesugperfstop <BR>
+       <LI> \subpage cfeesugperfview <BR>
+    </UL>
+    <LI> \subpage cfeesugcdssrv <BR>
+    <LI> \subpage cfeesugmempoolsrv <BR>
+    <LI> \subpage cfeesugsyslogsrv <BR>
+    <LI> \subpage cfeesugshellsrv <BR>
+    <LI> \subpage cfeesugversion <BR>
+    <LI> \subpage cfeesugfaq <BR>
+  </UL>
+  
+    \subpage cfeesrevhist <BR>
+**/
+
+/**
+  \page cfeesugterm Terminology
+
+  The following sections describe terminology that is very relevant to understanding
+  the Executive Services:
+  
+    <UL>
+       <LI> \subpage cfeesugappterm <BR>
+       <LI> \subpage cfeesugtaskterm <BR>
+       <LI> \subpage cfeesugstartupterm <BR>
+    </UL>
+
+  Next: \ref cfeesugswreset <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugappterm "Application" and "cFE Application"
+
+  <CENTER><B>Application</B></CENTER>
+  
+  The term 'Application' as defined in the \ref cfeglossary is <i> a set of
+  data and functions that is treated as a single entity by the cFE.  cFE
+  resources are allocated on a per-Application basis.  Applications are made up
+  of a Main Task and zero or more Child Tasks.</i>
+
+  <CENTER><B>Application</B></CENTER>
+  
+  A 'cFE Application' is an application that is external to the cFE and designed
+  to interface to the cFE through the APIs.  It is created through an entry in
+  the \ref cfeesugstartupterm (with the 'Object Type' field set to CFE_APP) or
+  by way of the #CFE_ES_START_APP_CC ground command. 
+
+  When referring to one of the five applications internal to the cFE (ES, EVS,
+  SB, TIME or TBL), the term 'internal application', 'cFE internal application'
+  or "cFE Core Application" should be used. 
+
+  A listing of cFE applications can be acquired by using the
+  #CFE_ES_QUERY_ALL_CC ground command. This listing will include the cFE
+  internal applications as well as cFE applications that are loaded and running.
+
+  Next: \ref cfeesugtaskterm <BR>
+  Up To: \ref cfeesugterm
+**/
+
+/**
+  \page cfeesugtaskterm "Task"
+
+  A Task is a thread of execution in the operating system, often associated with
+  a cFE Application. Each cFE Application has a Main task providing its CPU
+  context, stack and other OS resources. In addition, each cFE Application can
+  create multiple Child Tasks which are closely associated with the Parent Task
+  and cFE Application.
+
+  In a traditional Real Time Operating System such as vxWorks, the cFE
+  Application Main task and child tasks end up being mapped to these OS tasks in
+  the same shared memory space. For example, a Stored Command cFE Application
+  that consists of a cFE Main Task and 10 Relative Time Sequence Child Tasks
+  would have 11 tasks on a vxWorks system. The only association between these
+  tasks exists in the cFE.
+
+  In a memory protected process oriented Operating System, the intention is to
+  have a cFE Application implemented as a memory protected process with its own
+  virtual address space. In this Process Model, each cFE Child Task would be a
+  thread in the parent Process, much like a Unix process with multiple threads.
+  In this model, the Stored Command example with a cFE Main Task and 10 Relative
+  Time Sequence Child Tasks would consist of a Unix Process and 10 pthreads, all
+  under the same virtual address space.
+
+  Next: \ref cfeesugstartupterm <BR>
+  Prev: \ref cfeesugappterm <BR>
+  Up To: \ref cfeesugterm
+**/
+
+/**
+  \page cfeesugstartupterm "Startup Script"
+
+  The startup script is a text file, written by the user that contains a list of
+  entries (one entry for each application) and is used by the ES application for
+  automating the startup of applications. The ES application allows the use of a
+  volatile and nonvolatile startup scripts. The project may utilize zero, one or
+  two startup scripts.
+
+  The fields in a single entry include:
+  <TABLE>
+     <TR>
+        <TD> Object Type
+        <TD> <tt>CFE_APP</tt> for an Application, or <tt>CFE_LIB</tt> for a library.
+     <TR>
+        <TD> Path/Filename
+        <TD> This is a cFE Virtual filename, not a vxWorks device/pathname
+     <TR>
+        <TD> Entry Point
+        <TD> This is the name of the "main" function for App.
+     <TR>
+        <TD> CFE Name
+        <TD> The cFE name for the APP or Library
+     <TR>
+        <TD> Priority
+        <TD> This is the Priority of the App, not used for a Library
+     <TR>
+        <TD> Stack Size
+        <TD> This is the Stack size for the App, not used for a Library
+     <TR>
+        <TD> Load Address
+        <TD> This is the Optional Load Address for the App or Library. It is currently
+             not implemented so it should always be 0x0.
+     <TR>
+        <TD> Exception Action
+        <TD> This is the Action the cFE should take if the Application has an exception. <BR>
+             <UL>
+                <LI> 0        = Do a cFE Processor Reset <BR>
+                <LI> Non-Zero = Just restart the Application
+             </UL>
+  </TABLE>
+
+  Immediately after the cFE completes its initialization, the ES Application first 
+  looks for the volatile startup script. The location in the file system is defined 
+  by the cFE platform configuration parameter named #CFE_ES_VOLATILE_STARTUP_FILE. 
+  This configuration parameter contains a path as well as a filename. If the file 
+  is found, ES begins to startup the applications that are listed in the file. If 
+  ES does not find the file, it attempts to open the #CFE_ES_NONVOL_STARTUP_FILE.
+   
+  If ES finds the volatile startup script, the attempt to open the nonvolatile startup 
+  script is bypassed.
+
+  Any errors encountered in the startup script processing are written to the 
+  \ref cfeesugsyslogsrv. The \ref cfeesugsyslogsrv 
+  may also contain positive acknowledge messages regarding the startup script processing.
+
+  Refer to the CFS Deployment Guide for more 
+  information regarding the startup script. The startup script delivered with the 
+  cFE (<tt>cfe_es_startup.scr</tt>) also has some detailed information about the fields 
+  and the settings.
+    
+  Next: \ref cfeesugswreset <BR>
+  Prev: \ref cfeesugappstart <BR>
+  Up To: \ref cfeesugterm
+**/
+
+/**
+  \page cfeesugswreset Software Reset Service
+
+  The ES Software Reset Service provides a command to 
+  \link #CFE_ES_RESTART_CC reset the cFE \endlink
+  as well as \link #CFE_ES_RESTART_APP_CC resetting individual applications.\endlink
+  Because applications are dependent on the cFE services, it is not possible 
+  to reset the cFE without affecting the applications. Therefore, a command to reset the 
+  cFE will also reset every application that is running at the time the command is received. 
+
+  Also part of this service is the Exception and Reset (ER) Log, which has a command for 
+  \link #CFE_ES_WRITE_ERLOG_CC dumping \endlink or \link #CFE_ES_CLEAR_ERLOG_CC clearing \endlink
+  the log and telemetry to show the number of entries in the log.  In addition to the ER log,
+   the user may find information about the most recent reset in the ES task housekeeping telemetry.
+
+  The ES Software Reset Service also provides a command to 
+  \link #CFE_ES_SET_MAX_PR_COUNT_CC set the maximum number of processor resets \endlink
+  before ES issues a power-on reset. There is a corresponding 'processor resets' counter 
+  in ES housekeeping telemetry that may be \link #CFE_ES_RESET_PR_COUNT_CC reset through another 
+  ES command.\endlink
+
+  Next: \ref cfeesugresettype <BR>
+  Prev: \ref cfeesugterm <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugresettype Reset Types and Subtypes
+
+  The Reset Type is sent to the ground in the ES housekeeping packet and tells 
+  how the current running version of the cFE was invoked. The possible Reset 
+  Types expected in the telemetry field are #CFE_ES_POWERON_RESET and 
+  #CFE_ES_PROCESSOR_RESET. There is a third Reset Type defined in the ES 
+  code as #CFE_ES_APP_RESTART which applies only to restarting an individual 
+  application and is covered in more detail in the section titled Application 
+  and Child Task Service.
+
+  The Reset Subtype is also sent in the ES housekeeping packet and gives more 
+  detail about the type of reset that started the execution of the current 
+  running version of the cFE. The possible Reset Subtypes are 
+  #CFE_ES_POWER_CYCLE, #CFE_ES_PUSH_BUTTON, #CFE_ES_HW_SPECIAL_COMMAND,
+  #CFE_ES_HW_WATCHDOG, #CFE_ES_RESET_COMMAND, #CFE_ES_EXCEPTION,
+  #CFE_ES_UNDEFINED_RESET, #CFE_ES_HWDEBUG_RESET, #CFE_ES_BANKSWITCH_RESET.
+
+  Next: \ref cfeesugresetlog <BR>
+  Prev: \ref cfeesugswreset <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugresetlog Exception and Reset (ER) Log
+
+  The Exception and Reset Log contains detailed information about past 
+  resets and exceptions. To view the information the #CFE_ES_WRITE_ERLOG_CC 
+  command must be sent. This command will write the log to a binary file. 
+  The path and filename may be specified in the command. If the filename 
+  command field contains an empty string, the configuration parameter 
+  #CFE_ES_DEFAULT_ER_LOG_FILE is used to specify the path and filename.  
+  Use the ground system to get the file and display the contents.  There 
+  is also a command to clear the ER log, #CFE_ES_CLEAR_ERLOG_CC.
+
+  The size of the ER log is defined by the platform configuration parameter 
+  #CFE_ES_ER_LOG_ENTRIES This log is preserved after a processor reset and 
+  held in the ES reset area.  
+
+  A count of the number of entries in the log is present in the ES 
+  housekeeping telemetry. This count can be used with the configuration 
+  parameter # CFE_ES_ER_LOG_ENTRIES to calculate the fullness of the log.
+
+  The information contained in a single log entry is defined by the 
+  structure #CFE_ES_ERLog_t.
+
+  Next: \ref cfeesugappsrv <BR>
+  Prev: \ref cfeesugresettype <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugappsrv Application and Child Task Service
+
+  The ES Application and Child Task Service provide the user with full 
+  control over starting and stopping applications as well as querying 
+  information regarding applications, tasks and library routines. 
+
+  There is no command to start or stop a child task. Child tasks can 
+  be controlled (started, stopped or deleted) only by the parent 
+  application through an API call. 
+
+  This service provides a way for the user to load a set of library 
+  routines, (via the startup script) without starting a corresponding 
+  task. See the section related to library routines for more detail. 
+
+  The ES task maintains a counter for the number of registered 
+  applications, number of registered child tasks and the number of 
+  registered libraries in the ES housekeeping data.
+
+  Next: \ref cfeesugappstart <BR>
+  Prev: \ref cfeesugswreset <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugappstart Starting an Application
+
+  There are two ways to start an application, through the ground 
+  command #CFE_ES_START_APP_CC or through the startup script. In 
+  either case, the object file must be loaded on board before the 
+  command is sent or before the startup script is executed. The 
+  startup script contains a list of applications and library 
+  routines to load and start immediately after the cFE finishes 
+  its startup sequence. The parameters in the command, match the 
+  elements of an entry in the startup script. See the cFE Deployment 
+  Guide for more information about starting applications by way of 
+  the startup script. 
+
+  The format of the Start Application command, is defined in the 
+  structure #CFE_ES_StartAppCmd_t. The members of the structure 
+  include, application name, entry point, filename, stack size, 
+  load address, exception action and priority.
+
+  If the command fails for any reason, an error event will be sent 
+  stating the reason for the failure. There may be additional 
+  information in the system log that can be viewed by sending 
+  the ES command to dump the system log. 
+
+  After starting an application, the ES task sends an informational 
+  event message displaying the application name, filename of the 
+  object and the application ID. The new application will then show 
+  up in the query list downloaded in response to the 
+  #CFE_ES_QUERY_ALL_CC command.
+
+  Next: \ref cfeesugappstop <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugappstop Stopping an Application
+
+  Stopping an application can be done through the ground command 
+  #CFE_ES_STOP_APP_CC. This command will terminate the application 
+  execution and all child tasks created by the application, free 
+  the system resources that it allocated and delete the corresponding 
+  object file.
+
+  The process of stopping an application is done in a controlled manner 
+  when the application is properly using the return code from the call 
+  to the #CFE_ES_RunLoop. When the application properly uses this function, 
+  the ES task starts a timer and (via the return code) tells the 
+  application to exit at its own convenience. This gives the application 
+  time to free its own resources and do any cleanup that may be required 
+  before terminating itself by calling CFE_ES_ExitApp. If the timer expires 
+  and the application still exists, then ES must 'kill' the application. 
+  When the application is killed, ES attempts to cleanup the applications 
+  resources as best it could. In this case there is no guarantee that all 
+  the system resources are properly released.
+
+  The format of the Stop Application command, is defined in the structure 
+  #CFE_ES_AppNameCmd_t. The only parameter in the command is an application 
+  name. 
+
+  If the command fails for any reason, an error event will be sent stating 
+  the reason for the failure. There may be additional information in the 
+  system log that can be viewed by sending the ES command to dump the 
+  system log. 
+
+  After stopping an application, the ES task sends a debug message stating 
+  the name of the application. After executing the command, the application 
+  (or any resources it allocated) should no longer be listed in any cFE 
+  tables or files. 
+
+  Next: \ref cfeesugapprestart <BR>
+  Prev: \ref cfeesugappstart <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugapprestart Restarting an Application
+
+  The  #CFE_ES_RESTART_APP_CC command is used to restart an application. 
+  This command stops and restarts an application using the parameters 
+  defined when the application was originally started, either through 
+  the startup script or by way of the #CFE_ES_START_APP_CC command. 
+    
+  Next: \ref cfeesugappreload <BR>
+  Prev: \ref cfeesugappstop <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugappreload Reloading an Application
+
+  The  #CFE_ES_RELOAD_APP_CC command is used to reload an application. 
+  This command stops the application, unloads the object file, loads 
+  the new object file specified in the command and starts the application 
+  again using the parameters defined when the application was originally 
+  started, either through the startup script or by way of the 
+  #CFE_ES_START_APP_CC command. 
+    
+  Next: \ref cfeesugapplist <BR>
+  Prev: \ref cfeesugapprestart <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugapplist Listing Current Applications
+
+  There are two options for receiving information about applications, 
+  the #CFE_ES_QUERY_ONE_CC command can be used to get details about a 
+  single application. This command takes an application name as its 
+  only parameter and the application information is sent as a software 
+  bus packet that can be telemetered to the ground.
+  
+  Or the #CFE_ES_QUERY_ALL_CC command can be used to get information about
+  all the applications that are currently registered with ES. This command
+  writes the application data to a file and has a one parameter which 
+  specifies the path and filename of the output file.
+  
+  For either command, the following Application information is made available:
+  
+  <UL>
+     <LI> <B>Application ID</B> - The Application ID assigned by the cFE to the Application <BR>
+     <LI> <B>Type Identifier</B> - Identifies whether the Application is a CORE App 
+          or an EXTERNAL App <BR>
+     <LI> <B>Name</B> - The Application Name <BR>
+     <LI> <B>Entry Point</B> - The symbolic name for the entry point into the Application <BR>
+     <LI> <B>Filename</B> - The name of the file the Application was loaded from <BR>
+     <LI> <B>Stack Size</B> - The number of bytes allocated for the Application's stack <BR>
+     <LI> <B>Load Address</B> - The starting address of memory where the Application was loaded <BR>
+     <LI> <B>Load Size</B> - The size, in bytes, of the Application when loaded into memory <BR>
+     <LI> <B>Start Address</B> - The physical address that maps to the Entry Point <BR>
+     <LI> <B>Exception Action</B> - A flag that identifies whether the the Processor should undergo
+          a Restart or whether just the Application should restart upon an exception condition
+          within the Application <BR>
+     <LI> <B>Priority</B> - The assigned priority for the Application <BR>
+     <LI> <B>Main Task ID</B> - The Task ID assigned to the main task associated with the Application <BR>
+     <LI> <B>Main Task Name</B> - The name of the main task associated with the Application <BR>
+     <LI> <B>Number of Child Tasks</B> - The number of child tasks spawned by the main task <BR>
+  </UL>
+  
+  For a description of the format in which this data is dumped, see #CFE_ES_AppInfo_t. 
+    
+  Next: \ref cfeesugtasklist <BR>
+  Prev: \ref cfeesugappreload <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugtasklist Listing Current Tasks
+
+  The #CFE_ES_QUERY_ALL_TASKS_CC command is used to get a list of child 
+  tasks that are currently registered with ES.  The following information is
+  provided for each registered task:
+  
+  <UL>
+     <LI> <B>Task ID</B> - The Task ID associated with the specified task<BR>
+     <LI> <B>Task Name</B> - The name of the Task <BR>
+     <LI> <B>Application ID</B> - The ID for the Application the Task is
+          associated with <BR>
+     <LI> <B>Application Name </B> - The name of the Application the Task is
+          associated with <BR>
+  </UL>
+  
+    
+  Next: \ref cfeesugloadlibs <BR>
+  Prev: \ref cfeesugapplist <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugloadlibs Loading Common Libraries
+
+  Library routines may be loaded only through the startup script. There 
+  is an option that allows a library routine initialization function 
+  to be executed after the library is loaded. Refer to the cFE Application 
+  Developers Guide for more information regarding Library Routines and 
+  startup scripts. The startup script delivered with the cFE 
+  (<tt>cfe_es_startup.scr</tt>) also has some detailed information 
+  about library routines.
+    
+  Next: \ref cfeesugloaddevs <BR>
+  Prev: \ref cfeesugtasklist <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugloaddevs Loading Device Servers
+
+  Device Servers have been designed and coded but, as of Build 5.0 of the cFE,
+  have not been tested.
+    
+  Next: \ref cfeesugfilesrv <BR>
+  Prev: \ref cfeesugloadlibs <BR>
+  Up To: \ref cfeesugappsrv
+**/
+
+/**
+  \page cfeesugfilesrv File System Service
+
+
+    
+  Next: \ref cfeesugfsdef <BR>
+  Prev: \ref cfeesugappsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugfsdef Defining the File Systems
+
+
+    
+  Next: \ref cfeesugfsinit <BR>
+  Up To: \ref cfeesugfilesrv
+**/
+
+/**
+  \page cfeesugfsinit Initializing File Systems
+
+
+    
+  Next: \ref cfeesugfslist <BR>
+  Prev: \ref cfeesugfsdef <BR>
+  Up To: \ref cfeesugfilesrv
+**/
+
+/**
+  \page cfeesugfslist Listing the File Systems
+
+
+    
+  Next: \ref cfeesugperfsrv <BR>
+  Prev: \ref cfeesugfsinit <BR>
+  Up To: \ref cfeesugfilesrv
+**/
+
+/**
+  \page cfeesugperfsrv Performance Data Collection Service
+
+  The Performance Data Collection Service is also known as the 
+  Software Timing Analyzer. This service provides precise timing 
+  information for each software application by showing the task 
+  execution time in a waveform style similar to the display on 
+  a logic analyzer. In fact, this service closely models the 
+  operation of a logic analyzer in the way it displays, triggers
+  and filters the data collected. This service uses passive markers 
+  that are inserted by the development team at key points in the 
+  code. The basic operation is to start the data collection, wait 
+  some amount of time, then send the command to stop the data 
+  collection. When the stop command is received, the ES task writes 
+  all the data from the buffer to a file. The file can then be 
+  imported to the windows GUI tool that is delivered with every 
+  version of the cFE and displayed on a windows PC. The size of the 
+  buffer is configurable through the #CFE_ES_PERF_DATA_BUFFER_SIZE
+  platform configuration parameter.
+
+  For more detail refer to the <i>CFE_STA_Integration.doc</i> file and the 
+  <i>Software Timing Analyzer Users Guide.pdf</i>. document. Both files 
+  are located in the <tt>cFE/tools/perfutils</tt> directory.
+  
+  Additional information follows:<BR>
+
+    <UL>
+       <LI> \subpage cfeesugperftrig <BR>
+       <LI> \subpage cfeesugperfmodes <BR>
+       <LI> \subpage cfeesugperfstart <BR>
+       <LI> \subpage cfeesugperfstop <BR>
+       <LI> \subpage cfeesugperfview <BR>
+    </UL>
+
+  Next: \ref cfeesugperfmodes <BR>
+  Prev: \ref cfeesugfilesrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugperftrig Performance Data Collection Trigger Masks
+
+  The trigger mask is used to tell the Performance Data Collection tool, 
+  precisely when to start collecting the data. There is a bit in the 
+  trigger mask for every marker used in the code. After a start command 
+  is received, the trigger mask is read and dictates when the performance 
+  tool begins storing data in the buffer.
+
+  If the trigger mask is set to all zeros, then the collection will begin 
+  immediately after the start command and continue until a stop command 
+  is received. In this case the buffer behaves in a 'circular' manner. 
+
+  Next: \ref cfeesugperfmodes <BR>
+  Up To: \ref cfeesugperfsrv
+**/
+
+/**
+  \page cfeesugperfmodes Performance Data Collection Modes
+
+  The Performance Data Collection modes are similar to the modes of a 
+  logic analyzer. The user may select a trigger point and 'start' 
+  the trace at the trigger point, 'center' the trace at the trigger 
+  point or 'end' the trace at the trigger point. 
+  <B>Note: The current cFE version does not have a way to set this mode.
+  The ES software for this version of the cFE always uses the mode to "start the
+  trace at the trigger point". The cFE FSW DCR 7092 can be used to track the
+  issue.</B> 
+
+  In 'start' mode, with a non-zero trigger mask, the first entry in the 
+  buffer will be the trigger point. The buffer then begins receiving 
+  unfiltered entries. This continues until the buffer becomes full or 
+  until the stop command is received. The result is a buffer that 
+  contains the trigger point and events that occur after the trigger point. 
+
+  In 'center' mode, regardless of the trigger point, the buffer begins 
+  receiving unfiltered entries when the start command is received. In 
+  this case the buffer behaves as a circular buffer. When the trigger
+  point is detected, the collection continues until 'buffer size divided 
+  by 2' entries have been stored or a stop command is received. The 
+  result is a buffer that contains data leading up to the trigger point, 
+  the trigger point itself and data following the trigger point. If the 
+  trigger never occurs and the stop cmd is received, the number of entries 
+  written to the file will correspond to the ES housekeeping telemetry 
+  point named 'Data Count'.
+
+  In 'end' mode, regardless of the trigger point, the buffer begins 
+  receiving unfiltered entries when the start command is received. In 
+  this case the buffer behaves as a circular buffer. The collection 
+  stops immediately after the trigger point is detected. The result 
+  is a buffer that contains data leading up to the trigger point and 
+  the trigger point itself as the last item in the buffer. If the 
+  trigger never occurs and the stop cmd is received, the number of 
+  entries written to the file will correspond to the ES housekeeping 
+  telemetry point named 'Data Count'.
+
+  The 'no trigger' mode can be used to continuously collect data until 
+  the stop command is received. This is done by setting the trigger 
+  mask to all zeros, then sending the start command. The result is a 
+  buffer that contains data up to the stop command. The number of entries 
+  written to the file will correspond to the ES housekeeping telemetry 
+  point named 'DataCount'.
+
+  Next: \ref cfeesugperfstart <BR>
+  Prev: \ref cfeesugperftrig <BR>
+  Up To: \ref cfeesugperfsrv
+**/
+
+/**
+  \page cfeesugperfstart Starting to Collect Performance Data
+
+  The #CFE_ES_PERF_STARTDATA_CC command is used to start the data collection
+  process. The ES task sends a debug event when the command is received. It is
+  not possible to start a collection if the buffer-to-file write is in process
+  from an earlier collection. There is an ES telemetry point that can be used to
+  ensure there is not a buffer-to-file write in progress. This ES telemetry
+  point is called 'Perf Data to Write' and begins counting down from 'Data
+  Count' to zero. If this counter is zero, it is ok to send the start command.
+  If any errors are encountered when the start command is received, the details
+  will be displayed in an error event message.
+    
+  Next: \ref cfeesugperfstop <BR>
+  Prev: \ref cfeesugperfmodes <BR>
+  Up To: \ref cfeesugperfsrv
+**/
+
+/**
+  \page cfeesugperfstop Stopping the Collection of Performance Data
+
+  The #CFE_ES_PERF_STOPDATA_CC command is used to stop the data collection 
+  process and write the buffer data to a file. The path and filename may be 
+  specified in the command. If the filename command field contains an empty 
+  string, the configuration parameter #CFE_ES_DEFAULT_PERF_DUMP_FILENAME is 
+  used to specify the path and filename.  The number of entries written to 
+  the file is determined by the 'data count' variable, which is sent in the 
+  ES housekeeping telemetry packet. To ensure cpu hogging does not occur 
+  during the write process, ES creates a low priority child task to perform 
+  the file write operation. This child task will write a number of entries, 
+  then sleep for a short time to give tasks of lower priority a chance to 
+  run. The number of entries between delays, and the delay time is displayed 
+  in the debug event at the time the stop command is received.
+    
+  Next: \ref cfeesugperfview <BR>
+  Prev: \ref cfeesugperfmodes <BR>
+  Up To: \ref cfeesugperfsrv
+**/
+
+/**
+  \page cfeesugperfview Viewing the Collection of Performance Data
+
+  To view the performance data, the file created as a result of the stop 
+  command must be transferred to the ground and imported into the 
+  Software Timing Analyzer GUI tool. This tool is located in the 
+  <tt>cFE/tools/perfutils</tt> directory and designed only for Windows 
+  based machines. This GUI must be installed on the windows machine by 
+  way of the installation file named <tt>SoftwareTimingAnalyzer.msi</tt>. Double 
+  click this file on a windows machine to invoke the installation wizard. 
+  The installation process will place an icon named "<i> Timing Analyzer</i> 
+  on the desktop. Double click the icon and import the file. Refer to the 
+  <i>Software Timing Analyzer Users Guide.pdf</i>. document in the 
+  <tt>cFE/tools/perfutils</tt> directory for more information.
+  
+  Next: \ref cfeesugcdssrv <BR>
+  Prev: \ref cfeesugperfstop <BR>
+  Up To: \ref cfeesugperfsrv
+**/
+
+/**
+  \page cfeesugcdssrv Critical Data Store Service
+
+  Some missions are required, for health, safety and mission success criteria, to
+  survive Processor Resets.  These mission requirements frequently flow down to
+  Attitude Control and/or Command and Data Handling requirements that force an
+  Application developer to design a mechanism for retaining software state information
+  through a Processor Reset.  The cFE provides the Critical Data Store service to
+  assist the developer in meeting these requirements.
+  
+  The Critical Data Store is an area of memory that is not cleared during a Processor
+  Reset.  In addition, the contents of memory are validated when accessed with a Data
+  Integrity Value that helps to ensure the contents have not been corrupted.  Each
+  processor platform, through the design of its Board Support Package, can implement
+  this area of memory in a number of ways to ensure the contents survive a Processor
+  Reset.  Applications can allocate a section of this memory for their use in a way
+  similar to the \ref cfetblovr.
+  
+  When an Application registers a Critical Data Store (CDS), the Executive Services
+  allocates a section of the Critical Data Store memory for the application's use and
+  assigns the Application specified name to the memory area.  The operator can find
+  and learn the characteristics of these Critical Data Stores by using the
+  \link #CFE_ES_DUMP_CDS_REG_CC Dump CDS Registry Command. \endlink  This command will
+  dump the contents of the CDS Registry maintained by the Executive Services into a
+  file that can be downlinked and examined by the operator.
+  
+  The CDS Registry dump will identify the following information for each registered CDS:
+  
+  <UL>
+     <LI> <B>Handle</B> - the numeric identifier used by an Application to access
+          the contents of the CDS <BR>
+     <LI> <B>Size</B> - the number of bytes allocated to the specified CDS <BR>
+     <LI> <B>Table Flag</B> - a flag that indicates whether the CDS is associated with a
+          \ref cfetblugcritical (when non-zero) or not (when equal to zero).
+     <LI> <B>Name</B> - a processor specific name that uniquely identifies the CDS.
+          The name comes in two parts, <tt>"AppName.CDSName"</tt>.  <tt>AppName</tt> identifies
+          which Application registered the CDS.  <tt>CDSName</tt> is the name the Application
+          assigned to the CDS.
+  </UL>
+  
+  The format of the CDS Registry Dump File is a cFE Standard File header (see #CFE_FS_Header_t)
+  followed by one or more CDS Registry Dump File Records (see #CFE_ES_CDSRegDumpRec_t).
+    
+  Next: \ref cfeesugmempoolsrv <BR>
+  Prev: \ref cfeesugperfsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugmempoolsrv Memory Pool Service
+  
+  Refer to the cFE Application Developers Guide for additional information.
+
+  Applications that are designed for generic missions, frequently have to wait
+  until run-time before allocating memory for buffers, data records, etc.  
+  
+  The cFE provides a memory allocation algorithm that may be used by an
+  application to manage its block of memory. The user provides a pointer to its
+  memory block and a list of block sizes and the cFE provides 'get' and 'put'
+  API's to the user for managing its memory pool.  
+  
+  Run-time memory allocation in an embedded system can be risky because of the
+  potential problem of memory fragmentation. Memory fragmentation is also
+  referred to as External Fragmentation and is defined in the wikipedia as:
+  
+  \verbatim
+  
+  External fragmentation is the phenomenon in which free storage becomes divided
+  into many small pieces over time. It is a weakness of certain storage
+  allocation algorithms, occurring when an application allocates and deallocates
+  ("frees") regions of storage of varying sizes, and the allocation algorithm
+  responds by leaving the allocated and deallocated regions interspersed. The
+  result is that, although free storage is available, it is effectively unusable
+  because it is divided into pieces that are too small to satisfy the demands of
+  the application. The term "external" refers to the fact that the unusable
+  storage is outside the allocated regions.
+  
+  \endverbatim
+   
+  To help prevent this from happening, the cFE has integrated a memory
+  allocation algorithm that is designed to create blocks at run-time, based on
+  the size of the blocks requested. After a reset, there are no blocks created,
+  the memory pool is said to be unconfigured. As requests for memory blocks are
+  made, the memory pool first tries to use blocks that have been created but are
+  no longer in use. If it cannot find an available block, it will create a new
+  one. The created blocks remain until a reset occurs.   
+  
+  This algorithm is recommended when the size of the requests and the peak rate
+  of requests can be pre-determined. It is highly recommended that adequate
+  margin is designed into the pool size. The memory pool should never get close
+  to being fully configured (i.e. not enough memory to create a new block). If
+  the memory does become fully configured, requests for new size blocks will
+  fail, regardless of whether the created blocks are in-use or not. The margin
+  on the memory pool can be monitored by viewing the 'free bytes' member of the
+  memory pool statistics. The memory pool statistics are dumped only when
+  commanded by way of the ES command #CFE_ES_TLM_POOL_STATS_CC. 
+    
+  A user of the ES memory pool begins by tailoring the memory pool for the
+  particular use, by defining a list of block sizes and allocating a block of
+  memory. These block size definitions simply give the memory pool a set of
+  sizes to choose from. They do not configure the memory pool in any way and
+  they do not affect the size of the pool. The cFE defines a default set of
+  block sizes in the cfe_platform_cfg.h file. 
+  
+  If the default block sizes are used, the application will create the pool
+  using the simpler #CFE_ES_PoolCreate API. This API takes a pointer to the
+  first byte of the memory pool (allocated by the application) and a size
+  parameter. The API returns a handle to be used for the get and put requests.
+  
+  If the defaults are not sufficient, the user must define the block sizes and
+  use the #CFE_ES_PoolCreateEx API.
+  
+  After receiving a positive response from the PoolCreate API, the memory pool
+  is ready to accept requests, but at this point it is completely unconfigured
+  (meaning there are no blocks created). The first valid request (via
+  #CFE_ES_GetPoolBuf API) after creating the pool will always cause the memory
+  pool to create a block and return a pointer to the new block. The size of the
+  block depends on the size definitions mentioned earlier. If there is not an
+  exact match between the requested and defined sizes, then the memory pool will
+  create and return the smallest block that meets the following criteria: is a
+  defined size and large enough to hold the request. 
+  
+  If another request for that size comes in before the first block was released
+  through the #CFE_ES_PutPoolBuf API, then the memory pool will create a second
+  block of that size and return a pointer to the second block. If both blocks
+  were then released through the #CFE_ES_PutPoolBuf API and the memory pool
+  statistics were dumped via the #CFE_ES_TLM_POOL_STATS_CC command, the number
+  of blocks created would be two. The number of 'free bytes' in the pool would
+  be the size of the pool minus the sum of the following items: 
+    - the size of the two blocks created (even though they are not 'in-use').
+    - a buffer descriptor for each of the two blocks created (2 * 12 bytes)
+    - a 168 byte pool descriptor
+  Refer to the cFE Applications Developers Guide for more details.
+  
+  This allocation algorithm does have its limits. There are certain conditions
+  that can place the memory pool in an undesired state. For instance, if a burst
+  of get requests were received for the same block size, the memory pool may
+  create a large number of blocks of that size. If this is a one-time burst,
+  the memory pool would be configured with this large number of blocks that may
+  no longer be needed. This scenario would use up the 'free bytes' margin in an
+  undesired way. It should be noted that once the blocks are created, they
+  cannot be deleted by any means other than a processor or power-on reset. It is
+  highly recommended that the memory pool statistics be carefully monitored to
+  ensure that the 'free-bytes' margin is sufficient (which is typically dictated
+  by mission requirements).
+    
+  An operator can obtain information about an Application's Memory Pool by using
+  the \link #CFE_ES_TLM_POOL_STATS_CC Telemeter Memory Pool Statistics Command.
+  \endlink
+  
+  This command will cause Executive Services to extract pertinent statistics
+  from the data used to manage the Memory Pool and telemeter them to the ground
+  in the \link #CFE_ES_PoolStatsTlm_t Memory Pool Statistics Telemetry Packet.
+  \endlink
+  
+  In order to obtain the statistics associated with a memory pool, the operator
+  <B>MUST</B> have the correct Memory Handle as reported by the Application who
+  owns the Memory Pool.  <B>It should be noted that an inappropriate Memory Pool
+  Handle can <em>(and likely will)</em> cause the system software to crash!</B> 
+  Within the cFE itself, there are three cFE Core Applications that make use of
+  the Executive Services Memory Pool API.  These are Software Bus (SB), Event
+  Services (EVS) and Table Services (TBL).  Each of these cFE Core Applications
+  report their memory pool handles in telemetry.
+  
+  The \link #CFE_ES_PoolStatsTlm_t Memory Pool Statistics Telemetry Packet
+  \endlink contains the following information:
+  
+  <UL>
+    <LI> <B>Memory Pool Handle</B> - the handle, as provided by the operator in the
+         \link #CFE_ES_TLM_POOL_STATS_CC Telemeter Memory Pool Statistics Command. \endlink
+         This repeating of the handle in telemetry insures the operator knows which Memory
+         Pool Statistics are being viewed <BR>
+    <LI> <B>Pool Size</B> - The total size of the memory pool (in bytes)<BR>
+    <LI> <B>Number Blocks Requested</B> - The total number of memory blocks requested for allocation<BR>
+    <LI> <B>Number of Errors</B> - The total number of errors encountered when a block was released<BR>
+    <LI> <B>Number of Free Bytes</B> - The total number of bytes in the Memory Pool that have never
+         been allocated to a Memory Block<BR>
+    <LI> <B>Block Statistics</B> - For each specified size of memory block (of which there are 
+         #CFE_ES_MAX_MEMPOOL_BLOCK_SIZES), the following statistics are kept<BR>
+       <UL>
+          <LI> <B>Block Size</B> - The size, in bytes, of all blocks of this type<BR>
+          <LI> <B>Number of Blocks Allocated</B> - The number of this sized block which are currently
+               allocated and in use<BR>
+          <LI> <B>Number of Blocks Free</B> - The number of this size block which have been in use
+               previously but are no longer being used<BR>
+       </UL>
+  </UL>
+  
+  Next: \ref cfeesugsyslogsrv <BR>
+  Prev: \ref cfeesugcdssrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugsyslogsrv System Log Service
+
+  The System Log is an array of bytes that contains back-to-back printf type
+  messages from applications. The cFE internal applications use this log when
+  errors are encountered during initialization before the Event Manager is fully
+  initialized. To view the information the #CFE_ES_WRITE_SYSLOG_CC command must
+  be sent. This command will write the log to a binary file. The path and
+  filename may be specified in the command. If the filename command field
+  contains an empty string, the configuration parameter
+  #CFE_ES_DEFAULT_SYSLOG_FILE is used to specify the path and filename.  Use the
+  ground system to get the file and display the contents.  The
+  #CFE_ES_CLEAR_SYSLOG_CC is used to clear the System log.
+
+  The size of the System log is defined by the platform configuration parameter
+  #CFE_ES_SYSTEM_LOG_SIZE. This log is preserved after a processor reset and
+  held in the ES reset area.  
+
+  A count of the number of entries in the log is present in the ES housekeeping
+  telemetry.
+
+  Next: \ref cfeesugshellsrv <BR>
+  Prev: \ref cfeesugmempoolsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugshellsrv OS Shell Service
+
+
+    
+  Next: \ref cfeesugversion <BR>
+  Prev: \ref cfeesugsyslogsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugversion Version Identification Service
+
+
+    
+  Next: \ref cfeesugfaq <BR>
+  Prev: \ref cfeesugshellsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**
+  \page cfeesugfaq Software Bus Frequently Asked Questions
+
+
+    
+  Prev: \ref cfeesugshellsrv <BR>
+  Up To: \ref cfeesovr
+**/
+
+/**  
+  \page cfeescmds cFE Executive Services Commands
+
+  The following is a list of commands that are processed by the cFE Executive Services Task. 
+**/
+
+/**
+  \page cfeestlm  cFE Executive Services Telemetry
+
+  The following are telemetry packets generated by the cFE Executive Services Task.
+**/
+
+/**
+  \page cfeescfg  cFE Executive Services Configuration Parameters
+
+  The following are configuration parameters used to configure the cFE Executive Services
+  either for each platform or for a mission as a whole.
+**/
+
+/**
+  \page cfeesrevhist cFE Executive Services Documentation Revision History
+  
+  \verbatim
+  $Log: cfe_es.dox  $
+  Revision 1.6 2014/08/23 19:57:25GMT-05:00 sstrege 
+  Removed/Replaced all references to the doxygen application developers guide
+  Revision 1.5 2009/03/04 15:46:31EST rmcgraw 
+  DCR6812:2 Added '...refer to developers guide...' in memory pool section
+  Revision 1.4 2009/02/24 15:18:50EST rmcgraw 
+  DCR6812:1 Updated memory pool details and made corrections in other sections
+  Revision 1.3 2008/12/08 12:06:55EST dkobe 
+  Updates to correct doxygen errors
+  Revision 1.2 2008/12/06 15:34:27EST dkobe 
+  Corrected formatting of revision history
+  Revision 1.1 2008/12/06 10:19:47EST dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/docs/src/project.pj
+  \endverbatim
+
+  Up To: \ref cfeesovr
+**/

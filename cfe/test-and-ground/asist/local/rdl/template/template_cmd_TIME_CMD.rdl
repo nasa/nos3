@@ -1,0 +1,116 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TIME Command Packet #xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Time Services Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  04APR05     SMA           : Initial
+!  02MAY05     MOB           ; Correct Add STCF commands (was SCTF)
+!  05MAY05     MOB           ; Added command to stop STCF 1 HZ adjustment
+!  13JUL05     MOB           ; Modified STOPADD1HZ and STOPSUB1HZ so that
+!                                 they don't take any arguments
+!  07SEP05     SMA           ; Added support for Build 3.
+!  13AUG09     WFM           ; Changed 1HzSTCF commands to use SubSeconds
+!			     : rather than microseconds.
+!
+!======================================================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Time Services Commands"
+!
+  CMD  $sc_$cpu_TIME_NOOP        	FCTN=0, DESC="$sc $cpu TIME no-operation command code"
+!
+  CMD  $sc_$cpu_TIME_ResetCtrs    	FCTN=1, DESC="$sc $cpu TIME reset counters command code"
+!
+  CMD  $sc_$cpu_TIME_RequestDiag	        FCTN=2, DESC="$sc $cpu TIME request diagnostic telemetry code"
+!
+  CMDS  $sc_$cpu_TIME_SetSource	        FCTN=3, DESC="$sc $cpu TIME select Time Service clock source code"
+    UNION SOURCE    DESC="Clock Source"
+	UI INTERNAL       STATIC, DEFAULT=1, DESC="Select Internal Clock Source"
+      UI EXTERNAL       STATIC, DEFAULT=2, DESC="Select External Clock Source"
+    END
+  END
+!
+  CMDS  $sc_$cpu_TIME_SetState          FCTN=4, DESC="$sc $cpu TIME set Time Service clock state code"
+    UNION STATE     DESC="Clock State"
+      SI INVALID        STATIC, DEFAULT=-1, DESC="Spacecraft clock has not yet been accurately set"
+      UI VALID          STATIC, DEFAULT=0, DESC="Spacecraft clock has been accurately set"
+      UI FLYWHEEL       STATIC, DEFAULT=1, DESC="Time service forced into FLYWHEEL mode"
+    END
+  END
+!
+  CMDS  $sc_$cpu_TIME_AddClockLat        FCTN=5, DESC="$sc $cpu TIME add clock latency code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)" 
+  END
+!
+  CMDS  $sc_$cpu_TIME_SubClockLat        FCTN=6,DESC="$sc $cpu TIME subtract clock latency code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)"
+  END 
+!
+  CMDS  $sc_$cpu_TIME_SetClock           FCTN=7, DESC="$sc $cpu TIME set clock time code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)" 
+  END
+!
+  CMDS  $sc_$cpu_TIME_SetClockMET        FCTN=8, DESC="$sc $cpu TIME set clock MET code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)" 
+  END
+!
+  CMDS  $sc_$cpu_TIME_SetClockSTCF       FCTN=9, DESC="$sc $cpu TIME set clock STCF code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)" 
+  END
+!
+  CMDS  $sc_$cpu_TIME_SetClockLeap       FCTN=10, DESC="$sc $cpu TIME set clock leap seconds code"
+    SI   LEAPS              DYNAMIC, DESC="Number of Leap Seconds (signed - may be negative)"
+  END
+!
+  CMDS  $sc_$cpu_TIME_AddSTCFAdj         FCTN=11, DESC="$sc $cpu TIME add STCF adjustment code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)"
+  END
+!
+  CMDS  $sc_$cpu_TIME_SubSTCFAdj         FCTN=12, DESC="$sc $cpu TIME subtract STCF adjustment code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  MICROSECS          DYNAMIC, DESC="Number of microseconds (unsigned)"
+  END
+
+  CMDS  $sc_$cpu_TIME_Add1HzSTCF         FCTN=13, DESC="$sc $cpu TIME add 1Hz STCF adjustment code"
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  SUBSECS            DYNAMIC, DESC="Number of subseconds (unsigned)"
+  END
+!
+  CMDS  $sc_$cpu_TIME_Sub1HzSTCF         FCTN=14, DESC="$sc $cpu TIME subtract 1Hz STCF adjustment code"    
+    ULI  SECONDS            DYNAMIC, DESC="Number of seconds (unsigned)"
+    ULI  SUBSECS            DYNAMIC, DESC="Number of subseconds (unsigned)"
+  END  
+  CMDS  $sc_$cpu_TIME_StopAdd1Hz         FCTN=13, DESC="$sc $cpu STOPS TIME add 1Hz STCF adjustment"
+    ULI  SECONDS            STATIC, INVISIBLE, DEFAULT = 0, DESC="Number of seconds (unsigned)"
+    ULI  SUBSECS            STATIC, INVISIBLE, DEFAULT = 0, DESC="Number of subseconds (unsigned)"
+  END
+!
+  CMDS  $sc_$cpu_TIME_StopSub1Hz        FCTN=14, DESC="$sc $cpu STOPS TIME subtract 1Hz STCF adjustment code"    
+    ULI  SECONDS            STATIC, INVISIBLE, DEFAULT = 0, DESC="Number of seconds (unsigned)"
+    ULI  SUBSECS            STATIC, INVISIBLE, DEFAULT = 0, DESC="Number of subseconds (unsigned)"
+  END  
+!
+  CMDS  $sc_$cpu_TIME_SetSignal         FCTN=15, DESC="$sc $cpu TIME Set Signal Command"
+    UNION SIGNAL    DESC="Clock Signal"
+ 	UI PRIMARY		STATIC, DEFAULT=1, DESC="Select Primary Clock Signal"
+      UI REDUNDANT      STATIC, DEFAULT=2, DESC="Select Redundant Clock Signal"
+    END
+  END
+!
+END       !END PACKET
+!
+!======================================================================================================

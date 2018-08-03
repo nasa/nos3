@@ -1,0 +1,81 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Aug 26 2005
+!
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu  SB Statistics Telemetry Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2005/08/26  SMA     : Initial
+!  2005/11/10  SMA     : Add support for Event Log Entries per 
+!                      : RJ request.
+!  2007/04/03  SMA     : Change per FOT naming conventions.
+!  2007/05/02  WFM     : Modified the statistics packet according
+!			 to DCR 4174. The following are the
+!			 Destination stats mneumonics removed.
+!    ULI  SB_SMMDALW  DESC="Max Dests Allowed"
+!    $sc_$cpu_SB_D_STATS SB_SMDS[CFE_SB_MAX_MSG_IDS] DESC="Dest Stats"
+!
+!  2007/06/13  WFM     : Removed the $sc_$cpu_SB_D_Stats record type.
+!  2007/09/20  WFM     : Removed the Event Log related tlm points 
+!		       : SB_SMELEIU, SB_SMPELEIU, SB_SMMELEA from
+!		       : $sc_$cpu_SB_STAT_MSG
+!
+!==============================================================================
+!
+!
+TYPES
+   RECORD $sc_$cpu_SB_PD_STATS           DESC="SB Pipe Depth Stats"
+      SB_PIPEID_T SB_PDPIPEID            DESC="Pipe Id"
+      UB          SB_PDSPARE             DESC="Spare"
+      UI          SB_PDDEPTH             DESC="Depth"
+      UI          SB_PDINUSE             DESC="In Use"
+      UI          SB_PDPKINUSE           DESC="Peak In Use"
+   END
+
+  RECORD $sc_$cpu_SB_STAT_MSG            DESC="SB Statistics Message"
+     ULI  SB_SMMIDIU                     DESC="Message Ids In Use"
+     ULI  SB_SMPMIDIU                    DESC="Peak Message Ids In Use"
+     ULI  SB_SMMMIDALW                   DESC="Max Message Ids Allowed"
+     ULI  SB_SMPIU                       DESC="Pipes In Use"
+     ULI  SB_SMPPIU                      DESC="Peak Pipes In Use"
+     ULI  SB_SMMPALW                     DESC="Max Pipes Allowed"
+     ULI  SB_SMBMIU                      DESC="Buffer Memory In Use"
+     ULI  SB_SMPBMIU                     DESC="Peak Buffer Memory In Use"
+     ULI  SB_SMMBMALW                    DESC="Max Buffer Memory Allowed"
+     ULI  SB_SMSIU                       DESC="Subscriptions In Use"
+     ULI  SB_SMPSIU                      DESC="Peak Subscriptions In Use"
+     ULI  SB_SMMSALW                     DESC="Max Subscriptions Allowed"
+     ULI  SB_SMSBBIU                     DESC="SB Buffers In Use"
+     ULI  SB_SMPSBBIU                    DESC="Peak SB Buffers In Use"
+     ULI  SB_SMMPDALW                    DESC="Max Pipe Depth Allowed"
+     $sc_$cpu_SB_PD_STATS SB_SMPDS[CFE_SB_MAX_PIPES] DESC="Pipe Depth Stats"
+  END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC= "$sc $cpu SB Statistics Telemetry Packet"
+
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"                     
+#include "ccsds_header.rdl"
+
+$sc_$cpu_SB_STAT_MSG     $sc_$cpu_SB_Stat      DESC="$sc $cpu SB Statistics"
+
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

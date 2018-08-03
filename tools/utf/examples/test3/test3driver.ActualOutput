@@ -1,0 +1,112 @@
+UTF Info: Task <UU> added to Task Tbl.
+SysLog:1980-001-00:00:00.00000 ES Startup: UU loaded and created
+UTF Info: App <UU> added to App Tbl.
+INFO EVENT ID=1 UU: Application Initialized
+ Input file for cfe_utf_4.1.0/Test3
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Simulate Empty Pipe to Trigger Procedure Calls *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+SysLog:1980-001-00:00:00.00000 CFE_ES_ResetCFE called with bad ResetType argument.
+CFE_ES_ResetCFE returned c400000a
+CFE_ES_RegisterApp returned 0
+UTF WARNING: CFE_ES_GetAppID argument = NULL
+CFE_ES_GetAppID returned c4000003
+INFO EVENT ID=1 UU: SendEvent called from UU task's forever loop
+CFE_EVS_SendEvent returned 0
+CFE_FS_ReadHeader returned fffffff6
+CFE_SB_CreatePipe returned 0
+CFE_SB_RcvMsg returned ca000001
+SysLog:1980-001-00:00:00.00000 CFE_TBL:ValidateHandle-Table Handle=0 is for unused Table Handle
+SysLog:1980-001-00:00:00.00000 CFE_TBL:GetAddressInternal-App(0) using invalid Tbl Handle=0
+ CFE_TBL_GetAddress returned cc000001
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Send Housekeeping Request                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+< CMD: APID:000e SEQ:3276 LEN:8 FC:55 PKT:180e cccc 0001 b7cc 
+SysLog:1980-001-00:00:00.00000 CFE_ES_ResetCFE called with bad ResetType argument.
+CFE_ES_ResetCFE returned c400000a
+CFE_ES_RegisterApp returned 0
+UTF WARNING: CFE_ES_GetAppID argument = NULL
+CFE_ES_GetAppID returned c4000003
+INFO EVENT ID=1 UU: SendEvent called from UU task's forever loop
+CFE_EVS_SendEvent returned 0
+CFE_FS_ReadHeader returned fffffff6
+CFE_SB_CreatePipe returned 0
+CFE_SB_RcvMsg returned 0
+SysLog:1980-001-00:00:00.00000 CFE_TBL:ValidateHandle-Table Handle=0 is for unused Table Handle
+SysLog:1980-001-00:00:00.00000 CFE_TBL:GetAddressInternal-App(0) using invalid Tbl Handle=0
+ CFE_TBL_GetAddress returned cc000001
+ * * * * * * * * * * * * * * * * * * * *
+ * Set return code for invalid proc id  *
+ * * * * * * * * * * * * * * * * * * * *
+UTF Info: Return value for CFE ES Api #8 set to 11335577
+
+ * * * * * * * * * * * * * * * * * * * *
+ * Set Return Codes for API Procedures *
+ * * * * * * * * * * * * * * * * * * * *
+UTF Warning: L at end of Unsigned Integer Value 0xc4000002L ignored.
+UTF Info: Return value for CFE ES Api #0 set to c4000002
+UTF Info: Return value for CFE ES Api #1 set to c4000001
+UTF Warning: L at end of Unsigned Integer Value 0xc400ffffL ignored.
+UTF Info: Return value for CFE ES Api #2 set to c400ffff
+UTF Info: Return value for CFE ES Api #2 set to efefefef
+ @ SET_FS_RETURN_CODE  0 0xfaceface 
+UTF Info: Return value for CFE SB Api #0 set to 357a357a
+UTF Error: Invalid ApiIndex 11 passed to UTF_CFE_SB_Set_Api_Return_Code
+UTF Info: Return value for CFE TBL Api #5 set to beadbabe
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Send Housekeeping Request                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+< CMD: APID:000e SEQ:3276 LEN:8 FC:55 PKT:180e cccc 0001 b7cc 
+CFE_ES_ResetCFE returned c4000002
+CFE_ES_RegisterApp returned c4000001
+CFE_ES_GetAppID returned efefefef
+CFE_EVS_SendEvent returned efefefef
+CFE_FS_ReadHeader returned fffffff6
+CFE_SB_CreatePipe returned 357a357a
+CFE_SB_RcvMsg returned 0
+ CFE_TBL_GetAddress returned beadbabe
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Simulate Empty Pipe to Trigger Procedure Calls *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+CFE_ES_ResetCFE returned c4000002
+CFE_ES_RegisterApp returned c4000001
+CFE_ES_GetAppID returned efefefef
+CFE_EVS_SendEvent returned efefefef
+CFE_FS_ReadHeader returned fffffff6
+CFE_SB_CreatePipe returned 357a357a
+CFE_SB_RcvMsg returned ca000001
+ CFE_TBL_GetAddress returned beadbabe
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Restore API Procedures to default return codes *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+UTF Info: Return code for CFE ES Api #0 returned to default
+UTF Info: Return code for CFE ES Api #1 returned to default
+UTF Info: Return code for CFE ES Api #2 returned to default
+UTF Info: Return code for CFE EVS Api #2 returned to default
+ @ SET_FS_TO_DEFAULT_RETURN_CODE 0
+UTF Info: Return code for CFE SB Api #0 returned to default
+UTF Error: Invalid ApiIndex 11 passed to UTF_CFE_SB_Set_Api_Return_Code
+UTF Info: Return code for CFE TBL Api #5 returned to default
+
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Simulate Empty Pipe to Trigger Procedure Calls *
+ * * * * * * * * * * * * * * * * * * * * * * * * *
+SysLog:1980-001-00:00:00.00000 CFE_ES_ResetCFE called with bad ResetType argument.
+CFE_ES_ResetCFE returned c400000a
+CFE_ES_RegisterApp returned 0
+UTF WARNING: CFE_ES_GetAppID argument = NULL
+CFE_ES_GetAppID returned c4000003
+INFO EVENT ID=1 UU: SendEvent called from UU task's forever loop
+CFE_EVS_SendEvent returned 0
+CFE_FS_ReadHeader returned fffffff6
+CFE_SB_CreatePipe returned 0
+CFE_SB_RcvMsg returned ca000001
+SysLog:1980-001-00:00:00.00000 CFE_TBL:ValidateHandle-Table Handle=0 is for unused Table Handle
+SysLog:1980-001-00:00:00.00000 CFE_TBL:GetAddressInternal-App(0) using invalid Tbl Handle=0
+ CFE_TBL_GetAddress returned cc000001

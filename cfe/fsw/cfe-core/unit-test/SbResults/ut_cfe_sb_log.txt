@@ -1,0 +1,3761 @@
+Compiling sb tests using Baseline cFE version with following flags: -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE
+
+>>> [CLEAN] - REMOVE <CFS_MISSION_INC> HEADER FILES <<<
+
+rm -f /home/sstrege/cFE650/build/mission_inc/*
+
+>>> [CLEAN] REMOVE BUILD/INC HEADER FILES <<<
+
+rm -f ./inc/*
+make -C cfe/unit-test/sb clean
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'
+rm -f ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_evs_stubs.o ut_fs_stubs.o ut_tbl_stubs.o ut_time_stubs.o sb_UT.o cfe_sb_task.o cfe_sb_api.o cfe_sb_priv.o cfe_sb_init.o cfe_sb_buf.o cfe_sb_util.o ccsds.o sb_UT
+rm -f *.lis
+rm -f *.g*
+rm -f *.d
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'
+
+>>> [PRE-BUILD] CONFIGURING OSAL <<<
+
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/osal/build'
+test -d inc || mkdir inc
+cp -f ../src/bsp/pc-linux/config/osconfig.h inc/osconfig.h
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/osal/build'
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_MISSION> CORE <<<
+
+Copying <CFE_FSW>/mission_inc/*.h to <CFS_MISSION_INC>
+Copying <CFE_FSW>/platform_inc/<CFE_CORE_PLATFORM_INC_SRC>/cfe_platform_cfg.h to ./inc
+Copying <OSAL>/build/inc/osconfig.h to ./inc
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_APP_SRC>/INC <<<
+
+Copying <CFS_APP_SRC>/inc/*.h to <CFS_MISSION_INC>
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PUBLIC_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_lib/fsw/public_inc/sample_lib.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/MISSION_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/mission_inc/sample_app_perfids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/mission_inc/ci_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/mission_inc/to_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/mission_inc/sch_lab_perfids.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PLATFORM_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/platform_inc/sample_app_msgids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/platform_inc/ci_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_sub_table.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/platform_inc/sch_lab_sched_tab.h
+
+>>> [PRE-BUILD] CREATING <APP> BUILD DIRECTORY <<<
+
+
+>>> [PRE-BUILD] COPYING MAKEFILES FROM <APP>/FOR_BUILD <<<
+
+Copying <CFS_APP_SRC>/sample_lib/fsw/for_build/* to ./sample_lib
+Copying <CFS_APP_SRC>/sample_app/fsw/for_build/* to ./sample_app
+Copying <CFS_APP_SRC>/ci_lab/fsw/for_build/* to ./ci_lab
+Copying <CFS_APP_SRC>/to_lab/fsw/for_build/* to ./to_lab
+Copying <CFS_APP_SRC>/sch_lab/fsw/for_build/* to ./sch_lab
+make -C cfe/unit-test/sb
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_bsp_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_bsp_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_osprintf_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_osprintf_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_es_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_es_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_evs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_evs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_fs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_fs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_tbl_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_tbl_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_time_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_time_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o sb_UT.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/sb_UT.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_task.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_task.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_api.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_api.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_priv.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_priv.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_init.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_init.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_buf.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_buf.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_sb_util.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_util.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ccsds.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/ccsds.c
+gcc -o sb_UT ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_es_stubs.o ut_evs_stubs.o ut_fs_stubs.o ut_tbl_stubs.o ut_time_stubs.o sb_UT.o cfe_sb_task.o cfe_sb_api.o cfe_sb_priv.o cfe_sb_init.o cfe_sb_buf.o cfe_sb_util.o ccsds.o -pg -fprofile-arcs -ftest-coverage -m32 ../libut_osapi_stubs/libut_osapi_stubs.a ../libut_bsp/libut_bsp.a ../libut_assert/libut_assert.a
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'
+make -C cfe/unit-test/sb gcov
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'
+
+Running unit test: gcov
+
+./sb_UT
+
+[BEGIN] PC-LINUX UNIT TEST
+Making directories: ram0, ram1, eeprom1 for OSAL mount points
+[ INFO] cFE SB Unit Test Output File
+
+
+
+
+[BEGIN] 01 Test_SB_AppInit
+[ INFO] Begin Test App Init
+
+[ INFO] Start of ES_RegisterApp Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   SB:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.001 sb_UT.c:156 - CFE_SB_AppInit - ES_RegisterApp failure
+[ INFO] Start of EVS_Register Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called: -1
+
+[ INFO]   SB:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 01.002 sb_UT.c:200 - CFE_SB_AppInit - EVS register failure
+[ INFO] Start of EVS_SendEvent Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   SB:Error sending init event:RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 01.003 sb_UT.c:249 - CFE_SB_AppInit - EVS SendEvent failure
+[ INFO] Start of SB_CreatePipe Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 4, 3 - CreatePipeErr:OS_QueueCreate returned -1,app ut_cfe_sb
+
+[ INFO]   SB:Call to CFE_SB_CreatePipe Failed:RC=0xCA000005
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 46, 3 - Pipe Delete Error:Bad Argument,PipedId 0,Requestor ut_cfe_sb.,Idx 255,Stat 1
+
+[ PASS] 01.004 sb_UT.c:304 - CFE_SB_AppInit - Create pipe failure
+[ INFO] Start of Subscription 1 Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 20, 3 - Subscribe Err:Request for Destination Blk failed for Msg 0x1803
+
+[ INFO]   SB:Subscribe to Cmds Failed:RC=0xCA000008
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 01.005 sb_UT.c:356 - CFE_SB_AppInit - Subscription 1 failure
+[ INFO] Start of Subscription 2 Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 20, 3 - Subscribe Err:Request for Destination Blk failed for Msg 0x180b
+
+[ INFO]   SB:Subscribe to HK Request Failed:RC=0xCA000008
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 01.006 sb_UT.c:408 - CFE_SB_AppInit - Subscription 2 failure
+[ INFO] Start of GetPool Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   SB:Init error, GetPool Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 01.007 sb_UT.c:455 - CFE_SB_AppInit - GetPool failure
+[ INFO] Start of PutPool Failure Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   SB:Init error, PutPool Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 01.008 sb_UT.c:502 - CFE_SB_AppInit - PutPool Failure
+[ INFO] End Test App Init
+
+[  END] 01 Test_SB_AppInit      TOTAL::8     PASS::8     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 02 Test_SB_MainRoutine
+[ INFO] Begin Test for MainRoutine
+
+[ INFO] Start of Main Loop, Rcv Error Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE SB Initialized
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 27, 3 - Pipe Read Err,pipe SB_CMD_PIPE,app ut_cfe_sb.,stat 0xffffffff
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   SB:Error reading cmd pipe,RC=0xCA000006
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 02.001 sb_UT.c:565 - CFE_SB_TaskMain - Rcv Error failure
+[ INFO] Start of Main Loop, Init Error Test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   SB:Init error, PutPool Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   SB:Application Init Failed,RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 02.002 sb_UT.c:599 - CFE_SB_TaskMain - Init Error failure
+[ INFO] End Test for MainRoutine
+
+[  END] 02 Test_SB_MainRoutine  TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 03 Test_SB_Cmds
+[ INFO] Begin Test for SB Commands
+
+[ INFO] Begin Test for Cmd - No-op
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 28, 2 - No-op Cmd Rcvd. cFE Version 6.4.2.0
+
+[ PASS] 03.001 sb_UT.c:689 - CFE_SB_ProcessCmdPipePkt - No-op command test
+[ INFO] Begin Test for Cmd - Reset Counters
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 29, 1 - Reset Counters Cmd Rcvd
+
+[ PASS] 03.002 sb_UT.c:731 - CFE_SB_ProcessCmdPipePkt - Reset Counters command test
+[ INFO] Begin Test for Cmd - Send SB Stats
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80a,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 32, 1 - Software Bus Statistics packet sent
+
+[ PASS] 03.003 sb_UT.c:779 - CFE_SB_ProcessCmdPipePkt - Send SB Stats command test
+[ INFO] Begin Test for Cmd - Send Routing Info, Using Default Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE SB Initialized
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - /ram/cfe_sb_route.dat written:Size=156,Entries=2
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 03.004 sb_UT.c:859 - CFE_SB_ProcessCmdPipePkt - Send Routing Info command test
+[ INFO] Begin Test for Cmd - Send Routing Info2, Using Specified Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - RoutingTstFile written:Size=64,Entries=0
+
+[ PASS] 03.005 sb_UT.c:905 - CFE_SB_ProcessCmdPipePkt - Send Routing Info2 command test
+[ INFO] Begin Test for Cmd - Send Routing Info3, File Create Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 40, 3 - Error creating file RoutingTstFile, stat=0xffffffff
+
+[ PASS] 03.006 sb_UT.c:954 - CFE_SB_ProcessCmdPipePkt - Send Routing Info3 command test
+[ INFO] Begin Test for Cmd - Send Routing Info4, FileHdrWrite Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file RoutingTstFile,request=64,actual=-1
+
+[ PASS] 03.007 sb_UT.c:1005 - CFE_SB_SendRtgInfo - Send Routing Info4 command test
+[ INFO] Begin Test for Cmd - Send Routing Info5, Second FileWrite Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   SB:Registered 4 events for filtering
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SB_CMD_PIPE,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on SB_CMD_PIPE(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x180b on SB_CMD_PIPE(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE SB Initialized
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file RoutingTstFile,request=46,actual=-1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x180b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 03.008 sb_UT.c:1091 - CFE_SB_SendRtgInfo - Send Routing Info5 command test
+[ INFO] Begin Test for Cmd - Send Pipe Info, Using Default Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - /ram/cfe_sb_pipe.dat written:Size=268,Entries=3
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 03.009 sb_UT.c:1154 - CFE_SB_ProcessCmdPipePkt - Send Pipe Info command test
+[ INFO] Begin Test for Cmd - Send Pipe Info2, Using Specified Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - PipeTstFile written:Size=64,Entries=0
+
+[ PASS] 03.010 sb_UT.c:1199 - CFE_SB_ProcessCmdPipePkt - Send Pipe Info2 command test
+[ INFO] Begin Test for Cmd - Send Pipe Info3, File Create Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 40, 3 - Error creating file PipeTstFile, stat=0xffffffff
+
+[ PASS] 03.011 sb_UT.c:1251 - CFE_SB_SendPipeInfo - Send Pipe Info3 command test
+[ INFO] Begin Test for Cmd - Send Pipe Info4, FileHdrWrite Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file PipeTstFile,request=64,actual=-1
+
+[ PASS] 03.012 sb_UT.c:1302 - CFE_SB_SendPipeInfo - Send Pipe Info4 command test
+[ INFO] Begin Test for Cmd - Send Pipe Info5, Second FileWrite fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file PipeTstFile,request=68,actual=-1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 03.013 sb_UT.c:1370 - CFE_SB_SendPipeInfo - Send Pipe Info5 command test
+[ INFO] Begin Test for Cmd - Send Map Info, Using Default Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe2(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80a on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80b on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80c on TestPipe3(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80d on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80e on TestPipe2(1),app ut_cfe_sb.
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - /ram/cfe_sb_msgmap.dat written:Size=88,Entries=6
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80a on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80e on pipe 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80b on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80c on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80d on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 03.014 sb_UT.c:1452 - CFE_SB_ProcessCmdPipePkt - Send Map Info command test
+[ INFO] Begin Test for Cmd - Send Map Info2, Using Specified Filename
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 39, 1 - MapTstFile written:Size=64,Entries=0
+
+[ PASS] 03.015 sb_UT.c:1497 - CFE_SB_ProcessCmdPipePkt - Send Map Info2 command test
+[ INFO] Begin Test for Cmd - Send Map Info3, File Create Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 40, 3 - Error creating file MapTstFile, stat=0xffffffff
+
+[ PASS] 03.016 sb_UT.c:1549 - CFE_SB_SendMapInfo - Send Map Info3 command test
+[ INFO] Begin Test for Cmd - Send Map Info4, FileHdrWrite Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file MapTstFile,request=64,actual=-1
+
+[ PASS] 03.017 sb_UT.c:1600 - CFE_SB_SendMapInfo - Send Map Info4 command test
+[ INFO] Begin Test for Cmd - Send Map Info5, Second FileWrite Fails
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe2(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80a on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80b on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80c on TestPipe3(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80d on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80e on TestPipe2(1),app ut_cfe_sb.
+
+[ INFO]   CFE_FS_WriteHeader called: 1; 
+
+[ INFO]   CFE_EVS_SendEvent: 49, 3 - File write,byte cnt err,file MapTstFile,request=4,actual=-1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80a on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80e on pipe 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80b on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80c on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80d on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 03.018 sb_UT.c:1689 - CFE_SB_SendMapInfo - Send Map Info5 command test
+[ INFO] Begin Test for Cmd - Enable Route, Valid Param
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name EnRouteTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x829 on EnRouteTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 34, 1 - Enabling Route,Msg 0x829,Pipe 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x829 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 03.019 sb_UT.c:1753 - CFE_SB_ProcessCmdPipePkt - Enable Route, valid parameter test
+[ INFO] Begin Test for Cmd - Enable Route, Non Exist
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name EnRouteTestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name EnRouteTestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x829 on EnRouteTestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 33, 3 - Enbl Route Cmd:Route does not exist.Msg 0x829,Pipe 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x829 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ PASS] 03.020 sb_UT.c:1820 - CFE_SB_ProcessCmdPipePkt - Enable Route, non-existent route test
+[ INFO] Begin Test for Cmd - Enable Route, Invalid Pipe ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 35, 3 - Enbl Route Cmd:Invalid Param.Msg 0x1fff,Pipe 3
+
+[ PASS] 03.021 sb_UT.c:1866 - CFE_SB_ProcessCmdPipePkt - Enable Route, invalid pipe ID test
+[ INFO] Begin Test for Cmd - Enable Route, Invalid Msg ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 35, 3 - Enbl Route Cmd:Invalid Param.Msg 0xffff,Pipe 3
+
+[ PASS] 03.022 sb_UT.c:1912 - CFE_SB_ProcessCmdPipePkt - Enable Route, invalid msg ID test
+[ INFO] Begin Test for Cmd - Enable Route, Msg ID Too Large
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 35, 3 - Enbl Route Cmd:Invalid Param.Msg 0x2000,Pipe 0
+
+[ PASS] 03.023 sb_UT.c:1959 - CFE_SB_ProcessCmdPipePkt - Enable Route, msg ID too large test
+[ INFO] Begin Test for Cmd - Disable Route, Valid Param
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name DisRouteTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x829 on DisRouteTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 37, 1 - Route Disabled,Msg 0x829,Pipe 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x829 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 03.024 sb_UT.c:2023 - CFE_SB_ProcessCmdPipePkt - Disable Route, valid parameter test
+[ INFO] Begin Test for Cmd - Disable Route, Non Exist
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name DisRouteTestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name DisRouteTestPipe2,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x829 on DisRouteTestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 36, 3 - Disable Route Cmd:Route does not exist,Msg 0x829,Pipe 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x829 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ PASS] 03.025 sb_UT.c:2089 - CFE_SB_ProcessCmdPipePkt - Disable Route, non-existent route test
+[ INFO] Begin Test for Cmd - Disable Route, Invalid Pipe ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 38, 3 - Disable Route Cmd:Invalid Param.Msg 0x1fff,Pipe 3
+
+[ PASS] 03.026 sb_UT.c:2135 - CFE_SB_ProcessCmdPipePkt - Disable Route, invalid pipe ID test
+[ INFO] Begin Test for Cmd - Disable Route, Invalid Param2
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 38, 3 - Disable Route Cmd:Invalid Param.Msg 0xffff,Pipe 3
+
+[ PASS] 03.027 sb_UT.c:2181 - CFE_SB_ProcessCmdPipePkt - Disable Route, invalid msg ID test
+[ INFO] Begin Test for Cmd - Disable Route, Msg ID Too Large
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 38, 3 - Disable Route Cmd:Invalid Param.Msg 0x2000,Pipe 0
+
+[ PASS] 03.028 sb_UT.c:2228 - CFE_SB_ProcessCmdPipePkt - Disable Route, msg ID too large test
+[ INFO] Begin Test for Cmd - Send Housekeeping Info
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x803,sender ut_cfe_sb
+
+[ PASS] 03.029 sb_UT.c:2271 - CFE_SB_ProcessCmdPipePkt - Send Housekeeping Info command test
+[ INFO] Begin Test for Cmd - Send Previous Subscriptions
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x0 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x10 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x11 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x12 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x13 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x14 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x15 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x16 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x17 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x18 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x19 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1a on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1b on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1c on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1d on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1e on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1f on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x20 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x21 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x22 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x23 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x24 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x25 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x26 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x27 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x28 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x29 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2a on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2b on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2c on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3 on TestPipe2(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 44, 1 - Full Sub Pkt 1 Sent,Entries=20,Stat=0x0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 44, 1 - Full Sub Pkt 2 Sent,Entries=20,Stat=0x0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 45, 1 - Partial Sub Pkt 3 Sent,Entries=5,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2d on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2e on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2f on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x30 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x31 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x32 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x33 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x34 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x35 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x36 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x37 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x38 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x39 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3a on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3b on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 7, 2 - Duplicate Subscription,MsgId 0x3 on TestPipe2 pipe,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 44, 1 - Full Sub Pkt 1 Sent,Entries=20,Stat=0x0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 44, 1 - Full Sub Pkt 2 Sent,Entries=20,Stat=0x0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent: 44, 1 - Full Sub Pkt 3 Sent,Entries=20,Stat=0x0
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x0 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x10 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x11 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x12 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x13 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x14 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x15 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x16 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x17 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x18 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x19 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1a on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1c on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1d on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1e on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1f on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x20 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x21 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x22 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x23 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x24 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x25 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x26 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x27 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x28 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x29 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2a on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2c on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2d on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2e on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2f on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x30 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x31 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x32 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x33 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x34 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x35 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x36 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x37 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x38 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x39 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3a on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3b on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3 on pipe 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ PASS] 03.030 sb_UT.c:2396 - CFE_SB_ProcessCmdPipePkt - Send previous subscriptions test
+[ INFO] Begin Test for Cmd - Subscription Reporting On
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 03.031 sb_UT.c:2434 - CFE_SB_ProcessCmdPipePkt - Subscription Reporting On test
+[ INFO] Begin Test for Cmd - Subscription Reporting Off
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 03.032 sb_UT.c:2472 - CFE_SB_ProcessCmdPipePkt - Subscription Reporting Off test
+[ INFO] Begin Test for Cmd - Unexpected Command Code
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 42, 3 - Invalid Cmd, Unexpected Command Code 99
+
+[ PASS] 03.033 sb_UT.c:2516 - CFE_SB_ProcessCmdPipePkt - Unexpected command code test
+[ INFO] Begin Test for Cmd - Unexpected MsgId on SB Command Pipe
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent: 43, 3 - Invalid Cmd, Unexpected Msg Id: 0x0865
+
+[ PASS] 03.034 sb_UT.c:2558 - CFE_SB_ProcessCmdPipePkt - Unexpected MsgId on SB command pipe test
+[ INFO] End CFE_SB_ProcessCmdPipePkt
+
+[  END] 03 Test_SB_Cmds         TOTAL::34    PASS::34    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 04 Test_SB_EarlyInit
+[ INFO] Begin Test EarlyInit
+
+[ INFO] Begin Sem Create Error Logic test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   SB shared data mutex creation failed! RC=0xfffffff2
+
+
+[ PASS] 04.001 sb_UT.c:2592 - CFE_SB_EarlyInit - Sem Create error logic
+[ INFO] Begin PoolCreateEx Error Logic test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   PoolCreate failed for SB Buffers, gave adr 0x80d2d70,size 524288,stat=0xc400000a
+
+
+[ PASS] 04.002 sb_UT.c:2608 - CFE_SB_EarlyInit - PoolCreateEx error logic
+[ INFO] Begin EarlyInit No Errors test
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 04.003 sb_UT.c:2624 - CFE_SB_EarlyInit - No errors test
+[ INFO] End Test EarlyInit
+
+
+[  END] 04 Test_SB_EarlyInit    TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 05 Test_CreatePipe_API
+[ INFO] Begin Test_CreatePipe_API
+
+[ INFO] Begin Test for Null Pointer
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 2, 3 - CreatePipeErr:Bad Input Arg:app=Unknown,ptr=0x0,depth=10,maxdepth=256
+
+[ PASS] 05.001 sb_UT.c:2698 - Test_CreatePipe_API - Null pointer test
+[ INFO] Begin Test for Valid Pipe Depth
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe99,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe255,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipeMaxDepth,id 2,app ut_cfe_sb
+
+[ PASS] 05.002 sb_UT.c:2759 - Test_CreatePipe_API - Valid pipe depth test
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ INFO] Begin Test for Invalid Pipe Depth
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 2, 3 - CreatePipeErr:Bad Input Arg:app=ut_cfe_sb,ptr=0xbf9b4439,depth=0,maxdepth=256
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 2, 3 - CreatePipeErr:Bad Input Arg:app=ut_cfe_sb.,ptr=0xbf9b443a,depth=257,maxdepth=256
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 2, 3 - CreatePipeErr:Bad Input Arg:app=ut_cfe_sb,ptr=0xbf9b443b,depth=65535,maxdepth=256
+
+[ PASS] 05.003 sb_UT.c:2828 - Test_CreatePipe_API - Invalid pipe depth test
+[ INFO] Begin Test for Max Pipes
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe0,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 3,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe4,id 4,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe5,id 5,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe6,id 6,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe7,id 7,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe8,id 8,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe9,id 9,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe10,id 10,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe11,id 11,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe12,id 12,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe13,id 13,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe14,id 14,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe15,id 15,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe16,id 16,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe17,id 17,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe18,id 18,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe19,id 19,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe20,id 20,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe21,id 21,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe22,id 22,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe23,id 23,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe24,id 24,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe25,id 25,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe26,id 26,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe27,id 27,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe28,id 28,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe29,id 29,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe30,id 30,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe31,id 31,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe32,id 32,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe33,id 33,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe34,id 34,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe35,id 35,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe36,id 36,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe37,id 37,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe38,id 38,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe39,id 39,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe40,id 40,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe41,id 41,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe42,id 42,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe43,id 43,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe44,id 44,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe45,id 45,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe46,id 46,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe47,id 47,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe48,id 48,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe49,id 49,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe50,id 50,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe51,id 51,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe52,id 52,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe53,id 53,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe54,id 54,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe55,id 55,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe56,id 56,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe57,id 57,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe58,id 58,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe59,id 59,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe60,id 60,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe61,id 61,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe62,id 62,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe63,id 63,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 3, 3 - CreatePipeErr:Max Pipes(64)In Use.app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 3,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 4,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 5,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 6,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 7,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 8,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 9,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 10,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 11,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 12,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 13,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 14,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 15,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 16,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 17,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 18,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 19,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 20,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 21,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 22,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 23,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 24,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 25,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 26,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 27,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 28,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 29,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 30,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 31,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 32,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 33,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 34,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 35,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 36,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 37,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 38,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 39,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 40,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 41,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 42,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 43,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 44,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 45,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 46,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 47,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 48,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 49,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 50,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 51,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 52,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 53,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 54,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 55,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 56,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 57,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 58,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 59,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 60,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 61,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 62,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 63,owner ut_cfe_sb.
+
+[ PASS] 05.004 sb_UT.c:2894 - Test_CreatePipe_API - Max pipes test
+[ INFO] End Test_CreatePipe_API
+
+
+[  END] 05 Test_CreatePipe_API  TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 06 Test_DeletePipe_API
+[ INFO] Begin Test_DeletePipe_API
+
+[ INFO] Begin Test for No Subscriptions
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 06.001 sb_UT.c:2971 - Test_DeletePipe_API - No subscriptions test
+[ INFO] Begin Test With Subscriptions
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1801 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1802 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1804 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1801 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1802 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1804 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 06.002 sb_UT.c:3037 - Test_DeletePipe_API - With subscriptions test
+[ INFO] Begin Test for Invalid Pipe ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 46, 3 - Pipe Delete Error:Bad Argument,PipedId 30,Requestor ut_cfe_sb,Idx 255,Stat 1
+
+[ PASS] 06.003 sb_UT.c:3087 - Test_DeletePipe_API - Invalid pipe ID test
+[ INFO] Begin Test for Invalid Pipe Owner
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 54, 3 - Pipe Delete Error:Caller(ut_cfe_sb) is not the owner of pipe 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 06.004 sb_UT.c:3162 - Test_DeletePipe_API - Invalid pipe owner test
+[ INFO] Begin Test DeletePipeWithAppId API
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1801 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1802 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1803 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1804 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1801 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1802 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1803 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1804 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 06.005 sb_UT.c:3218 - Test_DeletePipe_API - With app ID test
+[ INFO] End Test_DeletePipe_API
+
+
+[  END] 06 Test_DeletePipe_API  TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 07 Test_Subscribe_API
+[ INFO] Begin Test_Subscribe_API
+
+
+[ INFO] Begin Test for SubscribeEx
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1806 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1806 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 07.001 sb_UT.c:3307 - Test_Subscribe_API - SubscribeEx test
+[ INFO] Begin Test for Invalid Pipe ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 50, 3 - Subscribe Err:Invalid Pipe Id,Msg=0x2000,PipeId=2,App ut_cfe_sb
+
+[ PASS] 07.002 sb_UT.c:3358 - Test_Subscribe_API - Invalid pipe ID test
+[ INFO] Begin Test for Invalid Message ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 6, 3 - Subscribe Err:Bad Arg,MsgId 0x2000,PipeId 0,app ut_cfe_sb,scope 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 07.003 sb_UT.c:3412 - Test_Subscribe_API - Invalid message ID test
+[ INFO] Begin Test for Maximum Message Limit
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 07.004 sb_UT.c:3470 - Test_Subscribe_API - Maximum message limit test
+[ INFO] Begin Test for Duplicate Subscription
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 7, 2 - Duplicate Subscription,MsgId 0x1805 on TestPipe pipe,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 07.005 sb_UT.c:3538 - Test_Subscribe_API - Duplicate subscription test
+[ INFO] Begin Test for Local Subscription
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 07.006 sb_UT.c:3594 - Test_Subscribe_API - Local subscription test
+[ INFO] Begin Test for Maximum Destination Count
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe0,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 3,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe4,id 4,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe5,id 5,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe6,id 6,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe7,id 7,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe8,id 8,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe9,id 9,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe10,id 10,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe11,id 11,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe12,id 12,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe13,id 13,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe14,id 14,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe15,id 15,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe16,id 16,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe0(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe1(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe3(3),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe4(4),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe5(5),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe6(6),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe7(7),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe8(8),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe9(9),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe10(10),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe11(11),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe12(12),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe13(13),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe14(14),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe15(15),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 9, 3 - Subscribe Err:Max Dests(16)In Use For Msg 0x811,pipe TestPipe16,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 3,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 3,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 4,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 4,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 5,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 5,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 6,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 6,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 7,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 7,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 8,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 8,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 9,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 9,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 10,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 10,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 11,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 11,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 12,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 12,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 13,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 13,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 14,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 14,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 15,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 15,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 16,owner ut_cfe_sb.
+
+[ PASS] 07.007 sb_UT.c:3690 - Test_Subscribe_API - Maximum destination count test
+[ INFO] Begin Test for Maximum Message ID Count
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe0,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x10 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x11 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x12 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x13 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x14 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x15 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x16 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x17 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x18 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x19 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x20 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x21 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x22 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x23 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x24 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x25 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x26 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x27 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x28 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x29 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x2f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x30 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x31 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x32 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x33 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x34 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x35 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x36 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x37 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x38 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x39 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x3f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x40 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x41 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x42 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x43 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x44 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x45 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x46 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x47 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x48 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x49 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x4f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x50 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x51 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x52 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x53 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x54 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x55 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x56 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x57 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x58 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x59 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x5f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x60 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x61 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x62 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x63 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x64 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x65 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x66 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x67 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x68 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x69 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x6f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x70 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x71 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x72 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x73 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x74 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x75 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x76 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x77 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x78 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x79 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x7f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x80 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x81 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x82 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x83 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x84 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x85 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x86 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x87 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x88 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x89 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x90 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x91 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x92 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x93 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x94 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x95 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x96 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x97 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x98 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x99 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9a on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9b on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9c on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9d on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9e on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x9f on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xa9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xaa on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xab on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xac on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xad on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xae on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xaf on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xb9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xba on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xbb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xbc on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xbd on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xbe on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xbf on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xc9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xca on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xcb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xcc on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xcd on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xce on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xcf on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xd9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xda on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xdb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xdc on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xdd on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xde on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xdf on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xe9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xea on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xeb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xec on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xed on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xee on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xef on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf0 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf1 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf2 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf3 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf4 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf5 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf6 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf7 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf8 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xf9 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xfa on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xfb on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xfc on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xfd on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xfe on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0xff on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 8, 3 - Subscribe Err:Max Msgs(256)In Use,MsgId 0x100,pipe TestPipe2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x10 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x11 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x12 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x13 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x14 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x15 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x16 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x17 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x18 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x19 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x20 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x21 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x22 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x23 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x24 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x25 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x26 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x27 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x28 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x29 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x2f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x30 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x31 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x32 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x33 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x34 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x35 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x36 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x37 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x38 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x39 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x3f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x40 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x41 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x42 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x43 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x44 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x45 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x46 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x47 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x48 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x49 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x4f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x50 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x51 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x52 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x53 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x54 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x55 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x56 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x57 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x58 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x59 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x5f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x60 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x61 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x62 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x63 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x64 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x65 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x66 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x67 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x68 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x69 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x6f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x70 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x71 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x72 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x73 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x74 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x75 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x76 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x77 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x78 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x79 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x7f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x80 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x81 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x82 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x83 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x84 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x85 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x86 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x87 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x88 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x89 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x90 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x91 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x92 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x93 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x94 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x95 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x96 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x97 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x98 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x99 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9a on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9b on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9c on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9d on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9e on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x9f on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xa9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xaa on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xab on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xac on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xad on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xae on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xaf on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xb9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xba on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xbb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xbc on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xbd on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xbe on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xbf on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xc9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xca on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xcb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xcc on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xcd on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xce on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xcf on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xd9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xda on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xdb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xdc on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xdd on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xde on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xdf on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xe9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xea on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xeb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xec on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xed on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xee on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xef on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf0 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf1 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf2 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf3 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf4 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf5 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf6 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf7 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf8 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xf9 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xfa on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xfb on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xfc on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xfd on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xfe on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0xff on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb
+
+[ PASS] 07.008 sb_UT.c:3750 - Test_Subscribe_API - Maximum message ID count test
+[ INFO] Begin Test for Send Previous Subscriptions
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe0,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe0(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x812 on TestPipe0(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x813 on TestPipe0(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe1(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x812 on TestPipe1(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x813 on TestPipe1(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe2(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80d,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent: 45, 1 - Partial Sub Pkt 1 Sent,Entries=2,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x812 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x812 on pipe 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 07.009 sb_UT.c:3812 - Test_Subscribe_API - Send previous subscriptions test
+[ INFO] Begin Test for Find Global Message ID Count
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe0,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe0(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x812 on TestPipe0(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x813 on TestPipe0(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe1(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x812 on TestPipe1(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x813 on TestPipe1(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe2(2),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x812 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x812 on pipe 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 2,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb.
+
+[ PASS] 07.010 sb_UT.c:3887 - Test_Subscribe_API - Find global message ID count test
+[ INFO] Begin Test for Pipe Nonexistent
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 50, 3 - Subscribe Err:Invalid Pipe Id,Msg=0x800,PipeId=55,App ut_cfe_sb
+
+[ PASS] 07.011 sb_UT.c:3939 - Test_Subscribe_API - Pipe nonexistent test
+[ INFO] Begin Test SubscribeFull, Subscription Reporting
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80e,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 22, 1 - Sending Subscription Report Msg=0x8fd,Pipe=0,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8fd on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80e,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 24, 1 - Sending Unsubscription Report Msg=0x8fd,Pipe=0,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8fd on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8fd on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8fd on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 07.012 sb_UT.c:4065 - Test_Subscribe_API - Subscription reporting test
+[ INFO] Begin Test for Invalid Pipe Owner
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 51, 3 - Subscribe Err:Caller(ut_cfe_sb) is not the owner of pipe 0,Msg=0x877
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 07.013 sb_UT.c:4128 - Test_Subscribe_API - Invalid pipe owner test
+[ INFO] End Test_Subscribe_API
+
+
+[  END] 07 Test_Subscribe_API   TOTAL::13    PASS::13    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 08 Test_Unsubscribe_API
+[ INFO] Begin Test_Unsubscribe_API
+
+[ INFO] Begin Test for Unsubscribe Basic
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1000 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1000 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 08.001 sb_UT.c:4209 - Test_Unsubscribe_API - Unsubscribe basic
+[ INFO] Begin Test for Local Unsubscribe
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x801 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 12, 2 - Unsubscribe Err:No subs for Msg 0x1fff on TestPipe,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x801 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 08.002 sb_UT.c:4264 - Test_Unsubscribe_API - Local unsubscribe test
+[ INFO] Begin Test for Invalid Param, Unsubscribe
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 11, 3 - UnSubscribe Err:Bad Arg,MsgId 0x2000,PipeId 0,app ut_cfe_sb,scope 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 11, 3 - UnSubscribe Err:Bad Arg,MsgId 0x0,PipeId 0,app ut_cfe_sb.,scope 2
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 11, 3 - UnSubscribe Err:Bad Arg,MsgId 0x0,PipeId 64,app ut_cfe_sb,scope 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 08.003 sb_UT.c:4380 - Test_Unsubscribe_API - Invalid param, unsubscribe test
+[ INFO] Begin Test for No Match
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 12, 2 - Unsubscribe Err:No subs for Msg 0x2 on TestPipe,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 08.004 sb_UT.c:4454 - Test_Unsubscribe_API - No match test
+[ INFO] Begin Test Unsubscribe Subscription Reporting
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8fd on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80e,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 24, 1 - Sending Unsubscription Report Msg=0x8fd,Pipe=0,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8fd on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x80e,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 22, 1 - Sending Subscription Report Msg=0x8fd,Pipe=0,Stat=0x0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8fd on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8fd on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 08.005 sb_UT.c:4551 - Test_Unsubscribe_API - Subscription reporting test
+[ INFO] Begin Test Unsubscribe, Invalid Pipe
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x8fd on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 52, 3 - Unsubscribe Err:Invalid Pipe Id Msg=0x8fd,Pipe=1,app=ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x8fd on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 08.006 sb_UT.c:4607 - Test_Unsubscribe_API - Invalid pipe test
+[ INFO] Begin Test for Invalid Pipe Owner
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x877 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 53, 3 - Unsubscribe Err:Caller(ut_cfe_sb) is not the owner of pipe 0,Msg=0x877
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x877 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 08.007 sb_UT.c:4682 - Test_Unsubscribe_API - Invalid pipe owner test
+[ INFO] Begin Test for Unsubscribe First Destination With Many
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe2(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb
+
+[ PASS] 08.008 sb_UT.c:4747 - Test_Unsubscribe_API - Unsubscribe first destination with many
+[ INFO] Begin Test for Unsubscribe Middle Destination With Many
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe3,id 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe1(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe2(1),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe3(2),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 2,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 2,owner ut_cfe_sb
+
+[ PASS] 08.009 sb_UT.c:4812 - Test_Unsubscribe_API - Unsubscribe middle destination with many
+[ INFO] Begin Test for Unsubscribe, Get Destination Pointer
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe2,id 1,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe1(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1805 on TestPipe2(1),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1805 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 1,owner ut_cfe_sb
+
+[ PASS] 08.010 sb_UT.c:4869 - Test_Unsubscribe_API - Get destination pointer
+[ INFO] End Test_Unsubscribe_API
+
+
+[  END] 08 Test_Unsubscribe_API TOTAL::10    PASS::10    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 09 Test_SendMsg_API
+[ INFO] Begin Test_SendMsg_API
+
+[ INFO] Begin Test for Null Pointer
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 13, 3 - Send Err:Bad input argument,Arg 0x0,App ut_cfe_sb.
+
+[ PASS] 09.001 sb_UT.c:4953 - Test_SendMsg_API - Null pointer test
+[ INFO] Begin Test for Invalid Message ID
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 21, 3 - Send Err:Invalid MsgId(0x2000)in msg,App ut_cfe_sb
+
+[ PASS] 09.002 sb_UT.c:5006 - Test_SendMsg_API - Invalid message ID test
+[ INFO] Begin Test for No Subscribers
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x815,sender ut_cfe_sb.
+
+[ PASS] 09.003 sb_UT.c:5059 - Test_SendMsg_API - No subscribers test
+[ INFO] Begin Test for Maximum Message Size Plus One
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 15, 3 - Send Err:Msg Too Big MsgId=0x808,app=ut_cfe_sb,size=32769,MaxSz=32768
+
+[ PASS] 09.004 sb_UT.c:5112 - Test_SendMsg_API - Maximum message size plus one test
+[ INFO] Begin Test for Basic Send
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x816 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x816 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 09.005 sb_UT.c:5164 - Test_SendMsg_API - Basic send test
+[ INFO] Begin Test for Telemetry Sequence Count
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name SeqCntTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x817 on SeqCntTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x817 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 09.006 sb_UT.c:5330 - Test_SendMsg_API - Telemetry sequence count test
+[ INFO] Begin Test for QueuePut Error
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x818 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 26, 3 - Pipe Write Err,MsgId 0x818,pipe TestPipe,sender ut_cfe_sb,stat 0xffffffff
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x818 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 09.007 sb_UT.c:5390 - Test_SendMsg_API - QueuePut error test
+[ INFO] Begin Test for Pipe Full
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name PipeFullTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x812 on PipeFullTestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 25, 3 - Pipe Overflow,MsgId 0x812,pipe PipeFullTestPipe,sender ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x812 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 09.008 sb_UT.c:5465 - Test_SendMsg_API - Pipe full test
+[ INFO] Begin Test for Msg Limit Exceeded
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name MsgLimTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on MsgLimTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 17, 3 - Msg Limit Err,MsgId 0x811,pipe MsgLimTestPipe,sender ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 09.009 sb_UT.c:5543 - Test_SendMsg_API - Msg Limit Exceeded test
+[ INFO] Begin Test for GetPoolBufErr
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name GetPoolErrPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on GetPoolErrPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 16, 3 - Send Err:Request for Buffer Failed. MsgId 0x809,app ut_cfe_sb.,size 24
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 09.010 sb_UT.c:5608 - Test_SendMsg_API - GetPoolBufErr test
+[ INFO] Begin Test for ZeroCopyGetPtr
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 09.011 sb_UT.c:5755 - Test_SendMsg_API - ZeroCopyGetPtr test
+[ INFO] Begin Test for CFE_SB_ZeroCopySend
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name ZeroCpyTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on ZeroCpyTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 09.012 sb_UT.c:5872 - Test_SendMsg_API - CFE_SB_ZeroCopySend test
+[ INFO] Begin Test for CFE_SB_ZeroCopyPass
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name ZeroCpyPassTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on ZeroCpyPassTestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 09.013 sb_UT.c:5991 - Test_SendMsg_API - CFE_SB_ZeroCopyPass test
+[ INFO] Begin Test for ZeroCopyReleasePtr
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 09.014 sb_UT.c:6152 - Test_SendMsg_API - ZeroCopyReleasePtr test
+[ INFO] Begin Test for Send w/Disabled Destination
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 09.015 sb_UT.c:6215 - Test_SendMsg_API - Disabled destination test
+[ INFO] Begin Test for Send with Metadata (SendMsgFull)
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on TestPipe(0),app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 09.016 sb_UT.c:6282 - Test_SendMsg_API - Send with metadata test
+[ INFO] Begin Test for Invalid Message ID (ZeroCopy)
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 21, 3 - Send Err:Invalid MsgId(0x2000)in msg,App ut_cfe_sb
+
+[ PASS] 09.017 sb_UT.c:6348 - Test_SendMsg_API - Invalid message ID test (ZeroCopy)
+[ INFO] Begin Test for Maximum Message Size Plus One (ZeroCopy)
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 15, 3 - Send Err:Msg Too Big MsgId=0x808,app=ut_cfe_sb.,size=32769,MaxSz=32768
+
+[ PASS] 09.018 sb_UT.c:6414 - Test_SendMsg_API - Maximum message size plus one test (ZeroCopy)
+[ INFO] Begin Test for No Subscribers (ZeroCopy)
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 14, 2 - No subscribers for MsgId 0x815,sender ut_cfe_sb
+
+[ PASS] 09.019 sb_UT.c:6480 - Test_SendMsg_API - No subscribers test (ZeroCopy)
+[ INFO] End Test_SendMsg_API
+
+
+[  END] 09 Test_SendMsg_API     TOTAL::19    PASS::19    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 10 Test_RcvMsg_API
+[ INFO] Begin Test_RcvMsg_API
+
+[ INFO] Begin Test for Rcv - Invalid PipeId Rcv
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 19, 3 - Rcv Err:PipeId 20 does not exist,app ut_cfe_sb.
+
+[ PASS] 10.001 sb_UT.c:6559 - Test_RcvMsg_API - Invalid pipe ID test
+[ INFO] Begin Test for Rcv - Invalid Timeout
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 18, 3 - Rcv Err:Bad Input Arg:BufPtr 0xbf9b4430,pipe 0,t/o -5,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 10.002 sb_UT.c:6615 - Test_RcvMsg_API - Invalid timeout test
+[ INFO] Begin Test for Poll Receive
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 10.003 sb_UT.c:6669 - Test_RcvMsg_API - Poll receive test
+[ INFO] Begin Test for GetLastSender Null Ptr
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 30, 3 - SB GetLastSender Err:Rcvd Null Ptr,Pipe=0,App=ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.004 sb_UT.c:6722 - Test_RcvMsg_API - GetLastSenderId null pointer test
+[ INFO] Begin Test for GetLastSender Invalid Pipe
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 31, 3 - SB GetLastSender Err:Rcvd Invalid Pipe=250,App=ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 10.005 sb_UT.c:6778 - Test_RcvMsg_API - GetLastSenderId invalid pipe test
+[ INFO] Begin Test for GetLastSender Invalid Caller
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 41, 3 - SB GetLastSender Err:Caller(ut_cfe_sb) is not the owner of pipe 0
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.006 sb_UT.c:6840 - Test_RcvMsg_API - GetLastSenderId invalid caller test
+[ INFO] Begin Test for GetLastSender Success
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.007 sb_UT.c:6889 - Test_RcvMsg_API - GetLastSenderId Success Test
+[ INFO] Begin Test for Timeout Rcv
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.008 sb_UT.c:6949 - Test_RcvMsg_API - Timeout receive test
+[ INFO] Begin Test for Pipe Read Error
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 27, 3 - Pipe Read Err,pipe RcvMsgTestPipe,app ut_cfe_sb.,stat 0xffffffff
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 10.009 sb_UT.c:7004 - Test_RcvMsg_API - Pipe read error test
+[ INFO] Begin Test for Pend Forever
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on RcvMsgTestPipe(0),app ut_cfe_sb
+
+[ INFO] Received Msg 0x809
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.010 sb_UT.c:7089 - Test_RcvMsg_API - Pend forever test
+[ INFO] Begin Test for Rcv - Invalid Buffer Pointer
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 18, 3 - Rcv Err:Bad Input Arg:BufPtr 0x0,pipe 0,t/o -1,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 10.011 sb_UT.c:7217 - Test_RcvMsg_API - Invalid buffer pointer test
+[ INFO] End Test_RcvMsg_API
+
+
+[ INFO] Begin Test for CleanupApp
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 46, 3 - Pipe Delete Error:Bad Argument,PipedId 255,Requestor ut_cfe_sb,Idx 1,Stat 1
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 10.012 sb_UT.c:7163 - Test_CleanupApp_API - CleanupApp test
+[  END] 10 Test_RcvMsg_API      TOTAL::12    PASS::12    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 11 Test_SB_Utils
+[ INFO] Begin Test for SB Utils
+
+[ INFO] Begin Test_CFE_SB_InitMsg
+
+[ INFO] Begin SB_TestInitMsg_True
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.001 sb_UT.c:7286 - SB_TestInitMsg_True - Clear message content
+[ INFO] Begin SB_TestInitMsg_False
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.002 sb_UT.c:7316 - SB_TestInitMsg_False - Leave message content
+[ INFO] End Test_CFE_SB_InitMsg
+
+
+[ INFO] Begin Test_CFE_SB_MsgHdrSize
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.003 sb_UT.c:7341 - Test_CFE_SB_MsgHdrSize - Commands with secondary header
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.004 sb_UT.c:7354 - Test_CFE_SB_MsgHdrSize - Commands without secondary header
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.005 sb_UT.c:7367 - Test_CFE_SB_MsgHdrSize - Telemetry with secondary header
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.006 sb_UT.c:7380 - Test_CFE_SB_MsgHdrSize - Telemetry without secondary header
+[ INFO] Begin Test_CFE_SB_GetUserData
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.007 sb_UT.c:7421 - Test_CFE_SB_GetUserData - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.008 sb_UT.c:7442 - Test_CFE_SB_GetUserData - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.009 sb_UT.c:7463 - Test_CFE_SB_GetUserData - Telemetry packets with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.010 sb_UT.c:7484 - Test_CFE_SB_GetUserData - Telemetry packets without secondary header test
+[ INFO] Begin Test_CFE_SB_SetGetMsgId
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.011 sb_UT.c:7523 - Test_CFE_SB_SetGetMsgId - Get the set message ID test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.012 sb_UT.c:7544 - Test_CFE_SB_SetGetMsgId - Loop test
+[ INFO] Begin Test_CFE_SB_SetGetUserDataLength
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.013 sb_UT.c:7595 - Test_CFE_SB_SetGetUserDataLength - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.014 sb_UT.c:7624 - Test_CFE_SB_SetGetUserDataLength - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.015 sb_UT.c:7653 - Test_CFE_SB_SetGetUserDataLength - Telemetry packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.016 sb_UT.c:7682 - Test_CFE_SB_SetGetUserDataLength - Telemetry packet without secondary header test
+[ INFO] Begin Test_CFE_SB_SetGetTotalMsgLength
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.017 sb_UT.c:7734 - Test_CFE_SB_SetGetTotalMsgLength - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.018 sb_UT.c:7763 - Test_CFE_SB_SetGetTotalMsgLength - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.019 sb_UT.c:7792 - Test_CFE_SB_SetGetTotalMsgLength - Telemetry packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.020 sb_UT.c:7821 - Test_CFE_SB_SetGetTotalMsgLength - Telemetry packet without secondary header test
+[ INFO] Begin Test_CFE_SB_SetGetMsgTime
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.021 sb_UT.c:7884 - Test_CFE_SB_SetGetMsgTime - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.022 sb_UT.c:7928 - Test_CFE_SB_SetGetMsgTime - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.023 sb_UT.c:7975 - Test_CFE_SB_SetGetMsgTime - Telemetry packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.024 sb_UT.c:8019 - Test_CFE_SB_SetGetMsgTime - Telemetry packet without secondary header test
+[ INFO] Begin Test_CFE_SB_TimeStampMsg
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.025 sb_UT.c:8077 - Test_CFE_SB_SetGetMsgTime - Telemetry packet with secondary header test
+[ INFO] Begin Test_CFE_SB_SetGetCmdCode
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.026 sb_UT.c:8141 - Test_CFE_SB_SetGetCmdCode - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.027 sb_UT.c:8182 - Test_CFE_SB_SetGetCmdCode - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.028 sb_UT.c:8223 - Test_CFE_SB_SetGetCmdCode - Telemetry packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.029 sb_UT.c:8264 - Test_CFE_SB_SetGetCmdCode - Telemetry packet without secondary header test
+[ INFO] Begin Test_CFE_SB_ChecksumUtils
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.030 sb_UT.c:8334 - Test_CFE_SB_ChecksumUtils - Command packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.031 sb_UT.c:8384 - Test_CFE_SB_ChecksumUtils - Command packet without secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.032 sb_UT.c:8432 - Test_CFE_SB_ChecksumUtils - Telemetry packet with secondary header test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 11.033 sb_UT.c:8482 - Test_CFE_SB_ChecksumUtils - Telemetry packet without secondary header test
+[ INFO] End Test for SB Utils
+
+
+[  END] 11 Test_SB_Utils        TOTAL::33    PASS::33    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 12 Test_SB_SpecialCases
+[ INFO] Begin Test Shared Semaphore Give/Take Failure
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   SB SharedData Mutex Take Err Stat=0xfffffffa,App=0,Func=CFE_SB_CreatePipe,Line=181
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   SB SharedData Mutex Give Err Stat=0xfffffffa,App=0,Func=CFE_SB_SubscribeFull,Line=760
+
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1801 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1801 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 12.001 sb_UT.c:8550 - CFE_SB_(Un)LockSharedData - Semaphore give/take failure test
+[ INFO] Begin Test GetPipeName Error
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 12.002 sb_UT.c:8603 - CFE_SB_GetPipeName - Get pipe name error test
+[ INFO] Begin Test ReqToSendEvent Error
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 12.003 sb_UT.c:8668 - CFE_SB_RequestToSendEvent - Request to send event error test
+[ INFO] Begin Test PutDestBlk Error
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 12.004 sb_UT.c:8712 - CFE_SB_PutDestinationBlk - PutDestBlk error test
+[ INFO] Begin Test GetPipeIdx
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 12.005 sb_UT.c:8757 - CFE_SB_GetPipeIdx - GetPipeIdx branch path coverage test
+[ INFO] Begin Test GetBufferFromPool
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 12.006 sb_UT.c:8803 - CFE_SB_GetBufferFromPool - GetBufferFromPool branch path coverage test
+[ PASS] 12.007 sb_UT.c:8834 - CFE_SB_ReturnBufferToPool - ReturnBufferToPool branch path coverage test
+[ PASS] 12.008 sb_UT.c:8865 - CFE_SB_DecrBufUseCnt - DecrBufUseCnt branch path coverage test
+[ PASS] 12.009 sb_UT.c:8897 - CFE_SB_PutDestinationBlk - PutDestinationBlk branch path coverage test
+[ INFO] Begin Test BadPipeInfo
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe1,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 46, 3 - Pipe Delete Error:Bad Argument,PipedId 0,Requestor ut_cfe_sb.,Idx 255,Stat 0
+
+[ PASS] 12.010 sb_UT.c:8948 - CFE_SB_DeletePipeFull - DeletePipeFull bad pipe information branch path coverage test
+[ INFO]   CFE_EVS_SendEvent from app 0: 6, 3 - Subscribe Err:Bad Arg,MsgId 0x0,PipeId 0,app ut_cfe_sb,scope 2
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 12.011 sb_UT.c:8983 - CFE_SB_SubscribeFull - SubscribeFull bad pipe information branch path coverage test
+[ INFO] Begin Test for SendMsgFull paths
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x1814 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x1814 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name MsgLimTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on MsgLimTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name PipeFullTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on PipeFullTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name TestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x811 on TestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x811 on pipe 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb.
+
+[ PASS] 12.012 sb_UT.c:9243 - CFE_SB_SendMsgFull - Send message paths test
+[ INFO] Begin Test for Unsubscribe/Resubscribe Path
+
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 5, 1 - Pipe Created:name RcvMsgTestPipe,id 0,app ut_cfe_sb
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on RcvMsgTestPipe(0),app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 10, 1 - Subscription Rcvd:MsgId 0x809 on RcvMsgTestPipe(0),app ut_cfe_sb
+
+[ INFO] Received Msg 0x809
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 48, 1 - Subscription Removed:Msg 0x809 on pipe 0,app ut_cfe_sb.
+
+[ INFO]   CFE_EVS_SendEvent from app 0: 47, 1 - Pipe Deleted:id 0,owner ut_cfe_sb
+
+[ PASS] 12.013 sb_UT.c:9329 - CFE_SB_RcvMsg - Unsubscribe/resubscribe path test
+[ INFO]   CFE_ES_PoolCreateEx called
+
+[ PASS] 12.014 sb_UT.c:9348 - CFE_SB_MessageStringSet - Destination size > source string size
+[ PASS] 12.015 sb_UT.c:9355 - CFE_SB_MessageStringSet - Empty source string
+[ PASS] 12.016 sb_UT.c:9362 - CFE_SB_MessageStringSet - Destination size < source string size
+[ PASS] 12.017 sb_UT.c:9370 - CFE_SB_MessageStringGet - Destination size > source string size
+[ PASS] 12.018 sb_UT.c:9378 - CFE_SB_MessageStringGet - Destination size = 0
+[ PASS] 12.019 sb_UT.c:9385 - CFE_SB_MessageStringGet - Default string = NULL
+[ PASS] 12.020 sb_UT.c:9392 - CFE_SB_MessageStringGet - Source string size = 0
+[ PASS] 12.021 sb_UT.c:9400 - CFE_SB_MessageStringGet - Destination size < source string size
+[  END] 12 Test_SB_SpecialCases TOTAL::21    PASS::21    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+[  END] 12 SUMMARY              TOTAL::164   PASS::164   FAIL::0      MIR::0      TSF::0      N/A::0   
+
+COMPLETE: 12 tests Segment(s) executed
+
+
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/ccsds.c' 100.00%  21
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_api.c' 99.82%  542
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_buf.c' 100.00%  51
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_init.c' 100.00%  45
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 100.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_priv.c' 100.00%  142
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_task.c' 99.42%  346
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_util.c' 100.00%  117
+
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/sb'

@@ -1,0 +1,962 @@
+        -:    0:Source:../src/cs_compute.c
+        -:    0:Programs:9
+        -:    1:/************************************************************************
+        -:    2: ** File:
+        -:    3: **   $Id: cs_compute.c.gcov 1.5 2017/03/30 16:06:28EDT mdeschu Exp  $
+        -:    4: **
+        -:    5: **   Copyright (c) 2007-2014 United States Government as represented by the 
+        -:    6: **   Administrator of the National Aeronautics and Space Administration. 
+        -:    7: **   All Other Rights Reserved.  
+        -:    8: **
+        -:    9: **   This software was created at NASA's Goddard Space Flight Center.
+        -:   10: **   This software is governed by the NASA Open Source Agreement and may be 
+        -:   11: **   used, distributed and modified only pursuant to the terms of that 
+        -:   12: **   agreement.
+        -:   13: **
+        -:   14: ** Purpose: 
+        -:   15: **   The CFS Checksum (CS) Application's computing checksum functions
+        -:   16: ** 
+        -:   17: *************************************************************************/
+        -:   18:
+        -:   19:/**************************************************************************
+        -:   20: **
+        -:   21: ** Include section
+        -:   22: **
+        -:   23: **************************************************************************/
+        -:   24:#include "cfe.h"
+        -:   25:#include "cs_app.h"
+        -:   26:#include <string.h>
+        -:   27:#include "cs_events.h"
+        -:   28:#include "cs_compute.h"
+        -:   29:#include "cs_utils.h"
+        -:   30:/**************************************************************************
+        -:   31: **
+        -:   32: ** Functions
+        -:   33: **
+        -:   34: **************************************************************************/
+        -:   35:
+        -:   36:
+        -:   37:
+        -:   38:
+        -:   39:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   40:/*                                                                 */
+        -:   41:/* CS function that computes the checksum for Eeprom, Memory, OS   */
+        -:   42:/* and cFE core code segments                                      */
+        -:   43:/*                                                                 */
+        -:   44:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       18:   45:int32 CS_ComputeEepromMemory (CS_Res_EepromMemory_Table_Entry_t         * ResultsEntry,
+        -:   46:                              uint32                                    * ComputedCSValue,
+        -:   47:                              boolean                                   * DoneWithEntry)
+        -:   48:{
+       18:   49:    uint32      OffsetIntoCurrEntry         = 0;
+       18:   50:    uint32      FirstAddrThisCycle          = 0;
+       18:   51:    uint32      NumBytesThisCycle           = 0;
+       18:   52:    int32       NumBytesRemainingCycles     = 0;
+       18:   53:    uint32      NewChecksumValue            = 0;
+       18:   54:    int32       Status                      = CS_SUCCESS;
+        -:   55:    
+        -:   56:    
+        -:   57:    /* By the time we get here, we know we have an enabled entry */    
+        -:   58:        
+       18:   59:    OffsetIntoCurrEntry     = ResultsEntry -> ByteOffset;
+       18:   60:    FirstAddrThisCycle      = ResultsEntry -> StartAddress + OffsetIntoCurrEntry;
+       18:   61:    NumBytesRemainingCycles = ResultsEntry -> NumBytesToChecksum - OffsetIntoCurrEntry;
+        -:   62:    
+       36:   63:    NumBytesThisCycle  = ( (CS_AppData.MaxBytesPerCycle < NumBytesRemainingCycles)
+       18:   64:                          ? CS_AppData.MaxBytesPerCycle
+        -:   65:                          : NumBytesRemainingCycles);
+        -:   66:    
+       18:   67:    NewChecksumValue = CFE_ES_CalculateCRC((void *) ((uint8*)FirstAddrThisCycle), 
+        -:   68:                                           NumBytesThisCycle, 
+        -:   69:                                           ResultsEntry -> TempChecksumValue, 
+        -:   70:                                           CS_DEFAULT_ALGORITHM);
+        -:   71:    
+       18:   72:    NumBytesRemainingCycles -= NumBytesThisCycle;
+        -:   73:    
+       18:   74:    if (NumBytesRemainingCycles <= 0)    
+        -:   75:    {
+        -:   76:        /* We are finished CS'ing all of the parts for this Entry */
+       17:   77:        *DoneWithEntry = TRUE;
+        -:   78:    
+       17:   79:        if (ResultsEntry -> ComputedYet == TRUE)
+        -:   80:        {
+        -:   81:            /* This is NOT the first time through this Entry.  
+        -:   82:             We have already computed a CS value for this Entry */             
+        -:   83:            
+        6:   84:            if (NewChecksumValue != ResultsEntry -> ComparisonValue)
+        -:   85:            {
+        -:   86:                /* If the just-computed value differ from the saved value */                                
+        5:   87:                Status = CS_ERROR;
+        -:   88:            }
+        -:   89:            else
+        -:   90:            {
+        -:   91:                /* The checksum passes the test. */
+        -:   92:            }
+        -:   93:        }
+        -:   94:        else        
+        -:   95:        {
+        -:   96:            /* This is the first time through this Entry */
+       11:   97:            ResultsEntry -> ComputedYet = TRUE;
+       11:   98:            ResultsEntry -> ComparisonValue = NewChecksumValue;
+        -:   99:        }
+        -:  100:        
+       17:  101:        *ComputedCSValue = NewChecksumValue;
+       17:  102:        ResultsEntry -> ByteOffset = 0;
+       17:  103:        ResultsEntry -> TempChecksumValue = 0;
+        -:  104:    }    
+        -:  105:    else    
+        -:  106:    {    
+        -:  107:        /* We not finished this Entry.  Will try to finish during next wakeup */
+        1:  108:        ResultsEntry -> ByteOffset       += NumBytesThisCycle;
+        1:  109:        ResultsEntry -> TempChecksumValue = NewChecksumValue;        
+        -:  110:    }
+        -:  111:    
+       18:  112:    return Status;
+        -:  113:    
+        -:  114:} /* End of CS_ComputeEepromMemory () */
+        -:  115:
+        -:  116:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  117:/*                                                                 */
+        -:  118:/* CS function that computes the checksum for Tables               */
+        -:  119:/*                                                                 */
+        -:  120:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       15:  121:int32 CS_ComputeTables (CS_Res_Tables_Table_Entry_t    * ResultsEntry,
+        -:  122:                        uint32                         * ComputedCSValue,
+        -:  123:                        boolean                        * DoneWithEntry)
+        -:  124:{
+       15:  125:    uint32                                  OffsetIntoCurrEntry         = 0;
+       15:  126:    uint32                                  FirstAddrThisCycle          = 0;
+       15:  127:    uint32                                  NumBytesThisCycle           = 0;
+       15:  128:    int32                                   NumBytesRemainingCycles     = 0;
+       15:  129:    uint32                                  NewChecksumValue            = 0;
+       15:  130:    int32                                   Status                      = CS_SUCCESS;
+       15:  131:    int32                                   Result                      = CS_SUCCESS;
+       15:  132:    int32                                   ResultShare                 = 0;
+       15:  133:    int32                                   ResultGetInfo               = 0;
+       15:  134:    int32                                   ResultGetAddress            = 0;
+        -:  135:    
+        -:  136:    /* variables to get the table address */
+       15:  137:    CFE_TBL_Handle_t                        LocalTblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+       15:  138:    uint32                                  LocalAddress   = 0;
+        -:  139:    CFE_TBL_Info_t                          TblInfo;
+        -:  140:    
+        -:  141:
+        -:  142:    /* By the time we get here, we know we have an enabled entry */    
+        -:  143:        
+        -:  144:    /* set the done flag to false originally */
+       15:  145:    * DoneWithEntry = FALSE;
+       15:  146:    Result = CS_SUCCESS;
+        -:  147:    /* Handshake with Table Services to get address and size of table */ 
+        -:  148:    
+        -:  149:    /* if we already have a table handle for this table, don't get a new one */
+       15:  150:    if (ResultsEntry -> TblHandle == CFE_TBL_BAD_TABLE_HANDLE)
+        -:  151:    {
+        6:  152:        ResultShare = CFE_TBL_Share(&LocalTblHandle, ResultsEntry -> Name);
+        6:  153:        Result = ResultShare;
+        -:  154:        
+        6:  155:        if (Result == CFE_SUCCESS)
+        -:  156:        {
+        6:  157:            ResultsEntry -> TblHandle = LocalTblHandle;
+        -:  158:        }
+        -:  159:    }
+        -:  160:    else
+        -:  161:    {
+        9:  162:        LocalTblHandle = ResultsEntry -> TblHandle;
+        -:  163:    }
+        -:  164:    
+       15:  165:    if (Result == CFE_SUCCESS)
+        -:  166:    {
+       15:  167:        ResultGetInfo = CFE_TBL_GetInfo(&TblInfo, ResultsEntry -> Name);
+        -:  168:    }
+        -:  169:    
+        -:  170:    /* We want to try to to get the address even if the GetInfo fails. This
+        -:  171:       provides the CFE_TBL_UNREGISTERED if the table has gone away */
+       15:  172:    if (Result == CFE_SUCCESS)
+        -:  173:    {
+       15:  174:        ResultGetAddress = CFE_TBL_GetAddress((void*) &LocalAddress, LocalTblHandle);
+       15:  175:        Result = ResultGetAddress;
+        -:  176:    }
+        -:  177:    
+        -:  178:    /* if the table was never loaded, release the address to prevent the table from being
+        -:  179:       locked by CS, which would prevent the owner app from updating it*/
+       15:  180:    if ( ResultGetAddress == CFE_TBL_ERR_NEVER_LOADED)
+        -:  181:    {
+        1:  182:        CFE_TBL_ReleaseAddress(LocalTblHandle); 
+        -:  183:    }
+        -:  184:        
+        -:  185:    
+        -:  186:    
+        -:  187:    /* The table has dissapeared since the last time CS looked.
+        -:  188:       We are checking to see if the table came back */
+       15:  189:    if (Result == CFE_TBL_ERR_UNREGISTERED)
+        -:  190:    {
+        -:  191:        /* unregister the old handle */
+        2:  192:        CFE_TBL_Unregister(LocalTblHandle);
+        -:  193:        
+        -:  194:        /* reset the stored  data in the results table since the 
+        -:  195:           table went away */
+        2:  196:        ResultsEntry -> TblHandle = CFE_TBL_BAD_TABLE_HANDLE;
+        2:  197:        ResultsEntry -> ByteOffset = 0;
+        2:  198:        ResultsEntry -> TempChecksumValue = 0;
+        2:  199:        ResultsEntry -> ComputedYet = FALSE;
+        2:  200:        ResultsEntry -> ComparisonValue = 0;
+        2:  201:        ResultsEntry -> StartAddress = 0;
+        2:  202:        ResultsEntry -> NumBytesToChecksum = 0;
+        -:  203:         
+        -:  204:        
+        -:  205:        /* Maybe the table came back, try and reshare it */
+        2:  206:        ResultShare = CFE_TBL_Share(&LocalTblHandle, ResultsEntry -> Name);
+        -:  207:
+        2:  208:        if (ResultShare == CFE_SUCCESS)
+        -:  209:        {            
+        1:  210:            ResultsEntry -> TblHandle = LocalTblHandle;
+        -:  211:            
+        1:  212:            ResultGetInfo = CFE_TBL_GetInfo(&TblInfo, ResultsEntry -> Name);
+        -:  213:                
+        -:  214:            /* need to try to get the address again */
+        1:  215:            ResultGetAddress = CFE_TBL_GetAddress((void*) &LocalAddress, LocalTblHandle);
+        1:  216:            Result = ResultGetAddress;
+        -:  217:            
+        -:  218:            
+        -:  219:            /* if the table was never loaded, release the address to prevent the table from being
+        -:  220:             locked by CS, which would prevent the owner app from updating it*/
+        1:  221:            if ( ResultGetAddress == CFE_TBL_ERR_NEVER_LOADED)
+        -:  222:            {
+        1:  223:                CFE_TBL_ReleaseAddress(LocalTblHandle); 
+        -:  224:            }
+        -:  225:        }
+        -:  226:
+        -:  227:        else /* table was not there on the new share */
+        -:  228:        {
+        1:  229:            Result = ResultShare;
+        -:  230:        }
+        -:  231:    }
+        -:  232:    
+       24:  233:    if (Result == CFE_SUCCESS || Result == CFE_TBL_INFO_UPDATED)
+        -:  234:    {
+        -:  235:        /* push in the get data from the table info */
+        9:  236:        ResultsEntry -> NumBytesToChecksum = TblInfo.Size;
+        9:  237:        ResultsEntry -> StartAddress       = LocalAddress;
+        -:  238:        
+        -:  239:        /* if the table has been updated since the last time we
+        -:  240:         looked at it, we need to start over again. We can also
+        -:  241:         use the new value as a baseline checksum */
+        9:  242:        if (Result == CFE_TBL_INFO_UPDATED)
+        -:  243:        {
+        1:  244:            ResultsEntry -> ByteOffset = 0;
+        1:  245:            ResultsEntry -> TempChecksumValue = 0;
+        1:  246:            ResultsEntry -> ComputedYet = FALSE;
+        -:  247:        }
+        -:  248:    
+        9:  249:        OffsetIntoCurrEntry     = ResultsEntry -> ByteOffset;
+        9:  250:        FirstAddrThisCycle      = ResultsEntry -> StartAddress + OffsetIntoCurrEntry;
+        9:  251:        NumBytesRemainingCycles = ResultsEntry -> NumBytesToChecksum - OffsetIntoCurrEntry;
+        -:  252:        
+       18:  253:        NumBytesThisCycle  = ( (CS_AppData.MaxBytesPerCycle < NumBytesRemainingCycles)
+        9:  254:                              ? CS_AppData.MaxBytesPerCycle
+        -:  255:                              : NumBytesRemainingCycles);
+        -:  256:        
+        9:  257:        NewChecksumValue = CFE_ES_CalculateCRC((void *) ((uint8*)FirstAddrThisCycle), 
+        -:  258:                                               NumBytesThisCycle, 
+        -:  259:                                               ResultsEntry -> TempChecksumValue, 
+        -:  260:                                               CS_DEFAULT_ALGORITHM);
+        -:  261:        
+        9:  262:        NumBytesRemainingCycles -= NumBytesThisCycle;
+        -:  263:        
+        -:  264:        
+        -:  265:	/* Have we finished all of the parts for this Entry */
+        9:  266:        if (NumBytesRemainingCycles <= 0)
+        -:  267:        {
+        -:  268:            /* Start over if an update occurred after we started the last part */
+        7:  269:            CFE_TBL_ReleaseAddress(LocalTblHandle);  
+        7:  270:            Result = CFE_TBL_GetAddress((void*) &LocalAddress, LocalTblHandle);
+        7:  271:            if (Result == CFE_TBL_INFO_UPDATED)
+        -:  272:            {
+        1:  273:                *ComputedCSValue = 0;
+        1:  274:                ResultsEntry -> ComputedYet = FALSE;
+        1:  275:                ResultsEntry -> ComparisonValue = 0;
+        1:  276:                ResultsEntry -> ByteOffset = 0;
+        1:  277:                ResultsEntry -> TempChecksumValue = 0;
+        -:  278:            }
+        -:  279:            else
+        -:  280:            {
+        -:  281:		/* No last second updates, post the result for this table */
+        6:  282:                *DoneWithEntry = TRUE;
+        -:  283:            
+        6:  284:                if (ResultsEntry -> ComputedYet == TRUE)
+        -:  285:                {
+        -:  286:                    /* This is NOT the first time through this Entry.  
+        -:  287:                       We have already computed a CS value for this Entry */
+        3:  288:                    if (NewChecksumValue != ResultsEntry -> ComparisonValue)
+        -:  289:                    {
+        -:  290:                        /* If the just-computed value differ from the saved value */
+        2:  291:                        Status = CS_ERROR;                    
+        -:  292:                    }
+        -:  293:                    else
+        -:  294:                    {
+        -:  295:                        /* The checksum passes the test. */
+        -:  296:                    }
+        -:  297:                 }
+        -:  298:                 else
+        -:  299:                 {
+        -:  300:                     /* This is the first time through this Entry */
+        3:  301:                     ResultsEntry -> ComputedYet = TRUE;
+        3:  302:                     ResultsEntry -> ComparisonValue = NewChecksumValue;
+        -:  303:                 }
+        -:  304:            
+        6:  305:                 *ComputedCSValue = NewChecksumValue;
+        6:  306:                 ResultsEntry -> ByteOffset = 0;
+        6:  307:                 ResultsEntry -> TempChecksumValue = 0;
+        -:  308:            }
+        -:  309:        }
+        -:  310:        else
+        -:  311:        {
+        -:  312:            /* We have  not finished this Entry.  Will try to finish during next wakeup */
+        2:  313:            ResultsEntry -> ByteOffset       += NumBytesThisCycle;
+        2:  314:            ResultsEntry -> TempChecksumValue = NewChecksumValue;
+        2:  315:            *ComputedCSValue = NewChecksumValue;      
+        -:  316:        }
+        -:  317:        
+        -:  318:        /* We are done with the table for this cycle, so we need to release the address */
+        -:  319:    
+        9:  320:        Result = CFE_TBL_ReleaseAddress(LocalTblHandle);  
+        9:  321:        if (Result != CFE_SUCCESS)
+        -:  322:        {
+        1:  323:            CFE_EVS_SendEvent(CS_COMPUTE_TABLES_RELEASE_ERR_EID,
+        -:  324:                              CFE_EVS_ERROR,
+        -:  325:                              "CS Tables: Could not release addresss for table %s, returned: 0x%08X",
+        -:  326:                              ResultsEntry -> Name,
+        -:  327:                              (unsigned int)Result);
+        -:  328:        }
+        -:  329:        
+        -:  330:    }/* end if tabled was success or updated */
+        -:  331:    else
+        -:  332:    {
+        -:  333:        
+        6:  334:        CFE_EVS_SendEvent(CS_COMPUTE_TABLES_ERR_EID,
+        -:  335:                          CFE_EVS_ERROR,
+        -:  336:                          "CS Tables: Problem Getting table %s info Share: 0x%08X, GetInfo: 0x%08X, GetAddress: 0x%08X",
+        -:  337:                          ResultsEntry -> Name,
+        -:  338:                          (unsigned int)ResultShare,
+        -:  339:                          (unsigned int)ResultGetInfo,
+        -:  340:                          (unsigned int)ResultGetAddress);
+        -:  341:        
+        6:  342:        Status = CS_ERR_NOT_FOUND;
+        -:  343:    }
+        -:  344:    
+       15:  345:    return Status;
+        -:  346:    
+        -:  347:} /* End of CS_ComputeTables () */
+        -:  348:
+        -:  349:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  350:/*                                                                 */
+        -:  351:/* CS function that computes the checksum for Apps                 */
+        -:  352:/*                                                                 */
+        -:  353:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+       14:  354:int32 CS_ComputeApp (CS_Res_App_Table_Entry_t       * ResultsEntry,
+        -:  355:                     uint32                         * ComputedCSValue,
+        -:  356:                     boolean                        * DoneWithEntry)
+        -:  357:{
+       14:  358:    uint32              OffsetIntoCurrEntry         = 0;
+       14:  359:    uint32              FirstAddrThisCycle          = 0;
+       14:  360:    uint32              NumBytesThisCycle           = 0;
+       14:  361:    int32               NumBytesRemainingCycles     = 0;
+       14:  362:    uint32              NewChecksumValue            = 0;
+       14:  363:    int32               Status                      = CS_SUCCESS;
+        -:  364:    int32               Result;
+       14:  365:    int32               ResultGetAppID              = CS_ERROR;
+       14:  366:    int32               ResultGetAppInfo            = CS_ERROR;
+       14:  367:    int32               ResultAddressValid          = FALSE;
+        -:  368:
+        -:  369:    
+        -:  370:    
+        -:  371:    /* variables to get applications address */
+       14:  372:    uint32              AppID = 0;
+        -:  373:    CFE_ES_AppInfo_t    AppInfo;
+        -:  374:    
+        -:  375:    /* By the time we get here, we know we have an enabled entry */    
+        -:  376:
+        -:  377:    /* set the done flag to false originally */
+       14:  378:    * DoneWithEntry = FALSE;
+        -:  379:    
+       14:  380:    ResultGetAppID = CFE_ES_GetAppIDByName(&AppID, ResultsEntry -> Name);
+       14:  381:    Result = ResultGetAppID;
+        -:  382:    
+       14:  383:    if (Result == CFE_SUCCESS)
+        -:  384:    {
+        -:  385:        /* We got a valid AppID, so get the App info */
+        -:  386:    
+       11:  387:        ResultGetAppInfo = CFE_ES_GetAppInfo(&AppInfo, AppID);
+       11:  388:        Result = ResultGetAppInfo;
+        -:  389:    }
+        -:  390:    
+       14:  391:    if (Result == CFE_SUCCESS)
+        -:  392:    {
+        -:  393:        /* We got a valid AppID and good App info, so check the for valid addresses */
+        -:  394:
+       10:  395:        if (AppInfo.AddressesAreValid == FALSE)
+        -:  396:        {
+        1:  397:            CFE_EVS_SendEvent(CS_COMPUTE_APP_PLATFORM_DBG_EID,
+        -:  398:                              CFE_EVS_DEBUG,
+        -:  399:                              "CS cannot get a valid address for %s, due to the platform",ResultsEntry -> Name);
+        1:  400:            ResultAddressValid = FALSE;
+        1:  401:            Result = CS_ERROR;
+        -:  402:        }
+        -:  403:        else
+        -:  404:        {
+        -:  405:            /* Push in the data from the module info */
+        9:  406:            ResultsEntry -> NumBytesToChecksum =  AppInfo.CodeSize;
+        9:  407:            ResultsEntry -> StartAddress       =  AppInfo.CodeAddress;
+        9:  408:            Result = CFE_SUCCESS;
+        9:  409:            ResultAddressValid = TRUE;
+        -:  410:        }
+        -:  411:
+        -:  412:    }
+        -:  413:    
+       14:  414:    if (Result == CFE_SUCCESS)
+        -:  415:    {
+        -:  416:        /* We got valid AppID, good info, and valid addresses, so run the checksum */
+        -:  417:    
+        9:  418:        OffsetIntoCurrEntry     = ResultsEntry -> ByteOffset;
+        9:  419:        FirstAddrThisCycle      = ResultsEntry -> StartAddress + OffsetIntoCurrEntry;
+        9:  420:        NumBytesRemainingCycles = ResultsEntry -> NumBytesToChecksum - OffsetIntoCurrEntry;
+        -:  421:        
+       18:  422:        NumBytesThisCycle  = ( (CS_AppData.MaxBytesPerCycle < NumBytesRemainingCycles)
+        9:  423:                              ? CS_AppData.MaxBytesPerCycle
+        -:  424:                              : NumBytesRemainingCycles);
+        -:  425:        
+        9:  426:        NewChecksumValue = CFE_ES_CalculateCRC((void *) ((uint8*)FirstAddrThisCycle), 
+        -:  427:                                               NumBytesThisCycle, 
+        -:  428:                                               ResultsEntry -> TempChecksumValue, 
+        -:  429:                                               CS_DEFAULT_ALGORITHM);
+        -:  430:        
+        9:  431:        NumBytesRemainingCycles -= NumBytesThisCycle;
+        -:  432:        
+        9:  433:        if (NumBytesRemainingCycles <= 0)
+        -:  434:        {
+        -:  435:            /* We are finished CS'ing all of the parts for this Entry */
+        5:  436:            *DoneWithEntry = TRUE;
+        -:  437:            
+        5:  438:            if (ResultsEntry -> ComputedYet == TRUE)
+        -:  439:            {
+        -:  440:                /* This is NOT the first time through this Entry.  
+        -:  441:                 We have already computed a CS value for this Entry */
+        3:  442:                if (NewChecksumValue != ResultsEntry -> ComparisonValue)
+        -:  443:                {
+        -:  444:                    /* If the just-computed value differ from the saved value */                    
+        2:  445:                    Status = CS_ERROR;
+        -:  446:                }
+        -:  447:                else
+        -:  448:                {
+        -:  449:                    /* The checksum passes the test. */
+        -:  450:                }
+        -:  451:            }
+        -:  452:            else
+        -:  453:            {
+        -:  454:                /* This is the first time through this Entry */
+        2:  455:                ResultsEntry -> ComputedYet = TRUE;
+        2:  456:                ResultsEntry -> ComparisonValue = NewChecksumValue;
+        -:  457:            }
+        -:  458:            
+        5:  459:            *ComputedCSValue = NewChecksumValue;
+        5:  460:            ResultsEntry -> ByteOffset = 0;
+        5:  461:            ResultsEntry -> TempChecksumValue = 0;
+        -:  462:        }
+        -:  463:        else
+        -:  464:        {
+        -:  465:            /* We have not finished this Entry.  Will try to finish during next wakeup */
+        4:  466:            ResultsEntry -> ByteOffset       += NumBytesThisCycle;
+        4:  467:            ResultsEntry -> TempChecksumValue = NewChecksumValue;
+        4:  468:            *ComputedCSValue = NewChecksumValue;      
+        -:  469:        }
+        -:  470:    }/* end if got module id ok */
+        -:  471:    else
+        -:  472:    {
+        -:  473:        /* Something failed -- either invalid AppID, bad App info, or invalid addresses, so notify ground */
+        5:  474:        CFE_EVS_SendEvent(CS_COMPUTE_APP_ERR_EID,
+        -:  475:                          CFE_EVS_ERROR,
+        -:  476:                          "CS Apps: Problems getting app %s info, GetAppID: 0x%08X, GetAppInfo: 0x%08X, AddressValid: %d",
+        -:  477:                          ResultsEntry -> Name,
+        -:  478:                          (unsigned int)ResultGetAppID,
+        -:  479:                          (unsigned int)ResultGetAppInfo,
+        -:  480:                          (unsigned int)ResultAddressValid);
+        -:  481:        
+        5:  482:        Status = CS_ERR_NOT_FOUND;
+        -:  483:    }
+        -:  484:    
+       14:  485:    return Status;
+        -:  486:    
+        -:  487:} /* End of CS_ComputeApp () */
+        -:  488:
+        -:  489:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  490:/*                                                                 */
+        -:  491:/* CS child task for recomputing Eeprom and Memory entry baselines */
+        -:  492:/*                                                                 */
+        -:  493:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        5:  494:void CS_RecomputeEepromMemoryChildTask(void)
+        -:  495:{
+        5:  496:    uint32                              NewChecksumValue                   = 0;
+        -:  497:    char                                TableType[CS_TABLETYPE_NAME_SIZE];
+        5:  498:    CS_Res_EepromMemory_Table_Entry_t * ResultsEntry                       = NULL;
+        5:  499:    uint16                              Table                              = 0;
+        5:  500:    uint16                              EntryID                            = 0;
+        5:  501:    uint16                              PreviousState                      = CS_STATE_EMPTY;
+        5:  502:    uint32                              Status                             = -1;  /* Init to OS error */
+        5:  503:    boolean                             DoneWithEntry                      = FALSE;
+        5:  504:    uint16                              PreviousDefState                   = CS_STATE_EMPTY;
+        5:  505:    boolean                             DefEntryFound                      = FALSE;
+        5:  506:    uint16                              DefEntryID                         = 0;
+        5:  507:    CS_Def_EepromMemory_Table_Entry_t * DefTblPtr                          = NULL;
+        5:  508:    uint16                              MaxDefEntries                      = 0;
+        5:  509:    CFE_TBL_Handle_t                    DefTblHandle                       = CFE_TBL_BAD_TABLE_HANDLE;
+        5:  510:    CS_Res_Tables_Table_Entry_t       * TablesTblResultEntry               = NULL;
+        -:  511:    
+        -:  512:    
+        5:  513:    Status = CFE_ES_RegisterChildTask();
+        -:  514:
+        5:  515:    strncpy(TableType, "Undef Tbl", CS_TABLETYPE_NAME_SIZE);  /* Initialize table type string */
+        -:  516:    
+        5:  517:    if (Status == CFE_SUCCESS)
+        -:  518:    {
+        4:  519:        Table = CS_AppData.ChildTaskTable;
+        4:  520:        EntryID = CS_AppData.ChildTaskEntryID;
+        4:  521:        ResultsEntry = CS_AppData.RecomputeEepromMemoryEntryPtr;
+        -:  522:        
+        -:  523:        /* we want to  make sure that the entry isn't being checksummed in the
+        -:  524:         background at the same time we are recomputing */
+        4:  525:        PreviousState = ResultsEntry -> State;
+        4:  526:        ResultsEntry -> State = CS_STATE_DISABLED;
+        -:  527:        
+        -:  528:        /* Set entry as if this is the first time we are computing the checksum,
+        -:  529:         since we want the entry to take on the new value */
+        -:  530:        
+        4:  531:        ResultsEntry -> ByteOffset = 0;
+        4:  532:        ResultsEntry -> TempChecksumValue = 0;
+        4:  533:        ResultsEntry -> ComputedYet = FALSE;
+        -:  534:        
+        -:  535:        /* Update the definition table entry as well.  We need to determine which memory type is
+        -:  536:           being updated as well as which entry in the table is being updated. */
+        4:  537:        if ((Table != CS_OSCORE) && (Table != CS_CFECORE))
+        -:  538:        {
+        2:  539:            if (Table == CS_EEPROM_TABLE)
+        -:  540:            {
+        1:  541:                DefTblPtr = CS_AppData.DefEepromTblPtr;
+        1:  542:                MaxDefEntries = CS_MAX_NUM_EEPROM_TABLE_ENTRIES;
+        1:  543:                DefTblHandle = CS_AppData.DefEepromTableHandle;
+        1:  544:                TablesTblResultEntry = CS_AppData.EepResTablesTblPtr;
+        -:  545:            }
+        -:  546:            else 
+        -:  547:            {
+        1:  548:                DefTblPtr = CS_AppData.DefMemoryTblPtr;
+        1:  549:                MaxDefEntries = CS_MAX_NUM_MEMORY_TABLE_ENTRIES;
+        1:  550:                DefTblHandle = CS_AppData.DefMemoryTableHandle;
+        1:  551:                TablesTblResultEntry = CS_AppData.MemResTablesTblPtr;
+        -:  552:            }
+        -:  553:            
+        2:  554:            if (EntryID < MaxDefEntries)
+        -:  555:            {
+        -:  556:                /* This assumes that the definition table entries are in the same order as the 
+        -:  557:                   results table entries, which should be a safe assumption. */
+        4:  558:                if ((ResultsEntry->StartAddress == DefTblPtr[EntryID].StartAddress) &&
+        2:  559:                    (DefTblPtr[EntryID].State != CS_STATE_EMPTY))
+        -:  560:                {
+        2:  561:                    DefEntryFound = TRUE;
+        2:  562:                    PreviousDefState = DefTblPtr[EntryID].State;
+        2:  563:                    DefTblPtr[EntryID].State = CS_STATE_DISABLED;
+        2:  564:                    DefEntryID = EntryID;
+        2:  565:                    CS_ResetTablesTblResultEntry(TablesTblResultEntry);
+        2:  566:                    CFE_TBL_Modified(DefTblHandle);
+        -:  567:                }
+        -:  568:            }
+        -:  569:        }
+        -:  570:                        
+        -:  571:        
+       12:  572:        while(!DoneWithEntry)
+        -:  573:        {
+        4:  574:            CS_ComputeEepromMemory(ResultsEntry, &NewChecksumValue, &DoneWithEntry);
+        -:  575:            
+        4:  576:            OS_TaskDelay(CS_CHILD_TASK_DELAY);
+        -:  577:        }
+        -:  578:        
+        -:  579:        /* The new checksum value is stored in the table by the above functions */
+        -:  580:        
+        -:  581:        /* reset the entry's variables for a newly computed value */
+        4:  582:        ResultsEntry -> TempChecksumValue = 0;
+        4:  583:        ResultsEntry -> ByteOffset = 0;
+        4:  584:        ResultsEntry -> ComputedYet = TRUE;
+        -:  585:        /* restore the entry's previous state */
+        4:  586:        ResultsEntry -> State = PreviousState;
+        -:  587:
+        -:  588:        /* Restore the definition table if we found one earlier */
+        4:  589:        if (DefEntryFound)
+        -:  590:        {
+        2:  591:            DefTblPtr[DefEntryID].State = PreviousDefState;
+        2:  592:            CS_ResetTablesTblResultEntry(TablesTblResultEntry);
+        2:  593:            CFE_TBL_Modified(DefTblHandle);
+        -:  594:        }
+        -:  595:        
+        -:  596:        /* send event message */
+        -:  597:        
+        4:  598:        if( Table == CS_EEPROM_TABLE)
+        -:  599:        {
+        1:  600:            strncpy(TableType, "Eeprom", CS_TABLETYPE_NAME_SIZE);
+        -:  601:        }
+        4:  602:        if( Table == CS_MEMORY_TABLE)
+        -:  603:        {
+        1:  604:            strncpy(TableType, "Memory", CS_TABLETYPE_NAME_SIZE);
+        -:  605:        }
+        4:  606:        if( Table == CS_CFECORE)
+        -:  607:        {
+        1:  608:            strncpy(TableType, "cFE Core", CS_TABLETYPE_NAME_SIZE);
+        1:  609:            CS_AppData.CfeCoreBaseline = NewChecksumValue;
+        -:  610:        }
+        4:  611:        if( Table == CS_OSCORE)
+        -:  612:        {
+        1:  613:            strncpy(TableType, "OS", CS_TABLETYPE_NAME_SIZE);
+        1:  614:            CS_AppData.OSBaseline = NewChecksumValue;
+        -:  615:        }    
+        -:  616:        
+        4:  617:        CFE_EVS_SendEvent (CS_RECOMPUTE_FINISH_EEPROM_MEMORY_INF_EID,
+        -:  618:                           CFE_EVS_INFORMATION,
+        -:  619:                           "%s entry %d recompute finished. New baseline is 0X%08X", 
+        -:  620:                           TableType, EntryID, (unsigned int)NewChecksumValue);
+        -:  621:    }/* end if child task register */
+        -:  622:    else
+        -:  623:    {
+        -:  624:        /* Can't send event or write to syslog because this task isn't registered with the cFE. */
+        1:  625:        OS_printf("Recompute for Eeprom or Memory Child Task Registration failed!\n");
+        -:  626:    }
+        -:  627:    
+        5:  628:    CS_AppData.RecomputeInProgress = FALSE;
+        5:  629:    CFE_ES_ExitChildTask();
+        -:  630:    
+        5:  631:    return;
+        -:  632:}/* end CS_RecomputeEepromMemoryChildTask */
+        -:  633:
+        -:  634:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  635:/*                                                                 */
+        -:  636:/* CS child task for recomputing baselines for Apps                */
+        -:  637:/*                                                                 */
+        -:  638:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  639:void CS_RecomputeAppChildTask(void)
+        -:  640:{
+        3:  641:    uint32                              NewChecksumValue = 0;
+        3:  642:    CS_Res_App_Table_Entry_t          * ResultsEntry     = NULL;
+        3:  643:    uint16                              PreviousState    = CS_STATE_EMPTY;
+        3:  644:    boolean                             DoneWithEntry    = FALSE;
+        3:  645:    int32                               Status           = -1;  /* Init to OS Error */
+        3:  646:    uint16                              PreviousDefState = CS_STATE_EMPTY;
+        3:  647:    boolean                             DefEntryFound    = FALSE;
+        3:  648:    uint16                              DefEntryID       = 0;
+        3:  649:    CS_Def_App_Table_Entry_t          * DefTblPtr        = NULL;
+        3:  650:    uint16                              MaxDefEntries    = 0;
+        3:  651:    CFE_TBL_Handle_t                    DefTblHandle     = CFE_TBL_BAD_TABLE_HANDLE;
+        -:  652:    
+        -:  653:    
+        3:  654:    Status = CFE_ES_RegisterChildTask();
+        -:  655:    
+        3:  656:    if (Status == CFE_SUCCESS)
+        -:  657:    {
+        -:  658:        /* Get the variables to use from the global data */
+        2:  659:        ResultsEntry = CS_AppData.RecomputeAppEntryPtr;
+        -:  660:        
+        -:  661:        /* we want to  make sure that the entry isn't being checksummed in the
+        -:  662:         background at the same time we are recomputing */
+        -:  663:        
+        2:  664:        PreviousState = ResultsEntry -> State;
+        2:  665:        ResultsEntry -> State = CS_STATE_DISABLED;
+        -:  666:        
+        -:  667:        /* Set entry as if this is the first time we are computing the checksum,
+        -:  668:           since we want the entry to take on the new value */
+        -:  669:        
+        2:  670:        ResultsEntry -> ByteOffset = 0;
+        2:  671:        ResultsEntry -> TempChecksumValue = 0;
+        2:  672:        ResultsEntry -> ComputedYet = FALSE;
+        -:  673:        
+        -:  674:        /* Update the definition table entry as well.  We need to determine which memory type is
+        -:  675:         being updated as well as which entry in the table is being updated. */
+        2:  676:        DefTblPtr = CS_AppData.DefAppTblPtr;
+        2:  677:        MaxDefEntries = CS_MAX_NUM_APP_TABLE_ENTRIES;
+        2:  678:        DefTblHandle = CS_AppData.DefAppTableHandle;
+        -:  679:        
+        2:  680:        DefEntryID = 0;
+        -:  681:        
+        8:  682:        while ((!DefEntryFound) && (DefEntryID < MaxDefEntries))
+        -:  683:        {
+        8:  684:            if ((strncmp(ResultsEntry->Name, DefTblPtr[DefEntryID].Name, OS_MAX_API_NAME) == 0) &&
+        2:  685:                (DefTblPtr[DefEntryID].State != CS_STATE_EMPTY))
+        -:  686:            {
+        2:  687:                DefEntryFound = TRUE;
+        2:  688:                PreviousDefState = DefTblPtr[DefEntryID].State;
+        2:  689:                DefTblPtr[DefEntryID].State = CS_STATE_DISABLED;
+        2:  690:                CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);                
+        2:  691:                CFE_TBL_Modified(DefTblHandle);
+        -:  692:            }
+        -:  693:            else
+        -:  694:            {
+        2:  695:                DefEntryID++;
+        -:  696:            }
+        -:  697:        }
+        -:  698:        
+        -:  699:        
+        7:  700:        while(!DoneWithEntry)
+        -:  701:        {
+        4:  702:            Status = CS_ComputeApp(ResultsEntry, &NewChecksumValue, &DoneWithEntry);
+        -:  703:            
+        4:  704:            if (Status == CS_ERR_NOT_FOUND)
+        -:  705:            {
+        1:  706:                break;
+        -:  707:            }
+        -:  708:            
+        3:  709:            OS_TaskDelay(CS_CHILD_TASK_DELAY);
+        -:  710:        
+        -:  711:        }
+        -:  712:        /* The new checksum value is stored in the table by the above functions */
+        -:  713:
+        -:  714:        /* restore the entry's state */
+        2:  715:        ResultsEntry -> State = PreviousState;
+        -:  716:        
+        -:  717:        /* Restore the definition table if we found one earlier */
+        2:  718:        if (DefEntryFound)
+        -:  719:        {
+        2:  720:            DefTblPtr[DefEntryID].State = PreviousDefState;
+        2:  721:            CS_ResetTablesTblResultEntry(CS_AppData.AppResTablesTblPtr);                
+        2:  722:            CFE_TBL_Modified(DefTblHandle);
+        -:  723:        }
+        -:  724:        
+        -:  725:        
+        2:  726:        if (Status == CS_ERR_NOT_FOUND)
+        -:  727:        {
+        1:  728:            CFE_EVS_SendEvent (CS_RECOMPUTE_ERROR_APP_ERR_EID,
+        -:  729:                               CFE_EVS_ERROR,
+        -:  730:                               "App %s recompute failed. Could not get address",
+        -:  731:                               ResultsEntry -> Name);
+        -:  732:        }
+        -:  733:        else
+        -:  734:        {
+        -:  735:            /* reset the entry's variables for a newly computed value */
+        1:  736:            ResultsEntry -> TempChecksumValue = 0;
+        1:  737:            ResultsEntry -> ByteOffset = 0;
+        1:  738:            ResultsEntry -> ComputedYet = TRUE;
+        -:  739:            
+        -:  740:            /* send event message */
+        1:  741:            CFE_EVS_SendEvent (CS_RECOMPUTE_FINISH_APP_INF_EID,
+        -:  742:                               CFE_EVS_INFORMATION,
+        -:  743:                               "App %s recompute finished. New baseline is 0x%08X", 
+        -:  744:                               ResultsEntry -> Name,
+        -:  745:                               (unsigned int)NewChecksumValue);
+        -:  746:        }
+        -:  747:    }/*end if register child task*/
+        -:  748:    else
+        -:  749:    {
+        -:  750:        /* Can't send event or write to syslog because this task isn't registered with the cFE. */
+        1:  751:        OS_printf("Recompute for App Child Task Registration failed!\n");
+        -:  752:    }
+        -:  753:    
+        3:  754:    CS_AppData.RecomputeInProgress = FALSE;
+        3:  755:    CFE_ES_ExitChildTask();
+        -:  756:    
+        3:  757:    return;
+        -:  758:}/* end CS_RecomputeAppChildTask */
+        -:  759:
+        -:  760:
+        -:  761:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  762:/*                                                                 */
+        -:  763:/* CS child task for recomputing baselines for Tables              */
+        -:  764:/*                                                                 */
+        -:  765:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        3:  766:void CS_RecomputeTablesChildTask(void)
+        -:  767:{
+        3:  768:    uint32                              NewChecksumValue = 0;
+        3:  769:    CS_Res_Tables_Table_Entry_t       * ResultsEntry     = NULL;
+        3:  770:    uint16                              PreviousState    = CS_STATE_EMPTY;
+        3:  771:    boolean                             DoneWithEntry    = FALSE;
+        3:  772:    int32                               Status           = -1;  /* Init to OS error */
+        3:  773:    uint16                              PreviousDefState = CS_STATE_EMPTY;
+        3:  774:    boolean                             DefEntryFound    = FALSE;
+        3:  775:    uint16                              DefEntryID       = 0;
+        3:  776:    CS_Def_Tables_Table_Entry_t       * DefTblPtr        = NULL;
+        3:  777:    uint16                              MaxDefEntries    = 0;
+        3:  778:    CFE_TBL_Handle_t                    DefTblHandle     = CFE_TBL_BAD_TABLE_HANDLE;
+        -:  779:    
+        3:  780:    Status = CFE_ES_RegisterChildTask();
+        -:  781:    
+        3:  782:    if (Status == CFE_SUCCESS)
+        -:  783:    {
+        -:  784:        
+        -:  785:        /* Get the variables to use from the global data */
+        2:  786:        ResultsEntry = CS_AppData.RecomputeTablesEntryPtr;
+        -:  787:        
+        -:  788:        /* we want to  make sure that the entry isn't being checksummed in the
+        -:  789:         background at the same time we are recomputing */
+        -:  790:        
+        2:  791:        PreviousState = ResultsEntry -> State;
+        2:  792:        ResultsEntry -> State = CS_STATE_DISABLED;
+        -:  793:        
+        -:  794:        /* Set entry as if this is the first time we are computing the checksum,
+        -:  795:         since we want the entry to take on the new value */
+        -:  796:        
+        2:  797:        ResultsEntry -> ByteOffset = 0;
+        2:  798:        ResultsEntry -> TempChecksumValue = 0;
+        2:  799:        ResultsEntry -> ComputedYet = FALSE;
+        -:  800:        
+        -:  801:        /* Update the definition table entry as well.  We need to determine which memory type is
+        -:  802:         being updated as well as which entry in the table is being updated. */
+        2:  803:        DefTblPtr = CS_AppData.DefTablesTblPtr;
+        2:  804:        MaxDefEntries = CS_MAX_NUM_TABLES_TABLE_ENTRIES;
+        2:  805:        DefTblHandle = CS_AppData.DefTablesTableHandle;
+        -:  806:        
+        2:  807:        DefEntryID = 0;
+        -:  808:        
+        8:  809:        while ((!DefEntryFound) && (DefEntryID < MaxDefEntries))
+        -:  810:        {
+        8:  811:            if ((strncmp(ResultsEntry->Name, DefTblPtr[DefEntryID].Name, CFE_TBL_MAX_FULL_NAME_LEN) == 0) &&
+        2:  812:                (DefTblPtr[DefEntryID].State != CS_STATE_EMPTY))
+        -:  813:            {
+        2:  814:                DefEntryFound = TRUE;
+        2:  815:                PreviousDefState = DefTblPtr[DefEntryID].State;
+        2:  816:                DefTblPtr[DefEntryID].State = CS_STATE_DISABLED;
+        2:  817:                CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);                
+        2:  818:                CFE_TBL_Modified(DefTblHandle);
+        -:  819:            }
+        -:  820:            else
+        -:  821:            {
+        2:  822:                DefEntryID++;
+        -:  823:            }
+        -:  824:        }
+        -:  825:        
+        -:  826:        
+        5:  827:        while(!DoneWithEntry)
+        -:  828:        {
+        -:  829:
+        2:  830:            Status = CS_ComputeTables(ResultsEntry, &NewChecksumValue, &DoneWithEntry);
+        -:  831:            
+        2:  832:            if (Status == CS_ERR_NOT_FOUND)
+        -:  833:            {
+        1:  834:                break;
+        -:  835:            }
+        -:  836:            
+        1:  837:            OS_TaskDelay(CS_CHILD_TASK_DELAY);
+        -:  838:            
+        -:  839:        }
+        -:  840:        
+        -:  841:        
+        -:  842:        /* The new checksum value is stored in the table by the above functions */
+        2:  843:        if (Status == CS_ERR_NOT_FOUND)
+        -:  844:        {
+        1:  845:            CFE_EVS_SendEvent (CS_RECOMPUTE_ERROR_TABLES_ERR_EID,
+        -:  846:                               CFE_EVS_ERROR,
+        -:  847:                               "Table %s recompute failed. Could not get address", 
+        -:  848:                               ResultsEntry -> Name);
+        -:  849:        }
+        -:  850:        else
+        -:  851:        {
+        -:  852:            /* reset the entry's variables for a newly computed value */
+        1:  853:            ResultsEntry -> TempChecksumValue = 0;
+        1:  854:            ResultsEntry -> ByteOffset = 0;
+        1:  855:            ResultsEntry -> ComputedYet = TRUE;
+        -:  856:            
+        -:  857:            /* send event message */
+        1:  858:            CFE_EVS_SendEvent (CS_RECOMPUTE_FINISH_TABLES_INF_EID,
+        -:  859:                               CFE_EVS_INFORMATION,
+        -:  860:                               "Table %s recompute finished. New baseline is 0x%08X", 
+        -:  861:                               ResultsEntry -> Name,
+        -:  862:                               (unsigned int)NewChecksumValue);
+        -:  863:        }
+        -:  864:        
+        -:  865:        /* restore the entry's state */
+        2:  866:        ResultsEntry -> State = PreviousState;
+        -:  867:        
+        -:  868:        /* Restore the definition table if we found one earlier */
+        2:  869:        if (DefEntryFound)
+        -:  870:        {
+        2:  871:            DefTblPtr[DefEntryID].State = PreviousDefState;
+        2:  872:            CS_ResetTablesTblResultEntry(CS_AppData.TblResTablesTblPtr);                
+        2:  873:            CFE_TBL_Modified(DefTblHandle);
+        -:  874:        }
+        -:  875:
+        -:  876:    }/*end if register child task*/
+        -:  877:    else
+        -:  878:    {
+        -:  879:        /* Can't send event or write to syslog because this task isn't registered with the cFE. */
+        1:  880:        OS_printf("Recompute Tables Child Task Registration failed!\n");
+        -:  881:    }
+        -:  882:    
+        3:  883:    CS_AppData.RecomputeInProgress = FALSE;
+        3:  884:    CFE_ES_ExitChildTask();
+        -:  885:    
+        3:  886:    return;
+        -:  887:}/* end CS_RecomputeTablesChildTask */
+        -:  888:
+        -:  889:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  890:/*                                                                 */
+        -:  891:/* CS child task for getting the checksum on a area of memory      */
+        -:  892:/*                                                                 */
+        -:  893:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        2:  894:void CS_OneShotChildTask(void)
+        -:  895:{
+        2:  896:    uint32          NewChecksumValue        = 0;
+        2:  897:    int32           Status                  = -1;  /* Init to OS error */
+        2:  898:    uint32          NumBytesRemainingCycles = 0;
+        2:  899:    uint32          NumBytesThisCycle       = 0;
+        2:  900:    uint32          FirstAddrThisCycle      = 0;
+        2:  901:    uint32          MaxBytesPerCycle        = 0;
+        -:  902:    
+        -:  903:    
+        2:  904:    Status = CFE_ES_RegisterChildTask();
+        -:  905:    
+        2:  906:    if (Status == CFE_SUCCESS)
+        -:  907:    {
+        -:  908:        
+        1:  909:        NewChecksumValue        = 0;
+        1:  910:        NumBytesRemainingCycles = CS_AppData.LastOneShotSize;
+        1:  911:        FirstAddrThisCycle      = CS_AppData.LastOneShotAddress;
+        1:  912:        MaxBytesPerCycle        = CS_AppData.LastOneShotMaxBytesPerCycle;
+        -:  913:        
+        3:  914:        while (NumBytesRemainingCycles > 0)
+        -:  915:        {
+        1:  916:            NumBytesThisCycle  = ( (MaxBytesPerCycle < NumBytesRemainingCycles)
+        -:  917:                                  ? MaxBytesPerCycle
+        -:  918:                                  : NumBytesRemainingCycles);
+        -:  919:            
+        1:  920:            NewChecksumValue = CFE_ES_CalculateCRC((void *) ((uint8*)FirstAddrThisCycle), 
+        -:  921:                                                   NumBytesThisCycle, 
+        -:  922:                                                   NewChecksumValue, 
+        -:  923:                                                   CS_DEFAULT_ALGORITHM);
+        -:  924:
+        -:  925:            /* Update the remainders for the next cycle */
+        1:  926:            FirstAddrThisCycle      += NumBytesThisCycle;
+        1:  927:            NumBytesRemainingCycles -= NumBytesThisCycle;
+        -:  928:            
+        1:  929:            OS_TaskDelay(CS_CHILD_TASK_DELAY);
+        -:  930:        }
+        -:  931:        
+        -:  932:        /*Checksum Calculation is done! */
+        -:  933:        
+        -:  934:        /* put the new checksum value in the baseline */ 
+        1:  935:        CS_AppData.LastOneShotChecksum = NewChecksumValue;
+        -:  936:        
+        -:  937:        /* send event message */
+        1:  938:        CFE_EVS_SendEvent (CS_ONESHOT_FINISHED_INF_EID,
+        -:  939:                           CFE_EVS_INFORMATION,
+        -:  940:                           "OneShot checksum on Address: 0x%08X, size %d completed. Checksum =  0x%08X", 
+        1:  941:                           (unsigned int)(CS_AppData.LastOneShotAddress),
+        1:  942:                           (unsigned int)(CS_AppData.LastOneShotSize),
+        1:  943:                           (unsigned int)(CS_AppData.LastOneShotChecksum));
+        -:  944:    }/*end if register child task*/
+        -:  945:    else
+        -:  946:    {
+        -:  947:        /* Can't send event or write to syslog because this task isn't registered with the cFE. */
+        1:  948:        OS_printf("OneShot Child Task Registration failed!\n");
+        -:  949:    }
+        -:  950:    
+        2:  951:    CS_AppData.OneShotInProgress = FALSE;
+        2:  952:    CS_AppData.ChildTaskID      = 0;
+        -:  953:    
+        2:  954:    CFE_ES_ExitChildTask();
+        2:  955:    return;
+        -:  956:}/* end CS_OneShotChildTask */
+        -:  957:
+        -:  958:/************************/
+        -:  959:/*  End of File Comment */
+        -:  960:/************************/

@@ -1,0 +1,369 @@
+/**
+  \mainpage CFS File Manager (FM) User's Guide
+
+       <UL>
+           <LI> \subpage cfsfmrevhist
+           <LI> \subpage cfsfmintro
+           <LI> \subpage cfsfmovr
+           <LI> \subpage cfsfmopr
+           <LI> \subpage cfsfmreq
+           <LI> \subpage cfsfmdg
+           <LI> \subpage cfsfmcmds
+           <LI> \subpage cfsfmtlm
+           <LI> \subpage cfsfmtbl
+           <LI> \subpage cfsfmcfg
+           <LI> \subpage cfsfmcons
+           <LI> \subpage cfsfmfaqs
+           <LI> \subpage fm_events.h "CFS File Manager Event Message Reference" <BR>
+       </UL>
+**/
+
+/**
+  \page cfsfmrevhist CFS File Manager User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_fm.dox  $
+  Revision 1.3.1.1 2014/12/19 12:38:03EST sstrege 
+  Fixed cut-and-paste error referencing CS vs. FM
+  Revision 1.3 2010/03/08 08:30:17EST wmoleski 
+  Updated the command and telemetry mnemonic mapping files and the User's Guide source file.
+  Revision 1.2 2009/04/18 12:38:15EDT dkobe 
+  Corrected typos in doxygen comments
+  Revision 1.1 2009/04/16 17:40:20EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/docs/dox_src/users_guide/project.pj
+  \endverbatim
+  
+  Next: \ref cfsfmintro
+**/
+
+/**
+  \page cfsfmintro CFS File Manager Introduction
+
+  <H1> Scope </H1>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the CFS File Manager (FM) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personal).  
+  The deployment guide section, is intended for mission developers when deploying and 
+  configuring the FM application software for a mission flight software build environment. 
+
+  <H1> Applicable Documents </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> 582-2007-032       </TD> 
+      <TD WIDTH="40%"> CFS File Manager Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> 582-2007-026       </TD> 
+      <TD WIDTH="40%"> CFS File Manager Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS File Manager Design Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> <I>Need Reference to OSAL Document</I> </TD>
+  </TABLE>
+
+  <H1> Acronyms </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Next: \ref cfsfmovr <BR>
+  Prev: \ref cfsfmrevhist
+**/
+
+
+/**
+  \page cfsfmovr CFS File Manager Overview
+
+  The CFS FM application provides onboard file system management services by processing ground commands
+  for copying, moving, and renaming files, decompressing files, creating directories, deleting files and 
+  directories, providing file and directory informational telemetry messages, and providing open file and 
+  directory listings.  The FM software context diagram is shown in Figure FM-1.  
+  
+  \image html CFS_FM_Context.jpg "Figure FM-1" <BR>
+
+  The FM application interfaces with the Command Ingest (CI) application to receive ground commands.  
+  See page \ref cfsfmcmds for a detailed description of the FM ground commands.  FM utilizes the Operating 
+  System Abstraction Layer (OSAL) API library functions for interfacing with the onboard file systems when 
+  processing ground commands.  The FM application interfaces with the 
+  <A HREF="../sch/index.html">Scheduler (SCH) Application</A> for 
+  receiving periodic housekeeping requests.  Upon receipt of a housekeeping request, FM will send its 
+  housekeeping telemetry packets on the Software Bus.  Housekeeping telemetry packets are subscribed to 
+  by the Housekeeping (HK), Telemetry Output (TO), and Data Storage applications.  See page 
+  \ref cfsfmtlm for a detailed description of the contents of the FM housekeeping telemetry packet. <BR>
+
+   
+  Next: \ref cfsfmopr <BR>
+  Prev: \ref cfsfmintro
+**/
+
+/**
+  \page cfsfmopr CFS File Manager Operations
+
+  <H1>Initialization </H1>
+
+  <BR><B> Power-On and Processor Resets </B><BR>
+
+  Upon a Power-On or Processor reset the FM application initializes all telemetry within its housekeeping 
+  telemetry packet.  The Command and Command Error counters are set to zero, as well as, all other 
+  numerical data within the packet.  In addition to initializing telemetry, FM registers for cFE event 
+  services, creates its software bus message pipe, and subscribes to FM SB housekeeping requests and 
+  commands. <BR>
+
+  <BR><B> Normal Operation </B><BR>
+
+  The CFS FM application is a command and telemetry driven application.  FM waits in a command loop 
+  infinitely until the software receives a scheduled housekeeping request, ground command, or stored 
+  command.  Command packets (including housekeeping requests) are processed as they are received.  The 
+  application sends an FM housekeeping telemetry message to the ground upon receipt of a scheduled 
+  housekeeping request produced by the SCH application.  This request is typically performed every 
+  4-5 seconds. <BR>  
+
+  Various FM ground commands produce telemetry messages as a result of processing the command.  These 
+  telemetry messages include a directory listing telemetry message, file information telemetry message, 
+  and an open file listing telemetry message. See page \ref cfsfmcmds for a detailed description of the 
+  FM directory listing, file information, and open file listing ground commands.  See page \ref cfsfmtlm 
+  for a detailed description of the contents of the FM directory listing, file information, and open file 
+  listing telemetry messages. <BR>  
+
+  Other FM ground commands produce files as a result of processing the command.  These files include a 
+  decompression file, concatenation file, and a directory listing file.  See page \ref cfsfmcmds for a 
+  detailed description of the FM decompress file, concatenate files, and directory listing file ground 
+  commands. <BR>
+  
+  The decompression file is produced using the cFE API function #CFE_FS_Decompress which uses code ported 
+  from the GNU zip sources.  The cFE API function #CFE_FS_Decompress produces the decompressed output file.  
+  The output file is comparable to that of a file that has been unzipped using the system utility gunzip.  
+  A compressed file reduces the size of the file by encoding the file.  Compressed files may be used to 
+  reduce uplink time to the spacecraft.  Decompressing the file will restore the file from its encoded 
+  state to the original state of the file. <BR>
+
+  The concatenation file is a direct copy of the contents of the two command specified source files, 
+  with the contents of the first source file specified proceeding the contents of the second source 
+  file specified.  The contents of the second source file are written with no delineation characters 
+  such as spaces or returns following the contents of the first source file. <BR>     
+
+  The directory listing file is written as a binary file and contains a cFE file header at the top of 
+  the file contiguously followed by a directory listing status data structure containing an echo of the 
+  command specified directory name (#OS_MAX_PATH_LEN), directory size in bytes (uint32), total number of 
+  file contained in the directory (uint32), and the number of file names written in the directory listing 
+  file (uint32).  The directory listing is then written contiguously one entry at a time.  Each entry in 
+  the directory listing includes for each file in the directory, the name of the file(#OS_MAX_PATH_LEN), 
+  file size in bytes (uint32), and last modification time of the file (uint32).  File systems use specific 
+  time epochs for their time tagging of files.  Since spacecraft systems rarely use an epoch that matches 
+  a particular file system, a function is used to convert the file system time (in seconds) to spacecraft 
+  time (in seconds).  The conversion is controlled by a cFE configuration parameter which is set equal to 
+  the number of seconds between the spacecraft's epoch and the file system's epoch.  See #CFE_FS_Header_t 
+  for the cFE file header format.  See /FM_DirListFileStat_t for the format of the directory listing 
+  status structure.  See /FM_DirListFileData_t for the format of a directory listing entry. <BR>
+  
+   
+  Next: \ref cfsfmreq <BR>
+  Prev: \ref cfsfmovr
+
+**/
+
+
+/**
+  \page cfsfmreq CFS File Manager Requirements
+    
+   For detailed FM requirements, please see the "Core Flight System (CFS)
+   File Manager Application Requirements" Document Number: 582-2007-032 
+
+  Next: \ref cfsfmdg <BR>
+  Prev: \ref cfsfmopr 
+**/
+
+/**
+  \page cfsfmdg  CFS File Manager Deployment Guide
+  
+  To integrate the FM application, follow the CFS App Integration Guide. 
+  Also, be sure to set up the configuration parameters and message IDs for
+  the platform
+
+   Next: \ref cfsfmcmds <BR>
+   Prev: \ref cfsfmreq
+**/
+
+/**
+  \page cfsfmcmds CFS File Manager Commands
+  
+   Next: \ref cfsfmtlm <BR>
+   Prev: \ref cfsfmdg <BR>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcfg</B></TD>
+  </TABLE>
+  
+   The following is a list of commands that are processed by the CFS File Manager Application: 
+
+**/
+
+/**
+  \page cfsfmtlm  CFS File Manager Telemetry
+
+   Next: \ref cfsfmtbl <BR>
+   Prev: \ref cfsfmcmds <BR>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcfg</B></TD>
+  </TABLE>
+  
+  The following are telemetry packets generated by the CFS File Manager Application:
+
+**/
+
+/**
+  \page cfsfmtbl CFS File Manager Table Definitions
+  
+   Next: \ref cfsfmcfg <BR>
+   Prev: \ref cfsfmtlm <BR>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcfg</B></TD>
+  </TABLE>
+
+  The File Manager Application defines one table that specifies the file systems
+  contained in your system.
+
+  The table contains #FM_TABLE_ENTRY_COUNT entries of the following structure:<BR>
+      <ul><li>State - An integer value ranging from 0 to 2 indicating the state of this entry. The values correspond to "Unused", "Enabled", and "Disabled" <BR>
+      <li>Name  - The full path specification of the file system. I.e., "/ram"
+      </ul>
+**/
+
+/**
+  \page cfsfmcfg CFS File Manager Configuration Parameters
+
+   Next: \ref cfsfmcons <BR>
+   Prev: \ref cfsfmtbl <BR>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmcmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfsfmtbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the CFS File Manager
+  Application either for each platform or for a mission as a whole.
+
+**/
+
+/**
+  \page cfsfmcons  CFS File Manager Operational Constraints
+
+  -# All FM commands that input a file or directory name must use a full path specification. <BR>
+  -# The Decompress File Command should only be used on files that have been compressed. <BR>
+  -# The contents of a directory must be deleted before the directory itself can be deleted. <BR>
+
+  
+  Next: \ref cfsfmfaqs <BR>
+  Prev: \ref cfsfmcfg
+**/
+
+/**
+  \page cfsfmfaqs  CFS File Manager Frequently Asked Questions
+
+  <B> (Q)
+    What is the basic flow of the FM application?
+  </B> <BR> <BR> <I>
+    The FM application uses the typical CFS application format. At startup, FM
+    performs an initialization sequence and then enters an infinite loop waiting
+    for commands received via the cFE Software Bus.  A not so typical feature
+    is the FM child task which is used to process FM commands that might take a
+    very long time to execute.
+  </I>
+
+  <B> (Q)
+    In general, what is done during FM initialization?
+  </B> <BR> <BR> <I>
+    During initialization, FM performs the common cFE initialization (register
+    for cFE services, create command pipe, subscribe to commands, etc) and then
+    loads the File System Free Space table and creates the FM child task.  Errors
+    encountered during the initialization sequence will generally result in the
+    termination of the FM application.
+  </I>
+
+  <B> (Q)
+    Why does FM have a child task?
+  </B> <BR> <BR> <I>
+    FM commands that process files which may be very large and commands that
+    process directories which may have a very large number of entries can take
+    several seconds to execute.  This creates two potential issues: the length
+    of time that FM would be unresponsive to new commands and the length of time
+    that other lower priority tasks would be held off from execution.
+  </I> <BR> <BR> <I>
+    Thus, creating a lower priority child task to process "slow" commands allows
+    FM to immediately be ready to receive the next command.  And inserting task
+    delays into the child task command process loops provides other lower priority
+    tasks with execution opportunities.  Note that inserting delays into the main
+    FM task would have lengthened the time that FM was unavailable for new commands.
+  </I>
+
+  <B> (Q)
+    What happens if FM is unable to load the default File System Free Space table
+    during startup initialization?
+  </B> <BR> <BR> <I>
+    During initialization, FM must succeed in registering the File System Free
+    Space table with cFE Table Services or the application will terminate.  However,
+    it is OK if FM is unable to load the default table data file, although the
+    /FM_GetFreeSpace command will fail until a valid table data file is loaded.
+  </I>
+
+  <B> (Q)
+    Is there a limit to the number of files that can be open at one time?
+  </B> <BR> <BR> <I>
+    There are two levels of limit to the number of open files.  The first limit
+    is defined by the CFE-OSAL configuration element #OS_MAX_NUM_OPEN_FILES and
+    must be less than or equal to the second limit which is a value defined in
+    a manner specific to the selected operating system.  Note also that certain
+    directory access functions (reading directory entries, etc) require opening
+    the directory and may affect the count of available open files.
+  </I>
+
+  Prev: \ref cfsfmcons
+**/
+

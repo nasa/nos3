@@ -1,0 +1,1427 @@
+        -:    0:Source:../src/mm_dump.c
+        -:    0:Graph:mm_dump.gcno
+        -:    0:Data:mm_dump.gcda
+        -:    0:Runs:1
+        -:    0:Programs:3
+        -:    1:/*************************************************************************
+        -:    2:** File:
+        -:    3:**   $Id: mm_dump.c.gcov 1.1.2.4 2011/12/05 15:19:20EST jmdagost Exp  $
+        -:    4:**
+        -:    5:** Purpose: 
+        -:    6:**   Functions used for processing CFS Memory Manager memory dump commands
+        -:    7:**
+        -:    8:**   $Log: mm_dump.c.gcov  $
+        -:    8:**   Revision 1.1.2.4 2011/12/05 15:19:20EST jmdagost 
+        -:    8:**   Latest unit test results (as of 2011-Dec-05)
+        -:    9:**   Revision 1.10 2010/11/29 13:35:23EST jmdagost 
+        -:   10:**   Replaced ifdef tests with if-true tests.
+        -:   11:**   Revision 1.9 2010/05/26 15:22:46EDT jmdagost 
+        -:   12:**   In function MM_FillDumpInEventBuffer, put local variable declaration in a pre-processor conditional.
+        -:   13:**   Revision 1.8 2009/06/18 10:17:11EDT rmcgraw 
+        -:   14:**   DCR8291:1 Changed OS_MEM_ #defines to CFE_PSP_MEM_
+        -:   15:**   Revision 1.7 2009/06/10 14:04:22EDT rmcgraw 
+        -:   16:**   DCR82191:1 Changed os_bsp to cfe_psp and OS_Mem to CFE_PSP_Mem
+        -:   17:**   Revision 1.6 2008/09/05 14:24:09EDT dahardison 
+        -:   18:**   Updated references to local HK variables
+        -:   19:**   Revision 1.5 2008/09/05 13:14:45EDT dahardison 
+        -:   20:**   Added inclusion of mm_mission_cfg.h
+        -:   21:**   Revision 1.4 2008/05/22 15:09:30EDT dahardison 
+        -:   22:**   Changed inclusion of cfs_lib.h to cfs_utils.h
+        -:   23:**   Revision 1.3 2008/05/19 15:22:59EDT dahardison 
+        -:   24:**   Version after completion of unit testing
+        -:   25:** 
+        -:   26:*************************************************************************/
+        -:   27:
+        -:   28:/*************************************************************************
+        -:   29:** Includes
+        -:   30:*************************************************************************/
+        -:   31:#include "mm_app.h"
+        -:   32:#include "mm_dump.h"
+        -:   33:#include "mm_events.h"
+        -:   34:#include "mm_mem32.h"
+        -:   35:#include "mm_mem16.h"
+        -:   36:#include "mm_mem8.h"
+        -:   37:#include "mm_utils.h"
+        -:   38:#include "mm_mission_cfg.h"
+        -:   39:#include "cfs_utils.h"
+        -:   40:#include <string.h>
+        -:   41:
+        -:   42:/*************************************************************************
+        -:   43:** External Data
+        -:   44:*************************************************************************/
+        -:   45:extern MM_AppData_t MM_AppData; 
+        -:   46:
+        -:   47:/*************************************************************************
+        -:   48:** Local Function Prototypes
+        -:   49:*************************************************************************/
+        -:   50:/************************************************************************/
+        -:   51:/** \brief Memory peek
+        -:   52:**  
+        -:   53:**  \par Description
+        -:   54:**       Support function for #MM_PeekCmd. This routine will read 
+        -:   55:**       8, 16, or 32 bits of data and send it in an event message.
+        -:   56:**
+        -:   57:**  \par Assumptions, External Events, and Notes:
+        -:   58:**       None
+        -:   59:**       
+        -:   60:**  \param [in]   CmdPtr       A #MM_PeekCmd_t pointer to the peek 
+        -:   61:**                             command message
+        -:   62:**
+        -:   63:**  \param [in]   SrcAddress   The source address for the peek operation 
+        -:   64:** 
+        -:   65:*************************************************************************/
+        -:   66:void MM_PeekMem (MM_PeekCmd_t *CmdPtr, 
+        -:   67:                 uint32       SrcAddress);
+        -:   68:
+        -:   69:/************************************************************************/
+        -:   70:/** \brief Memory dump to file
+        -:   71:**  
+        -:   72:**  \par Description
+        -:   73:**       Support function for #MM_DumpMemToFileCmd. This routine will 
+        -:   74:**       read an address range and store the data in a file.
+        -:   75:**
+        -:   76:**  \par Assumptions, External Events, and Notes:
+        -:   77:**       None
+        -:   78:**       
+        -:   79:**  \param [in]   FileHandle   The open file handle of the dump file  
+        -:   80:**
+        -:   81:**  \param [in]   FileName     A pointer to a character string holding  
+        -:   82:**                             the dump file name
+        -:   83:**
+        -:   84:**  \param [in]   FileHeader   A #MM_LoadDumpFileHeader_t pointer to  
+        -:   85:**                             the dump file header structure initialized
+        -:   86:**                             with data based upon the command message 
+        -:   87:**                             parameters
+        -:   88:**
+        -:   89:**  \returns
+        -:   90:**  \retstmt Returns TRUE if the dump completed successfully  \endcode
+        -:   91:**  \retstmt Returns FALSE if the dump failed due to an error \endcode
+        -:   92:**  \endreturns
+        -:   93:** 
+        -:   94:*************************************************************************/
+        -:   95:boolean MM_DumpMemToFile(uint32                   FileHandle, 
+        -:   96:                         char                     *FileName, 
+        -:   97:                         MM_LoadDumpFileHeader_t  *FileHeader);
+        -:   98:
+        -:   99:/************************************************************************/
+        -:  100:/** \brief Verify memory dump to file parameters
+        -:  101:**  
+        -:  102:**  \par Description
+        -:  103:**       This routine will run various checks on the source address, 
+        -:  104:**       memory type, and data size (in bytes) for a dump memory to
+        -:  105:**       file command.
+        -:  106:**
+        -:  107:**  \par Assumptions, External Events, and Notes:
+        -:  108:**       None
+        -:  109:**       
+        -:  110:**  \param [in]   Address       The source address for the requested 
+        -:  111:**                              dump operation 
+        -:  112:**
+        -:  113:**  \param [in]   MemType       The source memory type for the requested 
+        -:  114:**                              dump operation  
+        -:  115:**
+        -:  116:**  \param [in]   SizeInBytes   The number of bytes for the requested 
+        -:  117:**                              dump operation 
+        -:  118:**
+        -:  119:**  \returns
+        -:  120:**  \retstmt Returns TRUE if all the parameter checks passed  \endcode
+        -:  121:**  \retstmt Returns FALSE any parameter check failed         \endcode
+        -:  122:**  \endreturns
+        -:  123:**
+        -:  124:*************************************************************************/
+        -:  125:boolean MM_VerifyFileDumpParams(uint32 Address, 
+        -:  126:                                uint8  MemType, 
+        -:  127:                                uint32 SizeInBytes);
+        -:  128:
+        -:  129:/************************************************************************/
+        -:  130:/** \brief Write the cFE primary and and MM secondary file headers
+        -:  131:**  
+        -:  132:**  \par Description
+        -:  133:**       Support function for #MM_DumpMemToFileCmd. This routine will 
+        -:  134:**       write the cFE primary and MM secondary headers to the
+        -:  135:**       file specified by the FileHandle.
+        -:  136:**
+        -:  137:**  \par Assumptions, External Events, and Notes:
+        -:  138:**       None
+        -:  139:**       
+        -:  140:**  \param [in]   FileName     A pointer to a character string holding  
+        -:  141:**                             the file name (used only for error event
+        -:  142:**                             messages).
+        -:  143:**
+        -:  144:**  \param [in]   FileHandle   File Descriptor obtained from a previous
+        -:  145:**                             call to #OS_open that is associated with
+        -:  146:**                             the file whose headers are to be written.
+        -:  147:**
+        -:  148:**  \param [in]   CFEHeader    A #CFE_FS_Header_t pointer to the
+        -:  149:**                             cFE primary file header structure to be
+        -:  150:**                             written.
+        -:  151:**
+        -:  152:**  \param [in]   MMHeader     A #MM_LoadDumpFileHeader_t pointer to 
+        -:  153:**                             the MM secondary file header structure
+        -:  154:**                             to be written.
+        -:  155:**
+        -:  156:**  \returns
+        -:  157:**  \retstmt Returns TRUE if the headers were written successfully \endcode
+        -:  158:**  \retstmt Returns FALSE if a write error occurred \endcode
+        -:  159:**  \endreturns
+        -:  160:** 
+        -:  161:*************************************************************************/
+        -:  162:boolean MM_WriteFileHeaders(char                    *FileName,
+        -:  163:                            int32                    FileHandle,
+        -:  164:                            CFE_FS_Header_t         *CFEHeader,
+        -:  165:                            MM_LoadDumpFileHeader_t *MMHeader);
+        -:  166:
+        -:  167:/************************************************************************/
+        -:  168:/** \brief Verify memory dump in event message parameters
+        -:  169:**  
+        -:  170:**  \par Description
+        -:  171:**       This routine will run various checks on the source address, 
+        -:  172:**       memory type, and data size (in bytes) for a dump memory in
+        -:  173:**       event message command.
+        -:  174:**
+        -:  175:**  \par Assumptions, External Events, and Notes:
+        -:  176:**       None
+        -:  177:**       
+        -:  178:**  \param [in]   Address       The source address for the requested 
+        -:  179:**                              dump operation 
+        -:  180:**
+        -:  181:**  \param [in]   MemType       The source memory type for the requested 
+        -:  182:**                              dump operation  
+        -:  183:**
+        -:  184:**  \param [in]   SizeInBytes   The number of bytes for the requested 
+        -:  185:**                              dump operation 
+        -:  186:**
+        -:  187:**  \returns
+        -:  188:**  \retstmt Returns TRUE if all the parameter checks passed  \endcode
+        -:  189:**  \retstmt Returns FALSE any parameter check failed         \endcode
+        -:  190:**  \endreturns
+        -:  191:**
+        -:  192:*************************************************************************/
+        -:  193:boolean MM_VerifyDumpInEventParams(uint32 Address, 
+        -:  194:                                   uint8  MemType, 
+        -:  195:                                   uint32 SizeInBytes);
+        -:  196:
+        -:  197:/************************************************************************/
+        -:  198:/** \brief Fill dump memory in event message buffer
+        -:  199:**  
+        -:  200:**  \par Description
+        -:  201:**       Support function for #MM_DumpInEventCmd. This routine will 
+        -:  202:**       read an address range and store the data in a byte array.
+        -:  203:**       It will properly adjust for optional memory types that may
+        -:  204:**       require 16 or 32 bit reads.
+        -:  205:**
+        -:  206:**  \par Assumptions, External Events, and Notes:
+        -:  207:**       None
+        -:  208:**       
+        -:  209:**  \param [in]   SrcAddress   The source address to read from 
+        -:  210:**
+        -:  211:**  \param [in]   CmdPtr       A #MM_DumpInEventCmd_t pointer to the  
+        -:  212:**                             dump in event command message
+        -:  213:**
+        -:  214:**  \param [in]   DumpBuffer   A pointer to the byte array to store
+        -:  215:**                             the dump data in
+        -:  216:**
+        -:  217:**  \param [out]  *DumpBuffer  A pointer to the byte array holding the
+        -:  218:**                             dump data
+        -:  219:**
+        -:  220:*************************************************************************/
+        -:  221:void MM_FillDumpInEventBuffer(uint32              SrcAddress, 
+        -:  222:                              MM_DumpInEventCmd_t *CmdPtr, 
+        -:  223:                              uint8               *DumpBuffer);
+        -:  224:
+        -:  225:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  226:/*                                                                 */
+        -:  227:/* Memory peek command                                             */
+        -:  228:/*                                                                 */
+        -:  229:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  230:void MM_PeekCmd(CFE_SB_MsgPtr_t MessagePtr)
+function MM_PeekCmd called 24 returned 100% blocks executed 100%
+       24:  231:{
+       24:  232:   boolean        Valid = TRUE;
+        -:  233:   MM_PeekCmd_t   *CmdPtr;
+        -:  234:   uint32         SrcAddress;
+       24:  235:   uint16         ExpectedLength = sizeof(MM_PeekCmd_t);
+        -:  236:   
+        -:  237:   /* Verify command packet length */
+       24:  238:   if(MM_VerifyCmdLength(MessagePtr, ExpectedLength))
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+        -:  239:   {
+       23:  240:      CmdPtr = ((MM_PeekCmd_t *)MessagePtr);
+        -:  241: 
+        -:  242:      /* Resolve the symbolic address in command message */
+       23:  243:      Valid = CFS_ResolveSymAddr(&(CmdPtr->SrcSymAddress), &SrcAddress);
+call    0 returned 100%
+        -:  244:
+       23:  245:      if(Valid == TRUE)
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+        -:  246:      {
+        -:  247:         /* Run necessary checks on command parameters */
+       22:  248:         Valid = MM_VerifyPeekPokeParams(SrcAddress, CmdPtr->MemType, CmdPtr->DataSize);
+call    0 returned 100%
+        -:  249:
+        -:  250:         /* Check the specified memory type and call the appropriate routine */
+       22:  251:         if(Valid == TRUE)
+branch  0 taken 45% (fallthrough)
+branch  1 taken 55%
+        -:  252:         {
+        -:  253:            /* 
+        -:  254:            ** We use this single peek routine for all memory types
+        -:  255:            ** (including the optional ones)
+        -:  256:            */ 
+       10:  257:            MM_PeekMem(CmdPtr, SrcAddress);
+call    0 returned 100%
+        -:  258:         }
+        -:  259:         
+        -:  260:      } /* end CFS_ResolveSymAddr if */
+        -:  261:      else
+        -:  262:      {
+        1:  263:         MM_AppData.ErrCounter++;
+        1:  264:         CFE_EVS_SendEvent(MM_SYMNAME_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  265:                           "Symbolic address can't be resolved: Name = '%s'", 
+        -:  266:                           CmdPtr->SrcSymAddress.SymName);   
+        -:  267:      }
+        -:  268:
+        -:  269:   } /* end MM_VerifyCmdLength if */
+        -:  270:   
+        -:  271:   return;
+        -:  272:   
+        -:  273:} /* end MM_PeekCmd */
+        -:  274:
+        -:  275:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  276:/*                                                                 */
+        -:  277:/* Read 8,16, or 32 bits of data from any given input address      */
+        -:  278:/*                                                                 */
+        -:  279:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  280:void MM_PeekMem (MM_PeekCmd_t *CmdPtr, 
+        -:  281:                 uint32       SrcAddress)
+function MM_PeekMem called 10 returned 100% blocks executed 100%
+       10:  282:{
+        -:  283:   uint8    ByteValue;
+        -:  284:   uint16   WordValue;
+        -:  285:   uint32   DWordValue;
+        -:  286:
+        -:  287:   /* Initialize telemetry */
+       10:  288:   MM_ResetHk();
+call    0 returned 100%
+       10:  289:   MM_AppData.LastAction  = MM_PEEK;
+       10:  290:   MM_AppData.MemType     = CmdPtr->MemType;
+       10:  291:   MM_AppData.Address     = SrcAddress;
+        -:  292:      
+        -:  293:   /* 
+        -:  294:   ** Read the requested number of bytes and report in an event message 
+        -:  295:   */
+       10:  296:   switch(CmdPtr->DataSize)
+branch  0 taken 30%
+branch  1 taken 30%
+branch  2 taken 40%
+branch  3 taken 0%
+        -:  297:   {
+        -:  298:      case MM_BYTE_BIT_WIDTH:
+        3:  299:         CFE_PSP_MemRead8(SrcAddress, &ByteValue);
+call    0 returned 100%
+        3:  300:         MM_AppData.CmdCounter++;
+        3:  301:         CFE_EVS_SendEvent(MM_PEEK_BYTE_INF_EID, CFE_EVS_INFORMATION,                                                         
+call    0 returned 100%
+        -:  302:                           "Peek Command: Addr = 0x%08X Size = 8 bits Data = 0x%02X", 
+        -:  303:                                                              SrcAddress, ByteValue);
+        3:  304:         MM_AppData.BytesProcessed = sizeof (uint8);
+        3:  305:         break;
+        -:  306:         
+        -:  307:      case MM_WORD_BIT_WIDTH:
+        3:  308:         CFE_PSP_MemRead16(SrcAddress, &WordValue);
+call    0 returned 100%
+        3:  309:         MM_AppData.CmdCounter++;
+        3:  310:         CFE_EVS_SendEvent(MM_PEEK_WORD_INF_EID, CFE_EVS_INFORMATION,                                                         
+call    0 returned 100%
+        -:  311:                           "Peek Command: Addr = 0x%08X Size = 16 bits Data = 0x%04X", 
+        -:  312:                                                               SrcAddress, WordValue);
+        3:  313:         MM_AppData.BytesProcessed = sizeof (uint16);
+        3:  314:         break;
+        -:  315:         
+        -:  316:      case MM_DWORD_BIT_WIDTH:
+        4:  317:         CFE_PSP_MemRead32(SrcAddress, &DWordValue);
+call    0 returned 100%
+        4:  318:         MM_AppData.CmdCounter++;
+        4:  319:         CFE_EVS_SendEvent(MM_PEEK_DWORD_INF_EID, CFE_EVS_INFORMATION,                                                         
+call    0 returned 100%
+        -:  320:                           "Peek Command: Addr = 0x%08X Size = 32 bits Data = 0x%08X", 
+        -:  321:                                                              SrcAddress, DWordValue);
+        4:  322:            MM_AppData.BytesProcessed = sizeof (uint32);
+        -:  323:         break;
+        -:  324:         
+        -:  325:      /* 
+        -:  326:      ** We don't need a default case, a bad DataSize will get caught
+        -:  327:      ** in the MM_VerifyPeekPokeParams function and we won't get here
+        -:  328:      */
+        -:  329:      default:
+        -:  330:         break;
+        -:  331:   }
+        -:  332:
+        -:  333:   return;
+        -:  334:   
+        -:  335:} /* end MM_PeekMem */
+        -:  336:
+        -:  337:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  338:/*                                                                 */
+        -:  339:/* Dump memory to file comand                                      */
+        -:  340:/*                                                                 */
+        -:  341:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  342:void MM_DumpMemToFileCmd(CFE_SB_MsgPtr_t MessagePtr)
+function MM_DumpMemToFileCmd called 56 returned 100% blocks executed 100%
+       56:  343:{
+       56:  344:   boolean                  Valid = TRUE;
+       56:  345:   int32                    OS_Status = OS_SUCCESS;
+        -:  346:   int32                    FileHandle;
+        -:  347:   uint32                   SrcAddress;
+        -:  348:   MM_DumpMemToFileCmd_t    *CmdPtr;
+        -:  349:   CFE_FS_Header_t          CFEFileHeader;
+        -:  350:   MM_LoadDumpFileHeader_t  MMFileHeader;
+       56:  351:   uint16                   ExpectedLength = sizeof(MM_DumpMemToFileCmd_t);
+        -:  352:   
+        -:  353:   /* Verify command packet length */
+       56:  354:   if(MM_VerifyCmdLength(MessagePtr, ExpectedLength))
+call    0 returned 100%
+branch  1 taken 98% (fallthrough)
+branch  2 taken 2%
+        -:  355:   {
+       55:  356:      CmdPtr = ((MM_DumpMemToFileCmd_t *)MessagePtr);
+        -:  357:
+        -:  358:      /* 
+        -:  359:      ** NUL terminate the very end of the file name string array as a
+        -:  360:      ** safety measure
+        -:  361:      */
+       55:  362:      CmdPtr->FileName[OS_MAX_PATH_LEN - 1] = '\0';
+        -:  363:      
+        -:  364:      /* Verify filename doesn't have any illegal characters */
+       55:  365:      Valid = CFS_IsValidFilename(CmdPtr->FileName, strlen(CmdPtr->FileName));
+call    0 returned 100%
+call    1 returned 100%
+       55:  366:      if(Valid == TRUE)
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+        -:  367:      {
+        -:  368:         /* Resolve the symbolic address in command message */
+       53:  369:         Valid = CFS_ResolveSymAddr(&(CmdPtr->SrcSymAddress), &SrcAddress);
+call    0 returned 100%
+        -:  370:
+       53:  371:         if(Valid == TRUE)
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+        -:  372:         {
+        -:  373:            /* Run necessary checks on command parameters */ 
+       52:  374:            Valid = MM_VerifyFileDumpParams(SrcAddress, CmdPtr->MemType, CmdPtr->NumOfBytes);
+call    0 returned 100%
+        -:  375:            
+       52:  376:            if(Valid == TRUE)
+branch  0 taken 71% (fallthrough)
+branch  1 taken 29%
+        -:  377:            {
+        -:  378:               /*
+        -:  379:               ** Initialize the cFE primary file header structure 
+        -:  380:               */
+       37:  381:               CFE_PSP_MemSet(&CFEFileHeader, 0, sizeof(CFE_FS_Header_t));
+call    0 returned 100%
+       37:  382:               CFEFileHeader.SubType = MM_CFE_HDR_SUBTYPE;
+       37:  383:               strcpy(&CFEFileHeader.Description[0], MM_CFE_HDR_DESCRIPTION);
+call    0 returned 100%
+        -:  384:        
+        -:  385:               /* 
+        -:  386:               ** Initialize the MM secondary file header structure
+        -:  387:               */
+       37:  388:               CFE_PSP_MemSet(&MMFileHeader, 0, sizeof(MM_LoadDumpFileHeader_t));
+call    0 returned 100%
+       37:  389:               MMFileHeader.SymAddress.SymName[0] = MM_CLEAR_SYMNAME;       
+        -:  390:               
+        -:  391:               /*
+        -:  392:               ** Copy command data to file secondary header 
+        -:  393:               */ 
+       37:  394:               MMFileHeader.SymAddress.Offset = SrcAddress;
+       37:  395:               MMFileHeader.MemType           = CmdPtr->MemType;
+       37:  396:               MMFileHeader.NumOfBytes        = CmdPtr->NumOfBytes;
+        -:  397:
+        -:  398:               /* 
+        -:  399:               ** Create and open dump file 
+        -:  400:               */ 
+       37:  401:               if((FileHandle = OS_creat(CmdPtr->FileName, OS_READ_WRITE)) >= 0)
+call    0 returned 100%
+branch  1 taken 97% (fallthrough)
+branch  2 taken 3%
+        -:  402:               {
+        -:  403:                  /* Write the file headers */
+       36:  404:                  Valid = MM_WriteFileHeaders(CmdPtr->FileName, FileHandle, &CFEFileHeader, &MMFileHeader);
+call    0 returned 100%
+       36:  405:                  if(Valid == TRUE)
+branch  0 taken 94% (fallthrough)
+branch  1 taken 6%
+        -:  406:                  {
+       34:  407:                     switch(MMFileHeader.MemType)
+branch  0 taken 38%
+branch  1 taken 21%
+branch  2 taken 21%
+branch  3 taken 21%
+branch  4 taken 0%
+        -:  408:                     {
+        -:  409:                        case MM_RAM:
+        -:  410:                        case MM_EEPROM:
+       13:  411:                           Valid = MM_DumpMemToFile(FileHandle, CmdPtr->FileName, &MMFileHeader);
+call    0 returned 100%
+       13:  412:                           break;
+        -:  413:
+        -:  414:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE)
+        -:  415:                        case MM_MEM32:
+        7:  416:                           Valid = MM_DumpMem32ToFile(FileHandle, CmdPtr->FileName, &MMFileHeader);
+call    0 returned 100%
+        7:  417:                           break;
+        -:  418:#endif /* MM_OPT_CODE_MEM32_MEMTYPE */
+        -:  419:                           
+        -:  420:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -:  421:                        case MM_MEM16:
+        7:  422:                           Valid = MM_DumpMem16ToFile(FileHandle, CmdPtr->FileName, &MMFileHeader);
+call    0 returned 100%
+        7:  423:                           break;
+        -:  424:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -:  425:                           
+        -:  426:#if (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)
+        -:  427:                        case MM_MEM8:
+        7:  428:                           Valid = MM_DumpMem8ToFile(FileHandle, CmdPtr->FileName, &MMFileHeader);
+call    0 returned 100%
+        -:  429:                           break;
+        -:  430:#endif /* MM_OPT_CODE_MEM8_MEMTYPE */                           
+        -:  431:                     }
+        -:  432:                     
+       34:  433:                     if(Valid == TRUE)
+branch  0 taken 65% (fallthrough)
+branch  1 taken 35%
+        -:  434:                     {
+        -:  435:                        /* 
+        -:  436:                        ** Compute CRC of dumped data 
+        -:  437:                        */
+       22:  438:                        OS_lseek(FileHandle, (sizeof(CFE_FS_Header_t) + sizeof(MM_LoadDumpFileHeader_t)), OS_SEEK_SET);
+call    0 returned 100%
+        -:  439:
+       22:  440:                        OS_Status = CFS_ComputeCRCFromFile(FileHandle, &MMFileHeader.Crc, MM_DUMP_FILE_CRC_TYPE);
+call    0 returned 100%
+       22:  441:                        if(OS_Status == OS_SUCCESS)
+branch  0 taken 95% (fallthrough)
+branch  1 taken 5%
+        -:  442:                        {
+        -:  443:                           /*
+        -:  444:                           ** Rewrite the file headers. The subfunctions will take care of moving
+        -:  445:                           ** the file pointer to the beginning of the file so we don't need to do it
+        -:  446:                           ** here.
+        -:  447:                           */
+       21:  448:                           Valid = MM_WriteFileHeaders(CmdPtr->FileName, FileHandle, &CFEFileHeader, &MMFileHeader);
+call    0 returned 100%
+        -:  449:                           
+        -:  450:                        } /* end CFS_ComputeCRCFromFile if */
+        -:  451:                        else
+        -:  452:                        {
+        1:  453:                           MM_AppData.ErrCounter++;
+        1:  454:                           CFE_EVS_SendEvent(MM_CFS_COMPUTECRCFROMFILE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  455:                                       "CFS_ComputeCRCFromFile error received: RC = 0x%08X File = '%s'", OS_Status, 
+        -:  456:                                                                                               CmdPtr->FileName);
+        -:  457:                        } 
+        -:  458:                        
+        -:  459:                     } /* end Valid == TRUE if */
+        -:  460:
+       34:  461:                     if(Valid == TRUE)
+branch  0 taken 65% (fallthrough)
+branch  1 taken 35%
+        -:  462:                     {
+        -:  463:                        /* 
+        -:  464:                        ** If we get to this point, dump was successful
+        -:  465:                        */
+       22:  466:                        MM_AppData.CmdCounter++;
+       22:  467:                        CFE_EVS_SendEvent(MM_DMP_MEM_FILE_INF_EID, CFE_EVS_INFORMATION,
+call    0 returned 100%
+        -:  468:                                "Dump Memory To File Command: Dumped %d bytes from address 0x%08X to file '%s'", 
+        -:  469:                                MM_AppData.BytesProcessed, SrcAddress, CmdPtr->FileName);
+        -:  470:                     }
+        -:  471:                     
+        -:  472:                  } /* end MM_WriteFileHeaders if */   
+        -:  473:
+        -:  474:                  /*
+        -:  475:                  ** Don't need an 'else' here. MM_WriteFileHeaders will increment
+        -:  476:                  ** the error counter and generate an event message if needed.
+        -:  477:                  */
+        -:  478:                  
+        -:  479:                  /* Close dump file */
+       36:  480:                  if((OS_Status = OS_close(FileHandle)) != OS_SUCCESS)
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+        -:  481:                  {
+        1:  482:                     MM_AppData.ErrCounter++;
+        1:  483:                     CFE_EVS_SendEvent(MM_OS_CLOSE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  484:                                       "OS_close error received: RC = 0x%08X File = '%s'", 
+        -:  485:                                                           OS_Status, CmdPtr->FileName);
+        -:  486:                  } 
+        -:  487:                  
+        -:  488:               } /* end OS_creat if */
+        -:  489:               else
+        -:  490:               {
+        1:  491:                  MM_AppData.ErrCounter++;
+        1:  492:                  CFE_EVS_SendEvent(MM_OS_CREAT_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  493:                                    "OS_creat error received: RC = 0x%08X File = '%s'", 
+        -:  494:                                                       FileHandle, CmdPtr->FileName);
+        -:  495:               }
+        -:  496:            
+        -:  497:            } /* end MM_VerifyFileDumpParams if */
+        -:  498:            
+        -:  499:         } /* end CFS_ResolveSymAddr if */
+        -:  500:         else
+        -:  501:         {
+        1:  502:            MM_AppData.ErrCounter++;
+        1:  503:            CFE_EVS_SendEvent(MM_SYMNAME_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  504:                              "Symbolic address can't be resolved: Name = '%s'", 
+        -:  505:                              CmdPtr->SrcSymAddress.SymName);   
+        -:  506:         }
+        -:  507:      } /* end IsValidFilename if */
+        -:  508:      else
+        -:  509:      {
+        2:  510:         MM_AppData.ErrCounter++;
+        2:  511:         CFE_EVS_SendEvent(MM_CMD_FNAME_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  512:                           "Command specified filename invalid: Name = '%s'", CmdPtr->FileName);
+        -:  513:      }
+        -:  514:      
+        -:  515:   } /* end MM_VerifyCmdLength if */
+        -:  516:    
+        -:  517:   return;
+        -:  518:    
+        -:  519:} /* end MM_DumpMemoryToFileCmd */
+        -:  520:
+        -:  521:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  522:/*                                                                 */
+        -:  523:/* Dump the requested number of bytes from memory to a file        */
+        -:  524:/*                                                                 */
+        -:  525:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  526:boolean MM_DumpMemToFile(uint32                  FileHandle, 
+        -:  527:                         char                    *FileName, 
+        -:  528:                         MM_LoadDumpFileHeader_t *FileHeader)
+function MM_DumpMemToFile called 13 returned 100% blocks executed 100%
+       13:  529:{
+       13:  530:       boolean    Valid = TRUE;
+        -:  531:       int32      OS_Status;
+        -:  532:       uint32     BytesRemaining;
+        -:  533:       uint8      *DataPtr;
+        -:  534:static uint8      DataArray[MM_MAX_DUMP_DATA_SEG];
+        -:  535:
+        -:  536:   /* Update telemetry */
+       13:  537:   MM_ResetHk();
+call    0 returned 100%
+       13:  538:   MM_AppData.LastAction = MM_DUMP_TO_FILE;
+       13:  539:   strncpy(MM_AppData.FileName, FileName, OS_MAX_PATH_LEN);
+call    0 returned 100%
+       13:  540:   MM_AppData.MemType    = FileHeader->MemType;
+       13:  541:   MM_AppData.Address    = FileHeader->SymAddress.Offset;
+        -:  542:    
+        -:  543:   /* Init byte counter */
+       13:  544:   BytesRemaining = FileHeader->NumOfBytes;
+        -:  545:    
+        -:  546:   /* Initialize data pointer */
+       13:  547:   DataPtr = (uint8 *)FileHeader->SymAddress.Offset;
+        -:  548:    
+        -:  549:   /* Check if data size is smaller than one dump segment */
+       13:  550:   if(BytesRemaining <= MM_MAX_DUMP_DATA_SEG)
+branch  0 taken 38% (fallthrough)
+branch  1 taken 62%
+        -:  551:   {
+        -:  552:      /* Initialize buffer and copy memory  */
+        5:  553:      CFE_PSP_MemSet(DataArray, 0, MM_MAX_DUMP_DATA_SEG);
+call    0 returned 100%
+        5:  554:      CFE_PSP_MemCpy(DataArray, DataPtr, BytesRemaining);
+call    0 returned 100%
+        -:  555:        
+        -:  556:      /* Write buffer contents to file */
+        5:  557:      if((OS_Status = OS_write(FileHandle, DataArray, BytesRemaining)) != BytesRemaining)
+call    0 returned 100%
+branch  1 taken 20% (fallthrough)
+branch  2 taken 80%
+        -:  558:      {
+        1:  559:         Valid = FALSE;
+        1:  560:         MM_AppData.ErrCounter++;
+        1:  561:         CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  562:                           "OS_write error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  563:                            OS_Status, BytesRemaining, FileName);
+        -:  564:         /* 
+        -:  565:         ** We may have gotten a negative error code or we may have written
+        -:  566:         ** less than we expected, fix up the housekeeping counter if
+        -:  567:         ** the second case is true
+        -:  568:         */
+        1:  569:         if(OS_Status > 0)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  570:         {
+        1:  571:            MM_AppData.BytesProcessed += OS_Status;           
+        -:  572:         }
+        -:  573:         
+        -:  574:      } /* end OS_Status != BytesRemaining if */
+        -:  575:      else
+        -:  576:      {
+        4:  577:         MM_AppData.BytesProcessed += BytesRemaining;         
+        -:  578:      }
+        -:  579:       
+        -:  580:   } /* end BytesRemaining <= MM_MAX_DUMP_DATA_SEG if */
+        -:  581:   else
+        -:  582:   {
+        -:  583:      /* Read data blocks and write to file one segment at a time */ 
+       47:  584:      while((BytesRemaining / MM_MAX_DUMP_DATA_SEG) >= 1)
+branch  0 taken 82%
+branch  1 taken 18% (fallthrough)
+        -:  585:      {
+        -:  586:         /* Initialize buffer and copy memory  */
+       32:  587:         CFE_PSP_MemSet(DataArray, 0, MM_MAX_DUMP_DATA_SEG);
+call    0 returned 100%
+       32:  588:         CFE_PSP_MemCpy(DataArray, DataPtr, MM_MAX_DUMP_DATA_SEG);
+call    0 returned 100%
+        -:  589:            
+        -:  590:         /* Write buffer contents to file */
+       32:  591:         if((OS_Status = OS_write(FileHandle, DataArray, MM_MAX_DUMP_DATA_SEG)) != MM_MAX_DUMP_DATA_SEG)
+call    0 returned 100%
+branch  1 taken 3% (fallthrough)
+branch  2 taken 97%
+        -:  592:         {
+        1:  593:            Valid = FALSE;
+        1:  594:            MM_AppData.ErrCounter++;
+        1:  595:            CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  596:                              "OS_write error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  597:                               OS_Status, MM_MAX_DUMP_DATA_SEG, FileName);
+        -:  598:            /* 
+        -:  599:            ** We may have gotten a negative error code or we may have written
+        -:  600:            ** less than we expected, fix up the housekeeping counter if
+        -:  601:            ** the second case is true
+        -:  602:            */
+        1:  603:            if(OS_Status > 0)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  604:            {
+        1:  605:               MM_AppData.BytesProcessed += OS_Status;           
+        -:  606:            }
+        -:  607:            
+        -:  608:            /* get out of this while loop on error */
+        1:  609:            break;
+        -:  610:            
+        -:  611:         } /* end OS_Status != MM_MAX_DUMP_DATA_SEG if */
+        -:  612:         else
+        -:  613:         {
+        -:  614:            /*
+        -:  615:            ** We managed to write a full dump segment, update byte counters
+        -:  616:            ** and go back to the top of the while loop
+        -:  617:            */   
+       31:  618:            MM_AppData.BytesProcessed += MM_MAX_DUMP_DATA_SEG;   
+       31:  619:            BytesRemaining = BytesRemaining - MM_MAX_DUMP_DATA_SEG;
+       31:  620:            DataPtr += MM_MAX_DUMP_DATA_SEG;
+        -:  621:               
+        -:  622:            /* 
+        -:  623:            ** Delay to prevent CPU hogging between dump segments 
+        -:  624:            */
+       31:  625:            MM_SegmentBreak();
+call    0 returned 100%
+        -:  626:         }
+        -:  627:
+        -:  628:      } /* end while */
+        -:  629:      
+        -:  630:      /*
+        -:  631:      ** Take care of anything over a segment multiple if no prior error
+        -:  632:      */
+        8:  633:      if((Valid == TRUE) && (BytesRemaining > 0))
+branch  0 taken 88% (fallthrough)
+branch  1 taken 13%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        -:  634:      {
+        -:  635:         /* Initialize buffer and copy memory  */
+        7:  636:         CFE_PSP_MemSet(DataArray, 0, MM_MAX_DUMP_DATA_SEG);
+call    0 returned 100%
+        7:  637:         CFE_PSP_MemCpy(DataArray, DataPtr, BytesRemaining);
+call    0 returned 100%
+        -:  638:         
+        -:  639:         /* Write buffer contents to file */
+        7:  640:         if((OS_Status = OS_write(FileHandle, DataArray, BytesRemaining)) != BytesRemaining)
+call    0 returned 100%
+branch  1 taken 14% (fallthrough)
+branch  2 taken 86%
+        -:  641:         {
+        1:  642:            Valid = FALSE;
+        1:  643:            MM_AppData.ErrCounter++;
+        1:  644:            CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  645:                              "OS_write error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  646:                               OS_Status, BytesRemaining, FileName);
+        -:  647:            /* 
+        -:  648:            ** We may have gotten a negative error code or we may have written
+        -:  649:            ** less than we expected, fix up the housekeeping counter if
+        -:  650:            ** the second case is true
+        -:  651:            */
+        1:  652:            if(OS_Status > 0)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  653:            {
+        1:  654:               MM_AppData.BytesProcessed += OS_Status;           
+        -:  655:            }
+        -:  656:         }
+        -:  657:         else
+        -:  658:         {
+        6:  659:            MM_AppData.BytesProcessed += BytesRemaining;            
+        -:  660:         }
+        -:  661:         
+        -:  662:      } /* end Valid == TRUE && BytesRemaining > 0 if */
+        -:  663:      
+        -:  664:   } /* end BytesRemaining <= MM_MAX_DUMP_DATA_SEG else */ 
+        -:  665:    
+       13:  666:   return(Valid);
+        -:  667:    
+        -:  668:} /* end MM_DumpMemToFile */
+        -:  669:
+        -:  670:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  671:/*                                                                 */
+        -:  672:/* Verify dump memory to file command parameters                   */
+        -:  673:/*                                                                 */
+        -:  674:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  675:boolean MM_VerifyFileDumpParams(uint32 Address, 
+        -:  676:                                uint8  MemType, 
+        -:  677:                                uint32 SizeInBytes)
+function MM_VerifyFileDumpParams called 52 returned 100% blocks executed 100%
+       52:  678:{
+       52:  679:   boolean  Valid = TRUE;
+        -:  680:   int32    OS_Status;
+        -:  681:   
+       52:  682:   switch(MemType)
+branch  0 taken 27%
+branch  1 taken 12%
+branch  2 taken 21%
+branch  3 taken 21%
+branch  4 taken 17%
+branch  5 taken 2%
+        -:  683:   {
+        -:  684:      case MM_RAM:
+       14:  685:         OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  686:         
+       14:  687:         if (OS_Status != OS_SUCCESS)
+branch  0 taken 7% (fallthrough)
+branch  1 taken 93%
+        -:  688:         {
+        1:  689:            Valid = FALSE;
+        1:  690:            MM_AppData.ErrCounter++;
+        1:  691:            CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  692:                        "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  693:                        OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  694:         }
+       13:  695:         else if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_FILE_DATA_RAM))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 8% (fallthrough)
+branch  3 taken 92%
+        -:  696:         {
+        1:  697:            Valid = FALSE;
+        1:  698:            MM_AppData.ErrCounter++;
+        1:  699:            CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  700:                        "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  701:         }
+       14:  702:         break;
+        -:  703:         
+        -:  704:      case MM_EEPROM:
+        6:  705:         OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_EEPROM);
+call    0 returned 100%
+        -:  706:         
+        6:  707:         if (OS_Status != OS_SUCCESS)
+branch  0 taken 17% (fallthrough)
+branch  1 taken 83%
+        -:  708:         {
+        1:  709:            Valid = FALSE;
+        1:  710:            MM_AppData.ErrCounter++;
+        1:  711:            CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  712:                        "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  713:                        OS_Status, Address, SizeInBytes, CFE_PSP_MEM_EEPROM); 
+        -:  714:         }
+        5:  715:         else if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_FILE_DATA_EEPROM))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 20% (fallthrough)
+branch  3 taken 80%
+        -:  716:         {
+        1:  717:            Valid = FALSE;
+        1:  718:            MM_AppData.ErrCounter++;
+        1:  719:            CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  720:                        "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  721:         }
+        6:  722:         break;
+        -:  723:
+        -:  724:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE)
+        -:  725:      case MM_MEM32:
+       11:  726:         OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  727:         
+       11:  728:         if (OS_Status != OS_SUCCESS)
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        -:  729:         {
+        1:  730:            Valid = FALSE;
+        1:  731:            MM_AppData.ErrCounter++;
+        1:  732:            CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  733:                        "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  734:                        OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  735:         }
+       11:  736:         else if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_FILE_DATA_MEM32))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 10% (fallthrough)
+branch  3 taken 90%
+        -:  737:         {
+        1:  738:            Valid = FALSE;
+        1:  739:            MM_AppData.ErrCounter++;
+        1:  740:            CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  741:                        "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  742:         }
+        9:  743:         else if (CFS_Verify32Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 22% (fallthrough)
+branch  2 taken 78%
+        -:  744:         {
+        2:  745:            Valid = FALSE;
+        2:  746:            MM_AppData.ErrCounter++;
+        2:  747:            CFE_EVS_SendEvent(MM_ALIGN32_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  748:                     "Data and address not 32 bit aligned: Addr = 0x%08X Size = %d", 
+        -:  749:                                                              Address, SizeInBytes);
+        -:  750:         }
+       11:  751:         break;
+        -:  752:#endif /* MM_OPT_CODE_MEM32_MEMTYPE */
+        -:  753:
+        -:  754:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -:  755:      case MM_MEM16:
+       11:  756:         OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  757:         
+       11:  758:         if (OS_Status != OS_SUCCESS)
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        -:  759:         {
+        1:  760:            Valid = FALSE;
+        1:  761:            MM_AppData.ErrCounter++;
+        1:  762:            CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  763:                        "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  764:                        OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  765:         }
+       11:  766:         else if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_FILE_DATA_MEM16))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 10% (fallthrough)
+branch  3 taken 90%
+        -:  767:         {
+        1:  768:            Valid = FALSE;
+        1:  769:            MM_AppData.ErrCounter++;
+        1:  770:            CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  771:                        "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  772:         }
+        9:  773:         else if (CFS_Verify16Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 22% (fallthrough)
+branch  2 taken 78%
+        -:  774:         {
+        2:  775:            Valid = FALSE;
+        2:  776:            MM_AppData.ErrCounter++;
+        2:  777:            CFE_EVS_SendEvent(MM_ALIGN16_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  778:                     "Data and address not 16 bit aligned: Addr = 0x%08X Size = %d", 
+        -:  779:                                                              Address, SizeInBytes);
+        -:  780:         }
+       11:  781:         break;
+        -:  782:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -:  783:         
+        -:  784:#if (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)
+        -:  785:      case MM_MEM8:
+        9:  786:         OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  787:         
+        9:  788:         if (OS_Status != OS_SUCCESS)
+branch  0 taken 11% (fallthrough)
+branch  1 taken 89%
+        -:  789:         {
+        1:  790:            Valid = FALSE;
+        1:  791:            MM_AppData.ErrCounter++;
+        1:  792:            CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  793:                        "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -:  794:                        OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -:  795:         }
+        8:  796:         else if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_FILE_DATA_MEM8))
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 13% (fallthrough)
+branch  3 taken 88%
+        -:  797:         {
+        1:  798:            Valid = FALSE;
+        1:  799:            MM_AppData.ErrCounter++;
+        1:  800:            CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  801:                        "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  802:         }
+        9:  803:         break;
+        -:  804:#endif /* MM_OPT_CODE_MEM8_MEMTYPE */
+        -:  805:         
+        -:  806:      default:
+        1:  807:         Valid = FALSE;
+        1:  808:         MM_AppData.ErrCounter++;
+        1:  809:         CFE_EVS_SendEvent(MM_MEMTYPE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  810:                           "Invalid memory type specified: MemType = %d", MemType);
+        -:  811:         break;
+        -:  812:   }
+        -:  813:
+       52:  814:   return (Valid);
+        -:  815:
+        -:  816:} /* end MM_VerifyFileDumpParams */
+        -:  817:
+        -:  818:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  819:/*                                                                 */
+        -:  820:/* Write the cFE primary and and MM secondary file headers         */
+        -:  821:/*                                                                 */
+        -:  822:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  823:boolean MM_WriteFileHeaders(char                    *FileName,
+        -:  824:                            int32                    FileHandle,
+        -:  825:                            CFE_FS_Header_t         *CFEHeader,
+        -:  826:                            MM_LoadDumpFileHeader_t *MMHeader)
+function MM_WriteFileHeaders called 57 returned 100% blocks executed 100%
+       57:  827:{
+       57:  828:   boolean     Valid = TRUE;
+        -:  829:   int32       OS_Status;
+        -:  830:
+        -:  831:   /*
+        -:  832:   ** Write out the primary cFE file header
+        -:  833:   */
+       57:  834:   OS_Status = CFE_FS_WriteHeader(FileHandle, CFEHeader);
+call    0 returned 100%
+       57:  835:   if(OS_Status != sizeof(CFE_FS_Header_t))
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+        -:  836:   {
+        -:  837:      /* We either got an error or didn't write as much data as expected */
+        1:  838:      Valid = FALSE;
+        1:  839:      MM_AppData.ErrCounter++;
+        1:  840:      CFE_EVS_SendEvent(MM_CFE_FS_WRITEHDR_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  841:                        "CFE_FS_WriteHeader error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  842:                        OS_Status, sizeof(CFE_FS_Header_t), FileName); 
+        -:  843:
+        -:  844:
+        -:  845:   } /* end CFE_FS_WriteHeader if */
+        -:  846:   else             
+        -:  847:   {  
+        -:  848:      /*
+        -:  849:      ** Write out the secondary MM file header 
+        -:  850:      */
+       56:  851:      OS_Status = OS_write(FileHandle, MMHeader, sizeof(MM_LoadDumpFileHeader_t));
+call    0 returned 100%
+       56:  852:      if(OS_Status != sizeof(MM_LoadDumpFileHeader_t))
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+        -:  853:      {
+        -:  854:         /* We either got an error or didn't read as much data as expected */
+        1:  855:         Valid = FALSE;
+        1:  856:         MM_AppData.ErrCounter++;
+        1:  857:         CFE_EVS_SendEvent(MM_OS_WRITE_EXP_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  858:                           "OS_write error received: RC = 0x%08X Expected = %d File = '%s'", 
+        -:  859:                           OS_Status, sizeof(MM_LoadDumpFileHeader_t), FileName); 
+        -:  860:
+        -:  861:      } /* end OS_write if */
+        -:  862:      
+        -:  863:   } /* end CFE_FS_WriteHeader else */
+        -:  864:
+       57:  865:   return (Valid);
+        -:  866:   
+        -:  867:} /* end MM_WriteFileHeaders */
+        -:  868:
+        -:  869:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  870:/*                                                                 */
+        -:  871:/* Dump memory in event message command                            */
+        -:  872:/*                                                                 */
+        -:  873:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  874:void MM_DumpInEventCmd(CFE_SB_MsgPtr_t MessagePtr)
+function MM_DumpInEventCmd called 24 returned 100% blocks executed 100%
+       24:  875:{
+       24:  876:       boolean               Valid = TRUE;
+        -:  877:       MM_DumpInEventCmd_t   *CmdPtr;
+        -:  878:       uint32                i;
+        -:  879:       uint32                SrcAddress;
+       24:  880:       uint16                ExpectedLength = sizeof(MM_DumpInEventCmd_t);
+        -:  881:       uint8                 *BytePtr;
+        -:  882:       char                  TempString[MM_DUMPINEVENT_TEMP_CHARS];  
+        -:  883:static char                  EventString[CFE_EVS_MAX_MESSAGE_LENGTH];
+        -:  884:
+        -:  885:   /*
+        -:  886:   ** Allocate a dump buffer. It's declared this way to ensure it stays
+        -:  887:   ** longword aligned since MM_MAX_DUMP_INEVENT_BYTES can be adjusted
+        -:  888:   ** by changing the maximum event message string size.
+        -:  889:   */
+        -:  890:   uint32         DumpBuffer[(MM_MAX_DUMP_INEVENT_BYTES + 3)/4];
+        -:  891:   
+        -:  892:   /* Verify command packet length */
+       24:  893:   if(MM_VerifyCmdLength(MessagePtr, ExpectedLength))
+call    0 returned 100%
+branch  1 taken 96% (fallthrough)
+branch  2 taken 4%
+        -:  894:   {
+       23:  895:      CmdPtr = ((MM_DumpInEventCmd_t *)MessagePtr);
+        -:  896:
+        -:  897:      /* Resolve the symbolic source address in the command message */
+       23:  898:      Valid = CFS_ResolveSymAddr(&(CmdPtr->SrcSymAddress), &SrcAddress);
+call    0 returned 100%
+        -:  899:
+       23:  900:      if(Valid == TRUE)
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+        -:  901:      {
+        -:  902:         /* Run necessary checks on command parameters */ 
+       22:  903:         Valid = MM_VerifyDumpInEventParams(SrcAddress, CmdPtr->MemType, CmdPtr->NumOfBytes);
+call    0 returned 100%
+        -:  904:        
+       22:  905:         if(Valid == TRUE)
+branch  0 taken 45% (fallthrough)
+branch  1 taken 55%
+        -:  906:         {
+        -:  907:            /* Fill a local data buffer with the dump words */
+       10:  908:            MM_FillDumpInEventBuffer(SrcAddress, CmdPtr, (uint8 *)DumpBuffer);
+call    0 returned 100%
+        -:  909:
+        -:  910:            /* Update telemetry */
+       10:  911:            MM_ResetHk();
+call    0 returned 100%
+       10:  912:            MM_AppData.LastAction = MM_DUMP_INEVENT;
+       10:  913:            MM_AppData.MemType    = CmdPtr->MemType;
+       10:  914:            MM_AppData.Address    = SrcAddress;
+        -:  915:               
+        -:  916:            /* 
+        -:  917:            ** Prepare event message string header
+        -:  918:            ** 13 characters, not counting NUL terminator 
+        -:  919:            */
+       10:  920:            strcpy(EventString, "Memory Dump: ");
+call    0 returned 100%
+        -:  921:               
+        -:  922:            /* 
+        -:  923:            ** Build dump data string
+        -:  924:            ** Each byte of data requires 5 characters of string space 
+        -:  925:            */
+       10:  926:            BytePtr = (uint8 *)DumpBuffer;
+      130:  927:            for (i = 0; i < CmdPtr->NumOfBytes; i++)            
+branch  0 taken 92%
+branch  1 taken 8% (fallthrough)
+        -:  928:            {
+      120:  929:               sprintf(TempString, "0x%02X ", *BytePtr); 
+call    0 returned 100%
+      120:  930:               strcat(EventString, TempString);
+call    0 returned 100%
+      120:  931:               BytePtr++;
+        -:  932:            }
+        -:  933:
+        -:  934:            /* 
+        -:  935:            ** Append tail
+        -:  936:            ** This adds 25 characters including the NUL terminator 
+        -:  937:            */
+       10:  938:            sprintf(TempString, "from address: 0x%08lX", SrcAddress); 
+call    0 returned 100%
+       10:  939:            strcat(EventString, TempString);
+call    0 returned 100%
+        -:  940:
+        -:  941:            /* Send it out */
+       10:  942:            CFE_EVS_SendEvent(MM_DUMP_INEVENT_INF_EID, CFE_EVS_INFORMATION,
+call    0 returned 100%
+        -:  943:                                                              EventString);
+        -:  944:            /* Update telemetry */
+       10:  945:            MM_AppData.CmdCounter++;
+       10:  946:            MM_AppData.BytesProcessed = CmdPtr->NumOfBytes;
+        -:  947:            
+        -:  948:         } /* end MM_VerifyDumpInEventParams if */
+        -:  949:         
+        -:  950:      } /* end CFS_ResolveSymAddr if */
+        -:  951:      else
+        -:  952:      {
+        1:  953:         MM_AppData.ErrCounter++;
+        1:  954:         CFE_EVS_SendEvent(MM_SYMNAME_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  955:                           "Symbolic address can't be resolved: Name = '%s'", 
+        -:  956:                           CmdPtr->SrcSymAddress.SymName);   
+        -:  957:      }
+        -:  958:      
+        -:  959:   } /* end MM_VerifyCmdLength if */
+        -:  960:   
+        -:  961:   return;
+        -:  962:   
+        -:  963:} /* end MM_DumpWordsInEventCmd */
+        -:  964:
+        -:  965:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  966:/*                                                                 */
+        -:  967:/* Verify dump memory in event messsage command parameters         */
+        -:  968:/*                                                                 */
+        -:  969:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -:  970:boolean MM_VerifyDumpInEventParams(uint32 Address, 
+        -:  971:                                   uint8  MemType, 
+        -:  972:                                   uint32 SizeInBytes)
+function MM_VerifyDumpInEventParams called 22 returned 100% blocks executed 100%
+       22:  973:{
+       22:  974:   boolean   Valid = TRUE;
+        -:  975:   int32     OS_Status;
+        -:  976:   
+        -:  977:   /*
+        -:  978:   ** Verify dump size is within limits. The limit is dictated by the
+        -:  979:   ** maximum event message string length and applies to all memory 
+        -:  980:   ** types
+        -:  981:   */   
+       24:  982:   if((SizeInBytes == 0) || (SizeInBytes > MM_MAX_DUMP_INEVENT_BYTES))
+branch  0 taken 95% (fallthrough)
+branch  1 taken 5%
+branch  2 taken 5% (fallthrough)
+branch  3 taken 95%
+        -:  983:   {
+        2:  984:      Valid = FALSE;
+        2:  985:      MM_AppData.ErrCounter++;
+        2:  986:      CFE_EVS_SendEvent(MM_DATA_SIZE_BYTES_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -:  987:                  "Data size in bytes invalid or exceeds limits: Data Size = %d", SizeInBytes);
+        -:  988:   }
+        -:  989:   else
+        -:  990:   {
+        -:  991:      /*
+        -:  992:      ** Run a bunch of other sanity checks
+        -:  993:      */
+       20:  994:      switch(MemType)
+branch  0 taken 15%
+branch  1 taken 15%
+branch  2 taken 25%
+branch  3 taken 25%
+branch  4 taken 15%
+branch  5 taken 5%
+        -:  995:      {
+        -:  996:         case MM_RAM:
+        3:  997:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -:  998:            
+        3:  999:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -: 1000:            {
+        1: 1001:               Valid = FALSE;
+        1: 1002:               MM_AppData.ErrCounter++;
+        1: 1003:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1004:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -: 1005:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -: 1006:            }
+        3: 1007:            break;
+        -: 1008:            
+        -: 1009:         case MM_EEPROM:
+        3: 1010:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_EEPROM);
+call    0 returned 100%
+        -: 1011:            
+        3: 1012:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -: 1013:            {
+        1: 1014:               Valid = FALSE;
+        1: 1015:               MM_AppData.ErrCounter++;
+        1: 1016:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1017:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -: 1018:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_EEPROM); 
+        -: 1019:            }
+        3: 1020:            break;
+        -: 1021:
+        -: 1022:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE)
+        -: 1023:         case MM_MEM32:
+        5: 1024:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -: 1025:            
+        5: 1026:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        -: 1027:            {
+        1: 1028:               Valid = FALSE;
+        1: 1029:               MM_AppData.ErrCounter++;
+        1: 1030:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1031:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -: 1032:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -: 1033:            }
+        4: 1034:            else if (CFS_Verify32Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -: 1035:            {
+        2: 1036:               Valid = FALSE;
+        2: 1037:               MM_AppData.ErrCounter++;
+        2: 1038:               CFE_EVS_SendEvent(MM_ALIGN32_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1039:                        "Data and address not 32 bit aligned: Addr = 0x%08X Size = %d",
+        -: 1040:                                                                 Address, SizeInBytes);
+        -: 1041:            }
+        5: 1042:            break;
+        -: 1043:#endif /* MM_OPT_CODE_MEM32_MEMTYPE */
+        -: 1044:
+        -: 1045:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -: 1046:         case MM_MEM16:
+        5: 1047:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -: 1048:            
+        5: 1049:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        -: 1050:            {
+        1: 1051:               Valid = FALSE;
+        1: 1052:               MM_AppData.ErrCounter++;
+        1: 1053:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1054:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -: 1055:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -: 1056:            }
+        4: 1057:            else if (CFS_Verify16Aligned(Address, SizeInBytes) != TRUE)
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        -: 1058:            {
+        2: 1059:               Valid = FALSE;
+        2: 1060:               MM_AppData.ErrCounter++;
+        2: 1061:               CFE_EVS_SendEvent(MM_ALIGN16_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1062:                        "Data and address not 16 bit aligned: Addr = 0x%08X Size = %d",
+        -: 1063:                                                                 Address, SizeInBytes);
+        -: 1064:            }
+        5: 1065:            break;
+        -: 1066:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -: 1067:
+        -: 1068:#if (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)
+        -: 1069:         case MM_MEM8:
+        3: 1070:            OS_Status = CFE_PSP_MemValidateRange(Address, SizeInBytes, CFE_PSP_MEM_RAM);
+call    0 returned 100%
+        -: 1071:            
+        3: 1072:            if (OS_Status != OS_SUCCESS)
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -: 1073:            {
+        1: 1074:               Valid = FALSE;
+        1: 1075:               MM_AppData.ErrCounter++;
+        1: 1076:               CFE_EVS_SendEvent(MM_OS_MEMVALIDATE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1077:                           "CFE_PSP_MemValidateRange error received: RC = 0x%08X Addr = 0x%08X Size = %d MemType = %d",
+        -: 1078:                           OS_Status, Address, SizeInBytes, CFE_PSP_MEM_RAM); 
+        -: 1079:            }
+        3: 1080:            break;
+        -: 1081:            
+        -: 1082:         default:
+        1: 1083:            Valid = FALSE;
+        1: 1084:            MM_AppData.ErrCounter++;
+        1: 1085:            CFE_EVS_SendEvent(MM_MEMTYPE_ERR_EID, CFE_EVS_ERROR,
+call    0 returned 100%
+        -: 1086:                              "Invalid memory type specified: MemType = %d", MemType);
+        -: 1087:            break;
+        -: 1088:#endif /* MM_OPT_CODE_MEM8_MEMTYPE */            
+        -: 1089:      }
+        -: 1090:  
+        -: 1091:   } /* end SizeInBytes else */
+        -: 1092:   
+       22: 1093:   return (Valid); 
+        -: 1094:   
+        -: 1095:} /* end MM_VerifyDumpInEventParams */
+        -: 1096:
+        -: 1097:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -: 1098:/*                                                                 */
+        -: 1099:/* Fill a buffer with data to be dumped in an event message string */
+        -: 1100:/*                                                                 */
+        -: 1101:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */   
+        -: 1102:void MM_FillDumpInEventBuffer(uint32              SrcAddress, 
+        -: 1103:                              MM_DumpInEventCmd_t *CmdPtr, 
+        -: 1104:                              uint8               *DumpBuffer)
+function MM_FillDumpInEventBuffer called 10 returned 100% blocks executed 100%
+       10: 1105:{
+        -: 1106:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE) || (MM_OPT_CODE_MEM16_MEMTYPE == TRUE) || (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)   
+        -: 1107:   uint32    i;
+        -: 1108:#endif
+        -: 1109:   
+        -: 1110:   /* Initialize buffer */
+       10: 1111:   CFE_PSP_MemSet(DumpBuffer, 0, MM_MAX_DUMP_INEVENT_BYTES);
+call    0 returned 100%
+        -: 1112:   
+       10: 1113:   switch(CmdPtr->MemType)
+branch  0 taken 40%
+branch  1 taken 20%
+branch  2 taken 20%
+branch  3 taken 20%
+branch  4 taken 0%
+        -: 1114:   {
+        -: 1115:      case MM_RAM:
+        -: 1116:      case MM_EEPROM:
+        4: 1117:         CFE_PSP_MemCpy((void *)DumpBuffer, (void *)SrcAddress, CmdPtr->NumOfBytes);
+call    0 returned 100%
+        4: 1118:         break;
+        -: 1119:
+        -: 1120:#if (MM_OPT_CODE_MEM32_MEMTYPE == TRUE)
+        -: 1121:      case MM_MEM32:
+        8: 1122:         for (i = 0; i < (CmdPtr->NumOfBytes / 4); i++)
+branch  0 taken 75%
+branch  1 taken 25% (fallthrough)
+        -: 1123:         {
+        6: 1124:            CFE_PSP_MemRead32(SrcAddress, (uint32 *)DumpBuffer);
+call    0 returned 100%
+        6: 1125:            SrcAddress += sizeof (uint32);
+        6: 1126:            DumpBuffer += sizeof (uint32);
+        -: 1127:         }
+        2: 1128:         break;
+        -: 1129:#endif /* MM_OPT_CODE_MEM32_MEMTYPE */
+        -: 1130:         
+        -: 1131:#if (MM_OPT_CODE_MEM16_MEMTYPE == TRUE)
+        -: 1132:      case MM_MEM16:
+       14: 1133:         for (i = 0; i < (CmdPtr->NumOfBytes / 2); i++)
+branch  0 taken 86%
+branch  1 taken 14% (fallthrough)
+        -: 1134:         {
+       12: 1135:            CFE_PSP_MemRead16(SrcAddress, (uint16 *)DumpBuffer);
+call    0 returned 100%
+       12: 1136:            SrcAddress += sizeof (uint16);
+       12: 1137:            DumpBuffer += sizeof (uint16);
+        -: 1138:         }
+        2: 1139:         break;
+        -: 1140:#endif /* MM_OPT_CODE_MEM16_MEMTYPE */
+        -: 1141:         
+        -: 1142:#if (MM_OPT_CODE_MEM8_MEMTYPE == TRUE)
+        -: 1143:      case MM_MEM8:
+       26: 1144:         for (i = 0; i < CmdPtr->NumOfBytes; i++)
+branch  0 taken 92%
+branch  1 taken 8% (fallthrough)
+        -: 1145:         {
+       24: 1146:            CFE_PSP_MemRead8(SrcAddress, DumpBuffer);
+call    0 returned 100%
+       24: 1147:            SrcAddress ++;
+       24: 1148:            DumpBuffer ++;
+        -: 1149:         }
+        -: 1150:         break;
+        -: 1151:#endif /* MM_OPT_CODE_MEM8_MEMTYPE */
+        -: 1152:   
+        -: 1153:   }
+        -: 1154:   
+        -: 1155:   return;
+        -: 1156:   
+        -: 1157:} /* end FillDumpInEventBuffer */
+        -: 1158:
+        -: 1159:/************************/
+        -: 1160:/*  End of File Comment */
+        -: 1161:/************************/

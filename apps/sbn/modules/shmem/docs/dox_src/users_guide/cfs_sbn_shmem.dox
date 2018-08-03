@@ -1,0 +1,206 @@
+/**
+  \page shmem CFS Software Bus Network Shared Memory Module
+
+  <UL>
+    <LI> \subpage sbnshmemrevhist </LI>
+    <LI> \subpage sbnshmemovr </LI>
+    <LI> \subpage sbnshmemopr </LI>
+    <LI> \subpage sbnshmemcfg </LI>
+    <LI> \subpage sbnshmemcons </LI>
+  </UL>
+**/
+
+/**
+  \page sbnshmemrevhist SBN Shared Memory Module User's Guide Revision History
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="15%"><B>Date</B></TD> <TD WIDTH="15%"><B>Author</B></TD> <TD WIDTH="30%"><B>Comments</B></TD></TR>
+  <TR><TD WIDTH="15%">5/27/2014</TD> <TD WIDTH="15%">jrbeck</TD> <TD WIDTH="30%">Initial revision</TD></TR>
+  <TR><TD WIDTH="15%">06/06/2014</TD> <TD WIDTH="15%">jrbeck</TD> <TD WIDTH="30%">Updated to cover code review revisions</TD></TR>
+  </TABLE>
+
+  Next: \ref sbnshmemovr
+**/
+
+/**
+  \page sbnshmemovr SBN Shared Memory Module Overview
+
+  The shared memory plugin for the Software Bus Network (SBN) allows two CPUs 
+  running cFE to send software bus (SB) messages to each other through shared 
+  memory. This plugin is never used directly by a user cFE app; instead it is used
+  by the SBN to make message passing across CPUs transparent to other apps. 
+
+  SBN uses this module by internally calling a set of functions:
+  <UL>
+    <LI>#SBN_ShMemParseFileEntry        (Reads module setup from SBN peer data file)
+    <LI>#SBN_ShMemInitIF                (Initializes shared memory interface)
+    <LI>#SBN_ShMemSendNetMsg            (Sends SB or SBN messages to other CPU)
+    <LI>#SBN_ShMemCheckForNetProtoMsg   (Checks for SBN protocol messages)
+    <LI>#SBN_ShMemRcvMsg                (Reads software bus messages from other CPU)
+    <LI>#SBN_ShMemVerifyPeerInterface   (Makes sure peer entry has matching host)
+    <LI>#SBN_ShMemVerifyHostInterface   (Makes sure host entry has matching peer)
+  </UL>
+
+  These functions then use shared memory-specific read/write operations to 
+  pass messages. 
+  
+  Next: \ref sbnshmemopr <BR>
+  Prev: \ref sbnshmemrevhist
+**/
+
+/**
+  \page sbnshmemopr SBN Shared Memory Module Operation
+
+  <H1>Shared Memory Layout</H1>
+
+  The shared memory plugin expects the shared memory to be divided into four 
+  regions per CPU:
+  <OL>
+    <LI>Data Receive
+    <LI>Data Send
+    <LI>Protocol Receive
+    <LI>Protocol Send
+  </OL>
+  Each CPU's send regions are the other CPU's receive regions, and vice versa. 
+
+  Each region has the following structure (with sizes in bytes):
+
+  \image html ShmemLayout.jpg "Figure Shmem-1"
+
+  <UL>
+    <LI>The mutex locks and unlocks the region for reading/writing.
+    <LI>ReadPtr points to the location of the length of the first message to be read.
+    <LI>WritePtr points to the location of the first empty place in memory to write.
+    <LI>The messages are read/written as a FIFO to allow for queueing of messages.
+  </UL>
+
+  <H1>Queue Operation</H1>
+  
+  <UL>
+    <LI>ReadPtr and WritePtr are relative to the start address of the message queue.
+        That is, if the memory segment starts at address 0xfffd0000, the message queue
+        starts at 0xfffd0020, and the next message to read is at address 0xfffd0094, 
+        ReadPtr would be set to 116 (0x74). This is done because the two CPUs don't 
+        necessarily map shared memory to the same virtual location so the pointers can 
+        not be absolute locations.  
+    <LI>When WritePtr gets large enough that a new message cannot be written without 
+        overflowing the memory segment, it first writes the length of the message at 
+        its current location and then wraps back to the start of the message queue to
+        write the message there. When ReadPtr encounters this length that can't fit,
+        it wraps to the beginning of the message queue and reads the message there 
+        instead. 
+    <LI>If writing a new message will overwrite part of the next message in the read 
+        queue (possibly invalidating the value in the "length" field), ReadPtr is 
+        moved to the next message in the read queue to make room and the message about 
+        to be overwritten is lost.
+  </UL>
+  Next: \ref sbnshmemcfg <BR>
+  Prev: \ref sbnshmemovr
+**/
+
+/**
+  \page sbnshmemcfg SBN Shared Memory Module Configuration
+
+  <H1>SBN Peer Data File Entry</H1>
+
+  The file entry in SbnPeerData.dat for a shared memory interface requires 12 fields.
+  The first 4 fields are the fields required of all interface modules:
+  <UL>
+    <LI>Peer Name
+    <LI>Processor ID
+    <LI>Protocol ID (5 for Shared Memory)
+    <LI>Spacecraft ID
+  </UL>
+
+  The remaining fields are the interface specific fields:
+  <UL>
+    <LI>Data Receive Address
+    <LI>Data Receive Memory Size
+    <LI>Data Send Address
+    <LI>Data Send Memory Size
+    <LI>Protocol Receive Address
+    <LI>Protocol Receive Memory Size
+    <LI>Protocol Send Address
+    <LI>Protocol Send Memory Size
+  </UL>
+
+  In order for the shared memory interface to work, there must be a "matching" set of 2 peers
+  for each shared memory interface.  In order for 2 peers (CPU1 and CPU2) to "match", the data
+  receive address for CPU1 must match the data send address for CPU2 (and so on for the other 
+  message address spaces).  An example of 2 such peers is below:
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR>
+    <TD WIDTH="5%"><B>Name</B></TD> 
+    <TD WIDTH="10%"><B>Processor ID</B></TD>
+    <TD WIDTH="10%"><B>Protocol ID</B></TD>
+    <TD WIDTH="10%"><B>Spacecraft ID</B></TD>
+    <TD WIDTH="10%"><B>Data Rcv Addr</B></TD>
+    <TD WIDTH="10%"><B>Data Rcv Size</B></TD>
+    <TD WIDTH="10%"><B>Data Send Addr</B></TD>
+    <TD WIDTH="10%"><B>Data Send Size</B></TD>
+    <TD WIDTH="10%"><B>Proto Rcv Addr</B></TD>
+    <TD WIDTH="10%"><B>Proto Rcv Size</B></TD>
+    <TD WIDTH="10%"><B>Proto Send Addr</B></TD>
+    <TD WIDTH="10%"><B>Proto Send Size</B></TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU1</TD> 
+    <TD WIDTH="10%">1</TD> 
+    <TD WIDTH="10%">5</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">0xfffd0000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd1000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd2000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd3000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+  </TR>
+  <TR>
+    <TD WIDTH="5%">CPU2</TD> 
+    <TD WIDTH="10%">2</TD> 
+    <TD WIDTH="10%">5</TD>
+    <TD WIDTH="10%">0</TD>
+    <TD WIDTH="10%">0xfffd1000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd0000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd3000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+    <TD WIDTH="10%">0xfffd2000</TD>
+    <TD WIDTH="10%">0x1000</TD>
+  </TR>
+  </TABLE>  
+
+  Next: \ref sbnshmemcons <BR>
+  Prev: \ref sbnshmemopr
+**/
+
+
+/**
+  \page sbnshmemcons SBN Shared Memory Module Constraints
+
+  <H1>Data Format</H1>
+
+  <UL>
+    <LI>The maximum message size that can be sent over the Software Bus Network is 
+        1400 bytes. 
+    <LI>The shared memory plugin is currently written for Linux only and other
+        operating systems will not be able to use it. 
+    <LI>When defining the address and size of shared memory in the SBN peer data file,
+        the address of each memory segment must be on a page boundary and the size
+        of that memory segment must be a multiple of page size. 
+  </UL>
+
+  <H1>Device Consistency</H1>
+  <UL>
+    <LI>Shared memory is erased each time SBN starts the plugin on either CPU.
+        Messages that were written to shared memory by one CPU will be lost if the 
+        other CPU starts SBN after those messages were written.
+  </UL>
+
+  
+  Prev: \ref sbnshmemcfg
+**/

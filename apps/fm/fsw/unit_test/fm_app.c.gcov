@@ -1,0 +1,484 @@
+        -:    0:Source:../src/fm_app.c
+        -:    0:Graph:fm_app.gcno
+        -:    0:Data:fm_app.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:** $Id: fm_app.c.gcov 1.5 2009/11/20 15:40:36EST lwalling Exp  $
+        -:    3:**
+        -:    4:** Title: Core Flight System (CFS) File Manager (FM) Application
+        -:    5:**
+        -:    6:** Purpose: The File Manager (FM) Application provides onboard file system
+        -:    7:**          management services by processing commands for copying and moving
+        -:    8:**          files, decompressing files, concatenating files, creating directories,
+        -:    9:**          deleting files and directories, and providing file and directory status.
+        -:   10:**          When the File Manager application receives a housekeeping request
+        -:   11:**          (scheduled within the scheduler application), FM  reports it's housekeeping
+        -:   12:**          status values via telemetry messaging.
+        -:   13:**
+        -:   14:** Author: Susanne L. Strege, Code 582 NASA GSFC
+        -:   15:**
+        -:   16:** Notes:
+        -:   17:**
+        -:   18:** $Log: fm_app.c.gcov  $
+        -:   18:** Revision 1.5 2009/11/20 15:40:36EST lwalling 
+        -:   18:** Unit test updates
+        -:   19:** Revision 1.23 2009/11/17 13:40:48EST lwalling 
+        -:   20:** Remove global open files list data structure
+        -:   21:** Revision 1.22 2009/11/13 16:26:34EST lwalling 
+        -:   22:** Modify macro names, add SetTableEntryState cmd
+        -:   23:** Revision 1.21 2009/11/09 16:57:53EST lwalling 
+        -:   24:** Move value definitions to fm_defs.h, move prototypes to fm_app.h, cleanup source indents
+        -:   25:** Revision 1.20 2009/10/30 16:01:09EDT lwalling 
+        -:   26:** Include fm_msgdefs.h, add HK request command packet definition
+        -:   27:** Revision 1.19 2009/10/30 14:02:31EDT lwalling 
+        -:   28:** Remove trailing white space from all lines
+        -:   29:** Revision 1.18 2009/10/30 10:46:46EDT lwalling
+        -:   30:** Remove detail from function prologs, leave detail in function prototypes
+        -:   31:** Revision 1.17 2009/10/29 11:42:23EDT lwalling
+        -:   32:** Make common structure for open files list and open file telemetry packet, change open file to open files
+        -:   33:** Revision 1.16 2009/10/27 17:38:35EDT lwalling
+        -:   34:** Fix typo during creation of new child task warning counter
+        -:   35:** Revision 1.15 2009/10/27 17:26:42EDT lwalling
+        -:   36:** Add child task warning counter to housekeeping telemetry structure
+        -:   37:** Revision 1.14 2009/10/26 16:40:41EDT lwalling
+        -:   38:** Rename funcs, make global data local, change struct/var names, add child vars to HK
+        -:   39:** Revision 1.13 2009/10/26 11:30:58EDT lwalling
+        -:   40:** Remove Close File command from FM application
+        -:   41:** Revision 1.12 2009/10/23 14:49:06EDT lwalling
+        -:   42:** Update event text and descriptions of event text
+        -:   43:** Revision 1.11 2009/10/16 15:47:59EDT lwalling
+        -:   44:** Update event text, command code names, function names, add warning counter
+        -:   45:** Revision 1.10 2009/10/09 17:23:51EDT lwalling
+        -:   46:** Create command to generate file system free space packet, replace device table with free space table
+        -:   47:** Revision 1.9 2009/10/08 16:20:22EDT lwalling
+        -:   48:** Remove disk free space from HK telemetry
+        -:   49:** Revision 1.8 2009/10/07 15:54:16EDT lwalling
+        -:   50:** Fix startup w/o table load, change some data types from int8 to int32
+        -:   51:** Revision 1.7 2009/09/28 15:29:54EDT lwalling
+        -:   52:** Review and modify event text
+        -:   53:** Revision 1.6 2009/09/28 14:15:27EDT lwalling
+        -:   54:** Create common filename verification functions
+        -:   55:** Revision 1.5 2009/06/12 14:16:27EDT rmcgraw
+        -:   56:** DCR82191:1 Changed OS_Mem function calls to CFE_PSP_Mem
+        -:   57:** Revision 1.4 2008/10/03 15:53:22EDT sstrege
+        -:   58:** Added include to new fm_version.h header files
+        -:   59:** Added version information to application initialization event message
+        -:   60:** Revision 1.3 2008/09/30 16:38:01EDT sstrege
+        -:   61:** Removed platform_cfg.h include and replaced with include to perfids.h
+        -:   62:** Revision 1.2 2008/06/20 16:21:20EDT slstrege
+        -:   63:** Member moved from fsw/src/fm_app.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_app.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
+        -:   64:** Revision 1.1 2008/06/20 15:21:20ACT slstrege
+        -:   65:** Initial revision
+        -:   66:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
+        -:   67:*/
+        -:   68:
+        -:   69:#include "cfe.h"
+        -:   70:#include "fm_msg.h"
+        -:   71:#include "fm_msgdefs.h"
+        -:   72:#include "fm_msgids.h"
+        -:   73:#include "fm_app.h"
+        -:   74:#include "fm_tbl.h"
+        -:   75:#include "fm_child.h"
+        -:   76:#include "fm_cmds.h"
+        -:   77:#include "fm_cmd_utils.h"
+        -:   78:#include "fm_events.h"
+        -:   79:#include "fm_perfids.h"
+        -:   80:#include "fm_mission_cfg.h"
+        -:   81:#include "fm_version.h"
+        -:   82:#include "fm_verify.h"
+        -:   83:
+        -:   84:#include <string.h>
+        -:   85:
+        -:   86:
+        -:   87:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   88:/*                                                                 */
+        -:   89:/* FM application global data                                      */
+        -:   90:/*                                                                 */
+        -:   91:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   92:
+        -:   93:FM_GlobalData_t  FM_GlobalData;
+        -:   94:
+        -:   95:
+        -:   96:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   97:/*                                                                 */
+        -:   98:/* FM application -- entry point and main loop processor           */
+        -:   99:/*                                                                 */
+        -:  100:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  101:
+        -:  102:void FM_AppMain(void)
+function FM_AppMain called 2 returned 50% blocks executed 100%
+        2:  103:{
+        2:  104:    uint32 RunStatus = CFE_ES_APP_RUN;
+        2:  105:    CFE_SB_MsgPtr_t MsgPtr;
+        2:  106:    int32  Result;
+        -:  107:
+        -:  108:    /* Register application */
+        2:  109:    Result = CFE_ES_RegisterApp();
+        -:  110:
+        -:  111:    /* Performance Log (start time counter) */
+        2:  112:    CFE_ES_PerfLogEntry(FM_APPMAIN_PERF_ID);
+        -:  113:
+        -:  114:    /*
+        -:  115:    ** Perform application specific initialization...
+        -:  116:    */
+        2:  117:    if (Result == CFE_SUCCESS)
+        -:  118:    {
+        1:  119:        Result = FM_AppInit();
+        -:  120:    }
+        -:  121:
+        -:  122:    /*
+        -:  123:    ** Check for start-up error...
+        -:  124:    */
+        2:  125:    if (Result != CFE_SUCCESS)
+        -:  126:    {
+        -:  127:        /*
+        -:  128:        ** Set request to terminate main loop...
+        -:  129:        */
+        1:  130:        RunStatus = CFE_ES_APP_ERROR;
+        -:  131:    }
+        -:  132:
+        -:  133:    /*
+        -:  134:    ** Main process loop...
+        -:  135:    */
+       11:  136:    while (CFE_ES_RunLoop(&RunStatus) == TRUE)
+        -:  137:    {
+        -:  138:        /* Performance Log (stop time counter) */
+       10:  139:        CFE_ES_PerfLogExit(FM_APPMAIN_PERF_ID);
+        -:  140:
+        -:  141:        /* Wait for the next Software Bus message */
+       10:  142:        Result = CFE_SB_RcvMsg(&MsgPtr, FM_GlobalData.CmdPipe, CFE_SB_PEND_FOREVER);
+        -:  143:
+        -:  144:        /* Performance Log (start time counter) */
+        9:  145:        CFE_ES_PerfLogEntry(FM_APPMAIN_PERF_ID);
+        -:  146:
+        9:  147:        if (Result == CFE_SUCCESS)
+        -:  148:        {
+        -:  149:            /* Process Software Bus message */
+        4:  150:            FM_ProcessPkt(MsgPtr);
+        -:  151:        }
+        -:  152:        else
+        -:  153:        {
+        -:  154:            /* Process Software Bus error */
+        5:  155:            CFE_EVS_SendEvent(FM_SB_RECEIVE_ERR_EID, CFE_EVS_ERROR,
+        -:  156:               "Main loop error: SB receive: result = 0x%08X", Result);
+        -:  157:
+        -:  158:            /* Set request to terminate main loop */
+        5:  159:            RunStatus = CFE_ES_APP_ERROR;
+        -:  160:        }
+        -:  161:    }
+        -:  162:
+        -:  163:    /*
+        -:  164:    ** Send an event describing the reason for the termination...
+        -:  165:    */
+        1:  166:    CFE_EVS_SendEvent(FM_EXIT_ERR_EID, CFE_EVS_ERROR,
+        -:  167:       "Application terminating: result = 0x%08X", Result);
+        -:  168:
+        -:  169:    /*
+        -:  170:    ** In case cFE Event Services is not working...
+        -:  171:    */
+        1:  172:    CFE_ES_WriteToSysLog("FM application terminating: result = 0x%08X\n", Result);
+        -:  173:
+        -:  174:    /*
+        -:  175:    ** Performance Log (stop time counter)...
+        -:  176:    */
+        1:  177:    CFE_ES_PerfLogExit(FM_APPMAIN_PERF_ID);
+        -:  178:
+        -:  179:    /*
+        -:  180:    ** Let cFE kill the task (and any child tasks)...
+        -:  181:    */
+        1:  182:    CFE_ES_ExitApp(RunStatus);
+        -:  183:
+        -:  184:} /* End FM_AppMain */
+        -:  185:
+        -:  186:
+        -:  187:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  188:/*                                                                 */
+        -:  189:/* FM application -- startup initialization processor              */
+        -:  190:/*                                                                 */
+        -:  191:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  192:
+        -:  193:int32 FM_AppInit(void)
+function FM_AppInit called 7 returned 100% blocks executed 100%
+        7:  194:{
+        7:  195:    char *ErrText = "Initialization error:";
+        7:  196:    int32 Result;
+        -:  197:
+        -:  198:    /* Initialize global data  */
+        7:  199:    CFE_PSP_MemSet(&FM_GlobalData, 0, sizeof(FM_GlobalData_t));
+        -:  200:
+        -:  201:    /* Register for event services */
+        7:  202:    Result = CFE_EVS_Register(NULL, 0, CFE_EVS_BINARY_FILTER);
+        -:  203:
+        7:  204:    if (Result != CFE_SUCCESS)
+        -:  205:    {
+        1:  206:        CFE_EVS_SendEvent(FM_STARTUP_EVENTS_ERR_EID, CFE_EVS_ERROR,
+        -:  207:           "%s register for event services: result = 0x%08X", ErrText, Result);
+        -:  208:    }
+        -:  209:    else
+        -:  210:    {
+        -:  211:        /* Create Software Bus message pipe */
+        6:  212:        Result = CFE_SB_CreatePipe(&FM_GlobalData.CmdPipe,
+        -:  213:                                    FM_APP_PIPE_DEPTH, FM_APP_PIPE_NAME);
+        6:  214:        if (Result != CFE_SUCCESS)
+        -:  215:        {
+        1:  216:            CFE_EVS_SendEvent(FM_STARTUP_CREAT_PIPE_ERR_EID, CFE_EVS_ERROR,
+        -:  217:               "%s create SB input pipe: result = 0x%08X", ErrText, Result);
+        -:  218:        }
+        -:  219:        else
+        -:  220:        {
+        -:  221:            /* Subscribe to Housekeeping request commands */
+        5:  222:            Result = CFE_SB_Subscribe(FM_SEND_HK_MID, FM_GlobalData.CmdPipe);
+        -:  223:
+        5:  224:            if (Result != CFE_SUCCESS)
+        -:  225:            {
+        1:  226:                CFE_EVS_SendEvent(FM_STARTUP_SUBSCRIB_HK_ERR_EID, CFE_EVS_ERROR,
+        -:  227:                   "%s subscribe to HK request: result = 0x%08X", ErrText, Result);
+        -:  228:            }
+        -:  229:        }
+        -:  230:    }
+        -:  231:
+        -:  232:    /* Keep indentation from getting too deep */
+        7:  233:    if (Result == CFE_SUCCESS)
+        -:  234:    {
+        -:  235:        /* Subscribe to FM ground command packets */
+        4:  236:        Result = CFE_SB_Subscribe(FM_CMD_MID, FM_GlobalData.CmdPipe);
+        -:  237:
+        4:  238:        if (Result != CFE_SUCCESS)
+        -:  239:        {
+        1:  240:            CFE_EVS_SendEvent(FM_STARTUP_SUBSCRIB_GCMD_ERR_EID, CFE_EVS_ERROR,
+        -:  241:               "%s subscribe to FM commands: result = 0x%08X", ErrText, Result);
+        -:  242:        }
+        -:  243:        else
+        -:  244:        {
+        -:  245:            /* Initialize FM tables */
+        3:  246:            Result = FM_TableInit();
+        -:  247:
+        3:  248:            if (Result != CFE_SUCCESS)
+        -:  249:            {
+        1:  250:                CFE_EVS_SendEvent(FM_STARTUP_TABLE_INIT_ERR_EID, CFE_EVS_ERROR,
+        -:  251:                   "%s register free space table: result = 0x%08X", ErrText, Result);
+        -:  252:            }
+        -:  253:            else
+        -:  254:            {
+        -:  255:                /* Create low priority child task */
+        2:  256:                FM_ChildInit();
+        -:  257:
+        -:  258:                /* Application startup event message */
+        2:  259:                CFE_EVS_SendEvent(FM_STARTUP_EID, CFE_EVS_INFORMATION,
+        -:  260:                   "Initialization complete: version %d.%d.%d.%d",
+        -:  261:                    FM_MAJOR_VERSION, FM_MINOR_VERSION, FM_REVISION, FM_MISSION_REV);
+        -:  262:            }
+        -:  263:        }
+        -:  264:    }
+        -:  265:
+        7:  266:    return(Result);
+        -:  267:
+        -:  268:} /* End of FM_AppInit() */
+        -:  269:
+        -:  270:
+        -:  271:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  272:/*                                                                 */
+        -:  273:/* FM application -- input packet processor                        */
+        -:  274:/*                                                                 */
+        -:  275:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  276:
+        -:  277:void FM_ProcessPkt(CFE_SB_MsgPtr_t MessagePtr)
+function FM_ProcessPkt called 96 returned 100% blocks executed 100%
+       96:  278:{
+       96:  279:    CFE_SB_MsgId_t MessageID;
+        -:  280:
+       96:  281:    MessageID = CFE_SB_GetMsgId(MessagePtr);
+        -:  282:
+       96:  283:    switch(MessageID)
+        -:  284:    {
+        -:  285:        /* Housekeeping request */
+        -:  286:        case FM_SEND_HK_MID:
+        6:  287:            FM_ReportHK(MessagePtr);
+        6:  288:            break;
+        -:  289:
+        -:  290:        /* FM ground commands */
+        -:  291:        case FM_CMD_MID:
+       89:  292:            FM_ProcessCmd(MessagePtr);
+       89:  293:            break;
+        -:  294:
+        -:  295:        default:
+        1:  296:            CFE_EVS_SendEvent(FM_MID_ERR_EID, CFE_EVS_ERROR,
+        -:  297:               "Main loop error: invalid message ID: mid = 0x%04X", MessageID);
+       96:  298:            break;
+        -:  299:
+        -:  300:    }
+        -:  301:
+       96:  302:    return;
+        -:  303:
+        -:  304:} /* End of FM_ProcessPkt */
+        -:  305:
+        -:  306:
+        -:  307:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  308:/*                                                                 */
+        -:  309:/* FM application -- command packet processor                      */
+        -:  310:/*                                                                 */
+        -:  311:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  312:
+        -:  313:void FM_ProcessCmd(CFE_SB_MsgPtr_t MessagePtr)
+function FM_ProcessCmd called 90 returned 100% blocks executed 100%
+       90:  314:{
+       90:  315:    boolean Result = TRUE;
+        -:  316:
+        -:  317:    /* Invoke specific command handler */
+       90:  318:    switch(CFE_SB_GetCmdCode(MessagePtr))
+        -:  319:    {
+        -:  320:        case FM_NOOP_CC:
+        4:  321:            Result = FM_NoopCmd(MessagePtr);
+        4:  322:            break;
+        -:  323:
+        -:  324:        case FM_RESET_CC:
+        3:  325:            Result = FM_ResetCountersCmd(MessagePtr);
+        3:  326:            break;
+        -:  327:
+        -:  328:        case FM_COPY_CC:
+        5:  329:            Result = FM_CopyFileCmd(MessagePtr);
+        5:  330:            break;
+        -:  331:
+        -:  332:        case FM_MOVE_CC:
+        6:  333:            Result = FM_MoveFileCmd(MessagePtr);
+        6:  334:            break;
+        -:  335:
+        -:  336:        case FM_RENAME_CC:
+        6:  337:            Result = FM_RenameFileCmd(MessagePtr);
+        6:  338:            break;
+        -:  339:
+        -:  340:        case FM_DELETE_CC:
+        5:  341:            Result = FM_DeleteFileCmd(MessagePtr);
+        5:  342:            break;
+        -:  343:
+        -:  344:        case FM_DELETE_ALL_CC:
+        4:  345:            Result = FM_DeleteAllFilesCmd(MessagePtr);
+        4:  346:            break;
+        -:  347:
+        -:  348:        case FM_DECOMPRESS_CC:
+        5:  349:            Result = FM_DecompressFileCmd(MessagePtr);
+        5:  350:            break;
+        -:  351:
+        -:  352:        case FM_CONCAT_CC:
+        6:  353:            Result = FM_ConcatFilesCmd(MessagePtr);
+        6:  354:            break;
+        -:  355:
+        -:  356:        case FM_GET_FILE_INFO_CC:
+        9:  357:            Result = FM_GetFileInfoCmd(MessagePtr);
+        9:  358:            break;
+        -:  359:
+        -:  360:        case FM_GET_OPEN_FILES_CC:
+        3:  361:            Result = FM_GetOpenFilesCmd(MessagePtr);
+        3:  362:            break;
+        -:  363:
+        -:  364:        case FM_CREATE_DIR_CC:
+        5:  365:            Result = FM_CreateDirectoryCmd(MessagePtr);
+        5:  366:            break;
+        -:  367:
+        -:  368:        case FM_DELETE_DIR_CC:
+        6:  369:            Result = FM_DeleteDirectoryCmd(MessagePtr);
+        6:  370:            break;
+        -:  371:
+        -:  372:        case FM_GET_DIR_FILE_CC:
+        5:  373:            Result = FM_GetDirListFileCmd(MessagePtr);
+        5:  374:            break;
+        -:  375:
+        -:  376:        case FM_GET_DIR_PKT_CC:
+        6:  377:            Result = FM_GetDirListPktCmd(MessagePtr);
+        6:  378:            break;
+        -:  379:
+        -:  380:        case FM_GET_FREE_SPACE_CC:
+        4:  381:            Result = FM_GetFreeSpaceCmd(MessagePtr);
+        4:  382:            break;
+        -:  383:
+        -:  384:        case FM_SET_TABLE_STATE_CC:
+        7:  385:            Result = FM_SetTableStateCmd(MessagePtr);
+        7:  386:            break;
+        -:  387:
+        -:  388:        default:
+        1:  389:            Result = FALSE;
+        1:  390:            CFE_EVS_SendEvent(FM_CC_ERR_EID, CFE_EVS_ERROR,
+        -:  391:               "Main loop error: invalid command code: cc = %d",
+        -:  392:                              CFE_SB_GetCmdCode(MessagePtr));
+       90:  393:            break;
+        -:  394:    }
+        -:  395:
+       90:  396:    if (Result == TRUE)
+        -:  397:    {
+        -:  398:        /* Increment command success counter */
+       28:  399:        if (CFE_SB_GetCmdCode(MessagePtr) != FM_RESET_CC)
+        -:  400:        {
+       27:  401:            FM_GlobalData.CommandCounter++;
+        -:  402:        }
+        -:  403:    }
+        -:  404:    else
+        -:  405:    {
+        -:  406:        /* Increment command error counter */
+       62:  407:        FM_GlobalData.CommandErrCounter++;
+        -:  408:    }
+        -:  409:
+       90:  410:    return;
+        -:  411:
+        -:  412:} /* End of FM_ProcessCmd */
+        -:  413:
+        -:  414:
+        -:  415:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  416:/*                                                                 */
+        -:  417:/* FM application -- housekeeping request packet processor         */
+        -:  418:/*                                                                 */
+        -:  419:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  420:
+        -:  421:void FM_ReportHK(CFE_SB_MsgPtr_t MessagePtr)
+function FM_ReportHK called 6 returned 100% blocks executed 100%
+        6:  422:{
+        6:  423:    char *CmdText = "HK Request";
+        6:  424:    boolean Result;
+        -:  425:
+        -:  426:    /* Verify command packet length */
+        6:  427:    Result = FM_IsValidCmdPktLength(MessagePtr, sizeof(FM_HousekeepingCmd_t),
+        -:  428:                                    FM_HK_REQ_ERR_EID, CmdText);
+        -:  429:
+        -:  430:    /* Report FM housekeeping telemetry data */
+        6:  431:    if (Result == TRUE)
+        -:  432:    {
+        -:  433:        /* Release table pointers */
+        4:  434:        FM_ReleaseTablePointers();
+        -:  435:
+        -:  436:        /* Allow cFE chance to dump, update, etc. */
+        4:  437:        FM_AcquireTablePointers();
+        -:  438:
+        -:  439:        /* Initialize housekeeping telemetry message */
+        4:  440:        CFE_SB_InitMsg(&FM_GlobalData.HousekeepingPkt, FM_HK_TLM_MID,
+        -:  441:                       sizeof(FM_HousekeepingPkt_t), TRUE);
+        -:  442:
+        -:  443:        /* Report application command counters */
+        4:  444:        FM_GlobalData.HousekeepingPkt.CommandCounter = FM_GlobalData.CommandCounter;
+        4:  445:        FM_GlobalData.HousekeepingPkt.CommandErrCounter = FM_GlobalData.CommandErrCounter;
+        4:  446:        FM_GlobalData.HousekeepingPkt.CommandWarnCounter = FM_GlobalData.CommandWarnCounter;
+        -:  447:
+        -:  448:        /* Report current number of open files */
+        4:  449:        FM_GlobalData.HousekeepingPkt.NumOpenFiles = FM_GetOpenFilesData(NULL);
+        -:  450:
+        -:  451:        /* Report child task command counters */
+        4:  452:        FM_GlobalData.HousekeepingPkt.ChildCmdCounter = FM_GlobalData.ChildCmdCounter;
+        4:  453:        FM_GlobalData.HousekeepingPkt.ChildCmdErrCounter = FM_GlobalData.ChildCmdErrCounter;
+        4:  454:        FM_GlobalData.HousekeepingPkt.ChildCmdWarnCounter = FM_GlobalData.ChildCmdWarnCounter;
+        -:  455:
+        -:  456:        /* Report number of commands in child task queue */
+        4:  457:        FM_GlobalData.HousekeepingPkt.ChildQueueCount = FM_GlobalData.ChildQueueCount;
+        -:  458:
+        -:  459:        /* Timestamp and send housekeeping telemetry packet */
+        4:  460:        CFE_SB_TimeStampMsg((CFE_SB_Msg_t *) &FM_GlobalData.HousekeepingPkt);
+        4:  461:        CFE_SB_SendMsg((CFE_SB_Msg_t *) &FM_GlobalData.HousekeepingPkt);
+        -:  462:    }
+        -:  463:
+        6:  464:    return;
+        -:  465:
+        -:  466:} /* End of FM_ReportHK */
+        -:  467:
+        -:  468:
+        -:  469:/************************/
+        -:  470:/*  End of File Comment */
+        -:  471:/************************/
+        -:  472:

@@ -1,0 +1,81 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: May 31, 2007  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu ES Application Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2007/05/31  WFM	: Initial
+!  2007/06/05  MOB      ; Removed the stale flag since this is generated on command
+!  2008/08/28  WFM	: Updated to match the app info structure in fsw
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu ES Application Telemetry Data Packet"
+
+#include "ccsds_header.rdl"
+!
+  ULI  $sc_$cpu_ES_AppID     DESC="$sc $cpu Id of this application"
+!
+  ULI  $sc_$cpu_ES_AppType   DESC="$sc $cpu Application type",
+			     DISCRETE, DRANGE=(1,2), DLABEL=("CORE","External")
+!
+  char $sc_$cpu_ES_AppName[OS_MAX_API_NAME]   DESC="$sc $cpu Name of this application"
+!
+  char $sc_$cpu_ES_AppEntryPt[OS_MAX_API_NAME] DESC="$sc $cpu application entry point"
+!
+  char $sc_$cpu_ES_AppFilename[OS_MAX_PATH_LEN] DESC="$sc $cpu Filename that contains the load image"
+!
+  ULI  $sc_$cpu_ES_StackSize   DESC="$sc $cpu Stack size (in bytes)"
+!
+  ULI  $sc_$cpu_ES_ModuleID   DESC="$sc $cpu OS ModuleID of this app"
+!
+  ULI  $sc_$cpu_ES_AddrsValid   DESC="$sc $cpu Valid Address flag",
+				DISCRETE, DRANGE=(0,1), DLABEL=("FALSE","TRUE")
+!
+  ULI  $sc_$cpu_ES_CodeAddress   DESC="$sc $cpu The address of this applications code segment"
+!
+  ULI  $sc_$cpu_ES_CodeSize   DESC="$sc $cpu The Code size of this application"
+!
+  ULI  $sc_$cpu_ES_DataAddress   DESC="$sc $cpu The address of this applications Data segment"
+!
+  ULI  $sc_$cpu_ES_DataSize   DESC="$sc $cpu The Data size of this application"
+!
+  ULI  $sc_$cpu_ES_BSSAddress   DESC="$sc $cpu The BSS address of this applications code segment"
+!
+  ULI  $sc_$cpu_ES_BSSSize   DESC="$sc $cpu The BSS size of this application"
+!
+  ULI  $sc_$cpu_ES_StartAddr   DESC="$sc $cpu Start address"
+!
+  UI  $sc_$cpu_ES_ExceptnActn   DESC="$sc $cpu Exception Action",
+				DISCRETE, DRANGE=(0,1), DLABEL=("RestartApp","RestartCPU")
+!
+  UI  $sc_$cpu_ES_Priority   DESC="$sc $cpu Priority"
+!
+  ULI  $sc_$cpu_ES_MainTaskId   DESC="$sc $cpu Task id"
+!
+  ULI  $sc_$cpu_ES_ExecutionCtr   DESC="$sc $cpu Execution counter"
+!
+  char $sc_$cpu_ES_MainTaskName[OS_MAX_API_NAME] DESC="$sc $cpu Name of the Main task"
+!
+  ULI  $sc_$cpu_ES_ChildTasks   DESC="$sc $cpu number of child tasks for this application"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

@@ -1,0 +1,74 @@
+export CFE_VERSION="Baseline"
+#export CFE_VERSION="ARINC653"
+
+# cFE Unit Test Compiler Flags:
+#  - Define UT_SHOW_PASS to display PASSED (and FAILED) test results;
+#    undefine to show only FAILED test results
+#  - Define UT_VERBOSE to display stub routine messages in unit test
+#    log files
+#  - Define SOCKET_QUEUE to use Linux socket queue functions; undefine
+#    to use an embedded queue replacement
+#  - Define CFE_ARINC653 if compiling using the ARINC653 cFE; undefine to
+#    use the baseline cFE
+#  - Define CFE_LINUX if compiling under Linux; undefine when compiling
+#    on the GHS target
+
+# Embedded (Replacement) printf Compiler Flags:
+#  - Define OS_USE_EMBEDDED_PRINTF to use the embedded (replacement) printf
+#    functions; undefine to use the standard printf library functions
+#  - Define OSP_ARINC653 if using embedded (replacement) printf functions
+#    and compiling on the GHS target using cFE modified for ARINC653
+#  - Define UT_USE_PRINTF_STUB if using embedded (replacement) printf
+#    functions and if using an OS_printf stub function (e.g., when compiling
+#    the cFE unit tests)
+
+if [ $CFE_VERSION = "ARINC653" ]; then
+    export OSCFLAGS="-DCFE_ARINC653 -DCFE_LINUX -DOS_USE_EMBEDDED_PRINTF -DUT_USE_PRINTF_STUB -DUT_SHOW_PASS -DUT_VERBOSE"
+    export ARINC653_MISSION_CFSTST=$HOME/CFS_Workspace/CFS653/trunk/FSW
+else
+    export OSCFLAGS="-DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE"
+fi
+
+echo -n "Compiling "
+if [ "$1" == "" ]; then
+echo -n "all"
+else
+echo -n "$1"
+fi
+echo -n " tests using "
+echo -n $CFE_VERSION
+echo -n " cFE version with following flags: "
+echo $OSCFLAGS
+
+if [ "$1" == "es" ]; then
+make cfe_ut_clean_es
+make cfe_ut_build_es
+make cfe_ut_run_es
+elif [ "$1" == "evs" ]; then
+make cfe_ut_clean_evs
+make cfe_ut_build_evs
+make cfe_ut_run_evs
+elif [ "$1" == "fs" ]; then
+make cfe_ut_clean_fs
+make cfe_ut_build_fs
+make cfe_ut_run_fs
+elif [ "$1" == "sb" ]; then
+make cfe_ut_clean_sb
+make cfe_ut_build_sb
+make cfe_ut_run_sb
+elif [ "$1" == "tbl" ]; then
+make cfe_ut_clean_tbl
+make cfe_ut_build_tbl
+make cfe_ut_run_tbl
+elif [ "$1" == "time" ]; then
+make cfe_ut_clean_time
+make cfe_ut_build_time
+make cfe_ut_run_time
+elif [ "$1" == "" ]; then
+make cfe_ut_clean
+make cfe_ut_build
+make cfe_ut_run
+else
+echo -n "Unknown test name '"
+echo "$1'"
+fi

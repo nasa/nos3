@@ -1,0 +1,96 @@
+
+***Initialize UTF ***
+
+***Add tasks to ES list of tasks ***
+UTF Info: Task <MD_APP> added to Task Tbl.
+SysLog:1980-001-00:16:40.00000 ES Startup: MD_APP loaded and created
+UTF Info: App <MD_APP> added to App Tbl.
+AppTable[0]:
+       Name    = MD_APP
+    ChildTasks = 0
+    State = Running
+
+*** Start Memory Dwell Main Task ***
+CALL #1 to GetAddress_FunctionHook
+ERROR EVENT ID=44 Dwell Table rejected because value of enable flag (17) is invalid
+ERROR EVENT ID=4 MD App will reinitialize Dwell Table #1 because recovered table is not valid
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=37 MD_APP Successfully Updated ''
+CALL #2 to GetAddress_FunctionHook
+ERROR EVENT ID=39 Didn't update MD tbl #2 due to unexpected CFE_TBL_GetAddress return: 0xCC000008
+Call to CFE_TBL_ValidateAccess returned 0
+INFO EVENT ID=37 MD_APP Successfully Updated ''
+CALL #3 to GetAddress_FunctionHook
+INFO EVENT ID=3 Recovered Dwell Table #3 is valid and has been copied to the MD App
+CALL #4 to GetAddress_FunctionHook
+INFO EVENT ID=3 Recovered Dwell Table #4 is valid and has been copied to the MD App
+INFO EVENT ID=7 Dwell Tables Recovered: 2, Dwell Tables Initialized: 2
+INFO EVENT ID=1 MD Initialized.  Version 0.0.0.0
+ * * * * * * * * * * * * * * * * * * * *
+ Command Input File opened for reading *
+ * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+ Start Dwell Tables                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Table 1 is enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:000003e8 00000000 PKT:0890 c000 0039 03e8 0000 0000 0000 0004 0000 0000 0001 0001 0000 0000 0001 0001 0000 0000 0002 0002 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+ * * ->   Start Table #1
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0001 
+CALL #5 to GetAddress_FunctionHook
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0001
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Table 1 is enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:000003e8 00000000 PKT:0890 c000 0039 03e8 0000 0000 0100 0005 0000 0000 0001 0001 0000 0000 0001 0001 0000 0000 0002 0002 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * ->  Start Tables #2 and #3
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 0006 
+CALL #6 to GetAddress_FunctionHook
+INFO EVENT ID=51 Dwell Table 2 is enabled with a delay of zero so no processing will occur
+CALL #7 to GetAddress_FunctionHook
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x0006
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  1, 2, and 3 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:000003e8 00000000 PKT:0890 c000 0039 03e8 0000 0000 0200 0007 0000 0000 0001 0001 0000 0000 0001 0001 0000 0000 0002 0002 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * ->  Start Tables #1, #2, #3, and #4
+ * * Expected output: info event message
+< CMD: APID:0090 SEQ:0 LEN:10 FC:2 PKT:1890 c000 0003 0200 000f 
+CALL #8 to GetAddress_FunctionHook
+INFO EVENT ID=51 Dwell Table 1 is enabled with a delay of zero so no processing will occur
+CALL #9 to GetAddress_FunctionHook
+INFO EVENT ID=51 Dwell Table 2 is enabled with a delay of zero so no processing will occur
+CALL #10 to GetAddress_FunctionHook
+CALL #11 to GetAddress_FunctionHook
+INFO EVENT ID=12 Start Dwell Table command processed successfully for table mask 0x000F
+
+ * * -> Send Housekeeping packet
+ * * Expected output:  Tables  1, 2, 3, and 4 are enabled.
+< CMD: APID:0091 SEQ:0 LEN:8 FC:0 PKT:1891 c000 0001 0000 
+> TLM: APID:0090 SEQ:0 LEN:64 TIME:000003e8 00000000 PKT:0890 c000 0039 03e8 0000 0000 0300 000f 0000 0000 0001 0001 0000 0000 0001 0001 0000 0000 0002 0002 0000 0000 0000 0000 0000 0000 0000 0000 0001 0001 0001 0001 
+
+ * * -> Send two Wakeup Messages
+ * * Expected output:  dwell packet
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Sim Mem Memory Address Not Found 0x 8070d38
+> TLM: APID:0093 SEQ:0 LEN:54 TIME:000003e8 00000000 PKT:0893 c000 002f 03e8 0000 0000 0103 0002 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Sim Mem Memory Address Not Found 0x 8070d38
+> TLM: APID:0094 SEQ:0 LEN:54 TIME:000003e8 00000000 PKT:0894 c000 002f 03e8 0000 0000 0104 0002 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+< CMD: APID:0092 SEQ:0 LEN:8 FC:0 PKT:1892 c000 0001 0000 
+Sim Mem Memory Address Not Found 0x 8070d38
+> TLM: APID:0093 SEQ:0 LEN:54 TIME:000003e8 00000000 PKT:0893 c000 002f 03e8 0000 0000 0103 0002 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Sim Mem Memory Address Not Found 0x 8070d38
+> TLM: APID:0094 SEQ:0 LEN:54 TIME:000003e8 00000000 PKT:0894 c000 002f 03e8 0000 0000 0104 0002 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+ * * -> Display list of tables registered with Table Services
+The Table Registry contains the following tables:
+  Index   Table_Name            Size(B) Apps_With_Access Load FileName
+(*) indicates the Table was updated via CFE_TBL_Modified API

@@ -1,0 +1,112 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Feb 28, 2008  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CS Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/06/25  WFM	: Initial
+!  2017/03/02  WFM	: Updated HK for CS 2.4.0.0
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CS Telemetry Data Packet",
+                        STALE = 36
+#include "ccsds_header.rdl"
+!
+  UB   $sc_$cpu_CS_CMDPC       DESC="$sc $cpu CS Command Processed Counter",
+                               UNITS=Counts
+!
+  UB   $sc_$cpu_CS_CMDEC       DESC="$sc $cpu CS Command Error Counter",
+                               UNITS=Counts, YH=1, DOLIMIT
+!
+  UB   $sc_$cpu_CS_State       DESC="$sc $cpu CS Overall Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_EepromState DESC="$sc $cpu CS Overall Eeprom Memory Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_MemoryState DESC="$sc $cpu CS Overall User-defined Memory Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_AppState    DESC="$sc $cpu CS Overall Application Code Segment Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_TableState  DESC="$sc $cpu CS Overall Table Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_OSState     DESC="$sc $cpu CS OS Code Segment Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_CFECoreState DESC="$sc $cpu CS cFE Core Code Segment Checksumming State",
+                               DISCRETE, DRANGE=(1,2),
+			       DLABEL=("Enabled","Disabled")
+!
+  UB   $sc_$cpu_CS_RecomputeInProgress DESC="$sc $cpu CS Recompute in progress flag",
+                               DISCRETE, DRANGE=(0,1),
+			       DLABEL=("False","True")
+!
+  UB  $sc_$cpu_CS_OneShotInProgress DESC="$sc $cpu CS One Shot in progress flag",
+                               DISCRETE, DRANGE=(0,1),
+			       DLABEL=("False","True")
+!
+  UB   $sc_$cpu_CS_Filler      DESC="$sc $cpu spare for alignment"
+!
+  UI   $sc_$cpu_CS_EepromEC    DESC="$sc $cpu CS Eeprom CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_MemoryEC    DESC="$sc $cpu CS User-defined Memory CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_AppEC       DESC="$sc $cpu CS Application Code Segment CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_TableEC     DESC="$sc $cpu CS Table CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_CFECoreEC   DESC="$sc $cpu CS cFE Core CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_OSEC        DESC="$sc $cpu CS OS Core CRC Miscompare Counter"
+!
+  UI   $sc_$cpu_CS_CurrTable   DESC="$sc $cpu CS Current Table being checksummed",
+                       DISCRETE, DRANGE=(0,1,2,3,4,5),
+		       DLABEL=("cFE","OS","EEPROM","Memory","Tables","Apps")
+!
+  UI   $sc_$cpu_CS_CurrEntryInTable DESC="$sc $cpu CS Current entry in the above table being checksummed"
+!
+  ULI  $sc_$cpu_CS_EepromBaseline  DESC="$sc $cpu CS EEPROM Baseline CRC"
+!
+  ULI  $sc_$cpu_CS_OSBaseline      DESC="$sc $cpu CS OS Baseline CRC"
+!
+  ULI  $sc_$cpu_CS_CFECoreBaseline DESC="$sc $cpu CS cFE Core Baseline CRC"
+!
+  ULI  $sc_$cpu_CS_LastOneShotAddr DESC="$sc $cpu CS starting address for the last one shot command"
+!
+  ULI  $sc_$cpu_CS_LastOneShotSize DESC="$sc $cpu CS size (in bytes) used in the last one shot command"
+  ULI  $sc_$cpu_CS_LastOneShotRate DESC="$sc $cpu CS Max bytes per cycle for the last one shot command"
+!
+  ULI  $sc_$cpu_CS_LastOneShotCRC  DESC="$sc $cpu CS CRC caclulated by the last one shot command"
+!
+  ULI  $sc_$cpu_CS_PassCTR   DESC="$sc $cpu CS Pass Counter"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

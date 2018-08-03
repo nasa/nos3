@@ -1,0 +1,113 @@
+Set the initial time to 1 and a half seconds or 1 second 500000us
+CFE_TIME_GetMETseconds Return Value 1
+CFE_TIME_GetMETsubsecs Return Value 80000000
+CFE_TIME_GetMET Return Value, Seconds 1, Subseconds 80000000
+CFE_TIME_Print Return Value 1980-001-00:00:01.50000
+CFE_TIME_GetSTCF Default Return Value, (should be 0, 0), Seconds 0, Subseconds 0
+Set STCF to 2 seconds and 3 subseconds
+CFE_TIME_GetSTCF New Return Value, (should be 2, 3), Seconds 2, Subseconds 30000000
+CFE_TIME_GetLeapSeconds Default Return Value, (should be 0), 0
+Set Leap Seconds to 1
+CFE_TIME_GetLeapSeconds New Return Value, (should be 1), 1
+CFE_TIME_GetTime Return Value, (should be same as TAI), Seconds 3, Subseconds b0000000
+CFE_TIME_GetTAI Return Value, TAI = MET + STCF, Seconds 3, Subseconds b0000000
+CFE_TIME_GetUTC Return Value, UTC = MET + STCF - Leap Seconds, Seconds 2, Subseconds b0000000
+CFE_TIME_GetClockState Return Value, (should be CFE_TIME_VALID = 0), 0
+CFE_TIME_Add Return Value, (should be 4, 6), Seconds 4, Subseconds 6
+CFE_TIME_Subtract Return Value, (should be 2, 2), Seconds 2, Subseconds 2
+CFE_TIME_Compare Return Value, (should be CFE_TIME_A_GT_B = 1), 1
+CFE_TIME_Sub2MicroSecs Return Value, (should be 62500), 62500
+CFE_TIME_Micro2SubSecs Return Value, (should be 0x10000000), 10000000
+CFE_TIME_CFE2FSSeconds Return Value, (should be time + CFE_TIME_FS_FACTOR = 789004802), 789004802
+CFE_TIME_FS2CFESeconds Return Value, (should be time - CFE_TIME_FS_FACTOR = 2) 2
+CFE_TIME_ExternalTone - does not do anything
+CFE_TIME_Sub2MicroSecs(0xFFFFDF00) Return Value, (should be 999998), 999998
+CFE_TIME_Micro2SubSecs(999999) Return Value, (should be 0xFFFFF000), fffff000
+CFE_TIME_Sub2MicroSecs(0xFFFFE000) Return Value, (should be 999999), 999999
+CFE_TIME_Micro2SubSecs(1000000) Return Value, (should be 0xFFFFFFFF), ffffffff
+CFE_TIME_GetMET Return Value, Seconds 1, Subseconds 80000000
+CFE_TIME_MET2SCTime Return Value, Seconds 3, Subseconds b0000000
+CFE_TIME_GetClockInfo() Return Value = 40
+UTF Info: Return value for CFE TIME Api #0 set to ff
+CFE_TIME_GetClockInfo() Return Value = ff
+UTF Info: Return code for CFE TIME Api #0 returned to default
+CFE_TIME_GetClockInfo() Return Value = 40
+UTF WARNING: Task must call CFE_ES_RegisterApp before calling CFE_ES_GetAppID.
+CFE_TIME_RegisterSynchCallback() Return Value = 0
+UTF Info: Return value for CFE TIME Api #1 set to ee
+CFE_TIME_RegisterSynchCallback() Return Value = ee
+UTF Info: Return code for CFE TIME Api #1 returned to default
+UTF WARNING: Task must call CFE_ES_RegisterApp before calling CFE_ES_GetAppID.
+CFE_TIME_RegisterSynchCallback() Return Value = 0
+UTF WARNING: Task must call CFE_ES_RegisterApp before calling CFE_ES_GetAppID.
+CFE_TIME_UnregisterSynchCallback() Return Value = 0
+UTF Info: Return value for CFE TIME Api #2 set to dd
+CFE_TIME_UnregisterSynchCallback() Return Value = dd
+UTF Info: Return code for CFE TIME Api #2 returned to default
+UTF WARNING: Task must call CFE_ES_RegisterApp before calling CFE_ES_GetAppID.
+CFE_TIME_UnregisterSynchCallback() Return Value = 0
+
+OS_Timer API Tests
+OS_TimerCreate() Return Value = 0
+ID = 0; accuracy = 20
+OS_TimerGetInfo() Return Value = 0
+Info Values returned:
+    Creator  = 5
+    Name     = Walts Timer 1
+    Start    = 0
+    Interval = 0
+    Accuracy = 0
+UTF Info: Return value for OSTIMER Api #0 set to ff
+OS_TimerCreate() Return Value = ff
+UTF Info: Return code for OSTIMER Api #0 returned to default
+OS_TimerCreate() Return Value = 0
+ID = 1; accuracy = 20
+OS_TimerSet() Return Value = 0
+UTF Info: Return value for OSTIMER Api #1 set to ea
+OS_TimerSet() Return Value = ea
+UTF Info: Return code for OSTIMER Api #1 returned to default
+OS_TimerSet() Return Value = 0
+OS_TimerDelete() Return Value = 0
+UTF Info: Return value for OSTIMER Api #2 set to ffea
+OS_TimerDelete() Return Value = ffea
+UTF Info: Return code for OSTIMER Api #2 returned to default
+OS_TimerDelete() Return Value = fffffff0; Expected fffffff0
+OS_TimerGetIdByName(Walts Timer 1) Return Value = ffffffef; Expected ffffffef
+UTF Info: Return value for OSTIMER Api #3 set to eaff
+OS_TimerGetIdByName() Return Value = eaff
+UTF Info: Return code for OSTIMER Api #3 returned to default
+OS_TimerGetIdByName(Walts Timer 2) Return Value = 0
+Returned ID = 1
+OS_TimerGetInfo() Return Value = 0
+Info Values returned:
+    Creator  = 5
+    Name     = Walts Timer 2
+    Start    = 10
+    Interval = 1
+    Accuracy = 0
+UTF Info: Return value for OSTIMER Api #4 set to ffff
+OS_TimerGetInfo() Return Value = ffff
+UTF Info: Return code for OSTIMER Api #4 returned to default
+OS_TimerGetInfo() Return Value = 0
+Info Values returned:
+    Creator  = 5
+    Name     = Walts Timer 2
+    Start    = 10
+    Interval = 1
+    Accuracy = 0
+GetMETseconds Hook Return Code 0
+GetMETseconds Hook Return Code 2
+GetMETseconds Hook Return Code 0
+GetMETseconds Hook Return Code 4
+GetMETsubseconds Hook Return Code 0
+GetMETsubseconds Hook Return Code 1
+GetMETsubseconds Hook Return Code 2
+GetMETsubseconds Hook Return Code 3
+RegisterSyncCallback Hook Return Code 0
+RegisterSyncCallback Hook Return Code ce000003
+RegisterSyncCallback Hook Return Code 0
+RegisterSyncCallback Hook Return Code ce000003
+UnregisterSyncCallback Hook Return Code 0
+UnregisterSyncCallback Hook Return Code ce000004
+UnregisterSyncCallback Hook Return Code 0
+UnregisterSyncCallback Hook Return Code ce000004

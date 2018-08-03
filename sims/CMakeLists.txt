@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 2.6.4)
+project(NOS3)
+
+# note: not sure why this needs to be re-configured for sim but cmake is resetting option values
+set(CXX_11 ON)
+ if(CXX_11)
+    set(ITC_CXX_FLAGS "")   #Used for C++
+	if(ITC_CXX_FLAGS)
+		STRING(REGEX REPLACE "--std=c\\+\\+98" "" ITC_CXX_FLAGS ${ITC_CXX_FLAGS}) #Remove the C++98 Flag if it exists
+		endif(ITC_CXX_FLAGS)		
+    set(ITC_CXX_FLAGS "${ITC_CXX_FLAGS} --std=c++11")    
+    set(CMAKE_CXX_FLAGS "")
+    set(CMAKE_SHARED_LINKER_FLAGS "")
+endif(CXX_11)
+
+include(MissionSettings.cmake)
+
+# simulator install directory (should be able to use target name rather than hard-code linux)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/linux/linux/sim)
+
+# NOS3 Sim Core
+add_subdirectory(sim_common)
+add_subdirectory(sim_server)
+add_subdirectory(nos_time_driver)
+add_subdirectory(sim_terminal)
+
+# Add Sims
+FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*_sim)
+FOREACH(_FILE ${_ALL_FILES})
+  IF(IS_DIRECTORY ${_FILE})
+    add_subdirectory(${_FILE})
+  ENDIF()
+ENDFOREACH()

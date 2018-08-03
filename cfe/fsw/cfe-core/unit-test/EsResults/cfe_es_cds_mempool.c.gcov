@@ -1,0 +1,713 @@
+        -:    0:Source:/home/wmoleski/CFS/mission_2014/cfe/fsw/cfe-core/src/es/cfe_es_cds_mempool.c
+        -:    0:Graph:cfe_es_cds_mempool.gcno
+        -:    0:Data:cfe_es_cds_mempool.gcda
+        -:    0:Runs:1
+        -:    0:Programs:4
+        -:    1:/*
+        -:    2:**  File:
+        -:    3:**  cfe_es_cds_mempool.c
+        -:    4:**
+        -:    5:**
+        -:    6:**
+        -:    7:**      Copyright (c) 2004-2012, United States government as represented by the
+        -:    8:**      administrator of the National Aeronautics Space Administration.
+        -:    9:**      All rights reserved. This software(cFE) was created at NASA's Goddard
+        -:   10:**      Space Flight Center pursuant to government contracts.
+        -:   11:**
+        -:   12:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   13:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   14:**
+        -:   15:**  Purpose:
+        -:   16:**  Set of services for management of the CDS discrete sized memory pools.
+        -:   17:**
+        -:   18:**  References:
+        -:   19:**     Flight Software Branch C Coding Standard Version 1.0a
+        -:   20:**     cFE Flight Software Application Developers Guide
+        -:   21:**
+        -:   22:**  $Log: cfe_es_cds_mempool.c.gcov  $
+        -:   22:**  Revision 1.6 2015/06/24 12:19:43EDT wmoleski 
+        -:   22:**  Checking in the unit-test results for cFE 6.4.2.0
+        -:   23:**  Revision 1.6 2012/01/13 11:50:00GMT-05:00 acudmore 
+        -:   24:**  Changed license text to reflect open source
+        -:   25:**  Revision 1.5 2010/10/25 15:02:11EDT jmdagost 
+        -:   26:**  Corrected bad apostrophe in prologue.
+        -:   27:**  Revision 1.4 2010/10/04 15:36:29EDT jmdagost 
+        -:   28:**  Cleaned up copyright symbol.
+        -:   29:**  Revision 1.3 2010/09/21 15:59:00EDT jmdagost 
+        -:   30:**  Add sanity check for BinIndex in CFE_ES_RebuildCDSPool().
+        -:   31:**  Revision 1.2 2009/06/10 09:08:52EDT acudmore 
+        -:   32:**  Converted OS_Mem* and OS_BSP* API to CFE_PSP_* API
+        -:   33:**  Revision 1.1 2008/04/17 08:05:04EDT ruperera 
+        -:   34:**  Initial revision
+        -:   35:**  Member added to project c:/MKSDATA/MKS-REPOSITORY/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   36:**  Revision 1.7 2007/04/28 14:51:01EDT David Kobe (dlkobe) 
+        -:   37:**  Replaced OS_SUCCESS return code with CFE_SUCCESS
+        -:   38:**  Revision 1.6 2007/04/04 16:39:48EDT dlkobe 
+        -:   39:**  Syntax Error
+        -:   40:**  Revision 1.5 2007/04/04 16:37:24EDT dlkobe 
+        -:   41:**  Missing include statement
+        -:   42:**  Revision 1.4 2007/04/04 16:32:26EDT dlkobe 
+        -:   43:**  Syntax Error Corrections
+        -:   44:**  Revision 1.3 2007/04/04 16:06:31EDT dlkobe 
+        -:   45:**  Made numerous changes to correct issues identified during ES code walkthrough
+        -:   46:**  Revision 1.2 2006/10/30 15:33:50GMT-05:00 dlkobe 
+        -:   47:**  Corrected  warning associated with pointer casting
+        -:   48:**  Revision 1.1 2006/10/30 11:05:06GMT-05:00 dlkobe 
+        -:   49:**  Initial revision
+        -:   50:**  Member added to project d:/mksdata/MKS-CFE-PROJECT/fsw/cfe-core/src/es/project.pj
+        -:   51:**
+        -:   52:*/
+        -:   53:
+        -:   54:/*
+        -:   55:** Includes
+        -:   56:*/
+        -:   57:#include "cfe.h"
+        -:   58:#include "cfe_platform_cfg.h"
+        -:   59:#include "cfe_es.h"
+        -:   60:#include "cfe_psp.h"
+        -:   61:#include "cfe_es_cds_mempool.h"
+        -:   62:#include "cfe_es_global.h"
+        -:   63:#include <stdio.h>
+        -:   64:
+        -:   65:/*****************************************************************************/
+        -:   66:/*
+        -:   67:** Local Macro Definitions
+        -:   68:*/
+        -:   69:#define CFE_ES_CDS_CHECK_PATTERN   0x5a5a
+        -:   70:#define CFE_ES_CDS_BLOCK_USED      0xaaaa
+        -:   71:#define CFE_ES_CDS_BLOCK_UNUSED    0xdddd
+        -:   72:#define CFE_ES_CDS_NUM_BLOCK_SIZES     17
+        -:   73:
+        -:   74:/*****************************************************************************/
+        -:   75:/*
+        -:   76:** Type Definitions
+        -:   77:*/
+        -:   78:
+        -:   79:typedef struct
+        -:   80:{
+        -:   81:  uint16    CheckBits;
+        -:   82:  uint16    AllocatedFlag;
+        -:   83:  uint32    SizeUsed;
+        -:   84:  uint32    ActualSize;
+        -:   85:  uint32    CRC;
+        -:   86:  uint32    Next;
+        -:   87:} CFE_ES_CDSBlockDesc_t;
+        -:   88:
+        -:   89:typedef struct
+        -:   90:{
+        -:   91:   uint32   Top;
+        -:   92:   uint32   NumCreated;
+        -:   93:   uint32   MaxSize;
+        -:   94:} CFE_ES_CDSBlockSizeDesc_t;
+        -:   95:/*
+        -:   96:** Memory Pool Type
+        -:   97:*/
+        -:   98:typedef struct {
+        -:   99:   uint32   Start;
+        -:  100:   uint32   Size;
+        -:  101:   uint32   End;
+        -:  102:   uint32   Current;
+        -:  103:   int32    SizeIndex;
+        -:  104:   uint16   CheckErrCntr;
+        -:  105:   uint16   RequestCntr;
+        -:  106:   uint32   MutexId;
+        -:  107:   uint32   MinBlockSize;
+        -:  108:   CFE_ES_CDSBlockSizeDesc_t SizeDesc[CFE_ES_CDS_NUM_BLOCK_SIZES];
+        -:  109:} CFE_ES_CDSPool_t;
+        -:  110:
+        -:  111:/*****************************************************************************/
+        -:  112:/*
+        -:  113:** File Global Data
+        -:  114:*/
+        -:  115:
+        -:  116:CFE_ES_CDSPool_t      CFE_ES_CDSMemPool;
+        -:  117:CFE_ES_CDSBlockDesc_t CFE_ES_CDSBlockDesc;
+        -:  118:
+        -:  119:uint32 CFE_ES_CDSMemPoolDefSize[CFE_ES_CDS_NUM_BLOCK_SIZES] = 
+        -:  120:{
+        -:  121:    CFE_ES_CDS_MAX_BLOCK_SIZE,
+        -:  122:    CFE_ES_CDS_MEM_BLOCK_SIZE_16,
+        -:  123:    CFE_ES_CDS_MEM_BLOCK_SIZE_15,
+        -:  124:    CFE_ES_CDS_MEM_BLOCK_SIZE_14,
+        -:  125:    CFE_ES_CDS_MEM_BLOCK_SIZE_13,
+        -:  126:    CFE_ES_CDS_MEM_BLOCK_SIZE_12,
+        -:  127:    CFE_ES_CDS_MEM_BLOCK_SIZE_11,
+        -:  128:    CFE_ES_CDS_MEM_BLOCK_SIZE_10,
+        -:  129:    CFE_ES_CDS_MEM_BLOCK_SIZE_09,
+        -:  130:    CFE_ES_CDS_MEM_BLOCK_SIZE_08,
+        -:  131:    CFE_ES_CDS_MEM_BLOCK_SIZE_07,
+        -:  132:    CFE_ES_CDS_MEM_BLOCK_SIZE_06,
+        -:  133:    CFE_ES_CDS_MEM_BLOCK_SIZE_05,
+        -:  134:    CFE_ES_CDS_MEM_BLOCK_SIZE_04,
+        -:  135:    CFE_ES_CDS_MEM_BLOCK_SIZE_03,
+        -:  136:    CFE_ES_CDS_MEM_BLOCK_SIZE_02,
+        -:  137:    CFE_ES_CDS_MEM_BLOCK_SIZE_01
+        -:  138:};
+        -:  139:
+        -:  140:/*****************************************************************************/
+        -:  141:/*
+        -:  142:** Local Function Prototypes
+        -:  143:*/
+        -:  144:int32 CFE_ES_CDSGetBinIndex(uint32 DesiredSize);
+        -:  145:
+        -:  146:/*****************************************************************************/
+        -:  147:/*
+        -:  148:** Functions
+        -:  149:*/
+        -:  150:
+        -:  151:/*
+        -:  152:** CFE_ES_CreateCDSPool will initialize a pre-allocated memory pool.
+        -:  153:*/
+        -:  154:int32 CFE_ES_CreateCDSPool(uint32  CDSPoolSize, uint32  StartOffset)
+       15:  155:{
+       15:  156:    char MutexName[10] = {"CDS_POOL"};
+       15:  157:    uint32  i = 0;
+       15:  158:    uint32  Size = (CDSPoolSize & 0xfffffffc);
+        -:  159:
+        -:  160:    /* create a semphore to protect this memory pool */
+       15:  161:    OS_MutSemCreate(&(CFE_ES_CDSMemPool.MutexId), MutexName, 0);
+        -:  162:
+        -:  163:    /* Take the semaphore to ensure the mem pool is not being used during it's creation */
+       15:  164:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  165:
+       15:  166:    CFE_ES_CDSMemPool.Start        = StartOffset;
+       15:  167:    CFE_ES_CDSMemPool.End          = StartOffset + Size;
+       15:  168:    CFE_ES_CDSMemPool.Size         = Size;
+       15:  169:    CFE_ES_CDSMemPool.Current      = StartOffset;
+       15:  170:    CFE_ES_CDSMemPool.SizeIndex    = -1;
+        -:  171:
+       15:  172:    CFE_ES_CDSMemPool.CheckErrCntr = 0;
+       15:  173:    CFE_ES_CDSMemPool.RequestCntr  = 0;
+        -:  174:
+      270:  175:    for (i=0; i<CFE_ES_CDS_NUM_BLOCK_SIZES; i++)
+        -:  176:    {
+      255:  177:        CFE_ES_CDSMemPool.SizeDesc[i].Top = 0;
+      255:  178:        CFE_ES_CDSMemPool.SizeDesc[i].NumCreated = 0;
+      255:  179:        CFE_ES_CDSMemPool.SizeDesc[i].MaxSize = CFE_ES_CDSMemPoolDefSize[i];
+        -:  180:    }
+        -:  181:
+       15:  182:    if (CDSPoolSize < (CFE_ES_CDSMemPool.MinBlockSize + sizeof(CFE_ES_CDSBlockDesc_t)))
+        -:  183:    {
+        -:  184:        /* Must be able make Pool verification, block descriptor and at least one of the smallest blocks  */
+        1:  185:        CFE_ES_WriteToSysLog("CFE_ES:CreateCDSPool-Pool size(%u) too small for one CDS Block, need >=%u\n",
+        -:  186:                             CDSPoolSize, (CFE_ES_CDSMemPool.MinBlockSize + sizeof(CFE_ES_CDSBlockDesc_t)));
+        -:  187:                        
+        -:  188:        /* Give and delete semaphore since CDS Pool creation failed */     
+        1:  189:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  190:        OS_MutSemDelete(CFE_ES_CDSMemPool.MutexId);
+        1:  191:        return(CFE_ES_BAD_ARGUMENT);
+        -:  192:    }
+        -:  193:    
+       14:  194:    OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  195:
+       14:  196:    return(CFE_SUCCESS);
+        -:  197:}
+        -:  198:
+        -:  199:
+        -:  200:/*
+        -:  201:** Function:
+        -:  202:**   CFE_ES_RebuildCDSPool
+        -:  203:**
+        -:  204:** Purpose:
+        -:  205:**
+        -:  206:*/
+        -:  207:int32 CFE_ES_RebuildCDSPool(uint32 CDSPoolSize, uint32 StartOffset)
+        7:  208:{
+        7:  209:    char MutexName[10] = {"CDS_POOL"};
+        7:  210:    uint32 i = 0;
+        7:  211:    uint32 Size = (CDSPoolSize & 0xfffffffc);
+        7:  212:    int32  Status = OS_SUCCESS;
+        7:  213:    uint32 Offset = StartOffset;
+        7:  214:    int32  BinIndex = 0;
+        -:  215:
+        -:  216:    /* create a semphore to protect this memory pool */
+        7:  217:    OS_MutSemCreate(&(CFE_ES_CDSMemPool.MutexId), MutexName, 0);
+        -:  218:
+        -:  219:    /* Take the semaphore to ensure the mem pool is not being used during it's creation */
+        7:  220:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  221:
+        7:  222:    CFE_ES_CDSMemPool.Start        = StartOffset;
+        7:  223:    CFE_ES_CDSMemPool.End          = StartOffset + Size;
+        7:  224:    CFE_ES_CDSMemPool.Size         = Size;
+        7:  225:    CFE_ES_CDSMemPool.Current      = 0;
+        7:  226:    CFE_ES_CDSMemPool.SizeIndex    = -1;
+        -:  227:
+        7:  228:    CFE_ES_CDSMemPool.CheckErrCntr = 0;
+        7:  229:    CFE_ES_CDSMemPool.RequestCntr  = 0;
+        -:  230:
+      126:  231:    for (i=0; i<CFE_ES_CDS_NUM_BLOCK_SIZES; i++)
+        -:  232:    {
+      119:  233:        CFE_ES_CDSMemPool.SizeDesc[i].Top = 0;
+      119:  234:        CFE_ES_CDSMemPool.SizeDesc[i].NumCreated = 0;
+      119:  235:        CFE_ES_CDSMemPool.SizeDesc[i].MaxSize = CFE_ES_CDSMemPoolDefSize[i];
+        -:  236:    }
+        -:  237:    
+        7:  238:    if (CDSPoolSize < (CFE_ES_CDSMemPool.MinBlockSize + sizeof(CFE_ES_CDSBlockDesc_t)))
+        -:  239:    {
+        -:  240:        /* Must be able make Pool verification, block descriptor and at least one of the smallest blocks  */
+        1:  241:        CFE_ES_WriteToSysLog("CFE_ES:RebuildCDSPool-Pool size(%u) too small for one CDS Block, need >=%u\n",
+        -:  242:                             CDSPoolSize, (CFE_ES_CDSMemPool.MinBlockSize + sizeof(CFE_ES_CDSBlockDesc_t)));
+        -:  243:
+        -:  244:        /* Give and delete semaphore since CDS Pool rebuild failed */     
+        1:  245:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  246:        OS_MutSemDelete(CFE_ES_CDSMemPool.MutexId);
+        1:  247:        return(CFE_ES_BAD_ARGUMENT);
+        -:  248:    }
+        -:  249:
+        -:  250:    /* Scan the CDS memory trying to find blocks that were created but are now free */
+     3755:  251:    while ((Status == OS_SUCCESS) && 
+        -:  252:           (Offset < (CFE_ES_CDSMemPool.End - sizeof(CFE_ES_CDSBlockDesc_t))) &&
+        -:  253:           (CFE_ES_CDSMemPool.Current == 0))
+        -:  254:    {
+        -:  255:        /* Read the block descriptor for the first block in the memory pool */
+     3743:  256:        Status = CFE_PSP_ReadFromCDS(&CFE_ES_CDSBlockDesc, Offset, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  257:        
+     3743:  258:        if (Status == OS_SUCCESS)
+        -:  259:        {
+        -:  260:            /* First, determine if the block is being or has been used */
+     3741:  261:            if (CFE_ES_CDSBlockDesc.CheckBits == CFE_ES_CDS_CHECK_PATTERN)
+        -:  262:            {
+        -:  263:                /* See if the block is currently being used */
+     3740:  264:                if (CFE_ES_CDSBlockDesc.AllocatedFlag != CFE_ES_CDS_BLOCK_USED)
+        -:  265:                {
+        -:  266:                    /* If the block is not currently being used, */
+        -:  267:                    /* then add it to the appropriate linked list in the memory pool */
+        3:  268:                    BinIndex = CFE_ES_CDSGetBinIndex(CFE_ES_CDSBlockDesc.SizeUsed);
+        -:  269:                    
+        -:  270:                    /* Sanity-check the block descriptor */
+        3:  271:                    if (BinIndex >= 0)
+        -:  272:                    {
+        2:  273:                        CFE_ES_CDSBlockDesc.Next = CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top;
+        2:  274:                        CFE_ES_CDSBlockDesc.AllocatedFlag = CFE_ES_CDS_BLOCK_UNUSED;
+        2:  275:                        CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top = Offset;
+        -:  276:
+        -:  277:                        /* Store the new CDS Block Descriptor in the CDS */
+        2:  278:                        Status = CFE_PSP_WriteToCDS(&CFE_ES_CDSBlockDesc, Offset, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  279:
+        2:  280:                        if (Status != OS_SUCCESS)
+        -:  281:                        {
+        1:  282:                            CFE_ES_WriteToSysLog("CFE_ES:RebuildCDS-Err writing to CDS (Stat=0x%08x)\n", Status);
+        1:  283:                            Status = CFE_ES_CDS_ACCESS_ERROR;
+        -:  284:                        }
+        -:  285:                    }
+        -:  286:                    else
+        -:  287:                    {
+        1:  288:                        CFE_ES_CDSMemPool.CheckErrCntr++;
+        1:  289:                        CFE_ES_WriteToSysLog("CFE_ES:RebuildCDS-Invalid Block Descriptor \n");
+        1:  290:                        Status = CFE_ES_CDS_ACCESS_ERROR;
+        -:  291:                    }
+        -:  292:                }
+        -:  293:                
+        -:  294:                /* Skip to the next block of memory */
+     3740:  295:                Offset = Offset + CFE_ES_CDSBlockDesc.ActualSize + sizeof(CFE_ES_CDSBlockDesc_t);
+        -:  296:            }
+        -:  297:            else
+        -:  298:            {
+        -:  299:                /* If the block has never been used, then we should save the offset as the current offset */
+        -:  300:                /* which in turn will finish the scan of the CDS memory */
+        1:  301:                CFE_ES_CDSMemPool.Current = Offset;
+        -:  302:            }
+        -:  303:        }
+        -:  304:        else
+        -:  305:        {
+        2:  306:            CFE_ES_WriteToSysLog("CFE_ES:RebuildCDS-Err reading from CDS (Stat=0x%08x)\n", Status);
+        2:  307:            Status = CFE_ES_CDS_ACCESS_ERROR;
+        -:  308:        }
+        -:  309:    }  /* end while */
+        -:  310:    
+        6:  311:    OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  312:
+        6:  313:    return Status;
+        -:  314:}
+        -:  315:
+        -:  316:
+        -:  317:/*
+        -:  318:** Function:
+        -:  319:**   CFE_ES_GetCDSBlock
+        -:  320:**
+        -:  321:** Purpose:
+        -:  322:**   CFE_ES_GetCDSBlock allocates a block from the CDS memory pool.
+        -:  323:*/
+        -:  324:int32 CFE_ES_GetCDSBlock(CFE_ES_CDSBlockHandle_t *BlockHandle,
+        -:  325:                         uint32  BlockSize )
+        9:  326:{
+        -:  327:    int32                   BinIndex;
+        -:  328:    int32                   Status;
+        -:  329:
+        9:  330:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  331:
+        9:  332:    BinIndex = CFE_ES_CDSGetBinIndex(BlockSize);
+        9:  333:    if (BinIndex < 0)
+        -:  334:    {
+        1:  335:        CFE_ES_WriteToSysLog("CFE_ES:GetCDSBlock-err:size(%d) > max(%d).\n", BlockSize, CFE_ES_CDS_MAX_BLOCK_SIZE);
+        1:  336:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  337:        return(CFE_ES_ERR_MEM_BLOCK_SIZE);
+        -:  338:    }
+        -:  339:
+        -:  340:   /*
+        -:  341:   ** Check if any of the requested size are available
+        -:  342:   */
+        8:  343:   if (CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top != 0)
+        -:  344:   {
+        -:  345:         /*
+        -:  346:         ** Get it off the top on the list
+        -:  347:         */
+        3:  348:         Status = CFE_PSP_ReadFromCDS(&CFE_ES_CDSBlockDesc, 
+        -:  349:                                    CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top, 
+        -:  350:                                    sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  351:                    
+        3:  352:         if (Status != OS_SUCCESS)
+        -:  353:         {
+        1:  354:            CFE_ES_WriteToSysLog("CFE_ES:GetCDSBlock-Err reading from CDS (Stat=0x%08x)\n", Status);
+        1:  355:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  356:            return(CFE_ES_CDS_ACCESS_ERROR);
+        -:  357:         }
+        -:  358:                 
+        -:  359:         /* The handle returned is the byte offset of the block in the CDS */
+        2:  360:         *BlockHandle                             = CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top;
+        -:  361:         
+        -:  362:         /* A local version of the block descriptor is initialized */
+        2:  363:         CFE_ES_CDSBlockDesc.CheckBits            = CFE_ES_CDS_CHECK_PATTERN;
+        2:  364:         CFE_ES_CDSBlockDesc.AllocatedFlag        = CFE_ES_CDS_BLOCK_USED;
+        2:  365:         CFE_ES_CDSBlockDesc.SizeUsed             = BlockSize;
+        2:  366:         CFE_ES_CDSBlockDesc.ActualSize           = CFE_ES_CDSMemPool.SizeDesc[BinIndex].MaxSize;
+        2:  367:         CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top = CFE_ES_CDSBlockDesc.Next;
+        2:  368:         CFE_ES_CDSBlockDesc.CRC                  = 0;
+        2:  369:         CFE_ES_CDSBlockDesc.Next                 = 0;
+        -:  370:    }
+        -:  371:    else /* Create a new block */
+        -:  372:    {
+        5:  373:         if ( (CFE_ES_CDSMemPool.Current == 0) ||
+        -:  374:              (((uint32)CFE_ES_CDSMemPool.Current + 
+        -:  375:                sizeof(CFE_ES_CDSBlockDesc_t) + 
+        -:  376:                CFE_ES_CDSMemPool.SizeDesc[BinIndex].MaxSize ) >= CFE_ES_CDSMemPool.End) )
+        -:  377:         {
+        1:  378:            CFE_ES_WriteToSysLog("CFE_ES:GetCDSBlock-err:Request for %d bytes won't fit in remaining memory\n", BlockSize);
+        1:  379:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  380:            return(CFE_ES_ERR_MEM_BLOCK_SIZE);
+        -:  381:         }
+        -:  382:
+        4:  383:         *BlockHandle = (CFE_ES_CDSBlockHandle_t)CFE_ES_CDSMemPool.Current;
+        -:  384:
+        4:  385:         CFE_ES_CDSMemPool.SizeDesc[BinIndex].NumCreated++;
+        4:  386:         CFE_ES_CDSMemPool.RequestCntr++;
+        -:  387:
+        -:  388:         /*
+        -:  389:         ** Initialize the buffer descriptor that will be kept in front of the CDS Block
+        -:  390:         */
+        4:  391:         CFE_ES_CDSBlockDesc.CheckBits     = CFE_ES_CDS_CHECK_PATTERN;
+        4:  392:         CFE_ES_CDSBlockDesc.AllocatedFlag = CFE_ES_CDS_BLOCK_USED;
+        4:  393:         CFE_ES_CDSBlockDesc.SizeUsed      = BlockSize;
+        4:  394:         CFE_ES_CDSBlockDesc.ActualSize    = CFE_ES_CDSMemPool.SizeDesc[BinIndex].MaxSize;
+        4:  395:         CFE_ES_CDSBlockDesc.CRC           = 0;
+        4:  396:         CFE_ES_CDSBlockDesc.Next          = 0;
+        -:  397:
+        -:  398:         /*
+        -:  399:         ** Adjust pool current pointer to first unallocated byte in CDS
+        -:  400:         */
+        4:  401:         CFE_ES_CDSMemPool.Current = CFE_ES_CDSMemPool.Current 
+        -:  402:                                     + CFE_ES_CDSBlockDesc.ActualSize
+        -:  403:                                     + sizeof(CFE_ES_CDSBlockDesc_t);
+        -:  404:     }
+        -:  405:     
+        -:  406:     /* Store the new CDS Block Descriptor in the CDS */
+        6:  407:     Status = CFE_PSP_WriteToCDS(&CFE_ES_CDSBlockDesc, *BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  408:
+        6:  409:     if (Status != OS_SUCCESS)
+        -:  410:     {
+        1:  411:        CFE_ES_WriteToSysLog("CFE_ES:GetCDSBlock-Err writing to CDS (Stat=0x%08x)\n", Status);
+        1:  412:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  413:        return(CFE_ES_CDS_ACCESS_ERROR);
+        -:  414:     }
+        -:  415:     
+        5:  416:     OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  417:     
+        5:  418:     return Status;
+        -:  419:}
+        -:  420:
+        -:  421:/*
+        -:  422:** CFE_ES_PutCDSBlock returns a block back to the CDS memory pool.
+        -:  423:*/
+        -:  424:int32 CFE_ES_PutCDSBlock(CFE_ES_CDSBlockHandle_t BlockHandle)
+       11:  425:{
+        -:  426:    int32 BinIndex;
+        -:  427:    int32 Status;
+        -:  428:
+        -:  429:    /* Perform some sanity checks on the BlockHandle */
+        -:  430:    /* First check, is the handle within an acceptable range of CDS offsets */
+       11:  431:    if ((BlockHandle < sizeof(CFE_ES_Global.CDSVars.ValidityField)) || 
+        -:  432:        (BlockHandle > (CFE_ES_CDSMemPool.End - sizeof(CFE_ES_CDSBlockDesc_t) - 
+        -:  433:                        CFE_ES_CDSMemPool.MinBlockSize - sizeof(CFE_ES_Global.CDSVars.ValidityField))))
+        -:  434:    {
+        3:  435:        CFE_ES_WriteToSysLog("CFE_ES:PutCDSBlock-Invalid Memory Handle.\n");
+        3:  436:        return(CFE_ES_ERR_MEM_HANDLE);
+        -:  437:    }
+        -:  438:
+        8:  439:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  440:
+        -:  441:    /* Read a copy of the contents of the block descriptor being freed */
+        8:  442:    Status = CFE_PSP_ReadFromCDS(&CFE_ES_CDSBlockDesc, BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  443:
+        8:  444:    if (Status != OS_SUCCESS)
+        -:  445:    {
+        1:  446:        CFE_ES_WriteToSysLog("CFE_ES:PutCDSBlock-Err reading from CDS (Stat=0x%08x)\n", Status);
+        1:  447:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  448:        return(CFE_ES_CDS_ACCESS_ERROR);
+        -:  449:    }
+        -:  450:     
+        -:  451:    /* Make sure the contents of the Block Descriptor look reasonable */
+        7:  452:    if ((CFE_ES_CDSBlockDesc.CheckBits != CFE_ES_CDS_CHECK_PATTERN) ||
+        -:  453:        (CFE_ES_CDSBlockDesc.AllocatedFlag != CFE_ES_CDS_BLOCK_USED))
+        -:  454:    {
+        1:  455:        CFE_ES_WriteToSysLog("CFE_ES:PutCDSBlock-Invalid Handle or Block Descriptor.\n");
+        1:  456:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  457:        return(CFE_ES_ERR_MEM_HANDLE);
+        -:  458:    }
+        -:  459:
+        6:  460:    BinIndex = CFE_ES_CDSGetBinIndex(CFE_ES_CDSBlockDesc.ActualSize);
+        -:  461:
+        -:  462:    /* Final sanity check on block descriptor, is the Actual size reasonable */
+        6:  463:    if (BinIndex < 0)
+        -:  464:    {
+        1:  465:        CFE_ES_CDSMemPool.CheckErrCntr++;
+        1:  466:        CFE_ES_WriteToSysLog("CFE_ES:PutCDSBlock-Invalid Block Descriptor\n");
+        1:  467:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  468:        return(CFE_ES_ERR_MEM_HANDLE);
+        -:  469:    }
+        -:  470:
+        5:  471:    CFE_ES_CDSBlockDesc.Next = CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top;
+        5:  472:    CFE_ES_CDSBlockDesc.AllocatedFlag = CFE_ES_CDS_BLOCK_UNUSED;
+        5:  473:    CFE_ES_CDSMemPool.SizeDesc[BinIndex].Top = BlockHandle;
+        -:  474:
+        -:  475:    /* Store the new CDS Block Descriptor in the CDS */
+        5:  476:    Status = CFE_PSP_WriteToCDS(&CFE_ES_CDSBlockDesc, BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  477:
+        5:  478:    if (Status != OS_SUCCESS)
+        -:  479:    {
+        1:  480:        CFE_ES_WriteToSysLog("CFE_ES:PutCDSBlock-Err writing to CDS (Stat=0x%08x)\n", Status);
+        1:  481:        OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  482:        return(CFE_ES_CDS_ACCESS_ERROR);
+        -:  483:    }
+        -:  484:     
+        4:  485:    OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  486:
+        4:  487:    return Status;
+        -:  488:}
+        -:  489:
+        -:  490:/*
+        -:  491:** Function:
+        -:  492:**   CFE_ES_CDSGetBinIndex
+        -:  493:**
+        -:  494:** Purpose:
+        -:  495:**
+        -:  496:*/
+        -:  497:int32 CFE_ES_CDSGetBinIndex(uint32 DesiredSize)
+       26:  498:{
+       26:  499:    int32 i=0;
+        -:  500:    
+       26:  501:    if (DesiredSize > CFE_ES_CDSMemPool.SizeDesc[0].MaxSize)
+        -:  502:    {
+        5:  503:        return(-1);
+        -:  504:    }
+        -:  505:    
+        -:  506:    /* Look ahead to see if the next bin has a size too small */
+      247:  507:    while ((i < (CFE_ES_CDS_NUM_BLOCK_SIZES-1)) &&
+        -:  508:           (DesiredSize <= CFE_ES_CDSMemPool.SizeDesc[i+1].MaxSize))
+        -:  509:    {
+      205:  510:        i++;
+        -:  511:    }
+        -:  512:    
+       21:  513:    return(i);
+        -:  514:}
+        -:  515:
+        -:  516:
+        -:  517:/*
+        -:  518:** Function:
+        -:  519:**   CFE_ES_CDSBlockWrite
+        -:  520:**
+        -:  521:** Purpose:
+        -:  522:**
+        -:  523:*/
+        -:  524:int32 CFE_ES_CDSBlockWrite(CFE_ES_CDSBlockHandle_t BlockHandle, void *DataToWrite)
+        7:  525:{
+        7:  526:    int32 Status = CFE_SUCCESS;
+        7:  527:    int32 BinIndex = 0;
+        -:  528:    
+        -:  529:    /* Validate the handle before doing anything */
+        7:  530:    if ((BlockHandle < sizeof(CFE_ES_Global.CDSVars.ValidityField)) || 
+        -:  531:        (BlockHandle > (CFE_ES_CDSMemPool.End - sizeof(CFE_ES_CDSBlockDesc_t) - 
+        -:  532:                        CFE_ES_CDSMemPool.MinBlockSize - sizeof(CFE_ES_Global.CDSVars.ValidityField))))
+        -:  533:    {
+        1:  534:        CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Invalid Memory Handle.\n");
+        1:  535:        return(CFE_ES_ERR_MEM_HANDLE);
+        -:  536:    }
+        -:  537:
+        6:  538:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  539:    
+        -:  540:    /* Get a copy of the block descriptor associated with the specified handle */
+        -:  541:    /* Read the block descriptor for the first block in the memory pool */
+        6:  542:    Status = CFE_PSP_ReadFromCDS(&CFE_ES_CDSBlockDesc, BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  543:    
+        6:  544:    if (Status == OS_SUCCESS)
+        -:  545:    {
+        -:  546:        /* Validate the block to make sure it is still active and not corrupted */
+        5:  547:        if ((CFE_ES_CDSBlockDesc.CheckBits != CFE_ES_CDS_CHECK_PATTERN) ||
+        -:  548:            (CFE_ES_CDSBlockDesc.AllocatedFlag != CFE_ES_CDS_BLOCK_USED))
+        -:  549:        {
+        1:  550:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Invalid Handle or Block Descriptor.\n");
+        1:  551:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  552:            return(CFE_ES_ERR_MEM_HANDLE);
+        -:  553:        }
+        -:  554:
+        4:  555:        BinIndex = CFE_ES_CDSGetBinIndex(CFE_ES_CDSBlockDesc.ActualSize);
+        -:  556:
+        -:  557:        /* Final sanity check on block descriptor, is the Actual size reasonable */
+        4:  558:        if (BinIndex < 0)
+        -:  559:        {
+        1:  560:            CFE_ES_CDSMemPool.CheckErrCntr++;
+        1:  561:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Invalid Block Descriptor\n");
+        1:  562:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  563:            return(CFE_ES_ERR_MEM_HANDLE);
+        -:  564:        }
+        -:  565:        
+        -:  566:        /* Use the size specified when the CDS was created to compute the CRC */
+        3:  567:        CFE_ES_CDSBlockDesc.CRC = CFE_ES_CalculateCRC(DataToWrite, CFE_ES_CDSBlockDesc.SizeUsed, 0, CFE_ES_DEFAULT_CRC);
+        -:  568:        
+        -:  569:        /* Write the new block descriptor for the data coming from the Application */
+        3:  570:        Status = CFE_PSP_WriteToCDS(&CFE_ES_CDSBlockDesc, BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  571:        
+        3:  572:        if (Status == OS_SUCCESS)
+        -:  573:        {
+        -:  574:            /* Write the new data coming from the Application to the CDS */
+        2:  575:            Status = CFE_PSP_WriteToCDS(DataToWrite, (BlockHandle + sizeof(CFE_ES_CDSBlockDesc_t)), CFE_ES_CDSBlockDesc.SizeUsed);
+        -:  576:            
+        2:  577:            if (Status != OS_SUCCESS)
+        -:  578:            {
+        1:  579:                CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Err writing data to CDS (Stat=0x%08x) @Offset=0x%08x\n", 
+        -:  580:                                     Status, (BlockHandle + sizeof(CFE_ES_CDSBlockDesc_t)));
+        -:  581:            }
+        -:  582:        }
+        -:  583:        else
+        -:  584:        {
+        1:  585:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Err writing BlockDesc to CDS (Stat=0x%08x) @Offset=0x%08x\n", 
+        -:  586:                                 Status, BlockHandle);
+        -:  587:        }
+        -:  588:    }
+        -:  589:    else
+        -:  590:    {
+        1:  591:        CFE_ES_WriteToSysLog("CFE_ES:CDSBlkWrite-Err reading from CDS (Stat=0x%08x)\n", Status);
+        -:  592:    }
+        -:  593:
+        4:  594:    OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  595:    
+        4:  596:    return Status;
+        -:  597:}
+        -:  598:
+        -:  599:
+        -:  600:/*
+        -:  601:** Function:
+        -:  602:**   CFE_ES_CDSBlockRead
+        -:  603:**
+        -:  604:** Purpose:
+        -:  605:**
+        -:  606:*/
+        -:  607:int32 CFE_ES_CDSBlockRead(void *DataRead, CFE_ES_CDSBlockHandle_t BlockHandle)
+        7:  608:{
+        7:  609:    int32  Status = CFE_SUCCESS;
+        -:  610:    uint32 CrcOfCDSData;
+        -:  611:    int32  BinIndex;
+        -:  612:    
+        -:  613:    /* Validate the handle before doing anything */
+        7:  614:    if ((BlockHandle < sizeof(CFE_ES_Global.CDSVars.ValidityField)) || 
+        -:  615:        (BlockHandle > (CFE_ES_CDSMemPool.End - sizeof(CFE_ES_CDSBlockDesc_t) - 
+        -:  616:                        CFE_ES_CDSMemPool.MinBlockSize - sizeof(CFE_ES_Global.CDSVars.ValidityField))))
+        -:  617:    {
+        1:  618:        CFE_ES_WriteToSysLog("CFE_ES:CDSBlkRd-Invalid Memory Handle.\n");
+        1:  619:        return(CFE_ES_ERR_MEM_HANDLE);
+        -:  620:    }
+        -:  621:
+        6:  622:    OS_MutSemTake(CFE_ES_CDSMemPool.MutexId);
+        -:  623:
+        -:  624:    /* Get a copy of the block descriptor associated with the specified handle */
+        -:  625:    /* Read the block descriptor for the first block in the memory pool */
+        6:  626:    Status = CFE_PSP_ReadFromCDS(&CFE_ES_CDSBlockDesc, BlockHandle, sizeof(CFE_ES_CDSBlockDesc_t));
+        -:  627:    
+        6:  628:    if (Status == OS_SUCCESS)
+        -:  629:    {
+        -:  630:        /* Validate the block to make sure it is still active and not corrupted */
+        5:  631:        if ((CFE_ES_CDSBlockDesc.CheckBits != CFE_ES_CDS_CHECK_PATTERN) ||
+        -:  632:            (CFE_ES_CDSBlockDesc.AllocatedFlag != CFE_ES_CDS_BLOCK_USED))
+        -:  633:        {
+        1:  634:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkRd-Invalid Handle or Block Descriptor.\n");
+        1:  635:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  636:            return(CFE_ES_ERR_MEM_HANDLE);
+        -:  637:        }
+        -:  638:
+        4:  639:        BinIndex = CFE_ES_CDSGetBinIndex(CFE_ES_CDSBlockDesc.ActualSize);
+        -:  640:
+        -:  641:        /* Final sanity check on block descriptor, is the Actual size reasonable */
+        4:  642:        if (BinIndex < 0)
+        -:  643:        {
+        1:  644:            CFE_ES_CDSMemPool.CheckErrCntr++;
+        1:  645:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkRd-Invalid Block Descriptor\n");
+        1:  646:            OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        1:  647:            return(CFE_ES_ERR_MEM_HANDLE);
+        -:  648:        }
+        -:  649:        
+        -:  650:        /* Read the old data block */
+        3:  651:        Status = CFE_PSP_ReadFromCDS(DataRead, (BlockHandle + sizeof(CFE_ES_CDSBlockDesc_t)), CFE_ES_CDSBlockDesc.SizeUsed);
+        -:  652:        
+        3:  653:        if (Status == OS_SUCCESS)
+        -:  654:        {
+        -:  655:            /* Compute the CRC for the data read from the CDS and determine if the data is still valid */
+        2:  656:            CrcOfCDSData = CFE_ES_CalculateCRC(DataRead, CFE_ES_CDSBlockDesc.SizeUsed, 0, CFE_ES_DEFAULT_CRC);
+        -:  657:            
+        -:  658:            /* If the CRCs do not match, report an error */
+        2:  659:            if (CrcOfCDSData != CFE_ES_CDSBlockDesc.CRC)
+        -:  660:            {
+        1:  661:                Status = CFE_ES_CDS_BLOCK_CRC_ERR;
+        -:  662:            }
+        -:  663:            else
+        -:  664:            {
+        1:  665:                Status = CFE_SUCCESS;
+        -:  666:            }
+        -:  667:        }
+        -:  668:        else
+        -:  669:        {
+        1:  670:            CFE_ES_WriteToSysLog("CFE_ES:CDSBlkRd-Err reading block from CDS (Stat=0x%08x) @Offset=0x%08x\n", 
+        -:  671:                                 Status, BlockHandle);
+        -:  672:        }
+        -:  673:    }
+        -:  674:    else
+        -:  675:    {
+        1:  676:        CFE_ES_WriteToSysLog("CFE_ES:CDSBlkRd-Err reading from CDS (Stat=0x%08x)\n", Status);
+        -:  677:    }
+        -:  678:
+        4:  679:    OS_MutSemGive(CFE_ES_CDSMemPool.MutexId);
+        -:  680:    
+        4:  681:    return Status;
+        -:  682:}
+        -:  683:
+        -:  684:/*
+        -:  685:** Function:
+        -:  686:**   CFE_ES_CDSReqdMinSize
+        -:  687:**
+        -:  688:** Purpose:
+        -:  689:**
+        -:  690:*/
+        -:  691:uint32 CFE_ES_CDSReqdMinSize(uint32 MaxNumBlocksToSupport)
+       15:  692:{
+        -:  693:    uint32 i;
+        -:  694:
+      270:  695:    for (i=0; i<CFE_ES_CDS_NUM_BLOCK_SIZES; i++)
+        -:  696:    {
+        -:  697:        /* Assume the last non-zero block size is the minimum block size */
+      255:  698:        if (CFE_ES_CDSMemPoolDefSize[i] > 0)
+        -:  699:        {
+      255:  700:            CFE_ES_CDSMemPool.MinBlockSize = CFE_ES_CDSMemPoolDefSize[i];
+        -:  701:        }
+        -:  702:    }
+        -:  703:    
+       15:  704:     return (MaxNumBlocksToSupport * (sizeof(CFE_ES_CDSBlockDesc_t)+CFE_ES_CDSMemPool.MinBlockSize));
+        -:  705:}
+        -:  706:

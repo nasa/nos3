@@ -1,0 +1,128 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: November 5, 2009  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu CF Telemetry Data Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  05NOV09     WFM      : Initial
+!  18MAY11     WFM      : Updated for CFDP 2.2.0.0. Added SemValue to downlink
+!			telemetry struct as well as created a union for the 
+!			downlink flags
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cf_platform_cfg.h"
+!
+TYPES
+   RECORD $sc_$cpu_CF_DownlinkType	DESC="Downlink Telemetry Record"
+      ULI  PDUsSent	DESC=""
+      ULI  FilesSent	DESC=""
+      ULI  GoodDownlinkCnt	DESC=""
+      ULI  BadDownlinkCnt	DESC=""
+      ULI  PendingQFileCnt	DESC=""
+      ULI  ActiveQFileCnt	DESC=""
+      ULI  HistoryQFileCnt	DESC=""
+      UNION DownlinkFlags	DESC=""
+	ULI DequeueFlag		DESC="Dequeue State Flag",mask=%x00000001,
+			DISCRETE, DRANGE=(0,1),DLABEL=("Disabled","Enabled")
+	ULI DataBlastFlag	DESC="Data Blast State Flag",mask=%x00000002,
+		DISCRETE, DRANGE=(0,1),DLABEL=("Not In Progress","In Progress")
+	ULI AllFlags	DESC="Downlink Flags",mask=%xffffffff
+      END
+      ULI  RedLightCtr		DESC=""
+      ULI  GreenLightCtr	DESC=""
+      ULI  PollDirsChkCtr	DESC=""
+      ULI  PendingQChkCtr	DESC=""
+      ULI  SemValue		DESC=""
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CFDP Telemetry Data Packet", STALE = 36
+#include "ccsds_header.rdl"
+!
+  UI  $sc_$cpu_CF_CMDPC         DESC="CFDP Command Processed Counter",
+                                        UNITS=Counts
+!
+  UI  $sc_$cpu_CF_CMDEC         DESC="CFDP Command Error Counter",
+                                        UNITS=Counts, YH=1, DOLIMIT
+!
+  ULI $sc_$cpu_CF_FileWakeupCnt	DESC=""
+  ULI $sc_$cpu_CF_EngnCycleCnt	DESC=""
+  ULI $sc_$cpu_CF_MemInUse	DESC=""
+  ULI $sc_$cpu_CF_PeakMemInUse	DESC=""
+  ULI $sc_$cpu_CF_LowMemMark	DESC=""
+  ULI $sc_$cpu_CF_MaxMemNeeded	DESC=""
+  ULI $sc_$cpu_CF_MemAllocated	DESC=""
+  ULI $sc_$cpu_CF_PoolHandle	DESC=""
+  ULI $sc_$cpu_CF_QNodesAlloc	DESC=""
+  ULI $sc_$cpu_CF_QNodesDealloc	DESC=""
+  ULI $sc_$cpu_CF_PDUsRcvd	DESC=""
+  ULI $sc_$cpu_CF_PDUsRejected	DESC=""
+!
+  ULI $sc_$cpu_CF_TotalInProgTrans	DESC=""
+  ULI $sc_$cpu_CF_TotalFailedTrans	DESC=""
+  ULI $sc_$cpu_CF_TotalAbandTrans	DESC=""
+  ULI $sc_$cpu_CF_TotalGoodTrans	DESC=""
+  ULI $sc_$cpu_CF_TotalCompleteTrans	DESC=""
+  char $sc_$cpu_CF_LastFailedTrans[CF_MAX_TRANSID_CHARS]	DESC=""
+!
+  ULI $sc_$cpu_CF_AutoSuspendFlag	DESC="", DISCRETE,DRANGE=(0,1),
+					DLABEL=("Disabled","Enabled")
+  ULI $sc_$cpu_CF_AutoSuspendLFM	DESC=""
+!
+  UB $sc_$cpu_CF_PosAckNum	DESC=""
+  UB $sc_$cpu_CF_FileStoreRejNum	DESC=""
+  UB $sc_$cpu_CF_FileChecksumNum	DESC=""
+  UB $sc_$cpu_CF_FileSizeNum	DESC=""
+  UB $sc_$cpu_CF_NakLimitNum	DESC=""
+  UB $sc_$cpu_CF_InactiveNum	DESC=""
+  UB $sc_$cpu_CF_SuspendNum	DESC=""
+  UB $sc_$cpu_CF_CancelNum	DESC=""
+!
+  CHAR $sc_$cpu_CF_FlightEntityId[CF_MAX_CFG_VALUE_CHARS]	DESC=""
+  UNION $sc_$cpu_CF_EngineFlags	DESC=""
+    ULI $sc_$cpu_CF_FreezeFlag	DESC="Engine Freeze Flag",mask=%x00000001,
+				DISCRETE, DRANGE=(0,1),DLABEL=("Thaw","Frozen")
+    ULI $sc_$cpu_CF_AllFlags	DESC="Engine Flags",mask=%xffffffff
+  END
+  ULI $sc_$cpu_CF_MachinesAlloc	DESC=""
+  ULI $sc_$cpu_CF_MachinesDealloc	DESC=""
+  UB $sc_$cpu_CF_PartnersFrozen	DESC="",
+			DISCRETE, DRANGE=(0,1), DLABEL=("False","True")
+  UB $sc_$cpu_CF_Spare2[3]	DESC=""
+  ULI $sc_$cpu_CF_NumSenders	DESC=""
+  ULI $sc_$cpu_CF_NumReceivers	DESC=""
+  ULI $sc_$cpu_CF_NumFrozen	DESC=""
+  ULI $sc_$cpu_CF_NumSuspended	DESC=""
+  ULI $sc_$cpu_CF_TotalFilesSent	DESC=""
+  ULI $sc_$cpu_CF_TotalFilesRcvd	DESC=""
+  ULI $sc_$cpu_CF_TotalBadSenders	DESC=""
+  ULI $sc_$cpu_CF_TotalBadReceivers	DESC=""
+!
+  ULI $sc_$cpu_CF_MetaCount	DESC=""
+  ULI $sc_$cpu_CF_ActiveQFileCnt	DESC=""
+  ULI $sc_$cpu_CF_GoodUplinkCtr	DESC=""
+  ULI $sc_$cpu_CF_BadUplinkCtr	DESC=""
+  CHAR $sc_$cpu_CF_LastFileUplinked[OS_MAX_PATH_LEN]	DESC=""
+!
+  $sc_$cpu_CF_DownlinkType $sc_$cpu_CF_DownlinkChan[0 .. CF_MAX_PLAYBACK_CHANNELS-1]	DESC="Downlink Telemetry channels"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

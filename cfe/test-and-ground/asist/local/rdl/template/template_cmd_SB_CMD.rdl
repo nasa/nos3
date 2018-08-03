@@ -1,0 +1,67 @@
+!======================================================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu SB Command Packet #nnnn
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title: $sc $cpu SB Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  25MAR05     SMA      : Initial
+!  20APR05     MOB      : Modified PID to be a UB to match the FSW
+!  17NOV05     SMA      : Standardize File Write Commands.
+!  15NOV06     WFM      : Replaced single WriteRouting2File command
+!			: with 3 separate commands for each file.
+!  2007/05/02  WFM	: Commented out FCTN=6 and added 3 new commands
+!			: documented in DCR 4228 (FCTN=9,10,11)
+!
+!======================================================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu SB Command"
+!
+  CMD  $sc_$cpu_SB_NOOP        	FCTN=0, DESC="$sc $cpu SB no-operation command code"
+!
+  CMD  $sc_$cpu_SB_ResetCtrs    	FCTN=1, DESC="$sc $cpu SB reset counters command code"
+!
+  CMD  $sc_$cpu_SB_DumpStats	FCTN=2, DESC="$sc $cpu SB dump statistics command code"
+!
+  CMDS $sc_$cpu_SB_WriteRouting2File	FCTN=3, DESC="$sc $cpu SB save routing info command code"
+    Char RoutInfoFileName[OS_MAX_PATH_LEN]	DESC="Routing Info Filename"
+  END
+!
+  CMDS  $sc_$cpu_SB_EnaRoute     FCTN=4, DESC="$sc $cpu SB enable routing command code"
+    UI   MID            DYNAMIC, DESC="Message ID of packets"
+    UB   PID            DYNAMIC, DESC="Pipeline ID of destination" 
+    UB   pad            INVISIBLE, DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_SB_DisRoute	FCTN=5, DESC="$sc $cpu SB disable routing command code"
+    UI   MID            DYNAMIC, DESC="Message ID of packets"
+    UB   PID            DYNAMIC, DESC="Pipeline ID of destination"
+    UB   pad            INVISIBLE, DEFAULT=0
+  END
+!
+!  CMD   $sc_$cpu_SB_DumpNetwork 	FCTN=6, DESC="$sc $cpu SB save network info command code"
+!	
+  CMDS $sc_$cpu_SB_WritePipe2File	FCTN=7, DESC="$sc $cpu SB save pipe info command code"
+    Char PipeInfoFileName[OS_MAX_PATH_LEN]	DESC="Pipe Info Filename"
+  END
+!
+  CMDS $sc_$cpu_SB_WriteMap2File	FCTN=8, DESC="$sc $cpu SB save map info command code"
+    Char MapInfoFileName[OS_MAX_PATH_LEN]	DESC="Map Info Filename"
+  END
+!
+  CMD $sc_$cpu_SB_EnaSubRptg 	FCTN=9, DESC="$sc $cpu SB Enable Subscription Reporting command code"
+!
+  CMD $sc_$cpu_SB_DisSubRptg 	FCTN=10, DESC="$sc $cpu SB Disable Subscription Reporting command code"
+!
+  CMD $sc_$cpu_SB_SendPrevSubs 	FCTN=11, DESC="$sc $cpu SB Send Previous Subscriptions command code"
+!
+END       !END PACKET
+!
+!======================================================================================================

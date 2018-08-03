@@ -1,0 +1,64 @@
+!=============================================================
+!
+!                Originator: S.Strege     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  
+!
+!                    Event Pseudo Telemetry
+!                 =================================
+!
+!       Packet Application ID: 
+!       Packet Title:  cfe Event Pseudo Telemetry
+!       Packet Length:  
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       Change History:
+!
+!  25AUG044  S.Strege        : Initial
+!  21SEPT04  M.Bartholomew   : Added all event messages from all processors 
+!                                and modified SC_TAI reference to packet time
+!  21SEPT04  M.Bartholomew   : temporarily removed formatting of event msg
+!                                to debug garbage that was being displayed
+!
+!  01OCT2004 MOB             ; Added converted value to processor ID
+!=============================================================
+PACKET P3E8 APID=1000, DESC="cFE Event Packet Description", STALE=36
+ 
+!  Ace event messages
+ UI ACE_CFEEVENTMSG
+    EQUATION= WHEN PKT_RCVD = (10)
+    DO
+!     EVENT "RT"&%substring(SC_TAI,8,17)&" =>   "&  ACE_EVMRT_EVENT  &"" 
+!      EVENT "RT"&%substring(P00ATTIME,8,17)&" =>   "&  ACE_EVMRT_EVENT  &"" 
+!      EVENT ACE_EVMRT_EVENT 
+       EVENT "SSID= "& ACE_EVMSUBSYSID & "  Proc ID = " & ;;
+            P@ACE_EVMPROCESSORID & "  APPID= " & ACE_EVMAPPID & "  " & ACE_EVMRT_EVENT
+    ENDDO 
+
+! C&DH event messages
+ UI CDH_CFEEVENTMSG
+    EQUATION= WHEN PKT_RCVD = (42)
+    DO
+!       EVENT "RT"&%substring(SC_TAI,8,17)&" =>   "&  CDH_EVMRT_EVENT  &"" 
+!      EVENT "RT"&%substring(P02ATTIME,8,17)&" =>   "&  CDH_EVMRT_EVENT  &"" 
+      EVENT "SSID= "& CDH_EVMSUBSYSID & "  Proc ID = " & ;;
+            p@CDH_EVMPROCESSORID & "  APPID= " & CDH_EVMAPPID & "  " & CDH_EVMRT_EVENT 
+    ENDDO
+
+! PSE event messages
+ UI PSE_CFEEVENTMSG
+    EQUATION= WHEN PKT_RCVD = (74)
+    DO
+!       EVENT "RT"&%substring(SC_TAI,8,17)&" =>   "&  PSE_EVMRT_EVENT  &"" 
+!      EVENT "RT"&%substring(P04ATTIME,8,17)&" =>   "&  PSE_EVMRT_EVENT  &""
+!      EVENT  PSE_EVMRT_EVENT
+       EVENT "SSID= "& PSE_EVMSUBSYSID & "  Proc ID = " & ;;
+            p@PSE_EVMPROCESSORID & "  APPID= " & PSE_EVMAPPID & "  " & PSE_EVMRT_EVENT
+    ENDDO
+!
+END

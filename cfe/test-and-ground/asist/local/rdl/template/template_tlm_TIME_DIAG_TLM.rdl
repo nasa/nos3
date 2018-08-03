@@ -1,0 +1,214 @@
+!==============================================================================
+!
+!                Originator: S. Applebee	     
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Apr 27 2005
+!
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu Time Service Diagnostic Telemetry Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!                                                                                                       
+
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!             14NOV2006  MOB  Remove Critical Data Store info (DCR 2700) since Time
+!                             is using ES reset area instead of CDS
+!             03APR2007  SMA  Change per FOT naming conventions.
+!
+!==============================================================================
+!
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu Time Service Diagnostic Telemetry Packet"
+                     
+#include "ccsds_header.rdl"
+!
+  ULI   $sc_$cpu_TIME_DTMETS  DESC="$sc $cpu Time MET at previous valid tone (seconds)",
+                                 UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DTMETSs DESC="$sc $cpu Time MET at previous valid tone (sub-seconds)",
+                                 UNITS=SubSeconds  
+!
+  ULI   $sc_$cpu_TIME_DSTCFS  DESC="$sc $cpu Time Current STCF (seconds)",
+                                  UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DSTCFSS DESC="$sc $cpu Time Current STCF (sub-seconds)",
+                                  UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DLatentS  DESC="$sc $cpu Time Latency adjustment (seconds)",
+                                  UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DLatentSs DESC="$sc $cpu Time Latency adjustment (sub-seconds)",
+                                  UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DTValidS  DESC="$sc $cpu Time local clock latched at previous valid tone (seconds)",
+                                  UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DTValidSs DESC="$sc $cpu Time local clock latched at previous valid tone (sub-seconds)",                                       UNITS=SubSeconds
+!
+  SI    $sc_$cpu_TIME_DLeapS  DESC="$sc $cpu Time Current Leap Seconds",
+                                  UNITS=Seconds
+!
+  SI    $sc_$cpu_TIME_DAPIState    DESC="$sc $cpu Time Clock State",
+                                   DISCRETE, DRANGE=(-1,0,1), 
+                                   DLABEL=("INVALID", "VALID", "FLYWHEEL")
+!
+  ULI   $sc_$cpu_TIME_DElapsedS DESC="$sc $cpu Time Elapsed time since valid tone (seconds)",
+                                  UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DElapsedSs DESC="$sc $cpu Time Elapsed time since valid tone (Sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DLocalS DESC="$sc $cpu Time Current Latch (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DLocalSs DESC="$sc $cpu Time Current Latch (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DMETS   DESC="$sc $cpu Time Current MET (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DMETSs  DESC="$sc $cpu Time Current MET (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DTAIS   DESC="$sc $cpu Time Current time computed as TAI (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DTAISS  DESC="$sc $cpu Time Current time computed as TAI (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DUTCS   DESC="$sc $cpu Time Current time computed as UTC (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DUTCSS  DESC="$sc $cpu Time Current time computed as UTC (sub-seconds)",
+                                   UNITS=Subseconds
+!
+  SI    $sc_$cpu_TIME_DValid        DESC="$sc $cpu Time Current clock set state"
+!
+  SI    $sc_$cpu_TIME_DFlywheel     DESC="$sc $cpu Time Current clock flywheel state"
+!
+  SI    $sc_$cpu_TIME_DSource       DESC="$sc $cpu Time Current clock source selection"
+!
+  SI    $sc_$cpu_TIME_DSignal       DESC="$sc $cpu Time Current clock signal selection"
+!
+  SI    $sc_$cpu_TIME_DSrvFly       DESC="$sc $cpu Time server flywheel state"
+!
+  SI    $sc_$cpu_TIME_DCMD2Fly	   DESC="$sc $cpu Time commanded to flywheel state"
+!
+  UNION $sc_$cpu_TIME_DStateFlags   DESC="$sc $cpu Time State Flags"
+    UI    $sc_$cpu_TIME_DFlagSet    mask=%x8000,DESC="Clock set state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOT SET","SET")
+    UI    $sc_$cpu_TIME_DFlagFly    mask=%x4000,DESC="Clock flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOFLY","FLY")
+    UI    $sc_$cpu_TIME_DFlagSrc    mask=%x2000,DESC="Clock source internal/external flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("EXT","INT")
+    UI    $sc_$cpu_TIME_DFlagPri    mask=%x1000,DESC="Clock source primary/redundant flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("RED","PRI")
+    UI    $sc_$cpu_TIME_DFlagSfly   mask=%x0800,DESC="Time server flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NOFLY","FLY")
+    UI    $sc_$cpu_TIME_DFlagCfly   mask=%x0400,DESC="Commanded into flywheel state flag",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("NO","YES")
+    UI    $sc_$cpu_TIME_DFlagAdjd   mask=%x0200,DESC="Previous one time STCF adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_DFlag1Hzd   mask=%x0100,DESC="Current 1Hz STCF adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_DFlagClat   mask=%x0080,DESC="Time Client latency adjustment direction",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("SUBTRACT","ADD")
+    UI    $sc_$cpu_TIME_DFlagSorC   mask=%x0040,DESC="Time Server or Client",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("CLIENT","SERVER")
+    UI    $sc_$cpu_TIME_DFlagToneIsGood   mask=%x0020,DESC="Time Tone (Bad/Good)",
+                                  DISCRETE, DRANGE =(0,1), DLABEL=("BAD","GOOD")
+    UI    $sc_$cpu_TIME_DFlagNIU    mask=%x001F,DESC="Unused Values"
+  END
+!
+  SI    $sc_$cpu_TIME_DAdjustDir    DESC="$sc $cpu Time One time STCF adjustment direction"
+!
+  SI    $sc_$cpu_TIME_D1HzAdjDir    DESC="$sc $cpu Time 1Hz STCF adjustment direction"
+!
+  SI    $sc_$cpu_TIME_DLatentDir     DESC="$sc $cpu Time Client latency adjustment direction"
+!
+  ULI   $sc_$cpu_TIME_DAdjustS    DESC="$sc $cpu Time previous one-time STCF adjustment (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DAdjustSs  DESC="$sc $cpu Time previous one-time STCF adjustment (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_D1HzAdjS    DESC="$sc $cpu Time Current 1Hz STCF adjustment (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_D1HzAdjSs   DESC="$sc $cpu Time Current 1Hz STCF adjustment (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DTTS  DESC="$sc $cpu Local CLock latched at most recent tone signal (seconds)",
+                                 UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DTTSs DESC="$sc $cpu Local CLock latched at most recent tone signal  (sub-seconds)",
+                                 UNITS=SubSeconds  
+!
+  ULI   $sc_$cpu_TIME_DTDS  DESC="$sc $cpu Local CLock latched at arrival of tone data (seconds)",
+                                 UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DTDSs DESC="$sc $cpu Local CLock latched at arrival of tone data  (sub-seconds)",
+                                 UNITS=SubSeconds  
+!
+  ULI   $sc_$cpu_TIME_DVerifyCNT     DESC="$sc $cpu Time tone signal / data verification count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DVerifyER      DESC="$sc $cpu Time tone signal / data verification error count",
+                                   UNITS=COUNTS,YH=1,DOLIMIT
+!
+  ULI   $sc_$cpu_TIME_DTSDetCNT   DESC="$sc $cpu Time tone signal detected SB message count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DTatTCNT     DESC="$sc $cpu Time at the tone data SB message count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DTsISRCNT      DESC="$sc $cpu Time tone signal ISR execution count",
+                                   UNITS=COUNTS
+! 
+  ULI   $sc_$cpu_TIME_DTsISRERR     DESC="$sc $cpu Time tone signal ISR error count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DTsTaskCNT     DESC="$sc $cpu Time tone task execution count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DVersionCNT    DESC="$sc $cpu Time count of mods to time at tone reference data (version)",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_D1HzISRCNT     DESC="$sc $cpu Time local 1Hz ISR execution count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_D1HzTaskCNT    DESC="$sc $cpu Time local 1Hz task execution count",
+                                   UNITS=COUNTS
+!
+  ULI   $sc_$cpu_TIME_DLogicalMET    DESC="$sc $cpu Time MET seconds counter (logical MET)",
+                                   UNITS=Counts
+!
+  ULI   $sc_$cpu_TIME_DMinWindow     DESC="$sc $cpu Time min tone signal / data pkt arrival window (Sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DMaxWindow     DESC="$sc $cpu Time max tone signal / data pkt arrival window (Sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DWrapS      DESC="$sc $cpu Time max local clock value before rollover (seconds)",
+                                   UNITS=Seconds
+!
+  ULI   $sc_$cpu_TIME_DWrapSs     DESC="$sc $cpu Time max local clock value before rollover (sub-seconds)",
+                                   UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DMaxSs      DESC="$sc $cpu Time max between tone signal interrupts", UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DMinSs      DESC="$sc $cpu Time min between tone signal interrupts", UNITS=SubSeconds
+!
+  ULI   $sc_$cpu_TIME_DataStStat    DESC="sc $cpu Time Data Store status (preserved across processor reset)"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

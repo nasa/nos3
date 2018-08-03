@@ -1,0 +1,407 @@
+#
+# Create simulated memory regions
+#
+ ->Create MemoryRange1 start=0x1000 size=0x100
+ ->Create MemoryRange2 start=0x2000 size=0x100
+#
+# Set simulated memory ranges
+#CFE_PSP_MemRangeSet(0,RAM,1000,100,BYTE,RW) returned 0x00000000. Expected 0x00000000
+CFE_PSP_MemRangeSet(1,EEPROM,2000,100,BYTE,RW) returned 0x00000000. Expected 0x00000000
+
+#
+# Test Memory Range calls
+#
+CFE_PSP_MemValidateRange(x1000,x100,EEPROM) returned ffffffea; Expected ffffffea
+CFE_PSP_MemValidateRange(x2000,x100,EEPROM) returned 0; Expected 0
+CFE_PSP_MemValidateRange(x1000,x100,RAM) returned 0; Expected 0
+CFE_PSP_MemValidateRange(x2000,x100,RAM) returned ffffffea; Expected ffffffea
+CFE_PSP_MemValidateRange(x1000,x101,RAM) returned ffffffe9; Expected ffffffe9
+CFE_PSP_MemValidateRange(x2000,x101,EEPROM) returned ffffffe9; Expected ffffffe9
+CFE_PSP_MemValidateRange(x3000,x50,EEPROM) returned ffffffeb; Expected ffffffeb
+
+***CFE_PSP_MemValidateRange Return Code Setting Test ***
+UTF Info: Return value for cFE PSP Api #2 set to fffffffe
+CFE_PSP_MemValidateRange Return Code fffffffe
+UTF Info: Return code for cFE PSP Api #2 returned to default
+The maximum number of memory ranges supported is 10
+
+Set memory range Test
+
+***CFE_PSP_MemRangeSet Return Code Setting Test ***
+UTF Info: Return value for cFE PSP Api #3 set to ffffffe6
+CFE_PSP_MemRangeSet Return Code ffffffe6
+UTF Info: Return code for cFE PSP Api #3 returned to default
+CFE_PSP_MemRangeSet(11,RAM,4096,256,BYTE,RW) returned 0xffffffe9. Expected 0xffffffe9
+CFE_PSP_MemRangeSet(0,4,4096,256,BYTE,RW) returned 0xffffffea. Expected 0xffffffea
+CFE_PSP_MemRangeSet(0,RAM,4096,256,3,RW) returned 0xffffffe8. Expected 0xffffffe8
+CFE_PSP_MemRangeSet(0,RAM,4096,256,BYTE,4) returned 0xffffffe6. Expected 0xffffffe6
+CFE_PSP_MemRangeSet(0,RAM,4096,256,BYTE,RW) returned 0x00000000. Expected 0x00000000
+
+Get memory range Test
+
+***CFE_PSP_MemRangeGet Return Code Setting Test ***
+UTF Info: Return value for cFE PSP Api #4 set to fffffffe
+CFE_PSP_MemRangeGet Return Code fffffffe
+UTF Info: Return code for cFE PSP Api #4 returned to default
+CFE_PSP_MemRangeGet(11,validPtrs) returned 0xffffffe9. Expected 0xffffffe9
+CFE_PSP_MemRangeGet(0,invalidPtr,validPtr,validPtr,validPtr,validPtr) returned 0xfffffffe. Expected 0xfffffffe
+CFE_PSP_MemRangeGet(0,validPtr,invalidPtr,validPtr,validPtr,validPtr) returned 0xfffffffe. Expected 0xfffffffe
+CFE_PSP_MemRangeGet(0,validPtr,validPtr,invalidPtr,validPtr,validPtr) returned 0xfffffffe. Expected 0xfffffffe
+CFE_PSP_MemRangeGet(0,validPtr,validPtr,validPtr,invalidPtr,validPtr) returned 0xfffffffe. Expected 0xfffffffe
+CFE_PSP_MemRangeGet(0,validPtr,validPtr,validPtr,validPtr,invalidPtr) returned 0xfffffffe. Expected 0xfffffffe
+CFE_PSP_MemRangeGet(0,validPtrs) returned 0x00000000. Expected 0x00000000
+Return values are:
+    Memory Type   = 1
+    Start Address = 4096
+    Range Size    = 256
+    Word Size     = 1
+    Attributes    = 3
+
+#
+# Test valid read/write calls
+#
+Display initial values in MemoryRange1.  Values should be 0.
+32 bits at address 0x1000 : 0x00000000
+Write '0x1a2b3c8f' to simulated addr 0x1000
+32 bits at address 0x1000 : 0x1a2b3c8f
+Write 0xc1 to valid address 0x2000 using CFE_PSP_PortWrite8
+CFE_PSP_PortRead8 returned 0xc1
+
+#
+# Test valid CFE_PSP_MemCpy, CFE_PSP_MemSet calls
+#
+
+->Test CFE_PSP_MemCpy(0x1020,0x1000,32)
+32 bits at address 0x1020 : 0x00000000
+IO MemCpy, Dest: 0x00001020 [MemoryRange1], Src: 0x00001000 [MemoryRange1], Size: 32
+32 bits at address 0x1020 : 0x1a2b3c8f
+
+->Set 32 bits at 0x1020 to 0
+IO MemSet, Dest: 0x00001020 [MemoryRange1], Data: 0x00, Size: 32
+32 bits at address 0x1020 : 0x00000000
+
+->Test CFE_PSP_MemCpy(0x2000,0x1000,32)
+32 bits at Dest 0x2000 : 0x000000c1
+32 bits at Src 0x1000 : 0x1a2b3c8f
+IO MemCpy, Dest: 0x00002000 [MemoryRange2], Src: 0x00001000 [MemoryRange1], Size: 32
+32 bits at address 0x2000 : 0x1a2b3c8f
+
+->Set 32 bits at 0x2000 to 0xff
+IO MemSet, Dest: 0x00002000 [MemoryRange2], Data: 0xff, Size: 32
+32 bits at address 0x2000 : 0xffffffff
+
+#
+# Attempt reads & writes to invalid addresses
+#
+->Test CFE_PSP_PortWrite8 with address=0x500
+Sim Mem Memory Address Not Found 0x     500
+->Test CFE_PSP_EepromWrite8 with address=0x07a9
+Sim Mem Memory Address Not Found 0x     7a9
+
+#
+# Attempt reads & writes on invalid boundaries
+#
+#CFE_PSP_PortWrite16 to 0x2001
+Address Not On 16 Bit Boundary: 0x00002001
+#CFE_PSP_PortRead16 to 0x2031
+Address Not On 16 Bit Boundary: 0x00002031
+#CFE_PSP_MemWrite16 to 0x2055
+Address Not On 16 Bit Boundary: 0x00002055
+#CFE_PSP_MemRead16 to 0x2099
+Address Not On 16 Bit Boundary: 0x00002099
+#CFE_PSP_PortWrite32 to 0x2006
+Address Not On 32 Bit Boundary: 0x00002006
+
+Setup the Symbol Table
+Length of entry 2 name = 0
+Return from UTF_SetSymbolTableEntry(myEntry) = 0
+UTF Info: Null string passed to UTF_SetSymbolTableEntry
+Return from UTF_SetSymbolTableEntry(myEntry2) = fffffffe
+UTF Info: Symbol Name too long
+Return from UTF_SetSymbolTableEntry with a symbol name length > 20 = fffffff3
+UTF Info: Symbol Name too long
+Return from UTF_SetSymbolTableEntry with a symbol name length = 20 = fffffff3
+Return from UTF_SetSymbolTableEntry with a symbol name length = 19 = 0
+
+Symbol Table API Tests
+OSAL: Address passed back = 2048
+OS_SymbolLookup(testSymbolVar) returned 0
+Pointer returned contains 2048
+
+   Symbol Name          Address
+1 'testSymbolVar' - 00002048
+2 'thisIsSymbolof19cOK' - 00004096
+OS_SymbolTableDump('symTab.dmp',1024) returned 0
+Return from UTF_SetSymbolTableEntry #3 = 0
+Return from UTF_SetSymbolTableEntry #4 = 0
+Return from UTF_SetSymbolTableEntry #5 = 0
+Return from UTF_SetSymbolTableEntry #6 = 0
+Return from UTF_SetSymbolTableEntry #7 = 0
+Return from UTF_SetSymbolTableEntry #8 = 0
+Return from UTF_SetSymbolTableEntry #9 = 0
+Return from UTF_SetSymbolTableEntry #10 = 0
+Return from UTF_SetSymbolTableEntry #11 = 0
+Return from UTF_SetSymbolTableEntry #12 = 0
+Return from UTF_SetSymbolTableEntry #13 = 0
+Return from UTF_SetSymbolTableEntry #14 = 0
+Return from UTF_SetSymbolTableEntry #15 = 0
+Return from UTF_SetSymbolTableEntry #16 = 0
+Return from UTF_SetSymbolTableEntry #17 = 0
+Return from UTF_SetSymbolTableEntry #18 = 0
+Return from UTF_SetSymbolTableEntry #19 = 0
+Return from UTF_SetSymbolTableEntry #20 = 0
+Return from UTF_SetSymbolTableEntry #21 = 0
+Return from UTF_SetSymbolTableEntry #22 = 0
+Return from UTF_SetSymbolTableEntry #23 = 0
+Return from UTF_SetSymbolTableEntry #24 = 0
+Return from UTF_SetSymbolTableEntry #25 = 0
+Return from UTF_SetSymbolTableEntry #26 = 0
+Return from UTF_SetSymbolTableEntry #27 = 0
+Return from UTF_SetSymbolTableEntry #28 = 0
+Return from UTF_SetSymbolTableEntry #29 = 0
+Return from UTF_SetSymbolTableEntry #30 = 0
+Return from UTF_SetSymbolTableEntry #31 = 0
+Return from UTF_SetSymbolTableEntry #32 = 0
+Return from UTF_SetSymbolTableEntry #33 = 0
+Return from UTF_SetSymbolTableEntry #34 = 0
+Return from UTF_SetSymbolTableEntry #35 = 0
+Return from UTF_SetSymbolTableEntry #36 = 0
+Return from UTF_SetSymbolTableEntry #37 = 0
+Return from UTF_SetSymbolTableEntry #38 = 0
+Return from UTF_SetSymbolTableEntry #39 = 0
+Return from UTF_SetSymbolTableEntry #40 = 0
+Return from UTF_SetSymbolTableEntry #41 = 0
+Return from UTF_SetSymbolTableEntry #42 = 0
+Return from UTF_SetSymbolTableEntry #43 = 0
+Return from UTF_SetSymbolTableEntry #44 = 0
+Return from UTF_SetSymbolTableEntry #45 = 0
+Return from UTF_SetSymbolTableEntry #46 = 0
+Return from UTF_SetSymbolTableEntry #47 = 0
+Return from UTF_SetSymbolTableEntry #48 = 0
+Return from UTF_SetSymbolTableEntry #49 = 0
+Return from UTF_SetSymbolTableEntry #50 = 0
+Return from UTF_SetSymbolTableEntry #51 = 0
+Return from UTF_SetSymbolTableEntry #52 = 0
+Return from UTF_SetSymbolTableEntry #53 = 0
+Return from UTF_SetSymbolTableEntry #54 = 0
+Return from UTF_SetSymbolTableEntry #55 = 0
+Return from UTF_SetSymbolTableEntry #56 = 0
+Return from UTF_SetSymbolTableEntry #57 = 0
+Return from UTF_SetSymbolTableEntry #58 = 0
+Return from UTF_SetSymbolTableEntry #59 = 0
+Return from UTF_SetSymbolTableEntry #60 = 0
+Return from UTF_SetSymbolTableEntry #61 = 0
+Return from UTF_SetSymbolTableEntry #62 = 0
+Return from UTF_SetSymbolTableEntry #63 = 0
+Return from UTF_SetSymbolTableEntry #64 = 0
+Return from UTF_SetSymbolTableEntry #65 = 0
+Return from UTF_SetSymbolTableEntry #66 = 0
+Return from UTF_SetSymbolTableEntry #67 = 0
+Return from UTF_SetSymbolTableEntry #68 = 0
+Return from UTF_SetSymbolTableEntry #69 = 0
+Return from UTF_SetSymbolTableEntry #70 = 0
+Return from UTF_SetSymbolTableEntry #71 = 0
+Return from UTF_SetSymbolTableEntry #72 = 0
+Return from UTF_SetSymbolTableEntry #73 = 0
+Return from UTF_SetSymbolTableEntry #74 = 0
+Return from UTF_SetSymbolTableEntry #75 = 0
+Return from UTF_SetSymbolTableEntry #76 = 0
+Return from UTF_SetSymbolTableEntry #77 = 0
+Return from UTF_SetSymbolTableEntry #78 = 0
+Return from UTF_SetSymbolTableEntry #79 = 0
+Return from UTF_SetSymbolTableEntry #80 = 0
+Return from UTF_SetSymbolTableEntry #81 = 0
+Return from UTF_SetSymbolTableEntry #82 = 0
+Return from UTF_SetSymbolTableEntry #83 = 0
+Return from UTF_SetSymbolTableEntry #84 = 0
+Return from UTF_SetSymbolTableEntry #85 = 0
+Return from UTF_SetSymbolTableEntry #86 = 0
+Return from UTF_SetSymbolTableEntry #87 = 0
+Return from UTF_SetSymbolTableEntry #88 = 0
+Return from UTF_SetSymbolTableEntry #89 = 0
+Return from UTF_SetSymbolTableEntry #90 = 0
+Return from UTF_SetSymbolTableEntry #91 = 0
+Return from UTF_SetSymbolTableEntry #92 = 0
+Return from UTF_SetSymbolTableEntry #93 = 0
+Return from UTF_SetSymbolTableEntry #94 = 0
+Return from UTF_SetSymbolTableEntry #95 = 0
+Return from UTF_SetSymbolTableEntry #96 = 0
+Return from UTF_SetSymbolTableEntry #97 = 0
+Return from UTF_SetSymbolTableEntry #98 = 0
+Return from UTF_SetSymbolTableEntry #99 = 0
+Return from UTF_SetSymbolTableEntry #100 = 0
+Return from UTF_SetSymbolTableEntry #101 = 0
+Return from UTF_SetSymbolTableEntry #102 = 0
+Return from UTF_SetSymbolTableEntry #103 = 0
+Return from UTF_SetSymbolTableEntry #104 = 0
+Return from UTF_SetSymbolTableEntry #105 = 0
+Return from UTF_SetSymbolTableEntry #106 = 0
+Return from UTF_SetSymbolTableEntry #107 = 0
+Return from UTF_SetSymbolTableEntry #108 = 0
+Return from UTF_SetSymbolTableEntry #109 = 0
+Return from UTF_SetSymbolTableEntry #110 = 0
+Return from UTF_SetSymbolTableEntry #111 = 0
+Return from UTF_SetSymbolTableEntry #112 = 0
+Return from UTF_SetSymbolTableEntry #113 = 0
+Return from UTF_SetSymbolTableEntry #114 = 0
+Return from UTF_SetSymbolTableEntry #115 = 0
+Return from UTF_SetSymbolTableEntry #116 = 0
+Return from UTF_SetSymbolTableEntry #117 = 0
+Return from UTF_SetSymbolTableEntry #118 = 0
+Return from UTF_SetSymbolTableEntry #119 = 0
+Return from UTF_SetSymbolTableEntry #120 = 0
+Return from UTF_SetSymbolTableEntry #121 = 0
+Return from UTF_SetSymbolTableEntry #122 = 0
+Return from UTF_SetSymbolTableEntry #123 = 0
+Return from UTF_SetSymbolTableEntry #124 = 0
+Return from UTF_SetSymbolTableEntry #125 = 0
+Return from UTF_SetSymbolTableEntry #126 = 0
+Return from UTF_SetSymbolTableEntry #127 = 0
+Return from UTF_SetSymbolTableEntry #128 = 0
+Return from UTF_SetSymbolTableEntry #129 = ffffffff
+Return from UTF_SetSymbolTableEntry #130 = ffffffff
+Symbol Table Dump #2
+
+   Symbol Name          Address
+1 'testSymbolVar' - 00002048
+2 'thisIsSymbolof19cOK' - 00004096
+3 'symbol3' - 00004096
+4 'symbol4' - 00004096
+5 'symbol5' - 00004096
+6 'symbol6' - 00004096
+7 'symbol7' - 00004096
+8 'symbol8' - 00004096
+9 'symbol9' - 00004096
+10 'symbol10' - 00004096
+11 'symbol11' - 00004096
+12 'symbol12' - 00004096
+13 'symbol13' - 00004096
+14 'symbol14' - 00004096
+15 'symbol15' - 00004096
+16 'symbol16' - 00004096
+17 'symbol17' - 00004096
+18 'symbol18' - 00004096
+19 'symbol19' - 00004096
+20 'symbol20' - 00004096
+21 'symbol21' - 00004096
+22 'symbol22' - 00004096
+23 'symbol23' - 00004096
+24 'symbol24' - 00004096
+25 'symbol25' - 00004096
+26 'symbol26' - 00004096
+27 'symbol27' - 00004096
+28 'symbol28' - 00004096
+29 'symbol29' - 00004096
+30 'symbol30' - 00004096
+31 'symbol31' - 00004096
+32 'symbol32' - 00004096
+33 'symbol33' - 00004096
+34 'symbol34' - 00004096
+35 'symbol35' - 00004096
+36 'symbol36' - 00004096
+37 'symbol37' - 00004096
+38 'symbol38' - 00004096
+39 'symbol39' - 00004096
+40 'symbol40' - 00004096
+41 'symbol41' - 00004096
+42 'symbol42' - 00004096
+43 'symbol43' - 00004096
+44 'symbol44' - 00004096
+45 'symbol45' - 00004096
+46 'symbol46' - 00004096
+47 'symbol47' - 00004096
+48 'symbol48' - 00004096
+49 'symbol49' - 00004096
+50 'symbol50' - 00004096
+51 'symbol51' - 00004096
+52 'symbol52' - 00004096
+53 'symbol53' - 00004096
+54 'symbol54' - 00004096
+55 'symbol55' - 00004096
+56 'symbol56' - 00004096
+57 'symbol57' - 00004096
+58 'symbol58' - 00004096
+59 'symbol59' - 00004096
+60 'symbol60' - 00004096
+61 'symbol61' - 00004096
+62 'symbol62' - 00004096
+63 'symbol63' - 00004096
+64 'symbol64' - 00004096
+65 'symbol65' - 00004096
+66 'symbol66' - 00004096
+67 'symbol67' - 00004096
+68 'symbol68' - 00004096
+69 'symbol69' - 00004096
+70 'symbol70' - 00004096
+71 'symbol71' - 00004096
+72 'symbol72' - 00004096
+73 'symbol73' - 00004096
+74 'symbol74' - 00004096
+75 'symbol75' - 00004096
+76 'symbol76' - 00004096
+77 'symbol77' - 00004096
+78 'symbol78' - 00004096
+79 'symbol79' - 00004096
+80 'symbol80' - 00004096
+81 'symbol81' - 00004096
+82 'symbol82' - 00004096
+83 'symbol83' - 00004096
+84 'symbol84' - 00004096
+85 'symbol85' - 00004096
+86 'symbol86' - 00004096
+87 'symbol87' - 00004096
+88 'symbol88' - 00004096
+89 'symbol89' - 00004096
+90 'symbol90' - 00004096
+91 'symbol91' - 00004096
+92 'symbol92' - 00004096
+93 'symbol93' - 00004096
+94 'symbol94' - 00004096
+95 'symbol95' - 00004096
+96 'symbol96' - 00004096
+97 'symbol97' - 00004096
+98 'symbol98' - 00004096
+99 'symbol99' - 00004096
+100 'symbol100' - 00004096
+101 'symbol101' - 00004096
+102 'symbol102' - 00004096
+103 'symbol103' - 00004096
+104 'symbol104' - 00004096
+105 'symbol105' - 00004096
+106 'symbol106' - 00004096
+107 'symbol107' - 00004096
+108 'symbol108' - 00004096
+109 'symbol109' - 00004096
+110 'symbol110' - 00004096
+111 'symbol111' - 00004096
+112 'symbol112' - 00004096
+113 'symbol113' - 00004096
+114 'symbol114' - 00004096
+115 'symbol115' - 00004096
+116 'symbol116' - 00004096
+117 'symbol117' - 00004096
+118 'symbol118' - 00004096
+119 'symbol119' - 00004096
+120 'symbol120' - 00004096
+121 'symbol121' - 00004096
+122 'symbol122' - 00004096
+123 'symbol123' - 00004096
+124 'symbol124' - 00004096
+125 'symbol125' - 00004096
+126 'symbol126' - 00004096
+127 'symbol127' - 00004096
+128 'symbol128' - 00004096
+
+***Function Hook Tests***
+EepromWrite8 Hook Return Code 0
+EepromWrite8 Hook Return Code fffffffe
+EepromWrite8 Hook Return Code 0
+EepromWrite8 Hook Return Code fffffffe
+EepromWrite16 Hook Return Code 0
+EepromWrite16 Hook Return Code fffffffe
+EepromWrite16 Hook Return Code 0
+EepromWrite16 Hook Return Code fffffffe
+EepromWrite32 Hook Return Code 0
+EepromWrite32 Hook Return Code fffffffe
+EepromWrite32 Hook Return Code 0
+EepromWrite32 Hook Return Code fffffffe

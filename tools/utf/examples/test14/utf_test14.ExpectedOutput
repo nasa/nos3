@@ -1,0 +1,635 @@
+
+***Test CFE_ES_ResetCFE API***
+
+Test Case #1: Call CFE_ES_ResetCFE(CFE_ES_PROCESSOR_RESET)
+SysLog:1980-001-00:00:01.50000 ES ResetCFE: CFE ES Processor Reset called.
+CFE_ES_ResetCFE returned 0. Expected 0
+
+Test Case #2: Set return for CFE_ES_ResetCFE to 0x3abc3abc
+UTF Info: Return value for CFE ES Api #0 set to 3abc3abc
+CFE_ES_ResetCFE returned 3abc3abc. Expected 0x3abc3abc
+
+Test Case #3: Revert return for CFE_ES_ResetCFE to default
+UTF Info: Return code for CFE ES Api #0 returned to default
+SysLog:1980-001-00:00:01.50000 ES ResetCFE: CFE ES Power On Reset called.
+CFE_ES_ResetCFE returned 0. Expected 0
+
+***Test CFE_ES_GetResetType API***
+
+Test Case #1: Call CFE_ES_GetResetType(NULL)
+CFE_ES_GetResetType returned 2. Expected 2
+
+Test Case #2: Set return for CFE_ES_GetResetType to 0x3abc3abc
+UTF Info: Return value for CFE ES Api #19 set to 3abc3abc
+CFE_ES_GetResetType(NULL) returned 3abc3abc. Expected 0x3abc3abc
+
+Test Case #3: Revert return for CFE_ES_GetResetType to default
+UTF Info: Return code for CFE ES Api #19 returned to default
+SysLog:1980-001-00:00:01.50000 ES ResetCFE: CFE ES Processor Reset called.
+CFE_ES_GetResetType(NULL) returned 1. Expected 1
+
+Test Case #4: Test the SubType argument return of CFE_ES_GetResetType
+CFE_ES_GetResetType() returned type = 1 & subType = 1. Expected 1 & 1
+
+Test Case #5: Set the SubType to an invalid value
+CFE_ES_GetResetType() returned type = 1 & subType = 0. Expected 1 & 0
+
+Test Case #6: Test the SubType argument return of CFE_ES_GetResetType
+CFE_ES_GetResetType() returned type = 1 & subType = 6. Expected 1 & 6
+
+***Test CFE_ES_RegisterApp API***
+
+Test Case #1: Call CFE_ES_RegisterApp()
+CFE_ES_RegisterApp returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_RegisterApp to 0x652a652a
+UTF Info: Return value for CFE ES Api #1 set to 652a652a
+CFE_ES_RegisterApp returned 652a652a. Expected 0x652a652a.
+
+Test Case #3: Revert return for CFE_ES_Register to default
+UTF Info: Return code for CFE ES Api #1 returned to default
+CFE_ES_RegisterApp returned 0. Expected 0
+
+***Test CFE_ES_GetAppIDByName API***
+
+Set up step #1: Call UTF_ES_InitAppRecords()
+
+Set up step #2: Call UTF_ES_AddAppRecord
+UTF Info: Null string passed to UTF_ES_AddAppRecord
+UTF Info: Task <Application#1> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Application#1 loaded and created
+UTF Info: App <Application#1> added to App Tbl.
+UTF Info: Task <Application#2> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Application#2 loaded and created
+UTF Info: App <Application#2> added to App Tbl.
+UTF Info: Task <Application#3> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Application#3 loaded and created
+UTF Info: App <Application#3> added to App Tbl.
+
+Test Case #1: Call CFE_ES_GetAppIDByName()
+CFE_ES_GetAppIDByName returned apid=11. Expected 11.
+CFE_ES_GetAppIDByName returned apid=12. Expected 12.
+CFE_ES_GetAppIDByName returned apid=13. Expected 13.
+
+***Test CFE_ES_GetAppID API***
+
+Set up step #1: Call UTF_CFE_ES_SetAppID(11)
+
+Test Case #1: Call CFE_ES_GetAppID(0)
+UTF WARNING: CFE_ES_GetAppID argument = NULL
+CFE_ES_GetAppID returned apid=c4000003. Expected c4000003.
+
+Test Case #2: Call CFE_ES_GetAppID.
+CFE_ES_GetAppID returned apid=11. Expected 11.
+
+***Test CFE_ES_GetAppName API***
+
+Test Case #1: Call CFE_ES_GetAppName() for assigned apids.
+CFE_ES_GetAppName(11) returned 0. AppName arg returned <Application#1>. Expected 0 and <Application#1>.
+CFE_ES_GetAppName(12) returned 0. AppName arg returned <Application#2>. Expected 0 and <Application#2>.
+CFE_ES_GetAppName(13) returned 0. AppName arg returned <Application#3>. Expected 0 and <Application#3>.
+
+Test Case #2: Call CFE_ES_GetAppName(5) for unassigned apid.
+AppId 5 is not in App Tbl.
+CFE_ES_GetAppName(5) returned c4000001. AppName arg returned <Application#3>.
+
+***Dump the Registered App Table***
+AppTable[11]:
+       Name    = Application#1
+    ChildTasks = 0
+    State = Running
+AppTable[12]:
+       Name    = Application#2
+    ChildTasks = 0
+    State = Running
+AppTable[13]:
+       Name    = Application#3
+    ChildTasks = 0
+    State = Running
+
+***Test CFE_ES_RestartApp API***
+
+Test Case #1: Call CFE_ES_RestartApp(11).
+SysLog:1980-001-00:00:01.50000 CFE_ES_RestartApp: Restart Application Application#1 Initiated
+CFE_ES_RestartApp(11) returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_RestartApp to 0x586e586e
+UTF Info: Return value for CFE ES Api #14 set to 586e586e
+CFE_ES_RestartApp(11) returned 586e586e. Expected 0x586e586e.
+
+Test Case #3: Revert return for CFE_ES_RestartApp to default
+UTF Info: Return code for CFE ES Api #14 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES_RestartApp: Restart Application Application#1 Initiated
+CFE_ES_RestartApp(11) returned 0. Expected 0.
+
+Test Case #4: Call CFE_ES_RestartApp(7).
+SysLog:1980-001-00:00:01.50000 CFE_ES_RestartApp: Cannot Restart Application , It is not running.
+CFE_ES_RestartApp(7) returned c4000001. Expected c4000001.
+
+***Test CFE_ES_ReloadApp API***
+
+Test Case #1: Call CFE_ES_ReloadApp(11,'app11.o').
+SysLog:1980-001-00:00:01.50000 CFE_ES_ReloadApp: Reload Application Application#1 Initiated. New filename = app11.o
+CFE_ES_ReloadApp(11,'app11.o') returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_ReloadApp to 0x586e586e
+UTF Info: Return value for CFE ES Api #20 set to 586e586e
+CFE_ES_ReloadApp(11,'app11.o') returned 586e586e. Expected 0x586e586e.
+
+Test Case #3: Revert return for CFE_ES_ReloadApp to default
+UTF Info: Return code for CFE ES Api #20 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES_ReloadApp: Reload Application Application#1 Initiated. New filename = app11.o
+CFE_ES_ReloadApp(11,'app11.o') returned 0. Expected 0.
+
+Test Case #4: Call CFE_ES_ReloadApp(22,'thisAppDoesntExist.o').
+SysLog:1980-001-00:00:01.50000 CFE_ES_ReloadApp: Cannot Reload Application , It is not running.
+CFE_ES_ReloadApp(22,'thisAppDoesntExist.o') returned c4000001. Expected c4000001.
+
+***Test CFE_ES_DeleteApp API***
+
+Test Case #1: Call CFE_ES_DeleteApp(11).
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteApp: Delete Application Application#1 Initiated
+CFE_ES_DeleteApp(11) returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_DeleteApp to 0x586e586e
+UTF Info: Return value for CFE ES Api #21 set to 586e586e
+CFE_ES_DeleteApp(11) returned 586e586e. Expected 0x586e586e.
+
+Test Case #3: Revert return for CFE_ES_DeleteApp to default
+UTF Info: Return code for CFE ES Api #21 returned to default
+UTF Info: Task <Application#1> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Application#1 loaded and created
+UTF Info: App <Application#1> added to App Tbl.
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteApp: Delete Application Application#1 Initiated
+CFE_ES_DeleteApp(11) returned 0. Expected 0.
+
+***Dump the Registered App Table***
+
+***AppID 11 should not appear***
+AppTable[12]:
+       Name    = Application#2
+    ChildTasks = 0
+    State = Running
+AppTable[13]:
+       Name    = Application#3
+    ChildTasks = 0
+    State = Running
+UTF Info: Task <Application#1> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: Application#1 loaded and created
+UTF Info: App <Application#1> added to App Tbl.
+
+Test Case #4: Call CFE_ES_DeleteApp(22).
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteApp: Cannot Delete Application , It is not running.
+CFE_ES_DeleteApp(22) returned c4000001. Expected c4000001.
+
+***Test CFE_ES_CreateChildTask API***
+
+Test Case #1: Call CFE_ES_CreateChildTask()
+UTF Info: Task <ImportantTask1> added to Task Tbl.
+CFE_ES_CreateChildTask returned 0. Expected 0.
+ChildTask 3 created.
+
+Test Case #2: Set return for CFE_ES_CreateChildTask to 0x586e586e
+UTF Info: Return value for CFE ES Api #5 set to 586e586e
+CFE_ES_CreateChildTask returned 586e586e. Expected 0x586e586e.
+
+Test Case #3: Revert return for CFE_ES_CreateChildTask to default
+UTF Info: Return code for CFE ES Api #5 returned to default
+UTF Info: Task <ImportantTask2> added to Task Tbl.
+CFE_ES_CreateChildTask returned 0. Expected 0.
+ChildTask 4 created.
+
+Test Case #4: CFE_ES_CreateChildTask Function Hook test
+CreateChildTask Function Hook called for 'HookTask'
+CreateChildTask Hook Return Code 0
+
+***Test CFE_ES_RegisterChildTask API***
+
+Test Case #1: Call CFE_ES_RegisterChildTask()
+CFE_ES_RegisterChildTask returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_RegisterChildTask to 0x847a847a
+UTF Info: Return value for CFE ES Api #15 set to 847a847a
+CFE_ES_RegisterChildTask returned 847a847a. Expected 0x847a847a.
+
+Test Case #3: Revert return for CFE_ES_RegisterChildTask to default
+UTF Info: Return code for CFE ES Api #15 returned to default
+CFE_ES_RegisterChildTask returned 0. Expected 0.
+
+***Dumping the Task Record Table***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+TaskTable[3]:
+    AppID  = 11
+    TaskID = 3
+    Name   = ImportantTask1
+  Exe Ctr  = 0
+TaskTable[4]:
+    AppID  = 11
+    TaskID = 4
+    Name   = ImportantTask2
+  Exe Ctr  = 0
+
+***Test CFE_ES_DeleteChildTask API***
+
+Test Case #1: Call CFE_ES_DeleteChildTask()
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteChildTask Task 3 Deleted
+CFE_ES_DeleteChildTask returned 0. Expected 0.
+
+Test Case #2: Set return for CFE_ES_DeleteChildTask to 0x146c146c
+UTF Info: Return value for CFE ES Api #6 set to 146c146c
+CFE_ES_DeleteChildTask returned 146c146c. Expected 0x146c146c.
+
+Test Case #3: Revert return for CFE_ES_DeleteChildTask to default
+UTF Info: Return code for CFE ES Api #6 returned to default
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteChildTask Error: Task ID is not active: 45
+CFE_ES_DeleteChildTask returned c4000016. Expected c4000016.
+
+Test Case #4: Attempt to delete a child task that is a main task.
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteChildTask Error: Task 1 is a cFE Main Task.
+CFE_ES_DeleteChildTask(1) returned c4000019. Expected c4000019.
+
+***Dumping the Task Record Table***
+
+***Child TaskId 3 should not appear***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+TaskTable[4]:
+    AppID  = 11
+    TaskID = 4
+    Name   = ImportantTask2
+  Exe Ctr  = 0
+
+***Test CFE_ES_ExitChildTask API***
+SysLog:1980-001-00:00:01.50000 Child Task 4 exited.
+
+***Dumping the Task Record Table***
+
+***Child TaskId 4 should not appear***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+
+***Testing OS_TaskDelete function hook***
+
+Test Case #1: Attempt to install a NULL pointer as the handler.
+OS_TaskInstallDeleteHandler(NULL) returned fffffffe. Expected fffffffe.
+
+Test Case #2: Install a valid Handler.
+OS_TaskInstallDeleteHandler() returned 0. Expected 0.
+
+Test Case #3: Verify the TaskDelete function hook is called.
+UTF Info: Task <DeleteHookTask1> added to Task Tbl.
+CFE_ES_CreateChildTask returned 0. Expected 0.
+ChildTask 3 created.
+
+***Dumping the Task Record Table***
+
+***Child TaskId 3 should not appear***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+TaskTable[3]:
+    AppID  = 11
+    TaskID = 3
+    Name   = DeleteHookTask1
+  Exe Ctr  = 0
+OS_TaskDelete Function Hook called for id 3
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteChildTask Task 3 Deleted
+CFE_ES_DeleteChildTask returned 0. Expected 0.
+
+***Dumping the Task Record Table***
+
+***Child TaskId 3 should not appear***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+
+Test Case #1: OS_BinSemCreate Function Hook test
+OS_BinSemCreate Function Hook called for 'BinarySemName'
+OS_BinSemCreate Hook Return Code 0
+
+Test Case #2: OS_BinSemCreate Return Code test
+UTF Info: Return value for CFE SB Api #1 set to 12ab34cd
+OS_BinSemCreate Return Code 12ab34cd
+UTF Info: Return code for CFE SB Api #1 returned to default
+
+***Test CFE_ES_WriteToSysLog API***
+
+Test Case #1: Call CFE_ES_WriteToSysLog() with short string.
+SysLog:1980-001-00:00:01.50000 This is a short string for the Sys Log.
+CFE_ES_WriteToSysLog returned 0. Expected 0.
+
+Test Case #2: Call CFE_ES_WriteToSysLog() with long string.
+SysLog:1980-001-00:00:01.50000 Long strings will have to be truncated because only 128 characters can be accommodated includin
+ the 'SysLog:' prefCFE_ES_WriteToSysLog returned 0. Expected 0.
+
+Test Case #3: Call CFE_ES_WriteToSysLog() with another short string.
+SysLog:1980-001-00:00:01.50000 So long, it's been good to know ya.
+CFE_ES_WriteToSysLog returned 0. Expected 0.
+
+Test Case #4: Set return for CFE_ES_WriteToSysLog to CFE_ES_ERR_SYS_LOG_FULL
+UTF Info: Return value for CFE ES Api #9 set to c4000006
+CFE_ES_WriteToSysLog returned c4000006. Expected c4000006.
+
+Test Case 5: Revert return for CFE_ES_WriteToSysLog to default
+UTF Info: Return code for CFE ES Api #9 returned to default
+SysLog:1980-001-00:00:01.50000 Big Jake--a bargain!
+CFE_ES_WriteToSysLog returned 0. Expected 0.
+
+***Test CFE_ES_RegisterDriver API***
+
+Test Case #1: Call CFE_ES_RegisterDriver()
+SysLog:1980-001-00:00:01.50000 CFE ES Register Driver not Implemented
+CFE_ES_RegisterDriver returned c400ffff. Expected c400ffff.
+
+Test Case #2: Set return for CFE_ES_RegisterDriver to 0x83ab83ab
+UTF Info: Return value for CFE ES Api #10 set to 83ab83ab
+CFE_ES_RegisterDriver returned 83ab83ab. Expected 0x83ab83ab.
+
+Test Case #3: Revert return for CFE_ES_RegisterDriver to default
+UTF Info: Return code for CFE ES Api #10 returned to default
+SysLog:1980-001-00:00:01.50000 CFE ES Register Driver not Implemented
+CFE_ES_RegisterDriver returned c400ffff. Expected c400ffff.
+
+***Test CFE_ES_UnloadDriver API***
+
+Test Case #1: Call CFE_ES_UnloadDriver()
+SysLog:1980-001-00:00:01.50000 CFE ES Unload Driver not Implemented
+CFE_ES_UnloadDriver returned c400ffff. Expected c400ffff.
+
+Test Case #2: Set return for CFE_ES_UnloadDriver to 0x83ab83ab
+UTF Info: Return value for CFE ES Api #11 set to 83ab83ab
+CFE_ES_UnloadDriver returned 83ab83ab. Expected 0x83ab83ab.
+
+Test Case #3: Revert return for CFE_ES_UnloadDriver to default
+UTF Info: Return code for CFE ES Api #11 returned to default
+SysLog:1980-001-00:00:01.50000 CFE ES Unload Driver not Implemented
+CFE_ES_UnloadDriver returned c400ffff. Expected c400ffff.
+
+***Test CFE_ES_CalculateCRC API***
+
+Test Case #1: Call CFE_ES_CalculateCRC(2)
+CFE_ES_CalculateCRC returned ffff863a. Expected non-zero.
+
+Test Case #2: Set return for CFE_ES_CalculateCRC to 0x7ef97ef9
+UTF Info: Return value for CFE ES Api #12 set to 7ef97ef9
+CFE_ES_CalculateCRC returned 7ef97ef9. Expected 0x7ef97ef9.
+
+Test Case #3: Revert return for CFE_ES_CalculateCRC to default
+UTF Info: Return code for CFE ES Api #12 returned to default
+SysLog:1980-001-00:00:01.50000 CFE ES Calculate CRC32 not Implemented
+CFE_ES_CalculateCRC returned 0. Expected 0.
+
+Test Case #4: Call CFE_ES_CalculateCRC(1)
+SysLog:1980-001-00:00:01.50000 CFE ES Calculate CRC8 not Implemented
+CFE_ES_CalculateCRC returned 0. Expected 0.
+
+Test Case #5: Call CFE_ES_CalculateCRC(2)
+CFE_ES_CalculateCRC returned ffff863a. Expected non-zero.
+UTF Info: Task <UTF Test14> added to Task Tbl.
+SysLog:1980-001-00:00:01.50000 ES Startup: UTF Test14 loaded and created
+UTF Info: App <UTF Test14> added to App Tbl.
+
+***Test CFE_ES_RegisterCDS API***
+
+Test Case #1: Call CFE_ES_RegisterCDS()
+CFE_ES_RegisterCDS returned 0.
+
+Test Case #2: Set return for CFE_ES_RegisterCDS to c400000f
+UTF Info: Return value for CFE ES Api #16 set to c400000f
+CFE_ES_RegisterCDS returned c400000f. Expected c400000f.
+
+Test Case #3: Revert return for CFE_ES_RegisterCDS to default
+UTF Info: Return code for CFE ES Api #16 returned to default
+CFE_ES_RegisterCDS returned 4400000d. Expected 4400000d.
+
+***Test CFE_ES_CopyToCDS & CFE_ES_RestoreFromCDS API***
+
+Test Case #1: Call CFE_ES_CopyToCDS()
+CFE_ES_CopyToCDS returned 0.
+Copied data of <128>; <Testing CDS strings>; <45> to CDS
+
+Call CFE_ES_RestoreFromCDS()
+CFE_ES_RestoreFromCDS returned 0.
+Restored data = <128>; <Testing CDS strings>; <45> to CDS
+
+Test Case #2: Set return for CFE_ES_CopyToCDS to c4000007
+UTF Info: Return value for CFE ES Api #17 set to c4000007
+CFE_ES_CopyToCDS returned c4000007. Expected c4000007.
+
+Set return for CFE_ES_RestoreFromCDS to c4000012
+UTF Info: Return value for CFE ES Api #16 set to c4000012
+CFE_ES_RestoreFromCDS returned 0. Expected c4000012.
+
+Test Case #3: Revert return for CFE_ES_CopyToCDS & CFE_ES_RestoreFromCDS to default
+UTF Info: Return code for CFE ES Api #17 returned to default
+UTF Info: Return code for CFE ES Api #16 returned to default
+CFE_ES_CopyToCDS returned 0.
+Copied data of <45>; <CDS string Test #2>; <128> to CDS
+
+Call CFE_ES_RestoreFromCDS()
+CFE_ES_RestoreFromCDS returned 0.
+Restored data = <45>; <CDS string Test #2>; <128> to CDS
+
+***Testing CFE_ES_DeleteCDS***
+
+Test Case #1: Call CFE_ES_DeleteCDS for an active Application
+CFE_ES_DeleteCDS(UTF Test14.Test14Data) returned c4000022. Expected c4000022.
+
+Test Case #2: Call CFE_ES_DeleteCDS with the flag indicating a Critical Table CDS
+CFE_ES_DeleteCDS(UTF Test14.Test14Data) returned c4000020. Expected c4000020.
+
+Test Case #3: Delete the Application and call CFE_ES_DeleteCDS
+SysLog:1980-001-00:00:01.50000 CFE_ES_DeleteApp: Delete Application UTF Test14 Initiated
+CFE_ES_DeleteApp(5) returned 0. Expected 0.
+CFE_ES_DeleteCDS(UTF Test14.Test14Data) returned 0. Expected 0.
+
+Test Case #1: Call CFE_ES_DeleteCDS again to verify the CDS is deleted.
+CFE_ES_DeleteCDS(UTF Test14.Test14Data) returned c4000021. Expected c4000021.
+
+***Dumping the Task Record Table***
+TaskTable[0]:
+    AppID  = 11
+    TaskID = 0
+    Name   = Application#1
+  Exe Ctr  = 0
+TaskTable[1]:
+    AppID  = 12
+    TaskID = 1
+    Name   = Application#2
+  Exe Ctr  = 0
+TaskTable[2]:
+    AppID  = 13
+    TaskID = 2
+    Name   = Application#3
+  Exe Ctr  = 0
+
+***Test CFE_ES_GetTaskInfo API***
+
+Test Case #1: Call CFE_ES_GetTaskInfo(0)
+CFE_ES_GetTaskInfo(0) returned 0. Expected 0.
+AppID    = 11
+TaskName = Application#1
+AppName  = Application#1
+
+Test Case #2: Call CFE_ES_GetTaskInfo(45)
+SysLog:1980-001-00:00:01.50000 CFE_ES_GetTaskInfo: Task ID Not Active: 45
+CFE_ES_GetTaskInfo(45) returned c4000016. Expected c4000016.
+
+***Dump the Registered App Table***
+AppTable[11]:
+       Name    = Application#1
+    ChildTasks = 3
+    State = Running
+AppTable[12]:
+       Name    = Application#2
+    ChildTasks = 0
+    State = Running
+AppTable[13]:
+       Name    = Application#3
+    ChildTasks = 0
+    State = Running
+
+***Test CFE_ES_GetAppInfo API***
+
+Test Case #1: Call CFE_ES_GetAppInfo(12)
+CFE_ES_GetAppInfo(12) returned 0. Expected 0.
+AppID        = 12
+Type         = 2
+AppName      = 'Application#2'
+EntryPoint   = ''
+FileName     = ''
+StackSize    = 8192
+StartAddress = 0
+ExceptnActn  = 0
+Priority     = 25
+MainTaskId   = 1
+MainTaskName = 'Application#2'
+NumChildTasks= 0
+ModuleId     = 0
+AddrsValid   = 0
+CodeAddress  = 0
+CodeSize     = 0
+DataAddress  = 0
+DataSize     = 0
+BSSAddress   = 0
+BSSSize      = 0
+
+Test Case #2: Call CFE_ES_GetAppInfo(25)
+SysLog:1980-001-00:00:01.50000 CFE_ES_GetAppInfo: App ID Not Active: 25
+CFE_ES_GetAppInfo(25) returned c4000001. Expected c4000001.
+
+Test Case #3: Call CFE_ES_GetAppInfo(45)
+SysLog:1980-001-00:00:01.50000 CFE_ES_GetAppInfo: App ID Exceeds CFE_ES_APPLICATION_MAX: 45
+CFE_ES_GetAppInfo(45) returned c4000001. Expected c4000001.
+
+Test Case #4: Change some AppInfo using the UTF_SetDefaultAppInfo utility
+Call CFE_ES_GetAppInfo(12)
+CFE_ES_GetAppInfo(12) returned 0. Expected 0.
+AppID        = 12
+Type         = 2
+AppName      = 'Application#2'
+EntryPoint   = ''
+FileName     = ''
+StackSize    = 8192
+StartAddress = 0
+ExceptnActn  = 0
+Priority     = 25
+MainTaskId   = 1
+MainTaskName = 'Application#2'
+NumChildTasks= 0
+ModuleId     = 0
+AddrsValid   = 1
+CodeAddress  = 123456000
+CodeSize     = 512
+DataAddress  = 123456512
+DataSize     = 256
+BSSAddress   = 123457000
+BSSSize      = 1024
+
+***Test CFE_ES_RunLoop API***
+
+Test Case #1: Call CFE_ES_RunLoop(CFE_ES_APP_RUN)
+CFE_ES_RunLoop(CFE_ES_APP_RUN) returned 1. Expected 1.
+
+Test Case #2: Call CFE_ES_RunLoop(CFE_ES_APP_EXIT)
+CFE_ES_RunLoop(CFE_ES_APP_EXIT) returned 0. Expected 0.
+
+Test Case #3: Call CFE_ES_RunLoop(CFE_ES_APP_ERROR)
+CFE_ES_RunLoop(CFE_ES_APP_ERROR) returned 0. Expected 0.
+
+Test Case #4: Call CFE_ES_RunLoop(45)
+SysLog:1980-001-00:00:01.50000 CFE_ES_RunLoop Error: Invalid RunStatus:45!
+CFE_ES_RunLoop(45) returned 0. Expected 0.
+
+Test Case #5: Call CFE_ES_RunLoop with an invalid AppID
+UTF Info: Return value for CFE ES Api #2 set to c4000001
+SysLog:1980-001-00:00:01.50000 CFE_ES_RunLoop Error: Cannot get AppID for the caller: RC = C4000001
+CFE_ES_RunLoop() returned 0. Expected 0.
+UTF Info: Return code for CFE ES Api #2 returned to default
+
+***Test CFE_ES_ExitApp API***
+SysLog:1980-001-00:00:01.50000 Application  called CFE_ES_ExitApp

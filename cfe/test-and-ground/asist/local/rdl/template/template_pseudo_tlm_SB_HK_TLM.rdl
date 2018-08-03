@@ -1,0 +1,37 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:
+!                Responsible CSE:
+!                Rev:  Last Change: May 2, 2014
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu SB Pseudo HK Telemetry Data Packet
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY:
+!       2014/05/02  WFM      : Initial version copied from GPM's cdh pseudo TLM
+!==============================================================================
+!
+PACKET Pxxxx  APID=nnnn, DESC="$sc $cpu SB Pseudo HK Telemetry Packet", STALE = 36
+ 
+! 524288 value comes from platform cfg parameter CFE_SB_BUF_MEMORY_BYTES
+  SFP   $sc_$cpu_SB_CurMemPercentX	    DESC="Perentage of Current SB Memory Utilization",
+      EQUATION= WHEN PKT_RCVD = rnnn
+      DO
+       $sc_$cpu_SB_CurMemPercentX = ($sc_$cpu_SB_MemInUse/524288.0) * 100.0
+      ENDDO
+        
+! 524288 value comes from platform cfg parameter CFE_SB_BUF_MEMORY_BYTES
+  SFP   $sc_$cpu_SB_PkMemPercentX	    DESC="Perentage of Peak SB Memory Utilization",
+      EQUATION= WHEN PKT_RCVD = rnnn
+      DO
+       $sc_$cpu_SB_PkMemPercentX = ((524288.0 - $sc_$cpu_SB_UnMarkedMem)/524288.0) * 100.0
+      ENDDO
+END

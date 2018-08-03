@@ -1,0 +1,828 @@
+        -:    0:Source:../src/ds_file.c
+        -:    0:Graph:ds_file.gcno
+        -:    0:Data:ds_file.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/************************************************************************
+        -:    2:**   $Id: ds_file.c.gcov 1.1 2009/12/07 13:43:52EST lwalling Exp  $
+        -:    3:**
+        -:    4:**  CFS Data Storage (DS) file functions
+        -:    5:**
+        -:    6:** $Log: ds_file.c.gcov  $
+        -:    6:** Revision 1.1 2009/12/07 13:43:52EST lwalling 
+        -:    6:** Initial revision
+        -:    6:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/unit_test/project.pj
+        -:    7:** Revision 1.6 2009/08/31 16:47:47EDT lwalling 
+        -:    8:** Remove references to DS_1HZ_MID and process file age tests during housekeeping request
+        -:    9:** Revision 1.5 2009/08/28 16:47:56EDT lwalling 
+        -:   10:** Add support for storing sequence counts in CDS
+        -:   11:** Revision 1.4 2009/08/27 16:32:34EDT lwalling 
+        -:   12:** Updates from source code review
+        -:   13:** Revision 1.3 2009/08/13 09:42:48EDT lwalling 
+        -:   14:** Call to CFE_FS_WriteHeader() returns bytes written, fixed arg order in call to OS_lseek()
+        -:   15:** Revision 1.2 2009/06/12 11:52:18EDT lwalling 
+        -:   16:** Moved function prototypes to header file, modify local vars for file enable state and sequence counters.
+        -:   17:** Revision 1.1 2009/05/26 14:30:40EDT lwalling 
+        -:   18:** Initial revision
+        -:   19:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/ds/fsw/src/project.pj
+        -:   20:*************************************************************************/
+        -:   21:
+        -:   22:#include "cfe.h"
+        -:   23:#include "cfe_fs.h"
+        -:   24:
+        -:   25:#include "cfs_utils.h"
+        -:   26:
+        -:   27:#include "ds_platform_cfg.h"
+        -:   28:#include "ds_verify.h"
+        -:   29:
+        -:   30:#include "ds_appdefs.h"
+        -:   31:
+        -:   32:#include "ds_msg.h"
+        -:   33:#include "ds_app.h"
+        -:   34:#include "ds_file.h"
+        -:   35:#include "ds_table.h"
+        -:   36:#include "ds_events.h"
+        -:   37:
+        -:   38:#include "string.h"
+        -:   39:
+        -:   40:
+        -:   41:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   42:/*                                                                 */
+        -:   43:/* DS_FileStorePacket() - store packet in file(s)                  */
+        -:   44:/*                                                                 */
+        -:   45:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   46:
+        -:   47:void DS_FileStorePacket(CFE_SB_MsgId_t MessageID, CFE_SB_MsgPtr_t MessagePtr)
+function DS_FileStorePacket called 9 returned 100% blocks executed 100%
+        9:   48:{
+        9:   49:    DS_PacketEntry_t *PacketEntry;
+        9:   50:    DS_FilterParms_t *FilterParms;
+        9:   51:    boolean PassedFilter;
+        9:   52:    boolean FilterResult;
+        9:   53:    int32 FilterIndex;
+        9:   54:    int32 FileIndex;
+        9:   55:    int32 i;
+        -:   56:
+        -:   57:    /*
+        -:   58:    ** Convert packet MessageID to packet filter table index...
+        -:   59:    */
+        9:   60:    FilterIndex = DS_TableFindMsgID(MessageID);
+        -:   61:
+        -:   62:    /*
+        -:   63:    ** Ignore packets not listed in the packet filter table...
+        -:   64:    */
+        9:   65:    if (FilterIndex == DS_INDEX_NONE)
+        -:   66:    {
+        5:   67:        DS_AppData.IgnoredPktCounter++;
+        -:   68:    }
+        -:   69:    else
+        -:   70:    {
+        4:   71:        PacketEntry = &DS_AppData.FilterTblPtr->Packet[FilterIndex];
+        4:   72:        PassedFilter = FALSE;
+        -:   73:
+        -:   74:        /*
+        -:   75:        ** Each packet has multiple filters for multiple files...
+        -:   76:        */
+       20:   77:        for (i = 0; i < DS_FILTERS_PER_PACKET; i++)
+        -:   78:        {
+       16:   79:            FilterParms = &PacketEntry->Filter[i];
+        -:   80:
+        -:   81:            /*
+        -:   82:            ** Ignore unused and invalid filters...
+        -:   83:            */
+       16:   84:            if ((FilterParms->Algorithm_N != DS_UNUSED) &&
+        -:   85:                (FilterParms->FileTableIndex < DS_DEST_FILE_CNT))
+        -:   86:            {
+        6:   87:                FileIndex = FilterParms->FileTableIndex;
+        -:   88:
+        -:   89:                /*
+        -:   90:                ** Ignore disabled destination files...
+        -:   91:                */
+        6:   92:                if (DS_AppData.FileStatus[FileIndex].FileState == DS_ENABLED)
+        -:   93:                {
+        -:   94:                    /*
+        -:   95:                    ** Apply filter algorithm to the packet...
+        -:   96:                    */
+        5:   97:                    FilterResult = CFS_IsPacketFiltered(MessagePtr,
+        -:   98:                                                        FilterParms->FilterType,
+        -:   99:                                                        FilterParms->Algorithm_N,
+        -:  100:                                                        FilterParms->Algorithm_X,
+        -:  101:                                                        FilterParms->Algorithm_O);
+        5:  102:                    if (FilterResult == FALSE)
+        -:  103:                    {
+        -:  104:                        /*
+        -:  105:                        ** Write unfiltered packets to destination file...
+        -:  106:                        */
+        4:  107:                        DS_FileSetupWrite(FileIndex, MessagePtr);
+        4:  108:                        PassedFilter = TRUE;
+        -:  109:                    }
+        -:  110:                }
+        -:  111:            }
+        -:  112:        }
+        -:  113:
+        -:  114:        /*
+        -:  115:        ** Count packet as passed if any filters passed...
+        -:  116:        */
+        4:  117:        if (PassedFilter)
+        -:  118:        {
+        2:  119:            DS_AppData.PassedPktCounter++;
+        -:  120:        }
+        -:  121:        else
+        -:  122:        {
+        2:  123:            DS_AppData.FilteredPktCounter++;
+        -:  124:        }
+        -:  125:    }
+        -:  126:
+        -:  127:
+        9:  128:    return;
+        -:  129:
+        -:  130:} /* End of DS_FileStorePacket() */
+        -:  131:
+        -:  132:
+        -:  133:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  134:/*                                                                 */
+        -:  135:/* DS_FileSetupWrite() - prepare to write packet data to file      */
+        -:  136:/*                                                                 */
+        -:  137:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  138:
+        -:  139:void DS_FileSetupWrite(int32 FileIndex, CFE_SB_MsgPtr_t MessagePtr)
+function DS_FileSetupWrite called 7 returned 100% blocks executed 100%
+        7:  140:{
+        7:  141:    DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
+        7:  142:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        7:  143:    boolean OpenNewFile = FALSE;
+        7:  144:    uint16 PacketLength;
+        -:  145:
+        -:  146:    /*
+        -:  147:    ** Create local pointers for array indexed data...
+        -:  148:    */
+        7:  149:    PacketLength = CFE_SB_GetTotalMsgLength(MessagePtr);
+        -:  150:
+        7:  151:    if (FileStatus->FileHandle == DS_CLOSED_FILE_HANDLE)
+        -:  152:    {
+        -:  153:        /*
+        -:  154:        ** 1st packet since destination enabled or file closed...
+        -:  155:        */
+        4:  156:        OpenNewFile = TRUE;
+        -:  157:    }
+        -:  158:    else
+        -:  159:    {
+        -:  160:        /*
+        -:  161:        ** Test size of existing destination file...
+        -:  162:        */
+        3:  163:        if ((FileStatus->FileSize + PacketLength) > DestFile->MaxFileSize)
+        -:  164:        {
+        -:  165:            /*
+        -:  166:            ** This packet would cause file to exceed max size limit...
+        -:  167:            */
+        1:  168:            DS_FileUpdateHeader(FileIndex);
+        1:  169:            DS_FileCloseDest(FileIndex);
+        1:  170:            OpenNewFile = TRUE;
+        -:  171:        }
+        -:  172:        else
+        -:  173:        {
+        -:  174:            /*
+        -:  175:            ** File size is OK - write packet data to file...
+        -:  176:            */
+        2:  177:            DS_FileWriteData(FileIndex, MessagePtr, PacketLength);
+        -:  178:        }
+        -:  179:    }
+        -:  180:
+        7:  181:    if (OpenNewFile)
+        -:  182:    {
+        -:  183:        /*
+        -:  184:        ** Either the file did not exist or we closed it because
+        -:  185:        **   of the size limit test above...
+        -:  186:        */
+        5:  187:        DS_FileCreateDest(FileIndex);
+        -:  188:
+        5:  189:        if (FileStatus->FileHandle != DS_CLOSED_FILE_HANDLE)
+        -:  190:        {
+        -:  191:            /*
+        -:  192:            ** By writing the first packet without first performing a size
+        -:  193:            **   limit test, we avoid issues resulting from having the max
+        -:  194:            **   file size set less than the size of one packet...
+        -:  195:            */
+        3:  196:            DS_FileWriteData(FileIndex, MessagePtr, PacketLength);
+        -:  197:        }
+        -:  198:    }
+        -:  199:
+        -:  200:    /*
+        -:  201:    ** If the write did not occur due to I/O error (create or write)
+        -:  202:    **   then current state = file closed and destination disabled...
+        -:  203:    */
+        7:  204:    return;
+        -:  205:
+        -:  206:} /* End of DS_FileSetupWrite() */
+        -:  207:
+        -:  208:
+        -:  209:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  210:/*                                                                 */
+        -:  211:/* DS_FileWriteData() - write data to destination file             */
+        -:  212:/*                                                                 */
+        -:  213:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  214:
+        -:  215:void DS_FileWriteData(int32 FileIndex, void *FileData, uint32 DataLength)
+function DS_FileWriteData called 7 returned 100% blocks executed 100%
+        7:  216:{
+        7:  217:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        7:  218:    int32 Result;
+        -:  219:
+        -:  220:    /*
+        -:  221:    ** Let cFE manage the file I/O...
+        -:  222:    */
+        7:  223:    Result = OS_write(FileStatus->FileHandle, FileData, DataLength);
+        -:  224:
+        7:  225:    if (Result == DataLength)
+        -:  226:    {
+        -:  227:        /*
+        -:  228:        ** Success - update file size and data rate counters...
+        -:  229:        */
+        6:  230:        DS_AppData.FileWriteCounter++;
+        -:  231:
+        6:  232:        FileStatus->FileSize   += DataLength;
+        6:  233:        FileStatus->FileGrowth += DataLength;
+        -:  234:    }
+        -:  235:    else
+        -:  236:    {
+        -:  237:        /*
+        -:  238:        ** Error - send event, close file and disable destination...
+        -:  239:        */
+        1:  240:        DS_FileWriteError(FileIndex, DataLength, Result);
+        -:  241:    }
+        -:  242:
+        7:  243:    return;
+        -:  244:
+        -:  245:} /* End of DS_FileWriteData() */
+        -:  246:
+        -:  247:
+        -:  248:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  249:/*                                                                 */
+        -:  250:/* DS_FileWriteHeader() - write header to destination file         */
+        -:  251:/*                                                                 */
+        -:  252:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  253:
+        -:  254:void DS_FileWriteHeader(int32 FileIndex)
+function DS_FileWriteHeader called 5 returned 100% blocks executed 85%
+        5:  255:{
+        5:  256:    DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
+        5:  257:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        5:  258:    CFE_FS_Header_t CFE_FS_Header;
+        5:  259:    DS_FileHeader_t DS_FileHeader;
+        5:  260:    int32 Result;
+        -:  261:
+        -:  262:    /*
+        -:  263:    ** Initialize selected parts of the cFE file header...
+        -:  264:    */
+        5:  265:	CFE_PSP_MemSet(&CFE_FS_Header, 0, sizeof(CFE_FS_Header_t));
+        5:  266:    CFE_FS_Header.SubType = DS_FILE_HDR_SUBTYPE;
+        5:  267:    strcpy(CFE_FS_Header.Description, DS_FILE_HDR_DESCRIPTION);
+        -:  268:
+        -:  269:    /*
+        -:  270:    ** Let cFE finish the init and write the primary header...
+        -:  271:    */
+        5:  272:    Result = CFE_FS_WriteHeader(FileStatus->FileHandle, &CFE_FS_Header);
+        -:  273:
+        5:  274:    if (Result == sizeof(CFE_FS_Header_t))
+        -:  275:    {
+        -:  276:        /*
+        -:  277:        ** Success - update file size and data rate counters...
+        -:  278:        */
+        4:  279:        DS_AppData.FileWriteCounter++;
+        -:  280:
+        4:  281:        FileStatus->FileSize   += sizeof(CFE_FS_Header_t);
+        4:  282:        FileStatus->FileGrowth += sizeof(CFE_FS_Header_t);
+        -:  283:
+        -:  284:        /*
+        -:  285:        ** Initialize the DS file header...
+        -:  286:        */
+        4:  287:        CFE_PSP_MemSet(&DS_FileHeader, 0, sizeof(DS_FileHeader_t));
+        4:  288:        DS_FileHeader.FileTableIndex = FileIndex;
+        4:  289:        DS_FileHeader.FileNameType = DestFile->FileNameType;
+        4:  290:        strcpy(DS_FileHeader.FileName, FileStatus->FileName);
+        -:  291:
+        -:  292:        /*
+        -:  293:        ** Manually write the secondary header...
+        -:  294:        */
+        4:  295:        Result = OS_write(FileStatus->FileHandle, &DS_FileHeader, sizeof(DS_FileHeader_t));
+        -:  296:
+        4:  297:        if (Result == sizeof(DS_FileHeader_t))
+        -:  298:        {
+        -:  299:            /*
+        -:  300:            ** Success - update file size and data rate counters...
+        -:  301:            */
+        4:  302:            DS_AppData.FileWriteCounter++;
+        -:  303:
+        4:  304:            FileStatus->FileSize   += sizeof(DS_FileHeader_t);
+        4:  305:            FileStatus->FileGrowth += sizeof(DS_FileHeader_t);
+        -:  306:        }
+        -:  307:        else
+        -:  308:        {
+        -:  309:            /*
+        -:  310:            ** Error - send event, close file and disable destination...
+        -:  311:            */
+    #####:  312:            DS_FileWriteError(FileIndex, sizeof(DS_FileHeader_t), Result);
+        -:  313:        }
+        -:  314:    }
+        -:  315:    else
+        -:  316:    {
+        -:  317:        /*
+        -:  318:        ** Error - send event, close file and disable destination...
+        -:  319:        */
+        1:  320:        DS_FileWriteError(FileIndex, sizeof(CFE_FS_Header_t), Result);
+        -:  321:    }
+        -:  322:
+        5:  323:    return;
+        -:  324:
+        -:  325:} /* End of DS_FileWriteHeader() */
+        -:  326:
+        -:  327:
+        -:  328:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  329:/*                                                                 */
+        -:  330:/* DS_FileWriteError() - file write error handler                  */
+        -:  331:/*                                                                 */
+        -:  332:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  333:void DS_FileWriteError(uint32 FileIndex, uint32 DataLength, int32 WriteResult)
+function DS_FileWriteError called 3 returned 100% blocks executed 100%
+        3:  334:{
+        3:  335:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        -:  336:
+        -:  337:    /*
+        -:  338:    ** Send event, close file and disable destination...
+        -:  339:    */
+        3:  340:    DS_AppData.FileWriteErrCounter++;
+        -:  341:
+        3:  342:    CFE_EVS_SendEvent(DS_WRITE_FILE_ERR_EID, CFE_EVS_ERROR,
+        -:  343:                     "FILE WRITE error: result = %d, length = %d, dest = %d, name = %s",
+        -:  344:                      WriteResult, DataLength, FileIndex, FileStatus->FileName);
+        -:  345:
+        3:  346:    DS_FileCloseDest(FileIndex);
+        -:  347:
+        3:  348:    FileStatus->FileState = DS_DISABLED;
+        -:  349:
+        -:  350:    return;
+        -:  351:
+        -:  352:} /* End of DS_FileWriteError() */
+        -:  353:
+        -:  354:
+        -:  355:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  356:/*                                                                 */
+        -:  357:/* DS_FileCreateDest() - create destination file                   */
+        -:  358:/*                                                                 */
+        -:  359:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  360:void DS_FileCreateDest(uint32 FileIndex)
+function DS_FileCreateDest called 7 returned 100% blocks executed 100%
+        7:  361:{
+        7:  362:    DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
+        7:  363:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        7:  364:    int32 Result;
+        -:  365:
+        -:  366:    /*
+        -:  367:    ** Create filename from "path + base + sequence count + extension"...
+        -:  368:    */
+        7:  369:    DS_FileCreateName(FileIndex);
+        -:  370:
+        7:  371:    if (FileStatus->FileName[0] != DS_STRING_TERMINATOR)
+        -:  372:    {
+        -:  373:        /*
+        -:  374:        ** Success - create a new destination file...
+        -:  375:        */
+        7:  376:        Result = OS_creat(FileStatus->FileName, OS_READ_WRITE);
+        -:  377:
+        7:  378:        if (Result < 0)
+        -:  379:        {
+        -:  380:            /*
+        -:  381:            ** Error - send event, disable destination and reset filename...
+        -:  382:            */
+        3:  383:            DS_AppData.FileWriteErrCounter++;
+        -:  384:
+        3:  385:            CFE_EVS_SendEvent(DS_CREATE_FILE_ERR_EID, CFE_EVS_ERROR,
+        -:  386:                             "FILE CREATE error: result = %d, dest = %d, name = %s",
+        -:  387:                              Result, FileIndex, FileStatus->FileName);
+        -:  388:
+        3:  389:            CFE_PSP_MemSet(FileStatus->FileName, 0, DS_TOTAL_FNAME_BUFSIZE);
+        -:  390:
+        -:  391:            /*
+        -:  392:            ** Something needs to get fixed before we try again...
+        -:  393:            */
+        3:  394:            FileStatus->FileState = DS_DISABLED;
+        -:  395:        }
+        -:  396:        else
+        -:  397:        {
+        -:  398:            /*
+        -:  399:            ** Success - store the file handle...
+        -:  400:            */
+        4:  401:            DS_AppData.FileWriteCounter++;
+        -:  402:
+        4:  403:            FileStatus->FileHandle = Result;
+        -:  404:
+        -:  405:            /*
+        -:  406:            ** Initialize and write file header...
+        -:  407:            */
+        4:  408:            DS_FileWriteHeader(FileIndex);
+        -:  409:
+        -:  410:            /*
+        -:  411:            ** Update sequence count if have one and write successful...
+        -:  412:            */
+        4:  413:            if ((FileStatus->FileHandle != DS_CLOSED_FILE_HANDLE) &&
+        -:  414:                (DestFile->FileNameType == DS_BY_COUNT))
+        -:  415:            {
+        3:  416:                FileStatus->FileCount++;
+        3:  417:                if (FileStatus->FileCount > DS_MAX_SEQUENCE_COUNT)
+        -:  418:                {
+        1:  419:                    FileStatus->FileCount = 0;
+        -:  420:                }
+        -:  421:
+        -:  422:                /*
+        -:  423:                ** Update Critical Data Store (CDS)...
+        -:  424:                */
+        3:  425:                DS_TableUpdateCDS();
+        -:  426:            }
+        -:  427:        }
+        -:  428:    }
+        -:  429:
+        7:  430:    return;
+        -:  431:
+        -:  432:} /* End of DS_FileCreateDest() */
+        -:  433:
+        -:  434:
+        -:  435:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  436:/*                                                                 */
+        -:  437:/* Create destination filename                                     */
+        -:  438:/*                                                                 */
+        -:  439:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  440:void DS_FileCreateName(uint32 FileIndex)
+function DS_FileCreateName called 11 returned 100% blocks executed 100%
+       11:  441:{
+       11:  442:    DS_DestFileEntry_t *DestFile = &DS_AppData.DestFileTblPtr->File[FileIndex];
+       11:  443:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+       11:  444:    int32 TotalLength;
+        -:  445:
+       11:  446:    char Workname[2 * DS_TOTAL_FNAME_BUFSIZE];
+       11:  447:    char Sequence[DS_TOTAL_FNAME_BUFSIZE];
+        -:  448:
+       11:  449:    Workname[0] = DS_STRING_TERMINATOR;
+       11:  450:    Sequence[0] = DS_STRING_TERMINATOR;
+        -:  451:
+        -:  452:    /*
+        -:  453:    ** Start with the path portion of the filename...
+        -:  454:    */
+       11:  455:    strcpy(Workname, DestFile->Pathname);
+       11:  456:    TotalLength = strlen(Workname);
+        -:  457:
+        -:  458:    /*
+        -:  459:    ** Add a path separator (if needed) before appending the base name...
+        -:  460:    */
+        -:  461:
+       11:  462:    if (Workname[TotalLength - 1] != DS_PATH_SEPARATOR)
+        -:  463:    {
+        2:  464:        Workname[TotalLength] = DS_PATH_SEPARATOR;
+        2:  465:        Workname[TotalLength + 1] = DS_STRING_TERMINATOR;
+        -:  466:    }
+        -:  467:
+        -:  468:    /*
+        -:  469:    ** Verify that the path plus the base portion is not too large...
+        -:  470:    */
+       11:  471:    if ((strlen(Workname) + strlen(DestFile->Basename)) < DS_TOTAL_FNAME_BUFSIZE)
+        -:  472:    {
+        -:  473:        /*
+        -:  474:        ** Append the base portion to the path portion...
+        -:  475:        */
+       10:  476:        strcat(Workname, DestFile->Basename);
+        -:  477:
+        -:  478:        /*
+        -:  479:        ** Create the sequence portion of the filename...
+        -:  480:        */
+       10:  481:        DS_FileCreateSequence(Sequence, DestFile->FileNameType, FileStatus->FileCount);
+        -:  482:
+        -:  483:        /*
+        -:  484:        ** Verify that the path/base plus the sequence portion is not too large...
+        -:  485:        */
+       10:  486:        if ((strlen(Workname) + strlen(Sequence)) < DS_TOTAL_FNAME_BUFSIZE)
+        -:  487:        {
+        -:  488:            /*
+        -:  489:            ** Append the sequence portion to the path/base portion...
+        -:  490:            */
+        9:  491:            strcat(Workname, Sequence);
+        -:  492:
+        -:  493:            /*
+        -:  494:            ** Check for an optional file extension...
+        -:  495:            */
+        9:  496:            if (strlen(DestFile->Extension) > 0)
+        -:  497:            {
+        -:  498:                /*
+        -:  499:                ** Add a "." character (if needed) before appending the extension...
+        -:  500:                */
+        9:  501:                if (DestFile->Extension[0] != '.')
+        -:  502:                {
+        2:  503:                    strcat(Workname, ".");
+        -:  504:                }
+        -:  505:
+        -:  506:                /*
+        -:  507:                ** Append the extension portion to the path/base+sequence portion...
+        -:  508:                */
+        9:  509:                strcat(Workname, DestFile->Extension);
+        -:  510:            }
+        -:  511:
+        -:  512:            /*
+        -:  513:            ** Final test - is "path/base+sequence.extension" length valid?...
+        -:  514:            */
+        9:  515:            if (strlen(Workname) < DS_TOTAL_FNAME_BUFSIZE)
+        -:  516:            {
+        -:  517:                /*
+        -:  518:                ** Success - copy workname to filename buffer...
+        -:  519:                */
+        8:  520:                strcpy(FileStatus->FileName, Workname);
+        -:  521:            }
+        -:  522:        }
+        -:  523:    }
+        -:  524:
+       11:  525:    if (FileStatus->FileName[0] == DS_STRING_TERMINATOR)
+        -:  526:    {
+        -:  527:        /*
+        -:  528:        ** Error - send event and disable destination...
+        -:  529:        */
+        3:  530:        CFE_EVS_SendEvent(DS_FILE_NAME_ERR_EID, CFE_EVS_ERROR,
+        -:  531:                         "FILE NAME error: dest = %d, path = %s, base = %s, seq = %s, ext = %s",
+        -:  532:                          FileIndex, DestFile->Pathname, DestFile->Basename,
+        -:  533:                          Sequence, DestFile->Extension);
+        -:  534:
+        -:  535:        /*
+        -:  536:        ** Something needs to get fixed before we try again...
+        -:  537:        */
+        3:  538:        DS_AppData.FileStatus[FileIndex].FileState = DS_DISABLED;
+        -:  539:    }
+        -:  540:
+       11:  541:    return;
+        -:  542:
+        -:  543:} /* End of DS_FileCreateName() */
+        -:  544:
+        -:  545:
+        -:  546:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  547:/*                                                                 */
+        -:  548:/* DS_FileCreateSequence() - set text from count or time           */
+        -:  549:/*                                                                 */
+        -:  550:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  551:void DS_FileCreateSequence(char *Buffer, uint32 Type, uint32 Count)
+function DS_FileCreateSequence called 13 returned 100% blocks executed 100%
+       13:  552:{
+       13:  553:    CFE_TIME_SysTime_t TimeToPrint;
+        -:  554:
+       13:  555:    uint32 SequenceCount;
+       13:  556:    uint32 NumericDigit;
+        -:  557:
+       13:  558:    int32 BufferIndex;
+        -:  559:
+        -:  560:    /*
+        -:  561:    ** Build the sequence portion of the filename (time or count)...
+        -:  562:    */
+       13:  563:    if (Type == DS_BY_COUNT)
+        -:  564:    {
+        -:  565:        /*
+        -:  566:        ** Get copy of sequence count that can be modified...
+        -:  567:        */
+        6:  568:        SequenceCount = Count;
+        -:  569:
+        -:  570:        /*
+        -:  571:        ** Extract each digit (least significant digit first)...
+        -:  572:        */
+       54:  573:        for (BufferIndex = DS_SEQUENCE_DIGITS - 1; BufferIndex >= 0; BufferIndex--)
+        -:  574:        {
+        -:  575:            /*
+        -:  576:            ** Extract this digit and prepare for next digit...
+        -:  577:            */
+       48:  578:            NumericDigit  = SequenceCount % 10;
+       48:  579:            SequenceCount = SequenceCount / 10;
+        -:  580:
+        -:  581:            /*
+        -:  582:            ** Store this digit as ASCII in sequence string buffer...
+        -:  583:            */
+       48:  584:            Buffer[BufferIndex] = '0' + NumericDigit;
+        -:  585:        }
+        -:  586:
+        -:  587:        /*
+        -:  588:        ** Add string terminator...
+        -:  589:        */
+        6:  590:        Buffer[DS_SEQUENCE_DIGITS] = DS_STRING_TERMINATOR;
+        -:  591:    }
+        7:  592:    else if (Type == DS_BY_TIME)
+        -:  593:    {
+        -:  594:        /*
+        -:  595:        ** Get the current time - format = 32 bits seconds, 32 bits subsecs...
+        -:  596:        */
+        6:  597:        TimeToPrint = CFE_TIME_GetTime();
+        -:  598:
+        -:  599:        /*
+        -:  600:        ** Convert current time to cFE format text string...
+        -:  601:        */
+        6:  602:        CFE_TIME_Print(Buffer, TimeToPrint);
+        -:  603:
+        -:  604:        /*
+        -:  605:        ** cFE time string has format: "YYYY-DDD-HH:MM:SS.sssss"...
+        -:  606:        */
+        -:  607:        #define CFE_YYYY_INDEX  0
+        -:  608:        #define CFE_DDD_INDEX   5
+        -:  609:        #define CFE_HH_INDEX    9
+        -:  610:        #define CFE_MM_INDEX   12
+        -:  611:        #define CFE_SS_INDEX   15
+        -:  612:        #define CFE_ssss_INDEX 18
+        -:  613:
+        -:  614:        /*
+        -:  615:        ** DS time string has format: "YYYYDDDHHMMSS"...
+        -:  616:        */
+        -:  617:        #define DS_YYYY_INDEX  0
+        -:  618:        #define DS_DDD_INDEX   4
+        -:  619:        #define DS_HH_INDEX    7
+        -:  620:        #define DS_MM_INDEX    9
+        -:  621:        #define DS_SS_INDEX   11
+        -:  622:        #define DS_TERM_INDEX 13
+        -:  623:
+        -:  624:        /*
+        -:  625:        ** Convert cFE time string to DS time string by moving
+        -:  626:        **  the cFE chars to the left to remove extra stuff...
+        -:  627:        */
+        -:  628:
+        -:  629:        /*
+        -:  630:        ** Step 1: Leave "year" (YYYY) alone - it is already OK...
+        -:  631:        */
+        -:  632:
+        -:  633:        /*
+        -:  634:        ** Step 2: Move "day of year" (DDD) next to (YYYY)...
+        -:  635:        */
+        6:  636:        Buffer[DS_DDD_INDEX + 0] = Buffer[CFE_DDD_INDEX + 0];
+        6:  637:        Buffer[DS_DDD_INDEX + 1] = Buffer[CFE_DDD_INDEX + 1];
+        6:  638:        Buffer[DS_DDD_INDEX + 2] = Buffer[CFE_DDD_INDEX + 2];
+        -:  639:
+        -:  640:        /*
+        -:  641:        ** Step 3: Move "hour of day" (HH) next to (DDD)...
+        -:  642:        */
+        6:  643:        Buffer[DS_HH_INDEX + 0] = Buffer[CFE_HH_INDEX + 0];
+        6:  644:        Buffer[DS_HH_INDEX + 1] = Buffer[CFE_HH_INDEX + 1];
+        -:  645:
+        -:  646:        /*
+        -:  647:        ** Step 4: Move "minutes" (MM) next to (HH)...
+        -:  648:        */
+        6:  649:        Buffer[DS_MM_INDEX + 0] = Buffer[CFE_MM_INDEX + 0];
+        6:  650:        Buffer[DS_MM_INDEX + 1] = Buffer[CFE_MM_INDEX + 1];
+        -:  651:
+        -:  652:        /*
+        -:  653:        ** Step 5: Move "seconds" (SS) next to (MM)...
+        -:  654:        */
+        6:  655:        Buffer[DS_SS_INDEX + 0] = Buffer[CFE_SS_INDEX + 0];
+        6:  656:        Buffer[DS_SS_INDEX + 1] = Buffer[CFE_SS_INDEX + 1];
+        -:  657:
+        -:  658:        /*
+        -:  659:        ** Step 6: Skip "subsecs" (ssss) - not in DS format...
+        -:  660:        */
+        -:  661:
+        -:  662:        /*
+        -:  663:        ** Step 7: Add string terminator...
+        -:  664:        */
+        6:  665:        Buffer[DS_TERM_INDEX] = DS_STRING_TERMINATOR;
+        -:  666:    }
+        -:  667:    else
+        -:  668:    {
+        -:  669:        /*
+        -:  670:        ** Bad filename type, init buffer as empty...
+        -:  671:        */
+        1:  672:        Buffer[0] = DS_STRING_TERMINATOR;
+        -:  673:    }
+        -:  674:
+       13:  675:    return;
+        -:  676:
+        -:  677:} /* End of DS_FileCreateSequence() */
+        -:  678:
+        -:  679:
+        -:  680:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  681:/*                                                                 */
+        -:  682:/* DS_FileUpdateHeader() - update destination file header          */
+        -:  683:/*                                                                 */
+        -:  684:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  685:
+        -:  686:void DS_FileUpdateHeader(int32 FileIndex)
+function DS_FileUpdateHeader called 5 returned 100% blocks executed 89%
+        5:  687:{
+        5:  688:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        5:  689:    CFE_TIME_SysTime_t CurrentTime = CFE_TIME_GetTime();
+        5:  690:    int32 Result;
+        -:  691:
+        -:  692:    /*
+        -:  693:    ** We need to update the field in the secondary header that
+        -:  694:    **   contains the time when the file was closed.  There are
+        -:  695:    **   several choices for "how" to update that value in the file.
+        -:  696:    **
+        -:  697:    **   1) Seek to 2nd header, read 2nd header, update the time field,
+        -:  698:    **      then seek to 2nd header again and write the modified 2nd header
+        -:  699:    **   2) Seek to 2nd header and write a new copy of 2nd header with time
+        -:  700:    **   3) Seek to time field within 2nd header and write current time only
+        -:  701:    **
+        -:  702:    ** We will use method #3...
+        -:  703:    **
+        -:  704:    ** Note: offset of file close time is same as start of 2nd header
+        -:  705:    */
+        5:  706:    Result = OS_lseek(FileStatus->FileHandle, sizeof(CFE_FS_Header_t), SEEK_SET);
+        -:  707:
+        5:  708:    if (Result == sizeof(CFE_FS_Header_t))
+        -:  709:    {
+        2:  710:        Result = OS_write(FileStatus->FileHandle, &CurrentTime, sizeof(CFE_TIME_SysTime_t));
+        -:  711:
+        2:  712:        if (Result == sizeof(CFE_TIME_SysTime_t))
+        -:  713:        {
+        2:  714:            DS_AppData.FileUpdateCounter++;
+        -:  715:        }
+        -:  716:        else
+        -:  717:        {
+    #####:  718:            DS_AppData.FileUpdateErrCounter++;
+        -:  719:        }
+        -:  720:    }
+        -:  721:    else
+        -:  722:    {
+        3:  723:        DS_AppData.FileUpdateErrCounter++;
+        -:  724:    }
+        -:  725:
+        5:  726:    return;
+        -:  727:
+        -:  728:} /* End of DS_FileUpdateHeader() */
+        -:  729:
+        -:  730:
+        -:  731:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  732:/*                                                                 */
+        -:  733:/* DS_FileCloseDest() - close destination file                     */
+        -:  734:/*                                                                 */
+        -:  735:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  736:void DS_FileCloseDest(int32 FileIndex)
+function DS_FileCloseDest called 8 returned 100% blocks executed 100%
+        8:  737:{
+        8:  738:    DS_AppFileStatus_t *FileStatus = &DS_AppData.FileStatus[FileIndex];
+        -:  739:
+        -:  740:    /*
+        -:  741:    ** Close the file...
+        -:  742:    */
+        8:  743:    OS_close(FileStatus->FileHandle);
+        -:  744:
+        -:  745:    /*
+        -:  746:    ** Reset status for this destination file...
+        -:  747:    */
+        8:  748:    FileStatus->FileHandle = DS_CLOSED_FILE_HANDLE;
+        8:  749:    FileStatus->FileAge  = 0;
+        8:  750:    FileStatus->FileSize = 0;
+        -:  751:
+        -:  752:    /*
+        -:  753:    ** Remove previous filename from status data...
+        -:  754:    */
+        8:  755:    CFE_PSP_MemSet(FileStatus->FileName, 0, DS_TOTAL_FNAME_BUFSIZE);
+        -:  756:
+        -:  757:    return;
+        -:  758:
+        -:  759:} /* End of DS_FileCloseDest() */
+        -:  760:
+        -:  761:
+        -:  762:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  763:/*                                                                 */
+        -:  764:/* DS_FileTestAge() -- file age processor                          */
+        -:  765:/*                                                                 */
+        -:  766:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  767:void DS_FileTestAge(uint32 ElapsedSeconds)
+function DS_FileTestAge called 10 returned 100% blocks executed 100%
+       10:  768:{
+       10:  769:    uint32 FileIndex;
+        -:  770:
+        -:  771:    /*
+        -:  772:    ** Called from HK request command handler (elapsed = platform config)
+        -:  773:    */
+       10:  774:    if (DS_AppData.DestFileTblPtr != (DS_DestFileTable_t *) NULL)
+        -:  775:    {
+        -:  776:        /*
+        -:  777:        ** Cannot test file age without destination file table...
+        -:  778:        */
+      136:  779:        for (FileIndex = 0; FileIndex < DS_DEST_FILE_CNT; FileIndex++)
+        -:  780:        {
+        -:  781:            /*
+        -:  782:            ** Update age of open files...
+        -:  783:            */
+      128:  784:            if (DS_AppData.FileStatus[FileIndex].FileHandle != DS_CLOSED_FILE_HANDLE)
+        -:  785:            {
+        7:  786:                DS_AppData.FileStatus[FileIndex].FileAge += ElapsedSeconds;
+        -:  787:
+        7:  788:                if (DS_AppData.FileStatus[FileIndex].FileAge >
+        -:  789:                    DS_AppData.DestFileTblPtr->File[FileIndex].MaxFileAge)
+        -:  790:                {
+        -:  791:                    /*
+        -:  792:                    ** Close files that exceed maximum file age...
+        -:  793:                    */
+        1:  794:                    DS_FileUpdateHeader(FileIndex);
+        1:  795:                    DS_FileCloseDest(FileIndex);
+        -:  796:                }
+        -:  797:            }
+        -:  798:        }
+        -:  799:    }
+        -:  800:
+       10:  801:    return;
+        -:  802:
+        -:  803:} /* End of DS_FileTestAge() */
+        -:  804:
+        -:  805:
+        -:  806:/************************/
+        -:  807:/*  End of File Comment */
+        -:  808:/************************/
+        -:  809:

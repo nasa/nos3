@@ -1,0 +1,39 @@
+#!/usr/bin/perl -X
+
+foreach $arg (@ARGV)
+{
+    $arg_cnt++;
+}
+if ($arg_cnt != 1)
+{
+   print "Incorrect number of arguments: $arg_cnt\n";
+   die "Please enter <spacecraft>.\nUse \"\" in place of the spacecraft if you want it omitted.\n\n";
+}
+
+$spacecraft = $ARGV[0];
+if ($spacecraft eq "") {
+    $spacecraft = "\"\"";
+}
+
+$configfile = "/s/opr/accounts/global/tools/cFEBuildMsgIds.h";
+open (INPUT, "<$configfile") or die "Missing configuration file $configfile\n";
+
+@templates = `ls template_*.rdl`;
+chomp(@templates);
+
+while (<INPUT>) {
+    chomp;
+    $line = $_;
+    # If we see " - Processor" we know we've found the next processor
+    if (index($line, "/*") < 0) {
+        if ($line =~ / - Processor/) {
+            @processors = (@processors, substr($line, 0, index($line, " ")));
+        }
+    }
+}
+
+foreach $template(@templates) {
+    foreach $processor(@processors) {
+        system("create_rdl $template $spacecraft $processor");
+    }
+}

@@ -1,0 +1,372 @@
+!==============================================================================
+!                Originator:      W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change:  July 17, 2009
+!
+!                  $sc $cpu CFDP Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Health and Safety App Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  17JUL09     WFM      : Initial
+!  06OCT09     WFM      : Added destination filename to playback cmd
+!  07JUL10     WFM      : Added Kickstart and QuickStatus commands
+!  04AUG10     WFM      : Replaced command arguments with defined unions
+!  01NOV10     WFM      : Added PeerEntityID argument to the PlaybackFile,
+!			PlaybackDir, and SetPollParam commands. Also, reversed
+!			the order of the Channel and Class args to PlaybackDir
+!			so they matched the PlaybackFile command
+!  18MAY11     WFM      : Updated for CFDP 2.2.0.0. Added FCTN 25 and added a
+!			spare to the Write Active Trans command
+!  20MAY11     WFM      : Added FCTN 26
+!
+!=============================================================================
+!
+#include "osconfig.h"
+#include "cfe_mission_cfg.h"
+#include "cf_platform_cfg.h"
+#include "cf_defs.h"
+
+! Defines to create command parameter unions
+!
+#define $sc_$cpu_Class 	UNION CF_Class \
+        UB Class_1 STATIC,DEFAULT=1,DESC="Class 1 - No Feedback" \
+        UB Class_2 STATIC,DEFAULT=2,DESC="Class 2 - With Feedback" \
+      END
+#define $sc_$cpu_Chan 	UNION CF_Channel \
+        UB Chan_0 STATIC,DEFAULT=0,DESC="Channel 0" \
+        UB Chan_1 STATIC,DEFAULT=1,DESC="Channel 1" \
+      END
+#define $sc_$cpu_Preserve UNION CF_Preserve \
+        UB Delete_File STATIC,DEFAULT=0,DESC="Delete file(s) upon successful transaction" \
+        UB Keep_File   STATIC,DEFAULT=1,DESC="Keep file(s) upon successful transaction" \
+      END
+#define $sc_$cpu_PollDirNoAll UNION CF_PollDirNoAll \
+        UB PollDir_0 STATIC,DEFAULT=0,DESC="Directory 0" \
+        UB PollDir_1 STATIC,DEFAULT=1,DESC="Directory 1" \
+        UB PollDir_2 STATIC,DEFAULT=2,DESC="Directory 2" \
+        UB PollDir_3 STATIC,DEFAULT=3,DESC="Directory 3" \
+        UB PollDir_4 STATIC,DEFAULT=4,DESC="Directory 4" \
+        UB PollDir_5 STATIC,DEFAULT=5,DESC="Directory 5" \
+        UB PollDir_6 STATIC,DEFAULT=6,DESC="Directory 6" \
+        UB PollDir_7 STATIC,DEFAULT=7,DESC="Directory 7" \
+      END
+#define $sc_$cpu_PollDirAll UNION CF_PollDirAll \
+        UB PollDir_0   STATIC,DEFAULT=0,DESC="Directory 0" \
+        UB PollDir_1   STATIC,DEFAULT=1,DESC="Directory 1" \
+        UB PollDir_2   STATIC,DEFAULT=2,DESC="Directory 2" \
+        UB PollDir_3   STATIC,DEFAULT=3,DESC="Directory 3" \
+        UB PollDir_4   STATIC,DEFAULT=4,DESC="Directory 4" \
+        UB PollDir_5   STATIC,DEFAULT=5,DESC="Directory 5" \
+        UB PollDir_6   STATIC,DEFAULT=6,DESC="Directory 6" \
+        UB PollDir_7   STATIC,DEFAULT=7,DESC="Directory 7" \
+        UB PollDir_All STATIC,DEFAULT=255,DESC="All Directories in use" \
+      END
+
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu CFDP App Commands"
+!
+  CMD  $sc_$cpu_CF_NOOP        	   FCTN=0, DESC="CF no-op command"
+!
+  CMDS $sc_$cpu_CF_RESETCTRS      FCTN=1, DESC="CF reset counters command"
+    UNION CF_ResetValue		DESC="Counter Values to reset"
+        UB All      STATIC,DEFAULT=0,DESC="All Counters"
+        UB Command  STATIC,DEFAULT=1,DESC="Command Counters"
+        UB Fault    STATIC,DEFAULT=2,DESC="Fault Counters"
+        UB Incoming STATIC,DEFAULT=3,DESC="Incoming transaction Counters"
+        UB Outgoing STATIC,DEFAULT=4,DESC="Outgoing transaction Counters"
+      END
+    UB spare[3]			DESC="Spare",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS $sc_$cpu_CF_PlaybackFile   FCTN=2, DESC="CF Playback File command"
+    $sc_$cpu_Class
+    $sc_$cpu_Chan
+    UB   priority			DESC="Priority"
+    $sc_$cpu_Preserve
+    char PeerEntityID[CF_MAX_CFG_VALUE_CHARS] DESC="Entity ID for file to be downloaded"
+    char SrcFilename[OS_MAX_PATH_LEN]	DESC="Path/Name of file to be downloaded"
+    char DestFilename[OS_MAX_PATH_LEN]	DESC="Path/Name of destination"
+  END
+!
+  CMDS $sc_$cpu_CF_PlaybackDir FCTN=3, DESC="CF Playback Directory command"
+    $sc_$cpu_Class
+    $sc_$cpu_Chan
+    UB   priority			DESC="Priority"
+    $sc_$cpu_Preserve
+    char PeerEntityID[CF_MAX_CFG_VALUE_CHARS] DESC="Entity ID for files to be downloaded"
+    char SrcPath[OS_MAX_PATH_LEN]	DESC="Path specification of the directory whose files are to be downloaded"    
+    char DstPath[OS_MAX_PATH_LEN]	DESC="Path specification of the destination directory on the ground"
+  END
+!
+  CMD  $sc_$cpu_CF_Freeze            FCTN=4, DESC="CF Freeze command"
+!
+  CMD  $sc_$cpu_CF_Thaw	             FCTN=5, DESC="CF Thaw command"
+!
+  CMDS  $sc_$cpu_CF_Suspend          FCTN=6, DESC="CF Suspend command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_Resume           FCTN=7, DESC="CF Resume command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_Cancel           FCTN=8, DESC="CF Cancel command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_Abandon          FCTN=9, DESC="CF Abandon command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetAckLimit      FCTN=10, DESC="CF Set Ack Limit command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Ack Limit string directive",INVISIBLE,STATIC,DEFAULT="ACK_LIMIT"
+    CHAR NumTries[CF_MAX_CFG_VALUE_CHARS]	DESC="number of tries"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetAckTimeout    FCTN=10, DESC="CF Set Ack Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Ack timout string directive",INVISIBLE,STATIC,DEFAULT="ACK_TIMEOUT"
+    CHAR NumSeconds[CF_MAX_CFG_VALUE_CHARS]	DESC="number of seconds"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetInactivTimeout FCTN=10, DESC="CF Set Inactivity Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Inactivity timout string directive",INVISIBLE,STATIC,DEFAULT="INACTIVITY_TIMEOUT"
+    CHAR NumSeconds[CF_MAX_CFG_VALUE_CHARS]	DESC="number of seconds"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetNakLimit      FCTN=10, DESC="CF Set Nak Limit command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Nak Limit string directive",INVISIBLE,STATIC,DEFAULT="NAK_LIMIT"
+    CHAR NumTries[CF_MAX_CFG_VALUE_CHARS]	DESC="number of tries"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetNakTimeout    FCTN=10, DESC="CF Set Nak Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Nak timout string directive",INVISIBLE,STATIC,DEFAULT="NAK_TIMEOUT"
+    CHAR NumSeconds[CF_MAX_CFG_VALUE_CHARS]	DESC="number of seconds"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetSaveIncompFiles FCTN=10, DESC="CF Save Incomplete Files command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Save incomplete files string directive",INVISIBLE,STATIC,DEFAULT="SAVE_INCOMPLETE_FILES"
+    CHAR YesorNo[CF_MAX_CFG_VALUE_CHARS]	DESC="Yes or No"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetOutgoingSize FCTN=10, DESC="CF Set Outgoing File Chunk Size command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Outgoing File Chunk Size string directive",INVISIBLE,STATIC,DEFAULT="OUTGOING_FILE_CHUNK_SIZE"
+    CHAR NumBytes[CF_MAX_CFG_VALUE_CHARS]	DESC="Byte size of the PDU"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetInvalidParam  FCTN=10, DESC="CF Save Incomplete Files command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Invalid string directive",INVISIBLE,STATIC,DEFAULT="INVALID_NAME"
+    CHAR Value[CF_MAX_CFG_VALUE_CHARS]	DESC="Dummy Value",INVISIBLE,STATIC,DEFAULT="30"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetAckLimit      FCTN=11, DESC="CF Get Ack Limit command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Ack Limit string directive",INVISIBLE,STATIC,DEFAULT="ACK_LIMIT"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetAckTimeout    FCTN=11, DESC="CF Get Ack Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Ack timout string directive",INVISIBLE,STATIC,DEFAULT="ACK_TIMEOUT"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetInactivTimeout FCTN=11, DESC="CF Get Inactivity Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Inactivity timout string directive",INVISIBLE,STATIC,DEFAULT="INACTIVITY_TIMEOUT"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetNakLimit      FCTN=11, DESC="CF Get Nak Limit command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Nak Limit string directive",INVISIBLE,STATIC,DEFAULT="NAK_LIMIT"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetNakTimeout    FCTN=11, DESC="CF Get Nak Timeout command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Nak timout string directive",INVISIBLE,STATIC,DEFAULT="NAK_TIMEOUT"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetSaveIncompFiles FCTN=11, DESC="CF Save Incomplete Files command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Save incomplete files string directive",INVISIBLE,STATIC,DEFAULT="SAVE_INCOMPLETE_FILES"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetOutgoingSize FCTN=11, DESC="CF Get Outgoing File Chunk Sizecommand"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Save incomplete files string directive",INVISIBLE,STATIC,DEFAULT="OUTGOING_FILE_CHUNK_SIZE"
+  END
+!
+  CMDS  $sc_$cpu_CF_GetInvalidParam FCTN=11, DESC="CF Save Incomplete Files command"
+    CHAR Param[CF_MAX_CFG_PARAM_CHARS]	DESC="Invalid string directive",INVISIBLE,STATIC,DEFAULT="INVALID_NAME"
+  END
+!
+  CMDS  $sc_$cpu_CF_SendTransDiag    FCTN=12, DESC="CF Send Transaction Diagnostics command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_SetPollParam     FCTN=13, DESC="CF Set Polling Directory Parameter command"
+    $sc_$cpu_Chan
+    $sc_$cpu_PollDirNoAll
+    $sc_$cpu_Class
+    UB   priority	DESC="Priority"
+    $sc_$cpu_Preserve
+    UB   spare[3]			DESC="Spare",INVISIBLE,STATIC,DEFAULT=0
+    char PeerEntityID[CF_MAX_CFG_VALUE_CHARS] DESC="Entity ID for the directory"
+    char  SrcPath[OS_MAX_PATH_LEN]	DESC="Path to poll"
+    char  DstPath[OS_MAX_PATH_LEN]	DESC="Path to store files on ground"    
+  END
+!
+  CMD  $sc_$cpu_CF_SendCfg           FCTN=14, DESC="CF Send Configuration Parameters command"
+!
+  CMDS  $sc_$cpu_CF_WritePB0PendInfo FCTN=15, DESC="CF Write Playback Channel 0 Pending Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=0
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=0
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WritePB0ActvInfo FCTN=15, DESC="CF Write Playback Channel 0 Active Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=0
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=1
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WritePB0HistInfo FCTN=15, DESC="CF Write Playback Channel 0 History Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=0
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=2
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WritePB1PendInfo FCTN=15, DESC="CF Write Playback Channel 1 Pending Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=1
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=0
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WritePB1ActvInfo FCTN=15, DESC="CF Write Playback Channel 1 Active Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=1
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=1
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WritePB1HistInfo FCTN=15, DESC="CF Write Playback Channel 1 History Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=2
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=1
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=2
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WriteUpActvInfo FCTN=15, DESC="CF Write Uplink Active Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=1
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=%XFF
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=1
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WriteUpHistInfo FCTN=15, DESC="CF Write Uplink History Queue Info command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)",INVISIBLE,STATIC,DEFAULT=1
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=%XFF
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=2
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_WriteQue2File FCTN=15, DESC="CF Write Queue Info to File command"  
+    UB qtype	DESC="Queue Type (up=1,down=2)"
+    UB chan	DESC="Channel number"
+    UB que	DESC="Queue number"
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the Queue Info to"
+  END
+!
+  CMDS  $sc_$cpu_CF_EnaDeque       FCTN=16, DESC="CF Enable Dequeue command"
+    $sc_$cpu_Chan
+    UB spare[3]		DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_DisDeque       FCTN=17, DESC="CF Disable Dequeue command"
+    $sc_$cpu_Chan
+    UB spare[3]		DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_EnaPoll 	   FCTN=18, DESC="CF Enable Directory Polling command"
+    $sc_$cpu_Chan
+    $sc_$cpu_PollDirAll
+    UB spare[2]		DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_DisPoll        FCTN=19, DESC="CF Disable Directory Polling command"
+    $sc_$cpu_Chan
+    $sc_$cpu_PollDirAll
+    UB spare[2]		DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+!
+  CMDS  $sc_$cpu_CF_DequeNode       FCTN=20, DESC="CF Deque Node command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_PurgePendingQue FCTN=21, DESC="CF Purge Pending Queue command"
+    UB qtype	DESC="Queue Type",INVISIBLE,STATIC,DEFAULT=2
+    $sc_$cpu_Chan
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=0
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_PurgeInHistoryQue FCTN=21, DESC="CF Purge Incoming History Queue command"
+    UB qtype	DESC="Queue Type",INVISIBLE,STATIC,DEFAULT=1
+    UB chan	DESC="Channel number",INVISIBLE,STATIC,DEFAULT=%XFF
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=2
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_PurgeOutHistoryQue FCTN=21, DESC="CF Purge Outgoing History Queue command"
+    UB qtype	DESC="Queue Type",INVISIBLE,STATIC,DEFAULT=2
+    $sc_$cpu_Chan
+    UB que	DESC="Queue number",INVISIBLE,STATIC,DEFAULT=2
+    UB spare	DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_WriteActiveTrans FCTN=22, DESC="CF Write Active Transaction Information command"
+    UNION qtype	DESC="Queue Type to write"
+      UB All      STATIC,DEFAULT=0,DESC="Incoming and Outgoing Active Queues"
+      UB Incoming STATIC,DEFAULT=1,DESC="Incoming Active Queue"
+      UB Outgoing STATIC,DEFAULT=2,DESC="Outgoing Active Queue"
+    END
+    UB spare	 DESC="",INVISIBLE,STATIC,DEFAULT=0
+    CHAR FileName[OS_MAX_PATH_LEN] DESC="Name of the file to write the information to"
+  END
+!
+  CMDS  $sc_$cpu_CF_KickStart FCTN=23, DESC="CF Kick Start command"
+    $sc_$cpu_Chan
+    UB spare[3]	DESC="",INVISIBLE,STATIC,DEFAULT=0
+  END
+!
+  CMDS  $sc_$cpu_CF_QuickStatus FCTN=24, DESC="CF Quick Status command"
+    char TransIdorFilename[OS_MAX_PATH_LEN] DESC="String - Transaction Id (i.e.: 0.24_5) or Filename (starts with /)"
+  END
+!
+  CMDS  $sc_$cpu_CF_ChanSemAction FCTN=25, DESC="CF Give or Take Semaphore command"
+    $sc_$cpu_Chan
+    UNION semAction	DESC="The action to take on the semaphore"
+      UB Give STATIC,DEFAULT=0,DESC="Give Semaphore back"
+      UB Take STATIC,DEFAULT=1,DESC="Take Semaphore"
+    END
+  END
+!
+  CMDS  $sc_$cpu_CF_AutoSuspend FCTN=26, DESC="CF Auto Suspend command"
+    UNION suspendAction DESC="The action to take"
+      ULI Disable STATIC,DEFAULT=0,DESC="Disable"
+      ULI Enable STATIC,DEFAULT=1,DESC="Enable"
+    END
+  END
+!
+END       !END PACKET
+!
+!=============================================================================

@@ -1,0 +1,90 @@
+!==============================================================================
+!
+!                Originator: W. Moleski
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: July 20, 2009
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu DS Destination File table
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!==============================================================================
+!
+#include "osconfig.h"
+#include "cf_platform_cfg.h"
+#include "cf_defs.h"
+
+!
+TYPES
+   RECORD $sc_$cpu_CF_INCHAN_TYPE  DESC="CF Input Channel Type"
+     UI   IncomingPduMID	DESC="Incoming PDU message ID"
+     UB   Class2ResponseChan	DESC="Response channel for Class2 uplinks"
+     UB   Spare			DESC="Response channel for Class2 uplinks"
+   END
+
+   RECORD $sc_$cpu_CF_POLLING_DIR_TYPE  DESC="CF Polling Directory Type"
+     UB  EntryInUse	DESC="Flag to indicate whether the entry is being used",			DISCRETE,DRANGE=(0,1),DLABEL=("No","Yes") 
+     UB  EnableState	DESC="Enable State of this entry",
+			DISCRETE,DRANGE=(0,1),DLABEL=("Disabled","Enabled") 
+     UB  CF_Class	DESC="CFDP Protocol Class" 
+     UB  Priority	DESC="Priority for this entry"
+     UB  Preserve	DESC="File Preservation Flag",DISCRETE,DRANGE=(0,1),
+			DLABEL=("Delete","Keep")
+     UB  Spare[3]	DESC="" 
+     CHAR PeerEntityID[CF_MAX_CFG_VALUE_CHARS]	DESC="2 byte dotted decimal entity ID"
+     CHAR SrcPath[OS_MAX_PATH_LEN]	DESC="Polling Directory Path"
+     CHAR DstPath[OS_MAX_PATH_LEN]	DESC="Path on ground system where files will be stored"
+   END
+
+   RECORD $sc_$cpu_CF_OUTCHAN_TYPE  DESC="CF Output Channel Type"
+     UB  EntryInUse	DESC="Flag to indicate whether the entry is being used",
+			DISCRETE,DRANGE=(0,1),DLABEL=("No","Yes") 
+     UB  DeqEnable	DESC="Enable reading of the pending queue", 
+			DISCRETE,DRANGE=(0,1),DLABEL=("No","Yes") 
+     UI  DnlinkPDUMsgID	DESC="MsgId of the Downlink PDUs" 
+     ULI PendingQDepth	DESC="The pending queue depth" 
+     ULI HistoryQDepth	DESC="The History queue depth" 
+     CHAR ChanName[OS_MAX_API_NAME]	DESC="Playback channel Name" 
+     CHAR SemName[OS_MAX_API_NAME]	DESC="Handshake semaphore name" 
+     $sc_$cpu_CF_POLLING_DIR_TYPE PollDir[0 .. CF_MAX_POLLING_DIRS_PER_CHAN-1] DESC=""
+   END
+END_TYPES
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu CF Configuration Table", VARYING
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+   CHAR $sc_$cpu_CF_TBLID[OS_MAX_API_NAME]  DESC="Table Name (19 chars max)"
+   ULI  $sc_$cpu_CF_TBLVersion	DESC="Table Version"
+   ULI  $sc_$cpu_CF_TBLCyclesPerWakeup	DESC="Engine cycles per wakeup"
+   ULI  $sc_$cpu_CF_TBLWakeupsPerQ	DESC="Wakeups per queue check"
+   ULI  $sc_$cpu_CF_TBLWakeupsPollDir	DESC="Wakeups per polling dir check"
+   ULI  $sc_$cpu_CF_TBLUpHistQDepth	DESC="Uplink History Queue Depth"
+   ULI  $sc_$cpu_CF_TBLReserved1	DESC="Reserved for future"
+   ULI  $sc_$cpu_CF_TBLReserved2	DESC="Reserved for future"
+   CHAR $sc_$cpu_CF_TBLAckTimeout[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLAckLimit[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLNakTimeout[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLNakLimit[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLInactTimeout[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLOutChunkSize[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLSaveIncomplete[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+   CHAR $sc_$cpu_CF_TBLFlightEntityID[CF_MAX_CFG_VALUE_CHARS]  DESC=""
+
+   $sc_$cpu_CF_INCHAN_TYPE $sc_$cpu_CF_TBLUPCHAN[0 .. CF_NUM_INPUT_CHANNELS-1] DESC="CF Input/Uplink Channel entries"
+   $sc_$cpu_CF_OUTCHAN_TYPE $sc_$cpu_CF_TBLPBCHAN[0 .. CF_MAX_PLAYBACK_CHANNELS-1] DESC="CF Playback Channel entries"
+
+!
+END

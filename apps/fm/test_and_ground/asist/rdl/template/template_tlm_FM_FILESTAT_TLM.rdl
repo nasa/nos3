@@ -1,0 +1,53 @@
+!==============================================================================
+!
+!                Originator: D. Stewart
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: April 17, 2008  
+!
+!                    Telemetry Packet # nnnn (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu FM File Status Packet
+!       Packet Length:  ?? Bytes (Including 12 Bytes Of Header)
+!	Collect             Frequency:         SEC
+!
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!
+!  2008/04/17  DDS	: Initial
+!  2010/01/14  WFM	: Updated the FileStatus discrete to match the new
+!			  values defined in FM 2.1.0.0
+!
+!==============================================================================
+!
+#include "osconfig.h"
+
+
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu FM File Info Packet"
+#include "ccsds_header.rdl"
+!
+  UB  $sc_$cpu_FM_FileStatus     DESC="$sc $cpu FM Current status of the requested file",
+                                 DISCRETE, DRANGE=(1,2,3,4),
+				 DLABEL=("Not Used","Open","Closed","Directory")
+!
+  UB  $sc_$cpu_FM_ComputeCRC     DESC="$sc $cpu FM Flag indicating whether a CRC was computed or not",
+                                 DISCRETE, DRANGE=(0,1),DLABEL=("No","Yes")
+!
+  UB  $sc_$cpu_FM_InfoPad[2]     DESC="Info Packet Padding"
+!
+  ULI  $sc_$cpu_FM_CRC           DESC="$sc $cpu FM CRC value if computed"
+!
+  ULI  $sc_$cpu_FM_InfoFileSize  DESC="$sc $cpu FM File Size of the requested file"
+!
+  ULI  $sc_$cpu_FM_ModTime	 DESC="$sc $cpu FM Last Modification Time of File"
+!
+  char $sc_$cpu_FM_InfoFileName[OS_MAX_PATH_LEN]  DESC="$sc $cpu FM Name of File"
+!
+!  END                !END APPEND RECORD FUNCTION
+!
+END

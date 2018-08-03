@@ -1,0 +1,30 @@
+# 
+# Command pages definition
+#  This file defines the list of command pages available to the "CommandSystem.py" 
+#  python program.
+# 
+#  The following comma delimted fields must be present:
+#  Description, 
+#  Command definition file, 
+#  Command Packet ID, 
+#  Target Endian (LE/BE),
+#  Command Python Class, 
+#  Target system address, 
+#  Target system port       
+#  
+#  The default Command Python Class is UdpCommands.py, which uses the 
+#   cmdUtil program to format and send a CCSDS command packet over the
+#   UDP port specified. 
+#  A different class could be created for other interfaces such as Xbee radio,
+#    TCP, etc. 
+#   
+#  Note(1): Lines starting with a # will be skipped
+#  Note(2): Please do not leave a blank line at the end of the file!
+#
+Executive Services (CPU1),  cfe__es__msg_8h,    0x1806, LE, UdpCommands.py,  127.0.0.1,   1234
+Software Bus (CPU1),        cfe__sb__msg_8h,    0x1803, LE, UdpCommands.py,  127.0.0.1,   1234
+Table Services (CPU1),      cfe__tbl__msg_8h,   0x1804, LE, UdpCommands.py,  127.0.0.1,   1234
+Time Services (CPU1),       cfe__time__msg_8h,  0x1805, LE, UdpCommands.py,  127.0.0.1,   1234
+Event Services (CPU1),      cfe__evs__msg_8h,   0x1801, LE, UdpCommands.py,  127.0.0.1,   1234
+Command Ingest LAB,         ci_lab_msg,         0x1884, LE, UdpCommands.py,  127.0.0.1,   1234
+Telemetry Output LAB,       to_lab_msg,         0x1880, LE, UdpCommands.py,  127.0.0.1,   1234

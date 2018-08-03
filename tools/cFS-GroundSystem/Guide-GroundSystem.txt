@@ -1,0 +1,168 @@
+cFS Ground System Version 2.0.90
+
+cFS Ground System Info:
+
+The GroundSystem directory contains the new Ground System project for the cFS, that incorporates a main window to launch commands and telemetry systems, and other utilities like FDL/FUL and FT managers to send and receive files. The main window runs alongside the Routing Service (RoutingService.py). The Routing Service handles all incoming data and publishes(PUB-SUB) the data to specific zeroMQ channels, so that the different ground system utilities can receive(subscribe) only the desired data.
+
+This ground system supports commanding and receiving telemetry from multiple spacecrafts using UDP.
+
+The Ground System contains a main window that lets you launch the different utilities. To start receiving data from the cFS, you need to enable telemetry first. To enable telemetry, click the "Start Command System" button from the main window, then from the Command System Main Page click the "Enable Tlm" button (you will need to enter the target/destination IP address as an input to this command).  
+
+Note: The Main Window needs to be opened at all times so that the telemetry messages can be forwarded to the Telemetry System.
+
+The Ground System will automatically detect the spacecraft when it starts sending the telemetry, and it will be added to the ip addresses list. You can select the spacecraft from the list, and start Telemetry System to receive its data. If ‘All’ spacecrafts are selected, you can start Telemetry System to display the packet count from multiple spacecrafts (if it detected more than one).
+
+Future enhancements:
+  1. Detect different spacecrafts based on telemetry header(spacecraft id) data instead of using the spacecraft ip address.
+  2. Add instructions for Windows.
+
+
+Before launching the Ground System make sure that:
+  —> PyQt4 is installed.
+  —> PyZMQ is installed. 
+  —> cmdUtil is compiled.
+
+
+Installing and running cFS Ground System on Mac:
+Install using Homebrew on Mac (http://brew.sh/)
+    $ brew install pyqt
+    $ brew install zeromq
+    $ ( cd Subsystems/cmdUtil/ && make )
+    $ python GroundSystem.py
+
+Installing and running cFS Ground System on Ubuntu:
+    $ sudo apt-get install python-qt4 python-qt4-dev
+    $ sudo apt-get install python-zmq
+    $ ( cd Subsystems/cmdUtil/ && make )
+    $ python GroundSystem.py
+
+
+Installing and running cFS Ground System on CentOS 6:
+    $ su
+    $ <type password>
+    $ yum -y update
+    
+    #### Install pip and python-development ####
+    # If you are on a 64-bit CentOS / RHEL based system: 
+    $ wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    $ rpm -ivh epel-release-6-8.noarch.rpm
+    
+    # If you are on a 32-bit CentOS / RHEL based system:
+    $ wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+    $ rpm -ivh epel-release-6-8.noarch.rpm
+    
+    $ yum install -y python-pip
+    $ yum install -y python-devel
+    
+    #### Install zeroMQ and pyZMQ messaging system ####
+    $ yum install -y uuid-devel
+    $ yum install -y pkgconfig
+    $ yum install -y libtool
+    $ yum install -y gcc-c++
+    $ wget http://download.zeromq.org/zeromq-4.0.5.tar.gz
+    $ tar xzvf zeromq-4.0.5.tar.gz
+    $ cd zeromq-4.0.5
+    $ ./configure
+    $ make
+    $ make install
+    $ echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
+    $ ldconfig 
+    $ pip install pyzmq
+    
+    #### Install pyQT4 ####
+    $ yum install -y PyQt4
+    $ yum install -y qt qt-demos qt-designer qt4 qt4-designer
+    
+    
+    ### Running Ground System ###
+    $ python GroundSystem.py
+
+
+##############################################################################
+
+ADDING NEW FLIGHT SOFTWARE APPLICATION TO GROUND SYSTEM COMMAND GUI
+
+This section was made to help developers who are adding core Flight Software (cFS) Applications to the Python-based Ground System that comes with this cFS distribution. 
+
+The CHeaderParser.py program that should be found in: GroundSystem/Subsystems/cmdGui is an interactive, command line based program to help walk developers through the process of adding custom cFS applications to the Ground System. Along with CHeaderParser.py is a configuration file that CHeaderParser uses to find the proper header files for your "new" cFS application. This file is named 'CHeaderParser-hdr-paths.txt', and should be placed in the same directory as CHeaderParser.py.
+
+
+Expected file structure:
+cFE-6.4.x-OSS-release/cfe/tools/cFS-GroundSystem/Subsystems/cmdGui/CHeaderParser.py
+cFE-6.4.x-OSS-release/cfe/tools/cFS-GroundSystem/Subsystems/cmdGui/CHeaderParser-hdr-paths.txt
+cFE-6.4.x-OSS-release/cfe/tools/cFS-GroundSystem/Subsystems/cmdGui/CommandFiles/
+cFE-6.4.x-OSS-release/cfe/tools/cFS-GroundSystem/Subsystems/cmdGui/ParameterFiles/
+cFE-6.4.x-OSS-release/cfe/tools/cFS-GroundSystem/Subsystems/cmdGui/command-pages.txt
+
+Steps to adding application commands to the Ground System:
+
+1) Edit 'CHeaderParser-hdr-paths.txt'
+    1.1) Locate any header files that contain command code definitions or command structure definitions. 
+            These files typically end in '*app_msg.h' or '*app_msgdefs.h' but could be named anything.
+    1.2) Add each one of the paths to a new line in CHeaderParser-hdr-paths.txt 
+    1.3) Comment out any paths/lines that aren't needed with '#' (at the beginning of the line)
+
+2) Run CHeaderParser
+    2.1) Call CHeaderParser using python
+            ~$ python CHeaderParser.py
+    2.2) The program will prompt you to enter a filename for the application.
+            This will create a pickle file for your application named CommandFiles/<user_defined_name>. Notice that this file will be stored in the CommandFiles directory. This same filename will be used in command-pages.txt later.
+    2.3) Type 'yes' if any commands in your application have parameters
+            The program will then look through the provided header files for definitions.pick which-ever definitions describe related command codes (one at a time,the program will prompt you for the next command code after all parametershave been added for the current command.
+    2.4) Select the appropriate command structure for the selected command.
+            The program will show all structures that it could find in the provided header files. Enter the index of the command structure (the corresponding index should be above the command structure)
+    2.5) Select any parameters from the structure that apply
+            Once you have selected all applicable lines from the command structure, enter -1 to finish. This will create a pickle file for the command/parameters named ParameterFiles/<command_name>. Notice that this file will be stored in the ParameterFiles directory.
+
+3) Update command-pages.txt (CSV)
+    3.1) Column 1 - Title of your application (whatever you want it called)
+    3.2) Column 2 - filename of your application (chosen in Step 2.2) under CommandFiles/ directory
+    3.3) Column 3 - Message ID for Application Commands (typically defined in mission_msgids.h)
+    3.4) Column 4 - Endianess (default little endian: LE)
+    3.5) Column 5 - PyGUI Page (default UdpCommands.py)
+    3.6) Column 6 - Command Send Address (default 127.0.0.1)
+    3.7) Column 7 - Command Send Port (default 1234)
+
+    Notes: 
+        - USE ONLY SPACES, NO TABS (Remember, it's Python.)
+        - Don't leave any empty lines in command-pages.txt, this could cause errors when running GroundSystem.py and
+            CommandSystem.py
+
+
+After completing these steps, restart the Ground System and the changes should have taken affect.
+
+
+
+##############################################################################
+
+COMMON ISSUES/TROUBLESHOOTING
+
+
+-----------------------------------------------------------------------------
+Issue: Cannot Send Command, receiving the following error:
+
+>    Calling cmdUtil from Parameter.py
+>    Traceback (most recent call last):
+>      File "Parameter.py", line 100, in ProcessSendButton
+>        subprocess.Popen(cmd_args, stdout=subprocess.PIPE)
+>      File "/usr/lib/python2.6/subprocess.py", line 642, in __init__
+>        errread, errwrite)
+>      File "/usr/lib/python2.6/subprocess.py", line 1234, in _execute_child
+>        raise child_exception
+>    OSError: [Errno 8] Exec format error
+
+Fix: This problem is most likely caused by calling cmdUtil without compiling it.  This issue has also been found to occur when the cmdUtil executable has been compressed/decompressed
+To fix this problem, use the Makefile inside of the cmdUtil directory to compile or recompile (in the case after decompressing).
+
+$ cd Subsystems/cmdUtil
+$ make
+$ cd ../..
+$ python GroundSystem.py
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+

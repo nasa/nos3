@@ -1,0 +1,1923 @@
+UTF Info: Task <LC> added to Task Tbl.
+SysLog:1980-001-00:00:00.00000 ES Startup: LC loaded and created
+UTF Info: App <LC> added to App Tbl.
+
+************************************
+* Application Initialization Tests *
+************************************
+
+Test CFE_EVS_Register call error 
+---------------------------------
+UTF Info: Return value for CFE EVS Api #0 set to c2000003
+SysLog:1980-001-00:00:00.00000 LC App: Error Registering For Event Services, RC = 0xC2000003
+CRITICAL EVENT ID=1 Task terminating, err = 0xC2000003
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xC2000003
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+UTF Info: Return code for CFE EVS Api #0 returned to default
+
+Test CFE_SB_CreatePipe call error 
+---------------------------------
+UTF Info: Return value for CFE SB Api #0 set to ca000004
+ERROR EVENT ID=5 Error Creating LC Pipe, RC=0xCA000004
+CRITICAL EVENT ID=1 Task terminating, err = 0xCA000004
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCA000004
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+UTF Info: Return code for CFE SB Api #0 returned to default
+
+Test CFE_SB_Subscribe call 1 error 
+-----------------------------------
+ERROR EVENT ID=6 Error Subscribing to HK Request, MID=0x18A5, RC=0xCA000009
+CRITICAL EVENT ID=1 Task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_SB_Subscribe call 2 error 
+-----------------------------------
+ERROR EVENT ID=7 Error Subscribing to GND CMD, MID=0x18A4, RC=0xCA000009
+CRITICAL EVENT ID=1 Task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_SB_Subscribe call 3 error 
+-----------------------------------
+ERROR EVENT ID=8 Error Subscribing to Sample CMD, MID=0x18A6, RC=0xCA000009
+CRITICAL EVENT ID=1 Task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCA000009
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+
+*********************************************
+* Application Initialization With CDS Tests *
+*********************************************
+
+UTF Info: Return value for CFE ES Api #17 set to 0
+Test CFE_TBL_Register call 1 error 
+-----------------------------------
+ERROR EVENT ID=11 Error registering WDT, RC=0xCC000003
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_TBL_Register call 2 error 
+-----------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+ERROR EVENT ID=14 Error registering ADT, RC=0xCC000003
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_TBL_Register call 3 error 
+-----------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+ERROR EVENT ID=15 Error registering WRT, RC=0xCC000003
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_TBL_Register call 4 error 
+-----------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+ERROR EVENT ID=16 Error registering ART, RC=0xCC000003
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000003
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE TBL Api #0 set to 0
+UTF Info: Return value for CFE ES Api #16 set to c400000f
+Test CFE_ES_RegisterCDS call 1 error 
+-------------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+ERROR EVENT ID=17 Error registering WRT CDS Area, RC=0xC400000F
+CRITICAL EVENT ID=1 Task terminating, err = 0xC400000F
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xC400000F
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE ES Api #16 set to 0
+Test CFE_TBL_GetAddress call 1 error 
+-------------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+ERROR EVENT ID=45 Error getting WRT address, RC=0xCC000001
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_TBL_GetAddress call 2 error 
+-------------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+ERROR EVENT ID=46 Error getting ART address, RC=0xCC000001
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE TBL Api #6 set to 0
+Test CFE_TBL_Load call 1 error 
+-------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+INFO EVENT ID=27 WDT and ADT CDS restore NOT complete, loading defaults
+ERROR EVENT ID=33 Error (RC=0xCC000001) Loading WDT with '/ram/lc_def_wdt.tbl'
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_TBL_Load call 2 error 
+-------------------------------
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+INFO EVENT ID=27 WDT and ADT CDS restore NOT complete, loading defaults
+ERROR EVENT ID=34 Error (RC=0xCC000001) Loading ADT with '/ram/lc_def_adt.tbl'
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE TBL Api #3 set to 0
+UTF Info: Return value for CFE ES Api #18 set to c4000012
+UTF Info: Return value for CFE TBL Api #10 set to 0
+UTF Info: Return value for CFE TBL Api #11 set to cc000001
+Test CFE_ES_RestoreFromCDS call 1 error
+AND  CFE_TBL_GetStatus call 1 error
+---------------------------------------
+DEBUG EVENT ID=9 WDT recovered from CDS
+DEBUG EVENT ID=12 ADT recovered from CDS
+DEBUG EVENT ID=21 WRT data NOT recovered from CDS
+INFO EVENT ID=28 Stats CDS restore NOT complete, resetting stats and counters
+ERROR EVENT ID=82 Error getting WRT status, RC=0xCC000001
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE ES Api #18 set to 0
+Test CFE_ES_RestoreFromCDS no error
+AND  CFE_TBL_GetStatus call 1 error
+-----------------------------------
+DEBUG EVENT ID=9 WDT recovered from CDS
+DEBUG EVENT ID=12 ADT recovered from CDS
+DEBUG EVENT ID=20 WRT data recovered from CDS
+DEBUG EVENT ID=22 ART data recovered from CDS
+DEBUG EVENT ID=24 Application data recovered from CDS
+INFO EVENT ID=29 CDS data not saved on last exit, resetting stats and counters
+ERROR EVENT ID=82 Error getting WRT status, RC=0xCC000001
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+Test CFE_ES_RestoreFromCDS no error
+AND  LC_AppData.CDSSavedOnExit = LC_CDS_SAVED
+AND  CFE_TBL_GetStatus call 1 error
+---------------------------------------------
+DEBUG EVENT ID=9 WDT recovered from CDS
+DEBUG EVENT ID=12 ADT recovered from CDS
+DEBUG EVENT ID=20 WRT data recovered from CDS
+DEBUG EVENT ID=22 ART data recovered from CDS
+DEBUG EVENT ID=24 Application data recovered from CDS
+INFO EVENT ID=30 CDS restore complete
+ERROR EVENT ID=82 Error getting WRT status, RC=0xCC000001
+CRITICAL EVENT ID=1 Task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCC000001
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+UTF Info: Return value for CFE TBL Api #11 set to 0
+
+***********************************
+* Application Exit With CDS Tests *
+***********************************
+
+UTF Info: Return value for CFE ES Api #17 set to c4000013
+Test CFE_ES_CopyToCDS call 1 error
+----------------------------------
+ERROR EVENT ID=36 WRT data NOT saved to CDS on exit, RC=0xC4000013
+
+UTF Info: Return value for CFE ES Api #17 set to 0
+
+****************************
+* LC_AcquirePointers Tests *
+****************************
+
+Test CFE_TBL_GetAddress call 1 error 
+-------------------------------------
+ERROR EVENT ID=45 Error getting WRT address, RC=0xCC000001
+
+Test CFE_TBL_GetAddress call 2 error 
+-------------------------------------
+ERROR EVENT ID=45 Error getting ART address, RC=0xCC000001
+
+Test CFE_TBL_GetAddress call 3 error 
+-------------------------------------
+ERROR EVENT ID=47 Error getting WDT address, RC=0xCC000001
+
+Test CFE_TBL_GetAddress call 4 error 
+-------------------------------------
+ERROR EVENT ID=48 Error getting ADT address, RC=0xCC000001
+
+UTF Info: Return value for CFE SB Api #3 set to ca00000b
+UTF Info: Return value for CFE SB Api #2 set to ca000009
+Test CFE_TBL_GetAddress call 3 table updated with subscription errors
+---------------------------------------------------------------------
+ERROR EVENT ID=32 Error unsubscribing watchpoint: MID=0x0010, RC=0xCA00000B
+ERROR EVENT ID=32 Error unsubscribing watchpoint: MID=0x0020, RC=0xCA00000B
+ERROR EVENT ID=32 Error unsubscribing watchpoint: MID=0x0030, RC=0xCA00000B
+ERROR EVENT ID=32 Error unsubscribing watchpoint: MID=0x0040, RC=0xCA00000B
+ERROR EVENT ID=32 Error unsubscribing watchpoint: MID=0x0050, RC=0xCA00000B
+ERROR EVENT ID=31 Error subscribing watchpoint: MID=0x0060, RC=0xCA000009
+ERROR EVENT ID=31 Error subscribing watchpoint: MID=0x0070, RC=0xCA000009
+ERROR EVENT ID=31 Error subscribing watchpoint: MID=0x0080, RC=0xCA000009
+ERROR EVENT ID=31 Error subscribing watchpoint: MID=0x0090, RC=0xCA000009
+ERROR EVENT ID=31 Error subscribing watchpoint: MID=0x00A0, RC=0xCA000009
+
+UTF Info: Return value for CFE SB Api #3 set to 0
+UTF Info: Return value for CFE SB Api #2 set to 0
+Test CFE_TBL_GetAddress call 3 table updated with no errors
+-----------------------------------------------------------
+
+UTF Info: Return code for CFE SB Api #3 returned to default
+UTF Info: Return code for CFE SB Api #2 returned to default
+Test CFE_TBL_GetAddress call 4 table updated 
+---------------------------------------------
+
+
+*************************
+* LC Command Pipe Tests *
+*************************
+
+UTF Info: Overwriting ES Task Table Record[0]
+SysLog:1980-001-00:00:00.00000 ES Startup: LC loaded and created
+UTF Info: App <LC> added to App Tbl.
+UTF Info: Return value for CFE TBL Api #6 set to 0
+DEBUG EVENT ID=10 WDT NOT recovered from CDS
+DEBUG EVENT ID=13 ADT NOT recovered from CDS
+INFO EVENT ID=27 WDT and ADT CDS restore NOT complete, loading defaults
+INFO EVENT ID=2 LC Initialized. Version 0.0.0.0
+
+ ***START LC SB COMMAND TESTING***
+ ---------------------------------
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 0
+   Command Error Count      = 0
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ NOOP Command Test
+ -----------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+INFO EVENT ID=3 No-op command: Version 0.0.0.0
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+INFO EVENT ID=3 No-op command: Version 0.0.0.0
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+INFO EVENT ID=3 No-op command: Version 0.0.0.0
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+INFO EVENT ID=3 No-op command: Version 0.0.0.0
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+INFO EVENT ID=3 No-op command: Version 0.0.0.0
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 5
+   Command Error Count      = 0
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ NOOP Command With Invalid Length Test
+ -------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:14 FC:0 PKT:18a4 c000 0007 0000 1234 ffff 7fff 
+ERROR EVENT ID=44 Invalid msg length: ID = 0x18A4, CC = 0, Len = 14, Expected = 8
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 5
+   Command Error Count      = 1
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Housekeeping Request With Invalid Length Test
+ ---------------------------------------------
+< CMD: APID:00a5 SEQ:0 LEN:14 FC:0 PKT:18a5 c000 0007 0000 1234 ffff 7fff 
+ERROR EVENT ID=42 Invalid HK request msg length: ID = 0x18A5, CC = 0, Len = 14, Expected = 8
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 5
+   Command Error Count      = 1
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset Counters Command Test
+ ---------------------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:1 PKT:18a4 c000 0001 0100 
+DEBUG EVENT ID=4 Reset counters command
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 0
+   Command Error Count      = 0
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset Counters Command With Invalid Length Test
+ -----------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:14 FC:1 PKT:18a4 c000 0007 0100 1234 ffff 7fff 
+ERROR EVENT ID=44 Invalid msg length: ID = 0x18A4, CC = 1, Len = 14, Expected = 8
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 0
+   Command Error Count      = 1
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set LC Application State Command With Invalid Length Test
+ ---------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:2 PKT:18a4 c000 0001 0200 
+ERROR EVENT ID=44 Invalid msg length: ID = 0x18A4, CC = 2, Len = 8, Expected = 12
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 0
+   Command Error Count      = 2
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set LC Application State To LC_STATE_PASSIVE Command Test
+ ---------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:2 PKT:18a4 c000 0005 0200 0002 0000 
+INFO EVENT ID=49 Set LC state command: new state = 2
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 1
+   Command Error Count      = 2
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_PASSIVE
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set LC Application State Command With Invalid State Test
+ --------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:2 PKT:18a4 c000 0005 0200 00ff 0000 
+ERROR EVENT ID=50 Set LC state error: invalid state = 255
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 1
+   Command Error Count      = 3
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_PASSIVE
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set LC Application State To LC_STATE_DISABLED Command Test
+ ---------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:2 PKT:18a4 c000 0005 0200 0003 0000 
+INFO EVENT ID=49 Set LC state command: new state = 3
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 2
+   Command Error Count      = 3
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set AP State Command With Invalid Length Test
+ ---------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:3 PKT:18a4 c000 0001 0300 
+ERROR EVENT ID=44 Invalid msg length: ID = 0x18A4, CC = 3, Len = 8, Expected = 12
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 2
+   Command Error Count      = 4
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Set AP Permanently Off Command With Invalid Length Test
+ -------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:4 PKT:18a4 c000 0001 0400 
+ERROR EVENT ID=44 Invalid msg length: ID = 0x18A4, CC = 4, Len = 8, Expected = 12
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 2
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Sample Actionpoints Request With Invalid Length Test
+ ----------------------------------------------------
+< CMD: APID:00a6 SEQ:0 LEN:8 FC:0 PKT:18a6 c000 0001 0000 
+ERROR EVENT ID=43 Invalid AP sample msg length: ID = 0x18A6, CC = 0, Len = 8, Expected = 12
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 2
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset AP Statistics for AP 0 Command Test
+ -----------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:5 PKT:18a4 c000 0005 0500 0000 0000 
+INFO EVENT ID=58 Reset AP stats command: AP = 0
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 3
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset WP Statistics for WP 0 Command Test
+ -----------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:6 PKT:18a4 c000 0005 0600 0000 0000 
+INFO EVENT ID=60 Reset WP stats command: WP = 0
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 4
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset AP Statistics for all APs Command Test
+ --------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:5 PKT:18a4 c000 0005 0500 ffff 0000 
+INFO EVENT ID=58 Reset AP stats command: AP = 65535
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 5
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset WP Statistics for all WPs Command Test
+ --------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:6 PKT:18a4 c000 0005 0600 ffff 0000 
+INFO EVENT ID=60 Reset WP stats command: WP = 65535
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 5
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset AP Statistics With Invalid AP Number Command Test
+ -------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:5 PKT:18a4 c000 0005 0500 0fff 0000 
+ERROR EVENT ID=59 Reset AP stats error: invalid AP number = 4095
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 6
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Reset WP Statistics With Invalid WP Number Command Test
+ -------------------------------------------------------
+< CMD: APID:00a4 SEQ:0 LEN:12 FC:6 PKT:18a4 c000 0005 0600 0fff 0000 
+ERROR EVENT ID=61 Reset WP stats error: invalid WP number = 4095
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 7
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Invalid Command ID Tests
+ ------------------------
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:10 PKT:18a4 c000 0001 0a00 
+ERROR EVENT ID=41 Invalid command code: ID = 0x18A4, CC = 10
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:11 PKT:18a4 c000 0001 0b00 
+ERROR EVENT ID=41 Invalid command code: ID = 0x18A4, CC = 11
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:12 PKT:18a4 c000 0001 0c00 
+ERROR EVENT ID=41 Invalid command code: ID = 0x18A4, CC = 12
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:13 PKT:18a4 c000 0001 0d00 
+ERROR EVENT ID=41 Invalid command code: ID = 0x18A4, CC = 13
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:14 PKT:18a4 c000 0001 0e00 
+ERROR EVENT ID=41 Invalid command code: ID = 0x18A4, CC = 14
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 12
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ Invalid Message ID (while LC is disabled) Test
+ ----------------------------------------------
+< TLM: APID:00ff SEQ:0 LEN:8 PKT:00ff c000 0001 0100 
+
+ Housekeeping Request
+ --------------------
+< CMD: APID:00a5 SEQ:0 LEN:8 FC:0 PKT:18a5 c000 0001 0000 
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 12
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 0
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+ SB error\app exit test
+ -----------------------------------------
+UTF Info: Return value for CFE SB Api #5 set to ca000006
+< CMD: APID:00a4 SEQ:0 LEN:8 FC:0 PKT:18a4 c000 0001 0000 
+CRITICAL EVENT ID=1 Task terminating, err = 0xCA000006
+SysLog:1980-001-00:00:00.00000 LC task terminating, err = 0xCA000006
+INFO EVENT ID=35 WRT data saved to CDS on exit
+INFO EVENT ID=37 ART data saved to CDS on exit
+INFO EVENT ID=39 App data saved to CDS on exit
+SysLog:1980-001-00:00:00.00000 Application LC called CFE_ES_ExitApp
+
+*********************************
+* LC Housekeeping Request Tests *
+*********************************
+
+
+LC HOUSEKEEPING DATA:
+   Command Count            = 6
+   Command Error Count      = 12
+   Actionpoint Sample Count = 0
+   Monitored Message Count  = 0
+   RTS Exec Count           = 0
+   Passive RTS Exec Count   = 0
+   Watchpoints In Use       = 0
+   Active Actionpoints      = 2
+   Current LC State         = LC_STATE_DISABLED
+
+Watchpoint Results:
+0xFF 0xFC 0xF1 0xC6 0x1B 0x6F 0xBF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 
+0xFF 0xFF 0xFF 0xFF 
+
+Actionpoint Results:
+0x33 0x33 0x37 0x3B 0x3F 0x33 0x73 0xB3 0xF3 0x33 
+0x33 0x30 0x31 0x32 0x03 0x13 0x23 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+0x33 0x33 0x33 0x33 0x33 0x33 0x33 0x33 
+
+***************************
+* LC WDT Validation Tests *
+***************************
+
+Test WDT Validation with bad DataType
+-------------------------------------
+ERROR EVENT ID=76 WDT verify err: WP = 20, Err = 1, DType = 45, Oper = 255, MID = 0
+INFO EVENT ID=75 WDT verify results: good = 0, bad = 1, unused = 175
+
+Test WDT Validation with bad OperatorID
+---------------------------------------
+ERROR EVENT ID=76 WDT verify err: WP = 20, Err = 2, DType = 6, Oper = 45, MID = 0
+INFO EVENT ID=75 WDT verify results: good = 0, bad = 1, unused = 175
+
+Test WDT Validation with bad MessageID
+--------------------------------------
+ERROR EVENT ID=76 WDT verify err: WP = 20, Err = 3, DType = 6, Oper = 3, MID = 8192
+INFO EVENT ID=75 WDT verify results: good = 0, bad = 1, unused = 175
+
+Test WDT Validation with floating point NAN comparison value
+------------------------------------------------------------
+ERROR EVENT ID=77 WDT verify float err: WP = 20, Err = 4, ComparisonValue = 0xFFFFFFFF
+INFO EVENT ID=75 WDT verify results: good = 0, bad = 1, unused = 175
+
+Test WDT Validation with floating point infinite comparison value
+-----------------------------------------------------------------
+ERROR EVENT ID=77 WDT verify float err: WP = 20, Err = 5, ComparisonValue = 0x7F800000
+INFO EVENT ID=75 WDT verify results: good = 0, bad = 1, unused = 175
+
+Test WDT Validation with good non-floating point entry
+------------------------------------------------------
+INFO EVENT ID=75 WDT verify results: good = 1, bad = 0, unused = 175
+
+Test WDT Validation with good floating point entry
+--------------------------------------------------
+INFO EVENT ID=75 WDT verify results: good = 1, bad = 0, unused = 175
+
+
+***************************
+* LC ADT Validation Tests *
+***************************
+
+Test ADT Validation with bad DefaultState
+-----------------------------------------
+ERROR EVENT ID=79 ADT verify err: AP = 30, Err = 1, State = 10, RTS = 0, FailCnt = 0, EvtType = 2
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad RTSId
+----------------------------------
+ERROR EVENT ID=79 ADT verify err: AP = 30, Err = 2, State = 1, RTS = 65521, FailCnt = 0, EvtType = 2
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad MaxFailsBeforeRTS
+----------------------------------------------
+ERROR EVENT ID=79 ADT verify err: AP = 30, Err = 3, State = 1, RTS = 20, FailCnt = 0, EvtType = 2
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad EventType
+--------------------------------------
+ERROR EVENT ID=79 ADT verify err: AP = 30, Err = 4, State = 1, RTS = 20, FailCnt = 5, EvtType = 10
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad RPN expression
+LC_RPN_NOT as the first symbol
+-------------------------------------------
+ERROR EVENT ID=80 ADT verify RPN err: AP = 30, Index = 0, StackDepth = 0
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad RPN expression
+Missing watchpoint ID
+-------------------------------------------
+ERROR EVENT ID=80 ADT verify RPN err: AP = 30, Index = 1, StackDepth = 0
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with bad RPN expression
+Not a valid polish symbol or watchpoint ID
+-------------------------------------------
+ERROR EVENT ID=80 ADT verify RPN err: AP = 30, Index = 1, StackDepth = 1
+INFO EVENT ID=78 ADT verify results: good = 0, bad = 1, unused = 175
+
+Test ADT Validation with good entry
+-----------------------------------
+INFO EVENT ID=78 ADT verify results: good = 1, bad = 0, unused = 175
+
+
+**********************************
+* LC Set Actionpoint State Tests *
+**********************************
+
+Test set AP state command with invalid new state
+------------------------------------------------
+ERROR EVENT ID=52 Set AP state error: AP = 100, Invalid new state = 100
+
+Test set AP state command with invalid AP number
+------------------------------------------------
+ERROR EVENT ID=54 Set AP state error: Invalid AP number = 177
+
+Test set AP state command with invalid current AP state
+-------------------------------------------------------
+ERROR EVENT ID=53 Set AP state error: AP = 100, Invalid current AP state = 255
+
+Test good set AP state command for a single AP
+----------------------------------------------
+INFO EVENT ID=51 Set AP state command: AP = 100, New state = 2
+
+Test good set AP state command for all APs
+------------------------------------------
+INFO EVENT ID=51 Set AP state command: AP = 65535, New state = 1
+
+
+**********************************
+* LC Set Actionpoint Off Tests *
+**********************************
+
+Test set AP off command with invalid AP number
+----------------------------------------------
+ERROR EVENT ID=56 Set AP perm off error: Invalid AP number = 177
+
+Test set AP off command with invalid current AP state
+-----------------------------------------------------
+ERROR EVENT ID=57 Set AP perm off error, AP NOT Disabled: AP = 100, Current state = 255
+
+Test good set AP off command
+----------------------------
+INFO EVENT ID=55 Set AP permanently off command: AP = 100
+
+
+*******************************
+* LC Sample Actionpoint Tests *
+*******************************
+
+Test sample AP message with invalid AP number
+---------------------------------------------
+ERROR EVENT ID=67 Sample AP error: invalid AP number = 177
+
+Test sample single AP message with invalid current AP state
+-----------------------------------------------------------
+ERROR EVENT ID=68 Sample AP error, invalid current AP state: AP = 75, State = 255
+
+Test sample all APs message 
+----------------------------
+
+Test sample single AP message with watch not measured
+-----------------------------------------------------
+
+Test sample single AP message with watch error
+----------------------------------------------
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Expression terminated with LC_RPN_AND
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 1, StackPtr = 1
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Expression terminated with LC_RPN_OR
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 1, StackPtr = 1
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Expression terminated with LC_RPN_XOR
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 1, StackPtr = 1
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Expression begins with LC_RPN_NOT
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 0, StackPtr = 1
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Premature LC_RPN_EQUAL in expression
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 2, StackPtr = 1
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message with bad RPN expression
+Expression runs beyond LC_MAX_RPN_EQU_SIZE
+-----------------------------------------------------
+ERROR EVENT ID=74 AP has illegal RPN expression: AP = 75, LastOperand = 19, StackPtr = 20
+ERROR EVENT ID=73 AP evaluated to error: AP = 75, Result = 2
+
+Test sample single AP message, PASS to FAIL Transition
+-----------------------------------------------------
+DEBUG EVENT ID=71 AP state change from PASS to FAIL: AP = 75
+> CMD: APID:00a6 SEQ:0 LEN:12 FC:2 PKT:18a6 c000 0005 0200 0014 0000 
+INFO EVENT ID=455 Test event text: AP = 75, FailCount = 1, RTS = 20
+
+LC ART DATA FOR ENTRY #75:
+   Action Result             = LC_ACTION_FAIL
+   Current State             = LC_APSTATE_PASSIVE
+   Fail To Pass Count        = 0
+   Pass To Fail Count        = 1
+   Consecutive Fail Count    = 1
+   Cumulative Fail Count     = 1
+   Cumulative RTS Exec Count = 1
+
+
+Test sample single AP message, PASS to FAIL Transition
+While LC state = LC_STATE_PASSIVE
+-----------------------------------------------------
+DEBUG EVENT ID=71 AP state change from PASS to FAIL: AP = 75
+DEBUG EVENT ID=69 AP failed while LC App passive: AP = 75, FailCount = 1, RTS = 20
+
+LC ART DATA FOR ENTRY #75:
+   Action Result             = LC_ACTION_FAIL
+   Current State             = LC_APSTATE_PASSIVE
+   Fail To Pass Count        = 0
+   Pass To Fail Count        = 1
+   Consecutive Fail Count    = 1
+   Cumulative Fail Count     = 1
+   Cumulative RTS Exec Count = 0
+
+
+Test sample single AP message, PASS to FAIL Transition
+While AP state = LC_APSTATE_PASSIVE
+-----------------------------------------------------
+DEBUG EVENT ID=71 AP state change from PASS to FAIL: AP = 75
+DEBUG EVENT ID=70 AP failed while passive: AP = 75, FailCount = 1, RTS = 20
+
+LC ART DATA FOR ENTRY #75:
+   Action Result             = LC_ACTION_FAIL
+   Current State             = LC_APSTATE_PASSIVE
+   Fail To Pass Count        = 0
+   Pass To Fail Count        = 1
+   Consecutive Fail Count    = 1
+   Cumulative Fail Count     = 1
+   Cumulative RTS Exec Count = 0
+
+
+Test sample single AP message, FAIL to PASS Transition
+------------------------------------------------------
+INFO EVENT ID=72 AP state change from FAIL to PASS: AP = 75
+
+LC ART DATA FOR ENTRY #75:
+   Action Result             = LC_ACTION_PASS
+   Current State             = LC_APSTATE_ACTIVE
+   Fail To Pass Count        = 1
+   Pass To Fail Count        = 0
+   Consecutive Fail Count    = 0
+   Cumulative Fail Count     = 0
+   Cumulative RTS Exec Count = 0
+
+
+
+***********************
+* LC Watchpoint Tests *
+***********************
+
+Test message with no defined watchpoints
+----------------------------------------
+INFO EVENT ID=62 Msg with unreferenced message ID rcvd: ID = 0x1000
+
+Test message with bad watchpoint offset
+and UBYTE data type                    
+---------------------------------------
+ERROR EVENT ID=64 WP offset error: MID = 4096, WP = 50, Offset = 100, DataSize = 1, MsgLen = 58
+
+Test message with bad watchpoint offset
+and UWORD data type                    
+---------------------------------------
+ERROR EVENT ID=64 WP offset error: MID = 4096, WP = 50, Offset = 100, DataSize = 2, MsgLen = 58
+
+Test message with bad watchpoint offset
+and UDWORD data type                   
+---------------------------------------
+ERROR EVENT ID=64 WP offset error: MID = 4096, WP = 50, Offset = 100, DataSize = 4, MsgLen = 58
+
+Test message with bad watchpoint offset
+and FLOAT data type                    
+---------------------------------------
+ERROR EVENT ID=64 WP offset error: MID = 4096, WP = 50, Offset = 100, DataSize = 4, MsgLen = 58
+
+Test message with bad watchpoint offset
+and undefined data type                
+---------------------------------------
+ERROR EVENT ID=63 WP has undefined data type: WP = 50, DataType = 15
+
+Test message with BYTE data type
+LC_OPER_LE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 1
+   False To True Count          = 1
+   Consecutive True Count       = 1
+   Cumulative True Count        = 1
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 0
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UBYTE data type
+LC_OPER_LE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 2
+   False To True Count          = 2
+   Consecutive True Count       = 2
+   Cumulative True Count        = 2
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 0
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with WORD LE data type
+LC_OPER_LT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 3
+   False To True Count          = 2
+   Consecutive True Count       = 0
+   Cumulative True Count        = 2
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with WORD BE data type
+LC_OPER_LT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 4
+   False To True Count          = 2
+   Consecutive True Count       = 0
+   Cumulative True Count        = 2
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UWORD LE data type
+LC_OPER_LT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 5
+   False To True Count          = 2
+   Consecutive True Count       = 0
+   Cumulative True Count        = 2
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UWORD BE data type
+LC_OPER_LT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 6
+   False To True Count          = 2
+   Consecutive True Count       = 0
+   Cumulative True Count        = 2
+
+   Last False To True (Value)   = 5
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with DWORD LE data type
+LC_OPER_EQ Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 7
+   False To True Count          = 3
+   Consecutive True Count       = 1
+   Cumulative True Count        = 3
+
+   Last False To True (Value)   = 987008
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with DWORD BE data type
+LC_OPER_EQ Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 8
+   False To True Count          = 4
+   Consecutive True Count       = 2
+   Cumulative True Count        = 4
+
+   Last False To True (Value)   = 987008
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UDWORD LE data type
+LC_OPER_EQ Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 9
+   False To True Count          = 5
+   Consecutive True Count       = 3
+   Cumulative True Count        = 5
+
+   Last False To True (Value)   = 987008
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 3968
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UDWORD LE data type
+LC_OPER_CUSTOM Operator ID, TRUE to FALSE transition
+----------------------------------------------------
+ERROR EVENT ID=85 Unexpected LC_CustomFunction call: WP = 50
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 10
+   False To True Count          = 5
+   Consecutive True Count       = 0
+   Cumulative True Count        = 5
+
+   Last False To True (Value)   = 987008
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 987008
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with BYTE data type
+LC_OPER_NE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 11
+   False To True Count          = 6
+   Consecutive True Count       = 1
+   Cumulative True Count        = 6
+
+   Last False To True (Value)   = 37
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 987008
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UBYTE data type
+LC_OPER_NE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 12
+   False To True Count          = 7
+   Consecutive True Count       = 2
+   Cumulative True Count        = 7
+
+   Last False To True (Value)   = 37
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 987008
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with BYTE data type
+LC_OPER_GT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 13
+   False To True Count          = 7
+   Consecutive True Count       = 0
+   Cumulative True Count        = 7
+
+   Last False To True (Value)   = 37
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UBYTE data type
+LC_OPER_GT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 14
+   False To True Count          = 7
+   Consecutive True Count       = 0
+   Cumulative True Count        = 7
+
+   Last False To True (Value)   = 37
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with BYTE data type
+LC_OPER_GE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 15
+   False To True Count          = 8
+   Consecutive True Count       = 1
+   Cumulative True Count        = 8
+
+   Last False To True (Value)   = 48
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UBYTE data type
+LC_OPER_GE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 16
+   False To True Count          = 9
+   Consecutive True Count       = 2
+   Cumulative True Count        = 9
+
+   Last False To True (Value)   = 48
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with BYTE data type, Invalid Operator ID
+-----------------------------------------------------
+ERROR EVENT ID=65 WP has invalid operator ID: WP = 50, OperID = 20
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_ERROR
+   Evaluation Count             = 17
+   False To True Count          = 9
+   Consecutive True Count       = 2
+   Cumulative True Count        = 9
+
+   Last False To True (Value)   = 48
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with UBYTE data type, Invalid Operator ID
+------------------------------------------------------
+ERROR EVENT ID=65 WP has invalid operator ID: WP = 50, OperID = 20
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_ERROR
+   Evaluation Count             = 18
+   False To True Count          = 9
+   Consecutive True Count       = 2
+   Cumulative True Count        = 9
+
+   Last False To True (Value)   = 48
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_LE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 19
+   False To True Count          = 10
+   Consecutive True Count       = 3
+   Cumulative True Count        = 10
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_LT Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 20
+   False To True Count          = 11
+   Consecutive True Count       = 4
+   Cumulative True Count        = 11
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 37
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_EQ Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 21
+   False To True Count          = 11
+   Consecutive True Count       = 0
+   Cumulative True Count        = 11
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_NE Operator ID, FALSE to TRUE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_TRUE
+   Evaluation Count             = 22
+   False To True Count          = 12
+   Consecutive True Count       = 1
+   Cumulative True Count        = 12
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_GT Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 23
+   False To True Count          = 12
+   Consecutive True Count       = 0
+   Cumulative True Count        = 12
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+LC_OPER_GE Operator ID, TRUE to FALSE transition
+------------------------------------------------
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_FALSE
+   Evaluation Count             = 24
+   False To True Count          = 12
+   Consecutive True Count       = 0
+   Cumulative True Count        = 12
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+Invalid Operator ID
+------------------------------------
+ERROR EVENT ID=65 WP has invalid operator ID: WP = 50, OperID = 25
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_ERROR
+   Evaluation Count             = 25
+   False To True Count          = 12
+   Consecutive True Count       = 0
+   Cumulative True Count        = 12
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test message with FLOAT LE data type
+NAN Watchpoint Data
+------------------------------------------------
+ERROR EVENT ID=66 WP data value is a float NAN: WP = 50, Value = 0xFFFFFFFF
+
+LC WRT DATA FOR ENTRY #50:
+   Watch Result                 = LC_WATCH_ERROR
+   Evaluation Count             = 26
+   False To True Count          = 12
+   Consecutive True Count       = 0
+   Cumulative True Count        = 12
+
+   Last False To True (Value)   = 1110769664
+   Last False To True (Secs)    = 0
+   Last False To True (SubSecs) = 0
+
+   Last True To False (Value)   = 1110769664
+   Last True To False (Secs)    = 0
+   Last True To False (SubSecs) = 0
+
+
+Test invalid data type error in LC_OperatorCompare
+--------------------------------------------------
+ERROR EVENT ID=63 WP has undefined data type: WP = 50, DataType = 25
+
+Test invalid data type error in LC_GetSizedWPData
+-------------------------------------------------
+ERROR EVENT ID=63 WP has undefined data type: WP = 50, DataType = 25
+

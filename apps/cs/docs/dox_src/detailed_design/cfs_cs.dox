@@ -1,0 +1,531 @@
+/**
+  \mainpage
+  <UL>
+      <LI> \subpage cfscsrevhist
+      <LI> \subpage cfscsintro
+      <LI> \subpage cfscsovr
+      <LI> \subpage cfscsopr
+      <LI> \subpage cfscsreq
+      <LI> \subpage cfscsdg
+      <LI> \subpage cfscscmds
+      <LI> \subpage cfscstlm
+      <LI> \subpage cfscstbl
+      <LI> \subpage cfscscons
+      <LI> \subpage cfscsfaqs
+      <LI> \subpage cfscscfg
+      <LI> \subpage cs_events.h "CFS Checksum Event Message Reference" <BR>
+  </UL>
+**/
+
+/**
+  \page cfscsrevhist CFS Checksum User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_cs.dox  $
+  Revision 1.1 2015/07/24 19:09:43EDT rperera 
+  Initial revision
+  Member added to project /CFS-APPs-PROJECT/cs/docs/dox_src/detailed_design/project.pj
+  Revision 1.4 2010/03/09 14:53:40EST jmdagost 
+  Made requested corrections and added tables discussion.
+  Revision 1.3 2010/03/09 14:47:07EST jmdagost 
+  Updated overview and deployment guide.
+  Revision 1.2 2009/04/18 12:12:42EDT dkobe 
+  Made User's Guide match standard format
+  Revision 1.1 2009/04/16 13:19:51EDT dkobe 
+  Initial revision
+  Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/cs/docs/dox_src/users_guide/project.pj
+  \endverbatim
+  
+**/
+
+/**
+  \page cfscsintro CFS Checksum Introduction
+
+  <H1> Scope </H1>
+
+  This document provides a complete specification for the commands and telemetry associated
+  with the CFS Checksum (CS) application software.  The document is intended primarily 
+  for users of the software (operations personal, test engineers, and maintenance personal).  
+  The deployment guide section, is intended for mission developers when deploying and 
+  configuring the CS application software for a mission flight software build environment. 
+
+  <H1> Applicable Documents </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Checksum Application Requirements Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Checksum Heritage Analysis Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> CFS Checksum Design Document </TD>
+  <TR><TD WIDTH="20%"> TBD       </TD> 
+      <TD WIDTH="40%"> <I>Need Reference to OSAL Document</I> </TD>
+  </TABLE>
+
+
+  <H1> Acronyms </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Next: \ref cfscsovr
+**/
+
+
+/**
+  \page cfscsovr CFS Checksum Overview
+  
+  The Checksum (CS) application of the Core Flight System (CFS) is responsible
+  for ensuring the integrity of onboard memory. CS has the ability to ensure the
+  integrity of Core Flight Executive (cFE) applications, cFE tables, the cFE 
+  core, the onboard operating system (OS), onboard EEPROM, as well as any 
+  memory regions ("Memory") specified by the users. 
+
+  CS automatically checksums the cFE core and the OS by default when the CS 
+  application is used.  Additionally, the user may select other areas to
+  checksum, including:
+  
+  <ul>
+  <li> <b>EEPROM</b>: A contiguous block of memory specified by a starting address
+  and number of bytes.
+  <li> <b>Memory</b>: A contiguous block of (non-EEPROM) memory specified by
+  a starting address and number of bytes.
+  <li> <b>Tables</b>: Any cFE or CFS application table, specified by the table name.
+  <li> <b>Applications</b>: Any cFE or CFS application, specified by the app name.
+  </ul>
+  
+  The CS application is table driven. All of the applications, tables, areas
+  of EEPROM, and other memory areas to be checksummed must be defined by the 
+  user in four separate tables that can be controlled independently. 
+
+  The CS application is also schedule driven. It will checksum up to 
+  #CS_DEFAULT_BYTES_PER_CYCLE (a configuration parameter) bytes every 
+  time CS receives its background cycle MID.
+
+  The CS application uses two sets of tables: a set of definition tables 
+  which the user populates on the ground with the set of applications,
+  tables, areas of EEPROM and other memory areas, and a set of results 
+  tables which are dump only tables. The results tables are populated by 
+  CS automatically from the definition tables, but also contain more
+  information. The results tables contain the checksum values for each
+  object in the table as well as other information for CS to use during 
+  runtime. For more information see  \ref cfscstbl.
+
+   
+  Next: \ref cfscsopr <BR>
+  Prev: \ref cfscsintro
+**/
+
+/**
+  \page cfscsopr CFS Checksum Operation
+
+  <H2>Initialization</H2>
+
+  Upon initialization CS will initialize its global memory area and proceed
+  to populate its results tables (which are dump only tables) from the 
+  default definition tables located in non-volatile memory and are enabled
+  for checksumming. If the default definition tables do not pass table 
+  validation, or they are nonexistent, blank definition tables are used
+  from CS's memory and the table is disabled for checksumming. The purpose
+  of loading a blank table from memory is so that another table can be loaded
+  from the ground and be functional. The other purpose of loading a blank 
+  table from memory is so that if the table is accidentally enabled for 
+  checksumming, the table pointers for the results table point to good data.
+
+  Since CS cannot operate without the operating system or the cFE core, CS 
+  automatically sets up checksumming for those areas and enables them for 
+  checksumming. 
+
+  The CS application makes no distinction between Power-On and Processor 
+  Resets. The same initialization occurs for both types of resets.
+
+   
+  Next: \ref cfscsreq <BR>
+  Prev: \ref cfscsovr
+
+**/
+
+
+/**
+  \page cfscsreq CFS Checksum Requirements
+
+  For detailed CS requirements, please see the "Core Flight System (CFS) 
+  Checksum Application Requirements" Document Number:  582-2008-036
+
+    
+  Next: \ref cfscsdg <BR>
+  Prev: \ref cfscsopr 
+**/
+
+/**
+  \page cfscsdg  CFS Checksum Deployment Guide
+
+  To integrate the CS application with the cFE, follow the CFS App 
+  Integration Guide.
+  
+  Follow the general guidelines below for platform deployment of the Housekeeping app.
+  
+  There are two message IDs that must be included in the CFS Scheduler Table:
+  #CS_SEND_HK_MID is sent out at the housekeeping request interval.
+  #CS_BACKGROUND_CYCLE_MID is sent out at the desired rate for background checksumming.
+  
+  The Checksum app generates telemetry when it receives the housekeeping request. It 
+  telemetry message ID is #CS_HK_TLM_MID.
+    
+  The ES app uses the CS performance ID, #CS_APPMAIN_PERF_ID , to keep track of the performance
+  of the CS app.
+  
+  The platform configuration file cs_platform_cfg.h contains parameters that can be adjusted to 
+  specific platforms.  The defined parameters (and their default values) are:
+  
+  #CS_PIPE_DEPTH defines the depth of the CS app command pipe.  The default value is 12.  When 
+  modifying this value, take into account not only the expected number of ground commands but
+  the number of scheduler table entries for CS.  These entries will include requests to perform background 
+  checksumming as well as requests to send its housekeeping telemetry packet to the HK app.
+  
+  #CS_MAX_NUM_EEPROM_TABLE_ENTRIES defines the maximum number of entries that can be in the table of EEPROM 
+  areas to checksum.  The default value is 16.
+  
+  #CS_MAX_NUM_MEMORY_TABLE_ENTRIES defines the maximum number of entries that can be in the table of memory 
+  areas to checksum.  The default value is 16.
+  
+  #CS_MAX_NUM_TABLES_TABLE_ENTRIES defines the maximum number of entries that can be in the table of Tables
+  to checksum.  The default value is 24.
+  
+  #CS_MAX_NUM_APP_TABLE_ENTRIES defines the maximum number of entries that can be in the table of Applications 
+  to checksum.  The default value is 24.
+  
+  #CS_DEFAULT_BYTES_PER_CYCLE defines the number of bytes that are checksummed in a single CS cycle.  The 
+  default value is 16384 (16KB).  When modifying this value, be careful to keep the value low enough to avoid
+  CPU hogging by the CS app.
+  
+  #CS_CHILD_TASK_PRIORITY defines the priority of child tasks created by the CS app.  The default value is 200,
+  where 1 is the highest priority and 255 is the lowest.  When modifying this value, be careful to keep the 
+  value low enough to avoid CPU hogging.  This value cannot have a higher priority than the CS app itself.
+  
+  #CS_CHILD_TASK_DELAY defines the number of milliseconds to delay between child task checksumming cycles.  The
+  default value is 1000 (1 second).  When modifying this value, be careful to keep the 
+  value high enough to avoid CPU hogging by the child task.
+    
+  #CS_STARTUP_TIMEOUT defines the number of milliseconds the CS app must wait before entering its main loop.
+  This is to ensure that all other apps have started up before the CS begins main loop execution.  The default 
+  value is 60000 (60 seconds).  When modifying this value, be careful to keep the value high enough to guarantee 
+  that all other apps have started up.  Otherwise, the CS app can pend indefinitely without a timeout.
+   
+  #CS_DEF_EEPROM_TABLE_FILENAME is the name of the CS table defining EEPROM areas to checksum.  The default 
+  value is "/cf/apps/cs_eepromtbl.tbl".  Note that the path is specified in the filename definition.
+  
+  #CS_DEF_MEMORY_TABLE_FILENAME is the name of the CS table defining memory areas to checksum.  The default 
+  value is "/cf/apps/cs_memorytbl.tbl".  Note that the path is specified in the filename definition.
+  
+  #CS_DEF_TABLES_TABLE_FILENAME is the name of the CS table defining table areas to checksum.  The default 
+  value is "/cf/apps/cs_tablestbl.tbl".  Note that the path is specified in the filename definition.
+  
+  #CS_DEF_APP_TABLE_FILENAME is the name of the CS table defining application areas to checksum.  The default 
+  value is "/cf/apps/cs_apptbl.tbl".  Note that the path is specified in the filename definition.
+  
+  Checksum app configuration parameter details are also available at \ref cfscscfg
+    
+  Next: \ref cfscscmds <BR>
+  Prev: \ref cfscsreq
+**/
+
+/**
+  \page cfscscmds CFS Checksum Commands
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscfg</B></TD>
+  </TABLE>
+  
+  The following is a list of Commands that are processed by the CFS 
+  Checksum Application. 
+**/
+
+/**
+  \page cfscstlm  CFS Checksum Telemetry
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscfg</B></TD>
+  </TABLE>
+  
+  The following are telemetry packets generated by the CFS Checksum 
+  Application.
+**/
+
+/**
+  \page cfscstbl CFS Checksum Table Definitions
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscfg</B></TD>
+  </TABLE>
+
+  
+  The Checksum application uses eight tables (four definition tables and four corresponding results tables).  The CS App
+  copies the data from each definition tables at initialization and during table updates, and stores the data in the 
+  corresponding results tables.  The CS app accesses this data from each results table for processing, and saves its 
+  state in the same table.
+  
+  The definitions tables are load-dump tables, and the results tables are dump-only. 
+  
+  <b>EEPROM Definition Table</b> and <b>Memory Definition Table</b>
+
+  There are #CS_MAX_NUM_EEPROM_TABLE_ENTRIES entries defined for the EEPROM Definition Table, and 
+  #CS_MAX_NUM_MEMORY_TABLE_ENTRIES entries defined for the Memory Definition Table.
+  
+  The format of a single entry in the EEPROM Definition Table or the Memory Definition Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;              
+      uint16                      Filler16;           
+      uint32                      StartAddress;       
+      uint32                      NumBytesToChecksum; 
+  } CS_Def_EepromMemory_Table_Entry_t;
+  \endverbatim
+  
+  
+  <b>Tables Definition Table</b>
+
+  There are #CS_MAX_NUM_TABLES_TABLE_ENTRIES entries defined for the Tables Definition Table.
+
+  The format of a single entry in the Tables Definition Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;                          
+      char                        Name[CFE_TBL_MAX_FULL_NAME_LEN];
+  } CS_Def_Tables_Table_Entry_t;
+  \endverbatim
+  
+  
+  <b>Apps Definition Table</b>
+
+  There are #CS_MAX_NUM_APP_TABLE_ENTRIES entries defined for the Apps Definition Table.
+
+  The format of a single entry in the Apps Definition Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;                 
+      char                        Name[OS_MAX_API_NAME]; 
+  } CS_Def_App_Table_Entry_t;
+  \endverbatim
+  
+  
+  <b>EEPROM Results Table</b> and <b>Memory Results Table</b>
+  
+  There are #CS_MAX_NUM_EEPROM_TABLE_ENTRIES entries defined for the EEPROM Results Table, and 
+  #CS_MAX_NUM_MEMORY_TABLE_ENTRIES entries defined for the Memory Results Table.
+
+  The format of a single entry in the EEPROM Definition Table or the Memory Results Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;              
+      uint16                      ComputedYet;        
+      uint32                      StartAddress;       
+      uint32                      NumBytesToChecksum; 
+      uint32                      ComparisonValue;    
+      uint32                      ByteOffset;         
+      uint32                      TempChecksumValue;  
+  } CS_Res_EepromMemory_Table_Entry_t;
+  \endverbatim
+  
+  
+  <b>Tables Results Table</b>
+
+  There are #CS_MAX_NUM_TABLES_TABLE_ENTRIES entries defined for the Tables Results Table.
+
+  The format of a single entry in the Tables Results Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;                 
+      uint16                      ComputedYet;           
+      uint32                      StartAddress;          
+      uint32                      NumBytesToChecksum;    
+      uint32                      ComparisonValue;       
+      uint32                      ByteOffset;            
+      uint32                      TempChecksumValue;     
+      CFE_TBL_Handle_t            TblHandle;             
+      boolean                     IsCSOwner;             
+      char                        Name[CFE_TBL_MAX_FULL_NAME_LEN];
+  } CS_Res_Tables_Table_Entry_t;
+  \endverbatim
+  
+  
+  <b>Apps Results Table</b>
+  
+  There are #CS_MAX_NUM_APP_TABLE_ENTRIES entries defined for the Apps Results Table.
+
+  The format of a single entry in the Apps Results Table is:
+  
+  \verbatim
+  typedef struct 
+  {
+      uint16                      State;                 
+      uint16                      ComputedYet;           
+      uint32                      StartAddress;          
+      uint32                      NumBytesToChecksum;    
+      uint32                      ComparisonValue;       
+      uint32                      ByteOffset;            
+      uint32                      TempChecksumValue;     
+      char                        Name[OS_MAX_API_NAME]; 
+  } CS_Res_App_Table_Entry_t;
+  \endverbatim
+
+  Next: \ref cfscscfg <br>
+  Prev: \ref cfscstlm
+   
+**/
+
+/**
+  \page cfscscfg CFS Checksum Configuration Parameters
+  
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscscmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfscstbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the CFS 
+  Checksum Application either for each platform or for a mission 
+  as a whole.
+**/
+
+/**
+
+  \page cfscscons CFS Checksum Constraints
+
+
+  <H2>Child Tasks</H2>
+  
+  The Checksum application only allows one child task to be used at a time.
+  One child task is used during each of the CS_*Recompute commands and during
+  the CS OneShot command. A child task is started  when the command returns
+  successfully (with a debug event message), and then ends when the child
+  task finishes the recompute (an info event message is generated). While it
+  is not possible to cancel a Recompute command's child task, the function-
+  ality is provided to cancel a One Shot command's child task, because any 
+  length can be specified in the command, and the checksum may take longer 
+  than expected.
+
+  What this means is that when a Recompute command (or One Shot command) is sent,
+  the user has to wait until completion of the checksum to send another 
+  Recompute (or One Shot) command can be sent. If another Recompute (or One 
+  Shot) command is sent while the child task is in use, the command will get
+  rejected. 
+
+  <H2>Use On OS X and Linux</H2>
+
+  Because of the way these two OS's are set up, it is not possible to checksum
+  applications or the OS text segment with these two operating systems. CS
+  will perform the rest of its functions without incident, but will issue an
+  informational event message on startup when it determines the OS cannot be
+  checksummed, and issue a debug event message.
+
+  <H2>Checksum application's tables</H2>
+  
+  It is worth a note to say that if the user wants CS's tables to be
+  checksummed, they must be put in CS's table of tables to be checksummed.
+
+  <H2>Checksumming tables</H2>
+
+  When creating CS's Table of tables to be checksummed, the 'Name' field must
+  be the same name that cFE Table Services uses. That is it must be in the form
+  of 'AppName.TableName', otherwise CS will not be able to find the table and 
+  it will not be checksummed. 
+  
+  
+  Next: \ref cfscsfaqs <BR>
+  Prev: \ref cfscstbl
+**/
+
+/**
+
+  \page cfscsfaqs CFS Checksum Frequently Asked Questions
+
+  <B> (Q)
+     Can I set the max number of table entries to zero to not use checksumming of
+     apps (or tables or EEPROM or user defined memory) ?
+  </B> <BR> <BR> <I>
+     No. The maximum number of entries must be at least one. This is to prevent
+     null pointers from ever becoming an issue in CS. If you don't want to 
+     checksum a certain area ever, than the max can be set to 1 and no default 
+     table loaded, so CS will just use its default blank table and disable 
+     checksumming for that area.
+  </I>
+  
+  <B> (Q)
+     What is the procedure for updating a table that is being checksummed?
+  </B> <BR> <BR> <I>
+     The recommended procedure for updating a table that is being checksummed is to
+     first disable the checksumming of that table, then load the new table via CFE 
+     TBL, then issue the CS Recompute Checksum command on that table, and finally
+     re-enable the checksumming of that table. What this procedure does is ensures
+     that no checksum miscompute errors get generated.
+  </I>
+  
+  <B> (Q)
+     What do I do if I want to see the checksums of my applications/tables/etc?
+  </B> <BR> <BR> <I>
+     The only way to see what the actual checksum value (Comparison Value) of an
+     object is is to dump the results table that contains that object. For CS, 
+     knowing what the Comparison Value is isn't important for routine activities,
+     only knowing when the Comparison Value has changed is important. That being 
+     said, having the Comparison Values on hand may be necessary, hence they are
+     available by dumping the table.
+  </I>
+  
+
+  Prev: \ref cfscscons
+**/

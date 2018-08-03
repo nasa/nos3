@@ -1,0 +1,50 @@
+!------------------------------------------------------------------------------------------------
+!      Filename: ccsds_header.rdl
+!
+!      Purpose:
+!      This file is #included into other packet definition files. It defines the CCSDS packet
+!      primary and secondary header data structures that exist in all packets. See the SDO CCSDS
+!      Implementation document for more infomation. 
+!
+!      It defines the packet length, source sequence count, segment flags and a flag bit
+!      indicating whether or not a secondary header exists.
+!
+!      The secondary header contains spacecraft TAI Time as defined in the SDO Timing Specification.
+!
+!      Change History
+!         Name              Date       Change description
+!      ----------------------------------------------
+!         M.Maldonado      7/22/04  Initial Version for SDO
+!         M. Bartholomew   3/31/05  Modified secondary header to be 6 bytes
+!                                   instead of 8 so that tlm packet header
+!                                   is 32 bit aligned
+!
+!------------------------------------------------------------------------------------------------
+
+RECORD CCSDS_HEADER DESC="SDO CCSDS Header"
+
+    UNION HDR1 DESC="CCSDS Header 1st 16 bits"
+        UI    PVNO      MASK=%xE000,  DESC="Packet Header Version Number"
+        UI    PCKT      MASK=%x1000,  DESC="Packet Type"
+        UI    SHDF      MASK=%x0800,  DESC="Secondary Header Flag"
+        UI    ID        MASK=%x07FF,  DESC="Application ID"
+     END
+
+     UNION HDR2 DESC="CCSDS Header 2nd 16 bits"
+        UI    SEGF      MASK=%xC000,  DESC="Segment Flags"
+        UI    SCNT      MASK=%x3FFF,  DESC="Source Sequence Count"
+     END
+
+     UI       PLEN   DESC="Packet Length Field = Packet Length in octets - 7"
+
+     UNION U_TIME
+        SC_TAI        TTIME DESC="Spacecraft TAI"
+        SC_TAI_W_LEAP STIME DESC="Spacecraft TAI + S/C Leap Seconds = S/C UTC"
+!        MET           MTIME DESC="Elapsed seconds converted to absolute time"
+!        MET is a predefined type of 8 bytes and conflicts with the redefined
+!         time which is now 6 bytes. The UNION causes the field to be 8 bytes.
+!         We have removed this type for the time being.
+!         04/08/05 Scott A. and Scott W.
+    END 
+
+END ! Record CCSDS_HEADER

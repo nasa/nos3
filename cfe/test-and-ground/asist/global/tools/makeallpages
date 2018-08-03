@@ -1,0 +1,74 @@
+#!/usr/bin/perl -X
+
+$arg_cnt = 0;
+foreach $arg (@ARGV) {
+    $arg_cnt++;
+}
+$die = 0;
+if ((($arg_cnt < 2) && ($ARGV[0] eq "-f")) || (($arg_cnt != 5) && ($ARGV[0] eq "-t")) || (($arg_cnt < 4) && ($ARGV[0] eq "-b"))) {
+   print "Incorrect number of arguments: $arg_cnt\n";
+   $die = 1;
+}
+if (($ARGV[0] ne "-f") && ($ARGV[0] ne "-t") && ($ARGV[0] ne "-b")) {
+    print "Incorrect flag: \"$ARGV[0]\"\n";
+    $die = 1;
+}
+if ($die) {
+   #die "Please enter:\n -t <contains spacecraft? y/n> <contains processor? y/n> <want spacecraft? y/n> <want processor? y/n>\n (for format to template conversion)\nor\n -f <spacecraft> <processor1> <processor2>, etc.\n (for template to format conversion)\nEnter \"\" for the spacecraft to omit it.\n\n";
+    die "Please enter:\n -b <contains spacecraft? y/n> <contains processor? y/n> <spacecraft> <processor1> <processor2>, etc.\nEnter \"\" for the spacecraft to omit it.\n\n";
+}
+
+if ($ARGV[0] eq "-t") {
+    @pages = `ls *.fmt`;
+    chomp(@pages);
+    
+    foreach $page(@pages) {
+        system("makepage -t $page $ARGV[1] $ARGV[2] $ARGV[3] $ARGV[4]");
+    }
+} elsif ($ARGV[0] eq "-f") {
+    if ($arg_cnt == 2) {
+        @processors = (@processors, "\"\"");
+    }
+    $i=2;
+    while ($i<$arg_cnt) {
+        @processors = (@processors, $ARGV[$i]);
+        $i = $i+1;
+    }
+    
+    $spacecraft = $ARGV[1];
+    if ($spacecraft eq "") {
+        $spacecraft = "\"\"";
+    }
+    
+    @templates = `ls template_*.asc`;
+    chomp(@templates);
+    
+    foreach $template(@templates) {
+        foreach $processor(@processors) {
+            system("makepage -f $template $spacecraft $processor");
+        }
+    }
+} elsif ($ARGV[0] eq "-b") {
+    if ($arg_cnt == 4) {
+        @processors = (@processors, "\"\"");
+    }
+    $i=4;
+    while ($i<$arg_cnt) {
+        @processors = (@processors, $ARGV[$i]);
+        $i = $i+1;
+    }
+            
+    $spacecraft = $ARGV[3];
+    if ($spacecraft eq "") {
+        $spacecraft = "\"\"";
+    }
+    
+    @pages = `ls *.fmt`;
+    chomp(@pages);
+    
+    foreach $page(@pages) {
+        foreach $processor(@processors) {
+            system("makepage -b $page $ARGV[1] $ARGV[2] $spacecraft $processor");
+        }
+    }
+}

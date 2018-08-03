@@ -1,0 +1,238 @@
+        -:    0:Source:../src/fm_tbl.c
+        -:    0:Graph:fm_tbl.gcno
+        -:    0:Data:fm_tbl.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2:** $Id: fm_tbl.c.gcov 1.2 2009/11/20 15:40:39EST lwalling Exp  $
+        -:    3:**
+        -:    4:** Title: File Manager (FM) Application Table Definitions
+        -:    5:**
+        -:    6:** Purpose: Provides functions for the initialization, validation, and
+        -:    7:**          management of the FM File System Free Space Table
+        -:    8:**
+        -:    9:** Author: Susanne L. Strege, Code 582 NASA GSFC
+        -:   10:**
+        -:   11:** Notes:
+        -:   12:**
+        -:   13:** $Log: fm_tbl.c.gcov  $
+        -:   13:** Revision 1.2 2009/11/20 15:40:39EST lwalling 
+        -:   13:** Unit test updates
+        -:   14:** Revision 1.14 2009/11/13 16:33:39EST lwalling 
+        -:   15:** Modify macro names, update table validation function, remove TableID
+        -:   16:** Revision 1.13 2009/11/09 16:58:32EST lwalling 
+        -:   17:** Change order of functions to match order of use
+        -:   18:** Revision 1.12 2009/10/30 16:01:55EDT lwalling 
+        -:   19:** Modify free space table entry state definitions
+        -:   20:** Revision 1.11 2009/10/30 14:02:35EDT lwalling 
+        -:   21:** Remove trailing white space from all lines
+        -:   22:** Revision 1.10 2009/10/30 10:46:55EDT lwalling
+        -:   23:** Remove detail from function prologs, leave detail in function prototypes
+        -:   24:** Revision 1.9 2009/10/28 16:40:59EDT lwalling
+        -:   25:** Complete effort to replace the use of phrase device table with file system free space table
+        -:   26:** Revision 1.8 2009/10/28 16:30:11EDT lwalling
+        -:   27:** Modify events generated during table verification
+        -:   28:** Revision 1.7 2009/10/09 17:23:52EDT lwalling
+        -:   29:** Create command to generate file system free space packet, replace device table with free space table
+        -:   30:** Revision 1.6 2009/10/07 15:59:29EDT lwalling
+        -:   31:** Changed table load and manage strategy to allow startup w/o device table
+        -:   32:** Revision 1.5 2008/12/11 12:07:28EST sstrege
+        -:   33:** Removed all table source references and replaced table load backup from source with table file check
+        -:   34:** Revision 1.4 2008/11/30 14:30:02EST sstrege
+        -:   35:** Updated device table to register as a single vs. double buffered table
+        -:   36:** Revision 1.3 2008/09/24 12:11:20EDT sstrege
+        -:   37:** Removed #ifdef UNIT_TEST statement
+        -:   38:** Revision 1.2 2008/06/20 16:21:43EDT slstrege
+        -:   39:** Member moved from fsw/src/fm_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj to fm_tbl.c in project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/fsw/src/project.pj.
+        -:   40:** Revision 1.1 2008/06/20 15:21:43ACT slstrege
+        -:   41:** Initial revision
+        -:   42:** Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/fm/cfs_fm.pj
+        -:   43:**
+        -:   44:*/
+        -:   45:
+        -:   46:#include "cfe.h"
+        -:   47:#include "fm_platform_cfg.h"
+        -:   48:#include "fm_msg.h"
+        -:   49:#include "fm_tbl.h"
+        -:   50:#include "fm_events.h"
+        -:   51:#include "cfs_utils.h"
+        -:   52:
+        -:   53:#include <string.h>
+        -:   54:
+        -:   55:
+        -:   56:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   57:/*                                                                 */
+        -:   58:/* FM table function -- startup initialization                     */
+        -:   59:/*                                                                 */
+        -:   60:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   61:
+        -:   62:int32 FM_TableInit(void)
+function FM_TableInit called 4 returned 100% blocks executed 100%
+        4:   63:{
+        4:   64:    int32 Status;
+        -:   65:
+        -:   66:    /* Initialize file system free space table pointer */
+        4:   67:    FM_GlobalData.FreeSpaceTablePtr = (FM_FreeSpaceTable_t *) NULL;
+        -:   68:
+        -:   69:    /* Register the file system free space table - this must succeed! */
+        4:   70:    Status = CFE_TBL_Register(&FM_GlobalData.FreeSpaceTableHandle,
+        -:   71:                               FM_TABLE_CFE_NAME, sizeof(FM_FreeSpaceTable_t),
+        -:   72:                             (CFE_TBL_OPT_SNGL_BUFFER | CFE_TBL_OPT_LOAD_DUMP),
+        -:   73:                             (CFE_TBL_CallbackFuncPtr_t) FM_ValidateTable);
+        -:   74:
+        4:   75:    if (Status == CFE_SUCCESS)
+        -:   76:    {
+        -:   77:        /* Make an attempt to load the default table data - OK if this fails */
+        3:   78:        CFE_TBL_Load(FM_GlobalData.FreeSpaceTableHandle,
+        -:   79:                     CFE_TBL_SRC_FILE, FM_TABLE_DEF_NAME);
+        -:   80:
+        -:   81:        /* Allow cFE a chance to dump, update, etc. */
+        3:   82:        FM_AcquireTablePointers();
+        -:   83:    }
+        -:   84:
+        4:   85:    return(Status);
+        -:   86:
+        -:   87:} /* End FM_TableInit */
+        -:   88:
+        -:   89:
+        -:   90:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   91:/*                                                                 */
+        -:   92:/* FM table function -- table data verification                    */
+        -:   93:/*                                                                 */
+        -:   94:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:   95:
+        -:   96:int32 FM_ValidateTable(void *TableData)
+function FM_ValidateTable called 5 returned 100% blocks executed 100%
+        5:   97:{
+        5:   98:    FM_FreeSpaceTable_t *TablePtr = (FM_FreeSpaceTable_t *) TableData;
+        5:   99:    int32  Result = CFE_SUCCESS;
+        5:  100:    int32  NameLength;
+        5:  101:    int32  i;
+        -:  102:
+        -:  103:    /*
+        -:  104:    ** Free space table data verification
+        -:  105:    **
+        -:  106:    ** -- table entries must be enabled or disabled or unused
+        -:  107:    **
+        -:  108:    ** -- enabled table entries may be disabled by command
+        -:  109:    ** -- disabled table entries may be enabled by command
+        -:  110:    ** -- unused table entries cannot be modified by command
+        -:  111:    **
+        -:  112:    ** -- enabled or disabled entries must have a valid file system name
+        -:  113:    **
+        -:  114:    ** -- file system name for unused entries is ignored
+        -:  115:    */
+       45:  116:    for (i = 0; (i < FM_TABLE_ENTRY_COUNT) && (Result == CFE_SUCCESS); i++)
+        -:  117:    {
+        -:  118:        /* Validate file system name if state is enabled or disabled */
+       40:  119:        if ((TablePtr->FileSys[i].State == FM_TABLE_ENTRY_ENABLED) ||
+        -:  120:            (TablePtr->FileSys[i].State == FM_TABLE_ENTRY_DISABLED))
+        -:  121:        {
+        -:  122:            /* Search file system name buffer for a string terminator */
+      160:  123:            for (NameLength = 0; NameLength < OS_MAX_PATH_LEN; NameLength++)
+        -:  124:            {
+      159:  125:                if (TablePtr->FileSys[i].Name[NameLength] == '\0')
+        -:  126:                {
+       17:  127:                    break;
+        -:  128:                }
+        -:  129:            }
+        -:  130:
+       18:  131:            if (NameLength == 0)
+        -:  132:            {
+        -:  133:                /* Error - must have a non-zero file system name length */
+        1:  134:                Result = FM_TABLE_VALIDATION_ERR;
+        -:  135:
+        1:  136:                CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
+        -:  137:                   "Table verify error: index = %d, empty name string", i);
+        -:  138:            }
+       17:  139:            else if (NameLength == OS_MAX_PATH_LEN)
+        -:  140:            {
+        -:  141:                /* Error - file system name does not have a string terminator */
+        1:  142:                Result = FM_TABLE_VALIDATION_ERR;
+        -:  143:
+        1:  144:                CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
+        -:  145:                   "Table verify error: index = %d, name too long", i);
+        -:  146:            }
+       16:  147:            else if (!CFS_IsValidFilename(TablePtr->FileSys[i].Name, NameLength))
+        -:  148:            {
+        -:  149:                /* Error - file system name has invalid characters */
+        1:  150:                Result = FM_TABLE_VALIDATION_ERR;
+        -:  151:
+        1:  152:                CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
+        -:  153:                   "Table verify error: index = %d, invalid name = %s",
+        -:  154:                                  i, TablePtr->FileSys[i].Name);
+        -:  155:            }
+        -:  156:        }
+       22:  157:        else if (TablePtr->FileSys[i].State == FM_TABLE_ENTRY_UNUSED)
+        -:  158:        {
+        -:  159:            /* Ignore unused table entries */
+        -:  160:        }
+        -:  161:        else
+        -:  162:        {
+        -:  163:            /* Error - table entry state is invalid */
+        1:  164:            Result = FM_TABLE_VALIDATION_ERR;
+        -:  165:
+        1:  166:            CFE_EVS_SendEvent(FM_TABLE_VERIFY_ERR_EID, CFE_EVS_ERROR,
+        -:  167:               "Table verify error: index = %d, invalid state = %d",
+        -:  168:                              i, TablePtr->FileSys[i].State);
+        -:  169:        }
+        -:  170:    }
+        -:  171:
+        5:  172:    return(Result);
+        -:  173:
+        -:  174:} /* End FM_ValidateTable */
+        -:  175:
+        -:  176:
+        -:  177:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  178:/*                                                                 */
+        -:  179:/* FM table function -- acquire table data pointer                 */
+        -:  180:/*                                                                 */
+        -:  181:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  182:
+        -:  183:void FM_AcquireTablePointers(void)
+function FM_AcquireTablePointers called 7 returned 100% blocks executed 100%
+        7:  184:{
+        7:  185:    int32  Status;
+        -:  186:
+        -:  187:    /* Allow cFE an opportunity to make table updates */
+        7:  188:    CFE_TBL_Manage(FM_GlobalData.FreeSpaceTableHandle);
+        -:  189:
+        -:  190:    /* Acquire pointer to file system free space table */
+        7:  191:    Status = CFE_TBL_GetAddress((void *) &FM_GlobalData.FreeSpaceTablePtr,
+        -:  192:                                          FM_GlobalData.FreeSpaceTableHandle);
+        -:  193:
+        7:  194:    if (Status == CFE_TBL_ERR_NEVER_LOADED)
+        -:  195:    {
+        -:  196:        /* Make sure we don't try to use the empty table buffer */
+        7:  197:        FM_GlobalData.FreeSpaceTablePtr = (FM_FreeSpaceTable_t *) NULL;
+        -:  198:    }
+        -:  199:
+        7:  200:    return;
+        -:  201:
+        -:  202:} /* End FM_AcquireTablePointers */
+        -:  203:
+        -:  204:
+        -:  205:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  206:/*                                                                 */
+        -:  207:/* FM table function -- release table data pointer                 */
+        -:  208:/*                                                                 */
+        -:  209:/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        -:  210:
+        -:  211:void FM_ReleaseTablePointers(void)
+function FM_ReleaseTablePointers called 4 returned 100% blocks executed 100%
+        4:  212:{
+        -:  213:    /* Release pointer to file system free space table */
+        4:  214:    CFE_TBL_ReleaseAddress(FM_GlobalData.FreeSpaceTableHandle);
+        -:  215:
+        -:  216:    /* Prevent table pointer use while released */
+        4:  217:    FM_GlobalData.FreeSpaceTablePtr = (FM_FreeSpaceTable_t *) NULL;
+        -:  218:
+        -:  219:    return;
+        -:  220:
+        -:  221:} /* End FM_ReleaseTablePointers */
+        -:  222:
+        -:  223:
+        -:  224:/************************/
+        -:  225:/*  End of File Comment */
+        -:  226:/************************/
+        -:  227:

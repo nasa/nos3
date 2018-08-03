@@ -1,0 +1,921 @@
+Compiling time tests using Baseline cFE version with following flags: -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE
+
+>>> [CLEAN] - REMOVE <CFS_MISSION_INC> HEADER FILES <<<
+
+rm -f /home/sstrege/cFE650/build/mission_inc/*
+
+>>> [CLEAN] REMOVE BUILD/INC HEADER FILES <<<
+
+rm -f ./inc/*
+make -C cfe/unit-test/time clean
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'
+rm -f cfe_time_task.o cfe_time_api.o cfe_time_utils.o cfe_time_tone.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_evs_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_tbl_stubs.o time_UT.o time_UT
+rm -f *.lis
+rm -f *.g*
+rm -f *.d
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'
+
+>>> [PRE-BUILD] CONFIGURING OSAL <<<
+
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/osal/build'
+test -d inc || mkdir inc
+cp -f ../src/bsp/pc-linux/config/osconfig.h inc/osconfig.h
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/osal/build'
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_MISSION> CORE <<<
+
+Copying <CFE_FSW>/mission_inc/*.h to <CFS_MISSION_INC>
+Copying <CFE_FSW>/platform_inc/<CFE_CORE_PLATFORM_INC_SRC>/cfe_platform_cfg.h to ./inc
+Copying <OSAL>/build/inc/osconfig.h to ./inc
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <CFS_APP_SRC>/INC <<<
+
+Copying <CFS_APP_SRC>/inc/*.h to <CFS_MISSION_INC>
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PUBLIC_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_lib/fsw/public_inc/sample_lib.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/MISSION_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/mission_inc/sample_app_perfids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/mission_inc/ci_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/mission_inc/to_lab_perfids.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/mission_inc/sch_lab_perfids.h
+
+>>> [PRE-BUILD] COPYING HEADER FILES FROM <APP>/PLATFORM_INC <<<
+
+Copying /home/sstrege/cFE650/apps/sample_app/fsw/platform_inc/sample_app_msgids.h
+Copying /home/sstrege/cFE650/apps/ci_lab/fsw/platform_inc/ci_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_msgids.h
+Copying /home/sstrege/cFE650/apps/to_lab/fsw/platform_inc/to_lab_sub_table.h
+Copying /home/sstrege/cFE650/apps/sch_lab/fsw/platform_inc/sch_lab_sched_tab.h
+
+>>> [PRE-BUILD] CREATING <APP> BUILD DIRECTORY <<<
+
+
+>>> [PRE-BUILD] COPYING MAKEFILES FROM <APP>/FOR_BUILD <<<
+
+Copying <CFS_APP_SRC>/sample_lib/fsw/for_build/* to ./sample_lib
+Copying <CFS_APP_SRC>/sample_app/fsw/for_build/* to ./sample_app
+Copying <CFS_APP_SRC>/ci_lab/fsw/for_build/* to ./ci_lab
+Copying <CFS_APP_SRC>/to_lab/fsw/for_build/* to ./to_lab
+Copying <CFS_APP_SRC>/sch_lab/fsw/for_build/* to ./sch_lab
+make -C cfe/unit-test/time
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_time_task.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_task.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_time_api.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_api.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_time_utils.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_utils.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o cfe_time_tone.o /home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_tone.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_bsp_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_bsp_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_osprintf_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_osprintf_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_evs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_evs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_es_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_es_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_sb_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_sb_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_fs_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_fs_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o ut_tbl_stubs.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/ut_tbl_stubs.c
+gcc -pg -fprofile-arcs -ftest-coverage -DCFE_LINUX -DSOCKET_QUEUE -DUT_SHOW_PASS -DUT_VERBOSE -I/home/sstrege/cFE650/osal/src/os/inc -I/home/sstrege/cFE650/osal/ut_assert/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/es -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/evs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/fs -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb -I/home/sstrege/cFE650/cfe/fsw/cfe-core/src/tbl -I/home/sstrege/cFE650/psp/fsw/inc -I/home/sstrege/cFE650/psp/fsw/pc-linux/inc -I/home/sstrege/cFE650/build/mission_inc -I/home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test -I../../../inc   -D_EL -DENDIAN=_EL -DSOFTWARE_LITTLE_BIT_ORDER  -D__ix86__ -D_ix86_ -D_LINUX_OS_  -Dposix -DX86PC -DBUILD= -D_REENTRANT -D _EMBED_   -m32  -Wall -Wstrict-prototypes -g -O0 -DOS_DEBUG_LEVEL=3 -c -o time_UT.o /home/sstrege/cFE650/cfe/fsw/cfe-core/unit-test/time_UT.c
+gcc -o time_UT cfe_time_task.o cfe_time_api.o cfe_time_utils.o cfe_time_tone.o ut_stubs.o ut_bsp_stubs.o ut_osprintf_stubs.o ut_evs_stubs.o ut_es_stubs.o ut_sb_stubs.o ut_fs_stubs.o ut_tbl_stubs.o time_UT.o -pg -fprofile-arcs -ftest-coverage -m32 ../libut_osapi_stubs/libut_osapi_stubs.a ../libut_bsp/libut_bsp.a ../libut_assert/libut_assert.a
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'
+make -C cfe/unit-test/time gcov
+make[1]: Entering directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'
+
+Running unit test: gcov
+
+./time_UT
+
+[BEGIN] PC-LINUX UNIT TEST
+Making directories: ram0, ram1, eeprom1 for OSAL mount points
+[ INFO] cFE TIME Unit Test Output File
+
+
+
+
+[BEGIN] 01 Test_Main
+[ INFO] Begin Test Main
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TIME Initialized
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_EVS_SendEvent: 26, 3 - Invalid message ID -- ID = 0x0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   TIME:Error reading cmd pipe,RC=0xCA000001
+
+
+[ PASS] 01.001 time_UT.c:161 - CFE_TIME_TaskMain - Command pipe read error
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   TIME:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ INFO]   TIME:Application Init Failed,RC=0xFFFFFFFF
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 01.002 time_UT.c:170 - CFE_TIME_TaskMain - Application initialization fail
+[  END] 01 Test_Main            TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 02 Test_Init
+[ INFO] Begin Test Init
+
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2053
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 2054
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 6160
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 6240
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 6241
+
+[ INFO]   CFE_SB_InitMsg called: initialized msg 6161
+
+[ PASS] 02.001 time_UT.c:208 - CFE_TIME_EarlyInit - Successful
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TIME Initialized
+
+[ PASS] 02.002 time_UT.c:215 - CFE_TIME_Task_Init - Successful
+[ INFO]   CFE_ES_RegisterApp called: -1
+
+[ INFO]   TIME:Call to CFE_ES_RegisterApp Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 02.003 time_UT.c:223 - CFE_TIME_Task_Init - Register application failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: -1
+
+[ INFO]   TIME:Error creating tone 1Hz child task:RC=0xFFFFFFFF
+
+
+[ PASS] 02.004 time_UT.c:231 - CFE_TIME_Task_Init - Child task 1 create failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: -3
+
+[ INFO]   TIME:Error creating local 1Hz child task:RC=0xFFFFFFFD
+
+
+[ PASS] 02.005 time_UT.c:239 - CFE_TIME_Task_Init - Child task 2 create failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called: -1
+
+[ INFO]   TIME:Error creating cmd pipe:RC=0xFFFFFFFF
+
+
+[ PASS] 02.006 time_UT.c:247 - CFE_TIME_Task_Init - Create pipe failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: -1
+
+[ INFO]   TIME:Error subscribing to HK Request:RC=0xFFFFFFFF
+
+
+[ PASS] 02.007 time_UT.c:256 - CFE_TIME_Task_Init - HK request subscription failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_Subscribe called: -1
+
+[ INFO]   TIME:Error subscribing to tone cmd:RC=0xFFFFFFFF
+
+
+[ PASS] 02.008 time_UT.c:277 - CFE_TIME_Task_Init - Tone commands subscription failure (client)
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_Subscribe called: -2
+
+[ INFO]   TIME:Error subscribing to time data cmd:RC=0xFFFFFFFE
+
+
+[ PASS] 02.009 time_UT.c:300 - CFE_TIME_Task_Init - Time data command subscription failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_Subscribe called: -3
+
+[ INFO]   TIME:Error subscribing to fake tone signal cmds:RC=0xFFFFFFFD
+
+
+[ PASS] 02.010 time_UT.c:324 - CFE_TIME_Task_Init - Fake tone signal commands subscription failure
+[ PASS] 02.011 time_UT.c:349 - CFE_TIME_Task_Init - *Not tested* Time at tone signal commands subscription failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: -2
+
+[ INFO]   TIME:Error subscribing to time task gnd cmds:RC=0xFFFFFFFE
+
+
+[ PASS] 02.012 time_UT.c:362 - CFE_TIME_Task_Init - Time task ground commands subscription failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   TIME:Error creating tone semaphore:RC=0xFFFFFFFF
+
+
+[ PASS] 02.013 time_UT.c:370 - CFE_TIME_Task_Init - Tone semaphore create failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   TIME:Error creating local semaphore:RC=0xFFFFFFFE
+
+
+[ PASS] 02.014 time_UT.c:378 - CFE_TIME_Task_Init - Local semaphore create failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called: -1
+
+[ INFO]   TIME:Call to CFE_EVS_Register Failed:RC=0xFFFFFFFF
+
+
+[ PASS] 02.015 time_UT.c:386 - CFE_TIME_Task_Init - EVS register failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   TIME:Error sending init event:RC=0xFFFFFFFF
+
+
+[ PASS] 02.016 time_UT.c:394 - CFE_TIME_Task_Init - Send initialization event error
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TIME Initialized
+
+[ PASS] 02.017 time_UT.c:403 - CFE_TIME_Task_Init - Get ID by name failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TIME Initialized
+
+[ INFO]   TIME:1Hz OS_TimerAdd failed:RC=0xFFFFFFFF
+
+
+[ PASS] 02.018 time_UT.c:415 - CFE_TIME_Task_Init - 1Hz OS_TimerAdd failure
+[ INFO]   CFE_ES_RegisterApp called: SUCCESS
+
+[ INFO]   CFE_EVS_Register called
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_TONE_TASK
+
+[ INFO]   CFE_ES_CreateChildTask called: TIME_1HZ_TASK
+
+[ INFO]   CFE_SB_CreatePipe called
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6157
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6160
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6240
+
+[ INFO]   CFE_SB_SubscribeLocal called: subscribed to msg 6241
+
+[ INFO]   CFE_SB_Subscribe called: subscribed to msg 6149
+
+[ INFO]   CFE_EVS_SendEvent: 1, 2 - cFE TIME Initialized
+
+[ INFO]   TIME:1Hz OS_TimerSet failed:RC=0xFFFFFFFF
+
+
+[ PASS] 02.019 time_UT.c:424 - CFE_TIME_Task_Init - 1Hz OS_TimerSet failure
+[  END] 02 Test_Init            TOTAL::19    PASS::19    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 03 Test_GetTime
+[ INFO] Begin Test Get Time
+
+
+[ PASS] 03.001 time_UT.c:469 - CFE_TIME_GetMET - Expected = 2013-001-02:03:14.56789, actual = 2013-001-02:03:14.56789
+[ PASS] 03.002 time_UT.c:483 - CFE_TIME_GetMETseconds - Expected = 1041472994, actual = 1041472994
+[ PASS] 03.003 time_UT.c:498 - CFE_TIME_GetMETsubsecs - Expected = -1855897600, actual = -1855897600
+[ PASS] 03.004 time_UT.c:509 - CFE_TIME_GetLeapSeconds - Expected = 32, actual = 32
+[ PASS] 03.005 time_UT.c:520 - CFE_TIME_GetTAI - Expected = 2013-001-03:03:14.56789, actual = 2013-001-03:03:14.56789
+[ PASS] 03.006 time_UT.c:531 - CFE_TIME_GetUTC - Expected = 2013-001-03:02:42.56789, actual = 2013-001-03:02:42.56789
+[ PASS] 03.007 time_UT.c:551 - CFE_TIME_GetTime - (Default = TAI) Expected = 2013-001-03:03:14.56789, actual = 2013-001-03:03:14.56789
+[ PASS] 03.008 time_UT.c:564 - CFE_TIME_GetSTCF - Expected = 1980-001-01:00:00.00000, actual = 1980-001-01:00:00.00000
+[ PASS] 03.009 time_UT.c:571 - CFE_TIME_GetClockState - Invalid time
+[ PASS] 03.010 time_UT.c:597 - CFE_TIME_GetClockInfo - Expected = 0x0040, actual = 0x0040
+[ PASS] 03.011 time_UT.c:632 - CFE_TIME_GetClockInfo - Expected = 0xFFE0, actual = 0xFFE0
+[  END] 03 Test_GetTime         TOTAL::11    PASS::11    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 04 Test_TimeOp
+[ INFO] Begin Test Time Operations
+
+
+[ PASS] 04.001 time_UT.c:660 - CFE_TIME_Add - Time A = time B = 0 seconds/subseconds
+[ PASS] 04.002 time_UT.c:668 - CFE_TIME_Subtract - Time A = time B = 0 seconds/subseconds
+[ PASS] 04.003 time_UT.c:675 - CFE_TIME_Compare - Time A = time B = 0 seconds/subseconds
+[ PASS] 04.004 time_UT.c:691 - CFE_TIME_Add - Time A = time B = maximum seconds/subseconds (rollover)
+[ PASS] 04.005 time_UT.c:701 - CFE_TIME_Subtract - Time A = time B = maximum seconds/subseconds (zero result)
+[ PASS] 04.006 time_UT.c:708 - CFE_TIME_Compare - Time A = time B = maximum seconds/subseconds
+[ PASS] 04.007 time_UT.c:726 - CFE_TIME_Add - Time A > time B (rollover)
+[ PASS] 04.008 time_UT.c:736 - CFE_TIME_Subtract - Time A > time B
+[ PASS] 04.009 time_UT.c:745 - CFE_TIME_Compare - Time A > time B
+[ PASS] 04.010 time_UT.c:755 - CFE_TIME_Add - Time A < time B
+[ PASS] 04.011 time_UT.c:765 - CFE_TIME_Subtract - Time A < time B (rollover)
+[ PASS] 04.012 time_UT.c:774 - CFE_TIME_Compare - Time A < time B
+[ PASS] 04.013 time_UT.c:793 - CFE_TIME_Add - Time A subseconds > time B subseconds (seconds same)
+[ PASS] 04.014 time_UT.c:805 - CFE_TIME_Subtract - Time A subseconds > time B subseconds (seconds same)
+[ PASS] 04.015 time_UT.c:814 - CFE_TIME_Compare - Time A subseconds > time B subseconds (seconds same)
+[ PASS] 04.016 time_UT.c:826 - CFE_TIME_Add - Time A subseconds < time B subseconds (seconds same)
+[ PASS] 04.017 time_UT.c:838 - CFE_TIME_Subtract - Time A subseconds < time B subseconds (seconds same)
+[ PASS] 04.018 time_UT.c:847 - CFE_TIME_Compare - Time A subseconds < time B subseconds (seconds same)
+[ PASS] 04.019 time_UT.c:867 - CFE_TIME_Add - Time A seconds > time B seconds (subseconds same)
+[ PASS] 04.020 time_UT.c:879 - CFE_TIME_Subtract - Time A seconds > time B seconds (subseconds same)
+[ PASS] 04.021 time_UT.c:888 - CFE_TIME_Compare - Time A seconds > time B seconds (subseconds same)
+[ PASS] 04.022 time_UT.c:900 - CFE_TIME_Add - Time A seconds < time B seconds (subseconds same)
+[ PASS] 04.023 time_UT.c:912 - CFE_TIME_Subtract - Time A seconds < time B seconds (subseconds same)
+[ PASS] 04.024 time_UT.c:921 - CFE_TIME_Compare - Time A seconds < time B seconds (subseconds same)
+[  END] 04 Test_TimeOp          TOTAL::24    PASS::24    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 05 Test_ConvertTime
+[ INFO] Begin Test Convert Time
+
+
+[ PASS] 05.001 time_UT.c:962 - CFE_TIME_MET2SCTime - Expected = 1980-001-02:00:40.00000, actual = 1980-001-02:00:40.00000
+[ PASS] 05.002 time_UT.c:969 - CFE_TIME_Sub2MicroSecs - Convert 0 subsecond value
+[ PASS] 05.003 time_UT.c:978 - CFE_TIME_Sub2MicroSecs - +1 microsecond adjustment
+[ PASS] 05.004 time_UT.c:985 - CFE_TIME_Sub2MicroSecs - No microsecond adjustment
+[ PASS] 05.005 time_UT.c:994 - CFE_TIME_Sub2MicroSecs - -1 microsecond adjustment
+[ PASS] 05.006 time_UT.c:1003 - CFE_TIME_Sub2MicroSecs - Subseconds exceeds maximum microseconds value (limit ms)
+[ PASS] 05.007 time_UT.c:1010 - CFE_TIME_Micro2SubSecs - Convert 0 microseconds to 0 subseconds
+[ PASS] 05.008 time_UT.c:1017 - CFE_TIME_Micro2SubSecs - Microseconds below maximum value (no subsecond adjustment)
+[ PASS] 05.009 time_UT.c:1026 - CFE_TIME_Micro2SubSecs - Microseconds below maximum value (subsecond adjustment)
+[ PASS] 05.010 time_UT.c:1035 - CFE_TIME_Micro2SubSecs - Microseconds equals maximum value (subsecond adjustment)
+[ PASS] 05.011 time_UT.c:1044 - CFE_TIME_Micro2SubSecs - Microseconds exceeds maximum; set maximum subseconds value
+[  END] 05 Test_ConvertTime     TOTAL::11    PASS::11    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 06 Test_ConvertCFEFS
+[ INFO] Begin Test Convert cFE and FS Seconds
+
+
+[ PASS] 06.001 time_UT.c:1075 - CFE_TIME_CFE2FSSeconds - Convert 0 cFE seconds to FS seconds
+[ PASS] 06.002 time_UT.c:1093 - CFE_TIME_CFE2FSSeconds - Convert mid-range cFE seconds to FS seconds
+[ PASS] 06.003 time_UT.c:1100 - CFE_TIME_CFE2FSSeconds - Maximum cFE seconds value
+[ PASS] 06.004 time_UT.c:1118 - CFE_TIME_FS2CFESeconds - Convert 0 FS seconds to cFE seconds
+[ PASS] 06.005 time_UT.c:1127 - CFE_TIME_FS2CFESeconds - Negative cFE seconds conversion (force to zero)
+[ PASS] 06.006 time_UT.c:1146 - CFE_TIME_FS2CFESeconds - Minimum convertible FS seconds value
+[ PASS] 06.007 time_UT.c:1153 - CFE_TIME_FS2CFESeconds - Maximum FS seconds value
+[  END] 06 Test_ConvertCFEFS    TOTAL::7     PASS::7     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 07 Test_Print
+[ INFO] Begin Test Print
+
+
+[ PASS] 07.001 time_UT.c:1185 - CFE_TIME_Print - 1980-001-00:00:00.00000 Zero time value
+[ PASS] 07.002 time_UT.c:1202 - CFE_TIME_Print - 1980-001-00:00:59.00000 Seconds overflow if CFE_TIME_EPOCH_SECOND > 0
+[ PASS] 07.003 time_UT.c:1215 - CFE_TIME_Print - 2013-001-02:03:04.00005 Mission representative time
+[ PASS] 07.004 time_UT.c:1229 - CFE_TIME_Print - 2116-038-06:28:15.99999 Maximum seconds/subseconds values
+[  END] 07 Test_Print           TOTAL::4     PASS::4     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 08 Test_RegisterSyncCallbackTrue
+[ INFO] Begin Test Register Synch Callback
+
+
+[ PASS] 08.001 time_UT.c:1308 - CFE_TIME_RegisterSynchCallback - Successfully registered callbacks
+[ PASS] 08.002 time_UT.c:1313 - CFE_TIME_RegisterSynchCallback - Unsuccessfully registered callback(s)
+[ PASS] 08.003 time_UT.c:1318 - CFE_TIME_RegisterSynchCallback - Bad application ID
+[  END] 08 Test_RegisterSyncCallbackTrue TOTAL::3     PASS::3     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 09 Test_ExternalTone
+[ INFO] Begin Test External Tone
+
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 09.001 time_UT.c:1339 - CFE_TIME_ExternalTone - External tone
+[  END] 09 Test_ExternalTone    TOTAL::1     PASS::1     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 10 Test_External
+[ INFO] Begin Test External Time Set
+
+
+[ PASS] 10.001 time_UT.c:1464 - CFE_TIME_ExternalMET - *Not tested* External MET - external source and clock state not set
+[ PASS] 10.002 time_UT.c:1470 - CFE_TIME_ExternalMET - *Not tested* External MET - external source and time out of range (low)
+[ PASS] 10.003 time_UT.c:1476 - CFE_TIME_ExternalMET - *Not tested* External MET - external source and time out of range (high)
+[ PASS] 10.004 time_UT.c:1482 - CFE_TIME_ExternalMET - *Not tested* External MET - external source and time in range
+[ PASS] 10.005 time_UT.c:1487 - CFE_TIME_ExternalMET - *Not tested* External MET (internal source)
+[ PASS] 10.006 time_UT.c:1601 - CFE_TIME_ExternalGPS - *Not tested* External GPS - external source and clock state not set
+[ PASS] 10.007 time_UT.c:1607 - CFE_TIME_ExternalGPS - Not tested* External GPS - external source and time out of range (low)
+[ PASS] 10.008 time_UT.c:1613 - CFE_TIME_ExternalGPS - *Not tested* External GPS - external source and time out of range (high)
+[ PASS] 10.009 time_UT.c:1619 - CFE_TIME_ExternalGPS - *Not tested* External GPS - external source and time in range
+[ PASS] 10.010 time_UT.c:1624 - CFE_TIME_ExternalGPS - *Not tested* External GPS (internal source)
+[ PASS] 10.011 time_UT.c:1738 - CFE_TIME_ExternalTime - *Not tested* External Time - external source and clock state not set
+[ PASS] 10.012 time_UT.c:1744 - CFE_TIME_ExternalTime - Not tested* External Time - external source and time out of range (low)
+[ PASS] 10.013 time_UT.c:1750 - CFE_TIME_ExternalTime - *Not tested* External Time - external source and time out of range (high)
+[ PASS] 10.014 time_UT.c:1756 - CFE_TIME_ExternalTime - *Not tested* External Time - external source and time in range
+[ PASS] 10.015 time_UT.c:1761 - CFE_TIME_ExternalTime - *Not tested* External Time (internal source)
+[  END] 10 Test_External        TOTAL::15    PASS::15    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 11 Test_PipeCmds
+[ INFO] Begin Test Pipe Commands
+
+
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO] Incomplete TIME housekeeping command: 2053
+
+[ PASS] 11.001 time_UT.c:1796 - CFE_TIME_HousekeepingCmd - Housekeeping telemetry request
+[ PASS] 11.002 time_UT.c:1805 - CFE_TIME_ToneSignalCmd - Time at tone signal
+[ PASS] 11.003 time_UT.c:1815 - CFE_TIME_ToneDataCmd - Time at tone data
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 11.004 time_UT.c:1828 - CFE_TIME_FakeToneCmd - Simulated time at tone signal
+[ INFO]   CFE_EVS_SendEvent: 26, 3 - Invalid message ID -- ID = 0x1862
+
+[ PASS] 11.005 time_UT.c:1858 - CFE_TIME_ToneSendCmd - *Command not available* Request time at tone data
+[ INFO]   CFE_EVS_SendEvent: 4, 2 - No-op command. cFE Version 6.4.2.0
+
+[ PASS] 11.006 time_UT.c:1867 - CFE_TIME_NoopCmd - No-op
+[ INFO]   CFE_EVS_SendEvent: 5, 1 - Reset Counters command
+
+[ PASS] 11.007 time_UT.c:1875 - CFE_TIME_ResetCmd - Reset counters
+[ INFO]   CFE_SB_TimeStampMsg called
+
+[ INFO] Incomplete TIME command: 2054
+
+[ INFO]   CFE_EVS_SendEvent: 6, 1 - Request diagnostics command
+
+[ PASS] 11.008 time_UT.c:1883 - CFE_TIME_DiagCmd - Request diagnostics
+[ INFO]   CFE_EVS_SendEvent: 7, 2 - Set Clock State = INVALID
+
+[ PASS] 11.009 time_UT.c:1893 - CFE_TIME_SetStateCmd - Set clock state = invalid
+[ INFO]   CFE_EVS_SendEvent: 7, 2 - Set Clock State = VALID
+
+[ PASS] 11.010 time_UT.c:1902 - CFE_TIME_SetStateCmd - Set clock state = valid
+[ INFO]   CFE_EVS_SendEvent: 7, 2 - Set Clock State = FLYWHEEL
+
+[ PASS] 11.011 time_UT.c:1911 - CFE_TIME_SetStateCmd - Set clock state = flywheel
+[ INFO]   CFE_EVS_SendEvent: 30, 3 - Invalid Clock State = 0x63
+
+[ PASS] 11.012 time_UT.c:1922 - CFE_TIME_SetStateCmd - Invalid clock state
+[ INFO]   CFE_EVS_SendEvent: 40, 3 - Set Source commands invalid without CFE_TIME_CFG_SOURCE set to TRUE
+
+[ PASS] 11.013 time_UT.c:1939 - CFE_TIME_SetSourceCmd - Set internal source invalid
+[ INFO]   CFE_EVS_SendEvent: 40, 3 - Set Source commands invalid without CFE_TIME_CFG_SOURCE set to TRUE
+
+[ PASS] 11.014 time_UT.c:1956 - CFE_TIME_SetSourceCmd - Set external source invalid
+[ INFO]   CFE_EVS_SendEvent: 31, 3 - Invalid Time Source = 0xFFFFFFFF
+
+[ PASS] 11.015 time_UT.c:1968 - CFE_TIME_SetSourceCmd - Invalid time source
+[ INFO]   CFE_EVS_SendEvent: 41, 3 - Set Signal commands invalid without CFE_TIME_CFG_SIGNAL set to TRUE
+
+[ PASS] 11.016 time_UT.c:1989 - CFE_TIME_SetSignalCmd - Set tone source = primary invalid
+[ INFO]   CFE_EVS_SendEvent: 41, 3 - Set Signal commands invalid without CFE_TIME_CFG_SIGNAL set to TRUE
+
+[ PASS] 11.017 time_UT.c:2011 - CFE_TIME_SetSignalCmd - Set tone signal source = redundant invalid
+[ INFO]   CFE_EVS_SendEvent: 32, 3 - Invalid Tone Source = 0xFFFFFFFF
+
+[ PASS] 11.018 time_UT.c:2025 - CFE_TIME_SetSignalCmd - Invalid tone source
+[ INFO]   CFE_EVS_SendEvent: 42, 3 - Set Delay commands invalid without CFE_TIME_CFG_CLIENT set to TRUE
+
+[ PASS] 11.019 time_UT.c:2048 - CFE_TIME_SetDelayCmd - Set tone add delay invalid
+[ INFO]   CFE_EVS_SendEvent: 42, 3 - Set Delay commands invalid without CFE_TIME_CFG_CLIENT set to TRUE
+
+[ PASS] 11.020 time_UT.c:2070 - CFE_TIME_SetDelayCmd - Set subtract delay invalid
+[ INFO]   CFE_EVS_SendEvent: 12, 2 - Set Time -- secs = 0, usecs = 0, ssecs = 0x0
+
+[ PASS] 11.021 time_UT.c:2085 - CFE_TIME_SetTimeCmd - Set time
+[ INFO]   CFE_EVS_SendEvent: 13, 2 - Set MET -- secs = 0, usecs = 0, ssecs = 0x0
+
+[ PASS] 11.022 time_UT.c:2107 - CFE_TIME_SetMETCmd - Set MET
+[ INFO]   CFE_EVS_SendEvent: 14, 2 - Set STCF -- secs = 0, usecs = 0, ssecs = 0x0
+
+[ PASS] 11.023 time_UT.c:2129 - CFE_TIME_SetSTCFCmd - Set STCF
+[ INFO]   CFE_EVS_SendEvent: 15, 2 - STCF Adjust -- secs = 0, usecs = 0, ssecs = 0x0, dir[1=Pos, 2=Neg] = 1
+
+[ PASS] 11.024 time_UT.c:2151 - CFE_TIME_AdjustCmd - Set STCF adjust positive
+[ INFO]   CFE_EVS_SendEvent: 15, 2 - STCF Adjust -- secs = 0, usecs = 0, ssecs = 0x0, dir[1=Pos, 2=Neg] = 2
+
+[ PASS] 11.025 time_UT.c:2173 - CFE_TIME_AdjustCmd - Set STCF adjust negative
+[ INFO]   CFE_EVS_SendEvent: 16, 2 - STCF 1Hz Adjust -- secs = 0, ssecs = 0x0, dir[1=Pos, 2=Neg] = 1
+
+[ PASS] 11.026 time_UT.c:2195 - CFE_TIME_1HzAdjCmd - Set STCF 1Hz adjust positive
+[ INFO]   CFE_EVS_SendEvent: 16, 2 - STCF 1Hz Adjust -- secs = 0, ssecs = 0x0, dir[1=Pos, 2=Neg] = 2
+
+[ PASS] 11.027 time_UT.c:2217 - CFE_TIME_1HzAdjCmd - Set STCF 1Hz adjust negative
+[ INFO]   CFE_EVS_SendEvent: 33, 3 - Invalid Tone Delay -- secs = 0, usecs = 1000001
+
+[ PASS] 11.028 time_UT.c:2236 - CFE_TIME_SetDelayCmd - Invalid tone delay
+[ INFO]   CFE_EVS_SendEvent: 34, 3 - Invalid Time -- secs = 0, usecs = 1000001
+
+[ PASS] 11.029 time_UT.c:2245 - CFE_TIME_SetTimeCmd - Invalid time
+[ INFO]   CFE_EVS_SendEvent: 35, 3 - Invalid MET -- secs = 0, usecs = 1000001
+
+[ PASS] 11.030 time_UT.c:2254 - CFE_TIME_SetMETCmd - Invalid MET
+[ INFO]   CFE_EVS_SendEvent: 36, 3 - Invalid STCF -- secs = 0, usecs = 1000001
+
+[ PASS] 11.031 time_UT.c:2263 - CFE_TIME_SetSTCFCmd - Invalid STCF
+[ INFO]   CFE_EVS_SendEvent: 37, 3 - Invalid STCF Adjust -- secs = 0, usecs = 1000001, dir[1=Pos, 2=Neg] = 1
+
+[ PASS] 11.032 time_UT.c:2272 - CFE_TIME_AdjustCmd - Invalid STCF adjust
+[ INFO]   CFE_EVS_SendEvent: 17, 2 - Set Leap Seconds = 0
+
+[ PASS] 11.033 time_UT.c:2286 - CFE_TIME_SetLeapsCmd - Set leap seconds
+[ INFO]   CFE_EVS_SendEvent: 27, 3 - Invalid command code -- ID = 0x1805, CC = 127
+
+[ PASS] 11.034 time_UT.c:2304 - CFE_TIME_TaskPipe - Invalid command code
+[ INFO]   CFE_EVS_SendEvent: 26, 3 - Invalid message ID -- ID = 0xFFFF
+
+[ PASS] 11.035 time_UT.c:2312 - CFE_TIME_TaskPipe - Invalid message ID
+[  END] 11 Test_PipeCmds        TOTAL::35    PASS::35    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 12 Test_ResetArea
+[ INFO] Begin Test Reset Area
+
+
+[ PASS] 12.001 time_UT.c:2335 - CFE_TIME_UpdateResetVars - Successful update
+[ PASS] 12.002 time_UT.c:2346 - CFE_TIME_QueryResetVars - Initialize times using an existing reset area; time tone PRI
+[ PASS] 12.003 time_UT.c:2357 - CFE_TIME_QueryResetVars - Initialize times using an existing reset area; time tone RED
+[ PASS] 12.004 time_UT.c:2368 - CFE_TIME_QueryResetVars - Reset area error
+[ PASS] 12.005 time_UT.c:2378 - CFE_TIME_QueryResetVars - Initialize to default values
+[ PASS] 12.006 time_UT.c:2388 - CFE_TIME_QueryResetVars - Bad clock signal selection
+[ PASS] 12.007 time_UT.c:2399 - CFE_TIME_UpdateResetVars - Reset area error
+[ PASS] 12.008 time_UT.c:2412 - CFE_TIME_UpdateResetVars - Get reset area fail
+[  END] 12 Test_ResetArea       TOTAL::8     PASS::8     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 13 Test_State
+[ INFO] Begin Test Time State
+
+
+[ PASS] 13.001 time_UT.c:2440 - CFE_TIME_CalculateState - Valid time state; server state - no flywheel
+[ PASS] 13.002 time_UT.c:2457 - CFE_TIME_CalculateState - Valid time state; server state - flywheel
+[ PASS] 13.003 time_UT.c:2465 - CFE_TIME_CalculateState - Flywheel time state
+[ PASS] 13.004 time_UT.c:2473 - CFE_TIME_CalculateState - Invalid time state
+[ PASS] 13.005 time_UT.c:2483 - CFE_TIME_GetStateFlags - State data to flag conversion
+[ PASS] 13.006 time_UT.c:2502 - CFE_TIME_GetStateFlags - State data with alternate flags
+[  END] 13 Test_State           TOTAL::6     PASS::6     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 14 Test_GetReference
+[ INFO] Begin Test Get Reference
+
+
+[ PASS] 14.001 time_UT.c:2537 - CFE_TIME_GetReference - Local clock < latch at tone time
+[ PASS] 14.002 time_UT.c:2557 - CFE_TIME_GetReference - Local clock > latch at tone time
+[  END] 14 Test_GetReference    TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 15 Test_Tone
+[ INFO] Begin Test Tone
+
+
+[ PASS] 15.001 time_UT.c:2605 - CFE_TIME_ToneSend - Send tone, flywheel ON
+[ PASS] 15.002 time_UT.c:2620 - CFE_TIME_ToneSend - Send tone, flywheel OFF
+[ INFO]   CFE_EVS_SendEvent: 21, 2 - Stop FLYWHEEL
+
+[ PASS] 15.003 time_UT.c:2655 - CFE_TIME_ToneVerify - Time 1 < time 2, Forced2Fly FALSE
+[ PASS] 15.004 time_UT.c:2665 - CFE_TIME_ToneVerify - Time 1 same as previous time 1
+[ PASS] 15.005 time_UT.c:2674 - CFE_TIME_ToneVerify - Time 2 same as previous time 2
+[ PASS] 15.006 time_UT.c:2689 - CFE_TIME_ToneVerify - Time 1 > time 2 (clock rollover)
+[ PASS] 15.007 time_UT.c:2704 - CFE_TIME_ToneVerify - Elapsed time out of limits (seconds)
+[ PASS] 15.008 time_UT.c:2721 - CFE_TIME_ToneVerify - Elapsed time out of limits (subseconds low)
+[ PASS] 15.009 time_UT.c:2738 - CFE_TIME_ToneVerify - Elapsed time out of limits (subseconds high)
+[ PASS] 15.010 time_UT.c:2762 - CFE_TIME_ToneVerify - Time 1 < time 2, Forced2Fly FALSE, Clock EXTERN
+[ PASS] 15.011 time_UT.c:2795 - CFE_TIME_ToneUpdate - *Not tested* Invalid pending state
+[ PASS] 15.012 time_UT.c:2800 - CFE_TIME_ToneUpdate - *Not tested* Pending state is FLYWHEEL
+[  END] 15 Test_Tone            TOTAL::12    PASS::12    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 16 Test_1Hz
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.001 time_UT.c:2827 - CFE_TIME_Set1HzAdj - Positive adjustment
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.002 time_UT.c:2837 - CFE_TIME_Set1HzAdj - Negative adjustment
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.003 time_UT.c:2868 - CFE_TIME_Local1HzISR - Auto start flywheel (seconds)
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.004 time_UT.c:2892 - CFE_TIME_Local1HzISR - Auto update MET
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.005 time_UT.c:2909 - CFE_TIME_Tone1HzISR - Invalid tone signal interrupt
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.006 time_UT.c:2921 - CFE_TIME_Tone1HzISR - Proper number of callbacks made
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_EVS_SendEvent: 20, 2 - Start FLYWHEEL
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent: 26, 3 - Invalid message ID -- ID = 0x1811
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.007 time_UT.c:2934 - CFE_TIME_Local1HzTask - Semaphore creation pass, then fail
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_EVS_SendEvent: 21, 2 - Stop FLYWHEEL
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.008 time_UT.c:2946 - CFE_TIME_Tone1HzTask - Semaphore creation pass, then fail
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.009 time_UT.c:2960 - CFE_TIME_Tone1HzISR - Invalid tone signal interrupt; tolerance over limit
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.010 time_UT.c:2972 - CFE_TIME_Tone1HzISR - Valid tone signal interrupt, tolerance in limits
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.011 time_UT.c:2984 - CFE_TIME_Tone1HzISR - Valid tone signal interrupt, tolerance under limits
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.012 time_UT.c:3001 - CFE_TIME_Local1HzISR - Auto start flywheel (subseconds)
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.013 time_UT.c:3016 - CFE_TIME_Local1HzISR - Do not auto start flywheel
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_EVS_SendEvent: 26, 3 - Invalid message ID -- ID = 0x1811
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.014 time_UT.c:3027 - CFE_TIME_Local1HzTask - Do not auto start flywheel
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 0
+
+[ INFO]   CFE_ES_PerfLogAdd called: EntryExit = 1
+
+[ PASS] 16.015 time_UT.c:3041 - CFE_TIME_Local1HzTimerCallback - Pass through to CFE_TIME_Local1HzISR
+[  END] 16 Test_1Hz             TOTAL::15    PASS::15    FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 17 Test_UnregisterSynchCallback
+[ INFO] Begin Test Unregister Callback
+
+
+[ PASS] 17.001 time_UT.c:3086 - CFE_TIME_UnregisterSynchCallback - Successfully unregister callback
+[ PASS] 17.002 time_UT.c:3091 - CFE_TIME_UnregisterSynchCallback - Unsuccessful unregister callback
+[ PASS] 17.003 time_UT.c:3107 - CFE_TIME_UnregisterSynchCallback - Bad application ID
+[ PASS] 17.004 time_UT.c:3113 - CFE_TIME_UnregisterSynchCallback - Unknown synch callback
+[ PASS] 17.005 time_UT.c:3124 - CFE_TIME_NotifyTimeSynchApps - Invalid time synch application
+[  END] 17 Test_UnregisterSynchCallback TOTAL::5     PASS::5     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+
+[BEGIN] 18 Test_CleanUpApp
+[ INFO] Begin Test Cleanup App
+
+
+[ PASS] 18.001 time_UT.c:3159 - CFE_TIME_CleanUpApp - Removed all callback entries for app
+[ PASS] 18.002 time_UT.c:3168 - CFE_TIME_CleanUpApp - Bad application ID
+[  END] 18 Test_CleanUpApp      TOTAL::2     PASS::2     FAIL::0      MIR::0      TSF::0      N/A::0   
+
+[  END] 18 SUMMARY              TOTAL::182   PASS::182   FAIL::0      MIR::0      TSF::0      N/A::0   
+
+COMPLETE: 18 tests Segment(s) executed
+
+
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_api.c' 97.99%  199
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_task.c' 100.00%  257
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_tone.c' 100.00%  137
+gcov: '/usr/include/sys/sysmacros.h' 0.00%  6
+gcov: '/usr/include/sys/stat.h' 0.00%  8
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/inc/cfe_es.h' 0.00%  3
+gcov: '/home/sstrege/cFE650/cfe/fsw/cfe-core/src/time/cfe_time_utils.c' 100.00%  275
+
+make[1]: Leaving directory `/mnt/disk2/sstrege/cFE650/build/cpu1/cfe/unit-test/time'

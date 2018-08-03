@@ -1,0 +1,361 @@
+#!/usr/bin/perl -X
+
+###################################################################
+# Makepage Utility
+# This utility will convert a page file (in .fmt format) into a new
+#  spacecraft and cpu. It will update APIDs (both in hex and decimal)
+#  accordingly for cFE CPUs (CPU1, CPU2, and CPU3).
+#
+# Change Log
+# 11/15/05     IEA     Fixed APID conversion problem - lines with 
+#                      multiple APIDs were not being converted properly.
+#                      Now the utility will convert all APIDs on the
+#                      line when it finds that it contains one.
+# 11/17/05     IEA     Added detection of p@p in APID stage. Also added
+#                      "-X" to the perl path to allow excution of this
+#                      script without having to preface it with perl.
+###################################################################
+
+print "\n*** MakePage 11/17/05 *** \n\n";
+
+$arg_cnt = 0;
+foreach $arg (@ARGV)
+{
+    $arg_cnt++;
+}
+$die = 0;
+if (($ARGV[0] ne "-t") && ($ARGV[0] ne "-f") && ($ARGV[0] ne "-b")) {
+    print "Incorrect flag: \"$ARGV[0]\"\n";
+    $die = 1;
+}
+if ((($ARGV[0] eq "-t") || ($ARGV[0] eq "-b")) && ($arg_cnt != 6)) {
+    print "Incorrect number of arguments: $arg_cnt\n";
+    $die = 1;
+}
+if (($ARGV[0] eq "-f") && ($arg_cnt != 4)) {
+    print "Incorrect number of arguments: $arg_cnt\n";
+    $die = 1;
+}
+if ($die) {
+   #die "Please enter:\n -t <page format filename> <contains spacecraft? y/n> <contains processor? y/n> <want spacecraft? y/n> <want processor? y/n>\n (for format to template)\nor\n -f <template> <spacecraft> <processor>\n (for template to format)\nor\n -b <page format filename> <contains spacecraft? y/n> <contains processor? y/n> <spacecraft> <processor>\n (for format to template and then template to format)\n Enter \"\" to omit the spacecraft and/or processor.\n\n";
+    die "Please enter:\n -b <page format filename> <contains spacecraft? y/n> <contains processor? y/n> <spacecraft> <processor>\n Enter \"\" to omit the spacecraft and/or processor.\n\n";
+}
+
+$create_template = 0;
+$create_page = 0;
+if (($ARGV[0] eq "-t") || ($ARGV[0] eq "-b")) {
+    $create_template = 1;
+}
+if (($ARGV[0] eq "-f") || ($ARGV[0] eq "-b")) {
+    $create_page = 1;
+}
+
+# The user wants to create a template from a fmt file
+if ($create_template) {
+    $filename = $ARGV[1];
+    
+    if (($ARGV[4] eq "n") || (length($ARGV[4]) == 0)) {
+        $do_sc = 0;
+    } else {
+        $do_sc = 1;
+    }
+    $spacecraft = $ARGV[2];
+    if (length($spacecraft) > 0) {
+        if ($spacecraft eq "n") {
+            if ($do_sc) {
+                die "ERROR: Cannot create a template with a spacecraft in it from one without a spacecraft.\n";
+            }
+            $spacecraft = "";
+        } else {
+            $spacecraft = substr($filename, 0, index($filename, "_"));
+        }
+    }
+
+    if (($ARGV[5] eq "n") || (length($ARGV[5]) == 0)) {
+        $do_cpu = 0;
+    } else {
+        $do_cpu = 1;
+    }
+    $cpu = $ARGV[3];
+    if (length($cpu) > 0) {
+        if ($cpu eq "n") {
+            if ($do_cpu) {
+                die "ERROR: Cannot create a template with a processor in it from one without a processor.\n";
+            }
+            $cpu = "";
+        } else {
+            if (length($spacecraft) > 0) {
+                $cpu = substr($filename, index($filename, "_")+1);
+                $cpu = substr($cpu, 0, index($cpu, "_"));
+            } else {
+                $cpu = substr($filename, 0, index($filename, "_"));
+            }
+        }
+    }
+    
+    if ((length($spacecraft)>0) && (length($cpu)>0)) {
+        $outputfilename = substr($filename, index($filename, "_")+1);
+        $outputfilename = substr($outputfilename, index($outputfilename, "_")+1);
+    } elsif ((length($spacecraft)>0) || (length($cpu)>0)) {
+        $outputfilename = $filename;
+        $outputfilename = substr($outputfilename, index($outputfilename, "_")+1);
+    }
+    $outputfilename = "template_".substr($outputfilename, 0, index($outputfilename, ".")).".asc";
+    
+    $inputfilename = substr($filename, 0, index($filename, ".")).".asc";
+    
+    print "Converting $filename to ascii format...\n";
+    system("fmt_unload $filename -i. -o.");
+    
+    print "Templatizing $inputfilename into $outputfilename...\n";
+    if ($do_sc && $do_cpu) {
+        print "Replacing $spacecraft with \$SC and $cpu with \$CPU...\n";
+    } elsif ($do_sc) {
+        print "Replacing $spacecraft with \$SC...\n";
+    } elsif ($do_cpu) {
+        print "Replacing $cpu with \$CPU...\n";
+    }
+    open(INPUT, "<$inputfilename");
+    open (OUTPUT, ">$outputfilename"); 
+    $spacecraft_lc = $spacecraft;
+    $spacecraft_lc =~tr/A-Z/a-z/;
+    $cpu_lc = $cpu;
+    $cpu_lc =~tr/A-Z/a-z/;
+    while (<INPUT>) {
+        chomp;
+        $line = $_;
+        if (index($line, "$spacecraft") >= 0) {
+            if ($do_sc) {
+                $line =~ s/$spacecraft/\$SC/g;
+            } else {
+                $spacecraft_ = $spacecraft."_";
+                $line =~ s/$spacecraft_//g;
+                $line =~ s/$spacecraft//g;
+            }
+        }
+        if (index($line, $spacecraft_lc) >= 0) {
+            if ($do_sc) {
+                $line =~ s/$spacecraft_lc/\$sc/g;
+            } else {
+                $spacecraft_ = $spacecraft_lc."_";
+                $line =~ s/$spacecraft_//g;
+                $line =~ s/$spacecraft_lc//g;
+            }
+        }
+        if (index($line, "$cpu") >= 0) {
+            if ($do_cpu) {
+                $line =~ s/$cpu/\$CPU/g;
+            } else {
+                $cpu_ = $cpu."_";
+                $line =~ s/$cpu_//g;
+                $line =~ s/$cpu//g;
+            }
+        }
+        if (index($line, $cpu_lc) >= 0) {
+            if ($do_cpu) {
+                $line =~ s/$cpu_lc/\$cpu/g;
+            } else {
+                $cpu_ = $cpu_lc."_";
+                $line =~ s/$cpu_//g;
+                $line =~ s/$cpu_lc//g;
+            }
+        }
+        if (index($line, "s get_file_to_cvt") >= 0) {
+            $line =~ s/\\\"1\\\"/\\\"\$CPU\\\"/g;
+            $line =~ s/\\\"2\\\"/\\\"\$CPU\\\"/g;
+            $line =~ s/\\\"3\\\"/\\\"\$CPU\\\"/g;
+        }
+        if ((index($line, "read_key_val=\"P") >= 0) || (index($line, "read_key_val=\"p\@P") >= 0) || (index($line, "read_key_val=\"p\@p") >= 0)) {
+            $point = -1;
+            if (index($line,  "read_key_val=\"P\@") < 0) {
+                $point = index($line, "read_key_val=\"P")+15;
+                if ($point < 15) {
+                    $point = index($line, "read_key_val=\"p\@P")+17;
+                    #print "p\@P: $line\nIndex: $point\n";
+                    if ($point < 17) {
+                        $point = index($line, "read_key_val=\"p\@p")+17;
+                        #print "p\@p: $line\nIndex: $point\n";
+                    }
+                } else {
+                    #print "P: $line\nIndex: $point\n";
+                }
+            } elsif (index($line, "read_key_val=\"P\@P") >= 0) {
+                $point = index($line, "read_key_val=\"P\@P")+17;
+                #print "P\@P: $line\nIndex: $point\n";
+            }
+            if ($point >= 0) {
+                # Convert the value to CPU1 value. Then when a fmt file is created, just add 0, 0x20, or 0x40 depending on CPU1, 2, or 3.
+                if ($cpu eq "CPU1") {
+                    # Do nothing, we want the value to stay the same.
+                } elsif ($cpu eq "CPU2") {
+                    # Replace the value with the current value minus 0x20.
+                    $orig_middle = substr($line, $point, 3);
+                    $middle = hex($orig_middle) - 0x20;
+                    $middle = sprintf("%3.3x", $middle);
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+                } elsif ($cpu eq "CPU3") {
+                    # Replace the value with the current value minus 0x40.
+                    $orig_middle = substr($line, $point, 3);
+                    $middle = hex($orig_middle) - 0x40;
+                    $middle = sprintf("%3.3x", $middle);
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+               } # else: If we are on a spacecraft that has different names, nothing will happen
+            }
+        }
+        if (index($line, "read_key_val=\"FILE_LIST[") >= 0) {
+            $point = -1;
+            $point = index($line, "read_key_val=\"FILE_LIST[")+24;
+            if ($point >= 0) {
+                # Convert the value to CPU1 value. Then when a fmt file is created, just add 0, 32, or 64 depending on CPU1, 2, or 3.
+                if ($cpu eq "CPU1") {
+                    # Do nothing, we want the value to stay the same.
+                } elsif ($cpu eq "CPU2") {
+                    # Replace the value with the current value minus 32.
+                    $orig_middle = substr($line, $point, 4);
+                    $middle = $orig_middle - 32;
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+                } elsif ($cpu eq "CPU3") {
+                    # Replace the value with the current value minus 64.
+                    $orig_middle = substr($line, $point, 4);
+                    $middle = $orig_middle - 64;
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+               } # else: If we are on a spacecraft that has different names, nothing will happen
+            }
+        }
+        print OUTPUT "$line\n";
+    }
+    
+    print "Completed.\n\n";
+} 
+if ($create_page) {
+# The user wants to create a fmt file from a template
+    if ($create_template) {
+        $inputfilename = $outputfilename;
+    } else {
+        $inputfilename = $ARGV[1];
+    }
+    if ($ARGV[0] eq "-f") {
+        $spacecraft = $ARGV[2];
+    } else {
+        $spacecraft = $ARGV[4];
+    }
+    if (length($spacecraft) == 0) {
+        $spacecraft_ = "";
+    } else {
+        $spacecraft_ = $spacecraft."_";
+    }
+    if ($ARGV[0] eq "-f") {
+        $cpu = $ARGV[3];
+    } else {
+        $cpu = $ARGV[5];
+    }
+    if (length($cpu) == 0) {
+        $cpu_ = "";
+    } else {
+        $cpu_ = $cpu."_";
+    }
+    $outputfilename = $spacecraft_.$cpu_.substr($inputfilename, index($inputfilename, "_")+1);
+    print "Converting template $inputfilename into $outputfilename...\n";
+
+    open(INPUT, "<$inputfilename");
+    open (OUTPUT, ">$outputfilename"); 
+    $spacecraft_lc = $spacecraft;
+    $spacecraft_lc =~tr/A-Z/a-z/;
+    $cpu_lc = $cpu;
+    $cpu_lc =~tr/A-Z/a-z/;
+    $spacecraft_lc_ = $spacecraft_;
+    $spacecraft_lc_ =~tr/A-Z/a-z/;
+    $cpu_lc_ = $cpu_;
+    $cpu_lc_ =~tr/A-Z/a-z/;
+    while (<INPUT>) {
+        chomp;
+        $line = $_;
+        if (index($line, "\$SC") >= 0) {
+            $line =~ s/\$SC_/$spacecraft_/g;
+            $line =~ s/\$SC/$spacecraft/g;
+        }
+        if (index($line, "\$sc") >= 0) {
+            $line =~ s/\$sc_/$spacecraft_lc_/g;
+            $line =~ s/\$sc/$spacecraft_lc/g;
+        }
+        if (index($line, "\$CPU") >= 0) {
+            $line =~ s/\$CPU_/$cpu_/g;
+            $line =~ s/\$CPU/$cpu/g;
+        }
+        if (index($line, "\$cpu") >= 0) {
+            $line =~ s/\$cpu_/$cpu_lc_/g;
+            $line =~ s/\$cpu/$cpu_lc/g;
+        }
+        if ((index($line, "read_key_val=\"P") >= 0) || (index($line, "read_key_val=\"p\@P") >= 0) || (index($line, "read_key_val=\"p\@p") >= 0)) {
+            $point = -1;
+            if (index($line,  "read_key_val=\"P\@") < 0) {
+                $point = index($line, "read_key_val=\"P")+15;
+                if ($point < 15) {
+                    $point = index($line, "read_key_val=\"p\@P")+17;
+                    #print "p\@P: $line\nIndex: $point\n";
+                    if ($point < 17) {
+                        $point = index($line, "read_key_val=\"p\@p")+17;
+                        #print "p\@p: $line\nIndex: $point\n";
+                    }
+                } else {
+                    #print "P: $line\nIndex: $point\n";
+                }
+            } elsif (index($line, "read_key_val=\"P\@P") >= 0) {
+                $point = index($line, "read_key_val=\"P\@P")+17;
+                #print "P\@P: $line\nIndex: $point\n";
+            }
+            if ($point >= 0) {
+                # Convert the value to the correct CPU value - just add 0, 0x20, or 0x40 depending on CPU1, 2, or 3.
+                if ($cpu eq "CPU1") {
+                    # Do nothing, we want the value to stay the same.
+                } elsif ($cpu eq "CPU2") {
+                    # Replace the value with the current value plus 0x20.
+                    $orig_middle = substr($line, $point, 3);
+                    $middle = hex($orig_middle) + 0x20;
+                    $middle = sprintf("%3.3x", $middle);
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+                } elsif ($cpu eq "CPU3") {
+                    # Replace the value with the current value plus 0x40.
+                    $orig_middle = substr($line, $point, 3);
+                    $middle = hex($orig_middle) + 0x40;
+                    $middle = sprintf("%3.3x", $middle);
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+               } # else: If we are on a spacecraft that has different names, nothing will happen
+            }
+        }
+        if (index($line, "read_key_val=\"FILE_LIST[") >= 0) {
+            $point = -1;
+            $point = index($line, "read_key_val=\"FILE_LIST[")+24;
+            if ($point >= 0) {
+                # Convert the value to the correct CPU value - just add 0, 32, or 64 depending on CPU1, 2, or 3.
+                if ($cpu eq "CPU1") {
+                    # Do nothing, we want the value to stay the same.
+                } elsif ($cpu eq "CPU2") {
+                    # Replace the value with the current value plus 32.
+                    $orig_middle = substr($line, $point, 4);
+                    $middle = $orig_middle + 32;
+                    $line =~ s/$orig_middle/$middle/g;                    
+                    #print "New Line: $line\n";
+                } elsif ($cpu eq "CPU3") {
+                    # Replace the value with the current value plus 64.
+                    $orig_middle = substr($line, $point, 4);
+                    $middle = $orig_middle + 64;
+                    $line =~ s/$orig_middle/$middle/g;
+                    #print "New Line: $line\n";
+               } # else: If we are on a spacecraft that has different names, nothing will happen
+            }
+        }
+        print OUTPUT "$line\n";
+    }
+    
+    print "Converting $outputfilename to fmt format...\n";
+    system("fmt_load $outputfilename -i. -o.");
+    
+    print "Completed.\n\n";
+}

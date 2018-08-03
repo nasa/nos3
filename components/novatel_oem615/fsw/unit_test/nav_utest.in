@@ -1,0 +1,63 @@
+;
+; File:
+;   $Id: nav_utest.in
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS STF-1 Navigation (NAV) Application.
+;
+;   This file is used in conjunction with the nav_utest.c
+;   unit test driver and handles high level testing of command 
+;   processing through the LC application's software bus pipe.
+; 
+;   These tests assume the following Message and Command ID
+;   settings in the NAV code:
+;
+;   TODO - fix these
+;   LC_CMD_MID        =  0xXXXX
+;   LC_SEND_HK_MID    =  0xXXXX
+;   LC_SAMPLE_AP_MID  =  0xXXXX
+;
+*
+* ***START NAV SB COMMAND TESTING***
+* ---------------------------------
+*
+*
+* NOOP Command Test
+* -----------------
+0019 C000 0001 0000    ; NOOP Command
+0019 C000 0001 0000    ; NOOP Command
+0019 C000 0001 0000    ; NOOP Command
+0019 C000 0001 0000    ; NOOP Command
+0019 C000 0001 0000    ; NOOP Command
+*
+*
+*
+* Invalid Command ID Tests
+* ------------------------
+18A4 C000 0001 0A00    ; Bad Command ID
+18A4 C000 0001 0B00    ; Bad Command ID
+18A4 C000 0001 0C00    ; Bad Command ID
+18A4 C000 0001 0D00    ; Bad Command ID
+18A4 C000 0001 0E00    ; Bad Command ID
+*
+*
+* NOOP Command With Invalid Length Test
+* -------------------------------------
+* 18A4 C000 0007 0000 1234 FFFF 7FFF  ; Bad NOOP Command
+*
+;
+; Force CFE_SB_RcvMsg to return CFE_SB_PIPE_RD_ERR 
+; that will exit app (SHOULD BE LAST IN SCRIPT)
+:
+; Note: Need to issue a command after setting the return
+; value to make the return happen
+*
+* SB error\app exit test
+* -----------------------------------------
+@ SET_SB_RETURN_CODE 5 0xca000006
+0019 C000 0001 0000    ; NOOP Command
+*
+*
+* ***END NAV SB COMMAND TESTING***
+*-------------------------------

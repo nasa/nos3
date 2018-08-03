@@ -1,0 +1,298 @@
+        -:    0:Source:/home/sstrege/cFE650/cfe/fsw/cfe-core/src/sb/cfe_sb_init.c
+        -:    0:Graph:cfe_sb_init.gcno
+        -:    0:Data:cfe_sb_init.gcda
+        -:    0:Runs:1
+        -:    0:Programs:3
+        -:    1:/******************************************************************************
+        -:    2:** File: cfe_sb_init.c
+        -:    3:**
+        -:    4:**      Copyright (c) 2004-2012, United States government as represented by the
+        -:    5:**      administrator of the National Aeronautics Space Administration.
+        -:    6:**      All rights reserved. This software(cFE) was created at NASAs Goddard
+        -:    7:**      Space Flight Center pursuant to government contracts.
+        -:    8:**
+        -:    9:**      This is governed by the NASA Open Source Agreement and may be used,
+        -:   10:**      distributed and modified only pursuant to the terms of that agreement.
+        -:   11:**
+        -:   12:**
+        -:   13:**
+        -:   14:** Purpose:
+        -:   15:**      This file contains the source code for the SB Initialization.
+        -:   16:**
+        -:   17:** Author:   R.McGraw/SSI
+        -:   18:**
+        -:   19:** $Log: cfe_sb_init.c  $
+        -:   20:** Revision 1.12 2012/01/13 12:15:12GMT-05:00 acudmore 
+        -:   21:** Changed license text to reflect open source
+        -:   22:** Revision 1.11 2010/11/04 16:41:25EDT aschoeni 
+        -:   23:** Added optional sender information storage
+        -:   24:** Revision 1.10 2010/10/20 12:36:52EDT jmdagost 
+        -:   25:** Updated memory pool creation to select no semaphore control.
+        -:   26:** Revision 1.9 2009/07/24 18:24:57EDT aschoeni 
+        -:   27:** Added Zero Copy Mode
+        -:   28:** Revision 1.8 2009/07/17 17:57:56EDT aschoeni 
+        -:   29:** Updated MsgMap (and associated variables) from a uint16 to an CFE_SB_MsgId_t
+        -:   30:** Revision 1.7 2009/06/10 09:18:02EDT acudmore 
+        -:   31:** Updated OS_Mem* and OS_BSP* to CFE_PSP_*
+        -:   32:** Revision 1.6 2009/03/30 10:48:48EDT rmcgraw 
+        -:   33:** DCR5801:2Added missing \n in mutex-creation-failed sys log msg
+        -:   34:** Revision 1.5 2009/02/11 14:21:43EST rmcgraw 
+        -:   35:** DCR6269:1 Changes for new SB defined mem pool sizes
+        -:   36:** Revision 1.4 2009/02/06 11:29:05EST rmcgraw 
+        -:   37:** DCR5801:2 General Cleanup
+        -:   38:** Revision 1.3 2009/02/03 11:06:59EST rmcgraw 
+        -:   39:** DCR5801:2 Changed destination desciptors from array based to linked list
+        -:   40:** Revision 1.2 2009/01/30 10:35:39EST rmcgraw 
+        -:   41:** DCR5801:1 Initialize destinations to zero
+        -:   42:** Revision 1.1 2008/04/17 08:05:31EDT ruperera 
+        -:   43:** Initial revision
+        -:   44:** Member added to cfe project on tlserver3
+        -:   45:** Revision 1.27 2007/09/13 09:38:20EDT rjmcgraw 
+        -:   46:** Initialized new StopRecurseFlags array
+        -:   47:** Revision 1.26 2007/07/12 17:03:49EDT rjmcgraw 
+        -:   48:** DCR4680:1 Removed Event log mutes creation
+        -:   49:** Revision 1.25 2007/06/04 13:24:07EDT rjmcgraw 
+        -:   50:** DCR4473:1 Moved SB stat initialization from task init to early init
+        -:   51:** Revision 1.24 2007/05/18 16:11:17EDT rjmcgraw 
+        -:   52:** DCR3052:9 Moved initialization of subscription report state from app init to 
+        -:   53:** early init
+        -:   54:** Revision 1.23 2007/04/26 09:25:31EDT rjmcgraw 
+        -:   55:** Changed EarlyInit to report and return errors
+        -:   56:** Revision 1.22 2006/10/16 14:30:54EDT rjmcgraw 
+        -:   57:** Minor changes to comply with MISRA standard
+        -:   58:** Revision 1.21 2006/09/01 11:08:11EDT kkaudra 
+        -:   59:** IV&V:Removed cfe_evs.h
+        -:   60:** Revision 1.20 2006/07/26 07:51:53EDT rjmcgraw 
+        -:   61:** Changed status format from dec to hex
+        -:   62:**
+        -:   63:******************************************************************************/
+        -:   64:
+        -:   65:/*
+        -:   66:**  Include Files
+        -:   67:*/
+        -:   68:
+        -:   69:#include "cfe_sb_priv.h"
+        -:   70:#include "cfe_sb.h"
+        -:   71:#include "osapi.h"
+        -:   72:#include "cfe_msgids.h"
+        -:   73:#include "cfe_es.h"
+        -:   74:#include "cfe_psp.h"
+        -:   75:#include "cfe_error.h"
+        -:   76:#include "cfe_sb_events.h"
+        -:   77:
+        -:   78:/*
+        -:   79:**  External Declarations
+        -:   80:*/
+        -:   81:
+        -:   82:uint32 CFE_SB_MemPoolDefSize[CFE_ES_MAX_MEMPOOL_BLOCK_SIZES] = 
+        -:   83:{
+        -:   84:    CFE_SB_MAX_BLOCK_SIZE,
+        -:   85:    CFE_SB_MEM_BLOCK_SIZE_16,
+        -:   86:    CFE_SB_MEM_BLOCK_SIZE_15,
+        -:   87:    CFE_SB_MEM_BLOCK_SIZE_14,
+        -:   88:    CFE_SB_MEM_BLOCK_SIZE_13,
+        -:   89:    CFE_SB_MEM_BLOCK_SIZE_12,
+        -:   90:    CFE_SB_MEM_BLOCK_SIZE_11,
+        -:   91:    CFE_SB_MEM_BLOCK_SIZE_10,
+        -:   92:    CFE_SB_MEM_BLOCK_SIZE_09,
+        -:   93:    CFE_SB_MEM_BLOCK_SIZE_08,
+        -:   94:    CFE_SB_MEM_BLOCK_SIZE_07,
+        -:   95:    CFE_SB_MEM_BLOCK_SIZE_06,
+        -:   96:    CFE_SB_MEM_BLOCK_SIZE_05,
+        -:   97:    CFE_SB_MEM_BLOCK_SIZE_04,
+        -:   98:    CFE_SB_MEM_BLOCK_SIZE_03,
+        -:   99:    CFE_SB_MEM_BLOCK_SIZE_02,
+        -:  100:    CFE_SB_MEM_BLOCK_SIZE_01
+        -:  101:};
+        -:  102:
+        -:  103:
+        -:  104:/******************************************************************************
+        -:  105:**  Function:  CFE_SB_EarlyInit()
+        -:  106:**
+        -:  107:**  Purpose:
+        -:  108:**    Initialize the Software Bus routing tables.
+        -:  109:**
+        -:  110:**  Arguments:
+        -:  111:**
+        -:  112:**  Notes:
+        -:  113:**    This function MUST be called before any SB API's are called.
+        -:  114:**
+        -:  115:**  Return:
+        -:  116:**    CFE_SUCCESS
+        -:  117:*/
+      160:  118:int32 CFE_SB_EarlyInit (void) {
+        -:  119:
+      160:  120:    int32 Stat = CFE_SUCCESS;
+        -:  121:
+      160:  122:    CFE_SB_Default_Qos.Priority    = CFE_SB_QOS_LOW_PRIORITY;
+      160:  123:    CFE_SB_Default_Qos.Reliability = CFE_SB_QOS_LOW_RELIABILITY;
+        -:  124:
+      160:  125:    Stat = OS_MutSemCreate(&CFE_SB.SharedDataMutexId, "CFE_SB_DataMutex", 0);
+      160:  126:    if(Stat != OS_SUCCESS){
+        1:  127:      CFE_ES_WriteToSysLog("SB shared data mutex creation failed! RC=0x%08x\n",(unsigned int)Stat);
+        1:  128:      return Stat;
+        -:  129:    }/* end if */
+        -:  130:    
+        -:  131:    /* Initialize the state of susbcription reporting */
+      159:  132:    CFE_SB.SubscriptionReporting = CFE_SB_DISABLE;
+        -:  133:
+        -:  134:    /* Initialize the state of sender reporting */
+      159:  135:    CFE_SB.SenderReporting = CFE_SB_DEFAULT_REPORT_SENDER;
+        -:  136:
+        -:  137:     /* Initialize memory partition. */
+      159:  138:    Stat = CFE_SB_InitBuffers();
+      159:  139:    if(Stat != CFE_SUCCESS){
+        -:  140:      /* error reported in CFE_SB_InitBuffers */
+        1:  141:      return Stat;
+        -:  142:    }/* end if */
+        -:  143:
+        -:  144:    /* Initialize the pipe table. */
+      158:  145:    CFE_SB_InitPipeTbl();
+        -:  146:
+        -:  147:    /* Initialize the routing index look up table */
+      158:  148:    CFE_SB_InitMsgMap();
+        -:  149:
+        -:  150:    /* Initialize the routing table. */
+      158:  151:    CFE_SB_InitRoutingTbl();
+        -:  152:    
+        -:  153:    /* Initialize the SB Statistics Pkt */
+      158:  154:    CFE_SB_InitMsg(&CFE_SB.StatTlmMsg.Hdr.Pri,
+        -:  155:                   CFE_SB_STATS_TLM_MID,
+        -:  156:                   sizeof(CFE_SB_StatMsg_t),
+        -:  157:                   TRUE);    
+        -:  158:
+      158:  159:   CFE_SB.ZeroCopyTail = NULL;
+        -:  160:
+      158:  161:    return Stat;
+        -:  162:
+        -:  163:}/* end CFE_SB_EarlyInit */
+        -:  164:
+        -:  165:
+        -:  166:
+        -:  167:/******************************************************************************
+        -:  168:**  Function:  CFE_SB_InitBuffers()
+        -:  169:**
+        -:  170:**  Purpose:
+        -:  171:**    Initialize the Software Bus Buffer Pool.
+        -:  172:**
+        -:  173:**  Arguments:
+        -:  174:**
+        -:  175:**  Notes:
+        -:  176:**    This function MUST be called before any SB API's are called.
+        -:  177:**
+        -:  178:**  Return:
+        -:  179:**    none
+        -:  180:*/
+      159:  181:int32  CFE_SB_InitBuffers(void) {
+        -:  182:
+      159:  183:    int32 Stat = 0;
+        -:  184:
+      159:  185:    Stat = CFE_ES_PoolCreateEx(&CFE_SB.Mem.PoolHdl, 
+        -:  186:                                CFE_SB.Mem.Partition, 
+        -:  187:                                CFE_SB_BUF_MEMORY_BYTES, 
+        -:  188:                                CFE_ES_MAX_MEMPOOL_BLOCK_SIZES, 
+        -:  189:                                &CFE_SB_MemPoolDefSize[0],
+        -:  190:                                CFE_ES_NO_MUTEX);
+        -:  191:    
+      159:  192:    if(Stat != CFE_SUCCESS){
+        1:  193:        CFE_ES_WriteToSysLog("PoolCreate failed for SB Buffers, gave adr 0x%lx,size %d,stat=0x%x\n",
+        -:  194:              (unsigned long)CFE_SB.Mem.Partition,CFE_SB_BUF_MEMORY_BYTES,(unsigned int)Stat);
+        1:  195:        return Stat;
+        -:  196:    }
+        -:  197:    
+      158:  198:    return CFE_SUCCESS;
+        -:  199:    
+        -:  200:}/* end CFE_SB_InitBuffers */
+        -:  201:
+        -:  202:
+        -:  203:/******************************************************************************
+        -:  204:**  Function:  CFE_SB_InitPipeTbl()
+        -:  205:**
+        -:  206:**  Purpose:
+        -:  207:**    Initialize the Software Bus Pipe Table.
+        -:  208:**
+        -:  209:**  Arguments:
+        -:  210:**
+        -:  211:**  Notes:
+        -:  212:**    This function MUST be called before any SB API's are called.
+        -:  213:**
+        -:  214:**  Return:
+        -:  215:**    none
+        -:  216:*/
+      158:  217:void CFE_SB_InitPipeTbl(void){
+        -:  218:
+        -:  219:    uint8  i;
+        -:  220:
+    10270:  221:    for(i=0;i<CFE_SB_MAX_PIPES;i++){
+    10112:  222:        CFE_SB.PipeTbl[i].InUse         = CFE_SB_NOT_IN_USE;
+    10112:  223:        CFE_SB.PipeTbl[i].SysQueueId    = CFE_SB_UNUSED_QUEUE;
+    10112:  224:        CFE_SB.PipeTbl[i].PipeId        = CFE_SB_INVALID_PIPE;
+    10112:  225:        CFE_SB.PipeTbl[i].CurrentBuff   = NULL;
+    10112:  226:        CFE_PSP_MemSet(&CFE_SB.PipeTbl[i].PipeName[0],0,OS_MAX_API_NAME);
+        -:  227:    }/* end for */
+        -:  228:
+      158:  229:}/* end CFE_SB_InitPipeTbl */
+        -:  230:
+        -:  231:
+        -:  232:
+        -:  233:/******************************************************************************
+        -:  234:**  Function:  CFE_SB_InitMsgMap()
+        -:  235:**
+        -:  236:**  Purpose:
+        -:  237:**    Initialize the Software Bus Message Map.
+        -:  238:**
+        -:  239:**  Arguments:
+        -:  240:**
+        -:  241:**  Notes:
+        -:  242:**    This function MUST be called before any SB API's are called.
+        -:  243:**
+        -:  244:**  Return:
+        -:  245:**    none
+        -:  246:*/
+      158:  247:void CFE_SB_InitMsgMap(void){
+        -:  248:
+        -:  249:#ifdef MESSAGE_FORMAT_IS_CCSDS
+        -:  250:
+        -:  251:    CFE_SB_MsgId_t   appId;
+        -:  252:
+  1294494:  253:    for (appId=0; appId < (CFE_SB_HIGHEST_VALID_MSGID + 1); appId++) {
+  1294336:  254:        CFE_SB.MsgMap[appId] = CFE_SB_AVAILABLE;
+        -:  255:    }
+        -:  256:
+        -:  257:#endif
+        -:  258:
+      158:  259:}/* end CFE_SB_InitMsgMap */
+        -:  260:
+        -:  261:
+        -:  262:
+        -:  263:/******************************************************************************
+        -:  264:**  Function:  CFE_SB_InitRoutingTbl()
+        -:  265:**
+        -:  266:**  Purpose:
+        -:  267:**    Initialize the Software Bus Routing Table.
+        -:  268:**
+        -:  269:**  Arguments:
+        -:  270:**
+        -:  271:**  Notes:
+        -:  272:**    This function MUST be called before any SB API's are called.
+        -:  273:**
+        -:  274:**  Return:
+        -:  275:**    none
+        -:  276:*/
+      158:  277:void CFE_SB_InitRoutingTbl(void){
+        -:  278:
+        -:  279:    uint32  i;
+        -:  280:
+        -:  281:    /* Initialize routing table */
+    40606:  282:    for(i=0;i<CFE_SB_MAX_MSG_IDS;i++){
+        -:  283:
+    40448:  284:        CFE_SB.RoutingTbl[i].MsgId = CFE_SB_INVALID_MSG_ID;
+    40448:  285:        CFE_SB.RoutingTbl[i].SeqCnt = 0;
+    40448:  286:        CFE_SB.RoutingTbl[i].Destinations = 0;
+    40448:  287:        CFE_SB.RoutingTbl[i].ListHeadPtr = NULL;
+        -:  288:              
+        -:  289:    }/* end for */
+        -:  290:
+      158:  291:}/* end CFE_SB_InitRoutingTbl */
+        -:  292:
+        -:  293:/*****************************************************************************/

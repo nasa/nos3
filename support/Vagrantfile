@@ -1,0 +1,142 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+#
+# NASA Operational Simulator for Small Satellites (NOS3)
+#
+
+# Answer the following questions by commenting and uncommenting lines
+# to achive the desired mission configuration.
+
+# 1) Virtual Operating System
+    #os = '1'   # CentOS
+    os = '2'  # Ubuntu
+
+# 2) Ground Station Software
+    gss = '1' # COSMOS
+    #gss = '2'  # ITOS
+
+# 3) Level of Installation
+    #loi = '1' # Minimal     = cFS + 42 + NOS
+    loi = '2'  # Full        = 1 + Ground Station
+    #loi = '3' # Development = 2 + Mission Specific Script
+
+
+###############################################################################
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+###############################################################################
+
+Vagrant.configure(2) do |config|  
+  if os == '1' 
+    config.vm.box = "bento/centos-7.2"
+  end
+  if os == '2'
+    config.vm.box = "bento/ubuntu-16.04"
+  end
+    
+  config.vm.synced_folder "../", "/vagrant_parent"
+
+  config.vm.provider "virtualbox" do |vb|
+    if os == '1' 
+      vb.name = "NOS3_CentOS"
+    end
+    if os == '2' 
+      vb.name = "NOS3_Ubuntu"
+    end
+    vb.gui = true
+    vb.memory = "4096"
+    vb.cpus = 2
+    vb.customize ["showvminfo", :id]
+    vb.customize ['storageattach', :id,  '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'dvddrive', '--medium', 'emptydrive']
+    vb.customize ["modifyvm", :id, "--vram", "128"]
+    vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    # Speed up ruby gem installs
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+    # Connect network
+    vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+  end
+
+  # Save off ruby variable with VirtualBox version number
+  vbox = VagrantPlugins::ProviderVirtualBox::Driver::Meta.new
+  vbox_version = vbox.version
+
+  if os == '1'
+    # CentOS
+    config.vm.provision "shell", path: "installers/centos/nos3_centos_64_INIT.sh"
+    if loi == '1'
+      config.vm.provision "shell", path: "installers/centos/nos3_centos_64_MIN.sh"
+    end
+    if loi == '2'
+      config.vm.provision "shell", path: "installers/centos/nos3_centos_64_MIN.sh"
+      if gss == '1'
+        config.vm.provision "shell", path: "installers/centos/nos3_centos_64_FULL_cosmos.sh"
+      else
+        config.vm.provision "shell", path: "installers/centos/nos3_centos_64_FULL_itos.sh"
+      end
+    end
+    if loi == '3'
+      config.vm.provision "shell", path: "installers/centos/nos3_centos_64_MIN.sh"
+      if gss == '1'
+        config.vm.provision "shell", path: "installers/centos/nos3_centos_64_FULL_cosmos.sh"
+      else
+        config.vm.provision "shell", path: "installers/centos/nos3_centos_64_FULL_itos.sh"
+      end
+      #config.vm.provision "shell", path: "installers/centos/nos3_centos_64_DEV.sh"
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+    echo ""    
+    echo "***** Download Guest Additions #{vbox_version} *****"
+    echo ""
+    cd /tmp
+    if [ "#{vbox_version}" == "5.2.0" ]; then
+      wget -q "https://www.virtualbox.org/download/testcase/VBoxGuestAdditions_5.2.1-118918.iso"
+    else
+      wget -q "http://download.virtualbox.org/virtualbox/#{vbox_version}/VBoxGuestAdditions_#{vbox_version}.iso"
+    fi
+    echo ""    
+    echo "***** Complete!  Run 'vagrant relead' from the command line! *****"
+    echo ""
+    echo "***** `vagrant reload` will report errors - this is solved   *****"
+    echo "***** by running the final install script on the desktop!    *****"
+    echo ""  
+    SHELL
+  end
+  
+  if os == '2'
+    # Ubuntu 
+    config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_INIT.sh"
+    if loi == '1'
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_MIN.sh"
+    end
+    if loi == '2'
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_MIN.sh"
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_FULL_cosmos.sh"
+    end
+    if loi == '3'
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_MIN.sh"
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_FULL_cosmos.sh"
+      #config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_DEV.sh"
+    end
+    config.vm.provision "shell", inline: <<-SHELL
+    DESKTOPINSTALLED=$(dpkg -s ubuntu-desktop &> /dev/null; echo $?)
+    if [ ${DESKTOPINSTALLED} -eq 1  ]
+    then
+        echo "***** Desktop Installed:  Now Install Guest Additions #{vbox_version} *****"
+        cd /tmp
+        wget -q "http://download.virtualbox.org/virtualbox/#{vbox_version}/VBoxGuestAdditions_#{vbox_version}.iso"
+        mount -o loop,ro "/tmp/VBoxGuestAdditions_#{vbox_version}.iso" /media
+        yes "y" | sh /media/VBoxLinuxAdditions.run
+        umount /media
+        echo ""   
+        echo "***** Complete!  Run 'vagrant relead' from the command line! *****"
+        echo ""
+    fi
+    SHELL
+  end
+
+end

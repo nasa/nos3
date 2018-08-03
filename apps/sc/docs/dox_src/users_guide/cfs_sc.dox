@@ -1,0 +1,789 @@
+/**
+  \mainpage CFS Stored Command (SC) User's Guide
+
+  <UL>
+      <LI> \subpage cfsscrevhist
+      <LI> \subpage cfsscintro
+      <LI> \subpage cfsscovr
+      <LI> \subpage cfsscopr
+      <LI> \subpage cfsscreq
+      <LI> \subpage cfsscdg
+      <LI> \subpage cfssccmds
+      <LI> \subpage cfssctlm
+      <LI> \subpage cfssctbl
+      <LI> \subpage cfssccfg
+      <LI> \subpage cfssccons
+      <LI> \subpage cfsscfaqs
+      <LI> \subpage sc_events.h "CFS Stored Command Event Message Reference" <BR>
+  </UL>
+**/
+
+/**
+  \page cfsscrevhist CFS Stored Command User's Guide Revision History
+
+  \verbatim  
+  $Log: cfs_sc.dox  $
+  Revision 1.12 2014/12/19 17:17:10EST sstrege 
+  Added ATP precaution information to the Operation, Tables, and FAQ sections.
+  Revision 1.11 2011/04/22 14:00:50EDT wmoleski 
+  Added text to explaing that if the CDS is used and a table is found to be corrupted upon restore 
+  from the CDS, the actual data will not be cleared until the next table load occurs.
+  Revision 1.9 2011/02/02 14:06:34EST wmoleski 
+  Added a paragraph to the Constraints page to note that ATS & RTS updates can be done while the target ATS or RTS is executing.
+  Revision 1.8 2010/10/21 12:37:15EDT wmoleski 
+  Modified the Table Definition section to add a note for the ATS and RTS Table command structure to indicate that
+  a pad byte is required if a command has an odd number of bytes.
+  Revision 1.7 2010/10/14 15:00:32EDT wmoleski 
+  Added description for ATS Append Command and tables and cleaned up text.
+  Revision 1.6 2009/04/18 16:03:05EDT dkobe 
+  Corrected annoying links once more
+  Revision 1.5 2009/04/18 16:01:42EDT dkobe 
+  Corrected erroneous links once again
+  Revision 1.4 2009/04/18 15:58:47EDT dkobe 
+  Corrected erroneous doxygen links again
+  Revision 1.3 2009/04/18 15:56:47EDT dkobe 
+  Corrected erroneous doxygen links
+  Revision 1.2 2009/04/18 15:51:43EDT dkobe 
+  Made to conform to standard format
+  \endverbatim
+  
+  Next: \ref cfsscintro
+**/
+
+
+/**
+  \page cfsscintro CFS Stored Command Introduction
+
+  <H1> Scope </H1>
+
+  This document provides a complete specification for the commands and telemetry
+  associated with the CFS Stored Command (SC) application software. The document
+  is intended primarily for users of the software (operations personal, test
+  engineers, and maintenance personal). The deployment guide section, is
+  intended for mission developers when deploying and configuring the SC
+  application software for a mission flight software build environment. 
+
+  <H1> Applicable Documents </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Document ID</B> </TD> 
+      <TD WIDTH="40%"> <B>Document Title</B> </TD>
+  <TR><TD WIDTH="20%"> 582-2008-010 </TD> 
+      <TD WIDTH="40%"> CFS Stored Command Application Requirements Document</TD>
+  <TR><TD WIDTH="20%"> TBD </TD> 
+      <TD WIDTH="40%"> CFS Stored Command Design Document </TD>
+  </TABLE>
+
+
+  <H1> Acronyms </H1>
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%">
+  <TR><TD WIDTH="20%"> <B>Acronym</B> </TD> <TD WIDTH="40%"> <B>Description</B>                       </TD>
+  <TR><TD WIDTH="20%"> API     </TD> <TD WIDTH="40%"> Application Programming Interface               </TD>
+  <TR><TD WIDTH="20%"> ATP     </TD> <TD WIDTH="40%"> Absolute Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> ATS     </TD> <TD WIDTH="40%"> Absolute Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> CCSDS   </TD> <TD WIDTH="40%"> Consultative Committee for Space Data Systems   </TD>
+  <TR><TD WIDTH="20%"> C&DH    </TD> <TD WIDTH="40%"> Command and Data Handling                       </TD>
+  <TR><TD WIDTH="20%"> CFE     </TD> <TD WIDTH="40%"> Core Flight Executive                           </TD>
+  <TR><TD WIDTH="20%"> CFS     </TD> <TD WIDTH="40%"> Core Flight System                              </TD>
+  <TR><TD WIDTH="20%"> CI      </TD> <TD WIDTH="40%"> Command Ingest                                  </TD>
+  <TR><TD WIDTH="20%"> Cmd     </TD> <TD WIDTH="40%"> Command                                         </TD>
+  <TR><TD WIDTH="20%"> CPU     </TD> <TD WIDTH="40%"> Central Processing Unit                         </TD>
+  <TR><TD WIDTH="20%"> EDAC    </TD> <TD WIDTH="40%"> Error Detection and Correction                  </TD>
+  <TR><TD WIDTH="20%"> FDS     </TD> <TD WIDTH="40%"> Flight Data System                              </TD>
+  <TR><TD WIDTH="20%"> FM      </TD> <TD WIDTH="40%"> File Manager                                    </TD>
+  <TR><TD WIDTH="20%"> FSW     </TD> <TD WIDTH="40%"> Flight Software                                 </TD>
+  <TR><TD WIDTH="20%"> GN&C    </TD> <TD WIDTH="40%"> Guidance Navigation & Control                   </TD>
+  <TR><TD WIDTH="20%"> GSFC    </TD> <TD WIDTH="40%"> Goddard Space Flight Center                     </TD>
+  <TR><TD WIDTH="20%"> HK      </TD> <TD WIDTH="40%"> Housekeeping                                    </TD>
+  <TR><TD WIDTH="20%"> HW, H/W </TD> <TD WIDTH="40%"> Hardware                                        </TD>
+  <TR><TD WIDTH="20%"> ICD     </TD> <TD WIDTH="40%"> Interface Control Document                      </TD>
+  <TR><TD WIDTH="20%"> ISR     </TD> <TD WIDTH="40%"> Interrupt Service Routine                       </TD>
+  <TR><TD WIDTH="20%"> OS      </TD> <TD WIDTH="40%"> Operating System                                </TD>
+  <TR><TD WIDTH="20%"> OSAL    </TD> <TD WIDTH="40%"> Operating System Abstraction Layer              </TD>
+  <TR><TD WIDTH="20%"> Pkts    </TD> <TD WIDTH="40%"> Packets                                         </TD>
+  <TR><TD WIDTH="20%"> RAM     </TD> <TD WIDTH="40%"> Random-Access Memory                            </TD>
+  <TR><TD WIDTH="20%"> RTOS    </TD> <TD WIDTH="40%"> Real Time Operating System                      </TD>
+  <TR><TD WIDTH="20%"> RTP     </TD> <TD WIDTH="40%"> Relative Time Processor                         </TD>
+  <TR><TD WIDTH="20%"> RTS     </TD> <TD WIDTH="40%"> Relative Time tagged command Sequence           </TD>
+  <TR><TD WIDTH="20%"> SB      </TD> <TD WIDTH="40%"> Software Bus Service                            </TD>
+  <TR><TD WIDTH="20%"> SBC     </TD> <TD WIDTH="40%"> Single Board Computer                           </TD>
+  <TR><TD WIDTH="20%"> SC      </TD> <TD WIDTH="40%"> Stored Commands task                            </TD>
+  <TR><TD WIDTH="20%"> SW, S/W </TD> <TD WIDTH="40%"> Software                                        </TD>
+  <TR><TD WIDTH="20%"> TBD     </TD> <TD WIDTH="40%"> To Be Determined                                </TD>
+  <TR><TD WIDTH="20%"> TBL     </TD> <TD WIDTH="40%"> Table                                           </TD>
+  <TR><TD WIDTH="20%"> TLM     </TD> <TD WIDTH="40%"> Telemetry                                       </TD>
+  <TR><TD WIDTH="20%"> UTC     </TD> <TD WIDTH="40%"> Universal time code                             </TD>
+  </TABLE>
+
+  Next: \ref cfsscovr <BR>
+  Prev: \ref cfsscrevhist
+**/
+
+
+/**
+  \page cfsscovr CFS Stored Command Overview
+
+  The CFS Stored Command appliaction allows the spacecraft to be commanded 24
+  hours a day using sequences of commands that are loaded from the ground. Each
+  command has a time tag associated with it, permitting the command to be
+  released for distribution at predetermined times. SC supports both Absolute
+  Time tagged command Sequences (ATSs) as well as multiple Relative Time tagged
+  command Sequences (RTSs).  
+
+\section SC Design Overview
+
+  The CFS Stored Command application is driven off of the 1Hz packet from the
+  Scheduler Application. When the 1Hz is received, SC looks to see if there are
+  stored commands to execute (in the ATS and the RTS's). If there are commands
+  to be executed in this second, SC will execute them up until
+  #SC_MAX_CMDS_PER_SEC commands are executed. SC is also driven off of the
+  housekeeping request packet from the Scheduler Application. When SC receives
+  the HK request, it processes the request, sends out the housekeeping packet,
+  and looks for table updates to the load/dump tables that SC maintains. SC is
+  also driven by commands, responding to them as they are received. 
+
+  Next: \ref cfsscopr <BR>
+  Prev: \ref cfsscintro
+
+**/
+
+/**
+  \page cfsscopr CFS Stored Command Operation
+
+  <H2>Initialization</H2>
+
+  SC can do different things on initialization depending on the type of
+  initialization taking place and how SC is configured. SC can be configured to
+  try to fly through a reset by uncommenting the #SC_SAVE_TO_CDS configuration
+  parameter. 
+
+  <H2>Power On Resets</H2>
+
+  Power On resets are handled exactly like Processor resets, but there is no
+  chance the CDS information is saved because that region of memory is cleared
+  on a Power On reset. Power On resets will begin with a clean startup as shown
+  below. 
+
+  As with any file, any RTS or ATS table file that is stored on a RAM drive will
+  not survive a Power On reset. 
+
+  <H2>Processor Resets</H2>
+
+  If SC is configured to fly through a reset, it will try to do the following
+  things:<BR>
+
+  <OL>
+    <LI>Attempt to read the SC table information that was saved in the Critical Data Store (CDS).
+    <LI>Attempt to read the SC Application Data that was saved in the CDS.
+    <LI>Verify that the CDS information was all properly saved before SC exited the previous time.
+  </OL>
+
+  If any of those checks fail, SC will start up clean, without using any
+  information from the CDS. If those checks pass, SC will copy that data to it's
+  internal structures and tables to start processing from where it left off
+  previously. If SC detects that a table has been corrupted upon restore, the
+  data residing in that table is not automatically cleared until the next table
+  load is performed.
+
+  If SC is not configured to try to fly though a reset, it will perform a clean 
+  start up. A clean start up entails: <BR>
+
+  <OL>
+     <LI>Load all RTS tables located in EEPROM
+     <LI>Initialize all internal tables and set all RTS's to disabled
+     <LI>Enable and execute RTS #1
+  </OL> 
+
+  <H2>Absolute Time Processor (ATP)</H2>
+
+  The ATP is used to schedule spacecraft commands for an extended period of
+  time. Under normal operations one of the ATS buffers will be loaded with all
+  anticipated commands to operate the spacecraft for a day. While one ATS buffer
+  is being used, the second ATS buffer can be prepared for the next day. The job
+  of the ATP is to send out the commands in the ATS buffer in time order. Each
+  command will be sent out to the data system when the command time tag matches
+  the UTC Time. Because the ATS command time tag only has seconds, the
+  resolution of each ATS command is in seconds. Commands with the same time tag
+  are legal and will be sent to the data system in the same second. In the case
+  where the time tags are equal, the command with the lower command number will
+  be executed first. When it is time for an ATS command to be executed, the
+  corresponding command status from the ATS Command Status Table is checked. If
+  the command status is valid (i.e. LOADED) the command will be executed. If the
+  command status indicates any status other than LOADED, the command is not
+  executed. After the command status is checked and determined to be valid, the
+  checksum on the ATS command is verified. If the checksum fails, the status of
+  the command in the ATS Command Status Table will be marked as FAILED_CHECKSUM.
+  If the checksum is valid, the command is sent out to the data system via the
+  Software Bus. If the command is targeted for the SC (i.e. START RTS), the
+  Software Bus will route the command back to the input pipeline for the SC.
+  After the command has been sent to the Software Bus, the return status will be
+  checked. If the Software Bus was able to send the command with no errors, the
+  status will be marked as EXECUTED. If the Software Bus returns an error code,
+  the status will be marked as FAILED_DISTRIBUTION. After a command has been
+  sent to the Software Bus, the ATP sets up the next ATS command for processing.
+  If the ATP detects the end of the ATS buffer, it will stop the ATS. After
+  finding the next command (or stopping the ATS buffer) the ATP will return
+  control to the main function of the SC. 
+
+  <H2>ATP Error Handling</H2> 
+
+  There are many error checks built in to the ATP to assure that it does not
+  cause any ill effects on the spacecraft. The error handling within the ATP can
+  be thought of in four different categories: ground command validation,
+  sequence error detection, load error detection, and memory error detection.
+
+  Each ground command sent to the SC is first checked to see if the parameters
+  are valid. For example, the command to execute ATS number 24 will never be
+  accepted. After the parameter is checked, there is a logical check on each
+  command. An example of the logical check is the Ground Switch command checking
+  to see if the ATP is actually executing an ATS before a switch is attempted.
+  If the ATP is idle, then it makes no sense to switch the ATS buffer. The
+  exception to this rule is the Stop ATS ground command. This command will be
+  executed even if there is not an ATS currently running. This feature is useful
+  in the very unlikely case that the ATP is running an ATS but does not "think"
+  it is actually running an ATS (i.e. processor memory becomes corrupted). The
+  Stop ATS command simply cleans up the ATP control block regardless of the ATP
+  status.<BR>
+
+  The ATP also catches errors within ATSs. The common errors it checks for
+  include: invalid packet IDs, and end of buffer detection (not really an
+  error). The ATP also checks the ATS Command Status Table for each command to
+  make sure that each command is loaded and ready to go. As mentioned in the
+  section on ATS loads, the ATP also parses through the load to try to assure
+  that the ATS loads are valid and not corrupted. If the ATS does not pass the
+  load checks, it will be rejected. This check will eliminate many of the
+  run-time errors before the ATS gets started. The ATP also does memory error
+  checking. Before each command is sent out, the checksum in the command 
+  secondary header is recomputed and compared to the checksum stored with the 
+  command. If the checksum fails, the command is not sent out and the
+  appropriate entry in the ATS Command Status Table is set to FAILED_CHECKSUM.
+  Also, the command number is checked to make sure it matches the number of the
+  next ATS command to execute.
+
+  <H2>Appending to an ATS</H2>
+
+  Version 2.1.0.0 of the SC application contains a capability to append commands
+  to an existing ATS. The user loads the desired commands into the ATS Append
+  Table using the cFE Table Services. The new commands will be added to the end
+  of the ATS being appended. The new commands can replace existing commands in
+  the ATS as long as those commands have not executed yet. The ATS being
+  appended can be executing or idle. Once the data in the Append Table is
+  loaded, validated and activated, the #SC_APPENDATS command can be sent to add
+  the contents of the Append Table to the specified ATS. When the #SC_AppendATS
+  command is processed, the SC application will copy the contents of the Append
+  Table to the specified ATS and rebuild the pending execution list with the new
+  commands.
+  
+  <H2>ATP Precaution</H2>
+  
+  Despite the many error checks built in to the ATP to assure that it does not
+  cause any ill effects on the spacecraft, there is a crucial safety measure that
+  is required of all ATS tables.  The ATP relies on a sentinel word of zeroes at the
+  end of an ATS table to signal the end of the ATS table (end of data marker).  cFE 
+  Table Services, when loading a new table, unconditionally fills the table working 
+  buffer with the contents of the current table prior to placing the new table file 
+  contents into the buffer.  If a newly loaded ATS table does not contain the 
+  sentinel word of zeroes at the end of the table and is smaller than the table that 
+  was previously loaded, the newly loaded table has potential to execute the "old" 
+  invalid commands that were part of the prior table load.  It is therefore essential 
+  for operators to place the sentinel word of zeroes at the end of each ATS table 
+  including ATS append tables.  
+
+  <H2>Relative Time Processor (RTP)</H2>
+
+  When the sequence is started, the RTP reads the delay of the first command.
+  After the amount of seconds listed in the delay, the RTP will fetch the
+  command, check the checksum of the command, and send the command out to the
+  data system. The RTP will then fetch the next command in the sequence and
+  determine when this command needs to execute.
+
+  The RTP will continue to process commands in the RTS until one of the
+  following conditions occur: 
+    <OL>
+    <LI>The SCP receives a Stop RTS command from any source.
+    <LI>The RTP detects the end of the RTS sequence (Zero value for the first word of the cFE command) or detect the end of the buffer.
+    <LI>The RTP encounters an RTS command with an invalid CCSDS length field. Because the RTS commands are variable length, the RTP relies on the length field in each command to find the next command. If the length field is not valid, then the RTP cannot assume that it can find the next command so it must stop the sequence.
+    <LI>The RTP encounters a command that runs past the end of the RTS buffer.
+    <LI>The RTP processes a command with a bad checksum.
+    </OL>
+
+  <B>NOTE:</B> The RTS will stop if it encounters the end of its buffer. If the
+  last command in an RTS is a command to stop the RTS, the command will be 'sent
+  out' to the SC. Meanwhile, the RTP will detect the end of the buffer and stop
+  the RTS. Then the SC will process the Stop RTS command and stop an RTS that is
+  already stopped. This is not an error, but it shows that the Stop RTS command
+  is not needed within the buffer.
+
+  Each RTS can be started and run independently of the other RTSs. The only
+  restriction is that an RTS cannot be started a second time while it is
+  executing. When there is more than one RTS running concurrently, each RTS has
+  a priority associated with it. The priority is assigned by the buffer number.
+  In other words, RTS buffer 1 has the highest priority and the last RTS buffer
+  has the lowest priority. This priority only comes into play when there is more
+  than one RTS that has commands to be executed in the SAME SECOND. For example,
+  if RTS 1 has a command to go out at 12:00:01 and RTS 50 has 8 commands to go
+  out at 12:00:00, all 8 commands from RTS 50 will be executed before RTS 1
+  executes it's command. However, if the 8 commands from RTS 50 are scheduled to
+  go out at 12:00:01, then the command from RTS 1 will be sent first, followed
+  by 7 commands from RTS 50. At 12:00:02, the 8th command from RTS 50 will be
+  sent.
+     
+  <H2>RTP Error Handling</H2> 
+
+  Like the ATP, the RTP performs many error checks. The RTP detects and handles 
+  errors in ground commands, in sequences and in memory. Each ground command
+  sent to the RTP must pass validation checks on each of the parameters required
+  for that command. After the parameter check, a logical check is performed to
+  see if the command can be safely executed. For example, if a command to Start
+  RTS 1 is sent and RTS 1 is already executing, the command is rejected because
+  that RTS is already in use. Any command that is rejected is reported by an
+  event message as well as in telemetry. In addition to ground command errors,
+  the RTP detects a number of sequence errors once the RTS is running. The RTP
+  checks for invalid packet length, invalid packet application ids, command
+  packets that run off the end of the RTS buffer, and end of buffer detection.
+  The RTP also checks for memory errors. When it is time for the command to be
+  sent out to the data system, the checksum in the command secondary header is
+  computed and compared to the checksum attached to the command. If the checksum
+  fails, the command is discarded, the error is reported through an event
+  message, and the RTS is stopped. 
+  
+  Next: \ref cfsscreq <BR>
+  Prev: \ref cfsscovr
+
+**/
+
+
+/**
+  \page cfsscreq CFS Stored Command Requirements
+
+  For detailed SC requirements, please see the "Core Flight System (CFS) Stored Command Application 
+  Requirements" Document number: 582-2008-010.
+
+  Next: \ref cfsscdg <BR>
+  Prev: \ref cfsscopr 
+
+**/
+
+/**
+  \page cfsscdg CFS Stored Command Deployment Guide
+
+  While the SC application does not require a great deal of work for platform
+  deployment, the following are some general guidlines.
+
+
+  CFS Stored Command requires that two message ID's be put in the CFS Scheduler
+  table for proper operation. Those message ID's are #SC_SEND_HK_MID, which
+  should be sent out at the housekeeping request interval, and
+  #SC_1HZ_WAKEUP_MID, which needs to be sent out every second.
+
+  CFS Stored Command generates telemetry when it receives the housekeeping
+  request. Its telemetry message ID is #SC_HK_TLM_MID.
+
+  The user should look through the SC platform configuration header file to make
+  sure the default configuration meets the needs of the mission. Special care
+  should be taken with the following parameters: #SC_ATS_FILE_NAME,
+  #SC_RTS_FILE_NAME, #SC_APPEND_FILE_NAME and #SC_TIME_TO_USE.<BR> 
+  The #SC_ATS_FILE_NAME, #SC_RTS_FILE_NAME and #SC_APPEND_FILE_NAME must contain
+  a path in EEPROM because this is where SC looks for tables upon startup. If
+  there is a PowerOn reset, then there will be no files in any other filesystem
+  besides EEPROM.<BR>
+  The #SC_TIME_TO_USE specifies the type of time format SC should use. If the
+  time format is set to anything but #SC_USE_CFE_TIME, then the user must take
+  special care when creating ATS commands to take this time difference into
+  account. 
+
+  Also, please be aware that SC has a performance ID, #SC_APPMAIN_PERF_ID, that
+  keeps track of the performance of the SC app. 
+
+   Next: \ref cfssccmds <BR>
+   Prev: \ref cfsscreq
+ 
+**/
+
+/**
+  \page cfssccmds CFS Stored Command Commands
+
+  Next: \ref cfssctlm <BR>
+  Prev: \ref cfsscdg
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccfg</B></TD>
+  </TABLE>
+  
+  The following is a list of commands that are processed by the CFS Stored Command Application. 
+
+**/
+
+/**
+  \page cfssctlm CFS Stored Command Telemetry
+
+  Next: \ref cfssctbl <BR>
+  Prev: \ref cfssccmds
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccmds</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctbl</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccfg</B></TD>
+  </TABLE>
+  
+  The following are telemetry packets generated by the CFS Stored Command Application.
+  
+**/
+
+/**
+  \page cfssctbl CFS Stored Command Table Definitions
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccfg</B></TD>
+  </TABLE>
+  
+  The CFS Stored Command application utilizes several tables of varying types.
+
+  <H2>Load/Dump Tables</H2>
+
+  There are two types of load/dump tables: an ATS table and an RTS table. While
+  there are multiple tables of each type, each table itself is unique. There are
+  two ATS tables (for ATS A and B) and there are multiple (#SC_NUMBER_OF_RTS)
+  RTS tables. There is also a single ATS Append table that has the same
+  structure as the ATS tables. The ATS and RTS table structures are different
+  than most other kinds of table structures. Instead of an array of 'C'
+  structures, the ATS and RTS tables are defined by a series of words (#uint16),
+  with the unused portion at the end (if any) zero filled.
+
+  <B>ATS Tables</B>
+  
+  The ATS tables are double-buffer tables. The size of these tables are defined
+  by the configuration parameters #SC_ATS_BUFF_SIZE times #SC_BYTES_IN_WORD.
+  Each table contains a series of ATS commands defined by #SC_AtsEntryHeader_t.
+  The structure of a single command is:
+  <OL><LI><B>Command number:</B> This number must be unique for each command in the ATS, and this number must start at 1 (one), and go up to #SC_MAX_ATS_CMDS. The command numbers must not be zero, must not repeat, and must not go above #SC_MAX_ATS_CMDS -1.
+   <LI><B>Time Tag:</B> A 32-bit #SC_AbsTimeTag_t type that specifies the absolute time at which this ATS command should execute and is specified as a number of seconds, as received from the #CFE_TIME_GetTime functions. This time can either be UTC, TAI, or the default cFE Time, as defined by the #SC_TIME_TO_USE platform configuration parameter.
+  <LI><B>Command:</B> The variable-length command to send out on the Software Bus. This command must have a valid checksum in the checksum field or it will not be sent out.<BR>
+  <B>NOTE:</B> If the command length (in bytes) is odd, the user must add a pad
+  byte to the ATS command structure so that the next command starts on a word
+  (#uint16) boundary.
+  </OL>
+  
+  Despite the many error checks built in to the ATP to assure that it does not
+  cause any ill effects on the spacecraft, there is a crucial safety measure that
+  is required of all ATS tables.  The ATP relies on a sentinel word of zeroes at the
+  end of an ATS table to signal the end of the ATS table (end of data marker).  cFE 
+  Table Services, when loading a new table, unconditionally fills the table working 
+  buffer with the contents of the current table prior to placing the new table file 
+  contents into the buffer.  If a newly loaded ATS table does not contain the sentinel 
+  word of zeroes at the end of the table and is smaller than the table that was previously 
+  loaded, the newly loaded table has potential to execute the "old" invalid commands 
+  that were part of the prior table load.  It is therefore essential for operators to 
+  place the sentinel word of zeroes at the end of each ATS table including ATS append 
+  tables.
+
+  <B>RTS Tables</B>
+  
+  The RTS tables are single-buffer tables. The size of these tables are defined
+  by the configuration parameters #SC_RTS_BUFF_SIZE times #SC_BYTES_IN_WORD.
+  Each table contains a series of RTS commands defined by #SC_RtsEntryHeader_t. 
+  The structure of a single command is:
+  <OL><LI><B>Time Tag:</B> A 32-bit #SC_RelTimeTag_t type that specifies the relative time at which this RTS command should execute from which the last RTS command in this RTS was executed and is specified as the number of seconds from the current time. If the Time Tag is zero, then there will be no delay in sending out this command. If it is non zero, the delay will be the number of seconds from the time the last RTS command in this RTS was sent out. The first RTS command can have a delay value. It will be interpreted as a delay from the time the RTS was started.
+  <LI><B>Command:</B> The variable-length command to send out on the Software Bus. This command must have a valid checksum in the checksum field or it will not be sent out.<BR>
+  <B>NOTE:</B> If the command length (in bytes) is odd, the user must add a pad byte to the RTS command structure so that the next command starts on a word (#uint16) boundary.
+  </OL>
+
+  <B>ATS Append Table</B>
+  
+  The ATS Append table is a double-buffer table. The size of this table is
+  defined by the configuration parameters #SC_APPEND_BUFF_SIZE times
+  #SC_BYTES_IN_WORD. The table contains a series of ATS commands defined by
+  #SC_AtsEntryHeader_t. The structure of a single command is the same as the ATS
+  table command structure defined above.
+
+  <H2>Dump-Only Tables</H2>
+
+  SC uses the following dump-only tables for status information which can be
+  useful in debugging situations. These tables are defined as single buffer
+  tables with the structures defined below.
+
+  <B>Absolute Time Processor (ATP) Control Block Table</B>
+
+  The ATP Control Block table is defined by #SC_AtpControlBlock_t. This table
+  contains data items to keep track of the execution of an ATS on the ATP. The
+  fields include:
+  <OL><LI><b>AtpState:</b> This field has the current state of the Absolute Time Processor. It can be IDLE or EXECUTING.
+  <LI><b>AtsNumber:</b> This field has the number of the current or last executed ATS.  The possible values are: 
+          0 for none (after power on or cold restart), 
+          1 for ATS A, and 
+          2 for ATS B.
+  <LI><b>CmdNumber:</b> This field has the current or last executed ATS command number.
+  <LI><b>TimeIndexPtr:</b> This field has the table offset into the ATS Time Index Table of the next ATS command to execute.
+  <LI><b>SwitchPendFlag:</b> This flag indicates that an ATS switch is pending. This flag is used for internal logic.
+  </OL>
+
+  <B>ATS Information Table</B>
+
+  The ATS Information table is defined by #SC_AtsInfoTable_t. The SC application
+  defines one of these tables for each ATS table created. This table contains
+  data items that provide information about the ATS. The fields include:
+  <OL>
+  <LI><b>Usage Counter:</b> A counter that increments each time the ATS is used
+  <LI><b>Command Count:</b> The number of commands contained in the ATS
+  <LI><b>Size:</b> The size of the ATS.
+  </OL>
+
+  <B>ATS Append Information Table</B>
+
+  The ATS Append Info table is defined by #SC_AtsInfoTable_t just like the ATS
+  Info tables described above. There is only one ATS Append Info Table defined
+  and it provides information about the ATS Append table described earlier.
+
+  <B>RTS Information Table</B>
+
+  The RTS Information Table is used to keep the current status of each RTS
+  table. This table contains one record for each RTS table as defined by 
+  #SC_RtsInfoEntry_t. The fields of each entry include:
+  <OL>
+  <LI><b>Status flag:</b> The status of the associated RTS. This can be EMPTY, LOADED, or EXECUTING. 
+  <LI><b>Disabled flag:</b> Indicates whether the associated RTS is Enabled or Disabled. If Disabled, the RTS cannot be started.
+  <LI><b>Command Counter:</b> The number of commands executed in this execution of the RTS.
+  <LI><b>Command Error Counter:</b> The number of errors that have occurred during this RTS execution. Currently, an RTS will stop when it encounters an error, so the counter should never increment past 1.
+  <LI><b>Next Command Time:</b> The computed absolute time the next command will execute.
+  <LI><b>Next Command Pointer:</b> An offset (in 16-bit words) into the RTS Table of the next command.
+  <LI><b>Usage Counter:</b> The number of times that the associated RTS has been started since the last time it was loaded.
+  </OL>
+
+  <B>RTP Control Block Table</B>
+
+  The RTP Control Block table is defined by #SC_RtpControlBlock_t. This table
+  contains data items to keep track of the RTS's executing on the RTP. The
+  fields include:
+  <OL>
+  <LI><b>Active RTS's:</b> The number of RTS's currently active (started).
+  <LI><b>RtsNumber:</b> The current RTS number that is executing on the RTP. Note that this field is only cleared out when another RTS is started, allowing the ground to note the last RTS that ran on the RTP.</LI>
+  </OL>
+
+  Next: \ref cfssccfg <BR>
+  Prev: \ref cfssctlm
+
+**/
+
+/**
+  \page cfssccfg CFS Stored Command Configuration Parameters
+
+  <TABLE BORDER="1" CELLPADDING="2" WIDTH="60%" ALIGN="CENTER">
+  <TR><TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssccmds</B></TD>
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctlm</B> </TD> 
+      <TD WIDTH="20%" ALIGN="CENTER"> <B>\ref cfssctbl</B></TD>
+  </TABLE>
+  
+  The following are configuration parameters used to configure the CFS Stored
+  Command Application either for each platform or for a mission as a whole.
+
+
+  Next: \ref cfssccons <BR>
+  Prev: \ref cfssctbl
+**/
+
+
+
+/**
+  \page cfssccons CFS Stored Command Constraints
+
+  <H2>Adjusting Time</H2>
+
+  Because the SC application depends on the spacecraft clock to schedule itself
+  and all of the active sequences, adjustments to spacecraft clock time
+  (depending on what time format is configured) will have an effect on those
+  active sequences. Adjusting the spacecraft clock time has different effects on
+  active ATSs and RTSs.
+
+  The effect that adjusting time has on an ATS is predictable. Because each
+  command has an absolute time tag associated with it, any sequence that is
+  running will have a new frame of reference when the time is adjusted. For
+  example, an ATS is started at 12:00 and it is waiting to send out commands
+  starting at 2:00pm. If SC is configured to use UTC time, and the ATS is
+  started and UTC time is adjusted to 1:00pm (by adjusting spacecraft time or
+  the UTCF or both), the first ATS command will execute in an hour instead of
+  two hours. If SC is conifured to use TAI time, and the ATS is started, and the
+  leap seconds are changed, SC time will not be affected.
+
+  The effect of adjusting time on Relative Time Sequences is a little more
+  complicated. As mentioned in the Scheduling section, the next RTS command for
+  each sequence actually has an absolute time associated with it. With this
+  absolute time, it is possible for SC to know when to send out each RTS
+  command. From the Absolute time a delay time is computed, which is used to
+  tell SC how long to delay. When time is adjusted on an RTS, the command that
+  is currently waiting to execute gets "thrown off". Depending on the time
+  adjustment, the command could go out sooner or later than expected. Once the 
+  "current" command is out, however, the remaining commands in the sequence will
+  execute as scheduled because they are relative to the previous command.
+
+  The point of this discussion is that SC will not react well to time changes.
+  It is recommended that SC be idle during large time adjustments (1 second or
+  greater). Small adjustments can be tolerated if there is not an exact second
+  tolerance for every command being executed.  
+
+  <H2>Over-scheduling the Stored Command Application</H2>
+
+  Another way to stress SC is to send out many commands in one second from many 
+  sequences. The time tags for both ATS commands and RTS commands have one
+  second resolution. However, there is a way to send multiple commands in one
+  second. For ATS commands, set the time tags to the same second. For RTS
+  commands, set the delays to zero. As noted earlier, SC will send out the
+  commands as fast as possible up to a certain number of commands per second.
+  With this in mind, it is possible to pack the ATSs and a few RTSs with
+  commands that want to go out in the same second. When all of these sequences
+  are run, SC will get behind in sending out the commands. SC will keep going
+  until all of the commands are executed, but do not expect "to the second"
+  execution accuracy.
+
+  <H2>Unsorted ATS Loads</H2>
+
+  Although there is no requirement for the ATS command loads to be sorted in
+  time order, having a full command load (Platform Defined ATS commands) of 
+  completely unsorted commands can cause the SC to block the execution of lower 
+  priority tasks until it is finished sorting. The recommendation is that
+  maximum unsorted loads are not used.
+
+  <H2>ATS Switching Buffers</H2>
+  
+  Because the ATS switch is one of the most complicated SC operations, it is 
+  important to discuss the complete details of the ATS switch here. In normal 
+  operations, one ATS buffer will be running on the ATP, executing commands 
+  while the unused command buffer can be loaded and patched with the next 
+  sequence of commands. Because of the way the ATP skips commands that have 
+  time tags "in the past" when the ATS is started, the two ATS buffers can be 
+  built with some overlap in them. This allows a window of time during which 
+  the switch command could be sent. Figure 4.6 shows the overlapping buffer 
+  concept with the ATSs. As mentioned earlier, the ATP can execute commands 
+  with the same time tag. Because the resolution of the time tag only goes 
+  down to one second, in order to execute more than one command in one second, 
+  the commands should have the same time tag. Now suppose that the ATP receives 
+  the command to Switch ATSs while one ATS is in the middle of sending 8 
+  commands out with the same time tag, and only 5 of these commands were 
+  sent out before the buffer is switched (assuming a switch command coming 
+  from the ground, not the internal switch command). At first glance this 
+  seems to work because the other ATS buffer has an overlap with the same 8 
+  commands that want to go out in one second. This is where a problem occurs: 
+  when the new ATS is started, the ATP will walk down the list of commands 
+  until it finds a command with a time tag that is greater than or equal to 
+  the current time tag. Because the resolution of the time tags only goes 
+  down to a second, the ATP will execute all 8 commands in that one second, 
+  causing 5 of the eight commands to be sent out twice. In order to solve the 
+  problem of the ATS Switch sending out duplicate commands, the Switch ATS 
+  command received from the ground causes a wait condition until it is "safe" 
+  to switch the ATS buffer. So, when the Switch ATS command is received by the 
+  ATP, the command is validated and then a SWITCH_PEND flag is set. When it 
+  becomes safe for the ATS to switch (i.e. at a 1 second boundary in UTC Time),
+  the switch will be serviced. This method assures that sending the Switch ATS 
+  command from the ground will not cause any duplicate commands to be sent 
+  out to the data system, nor any missed commands. Note that all of this 
+  switch logic only comes into use when there are multiple commands per second. 
+  The safe switch will wait until all commands during the current second have 
+  been sent out, then it will switch. If there are no commands with the same 
+  time tag in the overlap region (including the switch command) this logic 
+  does not get used. In either case, the switch can be performed without 
+  sending any duplicate commands to be sent out. There are certain conditions 
+  that can cause a ATS switch that is pending to be canceled. If the ATP is 
+  stopped by the ground while the ATP is waiting for a "safe" time to switch, 
+  then the switch will not occur. Also if the ATP detects the end of the ATS 
+  buffer before there is a "safe" time to switch, the switch will be canceled. 
+  Note that the typical time frame for a "switch pend" is one second or less. 
+  The operation of the switch is transparent to the ground.
+
+  <H2>Updating ATS/RTS Loads</H2>
+
+  When creating and loading a new ATS or RTS table, it is recommended that the
+  table to be updated is not executing. While updating an executing ATS or RTS
+  is allowed, unexpected results may arise since the contents of the updated ATS
+  or RTS will be executed after the table is activated.
+
+  <H2>Null ATS/RTS Loads</H2>
+
+  Loading a NULL RTS or ATS is an invalid SC operation. In the event that 
+  the user does execute a NULL RTS the following happens:
+  <OL>
+  <LI>An SC event message will be sent out.
+  <LI>The RTS that was being overwritten will NOT be cleared.
+  </OL>
+
+  In the event that the user executes a NULL ATS the following happens:
+  <OL>
+  <LI>An SC event message will be sent out.
+  <LI>The ATS and associated index and status tables will be cleared.
+  </OL> 
+
+  <H2>Table and File Naming Convention</H2>
+
+  SC uses two types of loadable tables: ATS and RTS tables. Both the table file
+  names and the table names contained in the file header need to follow a
+  specific naming convention.
+
+  <H3>RTS's</H3>
+  
+  Because RTS's can be loaded at startup, the files for the those RTS's must be
+  in a predetermined location as determined by the platform configuration
+  parameter #SC_RTS_FILE_NAME. This location must be in non-volatile memory.
+  Otherwise, the files would not exist upon a Power-On reset. Also, the RTS
+  table file must be named according to a specific convention. The file name
+  must start with whatever the #SC_RTS_TABLE_NAME platform configuration
+  parameter is set to. Next must be a three digit number indicating which RTS
+  this table file is, and the last must be ".tbl". An example of this for RTS
+  #1, with #SC_RTS_TABLE_NAME set to "RTS_TBL" would be: 'RTS_TBL001.tbl'. In
+  addition to the file naming convention, the name of the table contained within
+  the table file should be the same as the file name, without the path or
+  extension. Remember to also have the application name prefixed to the name of
+  the table. For the file 'RTS_TBL001.tbl', its table name should be
+  'SC.RTS_TBL001, if the name of the application is "SC".
+
+  <H3>ATS's</H3>
+  
+  ATS's are not loaded at startup, nor are they loaded automatically at any
+  other time. Therefore, neither the name of the file of the ATS nor the file's 
+  location matter. All that matters to SC is the name of the table itself in the
+  header of the table file. The name should either be 'SC.ATS_TBL1' or 
+  'SC.ATS_TBL2' provided that the name of the the application is "SC" and which
+  ATS the table is meant for (1 is for A, 2 is for B).
+
+  Next: \ref cfsscfaqs <BR>
+  Prev: \ref cfssccfg
+
+**/
+
+/**
+  \page cfsscfaqs CFS Stored Command Frequently Asked Questions
+
+         <B> (Q)
+            Is patching a capability of SC since it was in heritage missions?
+         </B> <BR> <BR> <I>
+            Answer is no. cFE Table Services do not allow this at the time.
+         </I> <BR><BR>
+         <B> (Q)
+            Can an RTS start itself?
+         </B> <BR> <BR> <I>
+            Answer is Yes. Since the RTS is just a collection of commands, an RTS can include the StartRTS command. 
+            However, it is recommended that this be the last command in the RTS.
+         </I> <BR><BR>
+         <B> (Q)
+	    What precautions should be taken when using the ATP?
+	 </B> <BR> <BR> <I>
+	    Despite the many error checks built in to the ATP to assure that it does not
+	    cause any ill effects on the spacecraft, there is a crucial safety measure that
+	    is required of all ATS tables.  The ATP relies on a word of zeroes at the
+	    end of an ATS table to signal the end of the ATS table (end of data marker).  cFE 
+	    Table Services, when loading a new table, unconditionally fills the table working 
+	    buffer with the contents of the current table prior to placing the new table file 
+	    contents into the buffer.  If a newly loaded ATS table does not contain the sentinel 
+	    word of zeroes at the end of the table and is smaller than the table that was previously 
+	    loaded, the newly loaded table has potential to execute the "old" invalid commands that 
+	    were part of the prior table load.  It is therefore essential for operators to place the 
+	    sentinel word of zeroes at the end of each ATS table including ATS append tables.
+
+         </I> <BR><BR>
+            
+
+  Prev: \ref cfssccons
+
+**/

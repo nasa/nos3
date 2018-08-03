@@ -1,0 +1,58 @@
+!===============================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu CI Command Packet xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Command Ingest Task Commands
+!       Packet Source:
+!
+!       HISTORY:
+!
+!  17JUN05     SMA     : Initial
+!  25AUG10     WFM     : Updated to include commands for capturing the CFS CF
+!			 Application PDUs from the uplink queue in order to 
+!			 modify and put onto the software bus or prevent them
+!			 from being put onto the software bus
+!===============================================================================
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Command Ingest Task Commands"
+!
+  CMD  $sc_$cpu_CI_NOOP			FCTN=0, DESC="$sc $cpu CI no-operation command code"
+!
+  CMD  $sc_$cpu_CI_ResetCtrs		FCTN=1, DESC="$sc $cpu CI reset counters command code"
+!
+  CMDS $sc_$cpu_CI_ModifyPDUFileSize	FCTN=2, DESC="$sc $cpu CI command code"
+    UNION direction	DESC="Add or Subtract from File Size"
+      UI Add		STATIC,DEFAULT=0,DESC="Add amount to File Size"
+      UI Subtract	STATIC,DEFAULT=1,DESC="Subtract amount from File Size"
+    END
+    UI amount		DESC="The number of bytes to add or subtract from the File Size specified in the next Meta Data PDU"
+  END
+!
+  CMD  $sc_$cpu_CI_CorruptChecksum	FCTN=3, DESC="$sc $cpu CI command code"
+!
+  CMDS $sc_$cpu_CI_DropPDUs		FCTN=4, DESC="$sc $cpu CI command code"
+    UNION pduType	DESC="PDU Type union"
+      UB FileData	STATIC,DEFAULT=0,DESC="File Data PDU"
+      UB EOF		STATIC,DEFAULT=1,DESC="EOF PDU"
+      UB FIN		STATIC,DEFAULT=2,DESC="FIN PDU"
+      UB ACK		STATIC,DEFAULT=3,DESC="ACK PDU"
+      UB MetaData	STATIC,DEFAULT=4,DESC="Meta Data PDU"
+      UB NAK		STATIC,DEFAULT=5,DESC="NAK PDU"
+    END
+    UB dropCnt	DESC="The number of consecutive PDUs to drop"
+  END
+!
+  CMDS $sc_$cpu_CI_CapturePDUs		FCTN=5, DESC="$sc $cpu CI command code"
+    UI MsgID	DESC="The message ID to capture"
+  END
+!
+  CMD  $sc_$cpu_CI_StopPDUCapture	FCTN=6, DESC="$sc $cpu CI command code"
+!
+END       !END PACKET
+!
+!===============================================================================

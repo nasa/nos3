@@ -1,0 +1,59 @@
+!==============================================================================
+!
+!                Originator: B. Medina
+!                Responsible SC:  
+!                Responsible CSE: 
+!                Rev:  Last Change: Nov 15, 2008
+!
+!                    Telemetry Packet #nnnn  (dec)
+!                 =================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:  $sc $cpu LC WRT 
+!       Packet Length:  ?? Bytes (Including ?? Bytes Of Header)
+!	Collect             Frequency:         SEC
+!  
+!       REFERENCES:
+!
+!       NOTES:
+!
+!       HISTORY: 
+!  	2008/11/15  B. Medina  initial release
+!       2012/01/04  W. Moleski Removed VARYING from Packet definition
+!       2012/08/03  W. Moleski Added CountdownToStale item to entry
+!==============================================================================
+!
+#include "lc_msgdefs.h"
+#include "lc_tbldefs.h"
+#include "lc_platform_cfg.h"
+
+TYPES
+   RECORD $sc_$cpu_LC_WRTEntry  DESC="$sc $cpu LC WP Results Table Entry"
+    UB  WatchResults	 DESC="Results for the last evaluation of this WP",
+                         DISCRETE, DRANGE=(0,1,2,255),
+                         DLABEL=("False", "True", "Error", "Stale")
+    UB   Padding[3]
+    ULI  CountdownToStale    DESC="Number of LC Sample AP commands to be processed before result goes stale"
+    ULI  EvaluationCount     DESC="How many times this WP has been evaluated"
+    ULI  FalsetoTrueCount    DESC="How many times this WP has transitioned form False to True"
+    ULI  ConsectiveTrueCount DESC="Number of consecutive times this WP has evaluated to True"
+    ULI  CumulativeTrueCount DESC="Total number of times this WP has evaluated to True"
+    ULI  FtoTValue           DESC="WP value at comparison that caused the F to T transition"
+    ULI  SecFtoTTimeStamp    DESC="Timestamp when the F to T transition was detected"
+    ULI  SubSecFtoTTimeStamp DESC="Sub Timestamp when the F to T transition was detected"
+    ULI  TtoFValue           DESC="WP value at comparison that caused the T to F transition"
+    ULI  SecTtoFTimeStamp    DESC="Timestamp when the T to F transition was detected"
+    ULI  SubSecTtoFTimeStamp DESC="Sub Timestamp when the T to F transition was detected"
+   END
+END_TYPES
+
+! LC WP Results Table
+PACKET Pxxxx APID=nnnn, DESC="$sc $cpu LC WP Results Table"
+!
+#include "cfe_file_header.rdl"
+#include "cfe_tbl_header.rdl" 
+!
+$sc_$cpu_LC_WRTEntry $sc_$cpu_LC_WRT[0 .. LC_MAX_WATCHPOINTS-1]  DESC="$sc $cpu LC WP Results Table"
+!
+END
+

@@ -1,0 +1,167 @@
+;
+; File:
+;   $Id: sbsim.in 1.6 2012/08/23 17:11:15EDT aschoeni Exp  $
+;
+; Purpose: 
+;   This is the command input file used to unit test the 
+;   CFS Housekeeping (HK) Application.
+;
+;   This file is used in conjunction with the utf_test_hk.c
+;   unit test driver and handles high level testing of command 
+;   processing through the MM application's software bus pipe.
+; 
+;   $Log: sbsim.in  $
+;   Revision 1.6 2012/08/23 17:11:15EDT aschoeni 
+;   Updated unit tests for 2.4.0.0
+;   Revision 1.5 2012/08/15 18:32:53EDT aschoeni 
+;   Added ability to discard incomplete combo packets
+;   Revision 1.4 2011/09/19 17:24:24EDT jmdagost 
+;   Updated unit test and results files.
+;   Revision 1.3 2010/05/11 16:20:00EDT jmdagost 
+;   Major revisions to unit test and associated files, plus results.
+;   Revision 1.2 2008/10/17 15:44:08EDT rjmcgraw 
+;   DCR4325:2 Unit test results for HK 1.0.0.0
+;   Revision 1.1.1.1 2008/10/17 15:25:13EDT rjmcgraw 
+;   DCR4325:2 Unit test results for HK1.0.0.0
+;   Revision 1.1 2008/04/09 16:47:57EDT rjmcgraw 
+;   Initial revision
+;   Member added to project c:/MKSDATA/MKS-REPOSITORY/CFS-REPOSITORY/hk/fsw/unit_test/project.pj
+; 
+*
+* *** <sbsim.in> START HK COMMAND TESTING ***
+* -------------------------------------------
+*
+* <sbsim.in> Housekeeping Request
+* -------------------------------
+189B C000 0001 0000
+*
+*
+* <sbsim.in> Housekeeping Request with invalid size
+* -------------------------------------------------
+189B C000 0002 0000
+*
+*
+* <sbsim.in> NOOP Command Test
+* ----------------------------
+189A C000 0001 0000
+*
+*
+* <sbsim.in> NOOP Command Test with invalid size
+* ----------------------------------------------
+189A C000 0003 0000
+*
+*
+* <sbsim.in> Reset Counters Command Test
+* --------------------------------------
+189A C000 0001 0100
+*
+*
+* <sbsim.in> Reset Counters Cmd with invalid size 
+* -----------------------------------------------
+189A C000 0004 0100
+*
+*
+* <sbsim.in> Invalid Command Code 
+* -------------------------------
+189A C000 0004 0500
+*
+*
+* <sbsim.in> Send Output Pkt Command Test (packet output depends on HK_DISCARD_INCOMPLETE_COMBO setting)
+* ------------------------------------------------------------------------------------------------------
+;189C C000 0003 0100 099C
+189C C000 0003 0100 089C
+*
+*
+* <sbsim.in> Send Output Pkt Cmd with invalid size 
+* ------------------------------------------------
+189C C000 0001 0100 
+*
+*
+* <sbsim.in> Send Output Pkt Cmd with invalid parameter 
+* -----------------------------------------------------
+189C C000 0003 0100 0855
+*
+*
+* <sbsim.in> Send housekeeping pkt from another app that is not currently in copy table 
+* -------------------------------------------------------------------------------------
+1899 C000 0003 0100 FEED
+*
+*
+* <sbsim.in> Send housekeeping pkt from another app that is in copy table, but pkt is too small
+* ---------------------------------------------------------------------------------------------
+;0820 C000 0005 0100 FEED 0099
+0803 C000 0005 0100 FEED 0099
+*
+*
+* <sbsim.in> Send housekeeping pkt from another app that is in copy table, pkt not too small
+* ------------------------------------------------------------------------------------------
+;0820 C000 001B 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112 1213 1415 
+0803 C000 001B 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112 1213 1415 
+*
+* <sbsim.in> Send housekeeping pkts to complete combo packet and send combo packet
+* --------------------------------------------------------------------------------
+0801 C000 0013 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112  
+0800 C000 0017 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112 1213 
+0804 C000 001F 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112 1213 1415 1617
+0805 C000 0023 0100 FEED 0099 0102 0304 0506 0708 090A 0B0C 0D0E 0F10 1112 1213 1415 1617 1819
+189C C000 0003 0100 089C
+*
+* *** <sbsim.in> END HK COMMAND TESTING ***
+*
+*
+* *** <sbsim.in> START HK TABLE TESTING ***
+* -----------------------------------------
+*
+* <sbsim.in> Process New Table with no errors
+* ------------------------------------------- 
+* Load file hk_cpy_tbl2.tbl to /cf/apps
+@ LOAD_TABLE_FROM_GROUND  HK.CopyTable /cf/apps/hk_cpy_tbl2.tbl
+189B C000 0001 0000    ; Housekeeping Request for validate
+189B C000 0001 0000    ; Housekeeping Request for update
+*
+*
+*
+* <sbsim.in> Process New Table with CFE_TBL_GetStatus errors
+* ---------------------------------------------------------- 
+@ SET_TBL_RETURN_CODE 11 0xffffffff ;fails getstatus call
+@ LOAD_TABLE_FROM_GROUND  HK.CopyTable /cf/apps/hk_cpy_tbl.tbl
+189B C000 0001 0000    ; Housekeeping Request causes GetStatus to be called
+@ SET_DEFAULT_TBL_RETURN_CODE 11
+*
+*
+* <sbsim.in> Process New Table with CFE_SB_Subscribe errors
+* --------------------------------------------------------- 
+@ SET_SB_RETURN_CODE 2 0xffffffff ;fails subscribe call
+@ LOAD_TABLE_FROM_GROUND  HK.CopyTable /cf/apps/hk_cpy_tbl.tbl
+189B C000 0001 0000    ; Housekeeping Request causes subscribe to be called
+189B C000 0001 0000    ; Housekeeping Request causes subscribe to be called
+@ SET_DEFAULT_SB_RETURN_CODE 2
+*
+*
+* <sbsim.in> Process New Table with Mem pool errors (get & put) 
+* -------------------------------------------------------------
+@ SET_ES_RETURN_CODE 25 0xffffffff ;fails get pool call
+@ SET_ES_RETURN_CODE 26 0xffffffff ;fails put pool call
+@ LOAD_TABLE_FROM_GROUND  HK.CopyTable /cf/apps/hk_cpy_tbl.tbl
+189B C000 0001 0000    ; Housekeeping Request for validate
+189B C000 0001 0000    ; Housekeeping Request for update
+*
+* *** <sbsim.in> END HK TABLE TESTING ***
+*
+* 
+* *** <sbsim.in> START HK APP EXIT TESTING ***
+* --------------------------------------------
+;
+; Force CFE_SB_RcvMsg to return CFE_SB_PIPE_RD_ERR 
+; that will exit app (SHOULD BE LAST TEST IN SCRIPT)
+:
+; Note: Need to issue a command after setting the return
+; value to make the return happen
+*
+* <sbsim.in> SB RcvMsg Error causing HK App to Exit
+* -------------------------------------------------
+@ SET_SB_RETURN_CODE 5 0xca000006
+189A C000 0001 0000    ; NOOP Command
+*
+* *** <sbsim.in> END HK APP EXIT TESTING ***
+* ------------------------------------------

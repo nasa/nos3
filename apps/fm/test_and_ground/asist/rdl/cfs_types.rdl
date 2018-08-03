@@ -1,0 +1,38 @@
+!=============================================================
+!
+!                Originator: W. Moleski
+!
+!                 CFS Data Types definition
+!               =================================
+!
+!       Change History:
+!
+!  22 APR10  WFM       ; Created this file to contain CFS Application types
+!
+!=============================================================
+
+#include "osconfig.h"
+
+
+TYPES
+  RECORD FM_FileName
+     CHAR Name[OS_MAX_PATH_LEN]
+  END 
+
+  RECORD FM_AppName
+     CHAR Name[OS_MAX_API_NAME]
+  END 
+
+  RECORD FM_FileDetails
+     char Name[OS_MAX_PATH_LEN] DESC="FM Name of File"
+     ULI  FileSize              DESC="FM Size of File"
+     ULI  LastModTime           DESC="FM Last modification time of File"
+  END 
+
+   RECORD SC_ATSINFO_ENTRY_TYPE  DESC="$sc $cpu SC ATS Info Table Entry Type"
+      UI  UsageCtr      DESC="The number of times this ATS has been started"
+      UI  CmdCtr        DESC="The number of commands contained in this ATS"
+      ULI ATSSize       DESC="The size of this ATS"
+   END
+
+END_TYPES

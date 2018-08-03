@@ -1,0 +1,172 @@
+!===============================================================================
+!                Originator:      S. Applebee
+!                Responsible SC:  name           phone
+!                Responsible CSE: name           phone
+!
+!                  $sc $cpu TIME Command Packet #xxxx
+!                  ================================
+!
+!       Packet Application ID: nnnn (Hex 'xxxx')
+!       Packet Title:$sc $cpu Executive Services Commands
+!       Packet Source:
+!
+!       HISTORY: 
+!       EIS 20May05  matching OS defines file name length = 20  
+!       SMA 09Sep05  Add support for cFE BUild 3 changes. 
+!       SMA 15Sep05  Change APP_FILE_NAME from 20 to 64.
+!       SMA 17Nov05  Standardize File Write Commands.
+!       WFM 12Jun06  Added 4 new commands (14-17).
+!       MOB 14Jul06  Modified the parametes for the Trigger and Filter commands
+!       WFM 31OCT06  Made cFE 4.0 changes to commands
+!       WFM 15NOV06  Updated commands according to cfe_es.h
+!       MOB 17NOV06  Added Reset Processor Reset counter and Set Max Processor
+!		     Reset Counter commands
+!       WFM 30APR07  Modified the StartApp command structure.
+!       WFM 03MAY07  Added the DeleteCDS command (FCTN=21).
+!       WFM 17MAY07  Added the PoolStats command (FCTN=22).
+!       WFM 17MAY07  Added the WriteCDS2File command (FCTN=23).
+!       WFM 31MAY07  Renamed the StopApp command to DeleteApp and the ResetApp
+!		     command to RestartApp.
+!       MOB 04JUN07  Added Discrete values to ExceptionAcion
+!       WFM 24SEP07  Added the QueryAllTasks command (FCTN=24)
+!       WFM 28AUG08  Removed LoadAddress argument from ES_StartApp command
+!       WFM 18NOV10  Added argument to StartPerf command
+!       WFM 12JAN12  Added output file name argument to Shell command
+!
+!===============================================================================
+#include "osconfig.h"
+#include "cfe_platform_cfg.h"
+#include "cfe_mission_cfg.h"
+
+!
+CLASS Pxxxx APID=nnnn, DESC="$sc $cpu Executive Services Commands"
+!
+  CMD  $sc_$cpu_ES_NOOP        	FCTN=0, DESC="$sc $cpu ES no-operation command code"
+!
+  CMD  $sc_$cpu_ES_ResetCtrs   	FCTN=1, DESC="$sc $cpu ES reset counters command code"
+!
+  CMDS  $sc_$cpu_ES_ProcessorReset FCTN=2, DESC="$sc $cpu ES Processor Reset command code"
+    UI RestartType		STATIC, DEFAULT=1, INVISIBLE, DESC="$sc $cpu ES Processor Reset"
+  END
+!
+
+  CMDS  $sc_$cpu_ES_PowerOnReset FCTN=2, DESC="$sc $cpu ES Power-On Reset command code"
+    UI RestartType		STATIC, DEFAULT=2, INVISIBLE, DESC="$sc $cpu ES Power-On Reset"
+  END
+!
+  CMDS   $sc_$cpu_ES_Shell	FCTN=3, DESC="$sc $cpu ES shell command code"
+      char CmdString[CFE_ES_MAX_SHELL_CMD] DESC="Shell Command string"
+      char OutputFilename[OS_MAX_PATH_LEN] DESC="Shell output File Name"
+  END 
+!
+  CMDS  $sc_$cpu_ES_StartApp    FCTN=4,   DESC="$sc $cpu ES load and start single application command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+      char APP_ENTRY_PT[OS_MAX_API_NAME]  DESC="Application Entry Point"
+      char APP_FILE_NAME[OS_MAX_PATH_LEN] DESC="Application File Name"
+      ULI STACKSIZE			  DESC="Stack Size"
+!      ULI LoadAddress			  DESC="Load Address"
+      UNION EXCEPTIONACTION		  DESC="Exception Action "
+        UI RestartApp  STATIC, DEFAULT=0, DESC="Restart the Application on exceptions"
+        UI RestartCPU  STATIC, DEFAULT=1, DESC="Perform Processor Restart on exceptions"
+      END
+      UI PRIORITY			  DESC="Priority of the application"
+  END
+!
+  CMDS  $sc_$cpu_ES_DeleteApp	FCTN=5, DESC="$sc $cpu ES Delete Application command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+  END
+!
+  CMDS  $sc_$cpu_ES_RestartApp    FCTN=6, DESC="$sc $cpu ES Restart Application command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+  END
+!
+  CMDS  $sc_$cpu_ES_ReloadApp	FCTN=7,DESC="$sc $cpu ES Reload Application command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+      char APPFILENAME[OS_MAX_PATH_LEN]   DESC="Application File Name"
+  END 
+!
+  CMDS  $sc_$cpu_ES_QueryApp    FCTN=8, DESC="$sc $cpu ES Query application command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+  END
+!
+  CMDS $sc_$cpu_ES_WriteAppInfo2File FCTN=9, DESC="$sc $cpu ES Write App Info command code" 
+      char AppFileName[OS_MAX_PATH_LEN] DESC="Application Info FileName"
+  END
+!
+  CMD  $sc_$cpu_ES_ClearSysLog    FCTN=10, DESC="$sc $cpu ES clear system log command code"
+!
+  CMDS $sc_$cpu_ES_WriteSysLog2File FCTN=11, DESC="$sc $cpu ES write system log command code"
+      char SysLogFileName[OS_MAX_PATH_LEN] DESC="System Log FileName"
+  END
+!
+  CMD  $sc_$cpu_ES_ClearERLog	FCTN=12, DESC="$sc $cpu ES clear Exception and Reset log command code"
+!
+  CMDS $sc_$cpu_ES_WriteERLog2File FCTN=13, DESC="$sc $cpu ES write Exception and Reset log command code"
+      char ERLogFileName[OS_MAX_PATH_LEN] DESC="Exception & Reset Log FileName"
+  END
+!	
+  CMDS $sc_$cpu_ES_StartPerf   FCTN=14, DESC="$sc $cpu ES Start Performance Analyzer data collection command code"
+      UNION TriggerMode	DESC="The Trigger mode for the Performance Analyzer"
+         ULI TriggerStart	STATIC, DEFAULT=0, DESC= "Start"
+         ULI TriggerCenter	STATIC, DEFAULT=1, DESC= "Center"
+         ULI TriggerEnd		STATIC, DEFAULT=2, DESC= "End"
+      END
+  END
+!
+  CMDS $sc_$cpu_ES_StopPerf   FCTN=15, DESC="$sc $cpu ES Stop Performance Analyzer data collection command code"
+      char DataFileName[OS_MAX_PATH_LEN] DESC="Logic Analyzer Data FileName"
+  END
+!
+  CMDS  $sc_$cpu_ES_PerfFltrMask FCTN=16, DESC="$sc $cpu ES Set Performance Analyzer Filter Mask command code"
+      UNION Bank_ID      DESC="The 32 bit bank reference (0 - 3) for the Filter Mask"
+         ULI Bank0  STATIC, DEFAULT=0, DESC= "Bank 0"
+         ULI Bank1  STATIC, DEFAULT=1, DESC= "Bank 1"
+         ULI Bank2  STATIC, DEFAULT=2, DESC= "Bank 2"
+         ULI Bank3  STATIC, DEFAULT=3, DESC= "Bank 3"
+      END
+      ULI Filter_Mask   DESC="The filter mask"
+  END
+!
+  CMDS  $sc_$cpu_ES_PerfTrigMask FCTN=17, DESC="$sc $cpu ES Set Performance Analyzer Trigger Mask command code"
+      UNION Bank_ID      DESC="The 32 bit bank reference (0 - 3) for the Trigger Mask"
+         ULI Bank0  STATIC, DEFAULT=0, DESC= "Bank 0"
+         ULI Bank1  STATIC, DEFAULT=1, DESC= "Bank 1"
+         ULI Bank2  STATIC, DEFAULT=2, DESC= "Bank 2"
+         ULI Bank3  STATIC, DEFAULT=3, DESC= "Bank 3"
+      END
+      ULI Trigger_Mask  DESC="The Trigger mask"
+  END
+!
+  CMDS  $sc_$cpu_ES_OverwriteSysLogMode FCTN=18, DESC="$sc $cpu Overwrite System Log Mode command code"
+      UNION Mode	DESC="System Log Write Mode"
+        ULI Overwrite	STATIC, DEFAULT=0, DESC="Overwrite"
+        ULI Discard     STATIC, DEFAULT=1, DESC="Discard"
+      END
+  END
+!
+  CMD $sc_$cpu_ES_ResetPRCnt   FCTN=19, DESC="$sc $cpu ES Set Processor Reset Counter to Zero"
+
+  CMDS  $sc_$cpu_ES_SetMaxPRCnt FCTN=20, DESC="$sc $cpu ES Set Maximum Processor Counter (before Power-on)"
+    UI Max_count		DESC="Max Number of Processor Resets before resulting in Power-on"
+  END
+!
+  CMDS $sc_$cpu_ES_DeleteCDS	FCTN=21, DESC="$sc $cpu ES Delete CDS command code"
+      char CdsName[CDS_NAME_LEN] DESC="CDS Name to delete"
+  END
+!
+  CMDS $sc_$cpu_ES_PoolStats	FCTN=22, DESC="$sc $cpu ES Memory Pool Stats command code"
+      char APPLICATION[OS_MAX_API_NAME]	  DESC="Application Name"
+      ULI Handle	DESC="Memory Pool Handle"
+  END
+!
+  CMDS $sc_$cpu_ES_WriteCDS2File FCTN=23, DESC="$sc $cpu ES Dump CDS Registry command code"
+      char CDSRegFileName[OS_MAX_PATH_LEN] DESC="CDS Registry FileName"
+  END
+!
+  CMDS $sc_$cpu_ES_WriteTaskInfo2File FCTN=24, DESC="$sc $cpu ES Write Task Info command code" 
+      char TaskFileName[OS_MAX_PATH_LEN] DESC="Task Info FileName"
+  END
+!
+END       !END PACKET
+!
+!===============================================================================
