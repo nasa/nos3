@@ -72,7 +72,7 @@ The following flow for development should be adhered to when possible:
     * Based out of development and merged back in after testing
 
 ### Example Flow
-Note that the git command line may be substitued for a GUI tool without issue.
+Note that the git command line may be substituted for a GUI tool without issue.
 
 1. Create GitLab issue describing the goal and the path forward
 2. Open a terminal
