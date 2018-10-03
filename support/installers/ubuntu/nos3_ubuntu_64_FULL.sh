@@ -55,6 +55,9 @@ echo " "
     cp -R $DIR/support/cosmos/* /home/$NOS3_USER/Desktop/cosmos/
     find /home/$NOS3_USER/Desktop/cosmos -type f | xargs dos2unix 2>&1 /dev/null
     chown -R $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/cosmos
+    cd /home/$NOS3_USER/Desktop/cosmos
+    bundler install
+    cd $DIR
 
 echo " "
 echo "Cleanup"
