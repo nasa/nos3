@@ -56,6 +56,7 @@ SET(FT_INSTALL_SUBDIR "host/functional-test")
 # NOTE: libstfhw to_lab intentionally left off of this list because the order it is included is
 # critical and differs between linux and avr builds.
 SET(MISSION_APPLIST
+         hk
          sch
          cfs_lib
          arducam
