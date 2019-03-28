@@ -99,12 +99,50 @@ namespace Nos3
         _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("BESTXYZA", &GPSSimHardwareModelOEM615::get_bestxyza_response));
         _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("GPGGAA", &GPSSimHardwareModelOEM615::get_gpggaa_response));
         _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("RANGECMPA", &GPSSimHardwareModelOEM615::get_rangecmpa_response));
-        _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("BESTXYZA", &GPSSimHardwareModelOEM615::get_bestxyzb_response));
-        _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("RANGECMPA", &GPSSimHardwareModelOEM615::get_rangecmpb_response));
+        _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("BESTXYZB", &GPSSimHardwareModelOEM615::get_bestxyzb_response));
+        _get_log_data_map.insert(std::map<std::string, get_log_data_func>::value_type("RANGECMPB", &GPSSimHardwareModelOEM615::get_rangecmpb_response));
         // TODO - The following two lines are a hack for now to set the configuration of the sim to be the same as the configuration that is saved
         // in the firmware of the STF-1 NovAtel OEM615 - Remove me and make me a configuration option and/or out of band commanding option
-        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("RANGECMPA", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
-        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("BESTXYZA", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
+
+        if (config.get_child_optional("simulator.hardware-model.log-messages")) {
+            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v, config.get_child("simulator.hardware-model.log-messages")) {
+
+                std::ostringstream oss;
+                write_xml(oss, v.second);
+                sim_logger->trace("GPSSimHardwareModelOEM615::GPSSimHardwareModelOEM615:  "
+                    "simulator.hardware-model.log-messages.log subtree:\n%s", oss.str().c_str());
+
+                // v.first is the name of the child.
+                // v.second is the child tree.
+                if (v.second.get("message", "").compare("BESTXYZA") == 0) {
+                    if (v.second.get("periodic", "").compare("true") == 0) {
+                        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("BESTXYZA", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
+                    }
+                    break;
+                }
+
+                if (v.second.get("message", "").compare("RANGECMPA") == 0) {
+                    if (v.second.get("periodic", "").compare("true") == 0) {
+                        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("RANGECMPA", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
+                    }
+                    break;
+                }
+
+                if (v.second.get("message", "").compare("BESTXYZB") == 0) {
+                    if (v.second.get("periodic", "").compare("true") == 0) {
+                        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("BESTXYZB", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
+                    }
+                    break;
+                }
+
+                if (v.second.get("message", "").compare("RANGECMPB") == 0) {
+                    if (v.second.get("periodic", "").compare("true") == 0) {
+                        _periodic_logs.insert(std::map<std::string, boost::tuple<double, double>>::value_type("RANGECMPB", boost::tuple<double, double>(_absolute_start_time + 10.0, 1.0)));
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     GPSSimHardwareModelOEM615::~GPSSimHardwareModelOEM615(void)
@@ -281,6 +319,9 @@ namespace Nos3
                     get_log_data_func f = search->second;
                     (this->*f)(*data_point, data);
                     _uart_connection->write(&data[0], data.size());
+
+                    sim_logger->debug("GPSSimHardwareModelOEM615::send_periodic_data:  SENT   %s\n",
+                    SimIHardwareModel::uint8_vector_to_hex_string(data).c_str());
                 }
             }
         }
