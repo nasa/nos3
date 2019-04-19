@@ -20,6 +20,7 @@
     #loi = '1' # Minimal     = cFS + 42 + NOS
     loi = '2'  # Full        = 1 + Ground Station
     #loi = '3' # Development = 2 + Mission Specific Script
+    #loi = 'K' # Kubos        = Kubos + 42 + NOS
 
 
 ###############################################################################
@@ -121,6 +122,10 @@ Vagrant.configure(2) do |config|
       config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_MIN.sh"
       config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_FULL_cosmos.sh"
       #config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_DEV.sh"
+    end
+    if loi == 'K'
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_kubos_MIN.sh"
+      config.vm.provision "shell", path: "installers/ubuntu/nos3_ubuntu_64_kubos_FULL.sh"
     end
     config.vm.provision "shell", inline: <<-SHELL
     DESKTOPINSTALLED=$(dpkg -s ubuntu-desktop &> /dev/null; echo $?)
