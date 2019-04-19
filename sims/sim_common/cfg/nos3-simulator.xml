@@ -28,10 +28,13 @@
             <active>true</active>
             <hardware-model>
                 <type>SimTerminal</type>
-                <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>terminal</node-name></connection>
-                </connections>
-                <sim-commanded>cam-command-node</sim-commanded>
+                <!--startup-commands>
+                    <command>SET SIMBUS i2c_4</command>
+                    <command>SET SIMNODE 12</command>
+                </startup-commands-->
+                <sim-commanded>33</sim-commanded>
+                <start-bus>command</start-bus>
+                <term-node-name>terminal</term-node-name>
                 <input-mode>HEX</input-mode> <!-- HEX or ASCII -->
                 <output-mode>HEX</output-mode> <!-- HEX or ASCII -->
             </hardware-model>
@@ -110,6 +113,22 @@
                 <other-hardware-parameter1>OTHER-FOO</other-hardware-parameter1>
                 <!-- ... -->
                 <other-hardware-parameterN>OTHER-FOO</other-hardware-parameterN>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>ants</name>
+            <active>true</active>
+            <library>libants_sim.so</library>
+            <hardware-model>
+                <type>ISISpace</type>
+                <connections>
+                    <connection>
+                        <type>i2c_A</type>
+                    </connection>
+                    <connection>
+                        <type>i2c_B</type>
+                    </connection>
+                </connections>
             </hardware-model>
         </simulator>
     </simulators>
