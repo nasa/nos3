@@ -71,9 +71,11 @@ echo " "
     apt-get -y install freeglut3 freeglut3-dev libgl1-mesa-dev git git-core cmake 1> /dev/null
     cd /opt 
     sudo chown -R $NOS3_USER:$NOS3_USER /opt
+    # Pull the 42 repo at a known, working version (a83d449... ParmLoad Bug Fix)
 sudo su $NOS3_USER << `EOF`
     cd /opt
     git clone https://github.com/ericstoneking/42.git
+    git -C 42 checkout a83d449c155c5af8fec505c6271c6ae09b924c06
 `EOF`
     chown -R $NOS3_USER:$NOS3_USER /opt/42
     make -C 42 NOS3FSWFLAG='-D _ENABLE_NOS3_FSW_'
