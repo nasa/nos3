@@ -1,18 +1,19 @@
 <<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>
-TX                                      ! IPC Mode (OFF, TX, RX, WRITEFILE, READFILE)
-1.0                                     ! TX Output Interval [sec]
-SERVER                                  ! Socket Role (SERVER or CLIENT)
-localhost  4242                         ! Server Host Name, Port 
-FALSE                                   ! Require/Send Acknowledgement
-TRUE                                    ! Allow Blocking
+OFF                                     ! IPC Mode (OFF,TX,RX,WRITEFILE,READFILE)
+CLIENT                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost     42420                     ! Server Host Name, Port 
+TRUE                                    ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
-11                                      ! Number of mnemonics
+20                                      ! Number of mnemonics
 **************  Telemetry Keys for 42 InterProcess Comm ******************
 ***   See "42 IPC Keys.ods" for complete descriptions                  ***
 TIME                                    ! Time Stamp YYYY-DDD-HH:MM:SS.SSS
 SC                                      ! Spacecraft ID
-POSITION                                ! Position
-VELOCITY                                ! Velocity
+ORBPOS_N                                ! Position of Ref Orbit in N
+ORBVEL_N                                ! Velocity of Ref Orbit in N
+POS_R                                   ! Position of SC wrt Ref Orbit
+VEL_R                                   ! Velocity of SC wrt Ref Orbit
+POS_H                                   ! Position of SC wrt Sun, in H
 ANGVEL                                  ! Angular rates
 QBN                                     ! Quaternion
 SUNVEC                                  ! Sun Vector
@@ -20,3 +21,9 @@ MAGVEC                                  ! Magnetic Field Vector
 ANGMOM                                  ! Angular Momentum Vector
 JOINT                                   ! Joint ID, Angles, Trns
 HWHL                                    ! Wheel ID, Momentum
+EARTH_POS_H                             ! Position of Earth wrt Sun, in H
+EARTH_QNH                               ! Quat of Earth's N wrt H
+EARTH_QWN                               ! Quat of Earth's W wrt Earth's N
+LUNA_POS_N                              ! Pos'n of Luna wrt Earth, in Earth's N
+LUNA_QNH                                ! Quat of Luna's N wrt H
+LUNA_QWN                                ! Quat of Luna's W wrt Luna's N

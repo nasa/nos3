@@ -1,9 +1,7 @@
 <<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
 ************************** Simulation Control **************************
-SIMULATION                      !  Time Mode (FAST, REAL, EXTERNAL, or SIMULATION)
-command                         !  Sim Time Bus
-tcp://127.0.0.1:12001           !  Sim Time Connection String
-86400.0   1.0                   !  Sim Duration, Step Size [sec]
+NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)
+20000.0   1.0                   !  Sim Duration, Step Size [sec]
 1.0                             !  File Output Interval [sec]
 TRUE                            !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name
@@ -12,27 +10,28 @@ Inp_Cmd.txt                     !  Command Script File Name
 TRUE   Orb_LEO.txt              !  Input file name for Orb 0
 *****************************  Spacecraft  *****************************
 1                               !  Number of Spacecraft
-TRUE  0 SC_NOS3.txt             !  Existence, RefOrb, Input file for SC 0
+TRUE  0 SC_Simple.txt           !  Existence, RefOrb, Input file for SC 0
 ***************************** Environment  *****************************
-06 30 2017                      !  Date (Month, Day, Year)
-16 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec) ! 552110400.0
+06 21 2016                      !  Date (Month, Day, Year)
+12 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
 0.0                             !  Time Offset (sec)
 USER_DEFINED                    !  Model Date Interpolation for Solar Flux and AP values?(TWOSIGMA_KP, NOMINAL or USER_DEFINED)
 230.0                           !  If USER_DEFINED, enter desired F10.7 value
 100.0                           !  If USER_DEFINED, enter desired AP value
 IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 8   8                           !  IGRF Degree and Order (<=10)
-2   0                           !  Earth Gravity Model N and M (<=18)
+8   8                           !  Earth Gravity Model N and M (<=18)
 2   0                           !  Mars Gravity Model N and M (<=18)
 2   0                           !  Luna Gravity Model N and M (<=18)
-FALSE                           !  Aerodynamic Forces & Torques
+FALSE   FALSE                   !  Aerodynamic Forces & Torques (Shadows)
 FALSE                           !  Gravity Gradient Torques
-FALSE                           !  Solar Pressure Forces & Torques
+FALSE   FALSE                   !  Solar Pressure Forces & Torques (Shadows)
 FALSE                           !  Gravity Perturbation Forces
 FALSE                           !  Passive Joint Forces & Torques
 FALSE                           !  Thruster Plume Forces & Torques
 FALSE                           !  RWA Imbalance Forces and Torques
 FALSE                           !  Contact Forces and Torques
+FALSE                           !  CFD Slosh Forces and Torques
 FALSE                           !  Output Environmental Torques to Files
 ********************* Celestial Bodies of Interest *********************
 FALSE                           !  Mercury
@@ -50,5 +49,9 @@ FALSE                           !  Earth-Moon
 FALSE                           !  Sun-Earth
 FALSE                           !  Sun-Jupiter
 ************************* Ground Stations ***************************
-1                               ! Number of Ground Stations
-TRUE EARTH -75.512936 37.854886 "Wallops" ! Exists, World, Lng, Lat, Label
+5                                            ! Number of Ground Stations
+TRUE  EARTH  -77.0  37.0  "GSFC"             ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  -155.6 19.0  "South Point"      ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  115.4 -29.0  "Dongara"          ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  -71.0 -33.0  "Santiago"         ! Exists, World, Lng, Lat, Label
+TRUE  LUNA   45.0  45.0   "Moon Base Alpha"  ! Exists, World, Lng, Lat, Label

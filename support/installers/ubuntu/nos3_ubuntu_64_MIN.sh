@@ -68,12 +68,17 @@ echo " "
 echo " "
 echo "42"
 echo " "
-    apt-get -y install freeglut3 freeglut3-dev libgl1-mesa-dev 1> /dev/null
+    apt-get -y install freeglut3 freeglut3-dev libgl1-mesa-dev git git-core cmake 1> /dev/null
     cd /opt 
-    unzip -qq -n $DIR/support/packages/42_amd64.zip  
-    chmod 755 42/42 
+    sudo chown -R $NOS3_USER:$NOS3_USER /opt
+sudo su $NOS3_USER << `EOF`
+    cd /opt
+    git clone https://github.com/ericstoneking/42.git
+`EOF`
+    chown -R $NOS3_USER:$NOS3_USER /opt/42
+    make -C 42 NOS3FSWFLAG='-D _ENABLE_NOS3_FSW_'
+    chmod 755 42/42
     chmod -R ugo+w 42/InOut 
-    chown -R $NOS3_USER:$NOS3_USER /opt/42 
 
 echo " "
 echo "Fixes and Environmental Varibles"
@@ -126,6 +131,7 @@ echo " "
     cd /home/$NOS3_USER/Desktop/nos3-42
     test -e Model || ln -s /opt/42/Model
     test -e World || ln -s /opt/42/World
+    test -e Kit || ln -s /opt/42/Kit
     cp -R $DIR/sims/sim_common/cfg/NOS3-42InOut .
     dos2unix NOS3-42InOut/* 1> /dev/null
     chown -R $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-42
