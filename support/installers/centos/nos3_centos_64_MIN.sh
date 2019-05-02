@@ -67,12 +67,19 @@ echo " "
 echo " "
 echo "42"
 echo " "
-    yum -y install freeglut freeglut-devel mesa-libGL mesa-libGL-devel 1> /dev/null
+    yum -y install freeglut freeglut-devel mesa-libGL mesa-libGL-devel git git-core 1> /dev/null
     cd /opt 
-    unzip -qq -n $DIR/support/packages/42_amd64.zip  
-    chmod 755 42/42 
+    sudo chown -R $NOS3_USER:$NOS3_USER /opt
+    # Pull the 42 repo at a known, working version (a83d449... ParmLoad Bug Fix)
+sudo su $NOS3_USER << `EOF`
+    cd /opt 
+    git clone https://github.com/ericstoneking/42.git
+    git -C 42 checkout a83d449c155c5af8fec505c6271c6ae09b924c06
+`EOF`
+    chown -R $NOS3_USER:$NOS3_USER /opt/42
+    make -C 42 NOS3FSWFLAG='-D _ENABLE_NOS3_FSW_'
+    chmod 755 42/42
     chmod -R ugo+w 42/InOut 
-    chown -R $STF_USER:$STF_USER /opt/42 
 
 echo " "
 echo "Fixes and Environmental Varibles"
@@ -141,6 +148,7 @@ echo " "
     cd /home/$STF_USER/Desktop/nos3-42
     test -e Model || ln -s /opt/42/Model
     test -e World || ln -s /opt/42/World
+    test -e Kit || ln -s /opt/42/Kit
     cp -R $DIR/sims/sim_common/cfg/NOS3-42InOut .
     dos2unix NOS3-42InOut/*
     chown -R $STF_USER:$STF_USER /home/$STF_USER/Desktop/nos3-42
