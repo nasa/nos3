@@ -111,21 +111,48 @@ echo " "
         cmake ../ 1> /dev/null
         make 1> /dev/null
         chown $NOS3_USER:$NOS3_USER /usr/local/lib/geotrans3.5/*
-    # Build
-    cp $DIR/support/VirtualMachine/scripts/nos3-build.sh /home/$NOS3_USER/Desktop 
-    chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-build.sh 
-    chmod 755 /home/$NOS3_USER/Desktop/nos3-build.sh
-    dos2unix /home/$NOS3_USER/Desktop/nos3-build.sh 1> /dev/null
-    # Run
-    cp $DIR/support/VirtualMachine/scripts/nos3-run.sh /home/$NOS3_USER/Desktop
-    chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-run.sh 
-    chmod 755 /home/$NOS3_USER/Desktop/nos3-run.sh 
-    dos2unix /home/$NOS3_USER/Desktop/nos3-run.sh 1> /dev/null
-    # Stop
-    cp $DIR/support/VirtualMachine/scripts/nos3-stop.sh /home/$NOS3_USER/Desktop 
-    chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-stop.sh 
-    chmod 755 /home/$NOS3_USER/Desktop/nos3-stop.sh 
-    dos2unix /home/$NOS3_USER/Desktop/nos3-stop.sh 1> /dev/null
+    # Test if is KubOS Install
+    if [[ "$1" == "kubos" ]]
+    then
+        echo "Installing scripts for KubOS"
+        # NOS3 & KubOS Build
+        cp $DIR/support/VirtualMachine/scripts/nos3-kubos-build.sh /home/$NOS3_USER/Desktop 
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-kubos-build.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-kubos-build.sh 
+        dos2unix /home/$NOS3_USER/Desktop/nos3-kubos-build.sh 1> /dev/null
+        # NOS3 & KubOS Run
+        cp $DIR/support/VirtualMachine/scripts/nos3-kubos-run.sh /home/$NOS3_USER/Desktop
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-kubos-run.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-kubos-run.sh 
+        dos2unix /home/$NOS3_USER/Desktop/nos3-kubos-run.sh 1> /dev/null
+        # NOS3 & KubOS Stop
+        cp $DIR/support/VirtualMachine/scripts/nos3-kubos-stop.sh /home/$NOS3_USER/Desktop 
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-kubos-stop.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-kubos-stop.sh 
+        dos2unix /home/$NOS3_USER/Desktop/nos3-kubos-stop.sh 1> /dev/null
+        # KubOS Services Config
+        mkdir -p /home/system/etc
+        cp $DIR/support/VirtualMachine/kubos-configs/config.toml /home/system/etc/config.toml  
+        chown $NOS3_USER:$NOS3_USER /home/system/etc/config.toml     
+        chmod 755 /home/system/etc/config.toml
+        dos2unix /home/system/etc/config.toml 1> /dev/null
+    else
+        # Build
+        cp $DIR/support/VirtualMachine/scripts/nos3-build.sh /home/$NOS3_USER/Desktop 
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-build.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-build.sh
+        dos2unix /home/$NOS3_USER/Desktop/nos3-build.sh 1> /dev/null
+        # Run
+        cp $DIR/support/VirtualMachine/scripts/nos3-run.sh /home/$NOS3_USER/Desktop
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-run.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-run.sh 
+        dos2unix /home/$NOS3_USER/Desktop/nos3-run.sh 1> /dev/null
+        # Stop
+        cp $DIR/support/VirtualMachine/scripts/nos3-stop.sh /home/$NOS3_USER/Desktop 
+        chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-stop.sh 
+        chmod 755 /home/$NOS3_USER/Desktop/nos3-stop.sh 
+        dos2unix /home/$NOS3_USER/Desktop/nos3-stop.sh 1> /dev/null
+    fi
     echo " "
     echo "    42"
     echo " "

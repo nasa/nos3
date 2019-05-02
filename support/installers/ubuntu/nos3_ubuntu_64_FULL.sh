@@ -22,39 +22,36 @@ fi
 DIR=/home/$NOS3_USER/nos3
 export BOOST_VERSION=1.58
 
+if [[ "$1" == "kubos" ]]
 echo " "
-echo "COSMOS"
+echo "KUBOS"
 echo " "
     # Install dependices 
     apt-get -y install libssl-dev libyaml-dev libffi-dev libreadline6-dev zlib1g-dev libgdbm3 libgdbm-dev libncurses5-dev git git-core cmake libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev qt4-default qt4-dev-tools software-properties-common curl build-essential libreadline-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev libqtscript4-qtbindings libcanberra-gtk-module libcanberra-gtk3-module libreoffice-calc 1> /dev/null
-    # Install ruby from source
     test -e /home/$NOS3_USER/Downloads || mkdir /home/$NOS3_USER/Downloads
     cd /home/$NOS3_USER/Downloads
-    test -e ruby-2.3.1.tar.gz || wget --quiet http://ftp.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz
-    test -e ruby-2.3.1 || tar -xzvf ruby-2.3.1.tar.gz 1> /dev/null
-    cd ruby-2.3.1/
-    ./configure --enable-shared 1> /dev/null
-    make 1> /dev/null
-    make install 1> /dev/null
-    ruby -v
-    # Install COSMOS gem
-    gem install cosmos 1> /dev/null
-    gem install bundler 1> /dev/null
+    
+# Set ownership
+chown -R $NOS3_USER:root /usr/local/bin
+
+then
+echo "Rust installation"
+cd /home/$NOS3_USER
+sudo su $NOS3_USER << `EOF`
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-host x86_64-unknown-linux-gnu --default-toolchain stable
+`EOF`
 
 echo " "
-echo "Setup Environment"
+echo "Clone KubOS master repo"
 echo " "
-    echo "    COSMOS install"
-    echo " "
-    cd /home/$NOS3_USER/Desktop
-    test -e cosmos || cosmos install cosmos 1> /dev/null
-    echo " "
-    echo "    COSMOS cmd_tlm"
-    echo " "
-    cd $DIR
-    cp -R $DIR/support/cosmos/* /home/$NOS3_USER/Desktop/cosmos/
-    find /home/$NOS3_USER/Desktop/cosmos -type f | xargs dos2unix 2>&1 /dev/null
-    chown -R $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/cosmos
+cd /home/nos3
+sudo chown -R $NOS3_USER:$NOS3_USER /home/nos3/
+sudo su $NOS3_USER << `EOF`
+    cd /home/nos3
+    git clone https://github.com/kubos/kubos.git
+`EOF`
+chown -R $NOS3_USER:$NOS3_USER /home/nos3/kubos
+fi
 
 echo " "
 echo "Cleanup"
