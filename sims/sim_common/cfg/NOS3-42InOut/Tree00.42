@@ -1,0 +1,46 @@
+SC  0:  Nb =  1  Ng =  0
+
+Connect Table:
+
+     
+B[00]:
+
+
+
+Joint Path Table:
+
+     
+B[00]:
+
+
+
+Body Path Table:
+
+       B[00]
+B[00]:    1  
+
+
+
+State Vector Map:
+
+Body/Joint   RotDOF   TrnDOF   RotSeq   TrnSeq       u[]      x[]
+  B[00]        wn       ---      123      ---       00-02    00-03
+  B[00]       ---       vn       ---      123       03-05    04-06
+
+
+
+Map all 6*Nb potential DOF Axes into DOFs or Constraints
+
+*****************************************************************
+Body 00:   RotSeq = 123   TrnSeq = 123
+                                Col in   Col in       Col in
+Axis      F/C    u[]  x[]       u00.42   x00.42   Constraint00.42
+-----------------------------------------------------------------
+Rot1       F      00   00         01       01           --
+Rot2       F      01   01         02       02           --
+Rot3       F      02   02         03       03           --
+(Sph)      -      --   03         --       04           --
+
+Trn1       F      03   04         04       05           --
+Trn2       F      04   05         05       06           --
+Trn3       F      05   06         06       07           --
