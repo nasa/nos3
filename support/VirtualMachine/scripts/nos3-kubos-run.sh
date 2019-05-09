@@ -27,10 +27,10 @@ gnome-terminal \
 # --tab -t 'EPS Simulator' -e '/home/nos3/Desktop/nos3-build/bin/nos3-eps-simulator --config eps.json'  \
 # --tab -t 'AntS Simulator' -e '/home/nos3/Desktop/nos3-build/bin/nos3-ants-simulator' &
 
-sleep 10
+sleep 5
 
 cd $KUBOS/target/debug
 gnome-terminal \
---tab -t 'Novatel GPS Service' -e '$KUBOS/target/debug/novatel-oem6-service' \
---tab -t 'Clyde EPS Service' -e '$KUBOS/target/debug/clyde-3g-eps-service' \
---tab -t 'ISIS AntS Service' -e '$KUBOS/target/debug/isis-ants-service' &
+--tab -t 'Novatel GPS Service' -e 'target/debug/novatel-oem6-service' --working-directory=$KUBOS \
+--tab -t 'Clyde EPS Service' -e 'target/debug/clyde-3g-eps-service' --working-directory=$KUBOS \
+--tab -t 'ISIS AntS Service' -e 'target/debug/isis-ants-service' --working-directory=$KUBOS & 
