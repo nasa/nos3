@@ -69,6 +69,10 @@
 #include "hk_platform_cfg.h"
 #include <string.h>
 
+/*
+** Extern statements for static tables
+*/
+extern hk_copy_table_entry_t      HK_CopyTable[];
 
 /************************************************************************
 ** HK global data
@@ -81,7 +85,9 @@ HK_AppData_t        HK_AppData;
 /* HK application entry point and main process loop                */
 /*                                                                 */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void HK_AppMain(void)
+CFS_MODULE_DECLARE_APP(hk, 50, 8192);
+
+void hk_Main(void)
 {
    int32 Status;
 
@@ -227,6 +233,7 @@ int32 HK_AppInit(void)
             "Error Creating Memory Pool,RC=0x%08X",Status);
         return (Status);
      }
+    HK_AppData.RunStatus = CFE_ES_APP_RUN; // TODO: How did this value change in `CFE_ES_PoolCreate`?
 
     HK_ResetHkData ();
 
@@ -299,8 +306,8 @@ int32 HK_TableInit (void)
 
 
     Status = CFE_TBL_Load (HK_AppData.CopyTableHandle,
-                           CFE_TBL_SRC_FILE,
-                           HK_COPY_TABLE_FILENAME);
+                           CFE_TBL_SRC_ADDRESS,
+                           (const void *) HK_CopyTable);
     if (Status != CFE_SUCCESS)
     {
       CFE_EVS_SendEvent(HK_CPTBL_LD_ERR_EID, CFE_EVS_ERROR,

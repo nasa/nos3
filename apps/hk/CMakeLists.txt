@@ -13,4 +13,4 @@ add_cfe_app(hk ${APP_SRC_FILES})
 include_directories(fsw/src)
 
 # Add the tables
-add_cfe_tables(hk fsw/tables/hk_cpy_tbl.c)
+add_static_cfe_tables(hk fsw/tables/hk_cpy_tbl.c)

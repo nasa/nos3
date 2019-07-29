@@ -45,11 +45,7 @@
 #include "hk_msgids.h"
 #include "hk_tbldefs.h"
 #include "cfe_tbl_filedef.h"
-
-/* STF-1 apps */
-#include "sen_msgids.h"
-#include "eps_msgids.h"
- 
+#include "cfe_msgids.h"
 
 hk_copy_table_entry_t      HK_CopyTable[HK_COPY_TABLE_ENTRIES] =
 {
