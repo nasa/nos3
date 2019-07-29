@@ -93,7 +93,7 @@ echo "42..."
     git reset --hard --quiet fe112678681bf752eb84fecf302b71117956846c
     sed -i -e 's/#NOS3FSW/NOS3FSW/; s/ARCHFLAG = /ARCHFLAG = -m32 /; s/LFLAGS = /LFLAGS = -m32 /;' Makefile
     make &> /dev/null
-    chmod -R ugo+w 42/InOut 
+    chmod -R ugo+w /opt/42/InOut 
     chown -R $NOS3_USER:$NOS3_USER /opt/42 
 
 echo "Fixes and environmental variables..."
