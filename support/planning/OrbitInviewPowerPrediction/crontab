@@ -1,0 +1,60 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+# STF-1 
+00 00 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/stf1/${stamp}
+01 00 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/retrieve_spacetrack_tles.sh /var/www/html/stf1/${stamp}/electrontles-${stamp}.tle user pwd 43849 43862
+02 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/stf1/${stamp}/electrontles-${stamp}.tle" "/var/www/html/stf1/stf1/electrontles.tle"
+03 00 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/stf1_html_report.config
+08 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/stf1/${stamp}/${stamp}.html" "/var/www/html/stf1/stf1/stf1.html"
+08 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/stf1/${stamp}/aer-day0-gs0.html" "/var/www/html/stf1/stf1/aer-day0-gs0.html"
+08 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/stf1/${stamp}/aer-day0-gs1.html" "/var/www/html/stf1/stf1/aer-day0-gs1.html"
+10 00 * * * /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/stf1-over-wv.config
+12 00 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/stf1_gbo_html_report.config
+17 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/stf1_gbo/${stamp}/${stamp}.html" "/var/www/html/stf1_gbo/stf1/stf1.html"
+# Wallops to Dellingr, CubeRRT, TempestD, HaloSat, Add in objects from Rocket Lab launch on 2016-12-16 06:33 UTC
+30 00 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/wallops/${stamp}
+31 00 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/retrieve_spacetrack_tles.sh /var/www/html/wallops/${stamp}/electrontles-${stamp}.tle user pwd 43849 43862
+32 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/wallops/${stamp}/electrontles-${stamp}.tle" "/var/www/html/wallops/wallops/electrontles.tle"
+33 00 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/wallops_html_report.config
+38 00 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/wallops/${stamp}/${stamp}.html" "/var/www/html/wallops/wallops/wallops.html"
+# NOAA weather satellites
+00 01 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/noaa/${stamp}
+01 01 * * * stamp=$(date --rfc-3339=date); curl -s http://celestrak.com/NORAD/elements/weather.txt > "/var/www/html/noaa/${stamp}/${stamp}.tle"
+02 01 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/noaa_html_report.config
+30 01 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/noaa/${stamp}/${stamp}.html" "/var/www/html/noaa/noaa/noaa.html"
+# amateur satellites
+30 01 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/amsat/${stamp}
+32 01 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/amsat_html_report.config
+55 01 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/amsat/${stamp}/${stamp}.html" "/var/www/html/amsat/amsat/amsat.html"
+# ISS
+00 02 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/iss/${stamp}
+01 02 * * * stamp=$(date --rfc-3339=date); curl -s http://celestrak.com/NORAD/elements/stations.txt | grep 25544 > "/var/www/html/iss/${stamp}/${stamp}.tle"
+02 02 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/iss_html_report.config
+30 02 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/iss/${stamp}/${stamp}.html" "/var/www/html/iss/iss/iss.html"
+# Dellingr
+00 04 * * * stamp=$(date --rfc-3339=date); mkdir /var/www/html/dellingr/${stamp}
+01 04 * * * stamp=$(date --rfc-3339=date); curl -s http://celestrak.com/NORAD/elements/cubesat.txt | grep 43021 > "/var/www/html/dellingr/${stamp}/${stamp}.tle"
+02 04 * * * stamp=$(date --rfc-3339=date); /usr/lib/cgi-bin/scripts/generate_html_report.py /usr/lib/cgi-bin/config/dellingr_html_report.config
+30 04 * * * stamp=$(date --rfc-3339=date); ln -s -f "/var/www/html/dellingr/${stamp}/${stamp}.html" "/var/www/html/dellingr/dellingr/dellingr.html"
+# Bright satellites for the day for home tracking
+30 07 * * * /usr/lib/cgi-bin/scripts/visible_satellite.py > "/var/www/html/bright/bright.html"
