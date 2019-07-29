@@ -39,6 +39,8 @@ Vagrant.configure(2) do |config|
     
   config.vm.synced_folder "../", "/vagrant_parent"
 
+  config.ssh.forward_x11 = true
+
   config.vm.provider "virtualbox" do |vb|
     if os == '1' 
       vb.name = "NOS3_CentOS"
