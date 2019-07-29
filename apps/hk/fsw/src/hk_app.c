@@ -233,8 +233,8 @@ int32 HK_AppInit(void)
             "Error Creating Memory Pool,RC=0x%08X",Status);
         return (Status);
      }
-    HK_AppData.RunStatus = CFE_ES_APP_RUN; // TODO: How did this value change in `CFE_ES_PoolCreate`?
 
+    HK_AppData.RunStatus = CFE_ES_APP_RUN;
     HK_ResetHkData ();
 
 

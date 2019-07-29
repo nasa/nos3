@@ -1,0 +1,958 @@
+- !Command
+  name:      CFS_ES_CLEAR_ERRLOG
+  opcode:    0x0C
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Clears the contents of the Exeception and Reset Log
+  desc:      |
+    <b>Description</b>
+    This command causes the contents of the Executive Services Exception
+    and Reset Log to be cleared.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_ERLOG1_INF_EID informational event message will be generated.
+    <li><code>ES_ERLOGINDEX</code> - Index into Exception Reset Log goes to zero
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not dangerous.  However, any previously logged data
+    will be lost.
+
+
+
+- !Command
+  name:      CFS_ES_CLEAR_SYSLOG
+  opcode:    0x0A
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Clear Executive Services System Log
+  desc:      |
+    <b>Description</b>
+    This command clears the contents of the Executive Services System Log.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with the following telemetry:
+    <li> <code>ES_CMDPC</code> - command execution counter will increment
+    <li> The <code>CFE_ES_SYSLOG1_INF_EID</code> informational event message will be generated.
+    <li> <code>ES_SYSLOGBYTEUSED</code> - System Log Bytes Used will go to zero
+    <li> <code>ES_SYSLOGENTRIES</code> - Number of System Log Entries will go to zero
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>  The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li> <code>ES_CMDEC</code> - command error counter will increment
+    <li> A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not dangerous.  However, any previously logged data will be lost.
+
+
+
+- !Command
+  name:      CFS_ES_DELETE_CDS
+  opcode:    0x15
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Delete Critical Data Store
+  desc:      |
+    <b>Description</b>
+    This command allows the user to delete a Critical Data Store that was created
+    by an Application that is now no longer executing.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_CDS_DELETED_INFO_EID informational event message will be generated.
+    <li>The specified CDS should no longer appear in a CDS Registry dump generated upon receipt of the #CFE_ES_DUMP_CDS_REG_CC command
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified CDS is the CDS portion of a Critical Table. See #CFE_TBL_DELETE_CDS_CC.
+    <li>The specified CDS is not found in the CDS Registry
+    <li>The specified CDS is associated with an Application that is still active
+    <li>An error occurred while accessing the CDS memory (see the System Log for more details)
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not critical because it is not possible to delete a CDS that is
+    associated with an active application.  However, deleting a CDS does eliminate
+    any "history" that an application may be wishing to keep.
+
+
+
+- !Command
+  name:      CFS_ES_DUMP_CDS_REG
+  opcode:    0x17
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Dump Critical Data Store Registry to a File
+  desc:      |
+    <b>Description</b>
+    This command allows the user to dump the Critical Data Store
+    Registry to an onboard file.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_CDS_REG_DUMP_INF_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_CDS_REG_DUMP_FILE configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>Error occurred while trying to create the dump file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  It will create a new
+    file in the file system (or overwrite an existing one) and could,
+    if performed repeatedly without sufficient file management by the
+    operator, fill the file system.
+
+
+
+- !Command
+  name:      CFS_ES_LA_FILTER_MASK
+  opcode:    0x10
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Set Performance Analyzer's Filter Masks
+  desc:      |
+    <b>Description</b>
+    This command sets the Performance Analyzer's Filter Masks.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_PERFFLTRMASK</code> - the current performance filter mask value(s) should reflect the commanded value
+    <li>The #CFE_ES_PERF_FILTMSKCMD_EID debug event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The Filter Mask ID number is out of range
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    Changing the filter masks may cause a small change in the Performance
+    Analyzer's CPU utilization.
+
+
+
+- !Command
+  name:      CFS_ES_LA_TRIGGER_MASK
+  opcode:    0x11
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Set Performance Analyzer's Trigger Masks
+  desc:      |
+    <b>Description</b>
+    This command sets the Performance Analyzer's Trigger Masks.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_PERFTRIGMASK</code> - the current performance trigger mask value(s) should reflect the commanded value
+    <li>The #CFE_ES_PERF_TRIGMSKCMD_EID debug event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The Trigger Mask ID number is out of range
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    Changing the trigger masks may cause a small change in the Performance
+    Analyzer's CPU utilization.
+
+
+
+- !Command
+  name:      CFS_ES_NO_OP
+  opcode:    0x00
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Executive Services No-Op
+  desc:      |
+    <b>Description</b>
+    This command performs no other function than to increment the
+    command execution counter. The command may be used to verify
+    general aliveness of the Executive Services task.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with the
+    following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_NOOP_INF_EID informational event message will be generated
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>the #CFE_ES_LEN_ERR_EID error event message will be generated
+
+    <b>Criticality</b>
+    None
+
+
+
+- !Command
+  name:      CFS_ES_OVERWRITE_SYSLOG_MODE
+  opcode:    0x12
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Set Executive Services System Log Mode to Discard/Overwrite
+  desc:      |
+    <b>Description</b>
+    This command allows the user to configure the Executive Services
+    to either discard new System Log messages when it is full or to
+    overwrite the oldest messages.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_SYSLOGMODE</code> - Current System Log Mode should reflect the commanded value
+    <li>The #CFE_ES_SYSLOGMODE_EID debug event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The desired mode is neither #CFE_ES_LOG_OVERWRITE or #CFE_ES_LOG_DISCARD
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    None. (It should be noted that "Overwrite" mode would allow a message
+    identifying the cause of a problem to be lost by a subsequent flood of
+    additional messages).
+
+
+
+- !Command
+  name:      CFS_ES_QUERY_APP
+  opcode:    0x08
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Request Executive Services Information on a Specified Application
+  desc:      |
+    <b>Description</b>
+    This command takes the information kept by Executive Services on the
+    specified application and telemeters it to the ground.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_ONE_APP_EID debug event message will be generated. NOTE: This event message only identifies that the act of stopping the application has begun, not that is has completed.
+    <li>Receipt of the #CFE_ES_OneAppTlm_t telemetry packet
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified application name is not recognized as an active application
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    None
+
+
+
+- !Command
+  name:      CFS_ES_RELOAD_APP
+  opcode:    0x07
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Stops, Unloads, Loads from a File and Restarts an Application
+  desc:      |
+    <b>Description</b>
+    This command halts and removes the specified Application
+    from the system.  Then it immediately loads the Application from
+    the command specified file and restarts it.  This command is
+    especially useful for restarting a Command Ingest Application
+    since once it has been stopped, no further commands can come in
+    to restart it.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_RELOAD_APP_DBG_EID debug event message will be generated. NOTE: This event message only identifies that the act of stopping the application has begun, not that is has completed.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified application name is not recognized as an active application
+    <li>The specified application is one of the cFE's Core applications (ES, EVS, SB, TBL, TIME)
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+    <li>Additional information on the reason for command failure may be found in the System Log
+
+    <b>Criticality</b>
+    This command is not inherently dangerous, however the restarting of certain
+    applications (e.g. - Spacecraft Attitude and Control) may have a detrimental effect
+    on the spacecraft.
+
+
+
+- !Command
+  name:      CFS_ES_RESET
+  opcode:    0x02
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Executive Services Processor / Power-On Reset
+  desc:      |
+    <b>Description</b>
+    This command restarts the cFE in one of two modes.  The Power-On Reset
+    will cause the cFE to restart as though the power were first applied
+    to the processor.  The Processor Reset will attempt to retain the contents
+    of the volatile disk and the contents of the Critical Data Store.
+    NOTE: If a requested Processor Reset should cause the
+    Processor Reset Counter (<code>ES_PROCRESETCNT</code>)
+    to exceed OR EQUAL the limit #CFE_ES_MAX_PROCESSOR_RESETS (which is reported in
+    housekeeping telemetry as <code>ES_MAXPROCRESETS</code>),
+    the command is <b>AUTOMATICALLY</b> upgraded to a Power-On Reset.
+
+    <b>Command Verification</b>
+    Successful execution of this command (as a Processor Reset)
+    may be verified with the following telemetry:
+    <li><code>ES_PROCRESETCNT</code> - processor reset counter will increment
+    <li>New entries in the Exception Reset Log and System Log can be found<BR>
+    NOTE: Verification of a Power-On Reset is shown through the loss of data nominally retained through a Processor Reset<BR>
+    NOTE: Since the reset of the processor resets the command execution counter (<code>ES_CMDPC</code>), this counter <b>CANNOT</b> be used to verify command execution.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The #CFE_ES_RestartCmd_t.RestartType Restart Type was not a recognized value.
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>the #CFE_ES_BOOT_ERR_EID error event message will be generated
+
+    <b>Criticality</b>
+    This command is, by definition, dangerous.  Significant loss of
+    data will occur.  All processes and the cFE itself will be stopped
+    and restarted.  With the Power-On reset option, all data on the
+    volatile disk and the contents of the Critical Data Store will be
+    lost.
+
+
+
+- !Command
+  name:      CFS_ES_RESET_CTRS
+  opcode:    0x01
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Executive Services Reset Counters
+  desc:      |
+    <b>Description</b>
+    This command resets the following counters within the Executive
+    Services housekeeping telemetry:
+    <li>Command Execution Counter
+    <li>Command Error Counter
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_RESET_INF_EID informational event message will be generated
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>the #CFE_ES_LEN_ERR_EID error event message will be generated
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  However, it is
+    possible for ground systems and on-board safing procedures
+    to be designed such that they react to changes in the counter
+    values that are reset by this command.
+
+
+
+- !Command
+  name:      CFS_ES_RESET_PR_COUNT
+  opcode:    0x13
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Resets the Processor Reset Counter to Zero
+  desc:      |
+    <b>Description</b>
+    This command allows the user to reset the Processor Reset Counter to zero.
+    The Processor Reset Counter counts the number of Processor Resets that
+    have occurred so as to identify when a Processor Reset should automatically
+    be upgraded to a full Power-On Reset.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_PROCRESETCNT</code> - Current number of processor resets will go to zero
+    <li>The #CFE_ES_RESET_PR_COUNT_EID informational event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not critical.  The only impact would be that the system
+    would have to have more processor resets before an automatic power-on reset
+    occurred.
+
+
+
+- !Command
+  name:      CFS_ES_RESTART_APP
+  opcode:    0x06
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Stops and Restarts an Application
+  desc:      |
+    <b>Description</b>
+    This command halts and restarts the specified Application.
+    This command does <b>NOT</b> reload the application from the onboard
+    filesystem.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_RESTART_APP_DBG_EID debug event message will be generated. NOTE: This event message only identifies that the act of stopping the application has begun, not that is has completed.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified application name is not recognized as an active application
+    <li>The specified application is one of the cFE's Core applications (ES, EVS, SB, TBL, TIME)
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+    <li>Additional information on the reason for command failure may be found in the System Log
+
+    <b>Criticality</b>
+    This command is not inherently dangerous, however the restarting of certain
+    applications (e.g. - Spacecraft Attitude and Control) may have a detrimental effect
+    on the spacecraft.
+
+
+
+- !Command
+  name:      CFS_ES_SET_MAX_PR_CNT
+  opcode:    0x14
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Configure the Maximum Number of Processor Resets before a Power-On Reset
+  desc:      |
+    <h1>Description</h1>
+    This command allows the user to specify the number of Processor Resets that
+    are allowed before the next Processor Reset is upgraded to a Power-On Reset.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_MAXPROCRESETS</code> - Current maximum number of processor resets before an automatic power-on reset will go to the command specified value.
+    <li>The #CFE_ES_SET_MAX_PR_COUNT_EID informational event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    If the operator were to set the Maximum Processor Reset Count to too high a value,
+    the processor would require an inordinate number of consecutive processor resets
+    before an automatic power-on reset would occur.  This could potentially leave the
+    spacecraft without any control for a significant amount of time if a processor reset
+    fails to clear a problem.
+
+
+
+- !Command
+  name:      CFS_ES_SHELL
+  opcode:    0x03
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Executive Services O/S Shell Command
+  desc:      |
+    <b>Description</b>
+    This command passes an ASCII string as a command line to the
+    underlying realtime operating system shell.  Any response to
+    the command is both written to the shell command output file
+    and sent as a series of shell command output telemetry packets.
+
+    If the shell command output filename argument is empty, then
+    #CFE_ES_DEFAULT_SHELL_FILENAME will be used as the filename.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_SHELL_INF_EID informational event message will be generated
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>Failure to create the shell command output file
+    <li>The shell command started with <tt> ES_ </tt> but was not one of the recognized cFE shell commands
+    <li>There was an error while performing a #OS_lseek on the shell command output file
+    <li>There was an error while redirecting the shell command response to the shell command output file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>the #CFE_ES_SHELL_ERR_EID error event message will be generated
+    <li>Additional information on the error should be found in the System Log
+
+    <b>Criticality</b>
+    This command should be used with caution.  Interfering with the
+    operation of the underlying realtime operating system can cause
+    significant problems.
+
+
+
+- !Command
+  name:      CFS_ES_START_APP
+  opcode:    0x04
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Load and Start an Application
+  desc:      |
+    <b>Description</b>
+    This command starts the specified application with the
+    specified start address, stack size, etc options.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_START_INF_EID informational event message will be generated
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified application filename string is either a NULL string or less than four characters in length
+    <li>The specified application entry point is a NULL string
+    <li>The specified application name is a NULL string
+    <li>The specified stack size is less than #CFE_ES_DEFAULT_STACK_SIZE
+    <li>The specified priority is greater than MAX_PRIORITY (as defined in osapi.c)
+    <li>The specified exception action is neither #CFE_ES_APP_EXCEPTION_RESTART_APP (0) or #CFE_ES_APP_EXCEPTION_PROC_RESTART (1)
+    <li>The Operating System was unable to load the specified application file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous although system resources
+    could be taxed beyond their limits with the starting of erroneous
+    or invalid applications.
+
+
+
+- !Command
+  name:      CFS_ES_START_LA_DATA
+  opcode:    0x0E
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Start Performance Analyzer
+  desc:      |
+    <b>Description</b>
+    This command causes the Performance Analyzer to begin collecting data using the specified trigger mode.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_PERFSTATE</code> - Current performance analyzer state will change to either WAITING FOR TRIGGER or, if conditions are appropriate fast enough, TRIGGERED.
+    <li><code>ES_PERFMODE</code> - Performance Analyzer Mode will change to the commanded trigger mode (TRIGGER START, TRIGGER CENTER, or TRIGGER END).
+    <li><code>ES_PERFTRIGCNT</code> - Performance Trigger Count will go to zero
+    <li><code>ES_PERFDATASTART</code> - Data Start Index will go to zero
+    <li><code>ES_PERFDATAEND</code> - Data End Index will go to zero
+    <li><code>ES_PERFDATACNT</code> - Performance Data Counter will go to zero
+    <li>The #CFE_ES_PERF_STARTCMD_EID debug event message will be generated.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>A previous #CFE_ES_PERF_STOPDATA_CC command has not completely finished.
+    <li>An invalid trigger mode is requested.
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous but may cause a small increase in CPU
+    utilization as the performance analyzer data is collected.
+
+
+
+- !Command
+  name:      CFS_ES_STOP_APP
+  opcode:    0x05
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Stop and Unload Application
+  desc:      |
+    <b>Description</b>
+    This command halts and removes the specified Application
+    from the system. <b>NOTE:</b> This command should never be used
+    on the Command Ingest application.  This would prevent further
+    commands from entering the system.  If Command Ingest needs to
+    be stopped and restarted, use #CFE_ES_RESTART_APP_CC or
+    #CFE_ES_RELOAD_APP_CC.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_STOP_DBG_EID debug event message will be generated. NOTE: This event message only identifies that the stop has been started, not that is has completed.
+    <li>Once the stop has successfully completed, the list of Applications and Tasks created in response to the <code>ES_WRITEAPPINFO2FILE</code>, <code>ES_WRITETASKINFO2FILE</code> should no longer contain the specified application.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified application name is not recognized as an active application
+    <li>The specified application is one of the cFE's Core applications (ES, EVS, SB, TBL, TIME)
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+    <li>Additional information on the reason for command failure may be found in the System Log
+
+    <b>Criticality</b>
+    This command is not inherently dangerous, however the removal of certain
+    applications (e.g. - Spacecraft Attitude and Control) may have a detrimental effect
+    on the spacecraft.
+
+
+
+- !Command
+  name:      CFS_ES_STOP_LA_DATA
+  opcode:    0x0F
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Stop Performance Analyzer
+  desc:      |
+    <b>Description</b>
+    This command stops the Performance Analyzer from collecting any more data.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li><code>ES_PERFSTATE</code> - Current performance analyzer state will change to IDLE.
+    <li>The #CFE_ES_PERF_STOPCMD_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_PERF_DUMP_FILENAME configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>A previous Stop Performance Analyzer command is still in process
+    <li>An error occurred while spawning the child task responsible for dumping the Performance Analyzer data to a file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  An additional low priority child
+    task will be spawned, however, to dump the performance analyzer data to a file.
+
+
+
+- !Command
+  name:      CFS_ES_TLM_POOL_STATS
+  opcode:    0x16
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Telemeter Memory Pool Statistics
+  desc:      |
+    <b>Description</b>
+    This command allows the user to obtain a snapshot of the statistics maintained
+    for a specified memory pool.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_TLM_POOL_STATS_INFO_EID debug event message will be generated.
+    <li>The #CFE_ES_PoolStatsTlm_t Memory Pool Statistics Telemetry Packet is produced
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>The specified handle is not associated with a known memory pool
+    <li>The specified handle caused a processor exception because it improperly identified a segment of memory
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    <B>An incorrect Memory Pool Handle value can cause a system crash.</B>
+    Extreme care should be taken to ensure the memory handle value
+    used in the command is correct.
+
+
+
+- !Command
+  name:      CFS_ES_WRITE_APPINFO_TO_FILE
+  opcode:    0x09
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Writes all Executive Services Information on All Applications to a File
+  desc:      |
+    <b>Description</b>
+    This command takes the information kept by Executive Services on all of the
+    registered applications and writes it to the specified file.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_ALL_APPS_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_APP_LOG_FILE configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>An Error occurs while trying to write to the file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  It will create a new
+    file in the file system (or overwrite an existing one) and could,
+    if performed repeatedly without sufficient file management by the
+    operator, fill the file system.
+
+
+
+- !Command
+  name:      CFS_ES_WRITE_ERRLOG_TO_FILE
+  opcode:    0x0D
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Writes Exeception and Reset Log to a File
+  desc:      |
+    <b>Description</b>
+    This command causes the contents of the Executive Services Exception
+    and Reset Log to be written to the specified file.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_ERLOG2_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_ER_LOG_FILE configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>An Error occurs while trying to write to the file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  It will create a new
+    file in the file system (or overwrite an existing one) and could,
+    if performed repeatedly without sufficient file management by the
+    operator, fill the file system.
+
+
+
+- !Command
+  name:      CFS_ES_WRITE_SYSLOG_TO_FILE
+  opcode:    0x0B
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Writes contents of Executive Services System Log to a File
+  desc:      |
+    <b>Description</b>
+    This command causes the contents of the Executive Services System Log
+    to be written to a log file.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_SYSLOG2_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_SYSLOG_FILE configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>An Error occurs while trying to write to the file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  It will create a new
+    file in the file system (or overwrite an existing one) and could,
+    if performed repeatedly without sufficient file management by the
+    operator, fill the file system.
+
+
+
+- !Command
+  name:      CFS_ES_WRITE_TASKINFO_TO_FILE
+  opcode:    0x18
+  ccsds:     { apid: 0x06 }
+  subsystem: ES
+  title:     Writes a list of All Executive Services Tasks to a File
+  desc:      |
+    <b>Description</b>
+    This command takes the information kept by Executive Services on all of the
+    registered tasks and writes it to the specified file.
+
+    <b>Command Verification</b>
+    Successful execution of this command may be verified with
+    the following telemetry:
+    <li><code>ES_CMDPC</code> - command execution counter will increment
+    <li>The #CFE_ES_TASKINFO_EID debug event message will be generated.
+    <li>The file specified in the command (or the default specified by the #CFE_ES_DEFAULT_TASK_LOG_FILE configuration parameter) will be updated with the lastest information.
+
+    <b>Error Conditions</b>
+    This command may fail for the following reason(s):
+    <li>The command packet length is incorrect
+    <li>An Error occurs while trying to write to the file
+
+    Evidence of failure may be found in the following telemetry:
+    <li><code>ES_CMDEC</code> - command error counter will increment
+    <li>A command specific error event message is issued for all error cases
+
+    <b>Criticality</b>
+    This command is not inherently dangerous.  It will create a new
+    file in the file system (or overwrite an existing one) and could,
+    if performed repeatedly without sufficient file management by the
+    operator, fill the file system.
+
+
+
+- !Command
+  name:      CFS_TO_OUTPUT_ENABLE
+  opcode:    0x06
+  ccsds:     { apid: 0x80 }
+  subsystem: TO
+  title:     Enable Telemetry
+  desc:      |
+      Instructs the cFS Telemetry Output (TO) application to enable
+      telemetry output, sending it to port 1235 at the specified IP
+      address.
+
+  arguments:
+    - !Argument
+      name:  destination
+      desc:  Destination IP address as a string (e.g. 127.0.0.1)
+      units: none
+      type:  S16
+      bytes: [0, 15]
+
+- !Command
+  name:      NAV_REQ_DATA_CC
+  opcode:    0x00
+  ccsds:     { apid: 0x71 }
+  subsystem: NAV
+  title:     Enable NAV Telemetry
+  desc:      |
+      Instructs the cFS Telemetry Output (TO) application to enable
+      NAV telemetry output.
+
+- !Command
+  name:      NAV_NOOP_CC
+  opcode:    0x00
+  ccsds:     { apid: 0x70 }
+  subsystem: NAV
+  title:     Enable NAV Telemetry
+  desc:      |
+      NAV NOOP Command
+
+- !Command
+  name:      HK_SEND_HK_MID
+  opcode:    0x18
+  ccsds:     { apid: 0x9b }
+  subsystem: HK
+  title:     Enable HK Telemetry
+  desc:      |
+      HK Send Housekeeping Data Cmd Message ID
+
+- !Command
+  name:      HK_SEND_COMBINED_PKT_MID
+  opcode:    0x18
+  ccsds:     { apid: 0x9c }
+  subsystem: HK
+  title:     Enable HK Combined Telemetry
+  desc:      |
+      HK Send Combined Pkt Cmd Message ID
+  arguments:
+    -  !Fixed
+      type: LSB_U16
+      bytes: [0,1]
+      value: 0x089d
+
+- !Command
+  name:      HK_CMD_MID_NOOP
+  opcode:    0x00
+  ccsds:     { apid: 0x9A }
+  subsystem: HK
+  title:     Enable HK Combined Telemetry
+  desc:      |
+      HK Send Ground Command Message ID
+
+

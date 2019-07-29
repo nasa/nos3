@@ -226,7 +226,7 @@ void ProcessStringArgument(char *optarg, CommandData_t *CommandData) {
     stringLenString[stringIndex] = '\0';
     stringLength = strtol(stringLenString, NULL, 10);
     if (CommandData->Verbose) {
-        printf("String Length is %d.\n", stringLength);
+        printf("String Length is %ld.\n", stringLength);
     }
 
     if (stringLength > 128) {

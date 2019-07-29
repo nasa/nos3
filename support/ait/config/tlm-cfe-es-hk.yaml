@@ -1,0 +1,231 @@
+- !Packet
+  name:  CFE_ES_HK
+  desc:  Executive Services (ES) Housekeeping
+  ccsds:
+    apid: 0
+
+  fields:
+    - !Field
+      name:  CommandCounter
+      desc:  The ES Application Command Counter
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  ErrorCounter
+      desc:  The ES Application Command Error Counter
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  cFECoreChecksum
+      desc:  Checksum of cFE Core Code
+      bytes: [14, 15]
+      type:  LSB_U16
+
+    - !Field
+      name:  cFEMajorVersion
+      desc:  Major Version Number of cFE
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  cFEMinorVersion
+      desc:  Minor Version Number of cFE
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  cFERevision
+      desc:  Sub-Minor Version Number of cFE
+      bytes: 18
+      type:  U8
+
+    - !Field
+      name:  cFEMissionRevision
+      desc:  Mission Version Number of cFE
+      bytes: 19
+      type:  U8
+
+    - !Field
+      name:  OSALMajorVersion
+      desc:  OS Abstraction Layer Major Version Number
+      bytes: 20
+      type:  U8
+
+    - !Field
+      name:  OSALMinorVersion
+      desc:  OS Abstraction Layer Minor Version Number
+      bytes: 21
+      type:  U8
+
+    - !Field
+      name:  OSALRevision
+      desc:  OS Abstraction Layer Revision Number
+      bytes: 22
+      type:  U8
+
+    - !Field
+      name:  OSALMissionRev
+      desc:  OS Abstraction Layer MissionRevision Number
+      bytes: 23
+      type:  U8
+
+    - !Field
+      name:  SyslogBytesUsed
+      desc:  Total number of bytes used in system log
+      bytes: [24, 27]
+      type:  LSB_U32
+
+    - !Field
+      name:  SyslogSize
+      desc:  Total size of the system log
+      bytes: [28, 31]
+      type:  LSB_U32
+
+    - !Field
+      name:  SyslogEntries
+      desc:  Number of entries in the system log
+      bytes: [32, 35]
+      type:  LSB_U32
+
+    - !Field
+      name:  SyslogMode
+      desc:  Write/Overwrite Mode
+      bytes: [36, 39]
+      type:  LSB_U32
+      enum:
+        0: 'Overwrite'
+        1: 'Discard'
+
+    - !Field
+      name:  ERlogIndex
+      desc:  Current index of the ER Log (wraps around)
+      bytes: [40, 43]
+      type:  LSB_U32
+
+    - !Field
+      name:  ERlogEntries
+      desc:  Number of entries made in the ER Log since the power on
+      bytes: [44, 47]
+      type:  LSB_U32
+
+    - !Field
+      name:  RegisteredCoreApps
+      desc:  Number of Core Applications registered with ES
+      bytes: [48, 51]
+      type:  LSB_U32
+
+    - !Field
+      name:  RegisteredCFSApps
+      desc:  Number of Applications registered with ES
+      bytes: [52, 55]
+      type:  LSB_U32
+
+    - !Field
+      name:  RegisteredTasks
+      desc:  Number of Tasks (main AND child tasks) registered with ES
+      bytes: [56, 59]
+      type:  LSB_U32
+
+    - !Field
+      name:  RegisteredLibs
+      desc:  Number of Libraries registered with ES
+      bytes: [60, 63]
+      type:  LSB_U32
+
+    - !Field
+      name:  ResetType
+      desc:  Reset type (Processor or PowerOn)
+      bytes: [64, 67]
+      type:  LSB_U32
+      enum:
+        1: 'Processor'
+        2: 'PowerOn'
+        3: 'CFE_PSP_RST_TYPE_MAX'
+
+    - !Field
+      name:  ResetSubtype
+      desc:  Reset Sub Type
+      bytes: [68, 71]
+      type:  LSB_U32
+      enum:
+        1:  'PowerCycle'
+        2:  'PushButton'
+        3:  'HardwareSpecialCommand'
+        4:  'Watchdog'
+        5:  'ResetCommand'
+        6:  'Exception'
+        7:  'Undefined'
+        8:  'HardwareDebug'
+        9:  'BankSwitch'
+        10: 'CFE_PSP_RST_SUBTYPE_MAX'
+
+    - !Field
+      name:  ProcessorResets
+      desc:  Number of processor resets since last power on
+      bytes: [72, 75]
+      type:  LSB_U32
+
+    - !Field
+      name:  MaxProcResets
+      desc:  Max processor resets before a power on is done
+      bytes: [76, 79]
+      type:  LSB_U32
+
+    - !Field
+      name:  BootSource
+      desc:  Boot source (as provided from BSP)
+      bytes: [80, 83]
+      type:  LSB_U32
+      enum:
+        0: 'BootSource0'
+        1: 'BootSource1'
+        2: 'BootSource2'
+        3: 'BootSource3'
+
+    - !Field
+      name:  PerfMonState
+      desc:  Current state of Performance Analyzer
+      bytes: [84, 87]
+      type:  LSB_U32
+      enum:
+        0: 'Idle'
+        1: 'WaitingForTrigger'
+        2: 'Triggered'
+        3: 'CFE_ES_PERF_MAX_STATES'
+
+    - !Field
+      name:  PerfMonMode
+      desc:  Current mode of Performance Analyzer
+      bytes: [88, 91]
+      type:  LSB_U32
+      enum:
+        0: 'TriggerStart'
+        1: 'TriggerCenter'
+        2: 'TriggerEnd'
+        3: 'CFE_ES_PERF_MAX_MODES'
+
+    - !Field
+      name:  PerfTriggerCount
+      desc:  Number of Times Perfomance Analyzer has Triggered
+      bytes: [92, 95]
+      type:  LSB_U32
+
+    - !Field
+      name:  HeapBytesFree
+      desc:  Number of free bytes remaining in the OS heap
+      bytes: [144, 147]
+      type:  LSB_U32
+
+    - !Field
+      name:  HeapBlocksFree
+      desc:  Number of free blocks remaining in the OS heap
+      bytes: [148, 151]
+      type:  LSB_U32
+
+    - !Field
+      name:  HeapMaxBlkSize
+      desc:  Number of bytes in the largest free block
+      bytes: [152, 155]
+      type:  LSB_U32

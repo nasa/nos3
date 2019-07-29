@@ -11,8 +11,3 @@ include_directories(inc
 aux_source_directory(src UTASSERT_SRC_FILES)
 
 add_library(utassert STATIC ${UTASSERT_SRC_FILES})
-
-# update utassert compile flags (suppress warnings)
-disable_warnings(CMAKE_C_FLAGS UTASSERT_C_FLAGS "format")
-set_target_properties(utassert PROPERTIES COMPILE_FLAGS "${UTASSERT_C_FLAGS}")
-

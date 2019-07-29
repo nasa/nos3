@@ -43,6 +43,7 @@
 
 #include "cfe_msgids.h"
 #include "ci_lab_msgids.h"
+#include "hk_msgids.h"
 #include "sch_msgids.h"
 /* #include "sc_msgids.h"  */
 /* #include "cs_msgids.h"  */
@@ -133,8 +134,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
 /*{ { HTONS(FM_SEND_HK_MID),  HTONS(0xC000), HTONS(0x0001), HTONS(0x0000) } }, */
   { { HTONS(SCH_UNUSED_MID) } },
     /* command ID #9 - Housekeeping HK Request       */
-/*{ { HTONS(HK_SEND_HK_MID),  HTONS(0xC000), HTONS(0x0001), HTONS(0x0000) } }, */
-  { { HTONS(SCH_UNUSED_MID) } },
+  { { HTONS(HK_SEND_HK_MID),  HTONS(0xC000), HTONS(0x0001), HTONS(0x0000) } },
+  /*{ { HTONS(SCH_UNUSED_MID) } },*/
 
     /* command ID #10 - Health & Safety HK Request   */
 /*{ { HTONS(HS_SEND_HK_MID),  HTONS(0xC000), HTONS(0x0001), HTONS(0x0000) } }, */
@@ -158,8 +159,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   **  CFS routine messages
   */
     /* command ID #16 - HK Send Combined Housekeeping Msg #1 */
-/*{ { HTONS(HK_SEND_COMBINED_PKT_MID), HTONS(0xC000), HTONS(0x0003), HTONS(0x0000), HTONS(HK_COMBINED_PKT1_MID) } }, */
-  { { HTONS(SCH_UNUSED_MID) } },
+  { { HTONS(HK_SEND_COMBINED_PKT_MID), HTONS(0xC000), HTONS(0x0003), HTONS(0x0000), HK_COMBINED_PKT1_MID } },
+  /*{ { HTONS(SCH_UNUSED_MID) } },*/
     /* command ID #17 - HK Send Combined Housekeeping Msg #2 */
 /*{ { HTONS(HK_SEND_COMBINED_PKT_MID), HTONS(0xC000), HTONS(0x0003), HTONS(0x0000), HTONS(HK_COMBINED_PKT2_MID) } }, */
   { { HTONS(SCH_UNUSED_MID) } },

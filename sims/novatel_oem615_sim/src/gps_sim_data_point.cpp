@@ -36,17 +36,13 @@ namespace Nos3
         _ECEF.resize(3);
         _ECI.resize(3);
         _ECI_vel.resize(3);
-        _DCM.resize(3);
-        _DCM[0].resize(3);
-        _DCM[1].resize(3);
-        _DCM[2].resize(3);
     }
 
     GPSSimDataPoint::GPSSimDataPoint(double abs_time, int16_t gps_week, int32_t gps_sec_week, double gps_frac_sec,
         const std::vector<double>& ECEF, const std::vector<double>& ECI,
-        const std::vector<std::vector<double>>& DCM, const std::vector<double>& ECI_vel) :
+        const std::vector<double>& ECI_vel) :
             _abs_time(abs_time), _gps_week(gps_week), _gps_sec_week(gps_sec_week), _gps_frac_sec(gps_frac_sec),
-            _ECEF(ECEF), _ECI(ECI), _DCM(DCM), _ECI_vel(ECI_vel)
+            _ECEF(ECEF), _ECI(ECI), _ECI_vel(ECI_vel)
     {
     }
 
@@ -78,19 +74,6 @@ namespace Nos3
            << std::setw(12) << _ECI[0] << ","
            << std::setw(12) << _ECI[1] << ","
            << std::setw(12) << _ECI[2] << std::endl;
-        ss << std::setprecision(4);
-        ss << "  DCM         : "
-           << std::setw(12) << _DCM[0][0] << ","
-           << std::setw(12) << _DCM[0][1] << ","
-           << std::setw(12) << _DCM[0][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _DCM[1][0] << ","
-           << std::setw(12) << _DCM[1][1] << ","
-           << std::setw(12) << _DCM[1][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _DCM[2][0] << ","
-           << std::setw(12) << _DCM[2][1] << ","
-           << std::setw(12) << _DCM[2][2] << std::endl;
 
         return ss.str();
     }
@@ -121,16 +104,6 @@ namespace Nos3
            << _ECI[0] << ","
            << _ECI[1] << ","
            << _ECI[2] ;
-        ss << " DCM ("
-           << _DCM[0][0] << ","
-           << _DCM[0][1] << ","
-           << _DCM[0][2] << "), ("
-           << _DCM[1][0] << ","
-           << _DCM[1][1] << ","
-           << _DCM[1][2] << "), ("
-           << _DCM[2][0] << ","
-           << _DCM[2][1] << ","
-           << _DCM[2][2] << ")";
 
         return ss.str();
     }

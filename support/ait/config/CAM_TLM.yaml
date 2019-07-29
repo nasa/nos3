@@ -1,0 +1,42 @@
+- !Packet
+  name:  CAM_EXP_TLM_T
+  desc:  CAM Experiment Telemetry
+    - !Field
+      name:  CAM_DATA
+      desc:  CAM Data
+      bytes: [12, 1021]
+      type:  LSB_ fixme 8080
+
+    - !Field
+      name:  PADDING
+      desc:  
+      bytes: [1022, 1023]
+      type:  LSB_U16
+
+    - !Field
+      name:  MSG_COUNT
+      desc:  CAM Experiment Message Count
+      bytes: [1024, 1027]
+      type:  LSB_U32
+
+    - !Field
+      name:  CAM_FIFO_LENGTH
+      desc:  CAM FIFO Length
+      bytes: [1028, 1031]
+      type:  LSB_U32
+
+- !Packet
+  name:  CAM_HK_TLM_T
+  desc:  CAM_Hk_tlm_t
+    - !Field
+      name:  COMMANDERRORCOUNT
+      desc:  CommandErrorCount
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  COMMANDCOUNT
+      desc:  CommandCount
+      bytes: 13
+      type:  U8
+

@@ -27,6 +27,7 @@
 //#include "sample_app_msgids.h"
 #include "cam_msgids.h"
 #include "nav_msgids.h"
+#include "hk_msgids.h"
 
 #if 0
 #include "hs_msgids.h"
@@ -46,7 +47,8 @@ static TO_subsciption_t  TO_SubTable[] =
 			{CAM_HK_TLM_MID,        {0,0},  10},
             {CAM_EXP_TLM_MID,       {0,0}, 100},
             {NAV_SEND_HK_TLM,       {0,0},  10},
-            {TO_UNUSED,              {0,0},  0},
+            {HK_HK_TLM_MID,         {0,0},  24},
+            {HK_COMBINED_PKT1_MID,  {0,0},  20},
 
 #if 0
             /* Add these if needed */

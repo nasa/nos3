@@ -45,7 +45,6 @@
 #include "hk_msgids.h"
 #include "hk_tbldefs.h"
 #include "cfe_tbl_filedef.h"
-#include "cfe_msgids.h"
 
 hk_copy_table_entry_t      HK_CopyTable[HK_COPY_TABLE_ENTRIES] =
 {

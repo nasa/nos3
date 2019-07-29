@@ -47,14 +47,6 @@ namespace Nos3
         _svn.resize(3);
         _bvn.resize(3);
         _hvn.resize(3);
-        _DCM.resize(3);
-        _DCM[0].resize(3);
-        _DCM[1].resize(3);
-        _DCM[2].resize(3);
-        _cbn.resize(3);
-        _cbn[0].resize(3);
-        _cbn[1].resize(3);
-        _cbn[2].resize(3);
         _qbn.resize(4);
     }
 
@@ -217,7 +209,7 @@ namespace Nos3
 
             {
                 std::lock_guard<std::mutex> lock(_data_point_mutex);
-                Sim42DataPoint dp(_abs_time, _gps_week, _gps_sec_week, _gps_frac_sec, _ECEF, _ECI, _ECI_vel, _svn, _bvn, _hvn, _eclipse, _DCM, _cbn, _qbn);
+                Sim42DataPoint dp(_abs_time, _gps_week, _gps_sec_week, _gps_frac_sec, _ECEF, _ECI, _ECI_vel, _svn, _bvn, _hvn, _qbn);
                 _data_point = dp;
                 // Lock is released when scope ends
             }
@@ -271,11 +263,6 @@ namespace Nos3
                     sim_logger->trace("SimData42SocketProvider::read_socket_data:      Found SC.  Line=%s", line);
                    // SC #
                    // TODO - Be careful... 42 can output state for multiple spacecraft... for now I am just assuming 1!
-                }
-                if (!strcmp(MnemString, "ECLIPSE")) 
-                {
-                    sim_logger->trace("SimData42SocketProvider::read_socket_data:      Found ECLIPSE.  Line=%s, Eclipse=%ld", line, IntVal1);
-                    _eclipse = IntVal1;
                 }
             }
             if (sscanf(line, "%s %lf %lf %lf", MnemString, &DblVal1, &DblVal2, &DblVal3) == 4) 
@@ -343,39 +330,6 @@ namespace Nos3
                     _qbn[3] = DblVal4;
                 }
             }
-            if (sscanf(line, "%s %lf %lf %lf %lf %lf %lf %lf %lf %lf", MnemString, &DblVal1, &DblVal2, &DblVal3, &DblVal4, &DblVal5,
-                &DblVal6, &DblVal7, &DblVal8, &DblVal9) == 10) 
-                {
-                sim_logger->trace("SimData42SocketProvider::read_socket_data:    Found mnemonic + 9 floats.  Line=%s", line);
-                if (!strcmp(MnemString, "DCM")) 
-                {
-                    sim_logger->trace("SimData42SocketProvider::read_socket_data:      Found DCM.  Line=%s, DCM=(%lf/%lf/%lf)/(%lf/%lf/%lf)/(%lf/%lf/%lf)",
-                        line, DblVal1, DblVal2, DblVal3, DblVal4, DblVal5, DblVal6, DblVal7, DblVal8, DblVal9);
-                    _DCM[0][0] = DblVal1;
-                    _DCM[0][1] = DblVal2;
-                    _DCM[0][2] = DblVal3;
-                    _DCM[1][0] = DblVal4;
-                    _DCM[1][1] = DblVal5;
-                    _DCM[1][2] = DblVal6;
-                    _DCM[2][0] = DblVal7;
-                    _DCM[2][1] = DblVal8;
-                    _DCM[2][2] = DblVal9;
-                }
-                if (!strcmp(MnemString, "CBN")) 
-                {
-                    sim_logger->trace("SimData42SocketProvider::read_socket_data:      Found CBN.  Line=%s, CBN=(%lf/%lf/%lf)/(%lf/%lf/%lf)/(%lf/%lf/%lf)",
-                        line, DblVal1, DblVal2, DblVal3, DblVal4, DblVal5, DblVal6, DblVal7, DblVal8, DblVal9);
-                    _cbn[0][0] = DblVal1;
-                    _cbn[0][1] = DblVal2;
-                    _cbn[0][2] = DblVal3;
-                    _cbn[1][0] = DblVal4;
-                    _cbn[1][1] = DblVal5;
-                    _cbn[1][2] = DblVal6;
-                    _cbn[2][0] = DblVal7;
-                    _cbn[2][1] = DblVal8;
-                    _cbn[2][2] = DblVal9;
-                }
-            }
             if (!strncmp(line,"[EOF]",5)) Done = 1;
         }
     }
@@ -410,7 +364,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf SC[%ld] qrn = [%lf %lf %lf %lf]", 
+                 "%lf SC[%d] qrn = [%lf %lf %lf %lf]", 
                  _abs_time - _init_time, 0, q1, q2, q3, q4
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -420,17 +374,17 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf SC[%ld] qrl = [%lf %lf %lf %lf]", 
+                 "%lf SC[%d] qrl = [%lf %lf %lf %lf]", 
                  _abs_time - _init_time, 0, q1, q2, q3, q4
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
     }
 
-    void SimData42SocketProvider::cmd_angles_wrt_frame(double ang1, double ang2, double ang3, long rotSeq, double frame)
+    void SimData42SocketProvider::cmd_angles_wrt_frame(double ang1, double ang2, double ang3, long rotSeq, char frame)
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf SC[%ld] Cmd Angles = [%lf %lf %lf] Seq = %ld wrt %c Frame", 
+                 "%lf SC[%d] Cmd Angles = [%lf %lf %lf] Seq = %ld wrt %c Frame", 
                  _abs_time - _init_time, 0, ang1, ang2, ang3, rotSeq, frame
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -440,7 +394,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf SC[%ld].G[%ld] Cmd Angles = [%lf %lf %lf]", 
+                 "%lf SC[%d].G[%d] Cmd Angles = [%lf %lf %lf]", 
                  _abs_time - _init_time, 0, 0, ang1, ang2, ang3
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -450,37 +404,37 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at RA = %lf Dec = %lf", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at RA = %lf Dec = %lf", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, ra, dec
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
     }
 
-    void SimData42SocketProvider::cmd_vector_world_lng_lat_alt(double vecR0, double vecR1, double vecR2, double world, double lng, double lat, double alt)
+    void SimData42SocketProvider::cmd_vector_world_lng_lat_alt(double vecR0, double vecR1, double vecR2, int world, double lng, double lat, double alt)
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at World[%ld] Lng = %lf Lat = %lf Alt = %lf", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at World[%d] Lng = %lf Lat = %lf Alt = %lf", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, world, lng, lat, alt
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
     }
 
-    void SimData42SocketProvider::cmd_vector_world(double vecR0, double vecR1, double vecR2, double world)
+    void SimData42SocketProvider::cmd_vector_world(double vecR0, double vecR1, double vecR2, int world)
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at World[%ld]", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at World[%d]", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, world
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
     }
 
-    void SimData42SocketProvider::cmd_vector_ground_station(double vecR0, double vecR1, double vecR2, double groundStation)
+    void SimData42SocketProvider::cmd_vector_ground_station(double vecR0, double vecR1, double vecR2, int groundStation)
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at GroundStation[%ld]", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at GroundStation[%d]", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, groundStation
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -490,7 +444,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at SC[%ld].B[%ld] point [%lf %lf %lf]", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at SC[%ld].B[%ld] point [%lf %lf %lf]", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, sc, body, vec0, vec1, vec2
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -500,7 +454,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at SC[%ld]", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at SC[%ld]", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, sc
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -510,7 +464,7 @@ namespace Nos3
     {   // Assumes that target has a NULL terminator
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at %s", 
+                 "%lf Point SC[%d].B[%d] %s Vector [%lf %lf %lf] at %s", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, target
                 );
         sim_logger->debug("SimData42SocketProvider::cmd_vector_point_at: %s", line);
@@ -522,7 +476,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with SC[%ld].B[%ld] vector [%lf %lf %lf]", 
+                 "%lf Align SC[%d].B[%d] %s Vector [%lf %lf %lf] with SC[%ld].B[%ld] vector [%lf %lf %lf]", 
                  _abs_time - _init_time, 0, 0, "Primary", vecR0, vecR1, vecR2, sc, body, vec0, vec1, vec2
                 );
         write(_cmd_socket_fd, &line, sizeof(line));
@@ -532,7 +486,7 @@ namespace Nos3
     {
         char line[512];
         snprintf(line, sizeof(line), 
-                 "%lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with %c-frame Vector [%lf %lf %lf]", 
+                 "%lf Align SC[%d].B[%d] %s Vector [%lf %lf %lf] with %c-frame Vector [%lf %lf %lf]", 
                  _abs_time - _init_time, 0, 0, "Primary\0", vecR0, vecR1, vecR2, frameChar, vec0, vec1, vec2
                 );
         write(_cmd_socket_fd, &line, sizeof(line));

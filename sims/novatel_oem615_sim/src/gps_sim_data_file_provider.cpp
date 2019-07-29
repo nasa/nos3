@@ -69,14 +69,9 @@ namespace Nos3
         int32_t gps_sec_week;
         double gps_frac_sec;
         std::vector<double> ECI, vel, ECEF;
-        std::vector<std::vector<double>> DCM;
         ECEF.resize(3);
         ECI.resize(3);
         vel.resize(3);
-        DCM.resize(3);
-        DCM[0].resize(3);
-        DCM[1].resize(3);
-        DCM[2].resize(3);
 
 		// Variables for data from 42 data file
 
@@ -94,42 +89,27 @@ namespace Nos3
 			filebuf >> j2000;
 			get_gps_time(j2000, gps_week, gps_sec_week, gps_frac_sec);
 
-			for ( i = 0; i < 3; i++ )
-			{
-				for ( j = 0; j < 3; j++ )
-				{
-					filebuf >> DCM[i][j];
-				}
+			for ( i = 0; i < 3; i++ ){
+				filebuf >> ECI[i];
 			}
 
 			for ( i = 0; i < 3; i++ ){
-				filebuf >> ECI[i];
+				filebuf >> ECEF[i];
 			}
 
 			for ( i = 0; i < 3; i++ ){
 				filebuf >> vel[i];
 			}
 
-			// Build data point
-			ECItoECEF(ECI, DCM, ECEF);
-
 			_file_loc = filebuf.tellg();
 		}
 		filebuf.close();
 
         GPSSimDataPoint* data_point =
-            new GPSSimDataPoint(j2000, gps_week, gps_sec_week, gps_frac_sec, ECEF, ECI, DCM, vel);
+            new GPSSimDataPoint(j2000, gps_week, gps_sec_week, gps_frac_sec, ECEF, ECI, vel);
         sim_logger->trace("GPSSimDataFileProvider::get_gps_data: %s", data_point->to_string().c_str());
 		return boost::shared_ptr<GPSSimDataPoint>(data_point);
     }
-
-	void GPSSimDataFileProvider::ECItoECEF(const std::vector<double>& ECI, const std::vector<std::vector<double>>& DCM,
-        std::vector<double> ECEF) const
-	{
-		  ECEF[0]=ECI[0]*DCM[0][0]+ECI[1]*DCM[1][0]+ECI[2]*DCM[2][0];
-		  ECEF[1]=ECI[0]*DCM[0][1]+ECI[1]*DCM[1][1]+ECI[2]*DCM[2][1];
-		  ECEF[2]=ECI[0]*DCM[0][2]+ECI[1]*DCM[1][2]+ECI[2]*DCM[2][2];
-	}
 
 	void GPSSimDataFileProvider::get_gps_time(double absTime,
         int32_t& gps_week, int32_t& gps_seconds_in_week, double& gps_fractions_of_a_second) const

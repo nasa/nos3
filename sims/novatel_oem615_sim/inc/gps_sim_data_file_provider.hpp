@@ -52,8 +52,6 @@ namespace Nos3
         // Private helper methods
         boost::shared_ptr<GPSSimDataPoint> get_gps_data() const;
     	void get_gps_time(double absTime, int32_t& gps_week, int32_t& gps_seconds_in_week, double& gps_fractions_of_a_second) const;
-        void ECItoECEF(const std::vector<double>& ECI, const std::vector<std::vector<double>>& DCM,
-            std::vector<double> ECEF) const;
 
         // Private data
         NosEngine::Transport::TransportHub      _hub;

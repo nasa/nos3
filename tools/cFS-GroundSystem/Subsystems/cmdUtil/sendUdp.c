@@ -24,6 +24,7 @@
     #include <unistd.h>
     #include <ctype.h>
     #include <stdio.h>
+    #include <stdlib.h>                 /* atoi */
     #include <string.h>
     #define SOCKET int
     #define closesocket(fd) close(fd)

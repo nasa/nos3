@@ -80,7 +80,7 @@ int32 hwlib_Init(void)
     }
     else
     {
-        CFE_EVS_SendEvent(HWLIB_INIT_EID, CFE_EVS_ERROR, "CAM Lib HW Init ERROR = 0x%lx\n", status);
+        CFE_EVS_SendEvent(HWLIB_INIT_EID, CFE_EVS_ERROR, "CAM Lib HW Init ERROR = 0x%dx\n", status);
     } 
 
     /* Initialize the NAV Lib */
@@ -91,7 +91,7 @@ int32 hwlib_Init(void)
     }
     else
     {
-        CFE_EVS_SendEvent(HWLIB_INIT_EID, CFE_EVS_ERROR, "NAV Lib HW Init ERROR = 0x%lx", status);
+        CFE_EVS_SendEvent(HWLIB_INIT_EID, CFE_EVS_ERROR, "NAV Lib HW Init ERROR = 0x%dx", status);
     }
 
     return OS_SUCCESS;

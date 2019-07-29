@@ -1,0 +1,235 @@
+- !Packet
+  name:  CFE_ES_HKPACKET
+  desc:  Executive Services Housekeeping Packet
+  ccsds:
+    apid:  00
+
+  fields:
+    - !Field
+      name:  CMDCOUNTER
+      desc:  The ES Application Command Counter.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  ERRCOUNTER
+      desc:  The ES Application Command Error Counter.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  CFECORECHECKSUM
+      desc:  Checksum of cFE Core Code.
+      bytes: [14, 15]
+      type:  U8
+
+    - !Field
+      name:  CFEMAJORVERSION
+      desc:  Major Version Number of cFE.
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  CFEMINORVERSION
+      desc:  Minor Version Number of cFE.
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  CFEREVISION
+      desc:  Sub-Minor Version Number of cFE.
+      bytes: 18
+      type:  U8
+
+    - !Field
+      name:  CFEMISSIONREVISION
+      desc:  Mission Version Number of cFE.
+      bytes: 19
+      type:  U8
+
+    - !Field
+      name:  OSALMAJORVERSION
+      desc:  OS Abstraction Layer Major Version Number.
+      bytes: 20
+      type:  U8
+
+    - !Field
+      name:  OSALMINORVERSION
+      desc:  OS Abstraction Layer Minor Version Number.
+      bytes: 21
+      type:  U8
+
+    - !Field
+      name:  OSALREVISION
+      desc:  OS Abstraction Layer Revision Number.
+      bytes: 22
+      type:  U8
+
+    - !Field
+      name:  OSALMISSIONREVISION
+      desc:  OS Abstraction Layer MissionRevision Number.
+      bytes: 23
+      type:  U8
+
+    - !Field
+      name:  SYSLOGBYTESUSED
+      desc:  Total number of bytes used in system log.
+      bytes: [24, 27]
+      type:  U8
+
+    - !Field
+      name:  SYSLOGSIZE
+      desc:  Total size of the system log.
+      bytes: [28, 31]
+      type:  U8
+
+    - !Field
+      name:  SYSLOGENTRIES
+      desc:  Number of entries in the system log.
+      bytes: [32, 35]
+      type:  U8
+
+    - !Field
+      name:  SYSLOGMODE
+      desc:  Write/Overwrite Mode.
+      bytes: [36, 39]
+      type:  U8
+
+    - !Field
+      name:  ERLOGINDEX
+      desc:  Current index of the ER Log (wraps around).
+      bytes: [40, 43]
+      type:  U8
+
+    - !Field
+      name:  ERLOGENTRIES
+      desc:  Number of entries made in the ER Log since the power on.
+      bytes: [44, 47]
+      type:  U8
+
+    - !Field
+      name:  REGISTEREDCOREAPPS
+      desc:  Number of Applications registered with ES.
+      bytes: [48, 51]
+      type:  U8
+
+    - !Field
+      name:  REGISTEREDEXTERNALAPPS
+      desc:  Number of Applications registered with ES.
+      bytes: [52, 55]
+      type:  U8
+
+    - !Field
+      name:  REGISTEREDTASKS
+      desc:  Number of Tasks ( main AND child tasks ) registered with ES.
+      bytes: [56, 59]
+      type:  U8
+
+    - !Field
+      name:  REGISTEREDLIBS
+      desc:  Number of Libraries registered with ES.
+      bytes: [60, 63]
+      type:  U8
+
+    - !Field
+      name:  RESETTYPE
+      desc:  Reset type ( PROCESSOR or POWERON ).
+      bytes: [64, 67]
+      type:  U8
+
+    - !Field
+      name:  RESETSUBTYPE
+      desc:  Reset Sub Type.
+      bytes: [68, 71]
+      type:  U8
+
+    - !Field
+      name:  PROCESSORRESETS
+      desc:  Number of processor resets since last power on.
+      bytes: [72, 75]
+      type:  U8
+
+    - !Field
+      name:  MAXPROCESSORRESETS
+      desc:  Max processor resets before a power on is done.
+      bytes: [76, 79]
+      type:  U8
+
+    - !Field
+      name:  BOOTSOURCE
+      desc:  Boot source ( as provided from BSP ).
+      bytes: [80, 83]
+      type:  U8
+
+    - !Field
+      name:  PERFSTATE
+      desc:  Current state of Performance Analyzer.
+      bytes: [84, 87]
+      type:  U8
+
+    - !Field
+      name:  PERFMODE
+      desc:  Current mode of Performance Analyzer.
+      bytes: [88, 91]
+      type:  U8
+
+    - !Field
+      name:  PERFTRIGGERCOUNT
+      desc:  Number of Times Perfomance Analyzer has Triggered.
+      bytes: [92, 95]
+      type:  U8
+
+    - !Field
+      name:  PERFFILTERMASK
+      desc:  Current Setting of Performance Analyzer Filter Masks.
+      bytes: [96, 111]
+      type:  U8
+
+    - !Field
+      name:  PERFTRIGGERMASK
+      desc:  Current Setting of Performance Analyzer Trigger Masks.
+      bytes: [112, 127]
+      type:  U8
+
+    - !Field
+      name:  PERFDATASTART
+      desc:  Identifies First Stored Entry in Performance Analyzer Log.
+      bytes: [128, 131]
+      type:  U8
+
+    - !Field
+      name:  PERFDATAEND
+      desc:  Identifies Last Stored Entry in Performance Analyzer Log.
+      bytes: [132, 135]
+      type:  U8
+
+    - !Field
+      name:  PERFDATACOUNT
+      desc:  Number of Entries Put Into the Performance Analyzer Log.
+      bytes: [136, 139]
+      type:  U8
+
+    - !Field
+      name:  PERFDATATOWRITE
+      desc:  Number of Performance Analyzer Log Entries Left to be Written to Log Dump File.
+      bytes: [140, 143]
+      type:  U8
+
+    - !Field
+      name:  HEAPBYTESFREE
+      desc:  Number of free bytes remaining in the OS heap.
+      bytes: [144, 147]
+      type:  U8
+
+    - !Field
+      name:  HEAPBLOCKSFREE
+      desc:  Number of free blocks remaining in the OS heap.
+      bytes: [148, 151]
+      type:  U8
+
+    - !Field
+      name:  HEAPMAXBLOCKSIZE
+      desc:  Number of bytes in the largest free block.
+      bytes: [152, 155]
+      type:  U8
+

@@ -1,7 +1,7 @@
 project(cam_sim)
 
-find_package(ITC_Common REQUIRED COMPONENTS itc_logger)
-find_package(NOSENGINE REQUIRED COMPONENTS common transport client i2c spi)
+find_package(ITC_Common REQUIRED QUIET COMPONENTS itc_logger)
+find_package(NOSENGINE REQUIRED QUIET COMPONENTS common transport client i2c spi)
 
 include_directories(inc
                     ${sim_common_SOURCE_DIR}/inc

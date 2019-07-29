@@ -1,0 +1,97 @@
+- !Packet
+  name:  CFE_EVS_TLMPKT
+  desc:  Event Services Housekeeping Telemetry Packet
+  ccsds:
+    apid:  01
+
+  fields:
+    - !Field
+      name:  COMMANDCOUNTER
+      desc:  EVS Command Counter.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  COMMANDERRCOUNTER
+      desc:  EVS Command Error Counter.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  MESSAGEFORMATMODE
+      desc:  Event message format mode (short/long).
+      bytes: 14
+      type:  U8
+
+    - !Field
+      name:  MESSAGETRUNCCOUNTER
+      desc:  Event message truncation counter.
+      bytes: 15
+      type:  U8
+
+    - !Field
+      name:  UNREGISTEREDAPPCOUNTER
+      desc:  Unregistered application message send counter.
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  OUTPUTPORT
+      desc:  Output port mask.
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  LOGFULLFLAG
+      desc:  Local event log full flag.
+      bytes: 18
+      type:  U8
+
+    - !Field
+      name:  LOGMODE
+      desc:  Local event logging mode (overwrite/discard).
+      bytes: 19
+      type:  U8
+
+    - !Field
+      name:  MESSAGESENDCOUNTER
+      desc:  Event message send counter.
+      bytes: [20, 21]
+      type:  U8
+
+    - !Field
+      name:  LOGOVERFLOWCOUNTER
+      desc:  Local event log overflow counter.
+      bytes: [22, 23]
+      type:  U8
+
+    - !Field
+      name:  LOGENABLED
+      desc:  Current event log enable/disable state.
+      bytes: 24
+      type:  U8
+
+    - !Field
+      name:  SPARE1
+      desc:  Padding for 32 bit boundary.
+      bytes: 25
+      type:  U8
+
+    - !Field
+      name:  SPARE2
+      desc:  Padding for 32 bit boundary.
+      bytes: 26
+      type:  U8
+
+    - !Field
+      name:  SPARE3
+      desc:  Padding for 32 bit boundary.
+      bytes: 27
+      type:  U8
+
+    - !Field
+      name:  APPDATA
+      desc:  Array of registered application table data.
+      bytes: [28, 283]
+      type:  U8
+

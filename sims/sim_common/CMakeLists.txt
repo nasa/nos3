@@ -1,8 +1,8 @@
 project(sim_common)
 
 find_package(Boost REQUIRED QUIET COMPONENTS program_options filesystem)
-find_package(ITC_Common REQUIRED COMPONENTS itc_logger)
-find_package(NOSENGINE REQUIRED COMPONENTS common)
+find_package(ITC_Common REQUIRED QUIET COMPONENTS itc_logger)
+find_package(NOSENGINE REQUIRED QUIET COMPONENTS common)
 
 add_definitions(-D_ENABLE_SOCKETS_)
 
@@ -32,12 +32,8 @@ file(GLOB sim_common_inc inc/*.hpp)
 set(sim_common_config
     cfg/nos3-simulator.xml
     cfg/sim_log_config.xml
+    cfg/gps_data.42
 )
-
-set(fram_sim_conf
-    cfg/fram.txt)
-set(spw_fram_sim_conf
-    cfg/spw.txt)
 
 add_library(sim_common SHARED ${sim_common_src} ${sim_common_inc})
 target_link_libraries(sim_common ${sim_common_libs})

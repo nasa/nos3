@@ -707,7 +707,7 @@ int32 ProcessCmdLineOptions(int ArgumentCount, char *Arguments[])
                     if ((EndPtr != &Arguments[i][12]) || 
                         (ScEpoch.Day == 0) || (ScEpoch.Day > MaxDay))
                     {
-                        fprintf(stderr, "Error! Spacecraft Epoch Day is not of the form 'DD:' where DD is in the range of 1-%d\n", MaxDay);
+                        fprintf(stderr, "Error! Spacecraft Epoch Day is not of the form 'DD:' where DD is in the range of 1-%ld\n", MaxDay);
                         Status = FALSE;
                     }
                     else
@@ -795,7 +795,7 @@ int32 ProcessCmdLineOptions(int ArgumentCount, char *Arguments[])
                     FileEpoch.Day = strtoul(&Arguments[i][10], &EndPtr, 0);
                     if ((EndPtr != &Arguments[i][12]) || (FileEpoch.Day == 0) || (FileEpoch.Day > MaxDay))
                     {
-                        fprintf(stderr, "Error! File Epoch Day is not of the form 'DD:' where DD is in the range of 1-%d\n", MaxDay);
+                        fprintf(stderr, "Error! File Epoch Day is not of the form 'DD:' where DD is in the range of 1-%ld\n", MaxDay);
                         Status = FALSE;
                     }
                     else
@@ -1001,7 +1001,7 @@ int32 OpenSrcFile(void)
     SrcFileTimeInScEpoch = SrcFileStats.st_mtime + EpochDelta;
     
     if (Verbose) printf("Original Source File Modification Time: %s\n", ctime(&SrcFileStats.st_mtime));
-    if (Verbose) printf("Source File Modification Time in Seconds since S/C Epoch: %ld (0x%08X)\n", SrcFileTimeInScEpoch, SrcFileTimeInScEpoch);
+    if (Verbose) printf("Source File Modification Time in Seconds since S/C Epoch: %ld (0x%08lX)\n", SrcFileTimeInScEpoch, SrcFileTimeInScEpoch);
 
     return SUCCESS;
 }
@@ -1189,7 +1189,7 @@ int32 GetElfHeader(void)
     if (Verbose) printf("   e_version = %d\n", ElfHeader.e_version);
     
     /* Output, if requested, other header entries without verification */
-    if (Verbose) printf("   e_entry = 0x%08x\n", (uint32)ElfHeader.e_entry);
+    if (Verbose) printf("   e_entry = 0x%08lx\n", (uint32)ElfHeader.e_entry);
     if (Verbose) printf("   e_phoff = 0x%08x (%d)\n", ElfHeader.e_phoff, ElfHeader.e_phoff);
     if (Verbose) printf("   e_shoff = 0x%08x (%d)\n", ElfHeader.e_shoff, ElfHeader.e_shoff);
     if (Verbose) printf("   e_flags = 0x%08x\n", ElfHeader.e_flags);
@@ -1224,7 +1224,7 @@ int32 GetSectionHeader(int32 SectionIndex, Elf32_Shdr *SectionHeader)
     
     if (Status != 0)
     {
-        printf("Error locating Section Header #%d in file '%s'\n", SectionIndex, SrcFilename);
+        printf("Error locating Section Header #%ld in file '%s'\n", SectionIndex, SrcFilename);
         return FAILED;
     }
     
@@ -1232,7 +1232,7 @@ int32 GetSectionHeader(int32 SectionIndex, Elf32_Shdr *SectionHeader)
     
     if (NumHdrsRead != 1)
     {
-        printf("Experienced error attempting to read Section Header #%d from file '%s'\n", SectionIndex, SrcFilename);
+        printf("Experienced error attempting to read Section Header #%ld from file '%s'\n", SectionIndex, SrcFilename);
         return FAILED;
     }
     
@@ -1240,7 +1240,7 @@ int32 GetSectionHeader(int32 SectionIndex, Elf32_Shdr *SectionHeader)
    
     if ((SectionHeaderStringTableDataOffset != 0) && (SectionHeader->sh_name != 0))
     {
-        if (Verbose) printf("Section Header #%d:\n", SectionIndex);
+        if (Verbose) printf("Section Header #%ld:\n", SectionIndex);
         
         SeekOffset = SectionHeaderStringTableDataOffset + SectionHeader->sh_name;
         if (Verbose) printf("   sh_name       = 0x%08x - ", SectionHeader->sh_name);
@@ -1270,7 +1270,7 @@ int32 GetSectionHeader(int32 SectionIndex, Elf32_Shdr *SectionHeader)
                 SymbolTableDataOffset = SectionHeader->sh_offset + sizeof(Elf32_Sym);
                 SymbolTableEntrySize = SectionHeader->sh_entsize;
                 NumSymbols = (SectionHeader->sh_size / SectionHeader->sh_entsize) - 1;
-                sprintf(VerboseStr, "SHT_SYMTAB (2) - # Symbols = %d", NumSymbols);
+                sprintf(VerboseStr, "SHT_SYMTAB (2) - # Symbols = %ld", NumSymbols);
                 break;
                 
             case SHT_STRTAB:
@@ -1358,13 +1358,13 @@ int32 GetSectionHeader(int32 SectionIndex, Elf32_Shdr *SectionHeader)
         if (Verbose) printf("   sh_flags      = %s\n", VerboseStr);
         
         
-        if (Verbose) printf("   sh_addr       = 0x%08x\n", (uint32)SectionHeader->sh_addr);
-        if (Verbose) printf("   sh_offset     = 0x%08x\n", SectionHeader->sh_offset);
-        if (Verbose) printf("   sh_size       = 0x%08x\n", SectionHeader->sh_size);
-        if (Verbose) printf("   sh_link       = 0x%08x\n", SectionHeader->sh_link);
-        if (Verbose) printf("   sh_info       = 0x%08x\n", SectionHeader->sh_info);
-        if (Verbose) printf("   sh_addralign  = 0x%08x\n", SectionHeader->sh_addralign);
-        if (Verbose) printf("   sh_entsize    = 0x%08x\n", SectionHeader->sh_entsize);
+        if (Verbose) printf("   sh_addr       = 0x%08lx\n", (uint32)SectionHeader->sh_addr);
+        if (Verbose) printf("   sh_offset     = 0x%08x\n" , SectionHeader->sh_offset);
+        if (Verbose) printf("   sh_size       = 0x%08x\n" , SectionHeader->sh_size);
+        if (Verbose) printf("   sh_link       = 0x%08x\n" , SectionHeader->sh_link);
+        if (Verbose) printf("   sh_info       = 0x%08x\n" , SectionHeader->sh_info);
+        if (Verbose) printf("   sh_addralign  = 0x%08x\n" , SectionHeader->sh_addralign);
+        if (Verbose) printf("   sh_entsize    = 0x%08x\n" , SectionHeader->sh_entsize);
     }
     
     return Status;
@@ -1386,7 +1386,7 @@ int32 GetSymbol(int32 SymbolIndex, Elf32_Sym *Symbol)
     
     if (Status != 0)
     {
-        printf("Error locating Symbol #%d in file '%s'\n", SymbolIndex, SrcFilename);
+        printf("Error locating Symbol #%ld in file '%s'\n", SymbolIndex, SrcFilename);
         return FAILED;
     }
     
@@ -1394,13 +1394,13 @@ int32 GetSymbol(int32 SymbolIndex, Elf32_Sym *Symbol)
     
     if (NumSymRead != 1)
     {
-        printf("Experienced error attempting to read Symbol #%d from file '%s'\n", SymbolIndex, SrcFilename);
+        printf("Experienced error attempting to read Symbol #%ld from file '%s'\n", SymbolIndex, SrcFilename);
         return FAILED;
     }
     
     if (ByteSwapRequired) SwapSymbol(Symbol);
    
-    if (Verbose) printf("Symbol #%d:\n", (SymbolIndex+1));
+    if (Verbose) printf("Symbol #%ld:\n", (SymbolIndex+1));
     
     SeekOffset = StringTableDataOffset + Symbol->st_name;
     if (Verbose) printf("   st_name  = 0x%08x - ", Symbol->st_name);
@@ -1427,11 +1427,11 @@ int32 GetSymbol(int32 SymbolIndex, Elf32_Sym *Symbol)
         if (Verbose) printf("%s\n", SymbolNames[SymbolIndex]);
     }
         
-    if (Verbose) printf("   st_value = 0x%08x\n", (uint32)Symbol->st_value);
-    if (Verbose) printf("   st_size  = 0x%08x\n", Symbol->st_size);
-    if (Verbose) printf("   st_info  = 0x%02x\n", Symbol->st_info);
-    if (Verbose) printf("   st_other = 0x%02x\n", Symbol->st_other);
-    if (Verbose) printf("   st_shndx = 0x%04x\n", Symbol->st_shndx);
+    if (Verbose) printf("   st_value = 0x%08lx\n", (uint32)Symbol->st_value);
+    if (Verbose) printf("   st_size  = 0x%08x\n" , Symbol->st_size);
+    if (Verbose) printf("   st_info  = 0x%02x\n" , Symbol->st_info);
+    if (Verbose) printf("   st_other = 0x%02x\n" , Symbol->st_other);
+    if (Verbose) printf("   st_shndx = 0x%04x\n" , Symbol->st_shndx);
     
     return Status;
 }
@@ -1593,7 +1593,7 @@ int32 GetTblDefInfo(void)
             }
             printf("\n");
             printf("   Output File: %s\n", TblFileDef.TgtFilename);
-            printf("   Object Size: %d (0x%08x)\n", TblFileDef.ObjectSize, TblFileDef.ObjectSize);
+            printf("   Object Size: %ld (0x%08lx)\n", TblFileDef.ObjectSize, TblFileDef.ObjectSize);
         }
     }
     
@@ -1616,7 +1616,7 @@ int32 LocateAndReadUserObject(void)
     if (Verbose) printf("\nTrying to match ObjectName '%s'... (length %d)",TblFileDef.ObjectName,strlen(TblFileDef.ObjectName));
     while (i<NumSymbols)
     {
-        if (Verbose) printf("\nSymbol Search loop %d: SymbolName ='%s' ",i,SymbolNames[i]);
+        if (Verbose) printf("\nSymbol Search loop %ld: SymbolName ='%s' ",i,SymbolNames[i]);
         /* Check to see if the symbol names match as far as the ObjectName is defined */
         if (strncmp(SymbolNames[i], TblFileDef.ObjectName, strlen(TblFileDef.ObjectName)) == 0)
         {
@@ -1642,7 +1642,7 @@ int32 LocateAndReadUserObject(void)
 
         if (Verbose)
         {
-            printf("strstr[%d] = %d; strlenSN = %d; strlenON = %d\n",i,strstr(SymbolNames[i], TblFileDef.ObjectName),
+            printf("strstr[%ld] = %s; strlenSN = %d; strlenON = %d\n",i,strstr(SymbolNames[i], TblFileDef.ObjectName),
                                                                      strlen(SymbolNames[i]), 
                                                                      strlen(TblFileDef.ObjectName));
         }
@@ -1652,7 +1652,7 @@ int32 LocateAndReadUserObject(void)
     
     if (Verbose)
     {
-        printf("\ni = %d, NumSymbols = %d\n", i, NumSymbols);
+        printf("\ni = %ld, NumSymbols = %ld\n", i, NumSymbols);
         if (i < NumSymbols)
         {
           printf("\nSymbolName = '%s', ObjectName = '%s'\n",SymbolNames[i], TblFileDef.ObjectName);
@@ -1667,7 +1667,7 @@ int32 LocateAndReadUserObject(void)
     }
     else
     {
-        if (Verbose) printf("Found '%s' object as Symbol #%d\n", TblFileDef.ObjectName, (i+1));
+        if (Verbose) printf("Found '%s' object as Symbol #%ld\n", TblFileDef.ObjectName, (i+1));
         UserObjSymbolIndex = i;
         
         if (strcmp(SectionNamePtrs[SymbolPtrs[UserObjSymbolIndex]->st_shndx], ".bss") == 0)
@@ -1703,7 +1703,7 @@ int32 LocateAndReadUserObject(void)
                 /* Check to see if the size in the elf file agrees with the size specified in our table def structure */
                 if (SymbolPtrs[UserObjSymbolIndex]->st_size != TblFileDef.ObjectSize)
                 {
-                    printf("ELF file indicates object '%s' is of size %d but table definition structure indicates size %d",
+                    printf("ELF file indicates object '%s' is of size %d but table definition structure indicates size %ld",
                            TblFileDef.ObjectName, SymbolPtrs[UserObjSymbolIndex]->st_size, TblFileDef.ObjectSize);
                     if (TblFileDef.ObjectSize < SymbolPtrs[UserObjSymbolIndex]->st_size)
                     {

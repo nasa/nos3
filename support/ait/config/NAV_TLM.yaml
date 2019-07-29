@@ -1,0 +1,85 @@
+- !Packet
+  name:  NAV_HK_TLM_T
+  desc:  Navigation Application Housekeeping Telemetry Message
+  ccsds:
+    apid:  0x70
+
+  fields:
+    - !Field
+      name:  ERROR_COUNT
+      desc:  Error Count
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  SPARE
+      desc:  
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  COMMAND_COUNT
+      desc:  Command Count
+      bytes: 14
+      type:  U8
+
+    - !Field
+      name:  SPARE
+      desc:  
+      bytes: 15
+      type:  U8
+
+    - !Field
+      name:  GPS_WEEKS
+      desc:  GPS Week Number
+      bytes: [16, 19]
+      type:  LSB_U32
+
+    - !Field
+      name:  GPS_SECONDS
+      desc:  GPS Seconds into the Week
+      bytes: [20, 23]
+      type:  LSB_U32
+
+    - !Field
+      name:  GPS_FRAC_SECS
+      desc:  GPS Fractions of a Second
+      bytes: [24, 31]
+      type:  LSB_D64
+
+    - !Field
+      name:  ECEF_X
+      desc:  ECEF Position X (meters)
+      bytes: [32, 39]
+      type:  LSB_D64
+
+    - !Field
+      name:  ECEF_Y
+      desc:  ECEF Position Y (meters)
+      bytes: [40, 47]
+      type:  LSB_D64
+
+    - !Field
+      name:  ECEF_Z
+      desc:  ECEF Position Z (meters)
+      bytes: [48, 55]
+      type:  LSB_D64
+
+    - !Field
+      name:  VEL_X
+      desc:  ECEF Velocity X (m/s)
+      bytes: [56, 63]
+      type:  LSB_D64
+
+    - !Field
+      name:  VEL_Y
+      desc:  ECEF Velocity Y (m/s)
+      bytes: [64, 71]
+      type:  LSB_D64
+
+    - !Field
+      name:  VEL_Z
+      desc:  ECEF Velocity Z (m/s)
+      bytes: [72, 79]
+      type:  LSB_D64
+

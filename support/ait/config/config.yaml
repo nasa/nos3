@@ -1,0 +1,27 @@
+default:
+    extensions:
+        ait.core.cmd.Cmd: ait.cfs.cmd.cFSCmd
+
+    command:
+        port: 1234
+
+    cmddict:
+        filename:  cmd.yaml
+
+    tlmdict:
+        filename:  tlm.yaml
+
+    logging:
+        name:     ait
+        hostname: localhost
+
+    gui:
+      html:
+        directory: ../gui
+
+      port: 8080
+
+      telemetry:
+        - stream:
+            port: 1235
+            type: ccsds

@@ -47,7 +47,7 @@ namespace Nos3
             boost::dynamic_pointer_cast<Sim42DataPoint>(SimData42SocketProvider::get_data_point());
 
         SimIDataPoint *dp = new GPSSimDataPoint(dp42->get_abs_time(), dp42->get_gps_week(), dp42->get_gps_sec_week(), dp42->get_gps_frac_sec(),
-            dp42->get_ECEF(), dp42->get_ECI(), dp42->get_DCM(), dp42->get_ECI_velocity());
+            dp42->get_ECEF(), dp42->get_ECI(), dp42->get_ECI_velocity());
 
         sim_logger->trace("GPSSimDataFileProvider::get_data_point: %s", dp->to_string().c_str()); // log data in a man readable format
         return boost::shared_ptr<SimIDataPoint>(dp);

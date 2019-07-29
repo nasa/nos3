@@ -81,15 +81,18 @@ echo "42"
 echo " "
     apt-get -y install freeglut3 freeglut3-dev libgl1-mesa-dev 1> /dev/null
     cd /opt 
-    unzip -qq -n $DIR/support/packages/42_x32_armhf.zip  
-    chmod 755 42/42 
+    git clone https://github.com/ericstoneking/42.git
+    cd 42
+    git reset --hard fe112678681bf752eb84fecf302b71117956846c
+    sed -i -e 's/#NOS3FSW/NOS3FSW/; s/ARCHFLAG = /ARCHFLAG = -m32 /; s/LFLAGS = /LFLAGS = -m32 /;' Makefile
+    make
     chmod -R ugo+w 42/InOut 
     chown -R $STF_USER:$STF_USER /opt/42 
 
 echo " "
 echo "Fixes and Environmental Varibles"
 echo " "
-    grep msg_max /etc/sysctl.conf &> /dev/null || echo 'fs.mqueue.msg_max=100' >> /etc/sysctl.conf
+    grep msg_max /etc/sysctl.conf &> /dev/null || echo 'fs.mqueue.msg_max=500' >> /etc/sysctl.conf
     echo "handle all ignore nostop noprint" > /home/$STF_USER/.gdbinit
 
 echo " "
@@ -106,6 +109,11 @@ echo " "
     chmod 755 /home/$STF_USER/Desktop/nos3-build.sh
     chmod +x /home/$STF_USER/Desktop/nos3-build.sh
     dos2unix /home/$STF_USER/Desktop/nos3-build.sh 1> /dev/null
+    # Clean
+    cp $DIR/support/VirtualMachine/scripts/nos3-clean.sh /home/$NOS3_USER/Desktop
+    chown $NOS3_USER:$NOS3_USER /home/$NOS3_USER/Desktop/nos3-clean.sh 
+    chmod 755 /home/$NOS3_USER/Desktop/nos3-clean.sh 
+    dos2unix /home/$NOS3_USER/Desktop/nos3-clean.sh 1> /dev/null
     # Run
     cp $DIR/support/VirtualMachine/scripts/nos3-run.sh /home/$STF_USER/Desktop
     chown $STF_USER:$STF_USER /home/$STF_USER/Desktop/nos3-run.sh 
@@ -125,11 +133,13 @@ echo " "
     cd /home/$STF_USER/Desktop/nos3-42
     test -e Model || ln -s /opt/42/Model
     test -e World || ln -s /opt/42/World
+    test -e Kit || ln -s /opt/42/Kit
     cp -R $DIR/sims/sim_common/cfg/NOS3-42InOut .
     dos2unix NOS3-42InOut/* 1> /dev/null
     chown -R $STF_USER:$STF_USER /home/$STF_USER/Desktop/nos3-42
     # Disable graphics
     sed -i 's/TRUE                            !  Graphics Front End?/FALSE                         !  Graphics Front End?/g' /home/$STF_USER/Desktop/nos3-42/NOS3-42InOut/Inp_Sim.txt
+    sed -i 's/TRUE                            !  Graphics Front End?/FALSE                         !  Graphics Front End?/g' /home/$STF_USER/Desktop/nos3-42/NOS3-42InOut-OpenSource/Inp_Sim.txt
 echo " "
 
 echo " "

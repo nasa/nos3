@@ -1,0 +1,43 @@
+- !Packet
+  name:  CFE_HK_PKT
+  desc:  Housekeeping Combined Packet 1
+  ccsds:
+    apid:  0x9b
+
+  fields:
+    - !Field
+      name:  COMMANDCOUNTER
+      desc:  HK  Command Counter.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  COMMANDERRCOUNTER
+      desc:  HK  Command Error Counter.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  Padding
+      desc:  Padding
+      bytes: [14,15]
+      type:  LSB_U16
+
+    - !Field
+      name:  CombinedPacketsSent
+      desc:  HK  Event message truncation counter.
+      bytes: [16, 17]
+      type:  LSB_U16
+
+    - !Field
+      name:  MissingDataCtr
+      desc:  Missing Data Ctr.
+      bytes: [18, 19]
+      type:  LSB_U16
+
+    - !Field
+      name:  MemPoolHandle
+      desc:  Mem Pool Handle.
+      bytes: [20, 23]
+      type:  LSB_U32
+

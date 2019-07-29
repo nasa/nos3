@@ -1,26 +1,30 @@
 [Desktop Entry]
-Version=1.0
 Name=NOS3-Run
-Type=Application
-Comment=Run the NOS3 Applications
-Terminal=false
-Icon=/home/nos3/nos3/support/VirtualMachine/icons/nos3.png
+Comment=Use NOS3
 Exec=/home/nos3/Desktop/nos3-run.sh
+Terminal=false
+Type=Application
+X-MultipleArgs=false
+Icon=nos3
+Categories=Utility;
+X-GNOME-FullName=NASA Operational Simuluator for Small Satellites
+StartupNotify=true
+Actions=NOS3-Build;NOS3-Clean;NOS3-Run;NOS3-Stop;
+X-Ubuntu-Gettext-Domain=NOS3-Build
+X-AppStream-Ignore=true
 
-X-Ayatana-Desktop-Shortcuts=NOS3-Build;NOS3-Run;NOS3-Stop
-
-[NOS3-Build Shortcut Group]
+[Desktop Action NOS3-Build]
 Name=NOS3-Build
 Exec=/home/nos3/Desktop/nos3-build.sh
-TargetEnvironment=Unity
 
-[NOS3-Run Shortcut Group]
+[Desktop Action NOS3-Clean]
+Name=NOS3-Clean
+Exec=/home/nos3/Desktop/nos3-clean.sh
+
+[Desktop Action NOS3-Run]
 Name=NOS3-Run
 Exec=/home/nos3/Desktop/nos3-run.sh
-TargetEnvironment=Unity
 
-[NOS3-Stop Shortcut Group]
+[Desktop Action NOS3-Stop]
 Name=NOS3-Stop
 Exec=/home/nos3/Desktop/nos3-stop.sh
-TargetEnvironment=Unity
-

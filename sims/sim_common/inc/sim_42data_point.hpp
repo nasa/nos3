@@ -59,8 +59,8 @@ namespace Nos3
         Sim42DataPoint();
         Sim42DataPoint(double abs_time, int32_t gps_week, int32_t gps_sec_week, double gps_frac_sec,
                 const std::vector<double>& ECEF, const std::vector<double>& ECI, const std::vector<double>& velocity,
-                const std::vector<double>& svn,  const std::vector<double>& bvn, const std::vector<double>& hvn, long eclipse,
-                const std::vector<std::vector<double>>& DCM, const std::vector<std::vector<double>>& cbn, const std::vector<double>& qbn);
+                const std::vector<double>& svn,  const std::vector<double>& bvn, const std::vector<double>& hvn,
+                const std::vector<double>& qbn);
         //@}
 
         /// @name Accessors
@@ -93,9 +93,6 @@ namespace Nos3
         std::vector<double> get_svn(void) const {return _svn;}
         std::vector<double> get_bvn(void) const {return _bvn;}
         std::vector<double> get_hvn(void) const {return _hvn;}
-        long get_eclipse(void) {return _eclipse;}
-        std::vector<std::vector<double>> get_DCM(void) const {return _DCM;}
-        std::vector<std::vector<double>> get_cbn(void) const {return _cbn;}
         std::vector<double> get_qbn(void) const {return _qbn;}
         //@}
     private:
@@ -105,9 +102,6 @@ namespace Nos3
         int32_t _gps_sec_week; // Integer seconds elapsed since the start of the GPS week
         double _gps_frac_sec; // Fractions of a second beyond the integer seconds_of_week
         std::vector<double> _ECEF, _ECEF_vel, _ECI, _ECI_vel, _svn, _bvn, _hvn; // 3 elements each
-        long _eclipse;
-        std::vector<std::vector<double>> _DCM; // 3x3 matrix ECI/ECEF
-        std::vector<std::vector<double>> _cbn; // 3x3 matrix body/inertial
         std::vector<double> _qbn; // 4 element quaternion body/inertial
     };
 

@@ -1,0 +1,222 @@
+<!doctype html>
+<head>
+  <link rel="stylesheet" href="ait/gui/static/build/ait.bundle.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="ait/gui/static/build/ait.bundle.js"></script>
+  <style> tr:nth-child(even) {background-color: #f2f2f2;} </style>
+</head>
+
+<body>
+
+<!-- Status Bar -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">AIT</a><br>
+        </div>  <!-- /.navbar-header -->
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <p class="navbar-text">Telemetry Status:</p>
+            </li>
+            <li>
+                <p class="navbar-text ait-status-indicators">
+                    <ait-led on      = "ait:tlm:packet"
+                               off     = "ait:tlm:close"
+                               pending = "ait:tlm:open"
+                               error   = "ait:tlm:stale"
+                               default = "pending"></ait-led>
+                    cFS
+                </p>
+            </li>
+            <li>
+                <ait-clock class="navbar-text" doy="true"></ait-clock>
+            </li>
+        </ul>  <!-- /.navbar-right -->
+    </div>  <!-- /.container-fluid -->
+</div>  <!-- /.navbar -->
+
+<div class='site-container'>
+  <div class='telemcontainer'>
+    <ait-tabset class="nav-tabs">
+	  <ait-tab title="CFE_ES_HKPACKET">
+        <table class="telem col1">
+            <tr><td>CMDCOUNTER:<td><ait-field packet="CFE_ES_HKPACKET" name="CMDCOUNTER"></ait-field></tr>
+            <tr><td>ERRCOUNTER:<td><ait-field packet="CFE_ES_HKPACKET" name="ERRCOUNTER"></ait-field></tr>
+            <tr><td>CFECORECHECKSUM:<td><ait-field packet="CFE_ES_HKPACKET" name="CFECORECHECKSUM"></ait-field></tr>
+            <tr><td>CFEMAJORVERSION:<td><ait-field packet="CFE_ES_HKPACKET" name="CFEMAJORVERSION"></ait-field></tr>
+            <tr><td>CFEMINORVERSION:<td><ait-field packet="CFE_ES_HKPACKET" name="CFEMINORVERSION"></ait-field></tr>
+            <tr><td>CFEREVISION:<td><ait-field packet="CFE_ES_HKPACKET" name="CFEREVISION"></ait-field></tr>
+            <tr><td>CFEMISSIONREVISION:<td><ait-field packet="CFE_ES_HKPACKET" name="CFEMISSIONREVISION"></ait-field></tr>
+            <tr><td>OSALMAJORVERSION:<td><ait-field packet="CFE_ES_HKPACKET" name="OSALMAJORVERSION"></ait-field></tr>
+            <tr><td>OSALMINORVERSION:<td><ait-field packet="CFE_ES_HKPACKET" name="OSALMINORVERSION"></ait-field></tr>
+            <tr><td>OSALREVISION:<td><ait-field packet="CFE_ES_HKPACKET" name="OSALREVISION"></ait-field></tr>
+            <tr><td>OSALMISSIONREVISION:<td><ait-field packet="CFE_ES_HKPACKET" name="OSALMISSIONREVISION"></ait-field></tr>
+            <tr><td>SYSLOGBYTESUSED:<td><ait-field packet="CFE_ES_HKPACKET" name="SYSLOGBYTESUSED"></ait-field></tr>
+            <tr><td>SYSLOGSIZE:<td><ait-field packet="CFE_ES_HKPACKET" name="SYSLOGSIZE"></ait-field></tr>
+            <tr><td>SYSLOGENTRIES:<td><ait-field packet="CFE_ES_HKPACKET" name="SYSLOGENTRIES"></ait-field></tr>
+            <tr><td>SYSLOGMODE:<td><ait-field packet="CFE_ES_HKPACKET" name="SYSLOGMODE"></ait-field></tr>
+            <tr><td>ERLOGINDEX:<td><ait-field packet="CFE_ES_HKPACKET" name="ERLOGINDEX"></ait-field></tr>
+            <tr><td>ERLOGENTRIES:<td><ait-field packet="CFE_ES_HKPACKET" name="ERLOGENTRIES"></ait-field></tr>
+            <tr><td>REGISTEREDCOREAPPS:<td><ait-field packet="CFE_ES_HKPACKET" name="REGISTEREDCOREAPPS"></ait-field></tr>
+            <tr><td>REGISTEREDEXTERNALAPPS:<td><ait-field packet="CFE_ES_HKPACKET" name="REGISTEREDEXTERNALAPPS"></ait-field></tr>
+            <tr><td>REGISTEREDTASKS:<td><ait-field packet="CFE_ES_HKPACKET" name="REGISTEREDTASKS"></ait-field></tr>
+            <tr><td>REGISTEREDLIBS:<td><ait-field packet="CFE_ES_HKPACKET" name="REGISTEREDLIBS"></ait-field></tr>
+            <tr><td>RESETTYPE:<td><ait-field packet="CFE_ES_HKPACKET" name="RESETTYPE"></ait-field></tr>
+            <tr><td>RESETSUBTYPE:<td><ait-field packet="CFE_ES_HKPACKET" name="RESETSUBTYPE"></ait-field></tr>
+            <tr><td>PROCESSORRESETS:<td><ait-field packet="CFE_ES_HKPACKET" name="PROCESSORRESETS"></ait-field></tr>
+            <tr><td>MAXPROCESSORRESETS:<td><ait-field packet="CFE_ES_HKPACKET" name="MAXPROCESSORRESETS"></ait-field></tr>
+            <tr><td>BOOTSOURCE:<td><ait-field packet="CFE_ES_HKPACKET" name="BOOTSOURCE"></ait-field></tr>
+            <tr><td>PERFSTATE:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFSTATE"></ait-field></tr>
+            <tr><td>PERFMODE:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFMODE"></ait-field></tr>
+            <tr><td>PERFTRIGGERCOUNT:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFTRIGGERCOUNT"></ait-field></tr>
+            <tr><td>PERFFILTERMASK:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFFILTERMASK"></ait-field></tr>
+            <tr><td>PERFTRIGGERMASK:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFTRIGGERMASK"></ait-field></tr>
+            <tr><td>PERFDATASTART:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFDATASTART"></ait-field></tr>
+            <tr><td>PERFDATAEND:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFDATAEND"></ait-field></tr>
+            <tr><td>PERFDATACOUNT:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFDATACOUNT"></ait-field></tr>
+            <tr><td>PERFDATATOWRITE:<td><ait-field packet="CFE_ES_HKPACKET" name="PERFDATATOWRITE"></ait-field></tr>
+            <tr><td>HEAPBYTESFREE:<td><ait-field packet="CFE_ES_HKPACKET" name="HEAPBYTESFREE"></ait-field></tr>
+            <tr><td>HEAPBLOCKSFREE:<td><ait-field packet="CFE_ES_HKPACKET" name="HEAPBLOCKSFREE"></ait-field></tr>
+            <tr><td>HEAPMAXBLOCKSIZE:<td><ait-field packet="CFE_ES_HKPACKET" name="HEAPMAXBLOCKSIZE"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="CFE_EVS_TLMPKT">
+        <table class="telem col1">
+            <tr><td>COMMANDCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="COMMANDCOUNTER"></ait-field></tr>
+            <tr><td>COMMANDERRCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="COMMANDERRCOUNTER"></ait-field></tr>
+            <tr><td>MESSAGEFORMATMODE:<td><ait-field packet="CFE_EVS_TLMPKT" name="MESSAGEFORMATMODE"></ait-field></tr>
+            <tr><td>MESSAGETRUNCCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="MESSAGETRUNCCOUNTER"></ait-field></tr>
+            <tr><td>UNREGISTEREDAPPCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="UNREGISTEREDAPPCOUNTER"></ait-field></tr>
+            <tr><td>OUTPUTPORT:<td><ait-field packet="CFE_EVS_TLMPKT" name="OUTPUTPORT"></ait-field></tr>
+            <tr><td>LOGFULLFLAG:<td><ait-field packet="CFE_EVS_TLMPKT" name="LOGFULLFLAG"></ait-field></tr>
+            <tr><td>LOGMODE:<td><ait-field packet="CFE_EVS_TLMPKT" name="LOGMODE"></ait-field></tr>
+            <tr><td>MESSAGESENDCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="MESSAGESENDCOUNTER"></ait-field></tr>
+            <tr><td>LOGOVERFLOWCOUNTER:<td><ait-field packet="CFE_EVS_TLMPKT" name="LOGOVERFLOWCOUNTER"></ait-field></tr>
+            <tr><td>LOGENABLED:<td><ait-field packet="CFE_EVS_TLMPKT" name="LOGENABLED"></ait-field></tr>
+            <tr><td>SPARE1:<td><ait-field packet="CFE_EVS_TLMPKT" name="SPARE1"></ait-field></tr>
+            <tr><td>SPARE2:<td><ait-field packet="CFE_EVS_TLMPKT" name="SPARE2"></ait-field></tr>
+            <tr><td>SPARE3:<td><ait-field packet="CFE_EVS_TLMPKT" name="SPARE3"></ait-field></tr>
+            <tr><td>APPDATA:<td><ait-field packet="CFE_EVS_TLMPKT" name="APPDATA"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="CFE_HK_PKT">
+        <table class="telem col1">
+            <tr><td>COMMANDCOUNTER:<td><ait-field packet="CFE_HK_PKT" name="COMMANDCOUNTER"></ait-field></tr>
+            <tr><td>COMMANDERRCOUNTER:<td><ait-field packet="CFE_HK_PKT" name="COMMANDERRCOUNTER"></ait-field></tr>
+            <tr><td>CombinedPacketsSent:<td><ait-field packet="CFE_HK_PKT" name="CombinedPacketsSent"></ait-field></tr>
+            <tr><td>MissingDataCtr:<td><ait-field packet="CFE_HK_PKT" name="MissingDataCtr"></ait-field></tr>
+            <tr><td>MemPoolHandle:<td><ait-field packet="CFE_HK_PKT" name="MemPoolHandle"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="CFE_HK_COMBINED_PKT1">
+        <table class="telem col1">
+            <tr><td>COMMANDCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="COMMANDCOUNTER"></ait-field></tr>
+            <tr><td>COMMANDERRCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="COMMANDERRCOUNTER"></ait-field></tr>
+            <tr><td>MESSAGEFORMATMODE:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="MESSAGEFORMATMODE"></ait-field></tr>
+            <tr><td>MESSAGETRUNCCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="MESSAGETRUNCCOUNTER"></ait-field></tr>
+            <tr><td>TIME_CMDCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="TIME_CMDCOUNTER"></ait-field></tr>
+            <tr><td>TIME_ERRCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="TIME_ERRCOUNTER"></ait-field></tr>
+            <tr><td>CLOCKSTATEFLAGS:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="CLOCKSTATEFLAGS"></ait-field></tr>
+            <tr><td>SB_COMMANDCNT:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="SB_COMMANDCNT"></ait-field></tr>
+            <tr><td>SB_CMDERRCNT:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="SB_CMDERRCNT"></ait-field></tr>
+            <tr><td>NOSUBSCRIBERSCNT:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="NOSUBSCRIBERSCNT"></ait-field></tr>
+            <tr><td>MSGSENDERRCNT:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="MSGSENDERRCNT"></ait-field></tr>
+            <tr><td>ES_CMDCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="ES_CMDCOUNTER"></ait-field></tr>
+            <tr><td>ES_ERRCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="ES_ERRCOUNTER"></ait-field></tr>
+            <tr><td>CFECORECHECKSUM:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="CFECORECHECKSUM"></ait-field></tr>
+            <tr><td>TBL_CMDCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="TBL_CMDCOUNTER"></ait-field></tr>
+            <tr><td>TBL_ERRCOUNTER:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="TBL_ERRCOUNTER"></ait-field></tr>
+            <tr><td>NUMTABLES:<td><ait-field packet="CFE_HK_COMBINED_PKT1" name="NUMTABLES"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="CFE_SB_HKMSG">
+        <table class="telem col1">
+            <tr><td>COMMANDCNT:<td><ait-field packet="CFE_SB_HKMSG" name="COMMANDCNT"></ait-field></tr>
+            <tr><td>CMDERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="CMDERRCNT"></ait-field></tr>
+            <tr><td>NOSUBSCRIBERSCNT:<td><ait-field packet="CFE_SB_HKMSG" name="NOSUBSCRIBERSCNT"></ait-field></tr>
+            <tr><td>MSGSENDERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="MSGSENDERRCNT"></ait-field></tr>
+            <tr><td>MSGRECEIVEERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="MSGRECEIVEERRCNT"></ait-field></tr>
+            <tr><td>INTERNALERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="INTERNALERRCNT"></ait-field></tr>
+            <tr><td>CREATEPIPEERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="CREATEPIPEERRCNT"></ait-field></tr>
+            <tr><td>SUBSCRIBEERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="SUBSCRIBEERRCNT"></ait-field></tr>
+            <tr><td>SPARE:<td><ait-field packet="CFE_SB_HKMSG" name="SPARE"></ait-field></tr>
+            <tr><td>DUPSUBSCRIPTIONSCNT:<td><ait-field packet="CFE_SB_HKMSG" name="DUPSUBSCRIPTIONSCNT"></ait-field></tr>
+            <tr><td>SPARE2ALIGN:<td><ait-field packet="CFE_SB_HKMSG" name="SPARE2ALIGN"></ait-field></tr>
+            <tr><td>PIPEOVERFLOWERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="PIPEOVERFLOWERRCNT"></ait-field></tr>
+            <tr><td>MSGLIMERRCNT:<td><ait-field packet="CFE_SB_HKMSG" name="MSGLIMERRCNT"></ait-field></tr>
+            <tr><td>MEMPOOLHANDLE:<td><ait-field packet="CFE_SB_HKMSG" name="MEMPOOLHANDLE"></ait-field></tr>
+            <tr><td>SPARE:<td><ait-field packet="CFE_SB_HKMSG" name="SPARE"></ait-field></tr>
+            <tr><td>MEMINUSE:<td><ait-field packet="CFE_SB_HKMSG" name="MEMINUSE"></ait-field></tr>
+            <tr><td>UNMARKEDMEM:<td><ait-field packet="CFE_SB_HKMSG" name="UNMARKEDMEM"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="CFE_TIME_HKPACKET">
+        <table class="telem col1">
+            <tr><td>CMDCOUNTER:<td><ait-field packet="CFE_TIME_HKPACKET" name="CMDCOUNTER"></ait-field></tr>
+            <tr><td>ERRCOUNTER:<td><ait-field packet="CFE_TIME_HKPACKET" name="ERRCOUNTER"></ait-field></tr>
+            <tr><td>CLOCKSTATEFLAGS:<td><ait-field packet="CFE_TIME_HKPACKET" name="CLOCKSTATEFLAGS"></ait-field></tr>
+            <tr><td>CLOCKSTATEAPI:<td><ait-field packet="CFE_TIME_HKPACKET" name="CLOCKSTATEAPI"></ait-field></tr>
+            <tr><td>LEAPSECONDS:<td><ait-field packet="CFE_TIME_HKPACKET" name="LEAPSECONDS"></ait-field></tr>
+            <tr><td>SECONDSMET:<td><ait-field packet="CFE_TIME_HKPACKET" name="SECONDSMET"></ait-field></tr>
+            <tr><td>SUBSECSMET:<td><ait-field packet="CFE_TIME_HKPACKET" name="SUBSECSMET"></ait-field></tr>
+            <tr><td>SECONDSSTCF:<td><ait-field packet="CFE_TIME_HKPACKET" name="SECONDSSTCF"></ait-field></tr>
+            <tr><td>SUBSECSSTCF:<td><ait-field packet="CFE_TIME_HKPACKET" name="SUBSECSSTCF"></ait-field></tr>
+            <tr><td>SECONDS1HZADJ:<td><ait-field packet="CFE_TIME_HKPACKET" name="SECONDS1HZADJ"></ait-field></tr>
+            <tr><td>SUBSECS1HZADJ:<td><ait-field packet="CFE_TIME_HKPACKET" name="SUBSECS1HZADJ"></ait-field></tr>
+        </table>
+      </ait-tab>
+      <ait-tab title="NAV_HK_TLM_T">
+        <table class="telem col1">
+            <tr><td>ERROR_COUNT:<td><ait-field packet="NAV_HK_TLM_T" name="ERROR_COUNT"></ait-field></tr>
+            <tr><td>COMMAND_COUNT:<td><ait-field packet="NAV_HK_TLM_T" name="COMMAND_COUNT"></ait-field></tr>
+            <tr><td>GPS_WEEKS:<td><ait-field packet="NAV_HK_TLM_T" name="GPS_WEEKS"></ait-field></tr>
+            <tr><td>GPS_SECONDS:<td><ait-field packet="NAV_HK_TLM_T" name="GPS_SECONDS"></ait-field></tr>
+            <tr><td>GPS_FRAC_SECS:<td><ait-field packet="NAV_HK_TLM_T" name="GPS_FRAC_SECS"></ait-field></tr>
+            <tr><td>ECEF_X:<td><ait-field packet="NAV_HK_TLM_T" name="ECEF_X"></ait-field></tr>
+            <tr><td>ECEF_Y:<td><ait-field packet="NAV_HK_TLM_T" name="ECEF_Y"></ait-field></tr>
+            <tr><td>ECEF_Z:<td><ait-field packet="NAV_HK_TLM_T" name="ECEF_Z"></ait-field></tr>
+            <tr><td>VEL_X:<td><ait-field packet="NAV_HK_TLM_T" name="VEL_X"></ait-field></tr>
+            <tr><td>VEL_Y:<td><ait-field packet="NAV_HK_TLM_T" name="VEL_Y"></ait-field></tr>
+            <tr><td>VEL_Z:<td><ait-field packet="NAV_HK_TLM_T" name="VEL_Z"></ait-field></tr>
+        </table>
+      </ait-tab>
+
+    </ait-tabset>
+  </div>
+
+
+
+  <div class='ctrlcontainer'>
+    <ait-tabset class='nav-tabs'>
+      <ait-tab title='Commanding'>
+        <div class='cmd-tab-container'>
+          <div class="cmd-browser-container">
+            <ait-command-search>
+            </ait-command-search>
+          </div>
+          <div class="cmd-config-container">
+            <ait-command-configure>
+            </ait-command-configure>
+          </div>
+          <div class='cmd-search-container'>
+            <ait-command-input></ait-command-input>
+            <hr />
+          </div>
+        </div>
+      </ait-tab>
+      <ait-tab title='Command History'>
+        <div class="row">
+          <div class="col-lg-12">
+            <div style="height:200px;overflow:auto;">
+              <ait-command-history></ait-command-history>
+            </div>
+          </div>
+        </div>
+      </ait-tab>
+    </ait-tabset>
+  </div>
+</div>
+
+
+</body>

@@ -1,0 +1,161 @@
+<!doctype html>
+<head>
+  <link rel="stylesheet" href="ait/gui/static/build/ait.bundle.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="ait/gui/static/build/ait.bundle.js"></script>
+</head>
+
+<body>
+
+<!-- Status Bar -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">AIT</a><br>
+        </div>  <!-- /.navbar-header -->
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <p class="navbar-text">Telemetry Status:</p>
+            </li>
+            <li>
+                <p class="navbar-text ait-status-indicators">
+                    <ait-led on      = "ait:tlm:packet"
+                               off     = "ait:tlm:close"
+                               pending = "ait:tlm:open"
+                               error   = "ait:tlm:stale"
+                               default = "pending"></ait-led>
+                    cFS
+                </p>
+            </li>
+            <li>
+                <ait-clock class="navbar-text" doy="true"></ait-clock>
+            </li>
+        </ul>  <!-- /.navbar-right -->
+    </div>  <!-- /.container-fluid -->
+</div>  <!-- /.navbar -->
+
+<div class='site-container'>
+  <div class='telemcontainer'>
+    <ait-tabset class="nav-tabs">
+      <ait-tab title="Executive Services (ES)">
+        <table class="telem col2">
+            <tr>
+                <td>Cmd Counter:   <td><ait-field packet="CFE_ES_HK" name="CommandCounter"></ait-field>
+                <td>Error Counter: <td><ait-field packet="CFE_ES_HK" name="ErrorCounter"></ait-field>
+            <tr>
+                <td>Core Checksum: <td><ait-field packet="CFE_ES_HK" name="cFECoreChecksum" format="0x%04x"></ait-field>
+                <td>Major Version: <td><ait-field packet="CFE_ES_HK" name="cFEMajorVersion"></ait-field>
+            <tr>
+                <td>Minor Version: <td><ait-field packet="CFE_ES_HK" name="cFEMinorVersion"></ait-field>
+                <td>Revision: <td><ait-field packet="CFE_ES_HK" name="cFERevision"></ait-field>
+            <tr>
+                <td>Mission Revision: <td><ait-field packet="CFE_ES_HK" name="cFEMissionRevision"></ait-field>
+                <td>OSAL Major Version: <td><ait-field packet="CFE_ES_HK" name="OSALMajorVersion"></ait-field>
+            <tr>
+                <td>OSAL Minor Version: <td><ait-field packet="CFE_ES_HK" name="OSALMinorVersion"></ait-field>
+                <td>OSAL Revision: <td><ait-field packet="CFE_ES_HK" name="OSALRevision"></ait-field>
+            <tr>
+                <td>OSAL Mission Rev: <td><ait-field packet="CFE_ES_HK" name="OSALMissionRev"></ait-field>
+                <td>Syslog Bytes Used: <td><ait-field packet="CFE_ES_HK" name="SyslogBytesUsed"></ait-field>
+            <tr>
+                <td>Syslog Size: <td><ait-field packet="CFE_ES_HK" name="SyslogSize"></ait-field>
+                <td>Syslog Entries: <td><ait-field packet="CFE_ES_HK" name="SyslogEntries"></ait-field>
+            <tr>
+                <td>Syslog Mode: <td><ait-field packet="CFE_ES_HK" name="SyslogMode"></ait-field>
+                <td>ER Log Index: <td><ait-field packet="CFE_ES_HK" name="ERlogIndex"></ait-field>
+            <tr>
+                <td>ER Log Entries: <td><ait-field packet="CFE_ES_HK" name="ERlogEntries"></ait-field>
+                <td>Registered Core Apps Count: <td><ait-field packet="CFE_ES_HK" name="RegisteredCoreApps"></ait-field>
+            <tr>
+                <td>Registered CFS Apps Count: <td><ait-field packet="CFE_ES_HK" name="RegisteredCFSApps"></ait-field>
+                <td>Registered Tasks Count: <td><ait-field packet="CFE_ES_HK" name="RegisteredTasks"></ait-field>
+            <tr>
+                <td>Registered Libs: <td><ait-field packet="CFE_ES_HK" name="RegisteredLibs"></ait-field>
+                <td>Reset Type: <td><ait-field packet="CFE_ES_HK" name="ResetType"></ait-field>
+            <tr>
+                <td>Reset Subtype: <td><ait-field packet="CFE_ES_HK" name="ResetSubtype"></ait-field>
+                <td>Processor Resets: <td><ait-field packet="CFE_ES_HK" name="ProcessorResets"></ait-field>
+            <tr>
+                <td>Max Proc Resets: <td><ait-field packet="CFE_ES_HK" name="MaxProcResets"></ait-field>
+                <td>Boot Source: <td><ait-field packet="CFE_ES_HK" name="BootSource"></ait-field>
+            <tr>
+                <td>Perf Mon State: <td><ait-field packet="CFE_ES_HK" name="PerfMonState"></ait-field>
+                <td>Perf Mon Mode: <td><ait-field packet="CFE_ES_HK" name="PerfMonMode"></ait-field>
+            <tr>
+                <td>Perf Trigger Count: <td><ait-field packet="CFE_ES_HK" name="PerfTriggerCount"></ait-field>
+                <td>Heap Bytes Free: <td><ait-field packet="CFE_ES_HK" name="HeapBytesFree"></ait-field>
+            <tr>
+                <td>Heap Blocks Free: <td><ait-field packet="CFE_ES_HK" name="HeapBlocksFree"></ait-field>
+                <td>Head Max Block Size: <td><ait-field packet="CFE_ES_HK" name="HeapMaxBlkSize"></ait-field>
+        </table>
+
+        <ait-plot title="Command Count" y-title="Counts">
+            <ait-plot-series type="line" packet="CFE_ES_HK" name="CommandCounter"></ait-plot-series>
+        </ait-plot>
+
+      </ait-tab>
+
+      <ait-tab title="Event Services (EVS) Housekeeping">
+        <table class="telem col2">
+            <tr>
+                <td>Cmd Counter:   <td><ait-field packet="CFE_EVS_HK" name="CommandCounter"></ait-field>
+                <td>Error Counter: <td><ait-field packet="CFE_EVS_HK" name="ErrorCounter"></ait-field>
+            <tr>
+                <td>Message Format Mode:        <td><ait-field packet="CFE_EVS_HK" name="MessageFormatMode"></ait-field>
+                <td>Message Truncation Counter: <td><ait-field packet="CFE_EVS_HK" name="MessageTruncationCounter"></ait-field>
+		</table>
+      </ait-tab>
+
+      <ait-tab title="Event Message Telemetry Packet">
+        <table class="telem col2">
+            <tr>
+                <td>Application name: <td><ait-field packet="CFE_EVS_PACKET" name="PACKETID_APPNAME"></ait-field>
+            <tr>
+                <td>Numerical event identifier: <td><ait-field packet="CFE_EVS_PACKET" name="PACKETID_EVENTID"></ait-field>
+                <td>Numerical event type identifier: <td><ait-field packet="CFE_EVS_PACKET" name="PACKETID_EVENTTYPE"></ait-field>
+            <tr>
+                <td>Spacecraft identifier: <td><ait-field packet="CFE_EVS_PACKET" name="PACKETID_SPACECRAFTID"></ait-field>
+                <td>Numerical processor identifier: <td><ait-field packet="CFE_EVS_PACKET" name="PACKETID_PROCESSORID"></ait-field>
+            <tr>
+                <td>Event message string: <td><ait-field packet="CFE_EVS_PACKET" name="MESSAGE"></ait-field>
+		</table>
+      </ait-tab>
+    </ait-tabset>
+  </div>
+
+
+
+  <div class='ctrlcontainer'>
+    <ait-tabset class='nav-tabs'>
+      <ait-tab title='Commanding'>
+        <div class='cmd-tab-container'>
+          <div class="cmd-browser-container">
+            <ait-command-search>
+            </ait-command-search>
+          </div>
+          <div class="cmd-config-container">
+            <ait-command-configure>
+            </ait-command-configure>
+          </div>
+          <div class='cmd-search-container'>
+            <ait-command-input></ait-command-input>
+            <hr />
+          </div>
+        </div>
+      </ait-tab>
+      <ait-tab title='Command History'>
+        <div class="row">
+          <div class="col-lg-12">
+            <div style="height:200px;overflow:auto;">
+              <ait-command-history></ait-command-history>
+            </div>
+          </div>
+        </div>
+      </ait-tab>
+    </ait-tabset>
+  </div>
+</div>
+
+
+</body>

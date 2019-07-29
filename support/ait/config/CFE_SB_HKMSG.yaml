@@ -1,0 +1,109 @@
+- !Packet
+  name:  CFE_SB_HKMSG
+  desc:  Software Bus task housekeeping Packet
+  ccsds:
+    apid:  03
+
+  fields:
+    - !Field
+      name:  COMMANDCNT
+      desc:  Count of valid commands received.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  CMDERRCNT
+      desc:  Count of invalid commands received.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  NOSUBSCRIBERSCNT
+      desc:  Count pkts sent with no subscribers.
+      bytes: 14
+      type:  U8
+
+    - !Field
+      name:  MSGSENDERRCNT
+      desc:  Count of message send errors.
+      bytes: 15
+      type:  U8
+
+    - !Field
+      name:  MSGRECEIVEERRCNT
+      desc:  Count of message receive errors.
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  INTERNALERRCNT
+      desc:  Count of queue read or write errors.
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  CREATEPIPEERRCNT
+      desc:  Count of errors in create pipe API.
+      bytes: 18
+      type:  U8
+
+    - !Field
+      name:  SUBSCRIBEERRCNT
+      desc:  Count of errors in subscribe API.
+      bytes: 19
+      type:  U8
+
+    - !Field
+      name:  SPARE
+      desc:  Spare Byte.
+      bytes: 20
+      type:  U8
+
+    - !Field
+      name:  DUPSUBSCRIPTIONSCNT
+      desc:  Count of duplicate subscriptions.
+      bytes: 21
+      type:  U8
+
+    - !Field
+      name:  SPARE2ALIGN
+      desc:  Spare bytes to ensure alignment.
+      bytes: [22, 23]
+      type:  U8
+
+    - !Field
+      name:  PIPEOVERFLOWERRCNT
+      desc:  Count of pipe overflow errors.
+      bytes: [24, 25]
+      type:  U8
+
+    - !Field
+      name:  MSGLIMERRCNT
+      desc:  Count of msg id to pipe errors.
+      bytes: [26, 27]
+      type:  U8
+
+    - !Field
+      name:  MEMPOOLHANDLE
+      desc:  Handle to SB's Memory Pool.
+      bytes: [28, 35]
+      type:  U8
+
+    - !Field
+      name:  SPARE
+      desc:  Spare Byte.
+      bytes: [36, 39]
+      type:  U8
+
+    - !Field
+      name:  MEMINUSE
+      desc:  Memory in use.
+      bytes: [40, 43]
+      type:  U8
+
+    - !Field
+      name:  UNMARKEDMEM
+      desc:  cfg param CFE_SB_BUF_MEMORY_BYTES minus Peak Memory in use
+      bytes: [44, 47]
+      type:  U8
+

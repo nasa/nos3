@@ -95,12 +95,12 @@ namespace Nos3
         
         void cmd_qrn(double q1, double q2, double q3, double q4);
         void cmd_qrl(double q1, double q2, double q3, double q4);
-        void cmd_angles_wrt_frame(double ang1, double ang2, double ang3, long rotSeq, double frame);
+        void cmd_angles_wrt_frame(double ang1, double ang2, double ang3, long rotSeq, char frame);
         void cmd_angles(double ang1, double ang2, double ang3);
         void cmd_vector_ra_dec(double vecR0, double vecR1, double vecR2, double ra, double dec);
-        void cmd_vector_world_lng_lat_alt(double vecR0, double vecR1, double vecR2, double world, double lng, double lat, double alt);
-        void cmd_vector_world(double vecR0, double vecR1, double vecR2, double world);
-        void cmd_vector_ground_station(double vecR0, double vecR1, double vecR2, double groundStation);
+        void cmd_vector_world_lng_lat_alt(double vecR0, double vecR1, double vecR2, int world, double lng, double lat, double alt);
+        void cmd_vector_world(double vecR0, double vecR1, double vecR2, int world);
+        void cmd_vector_ground_station(double vecR0, double vecR1, double vecR2, int groundStation);
         void cmd_vector_sc_point(double vecR0, double vecR1, double vecR2, long sc, long body, double vec0, double vec1, double vec2);
         void cmd_vector_sc(double vecR0, double vecR1, double vecR2, long sc);
         void cmd_vector_point_at(double vecR0, double vecR1, double vecR2, const char* target);
@@ -125,8 +125,6 @@ namespace Nos3
         double _abs_time, _gps_frac_sec;
         long _gps_week, _gps_sec_week;
         std::vector<double> _ECEF, _ECI, _ECI_vel, _svn, _bvn, _hvn, _qbn;
-        long _eclipse;
-        std::vector<std::vector<double>> _DCM, _cbn;
 
         // ... a data point of data read from the socket
         Sim42DataPoint _data_point;

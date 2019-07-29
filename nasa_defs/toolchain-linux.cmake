@@ -24,5 +24,5 @@ SET(CFE_SYSTEM_PSPNAME      "nos-linux")
 
 SET(OSAL_SYSTEM_OSTYPE      "posix")
 
-SET(CMAKE_C_FLAGS_INIT "-g -Wfatal-errors -Wformat=0" CACHE STRING "C Flags required by platform")
+SET(CMAKE_C_FLAGS_INIT "-g -Wfatal-errors -Wformat=0 -m32" CACHE STRING "C Flags required by platform")
 

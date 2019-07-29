@@ -1,8 +1,8 @@
 project(nos_time_driver)
 
-find_package(Boost REQUIRED QUIET COMPONENTS program_options filesystem) # system program_options filesystem)
-find_package(ITC_Common REQUIRED COMPONENTS itc_logger)
-find_package(NOSENGINE REQUIRED COMPONENTS common transport client server)
+find_package(Boost REQUIRED QUIET COMPONENTS program_options filesystem)
+find_package(ITC_Common REQUIRED QUIET COMPONENTS itc_logger)
+find_package(NOSENGINE REQUIRED QUIET COMPONENTS common transport client server)
 
 include_directories(
                     ${sim_common_SOURCE_DIR}/inc

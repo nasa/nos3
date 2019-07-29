@@ -14,10 +14,10 @@ include_directories(fsw/mission_inc
 
 # freertos include directories for flight configuration
 IF(CFE_SYSTEM_PSPNAME STREQUAL FLIGHT_PSPNAME)
-    message(STATUS "FLIGHT configuration")
+    message(STATUS "hwlib: FLIGHT configuration")
     #include_directories(flight needed includes here)
 else()
-    message(STATUS "NON-FLIGHT configuration")
+    message(STATUS "hwlib: NON-FLIGHT configuration")
 ENDIF()
 
 # create the hwlib app module

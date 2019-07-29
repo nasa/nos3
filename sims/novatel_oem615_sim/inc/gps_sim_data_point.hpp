@@ -59,7 +59,7 @@ namespace Nos3
         GPSSimDataPoint();
         GPSSimDataPoint(double abs_time, int16_t gps_week, int32_t gps_sec_week, double gps_frac_sec,
             const std::vector<double>& ECEF, const std::vector<double>& ECI,
-            const std::vector<std::vector<double>>& DCM, const std::vector<double>& velocity);
+            const std::vector<double>& velocity);
         //@}
 
         /// @name Accessors
@@ -91,7 +91,6 @@ namespace Nos3
         int32_t _gps_sec_week; // Integer seconds elapsed since the start of the GPS week
         double _gps_frac_sec; // Fractions of a second beyond the integer seconds_of_week
         std::vector<double> _ECEF, _ECI, _ECI_vel;
-        std::vector<std::vector<double>> _DCM;
 
     };
 

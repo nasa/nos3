@@ -1,0 +1,42 @@
+- !Packet
+  name:  CFE_EVS_PACKET
+  desc:  Event Message Telemetry Packet
+  ccsds:
+    apid: 8
+
+  fields:
+    - !Field
+      name:  PACKETID_APPNAME
+      desc:  Application name
+      bytes: [12, 31]
+      type:  S20
+
+    - !Field
+      name:  PACKETID_EVENTID
+      desc:  Numerical event identifier
+      bytes: [32, 33]
+      type:  LSB_U16
+
+    - !Field
+      name:  PACKETID_EVENTTYPE
+      desc:  Numerical event type identifier
+      bytes: [34, 35]
+      type:  LSB_U16
+
+    - !Field
+      name:  PACKETID_SPACECRAFTID
+      desc:  Spacecraft identifier
+      bytes: [36, 39]
+      type:  LSB_U32
+
+    - !Field
+      name:  PACKETID_PROCESSORID
+      desc:  Numerical processor identifier
+      bytes: [40, 43]
+      type:  LSB_U32
+
+    - !Field
+      name:  MESSAGE
+      desc:  Event message string
+      bytes: [44, 165]
+      type:  S122

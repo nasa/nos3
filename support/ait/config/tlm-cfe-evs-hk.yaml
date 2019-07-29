@@ -1,0 +1,862 @@
+- !Packet
+  name:  CFE_EVS_HK
+  desc:  Event Services (EVS) Housekeeping
+  ccsds:
+    apid: 1
+
+  fields:
+    - !Field
+      name:  CommandCounter
+      desc:  The EVS Application Command Counter
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  ErrorCounter
+      desc:  The EVS Application Command Error Counter
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  MessageFormatMode
+      desc:  The EVS Message Format Mode (short/long)
+      bytes: 14
+      type:  U8
+
+    - !Field
+      name:  MessageTruncationCounter
+      desc:  The EVS Message Truncation Counter
+      bytes: 15
+      type:  U8
+   
+    - !Field
+      name:  UnregAppMsgCnt
+      desc:  The EVS Unregistered Application Message Send Counter
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  OutputPortMask
+      desc:  The EVS Output Port Mask
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  LogFullFlag
+      desc:  The EVS Local Event Log Full Flag
+      bytes: 18
+      type:  U8
+
+    - !Field
+      name:  LogMode
+      desc:  The EVS Local Event Log Mode (overwrite / discard)
+      bytes: 19
+      type:  U8
+   
+    - !Field
+      name:  MsgSendCnt
+      desc:  The EVS Message Send Counter
+      bytes: [20, 21]
+      type:  MSB_U16
+
+    - !Field
+      name:  LogOverflowCnt
+      desc:  The EVS Local Event Log Overflow Counter
+      bytes: [23, 24]
+      type:  MSB_U16
+   
+    - !Field
+      name:  LogEnabled
+      desc:  The EVS Log State (enabled / disabled)
+      bytes: 25
+      type:  U8
+
+    - !Field
+      name:  Spare1
+      desc:  Padding for 32 bit boundary
+      bytes: 26
+      type:  U8
+
+    - !Field
+      name:  Spare2
+      desc:  Padding for 32 bit boundary
+      bytes: 27
+      type:  U8
+
+    - !Field
+      name:  Spare3
+      desc:  Padding for 32 bit boundary
+      bytes: 28
+      type:  U8
+   
+    - !Field
+      name:  AppId1
+      desc:  Numerical App Id
+      bytes: [29, 32]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt1
+      desc:  Application Message sent counter
+      bytes: [33, 34]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus1
+      desc:  Application Message sent counter
+      bytes: 35
+      type:  U8
+
+    - !Field
+      name:  Padding1
+      desc:  Padding
+      bytes: 36
+      type:  U8
+
+    - !Field
+      name:  AppId2
+      desc:  Numerical App Id
+      bytes: [37, 40]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt2
+      desc:  Application Message sent counter
+      bytes: [41, 42]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus2
+      desc:  Application Message sent counter
+      bytes: 43
+      type:  U8
+
+    - !Field
+      name:  Padding2
+      desc:  Padding
+      bytes: 44
+      type:  U8
+
+    - !Field
+      name:  AppId3
+      desc:  Numerical App Id
+      bytes: [45, 48]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt3
+      desc:  Application Message sent counter
+      bytes: [49, 50]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus3
+      desc:  Application Message sent counter
+      bytes: 51
+      type:  U8
+
+    - !Field
+      name:  Padding3
+      desc:  Padding
+      bytes: 52
+      type:  U8
+
+
+    - !Field
+      name:  AppId4
+      desc:  Numerical App Id
+      bytes: [53, 56]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt4
+      desc:  Application Message sent counter
+      bytes: [57, 58]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus4
+      desc:  Application Message sent counter
+      bytes: 59
+      type:  U8
+
+    - !Field
+      name:  Padding4
+      desc:  Padding
+      bytes: 60
+      type:  U8
+
+
+    - !Field
+      name:  AppId5
+      desc:  Numerical App Id
+      bytes: [61, 64]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt5
+      desc:  Application Message sent counter
+      bytes: [65, 66]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus5
+      desc:  Application Message sent counter
+      bytes: 67
+      type:  U8
+
+    - !Field
+      name:  Padding5
+      desc:  Padding
+      bytes: 68
+      type:  U8
+
+
+    - !Field
+      name:  AppId6
+      desc:  Numerical App Id
+      bytes: [69, 72]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt6
+      desc:  Application Message sent counter
+      bytes: [73, 74]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus6
+      desc:  Application Message sent counter
+      bytes: 75
+      type:  U8
+
+    - !Field
+      name:  Padding6
+      desc:  Padding
+      bytes: 76
+      type:  U8
+
+
+    - !Field
+      name:  AppId7
+      desc:  Numerical App Id
+      bytes: [77, 80]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt7
+      desc:  Application Message sent counter
+      bytes: [81, 82]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus7
+      desc:  Application Message sent counter
+      bytes: 83
+      type:  U8
+
+    - !Field
+      name:  Padding7
+      desc:  Padding
+      bytes: 84
+      type:  U8
+
+
+    - !Field
+      name:  AppId8
+      desc:  Numerical App Id
+      bytes: [85, 88]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt8
+      desc:  Application Message sent counter
+      bytes: [89, 90]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus8
+      desc:  Application Message sent counter
+      bytes: 91
+      type:  U8
+
+    - !Field
+      name:  Padding8
+      desc:  Padding
+      bytes: 92
+      type:  U8
+
+
+    - !Field
+      name:  AppId9
+      desc:  Numerical App Id
+      bytes: [93, 96]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt9
+      desc:  Application Message sent counter
+      bytes: [97, 98]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus9
+      desc:  Application Message sent counter
+      bytes: 99
+      type:  U8
+
+    - !Field
+      name:  Padding9
+      desc:  Padding
+      bytes: 100
+      type:  U8
+
+
+    - !Field
+      name:  AppId10
+      desc:  Numerical App Id
+      bytes: [101, 104]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt10
+      desc:  Application Message sent counter
+      bytes: [105, 106]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus10
+      desc:  Application Message sent counter
+      bytes: 107
+      type:  U8
+
+    - !Field
+      name:  Padding10
+      desc:  Padding
+      bytes: 108
+      type:  U8
+
+
+    - !Field
+      name:  AppId11
+      desc:  Numerical App Id
+      bytes: [109, 112]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt11
+      desc:  Application Message sent counter
+      bytes: [113, 114]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus11
+      desc:  Application Message sent counter
+      bytes: 115
+      type:  U8
+
+    - !Field
+      name:  Padding11
+      desc:  Padding
+      bytes: 116
+      type:  U8
+
+
+    - !Field
+      name:  AppId12
+      desc:  Numerical App Id
+      bytes: [117, 120]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt12
+      desc:  Application Message sent counter
+      bytes: [121, 122]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus12
+      desc:  Application Message sent counter
+      bytes: 123
+      type:  U8
+
+    - !Field
+      name:  Padding12
+      desc:  Padding
+      bytes: 124
+      type:  U8
+
+
+    - !Field
+      name:  AppId13
+      desc:  Numerical App Id
+      bytes: [125, 128]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt13
+      desc:  Application Message sent counter
+      bytes: [129, 130]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus13
+      desc:  Application Message sent counter
+      bytes: 131
+      type:  U8
+
+    - !Field
+      name:  Padding13
+      desc:  Padding
+      bytes: 132
+      type:  U8
+
+
+    - !Field
+      name:  AppId14
+      desc:  Numerical App Id
+      bytes: [133, 136]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt14
+      desc:  Application Message sent counter
+      bytes: [137, 138]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus14
+      desc:  Application Message sent counter
+      bytes: 139
+      type:  U8
+
+    - !Field
+      name:  Padding14
+      desc:  Padding
+      bytes: 140
+      type:  U8
+
+
+    - !Field
+      name:  AppId15
+      desc:  Numerical App Id
+      bytes: [141, 144]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt15
+      desc:  Application Message sent counter
+      bytes: [145, 146]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus15
+      desc:  Application Message sent counter
+      bytes: 147
+      type:  U8
+
+    - !Field
+      name:  Padding15
+      desc:  Padding
+      bytes: 148
+      type:  U8
+
+
+    - !Field
+      name:  AppId16
+      desc:  Numerical App Id
+      bytes: [149, 152]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt16
+      desc:  Application Message sent counter
+      bytes: [153, 154]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus16
+      desc:  Application Message sent counter
+      bytes: 155
+      type:  U8
+
+    - !Field
+      name:  Padding16
+      desc:  Padding
+      bytes: 156
+      type:  U8
+
+
+    - !Field
+      name:  AppId17
+      desc:  Numerical App Id
+      bytes: [157, 160]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt17
+      desc:  Application Message sent counter
+      bytes: [161, 162]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus17
+      desc:  Application Message sent counter
+      bytes: 163
+      type:  U8
+
+    - !Field
+      name:  Padding17
+      desc:  Padding
+      bytes: 164
+      type:  U8
+
+
+    - !Field
+      name:  AppId18
+      desc:  Numerical App Id
+      bytes: [165, 168]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt18
+      desc:  Application Message sent counter
+      bytes: [169, 170]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus18
+      desc:  Application Message sent counter
+      bytes: 171
+      type:  U8
+
+    - !Field
+      name:  Padding18
+      desc:  Padding
+      bytes: 172
+      type:  U8
+
+
+    - !Field
+      name:  AppId19
+      desc:  Numerical App Id
+      bytes: [173, 176]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt19
+      desc:  Application Message sent counter
+      bytes: [177, 178]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus19
+      desc:  Application Message sent counter
+      bytes: 179
+      type:  U8
+
+    - !Field
+      name:  Padding19
+      desc:  Padding
+      bytes: 180
+      type:  U8
+
+
+    - !Field
+      name:  AppId20
+      desc:  Numerical App Id
+      bytes: [181, 184]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt20
+      desc:  Application Message sent counter
+      bytes: [185, 186]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus20
+      desc:  Application Message sent counter
+      bytes: 187
+      type:  U8
+
+    - !Field
+      name:  Padding20
+      desc:  Padding
+      bytes: 188
+      type:  U8
+
+
+    - !Field
+      name:  AppId21
+      desc:  Numerical App Id
+      bytes: [189, 192]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt21
+      desc:  Application Message sent counter
+      bytes: [193, 194]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus21
+      desc:  Application Message sent counter
+      bytes: 195
+      type:  U8
+
+    - !Field
+      name:  Padding21
+      desc:  Padding
+      bytes: 196
+      type:  U8
+
+
+    - !Field
+      name:  AppId22
+      desc:  Numerical App Id
+      bytes: [197, 200]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt22
+      desc:  Application Message sent counter
+      bytes: [201, 202]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus22
+      desc:  Application Message sent counter
+      bytes: 203
+      type:  U8
+
+    - !Field
+      name:  Padding22
+      desc:  Padding
+      bytes: 204
+      type:  U8
+
+
+    - !Field
+      name:  AppId23
+      desc:  Numerical App Id
+      bytes: [205, 208]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt23
+      desc:  Application Message sent counter
+      bytes: [209, 210]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus23
+      desc:  Application Message sent counter
+      bytes: 211
+      type:  U8
+
+    - !Field
+      name:  Padding23
+      desc:  Padding
+      bytes: 212
+      type:  U8
+
+
+    - !Field
+      name:  AppId24
+      desc:  Numerical App Id
+      bytes: [213, 216]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt24
+      desc:  Application Message sent counter
+      bytes: [217, 218]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus24
+      desc:  Application Message sent counter
+      bytes: 219
+      type:  U8
+
+    - !Field
+      name:  Padding24
+      desc:  Padding
+      bytes: 220
+      type:  U8
+
+
+    - !Field
+      name:  AppId25
+      desc:  Numerical App Id
+      bytes: [221, 224]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt25
+      desc:  Application Message sent counter
+      bytes: [225, 226]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus25
+      desc:  Application Message sent counter
+      bytes: 227
+      type:  U8
+
+    - !Field
+      name:  Padding25
+      desc:  Padding
+      bytes: 228
+      type:  U8
+
+
+    - !Field
+      name:  AppId26
+      desc:  Numerical App Id
+      bytes: [229, 232]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt26
+      desc:  Application Message sent counter
+      bytes: [233, 234]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus26
+      desc:  Application Message sent counter
+      bytes: 235
+      type:  U8
+
+    - !Field
+      name:  Padding26
+      desc:  Padding
+      bytes: 236
+      type:  U8
+
+
+    - !Field
+      name:  AppId27
+      desc:  Numerical App Id
+      bytes: [237, 240]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt27
+      desc:  Application Message sent counter
+      bytes: [241, 242]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus27
+      desc:  Application Message sent counter
+      bytes: 243
+      type:  U8
+
+    - !Field
+      name:  Padding27
+      desc:  Padding
+      bytes: 244
+      type:  U8
+
+
+    - !Field
+      name:  AppId28
+      desc:  Numerical App Id
+      bytes: [245, 248]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt28
+      desc:  Application Message sent counter
+      bytes: [249, 250]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus28
+      desc:  Application Message sent counter
+      bytes: 251
+      type:  U8
+
+    - !Field
+      name:  Padding28
+      desc:  Padding
+      bytes: 252
+      type:  U8
+
+
+    - !Field
+      name:  AppId29
+      desc:  Numerical App Id
+      bytes: [253, 256]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt29
+      desc:  Application Message sent counter
+      bytes: [257, 258]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus29
+      desc:  Application Message sent counter
+      bytes: 259
+      type:  U8
+
+    - !Field
+      name:  Padding29
+      desc:  Padding
+      bytes: 260
+      type:  U8
+
+
+    - !Field
+      name:  AppId30
+      desc:  Numerical App Id
+      bytes: [261, 264]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt30
+      desc:  Application Message sent counter
+      bytes: [265, 266]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus30
+      desc:  Application Message sent counter
+      bytes: 267
+      type:  U8
+
+    - !Field
+      name:  Padding30
+      desc:  Padding
+      bytes: 268
+      type:  U8
+
+    - !Field
+      name:  AppId31
+      desc:  Numerical App Id
+      bytes: [269, 272]
+      type:  MSB_U32
+
+    - !Field
+      name:  AppMsgSentCnt31
+      desc:  Application Message sent counter
+      bytes: [273, 274]
+      type:  MSB_U16
+
+    - !Field
+      name:  AppEnableStatus31
+      desc:  Application Message sent counter
+      bytes: 275
+      type:  U8
+
+    - !Field
+      name:  Padding31
+      desc:  Padding
+      bytes: 276
+      type:  U8
+

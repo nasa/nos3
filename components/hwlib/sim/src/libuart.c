@@ -57,11 +57,11 @@ void nos_init_usart_link(void)
 /* destroy nos engine usart link */
 void nos_destroy_usart_link(void)
 {
+    int i;
 
     OS_MutSemTake(nos_usart_mutex);
 
     /* clean up usart buses */
-    int i;
     for(i = 0; i <= NUM_USARTS; i++)
     {
         NE_Uart *dev = usart_device[i];
@@ -137,11 +137,12 @@ int32 uart_write_port(int32 handle, uint8 data[], const uint32 numBytes)
 int32 uart_read_port(int32 handle, uint8 data[], const uint32 numBytes)
 {
     char c = 0;
+    int  i;
     NE_Uart *dev = nos_get_usart_device((int)handle);
     if(dev)
     {
         OS_MutSemTake(nos_usart_mutex);
-        for (int i = 0; i < (int)numBytes; i++)
+        for (i = 0; i < (int)numBytes; i++)
         {
             NE_uart_getc(dev, (uint8_t*)&c);
             data[i] = c;

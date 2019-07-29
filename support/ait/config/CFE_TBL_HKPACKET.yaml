@@ -1,0 +1,139 @@
+- !Packet
+  name:  CFE_TBL_HKPACKET
+  desc:  Table Services Housekeeping Packet
+  ccsds:
+    apid:  04
+
+  fields:
+    - !Field
+      name:  CMDCOUNTER
+      desc:  Count of valid commands received.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  ERRCOUNTER
+      desc:  Count of invalid commands received.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  NUMTABLES
+      desc:  Number of Tables Registered.
+      bytes: [14, 15]
+      type:  U8
+
+    - !Field
+      name:  NUMLOADPENDING
+      desc:  Number of Tables pending on Applications for their update.
+      bytes: [16, 17]
+      type:  U8
+
+    - !Field
+      name:  VALIDATIONCTR
+      desc:  Number of completed table validations.
+      bytes: [18, 19]
+      type:  U8
+
+    - !Field
+      name:  LASTVALCRC
+      desc:  Data Integrity Value computed for last table validated.
+      bytes: [20, 23]
+      type:  U8
+
+    - !Field
+      name:  LASTVALSTATUS
+      desc:  Returned status from validation function for last table validated.
+      bytes: [24, 27]
+      type:  U8
+
+    - !Field
+      name:  ACTIVEBUFFER
+      desc:  Indicator of whether table buffer validated was 0=Inactive, 1=Active.
+      bytes: 28
+      type:  U8
+
+    - !Field
+      name:  LASTVALTABLENAME
+      desc:  Name of last table validated.
+      bytes: [29, 66]
+      type:  U8
+
+    - !Field
+      name:  SUCCESSVALCTR
+      desc:  Total number of successful table validations.
+      bytes: 67
+      type:  U8
+
+    - !Field
+      name:  FAILEDVALCTR
+      desc:  Total number of unsuccessful table validations.
+      bytes: 68
+      type:  U8
+
+    - !Field
+      name:  NUMVALREQUESTS
+      desc:  Number of times Table Services has requested validations from Apps.
+      bytes: 69
+      type:  U8
+
+    - !Field
+      name:  NUMFREESHAREDBUFS
+      desc:  Number of free Shared Working Buffers.
+      bytes: 70
+      type:  U8
+
+    - !Field
+      name:  BYTEALIGNPAD1
+      desc:  Spare byte to ensure longword alignment.
+      bytes: 71
+      type:  U8
+
+    - !Field
+      name:  MEMPOOLHANDLE
+      desc:  Handle to TBL's memory pool.
+      bytes: [72, 75]
+      type:  U8
+
+    - !Field
+      name:  LASTUPDATETIME_SECONDS
+      desc:  Number of seconds since epoch. (Parent Time of last table update.)
+      bytes: [76, 79]
+      type:  U8
+
+    - !Field
+      name:  LASTUPDATETIME_SUBSECONDS
+      desc:  Number of subseconds since epoch (LSB = 2^(-32) seconds). (Parent Time of last table update.)
+      bytes: [80, 83]
+      type:  U8
+
+    - !Field
+      name:  LASTUPDATEDTBL
+      desc:  Name of the last table updated.
+      bytes: [84, 121]
+      type:  U8
+
+    - !Field
+      name:  LASTFILELOADED
+      desc:  Path and Name of last table image file loaded.
+      bytes: [122, 185]
+      type:  U8
+
+    - !Field
+      name:  LASTFILEDUMPED
+      desc:  Path and Name of last file dumped to.
+      bytes: [186, 249]
+      type:  U8
+
+    - !Field
+      name:  LASTTABLELOADED
+      desc:  Name of the last table loaded.
+      bytes: [250, 287]
+      type:  U8
+
+    - !Field
+      name:  SPARE1
+      desc:  Spare - not sure why this is needed
+      bytes: [288, 295]
+      type:  U8
+

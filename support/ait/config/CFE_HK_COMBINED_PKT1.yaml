@@ -1,0 +1,109 @@
+- !Packet
+  name:  CFE_HK_COMBINED_PKT1
+  desc:  Housekeeping Combined Packet 1
+  ccsds:
+    apid:  0x9c
+
+  fields:
+    - !Field
+      name:  COMMANDCOUNTER
+      desc:  EVS  Command Counter.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  COMMANDERRCOUNTER
+      desc:  EVS  Command Error Counter.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  MESSAGEFORMATMODE
+      desc:  EVS  Event message format mode (short/long).
+      bytes: 14
+      type:  U8
+
+    - !Field
+      name:  MESSAGETRUNCCOUNTER
+      desc:  EVS  Event message truncation counter.
+      bytes: 15
+      type:  U8
+
+    - !Field
+      name:  TIME_CMDCOUNTER
+      desc:  TIME Time Command Execution Counter.
+      bytes: 16
+      type:  U8
+
+    - !Field
+      name:  TIME_ERRCOUNTER
+      desc:  TIME Time Command Error Counter.
+      bytes: 17
+      type:  U8
+
+    - !Field
+      name:  CLOCKSTATEFLAGS
+      desc:  TIME State Flags.
+      bytes: [18, 19]
+      type:  U8
+
+    - !Field
+      name:  SB_COMMANDCNT
+      desc:  SB   Count of valid commands received.
+      bytes: 20
+      type:  U8
+
+    - !Field
+      name:  SB_CMDERRCNT
+      desc:  SB   Count of invalid commands received.
+      bytes: 21
+      type:  U8
+
+    - !Field
+      name:  NOSUBSCRIBERSCNT
+      desc:  SB   Count pkts sent with no subscribers.
+      bytes: 22
+      type:  U8
+
+    - !Field
+      name:  MSGSENDERRCNT
+      desc:  SB   Count of message send errors.
+      bytes: 23
+      type:  U8
+
+    - !Field
+      name:  ES_CMDCOUNTER
+      desc:  ES   The ES Application Command Counter.
+      bytes: 24
+      type:  U8
+
+    - !Field
+      name:  ES_ERRCOUNTER
+      desc:  ES   The ES Application Command Error Counter.
+      bytes: 25
+      type:  U8
+
+    - !Field
+      name:  CFECORECHECKSUM
+      desc:  ES   Checksum of cFE Core Code.
+      bytes: [26, 27]
+      type:  U8
+
+    - !Field
+      name:  TBL_CMDCOUNTER
+      desc:  TBL  Count of valid commands received.
+      bytes: 28
+      type:  U8
+
+    - !Field
+      name:  TBL_ERRCOUNTER
+      desc:  TBL  Count of invalid commands received.
+      bytes: 29
+      type:  U8
+
+    - !Field
+      name:  NUMTABLES
+      desc:  TBL  Number of Tables Registered.
+      bytes: [30, 31]
+      type:  U8
+

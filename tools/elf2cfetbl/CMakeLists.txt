@@ -30,13 +30,9 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/inc_stubs/psp_version.h
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/inc_stubs)
 
 # force build as 32-bit
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") # -m32 : removed for PI
-# ITC - added to suppress warnings
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-format")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+
 add_executable(elf2cfetbl elf2cfetbl.c)
-# ITC - suppress build warnings
-disable_warnings(CMAKE_C_FLAGS ITC_C_FLAGS "format")
-set_target_properties(elf2cfetbl PROPERTIES COMPILE_FLAGS "${ITC_C_FLAGS}")
 
 install(TARGETS elf2cfetbl DESTINATION host)
 

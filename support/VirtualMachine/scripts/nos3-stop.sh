@@ -4,20 +4,18 @@
 #
 
 # cFS
+kill $(ps -ef | grep core-linux | head -1 | awk '{ print $2 }')
 killall -9 core-linux.bin
 killall -9 core-linux
 
+# AIT
+kill $(ps -ef | grep ait-gui | head -1 | awk '{ print $2 }')
+killall socat
+killall chrome
+killall python
+
 # COSMOS
 killall ruby
-
-# ITOS
-#cd /home/nos3/Desktop/itos
-#cleanup
-#rm -r fifos
-#find . -type p -delete
-
-killall firefox
-killall python
 
 # NOS3
 killall -r -9 'nos3.*simulator.*'

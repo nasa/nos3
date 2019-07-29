@@ -44,33 +44,23 @@ namespace Nos3
         _svn.resize(3);
         _bvn.resize(3);
         _hvn.resize(3);
-        _DCM.resize(3);
-        _DCM[0].resize(3);
-        _DCM[1].resize(3);
-        _DCM[2].resize(3);
-        _cbn.resize(3);
-        _cbn[0].resize(3);
-        _cbn[1].resize(3);
-        _cbn[2].resize(3);
         _qbn.resize(4);
     }
 
     Sim42DataPoint::Sim42DataPoint(double abs_time, int32_t gps_week, int32_t gps_sec_week, double gps_frac_sec,
             const std::vector<double>& ECEF, const std::vector<double>& ECI, const std::vector<double>& ECI_vel,
-            const std::vector<double>& svn, const std::vector<double>& bvn, const std::vector<double>& hvn, long eclipse,
-            const std::vector<std::vector<double>>& DCM, const std::vector<std::vector<double>>& cbn, const std::vector<double>& qbn) :
+            const std::vector<double>& svn, const std::vector<double>& bvn, const std::vector<double>& hvn,
+            const std::vector<double>& qbn) :
             _abs_time(abs_time), _gps_week(gps_week), _gps_sec_week(gps_sec_week), _gps_frac_sec(gps_frac_sec),
-            _ECEF(ECEF), _ECI(ECI), _ECI_vel(ECI_vel), _svn(svn), _bvn(bvn), _hvn(hvn), _eclipse(eclipse), _DCM(DCM), _cbn(cbn), _qbn(qbn)
+            _ECEF(ECEF), _ECI(ECI), _ECI_vel(ECI_vel), _svn(svn), _bvn(bvn), _hvn(hvn), _qbn(qbn)
     {
         sim_logger->trace("Sim42DataPoint::Sim42DataPoint:  Constructed data point with:  "
             "Abs Time:%lf, GPS Time:%d/%d/%lf, ECEF:%lf/%lf/%lf, ECI:%lf/%lf/%lf, ECI Velocity:%lf/%lf/%lf, "
-            "Sun Vector:%lf/%lf/%lf, Mag Field Vector:%lf/%lf/%lf, SC Angular Momentum:%lf/%lf/%lf, Eclipse(1=yes,0=no):%ld, "
-            "DCM:%lf/%lf/%lf////%lf/%lf/%lf////%lf/%lf/%lf, cbn:%lf/%lf/%lf////%lf/%lf/%lf////%lf/%lf/%lf, Body-Inertial Quaternion:%lf/%lf/%lf/%lf",
+            "Sun Vector:%lf/%lf/%lf, Mag Field Vector:%lf/%lf/%lf, SC Angular Momentum:%lf/%lf/%lf, "
+            "Body-Inertial Quaternion:%lf/%lf/%lf/%lf",
             _abs_time, _gps_week, _gps_sec_week, _gps_frac_sec,
             _ECEF[0], _ECEF[1], _ECEF[2], _ECI[0], _ECI[1], _ECI[2], _ECI_vel[0], _ECI_vel[1], _ECI_vel[2],
-            _svn[0], _svn[1], _svn[2], _bvn[0], _bvn[1], _bvn[2], _hvn[0], _hvn[1], _hvn[2], _eclipse,
-            _DCM[0][0], _DCM[0][1], _DCM[0][2], _DCM[1][0], _DCM[1][1], _DCM[1][2], _DCM[2][0], _DCM[2][1], _DCM[2][2],
-            _cbn[0][0], _cbn[0][1], _cbn[0][2], _cbn[1][0], _cbn[1][1], _cbn[1][2], _cbn[2][0], _cbn[2][1], _cbn[2][2],
+            _svn[0], _svn[1], _svn[2], _bvn[0], _bvn[1], _bvn[2], _hvn[0], _hvn[1], _hvn[2],
             _qbn[0], _qbn[1], _qbn[2], _qbn[3]);
     }
 
@@ -114,34 +104,7 @@ namespace Nos3
            << std::setw(12) << _hvn[0] << ","
            << std::setw(12) << _hvn[1] << ","
            << std::setw(12) << _hvn[2] << std::endl;
-        ss << " Eclipse      : " << std::setw(12) << _eclipse << std::endl;
         ss << std::setprecision(4);
-        ss << "  DCM         : "
-           << std::setw(12) << _DCM[0][0] << ","
-           << std::setw(12) << _DCM[0][1] << ","
-           << std::setw(12) << _DCM[0][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _DCM[1][0] << ","
-           << std::setw(12) << _DCM[1][1] << ","
-           << std::setw(12) << _DCM[1][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _DCM[2][0] << ","
-           << std::setw(12) << _DCM[2][1] << ","
-           << std::setw(12) << _DCM[2][2] << std::endl;
-        ss << std::setprecision(4);
-        ss << "  cbn         : "
-           << std::setw(12) << _cbn[0][0] << ","
-           << std::setw(12) << _cbn[0][1] << ","
-           << std::setw(12) << _cbn[0][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _cbn[1][0] << ","
-           << std::setw(12) << _cbn[1][1] << ","
-           << std::setw(12) << _cbn[1][2] << std::endl;
-        ss << "            "
-           << std::setw(12) << _cbn[2][0] << ","
-           << std::setw(12) << _cbn[2][1] << ","
-           << std::setw(12) << _cbn[2][2] << std::endl;
-        ss << std::setprecision(2);
         ss << "  qbn         : "
            << std::setw(12) << _qbn[0] << ","
            << std::setw(12) << _qbn[1] << ","
@@ -189,27 +152,6 @@ namespace Nos3
            << _hvn[0] << ","
            << _hvn[1] << ","
            << _hvn[2] ;
-        ss << " Eclipse: " << _eclipse;
-        ss << " DCM ("
-           << _DCM[0][0] << ","
-           << _DCM[0][1] << ","
-           << _DCM[0][2] << "), ("
-           << _DCM[1][0] << ","
-           << _DCM[1][1] << ","
-           << _DCM[1][2] << "), ("
-           << _DCM[2][0] << ","
-           << _DCM[2][1] << ","
-           << _DCM[2][2] << ")";
-        ss << " cbn ("
-           << _cbn[0][0] << ","
-           << _cbn[0][1] << ","
-           << _cbn[0][2] << "), ("
-           << _cbn[1][0] << ","
-           << _cbn[1][1] << ","
-           << _cbn[1][2] << "), ("
-           << _cbn[2][0] << ","
-           << _cbn[2][1] << ","
-           << _cbn[2][2] << ")";
         ss << " qbn: "
            << _qbn[0] << ","
            << _qbn[1] << ","

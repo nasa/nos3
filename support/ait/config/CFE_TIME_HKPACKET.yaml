@@ -1,0 +1,73 @@
+- !Packet
+  name:  CFE_TIME_HKPACKET
+  desc:  Time Services Housekeeping Packet
+  ccsds:
+    apid:  05
+
+  fields:
+    - !Field
+      name:  CMDCOUNTER
+      desc:  Time Command Execution Counter.
+      bytes: 12
+      type:  U8
+
+    - !Field
+      name:  ERRCOUNTER
+      desc:  Time Command Error Counter.
+      bytes: 13
+      type:  U8
+
+    - !Field
+      name:  CLOCKSTATEFLAGS
+      desc:  State Flags.
+      bytes: [14, 15]
+      type:  U8
+
+    - !Field
+      name:  CLOCKSTATEAPI
+      desc:  API State.
+      bytes: [16, 17]
+      type:  U8
+
+    - !Field
+      name:  LEAPSECONDS
+      desc:  Current Leaps Seconds.
+      bytes: [18, 19]
+      type:  U8
+
+    - !Field
+      name:  SECONDSMET
+      desc:  Current MET (seconds).
+      bytes: [20, 23]
+      type:  U8
+
+    - !Field
+      name:  SUBSECSMET
+      desc:  Current MET (sub-seconds).
+      bytes: [24, 27]
+      type:  U8
+
+    - !Field
+      name:  SECONDSSTCF
+      desc:  Current STCF (seconds).
+      bytes: [28, 31]
+      type:  U8
+
+    - !Field
+      name:  SUBSECSSTCF
+      desc:  Current STCF (sub-seconds).
+      bytes: [32, 35]
+      type:  U8
+
+    - !Field
+      name:  SECONDS1HZADJ
+      desc:  Current 1 Hz SCTF adjustment (seconds).
+      bytes: [36, 39]
+      type:  U8
+
+    - !Field
+      name:  SUBSECS1HZADJ
+      desc:  Current 1 Hz SCTF adjustment (sub-seconds).
+      bytes: [40, 43]
+      type:  U8
+

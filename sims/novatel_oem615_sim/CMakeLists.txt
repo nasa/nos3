@@ -1,8 +1,8 @@
 project(gps_sim)
 
 find_package(Boost REQUIRED QUIET COMPONENTS system program_options filesystem)
-find_package(ITC_Common REQUIRED COMPONENTS itc_logger)
-find_package(NOSENGINE REQUIRED COMPONENTS common transport client uart)
+find_package(ITC_Common REQUIRED QUIET COMPONENTS itc_logger)
+find_package(NOSENGINE REQUIRED QUIET COMPONENTS common transport client uart)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 include_directories(inc

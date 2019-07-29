@@ -1,0 +1,16 @@
+required_plugins = %w(
+	vagrant-reload
+)
+
+needs_restart = false
+required_plugins.each do |plugin|
+	unless Vagrant.has_plugin? plugin
+		system "vagrant plugin install #{plugin}"
+		needs_restart = true
+	end
+end
+
+if needs_restart
+	exec "vagrant #{ARGV.join' '}"
+end
+	

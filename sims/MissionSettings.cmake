@@ -11,6 +11,7 @@ set(ARCHITECTURE_STRING "i386")
 set(ITC_C_FLAGS "")     #Used for C
 set(ITC_CCXX_FLAGS "")  #Works for both C/C++
 set(CLANG_OVERRIDE "")
+set(BOOST_LIBRARYDIR /usr/lib/i386-linux-gnu)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message(STATUS "Clang detected. Mission Settings will invoke GCC Compile Flags")

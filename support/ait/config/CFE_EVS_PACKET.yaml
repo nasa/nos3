@@ -1,0 +1,55 @@
+- !Packet
+  name:  CFE_EVS_PACKET
+  desc:  Event Message Telemetry Packet
+  ccsds:
+    apid:  08
+
+  fields:
+    - !Field
+      name:  PACKETID_APPNAME
+      desc:  Application name. (Parent Event packet information.)
+      bytes: [12, 31]
+      type:  U8
+
+    - !Field
+      name:  PACKETID_EVENTID
+      desc:  Numerical event identifier. (Parent Event packet information.)
+      bytes: [32, 33]
+      type:  U8
+
+    - !Field
+      name:  PACKETID_EVENTTYPE
+      desc:  Numerical event type identifier. (Parent Event packet information.)
+      bytes: [34, 35]
+      type:  U8
+
+    - !Field
+      name:  PACKETID_SPACECRAFTID
+      desc:  Spacecraft identifier. (Parent Event packet information.)
+      bytes: [36, 39]
+      type:  U8
+
+    - !Field
+      name:  PACKETID_PROCESSORID
+      desc:  Numerical processor identifier. (Parent Event packet information.)
+      bytes: [40, 43]
+      type:  U8
+
+    - !Field
+      name:  MESSAGE
+      desc:  Event message string.
+      bytes: [44, 165]
+      type:  U8
+
+    - !Field
+      name:  SPARE1
+      desc:  Structure padding.
+      bytes: 166
+      type:  U8
+
+    - !Field
+      name:  SPARE2
+      desc:  Structure padding.
+      bytes: 167
+      type:  U8
+
