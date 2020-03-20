@@ -1,0 +1,54 @@
+<<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
+************************** Simulation Control **************************
+NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)
+20000.0   0.1                   !  Sim Duration, Step Size [sec]
+1.0                             !  File Output Interval [sec]
+FALSE                           !  Graphics Front End?
+Inp_Cmd.txt                     !  Command Script File Name
+**************************  Reference Orbits  **************************
+1                               !  Number of Reference Orbits
+TRUE   Orb_LEO.txt              !  Input file name for Orb 0
+*****************************  Spacecraft  *****************************
+1                               !  Number of Spacecraft
+TRUE  0 SC_NOS3.txt             !  Existence, RefOrb, Input file for SC 0
+***************************** Environment  *****************************
+06 30 2017                      !  Date (Month, Day, Year)
+16 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
+0.0                             !  Time Offset (sec)
+USER_DEFINED                    !  Model Date Interpolation for Solar Flux and AP values?(TWOSIGMA_KP, NOMINAL or USER_DEFINED)
+230.0                           !  If USER_DEFINED, enter desired F10.7 value
+100.0                           !  If USER_DEFINED, enter desired AP value
+IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
+8   8                           !  IGRF Degree and Order (<=10)
+8   8                           !  Earth Gravity Model N and M (<=18)
+2   0                           !  Mars Gravity Model N and M (<=18)
+2   0                           !  Luna Gravity Model N and M (<=18)
+FALSE   FALSE                   !  Aerodynamic Forces & Torques (Shadows)
+FALSE                           !  Gravity Gradient Torques
+FALSE   FALSE                   !  Solar Pressure Forces & Torques (Shadows)
+FALSE                           !  Gravity Perturbation Forces
+FALSE                           !  Passive Joint Forces & Torques
+FALSE                           !  Thruster Plume Forces & Torques
+FALSE                           !  RWA Imbalance Forces and Torques
+FALSE                           !  Contact Forces and Torques
+FALSE                           !  CFD Slosh Forces and Torques
+FALSE                           !  Output Environmental Torques to Files
+********************* Celestial Bodies of Interest *********************
+MEAN                            !  Ephem Option (MEAN or DE430)
+FALSE                           !  Mercury
+FALSE                           !  Venus
+TRUE                            !  Earth and Luna
+FALSE                           !  Mars and its moons
+FALSE                           !  Jupiter and its moons
+FALSE                           !  Saturn and its moons
+FALSE                           !  Uranus and its moons
+FALSE                           !  Neptune and its moons
+FALSE                           !  Pluto and its moons
+FALSE                           !  Asteroids and Comets
+***************** Lagrange Point Systems of Interest ******************
+FALSE                           !  Earth-Moon
+FALSE                           !  Sun-Earth
+FALSE                           !  Sun-Jupiter
+************************* Ground Stations ***************************
+1                               ! Number of Ground Stations
+TRUE EARTH -75.512936 37.854886 "Wallops" ! Exists, World, Lng, Lat, Label

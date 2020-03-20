@@ -1,0 +1,78 @@
+<<<<<<<<<<<<<<<<<  42:  Command Script File  >>>>>>>>>>>>>>>>>
+0.0 SC[0] qrl = [0.0  0.0  0.0  1.0]
+EOF
+
+##############################################################
+# All lines after EOF are ignored
+# Comment lines begin with #, %, or //
+# Blank lines are permitted
+
+# Here are recognized command formats.
+#  %lf means that a floating-point number is expected
+#  %ld means that an integer is expected
+#  %s means that a string is expected
+#  %c means that a character is expected
+#  Look in functions SimCmdInterpreter, GuiCmdInterpreter, 
+#     and FswCmdInterpreter for strings and characters that 
+#     are meaningful in a particular context
+#  The first %lf is always the SimTime of command execution.
+
+# Sim-related commands
+%lf DTSIM = %lf
+%lf SC[%ld].RotDOF %s
+%lf SC[%ld].G[%ld].RotLocked[%ld] %s
+%lf SC[%ld].G[%ld].TrnLocked[%ld] %s
+%lf Impart Impulsive Delta-V of [%lf %lf %lf] m/s in Frame %c to Orb[%ld]
+   %c can be N or L
+
+# GUI-related commands
+%lf POV.Host.SC %ld
+%lf CaptureCam %s
+%lf CamSnap %s
+%lf MapSnap %s
+%lf Banner = "Banner in Quotes"
+%lf GL Output Step = %lf
+%lf POV CmdRange = %lf
+%lf POV CmdSeq = %li
+%lf POV CmdAngle = [%lf %lf %lf] deg
+%lf POV CmdPermute = [%lf %lf %lf; %lf %lf %lf; %lf %lf %lf]
+%lf POV TimeToGo = %lf
+%lf POV Frame = %c
+%lf ShowHUD %s
+%lf ShowWatermark %s
+%lf ShowShadows %s
+%lf ShowProxOps %s
+%lf ShowFOV %s
+%lf FOV[%ld].NearExists =  %s
+%lf FOV[%ld].FarExists =  %s
+
+# FSW-related commands
+%lf SC[%ld] FswTag = %s
+   # %s is PASSIVE_FSW, PROTOTYPE_FSW, etc.
+%lf SC[%ld] qrn = [%lf %lf %lf %lf]
+%lf SC[%ld] qrl = [%lf %lf %lf %lf]
+%lf SC[%ld] Cmd Angles = [%lf %lf %lf] deg, Seq = %ld wrt %c Frame
+   # %c is either N or L
+%lf SC[%ld].G[%ld] Cmd Angles = [%lf %lf %lf] deg
+#  In the following, the (first) %s is either "Primary" or "Secondary"
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at RA = %lf deg, Dec = %lf deg
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at World[%ld] Lng = %lf deg, Lat = %lf deg, Alt = %lf km
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at World[%ld]
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at GroundStation[%ld]
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at %s
+   # Last %s is SUN, MOON, any planet, VELOCITY, or MAGFIELD
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at SC[%ld]
+%lf Point SC[%ld].B[%ld] %s Vector [%lf %lf %lf] at SC[%ld].B[%ld] point [%lf %lf %lf]
+%lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with %c-frame Vector [%lf %lf %lf]
+   # %c-frame can be H, N, or L
+%lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with SC[%ld].B[%ld] vector [%lf %lf %lf]
+%lf SC[%ld].Thr[%ld] %s
+   %s is OFF or ON
+Event Eclipse Entry SC[%ld] qrl = [%lf %lf %lf %lf]
+Event Eclipse Exit SC[%ld] qrl = [%lf %lf %lf %lf]
+Event Eclipse Entry SC[%ld] Cmd Angles = [%lf %lf %lf] deg, Seq = %ld wrt %c Frame
+   # %c is either N or L
+Event Eclipse Exit SC[%ld] Cmd Angles = [%lf %lf %lf] deg, Seq = %ld wrt %c Frame
+   # %c is either N or L
+%lf Set SC[%ld] RampCoastGlide wc = %lf Hz, amax = %lf, vmax = %lf
+%lf Spin SC[%ld] about Primary Vector at %lf deg/sec

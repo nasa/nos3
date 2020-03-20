@@ -1,0 +1,44 @@
+<nos3-configuration>
+    <!-- Simulator Configuration File -->
+    <!-- Configuration is in XML format -->
+    <common>
+        <log-config-file>sim_log_config.xml</log-config-file>
+        <!-- 533156400.0 = 11/23/2016 07:00:00.00 GMT -->
+        <!-- 552110400.0 = 06/30/2017 16:00:00.00 GMT -->
+        <absolute-start-time>552110400.0</absolute-start-time>
+        <sim-microseconds-per-tick>100000</sim-microseconds-per-tick>
+        <nos-connection-string>tcp://127.0.0.1:12001</nos-connection-string>
+    </common>
+
+    <simulators>
+        <simulator>
+            <name>time</name>
+            <active>true</active>
+            <hardware-model>
+                <type>TimeDriver</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
+                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
+                </connections>
+                <real-microseconds-per-tick>100000</real-microseconds-per-tick>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>terminal</name>
+            <active>true</active>
+            <hardware-model>
+                <type>SimTerminal</type>
+                <startup-commands>
+                    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMNODE 20</command>
+                </startup-commands>
+                <sim-commanded>33</sim-commanded>
+                <start-bus>command</start-bus>
+                <term-node-name>terminal</term-node-name>
+                <input-mode>HEX</input-mode> <!-- HEX or ASCII -->
+                <output-mode>HEX</output-mode> <!-- HEX or ASCII -->
+            </hardware-model>
+        </simulator>
+        
+    </simulators>
+</nos3-configuration>
