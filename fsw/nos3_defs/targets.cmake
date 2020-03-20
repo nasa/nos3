@@ -97,14 +97,14 @@ SET(APPLICATION_LIST
         #cf
         ci
         #ci_lab
-        cs
-        ds
-        fm
+        #cs
+        #ds
+        #fm
         hk
-        hs
+        #hs
         lc
-        md
-        mm
+        #md
+        #mm
         #sbn
         sc
         sch
@@ -114,9 +114,9 @@ SET(APPLICATION_LIST
     #
     # Components
     #
-        novatel_oem615
-        arducam
-        clyde_eps
+        #novatel_oem615
+        #arducam
+        #clyde_eps
 )
 
 # Create Application Platform Include List
