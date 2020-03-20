@@ -1,1 +1,0 @@
-Test file for the Directory functions stress test

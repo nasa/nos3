@@ -1,3 +1,0 @@
-# ait
-
-AIT database
