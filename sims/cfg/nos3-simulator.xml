@@ -39,6 +39,55 @@
                 <output-mode>HEX</output-mode> <!-- HEX or ASCII -->
             </hardware-model>
         </simulator>
+        <simulator>
+            <name>gps</name>
+            <active>true</active>
+            <library>libgps_sim.so</library>
+            <hardware-model>
+                <type>OEM615</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>gps-command</node-name></connection> -->
+                    <connection><type>usart</type>
+                        <bus-name>usart_1</bus-name>
+                        <node-port>1</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GPS42SOCKET</type>
+                    <hostname>localhost</hostname>
+                    <port>4242</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <GPS>0</GPS>
+                </data-provider>               
+                <!-- <data-provider>               
+                    <type>GPSFILE</type>
+                    <filename>gps_data.42</filename>
+                </data-provider> -->
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>camsim</name>
+            <active>true</active>
+            <library>libcam_sim.so</library>
+            <hardware-model>
+                <type>ARDUCAM_OV5640</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>cam-command-node</node-name></connection>
+                </connections>
+                <!-- <stream_data>true</stream_data> -->
+                <i2c>
+                    <address>60</address>
+                    <bus>i2c_2</bus>
+                </i2c>
+                <spi>
+                    <bus>spi_0</bus>
+                    <chip_select>0</chip_select>
+                </spi>
+            </hardware-model>
+        </simulator>
+
         
     </simulators>
 </nos3-configuration>
