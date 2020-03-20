@@ -114,9 +114,9 @@ SET(APPLICATION_LIST
     #
     # Components
     #
-        #novatel_oem615
-        #arducam
-        #clyde_eps
+        novatel_oem615
+        arducam
+        clyde_eps
 )
 
 # Create Application Platform Include List
