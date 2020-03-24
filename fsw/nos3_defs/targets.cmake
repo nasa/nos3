@@ -101,11 +101,10 @@ SET(APPLICATION_LIST
         #ds
         #fm
         hk
-        #hs
+        hs
         lc
         #md
         #mm
-        #sbn
         sc
         sch
         #sch_lab
