@@ -1,9 +1,9 @@
 <<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
 ************************** Simulation Control **************************
 NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)
-20000.0   0.1                   !  Sim Duration, Step Size [sec]
+10000.0   0.1                   !  Sim Duration, Step Size [sec]
 1.0                             !  File Output Interval [sec]
-FALSE                           !  Graphics Front End?
+TRUE                            !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name
 **************************  Reference Orbits  **************************
 1                               !  Number of Reference Orbits
@@ -12,8 +12,8 @@ TRUE   Orb_LEO.txt              !  Input file name for Orb 0
 1                               !  Number of Spacecraft
 TRUE  0 SC_NOS3.txt             !  Existence, RefOrb, Input file for SC 0
 ***************************** Environment  *****************************
-06 30 2017                      !  Date (Month, Day, Year)
-16 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
+05 07 2019                      !  Date (Month, Day, Year)
+12 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
 0.0                             !  Time Offset (sec)
 USER_DEFINED                    !  Model Date Interpolation for Solar Flux and AP values?(TWOSIGMA_KP, NOMINAL or USER_DEFINED)
 230.0                           !  If USER_DEFINED, enter desired F10.7 value
@@ -50,5 +50,10 @@ FALSE                           !  Earth-Moon
 FALSE                           !  Sun-Earth
 FALSE                           !  Sun-Jupiter
 ************************* Ground Stations ***************************
-1                               ! Number of Ground Stations
-TRUE EARTH -75.512936 37.854886 "Wallops" ! Exists, World, Lng, Lat, Label
+6                                            ! Number of Ground Stations
+TRUE  EARTH  -77.0  37.0  "GSFC"             ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  -155.6 19.0  "South Point"      ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  115.4 -29.0  "Dongara"          ! Exists, World, Lng, Lat, Label
+TRUE  EARTH  -71.0 -33.0  "Santiago"         ! Exists, World, Lng, Lat, Label
+TRUE  LUNA   45.0  45.0   "Moon Base Alpha"  ! Exists, World, Lng, Lat, Label
+TRUE  EARTH -75.512936 37.854886 "Wallops"   ! Exists, World, Lng, Lat, Label

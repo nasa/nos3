@@ -1,6 +1,42 @@
 <<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>
-OFF                                     ! IPC Mode (OFF,TX,RX,WRITEFILE,READFILE)
-CLIENT                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
-localhost     42042                     ! Server Host Name, Port 
-TRUE                                    ! Allow Blocking (i.e. wait on RX)
+1                                       ! Number of Sockets
+**********************************  IPC 0   *****************************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"State00.42"                            ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost      4242                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+TRUE                                    ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC"                                    ! Prefix 0
+**********************************  IPC 1   *****************************
+RX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"State01.42"                            ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost      4278                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC"                                    ! Prefix 0
+**********************************  IPC 2   *****************************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+1                                       ! AC.ID for ACS mode
+"State02.42"                            ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost      4277                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+FALSE                                   ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC"                                    ! Prefix 0
+**********************************  IPC 3   *****************************
+ON                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"State03.42"                            ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost     10004                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+FALSE                                   ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC[0].Tach[0]"                         ! Prefix 0
