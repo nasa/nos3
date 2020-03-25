@@ -29,14 +29,14 @@
             <hardware-model>
                 <type>SimTerminal</type>
                 <startup-commands>
-                    <command>SET SIMBUS can_0</command>
-                    <command>SET SIMNODE 20</command>
+                    <!-- <command>SET SIMBUS can_0</command> -->
+                    <!-- <command>SET SIMNODE 20</command> -->
                 </startup-commands>
-                <sim-commanded>33</sim-commanded>
+                <sim-commanded>rw-command</sim-commanded>
                 <start-bus>command</start-bus>
                 <term-node-name>terminal</term-node-name>
-                <input-mode>HEX</input-mode> <!-- HEX or ASCII -->
-                <output-mode>HEX</output-mode> <!-- HEX or ASCII -->
+                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
             </hardware-model>
         </simulator>
         <simulator>
@@ -85,6 +85,31 @@
                     <bus>spi_0</bus>
                     <chip_select>0</chip_select>
                 </spi>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic-reactionwheel-sim</name>
+            <active>true</active>
+            <library>libgeneric_rw_sim.so</library>
+            <hardware-model>
+                <type>GENERICREACTIONWHEELHARDWARE</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw-command</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_2</bus-name>
+                        <node-port>1</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4277</port>
+                    <command-port>4278</command-port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <reactionwheel>0</reactionwheel>
+                </data-provider>               
             </hardware-model>
         </simulator>
 

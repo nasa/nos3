@@ -116,6 +116,7 @@ SET(APPLICATION_LIST
         novatel_oem615
         arducam
         clyde_eps
+        generic_reaction_wheel
 )
 
 # Create Application Platform Include List
