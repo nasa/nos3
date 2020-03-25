@@ -15,7 +15,7 @@ SIMS=$(cd $SIM_BIN; ls nos3*simulator)
 #echo "Base directory   = " $BASE_DIR
 #echo "FSW directory    = " $FSW_BIN
 #echo "Sim directory    = " $SIM_BIN
-echo "Sim list         = " $SIMS
+#echo "Sim list         = " $SIMS
 #echo "Sim tabs         = " $SIM_TABS
 #exit
 
@@ -31,13 +31,14 @@ gnome-terminal \
 --tab --title="Simulator Terminal" -e $SIM_BIN/nos3-simulator-terminal \
 --tab -t 'Battery Simulator' -e "$SIM_BIN/nos3-battery-simulator --config $SIM_BIN/batteries.json" \
 --tab -t 'CAM Simulator' -e "$SIM_BIN/nos3-cam-simulator"  \
---tab -t 'EPS Simulator' -e "$SIM_BIN/nos3-eps-simulator --iconic true --config /home/nos3/nos3/build/sim/bin/eps.json" \
+--tab -t 'EPS Simulator' -e "$SIM_BIN/nos3-eps-simulator --iconic true --config $SIM_BIN/eps.json" \
 --tab -t 'GPS Simulator' -e "$SIM_BIN/nos3-gps-simulator"
 #$SIM_TABS > /dev/null
 
 echo "42..."
-cd $BASE_DIR/sims/cfg
-gnome-terminal --title="42 Dynamic Simulator" -e "/opt/42/42 InOut" \
+cp -r $BASE_DIR/sims/cfg/InOut /opt/42/NOS3InOut
+cd /opt/42/
+gnome-terminal --title="42 Dynamic Simulator" -e "/opt/42/42 NOS3InOut" \
 
 echo "Flight Software..."
 cd $FSW_BIN
