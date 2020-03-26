@@ -64,6 +64,8 @@ extern "C" {
 ** Component Include Files
 */
 #include "nav_msgids.h"
+#include "generic_reaction_wheel_msgids.h"
+#include "eps_msgids.h"
 
 /*
 ** Local Defines
@@ -118,8 +120,8 @@ TO_ConfigTable_t to_ConfigTable =
        {CI_HK_TLM_MID,                {0,0},  1,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_DATA_TYPE_MID,             {0,0},  1,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {NAV_SEND_HK_TLM,              {0,0},  1,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
+       {GENERIC_RW_APP_HK_TLM_MID,    {0,0},  1,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {EPS_HK_TLM_MID,               {0,0},  1,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        

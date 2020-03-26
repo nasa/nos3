@@ -32,12 +32,14 @@ gnome-terminal \
 --tab -t 'Battery Simulator' -e "$SIM_BIN/nos3-battery-simulator --config $SIM_BIN/batteries.json" \
 --tab -t 'CAM Simulator' -e "$SIM_BIN/nos3-cam-simulator"  \
 --tab -t 'EPS Simulator' -e "$SIM_BIN/nos3-eps-simulator --iconic true --config $SIM_BIN/eps.json" \
---tab -t 'GPS Simulator' -e "$SIM_BIN/nos3-gps-simulator"
+--tab -t 'GPS Simulator' -e "$SIM_BIN/nos3-gps-simulator" \
+--tab -t 'RW Simulator' -e "$SIM_BIN/nos3-generic-reactionwheel-simulator"
 #$SIM_TABS > /dev/null
 
 echo "42..."
-cp -r $BASE_DIR/sims/cfg/InOut /opt/42/NOS3InOut
 cd /opt/42/
+rm -rf NOS3InOut
+cp -r $BASE_DIR/sims/cfg/InOut /opt/42/NOS3InOut
 gnome-terminal --title="42 Dynamic Simulator" -e "/opt/42/42 NOS3InOut" \
 
 echo "Flight Software..."

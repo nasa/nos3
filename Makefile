@@ -61,7 +61,7 @@ sim:
 
 sim-prep:
 	mkdir -p $(SIMBUILDDIR)
-	cd $(SIMBUILDDIR) && cmake ..
+	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
 
 #
 # Clean
