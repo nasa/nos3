@@ -29,6 +29,7 @@ gnome-terminal \
 --tab --title="NOS Engine Standalone Server" -e "/usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json" \
 --tab --title="NOS Time Driver" -e $SIM_BIN/nos-time-driver \
 --tab --title="Simulator Terminal" -e $SIM_BIN/nos3-simulator-terminal \
+--tab -t 'Sample Simulator' -e "$SIM_BIN/nos3-sample-simulator" \
 --tab -t 'Battery Simulator' -e "$SIM_BIN/nos3-battery-simulator --config $SIM_BIN/batteries.json" \
 --tab -t 'CAM Simulator' -e "$SIM_BIN/nos3-cam-simulator"  \
 --tab -t 'EPS Simulator' -e "$SIM_BIN/nos3-eps-simulator --iconic true --config $SIM_BIN/eps.json" \

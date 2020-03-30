@@ -113,6 +113,7 @@ SET(APPLICATION_LIST
     #
     # Components
     #
+        sample
         novatel_oem615
         arducam
         clyde_eps

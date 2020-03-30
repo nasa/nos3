@@ -40,6 +40,31 @@
             </hardware-model>
         </simulator>
         <simulator>
+            <name>sample_sim</name>
+            <active>true</active>
+            <library>libsample_sim.so</library>
+            <hardware-model>
+                <type>SAMPLE</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>sample-sim-command-node</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_29</bus-name>
+                        <node-port>29</node-port>
+                    </connection>
+                    <connection><type>period</type>
+                        <init-time-seconds>5.0</init-time-seconds>
+                        <ms-period>1000</ms-period>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>SAMPLE_PROVIDER</type>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+        <simulator>
             <name>gps</name>
             <active>true</active>
             <library>libgps_sim.so</library>
