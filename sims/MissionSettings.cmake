@@ -1,6 +1,5 @@
 message(STATUS "Setting up Mission Settings")
 
-#option(CXX_11 "Enable C++ 11 Support")
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "No build type set, assuming Debug")
 	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
@@ -14,7 +13,7 @@ set(CLANG_OVERRIDE "")
 set(BOOST_LIBRARYDIR /usr/lib/i386-linux-gnu)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    message(STATUS "Clang detected. Mission Settings will invoke GCC Compile Flags")
+    message(STATUS "Clang detected. MissionSettings will invoke GCC Compile Flags")
     set(CLANG_OVERRIDE True)
 endif()
 

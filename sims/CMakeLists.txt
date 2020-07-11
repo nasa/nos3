@@ -28,22 +28,25 @@ set(CXX_11 ON)
     set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
 endif(CXX_11)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 include(MissionSettings.cmake)
-
-# simulator install directory (should be able to use target name rather than hard-code linux)
-set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/linux/linux/sim)
 
 # NOS3 Sim Core
 add_subdirectory(sim_common)
-add_subdirectory(sim_server)
 add_subdirectory(nos_time_driver)
 add_subdirectory(sim_terminal)
 
-# Add Sims
+# Add Component Sims
 FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*_sim)
 FOREACH(_FILE ${_ALL_FILES})
   IF(IS_DIRECTORY ${_FILE})
     add_subdirectory(${_FILE})
   ENDIF()
 ENDFOREACH()
+
+# Install configuration files to bin
+set(sim_cfg
+    cfg/nos_engine_server_config.json
+    cfg/nos3-simulator.xml
+    cfg/sim_log_config.xml
+)
+install(FILES ${sim_cfg} DESTINATION bin COMPONENT config)

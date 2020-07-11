@@ -1,0 +1,143 @@
+<nos3-configuration>
+    <!-- Simulator Configuration File -->
+    <!-- Configuration is in XML format -->
+    <common>
+        <log-config-file>sim_log_config.xml</log-config-file>
+        <!-- 533156400.0 = 11/23/2016 07:00:00.00 GMT -->
+        <!-- 552110400.0 = 06/30/2017 16:00:00.00 GMT -->
+        <absolute-start-time>552110400.0</absolute-start-time>
+        <sim-microseconds-per-tick>100000</sim-microseconds-per-tick>
+        <nos-connection-string>tcp://127.0.0.1:12001</nos-connection-string>
+    </common>
+
+    <simulators>
+        <simulator>
+            <name>time</name>
+            <active>true</active>
+            <hardware-model>
+                <type>TimeDriver</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
+                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
+                </connections>
+                <real-microseconds-per-tick>100000</real-microseconds-per-tick>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>terminal</name>
+            <active>true</active>
+            <hardware-model>
+                <type>SimTerminal</type>
+                <startup-commands>
+                    <!-- <command>SET SIMBUS can_0</command> -->
+                    <!-- <command>SET SIMNODE 20</command> -->
+                </startup-commands>
+                <sim-commanded>rw-command</sim-commanded>
+                <start-bus>command</start-bus>
+                <term-node-name>terminal</term-node-name>
+                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>sample_sim</name>
+            <active>true</active>
+            <library>libsample_sim.so</library>
+            <hardware-model>
+                <type>SAMPLE</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>sample-sim-command-node</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_29</bus-name>
+                        <node-port>29</node-port>
+                    </connection>
+                    <connection><type>period</type>
+                        <init-time-seconds>5.0</init-time-seconds>
+                        <ms-period>1000</ms-period>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>SAMPLE_PROVIDER</type>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>gps</name>
+            <active>true</active>
+            <library>libgps_sim.so</library>
+            <hardware-model>
+                <type>OEM615</type>
+                <connections>
+                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>gps-command</node-name></connection> -->
+                    <connection><type>usart</type>
+                        <bus-name>usart_1</bus-name>
+                        <node-port>1</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GPS42SOCKET</type>
+                    <hostname>localhost</hostname>
+                    <port>4242</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <GPS>0</GPS>
+                </data-provider>               
+                <!-- <data-provider>               
+                    <type>GPSFILE</type>
+                    <filename>gps_data.42</filename>
+                </data-provider> -->
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>camsim</name>
+            <active>true</active>
+            <library>libcam_sim.so</library>
+            <hardware-model>
+                <type>ARDUCAM_OV5640</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>cam-command-node</node-name></connection>
+                </connections>
+                <!-- <stream_data>true</stream_data> -->
+                <i2c>
+                    <address>60</address>
+                    <bus>i2c_2</bus>
+                </i2c>
+                <spi>
+                    <bus>spi_0</bus>
+                    <chip_select>0</chip_select>
+                </spi>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic-reactionwheel-sim</name>
+            <active>true</active>
+            <library>libgeneric_rw_sim.so</library>
+            <hardware-model>
+                <type>GENERICREACTIONWHEELHARDWARE</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw-command</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_2</bus-name>
+                        <node-port>2</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4277</port>
+                    <command-port>4278</command-port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <reactionwheel>0</reactionwheel>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
+
+        
+    </simulators>
+</nos3-configuration>
