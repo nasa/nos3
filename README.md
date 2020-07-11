@@ -1,12 +1,20 @@
 # NASA Operational Simulator for Small Satellites
 The NASA Operational Simulator for Small Satellites (NOS3) is a suite of tools developed by NASA's Katherine Johnson Independent Verification and Validation (IV&V) Facility to aid in areas such as software development, integration & test (I&T), mission operations/training, verification and validation (V&V), and software systems check-out. 
-NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based hardware models.
+NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.
+
+### Known Issues
+1. Not all cFS delivered apps are included and supported at this time. Currently supported are: CI, TO, SCH, SC, HK, CFS_LIB
+2. CentOS support not included in this release
+These issues will be addressed in future updates
+
+### Documentation
+The best source of documentation can be found at [NOS3](www.nos3.org), as well as a PDF Users Guide attached to this Release on Github
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
 * [Git 1.8+](https://git-scm.com/)
 * [Vagrant 2.2.3+](https://www.vagrantup.com/)
-* [VirtualBox 6.0+](https://www.virtualbox.org/)
+* [VirtualBox 6.1+](https://www.virtualbox.org/)
 
 ### Installing
 1. Open a terminal
@@ -51,6 +59,9 @@ It is recommended to share the nos3 repository into the virtual machine
 
 ## Support
 If this project interests you or if you have any questions, please feel free to contact any developer directly or email `support@nos3.org`.
+
+## Reporting Issues
+Please report issues to the tracking system on Github [NOS3 Issues](www.github.com/nasa/nos3/issues)
 
 ### Frequently Asked Questions
 * A GUI environment hasn't shown up after an extended period (> 1.5 hours), what should I do?
