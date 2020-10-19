@@ -54,13 +54,17 @@
                         <bus-name>usart_29</bus-name>
                         <node-port>29</node-port>
                     </connection>
-                    <connection><type>period</type>
-                        <init-time-seconds>5.0</init-time-seconds>
-                        <ms-period>1000</ms-period>
-                    </connection>
                 </connections>
+                <default-streams>
+                    <!-- Uncomment below to default the sample_stream to begin streaming at sim startup + initial-stream-time at stream-period-ms rate -->
+                    <!-- <stream>
+                        <name>sample_stream</name>
+                        <initial-stream-time>1.0</initial-stream-time>
+                        <stream-period-ms>1000</stream-period-ms>
+                    </stream> -->
+                </default-streams>
                 <data-provider>
-                    <type>SAMPLE_PROVIDER</type>
+                    <type>SAMPLE_42_PROVIDER</type>
                 </data-provider>
             </hardware-model>
         </simulator>
