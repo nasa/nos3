@@ -127,8 +127,7 @@ TO_ConfigTable_t to_ConfigTable =
        {SAMPLE_RAWIO_TLM_MID,         {0,0},  16,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        
        /* 30 - 39 */
-       
-       {SAMPLE_DEVICEPACK_TLM_MID,    {0,0},  16,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {SAMPLE_DEVICE_MULTI_TLM_MID,  {0,0},  16,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
