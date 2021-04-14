@@ -34,7 +34,8 @@ gnome-terminal \
 --tab -t 'CAM Simulator' -e "$SIM_BIN/nos3-cam-simulator"  \
 --tab -t 'EPS Simulator' -e "$SIM_BIN/nos3-eps-simulator --iconic true --config $SIM_BIN/eps.json" \
 --tab -t 'GPS Simulator' -e "$SIM_BIN/nos3-gps-simulator" \
---tab -t 'RW Simulator' -e "$SIM_BIN/nos3-generic-reactionwheel-simulator"
+--tab -t 'RW Simulator' -e "$SIM_BIN/nos3-generic-reactionwheel-simulator" \
+--tab --title="truth42sim" -e "$SIM_BIN/nos3-single-simulator truth42sim"
 #$SIM_TABS > /dev/null
 
 echo "42..."

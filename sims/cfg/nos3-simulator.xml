@@ -143,7 +143,25 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
-
-        
+        <simulator>
+            <name>truth42sim</name>
+            <active>true</active>
+            <library>libtruth_42_sim.so</library>
+            <hardware-model>
+                <type>TRUTH42</type>
+                <cosmos-port>5111</cosmos-port>
+                <initial-stream-time>1.0</initial-stream-time>
+                <stream-period-ms>1000</stream-period-ms>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>truth42-sim-command-node</node-name></connection>
+                </connections>
+                <data-provider>
+                    <type>TRUTH42PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>9999</port>
+                    <max-connection-attempts>10</max-connection-attempts>
+                </data-provider>
+            </hardware-model>
+        </simulator>
     </simulators>
 </nos3-configuration>
