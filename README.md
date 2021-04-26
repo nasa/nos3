@@ -25,6 +25,7 @@ Each of the applications listed below are required prior to performing the insta
 6. Run `vagrant up` and wait to return to a prompt
 	- This can take anywhere from 20 minutes to hours depending on internet speeds and host PC specs
   	- The VM will reboot multiple times in order to finish install packages for you automatically so wait for that prompt!
+	- **Sometimes ansible does not seem to install and there is an error like "Could not get lock /var/lib/apt/lists/lock".  If this happens run `vagrant provision` to install ansible and provision.**
 7. Login to the nos3 user using the password `nos3123!` and get to work!
 7. Try building and running following the instructions below
 
@@ -91,3 +92,4 @@ This project is licensed under the NOSA (NASA Open Source Agreement) License.
 
 ### Acknowledgments
 * Special thanks to all the developers involved!
+
