@@ -21,6 +21,7 @@ SIMS=$(cd $SIM_BIN; ls nos3*simulator)
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
+bundle install # just in case... sometimes the first run of cosmos fails on the nokogiri gem
 ruby Launcher -c nos3_launcher.txt -- system nos3_system.txt &
 
 echo "Simulators..."
@@ -39,10 +40,10 @@ gnome-terminal \
 #$SIM_TABS > /dev/null
 
 echo "42..."
-cd /opt/42/
+cd /opt/nos3/42/
 rm -rf NOS3InOut
-cp -r $BASE_DIR/sims/cfg/InOut /opt/42/NOS3InOut
-gnome-terminal --title="42 Dynamic Simulator" -e "/opt/42/42 NOS3InOut" \
+cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
+gnome-terminal --title="42 Dynamic Simulator" -e "/opt/nos3/42/42 NOS3InOut" \
 
 echo "Flight Software..."
 cd $FSW_BIN
