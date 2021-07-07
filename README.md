@@ -8,7 +8,7 @@ NOS3 provides a software development environment, a multi-target build system, a
 These issues will be addressed in future updates
 
 ### Documentation
-The best source of documentation can be found at [NOS3](www.nos3.org), as well as a PDF Users Guide attached to this Release on Github
+The best source of documentation can be found at [NOS3](http://www.nos3.org), as well as a PDF Users Guide attached to this Release on Github
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
@@ -20,7 +20,7 @@ Each of the applications listed below are required prior to performing the insta
 1. Open a terminal
 2. Navigate to the desired location for the repository
 3. Clone the repository `git clone https://github.com/nasa/nos3.git`
-4. Clone the submodules `git submodule init` and `git submodule update` 
+4. Enter the repository (`cd nos3`) and clone the submodules `git submodule init` and `git submodule update` 
 5. Navigate to `/nos3/deployment`
 6. Run `vagrant up` and wait to return to a prompt
 	- This can take anywhere from 20 minutes to hours depending on internet speeds and host PC specs
