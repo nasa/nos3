@@ -12,12 +12,12 @@ TRUE   Orb_LEO.txt              !  Input file name for Orb 0
 1                               !  Number of Spacecraft
 TRUE  0 SC_NOS3.txt             !  Existence, RefOrb, Input file for SC 0
 ***************************** Environment  *****************************
-05 07 2019                      !  Date (Month, Day, Year)
-12 00 00.00                     !  Greenwich Mean Time (Hr,Min,Sec)
-0.0                             !  Time Offset (sec)
-USER_DEFINED                    !  Model Date Interpolation for Solar Flux and AP values?(TWOSIGMA_KP, NOMINAL or USER_DEFINED)
-230.0                           !  If USER_DEFINED, enter desired F10.7 value
-100.0                           !  If USER_DEFINED, enter desired AP value
+10 18 2025                      !  Date (UTC) (Month, Day, Year)
+08 30 00.00                     !  Time (UTC) (Hr,Min,Sec)
+37.0                            !  Leap Seconds (sec)
+USER                            !  F10.7, Ap (USER, NOMINAL or TWOSIGMA)
+230.0                           !  USER-provided F10.7
+100.0                           !  USER-provided Ap 
 IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 8   8                           !  IGRF Degree and Order (<=10)
 8   8                           !  Earth Gravity Model N and M (<=18)
@@ -35,15 +35,15 @@ FALSE                           !  CFD Slosh Forces and Torques
 FALSE                           !  Output Environmental Torques to Files
 ********************* Celestial Bodies of Interest *********************
 MEAN                            !  Ephem Option (MEAN or DE430)
-FALSE                           !  Mercury
-FALSE                           !  Venus
+TRUE                            !  Mercury
+TRUE                            !  Venus
 TRUE                            !  Earth and Luna
-FALSE                           !  Mars and its moons
-FALSE                           !  Jupiter and its moons
-FALSE                           !  Saturn and its moons
-FALSE                           !  Uranus and its moons
-FALSE                           !  Neptune and its moons
-FALSE                           !  Pluto and its moons
+TRUE                            !  Mars and its moons
+TRUE                            !  Jupiter and its moons
+TRUE                            !  Saturn and its moons
+TRUE                            !  Uranus and its moons
+TRUE                            !  Neptune and its moons
+TRUE                            !  Pluto and its moons
 FALSE                           !  Asteroids and Comets
 ***************** Lagrange Point Systems of Interest ******************
 FALSE                           !  Earth-Moon
