@@ -100,8 +100,8 @@ SET(APPLICATION_LIST
         #cs
         #ds
         #fm
-        hk
-        hs
+        #hk
+        #hs
         lc
         #md
         #mm
@@ -116,7 +116,7 @@ SET(APPLICATION_LIST
         sample
         novatel_oem615
         arducam
-        clyde_eps
+        #clyde_eps
         generic_reaction_wheel
 )
 

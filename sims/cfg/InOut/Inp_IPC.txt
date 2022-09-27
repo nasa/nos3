@@ -40,17 +40,22 @@ FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
 1                                       ! Number of TX prefixes
 "SC"                                    ! Prefix 0
-**********************************  IPC 4   *****************************
+**********************************  Truth data to sim to pass to COSMOS ********************
 TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
 0                                       ! AC.ID for ACS mode
-"State04.42"                            ! File name for WRITE or READ
+"State.42"                              ! File name for WRITE or READ
 SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
-localhost      9999                     ! Server Host Name, Port 
+localhost      9999                     ! Server Host Name, Port
 FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
-2                                       ! Number of TX prefixes
-"SC"                                    ! Prefix 0
-"Orb"                                   ! Prefix 1
+7                                       ! Number of TX prefixes
+"SC[0].PosR"                            ! Prefix 0
+"SC[0].VelR"                            ! Prefix 1
+"SC[0].svb"                             ! Prefix 2
+"SC[0].bvb"                             ! Prefix 3
+"SC[0].Hvb"                             ! Prefix 4
+"SC[0].B[0]"                            ! Prefix 5
+"Orb"                                   ! Prefix 6
 **********************************  Write to file for analysis *****************************
 WRITEFILE                               ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
 0                                       ! AC.ID for ACS mode
