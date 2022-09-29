@@ -79,8 +79,18 @@ clean-sim:
 #
 # Script Calls
 #
+gsw:
+	./gsw/scripts/gsw.sh
+
 launch:
 	./gsw/scripts/launch.sh
+
+log:
+	./gsw/scripts/log.sh
+
+real-clean:
+	$(MAKE) clean
+	./gsw/scripts/real_clean.sh
 
 stop:
 	./gsw/scripts/stop.sh

@@ -17,6 +17,11 @@ SIMS=$(cd $SIM_BIN; ls nos3*simulator)
 #echo "Sim list         = " $SIMS
 #exit
 
+#echo "Make /tmp folders..."
+#mkdir /tmp/data 2> /dev/null
+#mkdir /tmp/data/hk 2> /dev/null
+#mkdir /tmp/uplink 2> /dev/null
+
 echo "42..."
 cd /opt/nos3/42/
 rm -rf NOS3InOut
