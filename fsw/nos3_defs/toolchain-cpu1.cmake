@@ -34,5 +34,6 @@ SET(CMAKE_C_FLAGS_INIT "-m32" CACHE STRING "C Flags required by platform")
 # Build Specific
 add_definitions(-DBYTE_ORDER_LE)
 add_definitions(-D_LINUX_OS_)
+
 set(CI_TRANSPORT udp)
 set(TO_TRANSPORT udp)

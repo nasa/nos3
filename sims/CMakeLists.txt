@@ -28,6 +28,7 @@ set(CXX_11 ON)
     set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
 endif(CXX_11)
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 include(MissionSettings.cmake)
 
 # NOS3 Sim Core
