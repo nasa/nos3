@@ -28,7 +28,6 @@ rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 # 42
 killall -q 42
 rm -rf /opt/nos3/42/NOS3InOut
-rm -rf /opt/nos3/42/Model/GTO*
 rm -rf /tmp/gpio*
 
 exit 0
