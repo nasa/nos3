@@ -33,10 +33,9 @@ cd $SIM_BIN
 gnome-terminal --tab --title="NOS Engine Standalone Server" -- /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
 gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos-time-driver
 gnome-terminal --tab --title="Simulator Terminal" -- $SIM_BIN/nos3-simulator-terminal
-gnome-terminal --tab --title='Sample Simulator' -- $SIM_BIN/nos3-sample-simulator
 gnome-terminal --tab --title='CAM Simulator' -- $SIM_BIN/nos3-cam-simulator
-gnome-terminal --tab --title='GPS Simulator' -- $SIM_BIN/nos3-gps-simulator
 gnome-terminal --tab --title='RW Simulator' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
+gnome-terminal --tab --title='Sample Simulator' -- $SIM_BIN/nos3-sample-simulator
 gnome-terminal --tab --title="truth42sim" -- $SIM_BIN/nos3-single-simulator truth42sim
 
 echo "COSMOS Ground Station..."
