@@ -107,17 +107,15 @@ SET(APPLICATION_LIST
         #mm
         sc
         sch
-        #sch_lab
         to
         #to_lab
     #
     # Components
     #
-        sample
-        novatel_oem615
         arducam
-        #clyde_eps
         generic_reaction_wheel
+        novatel_oem615
+        sample
 )
 
 # Create Application Platform Include List

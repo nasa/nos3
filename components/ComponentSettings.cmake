@@ -15,7 +15,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 "-Wformat=2"
                 #"-Wcast-align" # should discuss this 
                 #"-Wcast-qual"
-                -Wno-discarded-qualifiers
+                "-Wno-discarded-qualifiers"
                 "-Winline"
                 "-Wpointer-arith"
                 "-Wredundant-decls"
@@ -57,4 +57,3 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 string(REPLACE ";" " " ITC_C_FLAGS "${ITC_C_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ITC_C_FLAGS}")
-

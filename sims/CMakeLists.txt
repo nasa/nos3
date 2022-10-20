@@ -35,12 +35,14 @@ include(MissionSettings.cmake)
 add_subdirectory(sim_common)
 add_subdirectory(nos_time_driver)
 add_subdirectory(sim_terminal)
+add_subdirectory(truth_42_sim)
 
 # Add Component Sims
-FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*_sim)
+FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../components/*)
 FOREACH(_FILE ${_ALL_FILES})
   IF(IS_DIRECTORY ${_FILE})
-    add_subdirectory(${_FILE})
+    get_filename_component(SIM_NAME ${_FILE} NAME)
+    add_subdirectory(${_FILE}/sim ./${SIM_NAME})
   ENDIF()
 ENDFOREACH()
 

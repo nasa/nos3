@@ -43,32 +43,10 @@
 /*
 ** Component Include Files
 */
-
-/*************************************************************************
-**
-** Macro definitions
-**
-**************************************************************************/
-
-/*
-** (none)
-*/
-
-/*************************************************************************
-**
-** Type definitions
-**
-**************************************************************************/
-
-/*
-** (none)
-*/
-
-/*************************************************************************
-**
-** Exported data
-**
-**************************************************************************/
+#include "cam_msgids.h"
+#include "generic_reaction_wheel_msgids.h"
+#include "nav_msgids.h"
+#include "sample_app_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -204,8 +182,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #39 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
   
-    /* command ID #40 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #40 - CAM HK */
+  { { CFE_MAKE_BIG16(CAM_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #41 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #42 */
@@ -214,8 +192,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #44 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #45 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #45 - RW HK */
+  { { CFE_MAKE_BIG16(GENERIC_RW_APP_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #46 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #47 */
@@ -225,8 +203,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #49 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
-    /* command ID #50 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #50 - GPS HK */
+  { { CFE_MAKE_BIG16(NAV_CMD_REQ_NAV_SCH_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #51 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #52 */
@@ -235,8 +213,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #54 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #55 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #55 - Sample HK */
+  { { CFE_MAKE_BIG16(SAMPLE_APP_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #56 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #57 */

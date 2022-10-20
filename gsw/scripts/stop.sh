@@ -11,7 +11,9 @@ killall -q -r -9 core-cpu*
 
 # COSMOS
 killall -q -9 ruby
-rm  $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
+yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
+yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
+yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
 
 # NOS3
 killall -q -r -9 'nos3.*simulator.*'

@@ -1,27 +1,24 @@
 CFE_LIB, /cf/cfs_lib.so,                CFS_LibInit,              CFS_LIB,          0,  0,     0x0, 0;
-CFE_APP, /cf/sch.so,                    SCH_AppMain,              SCH,              40, 8192,  0x0, 0;
-
-CFE_LIB, /cf/io_lib.so,                 IO_LibInit,               IO_LIB,           0,  0,     0x0, 0;
-CFE_APP, /cf/ci.so,                     CI_AppMain,               CI,               52, 16384, 0x0, 0;
-CFE_APP, /cf/to.so,                     TO_AppMain,               TO,               53, 16384, 0x0, 0;
-
-CFE_APP, /cf/lc.so,                     LC_AppMain,               LC,               57, 16384, 0x0, 0;
-CFE_APP, /cf/sc.so,                     SC_AppMain,               SC,               62, 16384, 0x0, 0;
-
 CFE_LIB, /cf/hwlib.so,                  hwlib_Init,               HW_LIB,           0,  0,     0x0, 0;
+CFE_LIB, /cf/io_lib.so,                 IO_LibInit,               IO_LIB,           0,  0,     0x0, 0;
 
-CFE_APP, /cf/sample.so,                 SAMPLE_AppMain,           SAMPLE,           69, 8192,  0x0, 0;
-CFE_APP, /cf/arducam.so,                arducam_AppMain,          CAM,              70, 8192,  0x0, 0;
+CFE_APP, /cf/sch.so,                    SCH_AppMain,              SCH,              40, 8192,  0x0, 0;
+CFE_APP, /cf/ci_lab.so,                 CI_Lab_AppMain,           CI_LAB,           50, 8192, 0x0, 0;
+CFE_APP, /cf/to_lab.so,                 TO_Lab_AppMain,           TO_LAB,           50, 8192, 0x0, 0;
+
+CFE_APP, /cf/ci.so,                     CI_AppMain,               CI,               50, 16384, 0x0, 0;
+CFE_APP, /cf/to.so,                     TO_AppMain,               TO,               50, 16384, 0x0, 0;
+
+CFE_APP, /cf/lc.so,                     LC_AppMain,               LC,               50, 16384, 0x0, 0;
+CFE_APP, /cf/sc.so,                     SC_AppMain,               SC,               50, 16384, 0x0, 0;
+
+CFE_APP, /cf/arducam.so,                arducam_AppMain,          CAM,              50, 8192,  0x0, 0;
 CFE_APP, /cf/generic_reaction_wheel.so, GENERIC_RW_AppMain,       RW,               73, 8192,  0x0, 0;
-
-!
 CFE_APP, /cf/novatel_oem615.so,         novatel_oem615_AppMain,   NAV,              72, 8192,  0x0, 0;
+CFE_APP, /cf/sample.so,                 SAMPLE_AppMain,           SAMPLE,           50, 8192,  0x0, 0;
 
 !
 !  ** The software will not try to parse anything after the first '!' character it sees. **
-!
-!
-! CFE_APP, /cf/sample.so,           sample_AppMain,           SAMPLE,           50, 8192,  0x0, 0;
 !
 ! CFE_APP, /cf/clyde_eps.so,        clyde_eps_AppMain,        EPS,              71, 8192,  0x0, 0;
 ! CFE_APP, /cf/cs.so,               CS_AppMain,               CS,               55, 16384, 0x0, 0;
@@ -62,4 +59,3 @@ CFE_APP, /cf/novatel_oem615.so,         novatel_oem615_AppMain,   NAV,          
 !    vxWorks = .o ( ci.o )
 !    RTEMS with S-record Loader = .s3r ( ci.s3r )
 !    RTEMS with CEXP Loader = .o ( ci.o )
- 
