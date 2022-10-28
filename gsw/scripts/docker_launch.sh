@@ -27,7 +27,8 @@ echo "42..."
 cd /opt/nos3/42/
 rm -rf NOS3InOut
 cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
-gnome-terminal --tab --title="42 Dynamic Simulator" -- /opt/nos3/42/42 NOS3InOut
+xhost +local:*
+docker run -d -e DISPLAY=$DISPLAY -v /opt/nos3/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network=host -w /opt/nos3/42 -t nos3 /opt/nos3/42/42 NOS3InOut
 
 echo "Simulators..."
 #cd $SIM_BIN
