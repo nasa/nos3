@@ -52,4 +52,4 @@ sleep 5
 
 echo "Flight Software..."
 cd $FSW_BIN
-gnome-terminal --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
+gnome-terminal --title="NOS3 Flight Software" -- docker run --rm -it -v $FSW_BIN:$FSW_BIN --network=host -w $FSW_BIN --sysctl fs.mqueue.msg_max=500 nos3 $FSW_BIN/core-cpu1 -R PO &
