@@ -23,15 +23,14 @@ rm -rf /tmp/gpio_fake
 # NOS3 Stored HK
 rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 
-# 42
-killall -q 42
-rm -rf /opt/nos3/42/NOS3InOut
-rm -rf /tmp/gpio*
-
 # Docker
 for i in $(docker container ls -q); do
     docker container kill $i
 done
 docker container prune -f
+
+# 42
+rm -rf /opt/nos3/42/NOS3InOut
+rm -rf /tmp/gpio*
 
 exit 0

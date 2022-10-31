@@ -1,6 +1,7 @@
 #!/bin/bash -i
 #
 # Convenience script for NOS3 development
+# Use with the Dockerfile in the deployment repository
 #
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
