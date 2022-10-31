@@ -46,7 +46,10 @@ echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
 export MISSION_NAME=$(echo "NOS3")
 export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
-ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
+docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e QT_X11_NO_MITSHM=1 \
+    -v /home/nos3/Desktop/github-nos3/gsw/cosmos:/cosmos/cosmos \
+    -v /home/nos3/Desktop/github-nos3/components/:/COMPONENTS -w /cosmos/cosmos -d --network=host \
+    ballaerospace/cosmos /bin/bash -c 'ruby Launcher -c nos3_launcher.txt --system nos3_system.txt && true' # true is necessary to avoid setpgrp error
 
 sleep 5
 

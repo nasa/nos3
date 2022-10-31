@@ -6,15 +6,6 @@
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 
-# cFS
-killall -q -r -9 core-cpu*
-
-# COSMOS
-killall -q -9 ruby
-yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
-yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
-yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
-
 # NOS3
 
 # NOS3 GPIO
@@ -32,5 +23,12 @@ docker container prune -f
 # 42
 rm -rf /opt/nos3/42/NOS3InOut
 rm -rf /tmp/gpio*
+
+# cFS
+
+# COSMOS
+yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
+yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
+yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
 
 exit 0
