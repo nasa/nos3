@@ -97,3 +97,16 @@ services:
             - DISPLAY=$DISPLAY
         depends_on:
             - nos_engine_server_standalone
+    cosmos:
+        volumes:
+            - '/home/nos3/Desktop/github-nos3/gsw/cosmos:/cosmos/cosmos'
+            - '/home/nos3/Desktop/github-nos3/components/:/COMPONENTS'
+            - '/tmp/.X11-unix:/tmp/.X11-unix:ro'
+        network_mode: host
+        image: ballaerospace/cosmos
+        command: /bin/bash -c 'ruby Launcher -c nos3_launcher.txt --system nos3_system.txt && true' # true is necessary to avoid setpgrp error
+        working_dir: /cosmos/cosmos
+        tty: true
+        environment:
+            - DISPLAY=$DISPLAY
+            - QT_X11_NO_MITSHM=1
