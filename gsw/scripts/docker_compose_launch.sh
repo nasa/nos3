@@ -29,18 +29,7 @@ cd /opt/nos3/42/
 rm -rf NOS3InOut
 cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
 xhost +local:*
-docker run -d -e DISPLAY=$DISPLAY -v /opt/nos3/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network=host -w /opt/nos3/42 -t nos3 /opt/nos3/42/42 NOS3InOut
 
-echo "Simulators..."
-#cd $SIM_BIN
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN -t nos3 /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos-time-driver
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-simulator-terminal
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-cam-simulator
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-generic-reactionwheel-simulator
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-gps-simulator
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-sample-simulator
-# docker run --rm -d -v $SIM_DIR:$SIM_DIR --network=host -w $SIM_BIN nos3 $SIM_BIN/nos3-single-simulator truth42sim
 cd $SCRIPT_DIR
 docker compose up -d
 
@@ -54,8 +43,4 @@ docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e QT_X1
     ballaerospace/cosmos /bin/bash -c 'ruby Launcher -c nos3_launcher.txt --system nos3_system.txt && true' # true is necessary to avoid setpgrp error
 
 sleep 5
-
-echo "Flight Software..."
-cd $FSW_BIN
-gnome-terminal --title="NOS3 Flight Software" -- docker run --rm -it -v $FSW_BIN:$FSW_BIN --network=host -w $FSW_BIN --sysctl fs.mqueue.msg_max=500 nos3 $FSW_BIN/core-cpu1 -R PO &
 
