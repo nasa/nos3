@@ -1,0 +1,73 @@
+version: '3.3'
+services:
+    nos_engine_server_standalone:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
+        working_dir: $SIM_BIN
+        tty: true
+    nos-time-driver:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos-time-driver
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-simulator-terminal:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-simulator-terminal
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-cam-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-cam-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-generic-reactionwheel-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-generic-reactionwheel-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-gps-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-gps-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-sample-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-sample-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    truth42sim:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-single-simulator truth42sim
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone

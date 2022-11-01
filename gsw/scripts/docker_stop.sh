@@ -3,8 +3,12 @@
 # Convenience script for NOS3 development
 #
 
-SCRIPT_DIR=$(cd `dirname $0` && pwd)
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+export SCRIPT_DIR=$(cd `dirname $0` && pwd)
+export BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+export FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
+export SIM_DIR=$BASE_DIR/sims/build
+export SIM_BIN=$SIM_DIR/bin
+export SIMS=$(cd $SIM_BIN; ls nos3*simulator)
 
 # NOS3
 
@@ -15,6 +19,7 @@ rm -rf /tmp/gpio_fake
 rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 
 # Docker
+cd $SCRIPT_DIR; docker compose down
 for i in $(docker container ls -q); do
     docker container kill $i
 done
