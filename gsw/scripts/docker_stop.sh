@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Convenience script for NOS3 development
+# https://docs.docker.com/engine/install/ubuntu/
 #
 
 export SCRIPT_DIR=$(cd `dirname $0` && pwd)
