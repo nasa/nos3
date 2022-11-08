@@ -94,12 +94,12 @@ SET(APPLICATION_LIST
     #
     # cFS Apps
     #
-        #cf
+        cf
         ci
-        #ci_lab
+        ci_lab
         #cs
-        #ds
-        #fm
+        ds
+        fm
         #hk
         #hs
         lc
@@ -108,7 +108,7 @@ SET(APPLICATION_LIST
         sc
         sch
         to
-        #to_lab
+        to_lab
     #
     # Components
     #
@@ -127,7 +127,7 @@ ENDFOREACH(X)
 SET(TGT1_NAME cpu1)
 SET(TGT1_APPLIST ${APPLICATION_LIST})
 SET(TGT1_FILELIST cfe_es_startup.scr)
-SET(TGT2_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
+SET(TGT1_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
 
 # USER Supplied
 #SET(TGT2_NAME cpu2)

@@ -157,7 +157,7 @@ set(OSAL_CONFIG_MAX_FILE_SYSTEMS        14)
 # The maximum length for a file name, including any extension
 # (This does not include the directory part)
 # This length must include an extra character for NULL termination.
-set(OSAL_CONFIG_MAX_FILE_NAME           20)
+set(OSAL_CONFIG_MAX_FILE_NAME           28)
 
 # Maximum length for an virtual path name (virtual directory + file)
 # This length must include an extra character for NULL termination.

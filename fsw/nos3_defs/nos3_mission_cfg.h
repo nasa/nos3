@@ -242,7 +242,7 @@
 **      Minute - 0 to 59
 **      Second - 0 to 59
 */
-#define CFE_MISSION_TIME_EPOCH_YEAR        1958
+#define CFE_MISSION_TIME_EPOCH_YEAR        2000
 #define CFE_MISSION_TIME_EPOCH_DAY            1
 #define CFE_MISSION_TIME_EPOCH_HOUR           0
 #define CFE_MISSION_TIME_EPOCH_MINUTE         0
@@ -264,8 +264,8 @@
 **
 **      Worksheet:
 **
-**      S/C epoch = Jan 1, 2005  (LRO ground system epoch)
-**      FS epoch  = Jan 1, 1980  (vxWorks DOS file system epoch)
+**      S/C epoch = Jan 1, 2000  (GTOSat ground system epoch)
+**      FS epoch  = Jan 1, 1988  (RTEMS file system epoch)
 **
 **      Delta = 25 years, 0 days, 0 hours, 0 minutes, 0 seconds
 **
@@ -277,15 +277,15 @@
 **      1 hour   =       3,600 seconds
 **      1 minute =          60 seconds
 **
-**      25 years = 788,400,000 seconds
-**      7 extra leap days = 604,800 seconds
+**      12 years = 378,432,000 seconds
+**      4 extra leap days = 345,600 seconds
 **
-**      total delta = 789,004,800 seconds
+**      total delta = 378,777,600 seconds
 **
 **  \par Limits
 **      Not Applicable
 */
-#define CFE_MISSION_TIME_FS_FACTOR  789004800
+#define CFE_MISSION_TIME_FS_FACTOR  378777600
 
 
 /**

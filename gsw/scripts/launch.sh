@@ -22,6 +22,23 @@ SIMS=$(cd $SIM_BIN; ls nos3*simulator)
 #mkdir /tmp/data/hk 2> /dev/null
 #mkdir /tmp/uplink 2> /dev/null
 
+echo "Make data folders..."
+# FSW Side
+mkdir $FSW_BIN/data 2> /dev/null
+mkdir $FSW_BIN/data/cam 2> /dev/null
+mkdir $FSW_BIN/data/evs 2> /dev/null
+mkdir $FSW_BIN/data/hk 2> /dev/null
+mkdir $FSW_BIN/data/inst 2> /dev/null
+# GSW Side
+mkdir /tmp/data 2> /dev/null
+mkdir /tmp/data/cam 2> /dev/null
+mkdir /tmp/data/evs 2> /dev/null
+mkdir /tmp/data/hk 2> /dev/null
+mkdir /tmp/data/inst 2> /dev/null
+mkdir /tmp/uplink 2> /dev/null
+cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/uplink/tmp0.so 2> /dev/null
+cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/uplink/tmp1.so 2> /dev/null
+
 echo "42..."
 cd /opt/nos3/42/
 rm -rf NOS3InOut

@@ -156,7 +156,7 @@
 **       be verified.  Pipe Depth values that are checked against this configuration
 **       are defined by a 16 bit data word.
 */
-#define CFE_PLATFORM_SB_MAX_PIPE_DEPTH           256
+#define CFE_PLATFORM_SB_MAX_PIPE_DEPTH           1024
 
 
 /**
