@@ -35,6 +35,11 @@
 #include "to_lab_msgids.h"
 #include "ci_lab_msgids.h"
 
+#include "fm_msgids.h"
+#include "sc_msgids.h"
+#include "ds_msgids.h"
+#include "lc_msgids.h"
+
 /*
 ** Component Include Files
 */
@@ -53,14 +58,11 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CI_LAB_HK_TLM_MID), {0, 0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_APP_HK_TLM_MID), {0, 0}, 4},
 
-    #if 0
         /* Add these if needed */
-        {CFE_SB_MSGID_WRAP_VALUE(HS_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(FM_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(SC_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(DS_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(LC_HK_TLM_MID), {0,0}, 4},
-    #endif
 
         /* cFE Core subscriptions */
         {CFE_SB_MSGID_WRAP_VALUE(CFE_ES_HK_TLM_MID), {0, 0}, 4},

@@ -88,7 +88,7 @@ TO_ConfigTable_t to_ConfigTable =
        /* 0 - 9 */
        {CF_CONFIG_TLM_MID,            {0,0},  5,   0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
        {CF_HK_TLM_MID,                {0,0},  5,   0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
-       {CF_SPACE_TO_GND_PDU_MID,      {0,0},  32,  0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
+       {CF_SPACE_TO_GND_PDU_MID,      {0,0},  64,  0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
        {CF_TRANS_TLM_MID,             {0,0},  5,   0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
        {CFE_ES_APP_TLM_MID,           {0,0},  5,   0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
        {CFE_ES_HK_TLM_MID,            {0,0},  5,   0xffff,     TO_GROUP_CFE | TO_MGROUP_ONE, 0,1},
