@@ -269,7 +269,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 018 */
     {
-      /* .MessageID = */ GENERIC_RW_APP_HK_TLM_MID,
+      /* .MessageID = */ DS_UNUSED,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
