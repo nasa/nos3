@@ -94,30 +94,28 @@ SET(APPLICATION_LIST
     #
     # cFS Apps
     #
-        #cf
+        cf
         ci
-        #ci_lab
+        ci_lab
         #cs
-        #ds
-        #fm
-        hk
-        hs
+        ds
+        fm
+        #hk
+        #hs
         lc
         #md
         #mm
         sc
         sch
-        #sch_lab
         to
-        #to_lab
+        to_lab
     #
     # Components
     #
-        sample
-        novatel_oem615
         arducam
-        clyde_eps
         generic_reaction_wheel
+        novatel_oem615
+        sample
 )
 
 # Create Application Platform Include List
@@ -129,10 +127,10 @@ ENDFOREACH(X)
 SET(TGT1_NAME cpu1)
 SET(TGT1_APPLIST ${APPLICATION_LIST})
 SET(TGT1_FILELIST cfe_es_startup.scr)
-SET(TGT2_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
+SET(TGT1_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
 
 # USER Supplied
-SET(TGT2_NAME cpu2)
-SET(TGT2_APPLIST ${APPLICATION_LIST})
-SET(TGT2_FILELIST cfe_es_startup.scr)
-SET(TGT2_OSAL_SYSTEM_CONFIG cpu2_osconfig.h)
+#SET(TGT2_NAME cpu2)
+#SET(TGT2_APPLIST ${APPLICATION_LIST})
+#SET(TGT2_FILELIST cfe_es_startup.scr)
+#SET(TGT2_OSAL_SYSTEM_CONFIG cpu2_osconfig.h)

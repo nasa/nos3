@@ -126,8 +126,8 @@
 **       Dictates the size of the SB memory pool. For each message the SB
 **       sends, the SB dynamically allocates from this memory pool, the memory needed
 **       to process the message. The memory needed to process each message is msg
-**       size + msg descriptor(#CFE_SB_BufferD_t). This memory pool is also used
-**       to allocate destination descriptors (#CFE_SB_DestinationD_t) during the
+**       size + msg descriptor(CFE_SB_BufferD_t). This memory pool is also used
+**       to allocate destination descriptors (CFE_SB_DestinationD_t) during the
 **       subscription process.
 **       To see the run-time, high-water mark and the current utilization figures
 **       regarding this parameter, send an SB command to 'Send Statistics Pkt'.
@@ -156,7 +156,7 @@
 **       be verified.  Pipe Depth values that are checked against this configuration
 **       are defined by a 16 bit data word.
 */
-#define CFE_PLATFORM_SB_MAX_PIPE_DEPTH           256
+#define CFE_PLATFORM_SB_MAX_PIPE_DEPTH           1024
 
 
 /**
@@ -178,7 +178,12 @@
 **       The recommended case to to have this value the same across all mission platforms
 **
 **  \par Limits
-**       This parameter has a lower limit of 1 and an upper limit of 0xFFFF. 
+**       This parameter has a lower limit of 1 and an upper limit of 0xFFFF. Note
+**       for current implementations, V2/Extended headers assign 0xFFFFFFFF as the invalid
+**       message ID value, and default headers assigns 0xFFFF as the invalid value.  This
+**       means for default headers, 0xFFFF is invalid even if you set the value
+**       below to it's maximum of 0xFFFF.
+**       The allocated message table is this size + 1 (could change based on implementaiton).
 */
 #define CFE_PLATFORM_SB_HIGHEST_VALID_MSGID      0x1FFF
 
@@ -565,7 +570,7 @@
 **       in the error log. Any context information beyond this size will
 **       be truncated.
 */
-#define CFE_PLATFORM_ES_ER_LOG_MAX_CONTEXT_SIZE     128
+#define CFE_PLATFORM_ES_ER_LOG_MAX_CONTEXT_SIZE     256
 
 
 /**
@@ -788,7 +793,7 @@
 **       log ER Log and critical reset variables. This is 4 of 4 of the memory areas
 **       that are preserved during a processor reset.
 **       Note: This area must be sized large enough to hold all of the data
-**       structures. It should be automatically sized based on the #CFE_ES_ResetData_t
+**       structures. It should be automatically sized based on the CFE_ES_ResetData_t
 **       type, but circular dependancies in the headers prevent it from being defined
 **       this way.
 **       NOTE: Changing this value changes memory allocation, and may
@@ -1005,22 +1010,40 @@
 #define CFE_PLATFORM_ES_DEFAULT_CDS_REG_DUMP_FILE     "/ram/cfe_cds_reg.log"
 
 /**
-**  \cfeescfg Define Default System Log Mode
+**  \cfeescfg Define Default System Log Mode following Power On Reset
 **
 **  \par Description:
-**       Defines the default mode for the operation of the ES System log. The log may
-**       operate in either Overwrite mode = 0, where once the log becomes full the
-**       oldest message in the log will be overwritten, or Discard mode = 1, where
-**       once the log becomes full the contents of the log are preserved and the new
-**       event is discarded.  This constant may hold a value of either 0 or 1
-**       depending on the desired default log mode.  Overwrite Mode = 0, Discard
-**       Mode = 1.
+**       Defines the default mode for the operation of the ES System log following a power
+**       on reset. The log may operate in either Overwrite mode = 0, where once the
+**       log becomes full the oldest message in the log will be overwritten, or
+**       Discard mode = 1, where once the log becomes full the contents of the log are
+**       preserved and the new event is discarded.  This constant may hold a value of
+**       either 0 or 1 depending on the desired default.
+**       Overwrite Mode = 0, Discard Mode = 1.
 **
 **  \par Limits
 **       There is a lower limit of 0 and an upper limit of 1 on this configuration
 **       paramater.
 */
-#define CFE_PLATFORM_ES_DEFAULT_SYSLOG_MODE      1
+#define CFE_PLATFORM_ES_DEFAULT_POR_SYSLOG_MODE      0
+
+/**
+**  \cfeescfg Define Default System Log Mode following Processor Reset
+**
+**  \par Description:
+**       Defines the default mode for the operation of the ES System log following a
+**       processor reset. The log may operate in either Overwrite mode = 0, where once
+**       the log becomes full the oldest message in the log will be overwritten, or
+**       Discard mode = 1, where once the log becomes full the contents of the log are
+**       preserved and the new event is discarded.  This constant may hold a value of
+**       either 0 or 1 depending on the desired default.
+**       Overwrite Mode = 0, Discard Mode = 1.
+**
+**  \par Limits
+**       There is a lower limit of 0 and an upper limit of 1 on this configuration
+**       paramater.
+*/
+#define CFE_PLATFORM_ES_DEFAULT_PR_SYSLOG_MODE      1
 
 /**
 **  \cfeescfg Define Max Number of Performance IDs
@@ -1186,52 +1209,6 @@
 **       of the stack is used.
 */
 #define CFE_PLATFORM_ES_DEFAULT_STACK_SIZE 8192
-
-/**
-**  \cfeescfg Define cFE Core Exception Function
-**
-**  \par Description:
-**       This parameter defines the function-to-call when a CPU or floating point exception
-**       occurs.  The parameter is defaulted to call the ES API function #CFE_ES_ProcessCoreException
-**       which handles the logging and reset from a system or cFE core exception.
-**
-**       Note: Exception interrupts are trapped at the Platform Support Package (PSP)
-**       layer.  In order to initiate the cFE platform defined response to an exception, this
-**       platform defined callback function must be prototyped and called from the PSP
-**       exception hook API function #CFE_PSP_ExceptionHook. For example:
-**
-**       -- cfe_psp.h --
-**
-**       .... Prototype for exception ISR function implemented in CFE ....
-**
-**       typedef void (*System_ExceptionFunc_t)(uint32  HostTaskId,
-**                                              const char *ReasonString,
-**                                              const uint32 *ContextPointer,
-**                                              uint32 ContextSize);
-**
-**       -- cfe_pspexception.c --
-**
-**       .... Setup function pointer to CFE exception ISR callback ....
-**
-**       static const System_ExceptionFunc_t CFE_ExceptionCallback = CFE_PLATFORM_ES_EXCEPTION_FUNCTION;
-**
-**       void CFE_PSP_ExceptionHook (int task_id, int vector, uint8 *pEsf )
-**       {
-**           .... platform-specific logic ....
-**
-**           .... Use function pointer to call cFE routine to finish processing the exception ....
-**
-**           CFE_ExceptionCallback((uint32)task_id,
-**                                 CFE_PSP_ExceptionReasonString,
-**                                 (uint32 *)&CFE_PSP_ExceptionContext,
-**                                 sizeof(CFE_PSP_ExceptionContext_t));
-**
-**       }
-**
-**  \par Limits
-**       Must be a valid function name.
-*/
-#define CFE_PLATFORM_ES_EXCEPTION_FUNCTION CFE_ES_ProcessCoreException
 
 /**
 **  \cfeescfg Define EVS Task Priority
@@ -1997,7 +1974,7 @@
 #define CFE_ES_DEFAULT_ER_LOG_FILE          CFE_PLATFORM_ES_DEFAULT_ER_LOG_FILE
 #define CFE_ES_DEFAULT_PERF_DUMP_FILENAME   CFE_PLATFORM_ES_DEFAULT_PERF_DUMP_FILENAME
 #define CFE_ES_DEFAULT_CDS_REG_DUMP_FILE    CFE_PLATFORM_ES_DEFAULT_CDS_REG_DUMP_FILE
-#define CFE_ES_DEFAULT_SYSLOG_MODE          CFE_PLATFORM_ES_DEFAULT_SYSLOG_MODE
+#define CFE_ES_DEFAULT_SYSLOG_MODE          CFE_PLATFORM_ES_DEFAULT_PR_SYSLOG_MODE
 #define CFE_ES_PERF_MAX_IDS                 CFE_PLATFORM_ES_PERF_MAX_IDS
 #define CFE_ES_PERF_DATA_BUFFER_SIZE        CFE_PLATFORM_ES_PERF_DATA_BUFFER_SIZE
 #define CFE_ES_PERF_FILTMASK_NONE           CFE_PLATFORM_ES_PERF_FILTMASK_NONE

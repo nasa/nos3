@@ -1,0 +1,112 @@
+version: '3.3'
+services:
+    nos_engine_server_standalone:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
+        working_dir: $SIM_BIN
+        tty: true
+    nos-time-driver:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos-time-driver
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-simulator-terminal:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-simulator-terminal
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-cam-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-cam-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-generic-reactionwheel-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-generic-reactionwheel-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-gps-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-gps-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    nos3-sample-simulator:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-sample-simulator
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    truth42sim:
+        volumes:
+            - '$SIM_DIR:$SIM_DIR'
+        network_mode: host
+        image: nos3
+        command: $SIM_BIN/nos3-single-simulator truth42sim
+        working_dir: $SIM_BIN
+        depends_on:
+            - nos_engine_server_standalone
+    fsw:
+        volumes:
+            - '$FSW_BIN:$FSW_BIN'
+        network_mode: host
+        image: nos3
+        command: $FSW_BIN/core-cpu1 -R PO
+        working_dir: $FSW_BIN
+        stdin_open: true
+        tty: true
+        sysctls:
+            - fs.mqueue.msg_max=500
+        depends_on:
+            - nos_engine_server_standalone
+    fortytwo:
+        volumes:
+            - '/opt/nos3/42/NOS3InOut:/opt/nos3/42/NOS3InOut'
+            - '/tmp/.X11-unix:/tmp/.X11-unix:ro'
+        network_mode: host
+        image: nos3
+        command: /opt/nos3/42/42 NOS3InOut
+        working_dir: /opt/nos3/42
+        tty: true
+        environment:
+            - DISPLAY=$DISPLAY
+        depends_on:
+            - nos_engine_server_standalone
+    cosmos:
+        volumes:
+            - '/home/nos3/Desktop/github-nos3/gsw/cosmos:/cosmos/cosmos'
+            - '/home/nos3/Desktop/github-nos3/components/:/COMPONENTS'
+            - '/tmp/.X11-unix:/tmp/.X11-unix:ro'
+        network_mode: host
+        image: ballaerospace/cosmos
+        command: /bin/bash -c 'ruby Launcher -c nos3_launcher.txt --system nos3_system.txt && true' # true is necessary to avoid setpgrp error
+        working_dir: /cosmos/cosmos
+        tty: true
+        environment:
+            - DISPLAY=$DISPLAY
+            - QT_X11_NO_MITSHM=1

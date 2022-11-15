@@ -28,18 +28,23 @@ set(CXX_11 ON)
     set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
 endif(CXX_11)
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 include(MissionSettings.cmake)
 
 # NOS3 Sim Core
 add_subdirectory(sim_common)
 add_subdirectory(nos_time_driver)
 add_subdirectory(sim_terminal)
+add_subdirectory(truth_42_sim)
 
 # Add Component Sims
-FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*_sim)
+FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../components/*)
 FOREACH(_FILE ${_ALL_FILES})
   IF(IS_DIRECTORY ${_FILE})
-    add_subdirectory(${_FILE})
+    get_filename_component(SIM_NAME ${_FILE} NAME)
+    IF(NOT SIM_NAME STREQUAL "template")
+      add_subdirectory(${_FILE}/sim ./${SIM_NAME})
+    ENDIF()
   ENDIF()
 ENDFOREACH()
 

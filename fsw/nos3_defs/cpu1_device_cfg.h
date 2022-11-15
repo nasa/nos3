@@ -18,27 +18,15 @@
 **  limitations under the License.
 */
 
-/******************************************************************************
-** File: cfe_msgids.h
-**
-** Purpose:
-**   This header file contains the Message Id's for messages used by the
-**   cFE core.
-**
-** Author:   R.McGraw/SSI
-**
-** Notes:
-**   This file should not contain messages defined by cFE external
-**   applications.
-**
-******************************************************************************/
-#ifndef _device_cfg_
-#define _device_cfg_
-
 /*
-** Includes
+** CPU1 - NOS3
 */
+
+#ifndef _cpu1_device_cfg_
+#define _cpu1_device_cfg_
+
+/* Note: NOS3 uart requires matching handle and bus number */
 
 #define EPS_DEVICE_STRING  "spi_0"            /**< \brief EPS device file */
 
-#endif
+#endif /* _cpu1_device_cfg_ */

@@ -6,7 +6,7 @@ INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
-export CFS_APP_PATH = components
+export CFS_APP_PATH = ../components
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
@@ -27,7 +27,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all fsw fsw-prep sim sim-prep clean clean-fsw clean-sim launch stop 
+LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim gsw launch log real-clean stop
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -79,8 +79,18 @@ clean-sim:
 #
 # Script Calls
 #
+gsw:
+	./gsw/scripts/gsw.sh
+
 launch:
 	./gsw/scripts/launch.sh
+
+log:
+	./gsw/scripts/log.sh
+
+real-clean:
+	$(MAKE) clean
+	./gsw/scripts/real_clean.sh
 
 stop:
 	./gsw/scripts/stop.sh

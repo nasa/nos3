@@ -30,45 +30,24 @@
 #include "sch_tbldefs.h"
 
 #include "cfe_msgids.h"
+#include "cf_msgids.h"
 #include "ci_msgids.h"
-#include "to_msgids.h"
-//#include "ds_msgids.h"
-//#include "fm_msgids.h"
-#include "hk_msgids.h"
-#include "hs_msgids.h"
+#include "ds_msgids.h"
+#include "fm_msgids.h"
+//#include "hk_msgids.h"
+//#include "hs_msgids.h"
 #include "lc_msgids.h"
 #include "sc_msgids.h"
 #include "sch_msgids.h"
+#include "to_msgids.h"
 
 /*
 ** Component Include Files
 */
-
-/*************************************************************************
-**
-** Macro definitions
-**
-**************************************************************************/
-
-/*
-** (none)
-*/
-
-/*************************************************************************
-**
-** Type definitions
-**
-**************************************************************************/
-
-/*
-** (none)
-*/
-
-/*************************************************************************
-**
-** Exported data
-**
-**************************************************************************/
+#include "cam_msgids.h"
+#include "generic_reaction_wheel_msgids.h"
+#include "nav_msgids.h"
+#include "sample_app_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -112,11 +91,9 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
 /*{ { CFE_MAKE_BIG16(CS_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #7 - Data Store HK Request         */
-/*{ { CFE_MAKE_BIG16(DS_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(DS_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #8 - File Manager HK Request       */
-/*{ { CFE_MAKE_BIG16(FM_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(FM_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #9 - Housekeeping HK Request       */
 /*{ { CFE_MAKE_BIG16(HK_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
@@ -125,8 +102,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
 /*{ { CFE_MAKE_BIG16(HS_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #11 - Limit Checker HK Request     */
-/*{ { CFE_MAKE_BIG16(LC_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(LC_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #12 - Memory Dwell HK Request      */
 /*{ { CFE_MAKE_BIG16(MD_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
@@ -134,8 +110,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
 /*{ { CFE_MAKE_BIG16(MM_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #14 - Stored Command HK Request    */
-/*{ { CFE_MAKE_BIG16(SC_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(SC_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #15 - Scheduler HK Request         */
   { { CFE_MAKE_BIG16(SCH_SEND_HK_MID), CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
 
@@ -158,21 +133,19 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
 /*{ { CFE_MAKE_BIG16(CS_BACKGROUND_CYCLE_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #21 - SC 1 Hz Wakeup                    */
-/*{ { CFE_MAKE_BIG16(SC_1HZ_WAKEUP_MID),        CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(SC_1HZ_WAKEUP_MID),        CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #22 - LC Sample Action Points           */
-/*{ { CFE_MAKE_BIG16(LC_SAMPLE_AP_MID),         CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0005), 0x0000, LC_ALL_ACTIONPOINTS, 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(LC_SAMPLE_AP_MID),         CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0005), 0x0000, LC_ALL_ACTIONPOINTS, 0x0000 } },
     /* command ID #23 - DS 1 HZ Wakeup                    */
 /*{ { CFE_MAKE_BIG16(DS_1HZ_WAKEUP_MID),        CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #24 - MD Wakeup                         */
 /*{ { CFE_MAKE_BIG16(MD_WAKEUP_MID),            CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #25 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #26 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #25 - CF Wakeup */
+  { { CFE_MAKE_BIG16(CF_WAKE_UP_REQ_CMD_MID),   CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
+    /* command ID #26 - CF HK Request */
+  { { CFE_MAKE_BIG16(CF_SEND_HK_MID),           CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #27 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #28 */
@@ -184,11 +157,9 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   **  Mission Defined Messages
   */
     /* command ID #30 - Command Ingest HK Request Example */
-/*{ { CFE_MAKE_BIG16(CI_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(CI_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #31 - Telemetry Output HK Request Example */
-/*{ { CFE_MAKE_BIG16(TO_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(TO_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #32 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #33 */
@@ -206,8 +177,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #39 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
   
-    /* command ID #40 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #40 - CAM HK */
+  { { CFE_MAKE_BIG16(CAM_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #41 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #42 */
@@ -216,8 +187,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #44 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #45 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #45 - RW HK */
+  { { CFE_MAKE_BIG16(GENERIC_RW_APP_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0200) } },
     /* command ID #46 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #47 */
@@ -227,8 +198,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #49 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
-    /* command ID #50 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #50 - GPS HK */
+  { { CFE_MAKE_BIG16(NAV_CMD_REQ_NAV_SCH_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #51 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #52 */
@@ -237,8 +208,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #54 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #55 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #55 - Sample HK */
+  { { CFE_MAKE_BIG16(SAMPLE_APP_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #56 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #57 */
