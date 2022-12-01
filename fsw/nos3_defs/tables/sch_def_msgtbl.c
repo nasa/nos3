@@ -47,7 +47,7 @@
 #include "cam_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
-#include "sample_app_msgids.h"
+#include "sample_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -209,7 +209,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #54 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
     /* command ID #55 - Sample HK */
-  { { CFE_MAKE_BIG16(SAMPLE_APP_SEND_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
+  { { CFE_MAKE_BIG16(SAMPLE_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
     /* command ID #56 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #57 */
