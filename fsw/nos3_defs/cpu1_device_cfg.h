@@ -27,6 +27,15 @@
 
 /* Note: NOS3 uart requires matching handle and bus number */
 
-#define EPS_DEVICE_STRING  "spi_0"            /**< \brief EPS device file */
+/*
+** SAMPLE Configuration
+*/
+#define SAMPLE_CFG
+#define SAMPLE_CFG_STRING           "/dev/usart_29"
+#define SAMPLE_CFG_HANDLE           29 
+#define SAMPLE_CFG_BAUDRATE_HZ      115200
+#define SAMPLE_CFG_MS_TIMEOUT       250
+#define SAMPLE_CFG_DEBUG
+
 
 #endif /* _cpu1_device_cfg_ */
