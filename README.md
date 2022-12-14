@@ -45,7 +45,6 @@ It is recommended to share the nos3 repository into the virtual machine (e.g. `/
 	- /cfg - 42 configuration files and NOS3 top level configuration files
 	- /nos_time_driver - time syncronization for all components
 	- /sim_common - common files used by component simulators including the files that define the simulator plugin architecture
-	- /sim_server - NOS Engine Server config and build files
 	- /sim_terminal - terminal for testing on NOS Engine busses
 	- /truth_42_sim - interface between 42 and COSMOS to provide dynamics truth data to COSMOS
 

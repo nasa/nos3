@@ -25,17 +25,23 @@
 #ifndef _cpu1_device_cfg_
 #define _cpu1_device_cfg_
 
+/*
+** Note: These includes are required for HWLIB
+*/
+#include "cfe.h"
+#include "osapi.h"
+
 /* Note: NOS3 uart requires matching handle and bus number */
 
 /*
 ** SAMPLE Configuration
 */
 #define SAMPLE_CFG
-#define SAMPLE_CFG_STRING           "/dev/usart_29"
+#define SAMPLE_CFG_STRING           "usart_29"
 #define SAMPLE_CFG_HANDLE           29 
 #define SAMPLE_CFG_BAUDRATE_HZ      115200
-#define SAMPLE_CFG_MS_TIMEOUT       250
-#define SAMPLE_CFG_DEBUG
+#define SAMPLE_CFG_MS_TIMEOUT       50            /* Max 255 */
+//#define SAMPLE_CFG_DEBUG
 
 
 #endif /* _cpu1_device_cfg_ */
