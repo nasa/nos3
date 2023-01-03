@@ -30,6 +30,7 @@ SET(OSAL_SYSTEM_OSTYPE      "nos")
 
 # This adds the "-m32" flag to all compile commands
 SET(CMAKE_C_FLAGS_INIT "-m32" CACHE STRING "C Flags required by platform")
+#SET(CMAKE_SHARED_LINKER_FLAGS "-pg")
 
 # Build Specific
 add_definitions(-DBYTE_ORDER_LE)
