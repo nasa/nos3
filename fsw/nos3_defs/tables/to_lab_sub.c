@@ -46,7 +46,7 @@
 #include "cam_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
-#include "sample_app_msgids.h"
+#include "sample_msgids.h"
 
 TO_LAB_Subs_t TO_LAB_Subs =
 {
@@ -56,7 +56,6 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(TO_LAB_HK_TLM_MID), {0, 0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(TO_LAB_DATA_TYPES_MID), {0, 0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(CI_LAB_HK_TLM_MID), {0, 0}, 4},
-        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_APP_HK_TLM_MID), {0, 0}, 4},
 
         /* Add these if needed */
         {CFE_SB_MSGID_WRAP_VALUE(FM_HK_TLM_MID), {0,0}, 4},
@@ -83,9 +82,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CAM_EXP_TLM_MID),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NAV_SEND_HK_TLM),              {0,0},  32},
-        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_APP_HK_TLM_MID),        {0,0},  32},
-        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_APP_SEND_DEV_HK_MID),   {0,0},  32},
-        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_APP_SEND_DEV_DATA_MID), {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_DEVICE_TLM_MID),        {0,0},  32},
 
     }
 };
