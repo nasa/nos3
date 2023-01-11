@@ -114,6 +114,7 @@ SET(APPLICATION_LIST
     #
         arducam
         generic_reaction_wheel
+	generic_torquer
         novatel_oem615
         sample
 )
