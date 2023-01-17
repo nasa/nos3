@@ -161,5 +161,28 @@
                 </data-provider>
             </hardware-model>
         </simulator>
+        <simulator>
+            <name>generic-fss-sim</name>
+            <active>true</active>
+            <library>libgeneric_fss_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_FSS</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>fss-command</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_28</bus-name>
+                        <node-port>28</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERIC_FSS_42_PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4279</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
     </simulators>
 </nos3-configuration>

@@ -70,6 +70,7 @@ extern "C" {
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
+#include "generic_fss_msgids.h"
 
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
@@ -129,8 +130,8 @@ TO_ConfigTable_t to_ConfigTable =
        {NAV_SEND_HK_TLM,              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_HK_TLM_MID,            {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_DEVICE_TLM_MID,        {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
+       {GENERIC_FSS_HK_TLM_MID,       {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {GENERIC_FSS_DEVICE_TLM_MID,   {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        
        /* 40 - 49 */
