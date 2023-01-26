@@ -293,7 +293,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 020 */
     {
-      /* .MessageID = */ SAMPLE_APP_HK_TLM_MID,
+      /* .MessageID = */ SAMPLE_HK_TLM_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
@@ -305,7 +305,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 021 */
     {
-      /* .MessageID = */ SAMPLE_APP_SEND_DEV_HK_MID,
+      /* .MessageID = */ SAMPLE_DEVICE_TLM_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
@@ -317,11 +317,11 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 022 */
     {
-      /* .MessageID = */ SAMPLE_APP_SEND_DEV_DATA_MID,
+      /* .MessageID = */ DS_UNUSED,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
-        { FILE_SAMPLE_PKTS,  DS_BY_COUNT, 1, 1, 0 },
+        { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED },
         { DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED }
