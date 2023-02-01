@@ -55,6 +55,7 @@ gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-sim
 gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
 gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
+gnome-terminal --tab --title='CSS Sim' -- $SIM_BIN/nos3-generic-css-simulator
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos

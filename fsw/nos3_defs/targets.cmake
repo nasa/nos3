@@ -116,6 +116,7 @@ SET(APPLICATION_LIST
         generic_reaction_wheel
         novatel_oem615
         sample
+        generic_css
 )
 
 # Create Application Platform Include List

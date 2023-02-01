@@ -70,6 +70,7 @@ extern "C" {
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
+#include "generic_css_msgids.h"
 
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
