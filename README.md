@@ -7,9 +7,9 @@ The best source of documentation can be found at [the wiki](https://github.com/n
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
-* [Git 1.8+](https://git-scm.com/)
-* [Vagrant 2.2.3+](https://www.vagrantup.com/)
-* [VirtualBox 6.1+](https://www.virtualbox.org/)
+* [Git 2.36+](https://git-scm.com/)
+* [Vagrant 2.3.4+](https://www.vagrantup.com/)
+* [VirtualBox 7.0+](https://www.virtualbox.org/)
 
 ### Installing
 1. Clone the repository `git clone https://github.com/nasa/nos3.git`
@@ -21,8 +21,10 @@ Each of the applications listed below are required prior to performing the insta
 6. Try building and running following the instructions below
 
 ### Getting started
-It is recommended to share the nos3 repository into the virtual machine (e.g. `/home/nos3/Desktop/github-nos3`)
-1. Open a terminal (to `/home/nos3/Desktop/github-nos3`)
+By default the nos3 repository is shared into the virtual machine at `/home/nos3/Desktop/github-nos3`
+1. Open a terminal
+2. Navigate to the nos3 repository
+  - `cd /home/nos3/Desktop/github-nos3`
 2. To build use the `make` command from the nos3 repo
 3. To run nos3 use the `make launch` command from the nos3 repo
 4. To halt nos3 use the `make stop` command from the nos3 repo
