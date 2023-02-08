@@ -51,6 +51,7 @@ gnome-terminal --tab --title="NOS Engine Server" -- /usr/bin/nos_engine_server_s
 gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos-time-driver
 gnome-terminal --tab --title="NOS Terminal" -- $SIM_BIN/nos3-simulator-terminal
 gnome-terminal --tab --title='CAM Sim' -- $SIM_BIN/nos3-cam-simulator
+gnome-terminal --tab --title='EPS Sim' -- $SIM_BIN/nos3-generic-eps-simulator
 gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
 gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
 gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
