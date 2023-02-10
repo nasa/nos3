@@ -24,6 +24,7 @@
 */
 #include "cam_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_torquer_app_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 

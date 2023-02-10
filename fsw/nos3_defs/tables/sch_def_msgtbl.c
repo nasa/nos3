@@ -46,6 +46,7 @@
 */
 #include "cam_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_torquer_app_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 
@@ -220,7 +221,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
     /* command ID #60 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(GENERIC_TORQUER_APP_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0200) } },
     /* command ID #61 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #62 */
