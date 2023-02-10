@@ -12,6 +12,8 @@ Vagrant.configure("2") do |config|
         owner: 'root', group:'vboxsf', automount:'true', 
         mount_options: ["dmode=0770", "fmode=0770"]
 
+    config.vm.network "private_network", ip: "192.168.42.100"
+
     ### General configuration
     config.vm.provider "virtualbox" do |vbox|
         vbox.name = "nos3_1.6.0"
