@@ -85,6 +85,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(NAV_SEND_HK_TLM),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_DEVICE_TLM_MID),        {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_HK_TLM_MID),    {0,0},  32},
 
     }
 };

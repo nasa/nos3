@@ -190,8 +190,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
     /* command ID #45 - RW HK */
   { { CFE_MAKE_BIG16(GENERIC_RW_APP_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0200) } },
-    /* command ID #46 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #46 - CSS HK */
+  { { CFE_MAKE_BIG16(GENERIC_CSS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0200) } },
     /* command ID #47 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #48 */
