@@ -423,8 +423,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
 
   /* slot #45 - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  5,  1, 60, SCH_GROUP_CFS_HK },  /* FSS HK Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_CFS_HK },  /* FSS Data Request */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
