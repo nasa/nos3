@@ -201,7 +201,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   /* slot #15 - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 45, SCH_GROUP_NONE },   /* RW HK Request */         
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 46, SCH_GROUP_NONE },   /* CSS HK Request */                                         
+  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -569,8 +569,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
 
   /* slot #65 - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  1, 70, SCH_GROUP_NONE },  /* CSS HK Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        

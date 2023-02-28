@@ -113,10 +113,10 @@ SET(APPLICATION_LIST
     # Components
     #
         arducam
+        generic_css
         generic_reaction_wheel
         novatel_oem615
         sample
-        generic_css
 )
 
 # Create Application Platform Include List
