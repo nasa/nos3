@@ -44,6 +44,7 @@
 ** Component Include Files
 */
 #include "cam_msgids.h"
+#include "generic_css_msgids.h"
 #include "generic_fss_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
@@ -81,6 +82,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
 
         {CFE_SB_MSGID_WRAP_VALUE(CAM_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(CAM_EXP_TLM_MID),              {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_HK_TLM_MID),       {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NAV_SEND_HK_TLM),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},

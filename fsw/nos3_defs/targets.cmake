@@ -113,6 +113,7 @@ SET(APPLICATION_LIST
     # Components
     #
         arducam
+        generic_css
         generic_fss
         generic_reaction_wheel
         novatel_oem615
