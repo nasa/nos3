@@ -46,6 +46,7 @@
 */
 #include "cam_msgids.h"
 #include "generic_css_msgids.h"
+#include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
@@ -231,8 +232,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #64 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #65 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #65 - EPS HK */
+  { { CFE_MAKE_BIG16(GENERIC_EPS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #66 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #67 */
