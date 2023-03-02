@@ -247,6 +247,34 @@
             </hardware-model>
         </simulator>
         <simulator>
+            <name>generic_torquer_sim</name>
+            <active>true</active>
+            <library>libgeneric_torquer_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_TORQUER</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>torquer-command</node-name>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <command-port>4279</command-port>
+                    <max-connection-attempts>10</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                </data-provider>
+                <params>
+                    <num-mtbs>3</num-mtbs>
+                <!-- Parameters from 42 file -->
+                    <!-- MTB Saturation (A-m^2) -->
+                    <max-trq-mtb-0>1.42</max-trq-mtb-0>
+                    <max-trq-mtb-1>1.42</max-trq-mtb-1>
+                    <max-trq-mtb-2>1.42</max-trq-mtb-2>
+                </params>
+            </hardware-model>
+        </simulator>
+        <simulator>
             <name>truth42sim</name>
             <active>true</active>
             <library>libtruth_42_sim.so</library>

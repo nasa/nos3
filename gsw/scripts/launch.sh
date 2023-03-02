@@ -57,6 +57,7 @@ gnome-terminal --tab --title="FSS Sim" -- $SIM_BIN/nos3-single-simulator generic
 gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
 gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
 gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
+gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simulator
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
 
 echo "COSMOS Ground Station..."

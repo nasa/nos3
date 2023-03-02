@@ -71,6 +71,7 @@ extern "C" {
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 
@@ -130,6 +131,7 @@ TO_ConfigTable_t to_ConfigTable =
        {CAM_EXP_TLM_MID,              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {GENERIC_EPS_HK_TLM_MID,       {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {GENERIC_RW_APP_HK_TLM_MID,    {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {GENERIC_TORQUER_HK_TLM_MID,   {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {NAV_SEND_HK_TLM,              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_HK_TLM_MID,            {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_DEVICE_TLM_MID,        {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},

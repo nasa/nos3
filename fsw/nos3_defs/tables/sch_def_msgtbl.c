@@ -49,6 +49,7 @@
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 
@@ -227,7 +228,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #61 - FSS Data */
   { { CFE_MAKE_BIG16(GENERIC_FSS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0100) } },
     /* command ID #62 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(GENERIC_TORQUER_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #63 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #64 */
