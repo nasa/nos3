@@ -68,7 +68,7 @@ extern "C" {
 */
 #include "cam_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
-#include "generic_torquer_app_msgids.h"
+#include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 
@@ -127,10 +127,10 @@ TO_ConfigTable_t to_ConfigTable =
        {CAM_HK_TLM_MID,               {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {CAM_EXP_TLM_MID,              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {GENERIC_RW_APP_HK_TLM_MID,    {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {GENERIC_TORQUER_HK_TLM_MID,   {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {NAV_SEND_HK_TLM,              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_HK_TLM_MID,            {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {SAMPLE_DEVICE_TLM_MID,        {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
-       {GENERIC_TORQUER_APP_HK_TLM_MID, {0,0}, 32, 0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        
