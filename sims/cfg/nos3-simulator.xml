@@ -33,15 +33,29 @@
             <library>libsim_terminal.so</library>
             <hardware-model>
                 <type>SimTerminal</type>
-                <startup-commands>
-                    <!-- <command>SET SIMBUS can_0</command> -->
-                    <!-- <command>SET SIMNODE 20</command> -->
-                </startup-commands>
-                <sim-commanded>sample-sim-command-node</sim-commanded>
-                <start-bus>command</start-bus>
-                <term-node-name>terminal</term-node-name>
+                <other-nos-connections>
+                    <!-- <nos-connection>
+                        <name>sc1</name>
+                        <connection-string>tcp://10.10.10.101:12001</connection-string>
+                    </nos-connection>
+                    <nos-connection>
+                        <name>sc2</name>
+                        <connection-string>tcp://10.10.10.102:12001</connection-string>
+                    </nos-connection> -->
+                </other-nos-connections>
+                <bus>
+                    <name>command</name>
+                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                </bus>
+                <terminal-node-name>SimTerm</terminal-node-name>
+                <other-node-name>sample-command</other-node-name>
                 <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
                 <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <startup-commands>
+                <!--    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMBUSTYPE CAN</command>
+                    <command>SET SIMNODE 20</command> -->
+                </startup-commands>
             </hardware-model>
         </simulator>
         <simulator>
@@ -53,7 +67,7 @@
                 <connections>
                     <connection><type>command</type>
                         <bus-name>command</bus-name>
-                        <node-name>sample-sim-command-node</node-name>
+                        <node-name>sample-command</node-name>
                     </connection>
                     <connection><type>usart</type>
                         <bus-name>usart_29</bus-name>
