@@ -10,7 +10,7 @@
         <absolute-start-time>814048200.0</absolute-start-time>
         <sim-microseconds-per-tick>10000</sim-microseconds-per-tick>
 		<real-microseconds-per-tick>10000</real-microseconds-per-tick>
-        <nos-connection-string>tcp://127.0.0.1:12001</nos-connection-string>
+        <nos-connection-string>tcp://0.0.0.0:12001</nos-connection-string>
     </common>
 
     <simulators>
@@ -23,6 +23,7 @@
                 <connections>
                     <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
                     <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
+                    <!-- <connection><type>time</type><nos-connection-string-override>tcp://192.168.42.101:12001</nos-connection-string-override><bus-name>command</bus-name><node-name>time-driver</node-name></connection> -->
                 </connections>
             </hardware-model>
         </simulator>
@@ -32,15 +33,29 @@
             <library>libsim_terminal.so</library>
             <hardware-model>
                 <type>SimTerminal</type>
-                <startup-commands>
-                    <!-- <command>SET SIMBUS can_0</command> -->
-                    <!-- <command>SET SIMNODE 20</command> -->
-                </startup-commands>
-                <sim-commanded>sample-sim-command-node</sim-commanded>
-                <start-bus>command</start-bus>
-                <term-node-name>terminal</term-node-name>
+                <other-nos-connections>
+                    <!-- <nos-connection>
+                        <name>sc1</name>
+                        <connection-string>tcp://10.10.10.101:12001</connection-string>
+                    </nos-connection>
+                    <nos-connection>
+                        <name>sc2</name>
+                        <connection-string>tcp://10.10.10.102:12001</connection-string>
+                    </nos-connection> -->
+                </other-nos-connections>
+                <bus>
+                    <name>command</name>
+                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                </bus>
+                <terminal-node-name>SimTerm</terminal-node-name>
+                <other-node-name>sample-command</other-node-name>
                 <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
                 <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <startup-commands>
+                <!--    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMBUSTYPE CAN</command>
+                    <command>SET SIMNODE 20</command> -->
+                </startup-commands>
             </hardware-model>
         </simulator>
         <simulator>
@@ -52,7 +67,7 @@
                 <connections>
                     <connection><type>command</type>
                         <bus-name>command</bus-name>
-                        <node-name>sample-sim-command-node</node-name>
+                        <node-name>sample-command</node-name>
                     </connection>
                     <connection><type>usart</type>
                         <bus-name>usart_29</bus-name>
@@ -143,7 +158,7 @@
                         <solar-array-temperature>80.0</solar-array-temperature>
                     </bus>
                     <switch-0>
-                        <node-name>sample-sim-command-node</node-name>
+                        <node-name>sample-command</node-name>
                         <voltage>1.23</voltage>
                         <current>4.56</current>
                         <hex-status>00AA</hex-status>
@@ -318,6 +333,27 @@
                     <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                 </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_mag_sim</name>
+            <active>true</active>
+            <library>libgeneric_mag_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_MAG</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>mag-command</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_7</bus-name>
+                        <node-port>7</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_MAG_PROVIDER</type>
+                </data-provider>
             </hardware-model>
         </simulator>
     </simulators>
