@@ -116,6 +116,7 @@ SET(APPLICATION_LIST
         generic_css
         generic_eps
         generic_fss
+        generic_mag
         generic_reaction_wheel
 	generic_torquer
         novatel_oem615
