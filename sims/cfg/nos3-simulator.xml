@@ -335,5 +335,26 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+        <simulator>
+            <name>generic_imu_sim</name>
+            <active>true</active>
+            <library>libgeneric_imu_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_IMU</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>imu-command</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_5</bus-name>
+                        <node-port>5</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_IMU_PROVIDER</type>
+                </data-provider>
+            </hardware-model>
+        </simulator>
     </simulators>
 </nos3-configuration>
