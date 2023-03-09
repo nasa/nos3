@@ -48,6 +48,7 @@
 #include "generic_css_msgids.h"
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
+#include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
@@ -275,10 +276,10 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #84 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #85 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #86 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #85 - Radio HK */
+  { { CFE_MAKE_BIG16(GENERIC_RADIO_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #86 - Radio Data */
+  { { CFE_MAKE_BIG16(GENERIC_RADIO_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0100) } },
     /* command ID #87 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #88 */

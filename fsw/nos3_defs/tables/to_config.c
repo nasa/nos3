@@ -70,6 +70,7 @@ extern "C" {
 #include "generic_css_msgids.h"
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
+#include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
@@ -141,8 +142,8 @@ TO_ConfigTable_t to_ConfigTable =
        /* 40 - 49 */
        {GENERIC_CSS_HK_TLM_MID,       {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {GENERIC_CSS_DEVICE_TLM_MID,   {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
+       {GENERIC_RADIO_HK_TLM_MID,     {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {GENERIC_RADIO_DEVICE_TLM_MID, {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
        {TO_UNUSED_ENTRY,              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
