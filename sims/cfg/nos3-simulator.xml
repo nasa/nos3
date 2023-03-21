@@ -342,13 +342,34 @@
             <hardware-model>
                 <type>GENERIC_RADIO</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
-                        <node-name>radio-command</node-name>
+                        <node-name>radio-sim-command-node</node-name>
                     </connection>
-                    <connection><type>usart</type>
-                        <bus-name>usart_6</bus-name>
-                        <node-port>6</node-port>
+                    <connection>
+                        <name>fsw</name>
+                        <ip>0.0.0.0</ip>
+                        <ci-port>5010</ci-port>
+                        <to-port>5011</to-port>
+                        <radio-port>5015</radio-port>
+                    </connection>
+                    <connection>
+                        <name>radio</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>5014</cmd-port>
+                    </connection>
+                    <connection>
+                        <name>gsw</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>6010</cmd-port>
+                        <tlm-port>6011</tlm-port>
+                    </connection>
+                    <connection>
+                        <name>prox</name>
+                        <ip>0.0.0.0</ip>
+                        <fwd-port>7010</fdw-port>
+                        <rcv-port>7011</rcv-port>
                     </connection>
                 </connections>
                 <data-provider>

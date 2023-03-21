@@ -55,9 +55,9 @@ gnome-terminal --tab --title='CSS Sim' -- $SIM_BIN/nos3-generic-css-simulator
 gnome-terminal --tab --title='EPS Sim' -- $SIM_BIN/nos3-generic-eps-simulator
 gnome-terminal --tab --title="FSS Sim" -- $SIM_BIN/nos3-single-simulator generic-fss-sim
 gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
+gnome-terminal --tab --title='Radio Sim' -- $SIM_BIN/nos3-generic-radio-simulator
 gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
 gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
-gnome-terminal --tab --title='Radio Sim' -- $SIM_BIN/nos3-generic-radio-simulator
 gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simulator
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
 
