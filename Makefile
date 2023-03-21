@@ -27,7 +27,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim gsw launch log real-clean stop
+LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim gsw launch log real-clean stop sc-launch
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -91,6 +91,9 @@ log:
 real-clean:
 	$(MAKE) clean
 	./gsw/scripts/real_clean.sh
+
+sc-launch:
+	./gsw/scripts/sc_launch.sh
 
 stop:
 	./gsw/scripts/stop.sh
