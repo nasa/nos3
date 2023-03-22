@@ -22,8 +22,25 @@
                 <type>TimeDriver</type>
                 <connections>
                     <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
-                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
-                    <!-- <connection><type>time</type><nos-connection-string-override>tcp://192.168.42.101:12001</nos-connection-string-override><bus-name>command</bus-name><node-name>time-driver</node-name></connection> -->
+                    <connection>
+                        <type>time</type>
+                        <bus-name>command</bus-name>
+                        <node-name>time-driver</node-name>
+                    </connection>
+                    <!--
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.101:12001</nos-connection-string-override>
+                        <bus-name>sc1-command</bus-name>
+                        <node-name>sc1-time-driver</node-name>
+                    </connection>
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.102:12001</nos-connection-string-override>
+                        <bus-name>sc2-command</bus-name>
+                        <node-name>sc2-time-driver</node-name>
+                    </connection>
+                    -->
                 </connections>
             </hardware-model>
         </simulator>
@@ -368,8 +385,10 @@
                     <connection>
                         <name>prox</name>
                         <ip>0.0.0.0</ip>
-                        <fwd-port>7010</fdw-port>
-                        <rcv-port>7011</rcv-port>
+                        <rcv-port>7012</rcv-port>
+                        <fsw-port>7010</fsw-port>
+                        <fwd-port>7011</fdw-port>
+                        <dest-port>7012</dest-port>
                     </connection>
                 </connections>
                 <data-provider>
