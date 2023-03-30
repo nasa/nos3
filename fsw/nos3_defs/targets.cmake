@@ -89,6 +89,7 @@ SET(APPLICATION_LIST
     # Libraries
     #
         cfs_lib
+        cryptolib
         hwlib
         io_lib
     #
