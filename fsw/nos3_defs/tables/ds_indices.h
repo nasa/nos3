@@ -26,6 +26,7 @@
 #include "generic_reaction_wheel_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
+#include "generic_css_msgids.h"
 
 /**********************
 *     DS Index IDs

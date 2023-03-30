@@ -45,7 +45,12 @@
 ** Component Include Files
 */
 #include "cam_msgids.h"
+#include "generic_css_msgids.h"
+#include "generic_eps_msgids.h"
+#include "generic_fss_msgids.h"
+#include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 
@@ -219,18 +224,18 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #59 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
-    /* command ID #60 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #61 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #60 - FSS HK */
+  { { CFE_MAKE_BIG16(GENERIC_FSS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #61 - FSS Data */
+  { { CFE_MAKE_BIG16(GENERIC_FSS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0100) } },
     /* command ID #62 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(GENERIC_TORQUER_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #63 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #64 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },  
-    /* command ID #65 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #65 - EPS HK */
+  { { CFE_MAKE_BIG16(GENERIC_EPS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #66 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #67 */
@@ -240,10 +245,10 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #69 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
-    /* command ID #70 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #71 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #70 - CSS HK */
+  { { CFE_MAKE_BIG16(GENERIC_CSS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #71 - CSS Data */
+  { { CFE_MAKE_BIG16(GENERIC_CSS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0100) } },
     /* command ID #72 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #73 */
@@ -271,8 +276,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #84 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #85 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #85 - Radio HK */
+  { { CFE_MAKE_BIG16(GENERIC_RADIO_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #86 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #87 */

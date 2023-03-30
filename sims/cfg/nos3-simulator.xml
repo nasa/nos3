@@ -10,7 +10,7 @@
         <absolute-start-time>814048200.0</absolute-start-time>
         <sim-microseconds-per-tick>10000</sim-microseconds-per-tick>
 		<real-microseconds-per-tick>10000</real-microseconds-per-tick>
-        <nos-connection-string>tcp://127.0.0.1:12001</nos-connection-string>
+        <nos-connection-string>tcp://0.0.0.0:12001</nos-connection-string>
     </common>
 
     <simulators>
@@ -22,7 +22,25 @@
                 <type>TimeDriver</type>
                 <connections>
                     <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
-                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
+                    <connection>
+                        <type>time</type>
+                        <bus-name>command</bus-name>
+                        <node-name>time-driver</node-name>
+                    </connection>
+                    <!--
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.101:12001</nos-connection-string-override>
+                        <bus-name>command</bus-name>
+                        <node-name>sc1-time-driver</node-name>
+                    </connection>
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.102:12001</nos-connection-string-override>
+                        <bus-name>command</bus-name>
+                        <node-name>sc2-time-driver</node-name>
+                    </connection>
+                    -->
                 </connections>
             </hardware-model>
         </simulator>
@@ -32,19 +50,33 @@
             <library>libsim_terminal.so</library>
             <hardware-model>
                 <type>SimTerminal</type>
-                <startup-commands>
-                    <!-- <command>SET SIMBUS can_0</command> -->
-                    <!-- <command>SET SIMNODE 20</command> -->
-                </startup-commands>
-                <sim-commanded>sample-sim-command-node</sim-commanded>
-                <start-bus>command</start-bus>
-                <term-node-name>terminal</term-node-name>
+                <other-nos-connections>
+                    <!-- <nos-connection>
+                        <name>sc1</name>
+                        <connection-string>tcp://10.10.10.101:12001</connection-string>
+                    </nos-connection>
+                    <nos-connection>
+                        <name>sc2</name>
+                        <connection-string>tcp://10.10.10.102:12001</connection-string>
+                    </nos-connection> -->
+                </other-nos-connections>
+                <bus>
+                    <name>command</name>
+                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                </bus>
+                <terminal-node-name>SimTerm</terminal-node-name>
+                <other-node-name>sample-command</other-node-name>
                 <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
                 <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <startup-commands>
+                <!--    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMBUSTYPE CAN</command>
+                    <command>SET SIMNODE 20</command> -->
+                </startup-commands>
             </hardware-model>
         </simulator>
         <simulator>
-        <name>sample_sim</name>
+            <name>sample_sim</name>
             <active>true</active>
             <library>libsample_sim.so</library>
             <hardware-model>
@@ -52,7 +84,7 @@
                 <connections>
                     <connection><type>command</type>
                         <bus-name>command</bus-name>
-                        <node-name>sample-sim-command-node</node-name>
+                        <node-name>sample-command</node-name>
                     </connection>
                     <connection><type>usart</type>
                         <bus-name>usart_29</bus-name>
@@ -114,6 +146,86 @@
             </hardware-model>
         </simulator>
         <simulator>
+            <name>generic_eps_sim</name>
+            <active>true</active>
+            <library>libgeneric_eps_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_EPS</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>eps-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>i2c</type>
+                        <bus-name>i2c_1</bus-name>
+                        <bus-address>0x2B</bus-address>
+                        <node-port>10</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_EPS_PROVIDER</type>
+                </data-provider>
+                <physical>
+                    <bus>
+                        <battery-voltage>24.0</battery-voltage>
+                        <battery-temperature>30.0</battery-temperature>
+                        <solar-array-voltage>32.0</solar-array-voltage>
+                        <solar-array-temperature>80.0</solar-array-temperature>
+                    </bus>
+                    <switch-0>
+                        <node-name>sample-command</node-name>
+                        <voltage>1.23</voltage>
+                        <current>4.56</current>
+                        <hex-status>00AA</hex-status>
+                    </switch-0>
+                    <switch-1>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-1>
+                    <switch-2>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-2>
+                    <switch-3>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-3>
+                    <switch-4>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-4>
+                    <switch-5>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-5>
+                    <switch-6>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>3.30</voltage>
+                        <current>0.25</current>
+                        <hex-status>0000</hex-status>
+                    </switch-6>
+                    <switch-7>
+                        <node-name>unknown-sim-command-node</node-name>
+                        <voltage>12.00</voltage>
+                        <current>1.23</current>
+                        <hex-status>00AA</hex-status>
+                    </switch-7>
+                </physical>
+            </hardware-model>
+        </simulator>
+        <simulator>
             <name>generic-reactionwheel-sim</name>
             <active>true</active>
             <library>libgeneric_rw_sim.so</library>
@@ -139,6 +251,62 @@
             </hardware-model>
         </simulator>
         <simulator>
+            <name>generic_css_sim</name>
+            <active>true</active>
+            <library>libgeneric_css_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_CSS</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>css-command</node-name>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERIC_CSS_42_PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4227</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <42-css-scale-factor>1.0</42-css-scale-factor>
+                </data-provider>   
+                <i2c>
+                    <address>64</address>
+                    <bus>i2c_2</bus>
+                </i2c>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_torquer_sim</name>
+            <active>true</active>
+            <library>libgeneric_torquer_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_TORQUER</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>torquer-command</node-name>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <command-port>4279</command-port>
+                    <max-connection-attempts>10</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                </data-provider>
+                <params>
+                    <num-mtbs>3</num-mtbs>
+                <!-- Parameters from 42 file -->
+                    <!-- MTB Saturation (A-m^2) -->
+                    <max-trq-mtb-0>1.42</max-trq-mtb-0>
+                    <max-trq-mtb-1>1.42</max-trq-mtb-1>
+                    <max-trq-mtb-2>1.42</max-trq-mtb-2>
+                </params>
+            </hardware-model>
+        </simulator>
+        <simulator>
             <name>truth42sim</name>
             <active>true</active>
             <library>libtruth_42_sim.so</library>
@@ -158,6 +326,73 @@
                     <max-connection-attempts>10</max-connection-attempts>
                     <orbit>0</orbit>
                     <spacecraft>0</spacecraft>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic-fss-sim</name>
+            <active>true</active>
+            <library>libgeneric_fss_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_FSS</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>fss-command</node-name></connection>
+                    <connection><type>spi</type>
+                        <bus-name>spi_1</bus-name>
+                        <chip-select>1</chip-select>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERIC_FSS_42_PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4279</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_radio_sim</name>
+            <active>true</active>
+            <library>libgeneric_radio_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_RADIO</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>radio-sim-command-node</node-name>
+                    </connection>
+                    <connection>
+                        <name>fsw</name>
+                        <ip>0.0.0.0</ip>
+                        <ci-port>5010</ci-port>
+                        <to-port>5011</to-port>
+                        <radio-port>5015</radio-port>
+                    </connection>
+                    <connection>
+                        <name>radio</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>5014</cmd-port>
+                    </connection>
+                    <connection>
+                        <name>gsw</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>6010</cmd-port>
+                        <tlm-port>6011</tlm-port>
+                    </connection>
+                    <connection>
+                        <name>prox</name>
+                        <ip>0.0.0.0</ip>
+                        <rcv-port>7012</rcv-port>
+                        <fsw-port>7010</fsw-port>
+                        <fwd-port>7011</fdw-port>
+                        <dest-port>7012</dest-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_RADIO_PROVIDER</type>
                 </data-provider>
             </hardware-model>
         </simulator>
