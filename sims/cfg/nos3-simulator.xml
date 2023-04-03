@@ -28,11 +28,16 @@
             </hardware-model>
         </simulator>
         <simulator>
-            <name>terminal</name>
+            <name>stdio-terminal</name>
             <active>true</active>
             <library>libsim_terminal.so</library>
             <hardware-model>
                 <type>SimTerminal</type>
+                <terminal>
+                    <type>STDIO</type> <!-- type = STDIO, UDP -->
+                    <udp-port>5555</udp-port>
+                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                </terminal>
                 <other-nos-connections>
                     <!-- <nos-connection>
                         <name>sc1</name>
@@ -47,7 +52,43 @@
                     <name>command</name>
                     <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
                 </bus>
-                <terminal-node-name>SimTerm</terminal-node-name>
+                <terminal-node-name>stdio-terminal</terminal-node-name>
+                <other-node-name>sample-command</other-node-name>
+                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <startup-commands>
+                <!--    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMBUSTYPE CAN</command>
+                    <command>SET SIMNODE 20</command> -->
+                </startup-commands>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>udp-terminal</name>
+            <active>true</active>
+            <library>libsim_terminal.so</library>
+            <hardware-model>
+                <type>SimTerminal</type>
+                <terminal>
+                    <type>UDP</type> <!-- type = STDIO, UDP -->
+                    <udp-port>5556</udp-port>
+                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                </terminal>
+                <other-nos-connections>
+                    <!-- <nos-connection>
+                        <name>sc1</name>
+                        <connection-string>tcp://10.10.10.101:12001</connection-string>
+                    </nos-connection>
+                    <nos-connection>
+                        <name>sc2</name>
+                        <connection-string>tcp://10.10.10.102:12001</connection-string>
+                    </nos-connection> -->
+                </other-nos-connections>
+                <bus>
+                    <name>command</name>
+                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                </bus>
+                <terminal-node-name>udp-terminal</terminal-node-name>
                 <other-node-name>sample-command</other-node-name>
                 <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
                 <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
