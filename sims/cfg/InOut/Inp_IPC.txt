@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>
-7                                       ! Number of Sockets
+10                                      ! Number of Sockets
 **********************************  IPC 0   *****************************
 OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
 0                                       ! AC.ID for ACS mode
@@ -98,6 +98,16 @@ TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE
 "FSS.42"                                ! File name for WRITE or READ
 SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
 localhost      4279                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+FALSE                                   ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC"                                    ! Prefix 0
+**********************************  GENERIC_IMU   *****************************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"IMU.42"                                ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+localhost      4280                     ! Server Host Name, Port 
 FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
 1                                       ! Number of TX prefixes
