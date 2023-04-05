@@ -117,7 +117,7 @@ SET(APPLICATION_LIST
         generic_eps
         generic_fss
         generic_reaction_wheel
-	generic_torquer
+        generic_torquer
         novatel_oem615
         sample
 )
@@ -129,12 +129,12 @@ ENDFOREACH(X)
 
 # NASA Operational Simulator for Small Satellites (NOS3) - Host Linux
 SET(TGT1_NAME cpu1)
-SET(TGT1_APPLIST ${APPLICATION_LIST})
+SET(TGT1_APPLIST ${APPLICATION_LIST} ci_lab to_lab)
 SET(TGT1_FILELIST cfe_es_startup.scr)
 SET(TGT1_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
 
-# USER Supplied
-#SET(TGT2_NAME cpu2)
-#SET(TGT2_APPLIST ${APPLICATION_LIST})
-#SET(TGT2_FILELIST cfe_es_startup.scr)
-#SET(TGT2_OSAL_SYSTEM_CONFIG cpu2_osconfig.h)
+# USER Supplied - Linux no NOS Engine
+SET(TGT2_NAME cpu2)
+SET(TGT2_APPLIST ${APPLICATION_LIST} ci_lab to_lab)
+SET(TGT2_FILELIST cfe_es_startup.scr)
+SET(TGT2_OSAL_SYSTEM_CONFIG cpu2_osconfig.h)
