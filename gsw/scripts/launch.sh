@@ -61,6 +61,11 @@ gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
 gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simulator
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
 
+echo "CryptoLib..."
+cd $BASE_DIR/components/cryptolib/build/
+cmake .. && make -j2
+gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
+
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
 export MISSION_NAME=$(echo "NOS3")
