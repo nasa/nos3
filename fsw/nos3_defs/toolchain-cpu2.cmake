@@ -29,7 +29,8 @@ SET(OSAL_SYSTEM_BSPNAME     "pc-linux")
 SET(OSAL_SYSTEM_OSTYPE      "posix")
 
 # This adds the "-m32" flag to all compile commands
-SET(CMAKE_C_FLAGS_INIT "-m32" CACHE STRING "C Flags required by platform")
+#SET(CMAKE_C_FLAGS_INIT "-m32" CACHE STRING "C Flags required by platform")
+SET(CMAKE_C_FLAGS_INIT "-fPIC" CACHE STRING "C Flags required by platform")
 #SET(CMAKE_SHARED_LINKER_FLAGS "-pg")
 
 # Build Specific
