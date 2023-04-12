@@ -22,8 +22,25 @@
                 <type>TimeDriver</type>
                 <connections>
                     <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
-                    <connection><type>time</type><bus-name>command</bus-name><node-name>time-driver</node-name></connection>
-                    <!-- <connection><type>time</type><nos-connection-string-override>tcp://192.168.42.101:12001</nos-connection-string-override><bus-name>command</bus-name><node-name>time-driver</node-name></connection> -->
+                    <connection>
+                        <type>time</type>
+                        <bus-name>command</bus-name>
+                        <node-name>time-driver</node-name>
+                    </connection>
+                    <!--
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.101:12001</nos-connection-string-override>
+                        <bus-name>command</bus-name>
+                        <node-name>sc1-time-driver</node-name>
+                    </connection>
+                    <connection>
+                        <type>time</type>
+                        <nos-connection-string-override>tcp://10.10.10.102:12001</nos-connection-string-override>
+                        <bus-name>command</bus-name>
+                        <node-name>sc2-time-driver</node-name>
+                    </connection>
+                    -->
                 </connections>
             </hardware-model>
         </simulator>
@@ -100,7 +117,7 @@
             </hardware-model>
         </simulator>
         <simulator>
-        <name>sample_sim</name>
+            <name>sample_sim</name>
             <active>true</active>
             <library>libsample_sim.so</library>
             <hardware-model>
@@ -374,6 +391,50 @@
                     <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                 </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_radio_sim</name>
+            <active>true</active>
+            <library>libgeneric_radio_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_RADIO</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>radio-sim-command-node</node-name>
+                    </connection>
+                    <connection>
+                        <name>fsw</name>
+                        <ip>0.0.0.0</ip>
+                        <ci-port>5010</ci-port>
+                        <to-port>5011</to-port>
+                        <radio-port>5015</radio-port>
+                    </connection>
+                    <connection>
+                        <name>radio</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>5014</cmd-port>
+                    </connection>
+                    <connection>
+                        <name>gsw</name>
+                        <ip>0.0.0.0</ip>
+                        <cmd-port>6010</cmd-port>
+                        <tlm-port>6011</tlm-port>
+                    </connection>
+                    <connection>
+                        <name>prox</name>
+                        <ip>0.0.0.0</ip>
+                        <rcv-port>7012</rcv-port>
+                        <fsw-port>7010</fsw-port>
+                        <fwd-port>7011</fdw-port>
+                        <dest-port>7012</dest-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_RADIO_PROVIDER</type>
+                </data-provider>
             </hardware-model>
         </simulator>
     </simulators>
