@@ -118,7 +118,7 @@ SET(APPLICATION_LIST
         generic_fss
         generic_reaction_wheel
         generic_radio
-	    generic_torquer
+        generic_torquer
         novatel_oem615
         sample
 )
