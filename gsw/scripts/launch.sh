@@ -62,6 +62,7 @@ gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simu
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
 
 echo "CryptoLib..."
+mkdir $BASE_DIR/components/cryptolib/build/
 cd $BASE_DIR/components/cryptolib/build/
 export CFLAGS="-m32"
 cmake ..  && make -j2
