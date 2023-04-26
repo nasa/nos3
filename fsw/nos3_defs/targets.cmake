@@ -116,6 +116,7 @@ SET(APPLICATION_LIST
         generic_css
         generic_eps
         generic_fss
+        generic_imu
         generic_reaction_wheel
         generic_radio
         generic_torquer
