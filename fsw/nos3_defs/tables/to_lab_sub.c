@@ -48,6 +48,7 @@
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
 #include "generic_imu_msgids.h"
+#include "generic_mag_msgids.h"
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
@@ -93,6 +94,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_FSS_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_IMU_HK_TLM_MID),       {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_IMU_DEVICE_TLM_MID),   {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_MAG_HK_TLM_MID),       {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_MAG_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
 	    {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},

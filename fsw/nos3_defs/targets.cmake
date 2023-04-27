@@ -117,6 +117,7 @@ SET(APPLICATION_LIST
         generic_eps
         generic_fss
         generic_imu
+        generic_mag
         generic_reaction_wheel
         generic_radio
         generic_torquer
