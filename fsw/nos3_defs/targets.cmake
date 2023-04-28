@@ -123,6 +123,7 @@ SET(APPLICATION_LIST
         generic_torquer
         novatel_oem615
         sample
+        generic_adcs
 )
 
 # Create Application Platform Include List
