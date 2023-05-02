@@ -658,8 +658,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #78 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
