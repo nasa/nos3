@@ -27,6 +27,7 @@
 #include "nav_msgids.h"
 #include "sample_msgids.h"
 #include "generic_css_msgids.h"
+#include "generic_mag_msgids.h"
 
 /**********************
 *     DS Index IDs

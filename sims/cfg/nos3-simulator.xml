@@ -45,11 +45,16 @@
             </hardware-model>
         </simulator>
         <simulator>
-            <name>terminal</name>
+            <name>stdio-terminal</name>
             <active>true</active>
             <library>libsim_terminal.so</library>
             <hardware-model>
                 <type>SimTerminal</type>
+                <terminal>
+                    <type>STDIO</type> <!-- type = STDIO, UDP -->
+                    <udp-port>5555</udp-port>
+                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                </terminal>
                 <other-nos-connections>
                     <!-- <nos-connection>
                         <name>sc1</name>
@@ -64,7 +69,43 @@
                     <name>command</name>
                     <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
                 </bus>
-                <terminal-node-name>SimTerm</terminal-node-name>
+                <terminal-node-name>stdio-terminal</terminal-node-name>
+                <other-node-name>sample-command</other-node-name>
+                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <startup-commands>
+                <!--    <command>SET SIMBUS can_0</command>
+                    <command>SET SIMBUSTYPE CAN</command>
+                    <command>SET SIMNODE 20</command> -->
+                </startup-commands>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>udp-terminal</name>
+            <active>true</active>
+            <library>libsim_terminal.so</library>
+            <hardware-model>
+                <type>SimTerminal</type>
+                <terminal>
+                    <type>UDP</type> <!-- type = STDIO, UDP -->
+                    <udp-port>5556</udp-port>
+                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                </terminal>
+                <other-nos-connections>
+                    <!-- <nos-connection>
+                        <name>sc1</name>
+                        <connection-string>tcp://10.10.10.101:12001</connection-string>
+                    </nos-connection>
+                    <nos-connection>
+                        <name>sc2</name>
+                        <connection-string>tcp://10.10.10.102:12001</connection-string>
+                    </nos-connection> -->
+                </other-nos-connections>
+                <bus>
+                    <name>command</name>
+                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                </bus>
+                <terminal-node-name>udp-terminal</terminal-node-name>
                 <other-node-name>sample-command</other-node-name>
                 <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
                 <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
@@ -393,6 +434,58 @@
                 </connections>
                 <data-provider>
                     <type>GENERIC_RADIO_PROVIDER</type>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_imu_sim</name>
+            <active>true</active>
+            <library>libgeneric_imu_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_IMU</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>imu-command</node-name>
+                    </connection>
+                    <connection><type>can</type>
+                        <bus-name>can_1</bus-name>
+                        <node-port>0</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_IMU_42_PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4280</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic_mag_sim</name>
+            <active>true</active>
+            <library>libgeneric_mag_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_MAG</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>mag-command</node-name>
+                    </connection>
+                    <connection><type>spi</type>
+                        <bus-name>spi_2</bus-name>
+                        <chip-select>2</chip-select>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_MAG_42_PROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4234</port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
                 </data-provider>
             </hardware-model>
         </simulator>
