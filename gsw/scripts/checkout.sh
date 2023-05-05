@@ -15,3 +15,8 @@ cd $SIM_BIN
 gnome-terminal --tab --title="NOS Engine Server" -- /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
 gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos3-single-simulator time
 gnome-terminal --tab --title="NOS Terminal" -- $SIM_BIN/nos3-single-simulator terminal
+
+# Rename for your simulator under test to allow checkout
+gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
+
+# It is assumed you'll build and launch the checkout manually
