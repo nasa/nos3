@@ -108,6 +108,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_AD_MID),          {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_GNC_MID),         {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_AC_MID),          {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_DO_MID),          {0,0},  32},
 
     }
 };
