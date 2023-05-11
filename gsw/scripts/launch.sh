@@ -70,6 +70,8 @@ cd $BASE_DIR/components/cryptolib/build/
 export CFLAGS="-m32"
 cmake ..  && make -j2
 gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
+#cmake .. -DDEBUG=1 && make -j2
+#gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
