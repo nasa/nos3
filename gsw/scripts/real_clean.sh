@@ -11,6 +11,11 @@ yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
 yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
 yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
 yes | rm -r $BASE_DIR/gsw/cosmos/outputs 2> /dev/null
+
+echo "Cleaning up Minicom log..."
+yes | rm $BASE_DIR/minicom.cap 2> /dev/null
+
+echo "Cleaning up CryptoLib build..."
 yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 
 exit 0
