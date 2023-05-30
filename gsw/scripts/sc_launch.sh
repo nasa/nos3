@@ -48,31 +48,18 @@ gnome-terminal --tab --title="42 Dynamic Simulator" -- /opt/nos3/42/42 NOS3InOut
 echo "Simulators..."
 cd $SIM_BIN
 gnome-terminal --tab --title="NOS Engine Server" -- /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
-gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos3-single-simulator time
-gnome-terminal --tab --title="NOS STDIO Terminal" -- $SIM_BIN/nos3-single-simulator stdio-terminal
-gnome-terminal --tab --title="NOS UDP Terminal" -- $SIM_BIN/nos3-single-simulator udp-terminal
+#gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos3-single-simulator time
+gnome-terminal --tab --title="NOS Terminal" -- $SIM_BIN/nos3-single-simulator terminal
 gnome-terminal --tab --title='CAM Sim' -- $SIM_BIN/nos3-cam-simulator
 gnome-terminal --tab --title='CSS Sim' -- $SIM_BIN/nos3-generic-css-simulator
 gnome-terminal --tab --title='EPS Sim' -- $SIM_BIN/nos3-generic-eps-simulator
 gnome-terminal --tab --title="FSS Sim" -- $SIM_BIN/nos3-single-simulator generic-fss-sim
 gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
-gnome-terminal --tab --title='IMU Sim' -- $SIM_BIN/nos3-generic-imu-simulator
-gnome-terminal --tab --title='MAG Sim' -- $SIM_BIN/nos3-generic-mag-simulator
 gnome-terminal --tab --title='Radio Sim' -- $SIM_BIN/nos3-generic-radio-simulator
 gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
 gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
 gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simulator
 gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
-
-echo "CryptoLib..."
-mkdir $BASE_DIR/components/cryptolib/build/
-cd $BASE_DIR/components/cryptolib/build/
-export CFLAGS="-m32"
-cmake ..  && make -j2
-gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
-# Note: Can keep open if desired after a new gnome-profile is manually created
-#cmake .. -DDEBUG=1 && make -j2
-#gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
@@ -85,5 +72,6 @@ sleep 5
 echo "Flight Software..."
 cd $FSW_BIN
 gnome-terminal --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
+
 # Note: Can keep open if desired after a new gnome-profile is manually created
 #gnome-terminal --window-with-profile=KeepOpen --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &

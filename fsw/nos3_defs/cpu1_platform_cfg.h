@@ -1826,7 +1826,7 @@
 **       Must be defined as an integer value that is greater than
 **       or equal to zero.
 */
-#define CFE_PLATFORM_ES_STARTUP_SYNC_POLL_MSEC       50
+#define CFE_PLATFORM_ES_STARTUP_SYNC_POLL_MSEC       100
 
 /** \cfeescfg CFE core application startup timeout
 **

@@ -5,16 +5,19 @@ Vagrant.configure("2") do |config|
     config.vm.box = "nos3/ubuntu"
     
     ### Specify version
-    config.vm.box_version = "0.0.0"
+    config.vm.box_version = "1.6.1"
     
     ### Share host NOS3 repository into VM
-    config.vm.synced_folder ".", "/home/nos3/Desktop/github-nos3"
+    config.vm.synced_folder ".", "/home/nos3/Desktop/github-nos3", 
+        owner: 'root', group:'vboxsf', automount:'true', 
+        mount_options: ["dmode=0770", "fmode=0770"]
 
     ### General configuration
     config.vm.provider "virtualbox" do |vbox|
-        vbox.name = "nos3_1.5.2"
+        vbox.name = "nos3_1.6.1"
         vbox.gui = true
-        #vbox.cpus = 2
-        #vbox.memory = "8192"
+        ### Enable additional configuration as needed
+        #vbox.cpus = 8
+        #vbox.memory = "16384"
     end
 end
