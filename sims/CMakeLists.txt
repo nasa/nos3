@@ -24,7 +24,7 @@ set(CXX_11 ON)
 		STRING(REGEX REPLACE "--std=c\\+\\+98" "" ITC_CXX_FLAGS ${ITC_CXX_FLAGS}) #Remove the C++98 Flag if it exists
 		endif(ITC_CXX_FLAGS)		
     set(ITC_CXX_FLAGS "${ITC_CXX_FLAGS} --std=c++11")    
-    set(CMAKE_CXX_FLAGS "-m32 -Wl,--disable-new-dtags -Werror -Wall -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
+    set(CMAKE_CXX_FLAGS "-m32 -Wl,--disable-new-dtags -Werror -Wall -Wextra -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
     set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
 endif(CXX_11)
 
