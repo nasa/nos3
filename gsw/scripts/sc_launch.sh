@@ -47,19 +47,24 @@ gnome-terminal --tab --title="42 Dynamic Simulator" -- /opt/nos3/42/42 NOS3InOut
 
 echo "Simulators..."
 cd $SIM_BIN
-gnome-terminal --tab --title="NOS Engine Server" -- /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
-#gnome-terminal --tab --title="NOS Time Driver" -- $SIM_BIN/nos3-single-simulator time
-gnome-terminal --tab --title="NOS Terminal" -- $SIM_BIN/nos3-single-simulator terminal
-gnome-terminal --tab --title='CAM Sim' -- $SIM_BIN/nos3-cam-simulator
-gnome-terminal --tab --title='CSS Sim' -- $SIM_BIN/nos3-generic-css-simulator
-gnome-terminal --tab --title='EPS Sim' -- $SIM_BIN/nos3-generic-eps-simulator
-gnome-terminal --tab --title="FSS Sim" -- $SIM_BIN/nos3-single-simulator generic-fss-sim
-gnome-terminal --tab --title='GPS Sim' -- $SIM_BIN/nos3-gps-simulator
-gnome-terminal --tab --title='Radio Sim' -- $SIM_BIN/nos3-generic-radio-simulator
-gnome-terminal --tab --title='RW Sim' -- $SIM_BIN/nos3-generic-reactionwheel-simulator
-gnome-terminal --tab --title='Sample Sim' -- $SIM_BIN/nos3-sample-simulator
-gnome-terminal --tab --title='Torquer Sim' -- $SIM_BIN/nos3-generic-torquer-simulator
-gnome-terminal --tab --title="42 Truth Sim" -- $SIM_BIN/nos3-single-simulator truth42sim
+gnome-terminal --tab --title="NOS Engine Server"  -- /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
+#gnome-terminal --tab --title="NOS Time Driver"    -- $SIM_BIN/nos3-single-simulator time
+#gnome-terminal --tab --title="NOS STDIO Terminal" -- $SIM_BIN/nos3-single-simulator stdio-terminal
+#gnome-terminal --tab --title="NOS UDP Terminal"   -- $SIM_BIN/nos3-single-simulator udp-terminal
+gnome-terminal --tab --title="42 Truth Sim"       -- $SIM_BIN/nos3-single-simulator truth42sim
+gnome-terminal --tab --title='CAM Sim'            -- $SIM_BIN/nos3-single-simulator camsim
+gnome-terminal --tab --title='CSS Sim'            -- $SIM_BIN/nos3-single-simulator generic_css_sim
+gnome-terminal --tab --title='EPS Sim'            -- $SIM_BIN/nos3-single-simulator generic_eps_sim
+gnome-terminal --tab --title="FSS Sim"            -- $SIM_BIN/nos3-single-simulator generic-fss-sim
+gnome-terminal --tab --title='IMU Sim'            -- $SIM_BIN/nos3-single-simulator generic_imu_sim
+gnome-terminal --tab --title='MAG Sim'            -- $SIM_BIN/nos3-single-simulator generic_mag_sim
+gnome-terminal --tab --title='Radio Sim'          -- $SIM_BIN/nos3-single-simulator generic_radio_sim
+gnome-terminal --tab --title='RW 0 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim0
+gnome-terminal --tab --title='RW 1 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim1
+gnome-terminal --tab --title='RW 2 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim2
+gnome-terminal --tab --title='Torquer Sim'        -- $SIM_BIN/nos3-single-simulator generic_torquer_sim
+gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator gps
+gnome-terminal --tab --title='Sample Sim'         -- $SIM_BIN/nos3-single-simulator sample_sim
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
