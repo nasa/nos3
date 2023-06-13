@@ -40,11 +40,9 @@ add_subdirectory(truth_42_sim)
 # Add Component Sims
 FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../components/*)
 FOREACH(_FILE ${_ALL_FILES})
-  IF(IS_DIRECTORY ${_FILE})
+  IF(EXISTS ${_FILE}/sim/CMakeLists.txt)
     get_filename_component(SIM_NAME ${_FILE} NAME)
-    IF((NOT SIM_NAME STREQUAL "template") AND (NOT SIM_NAME STREQUAL "cryptolib")) 
-      add_subdirectory(${_FILE}/sim ./${SIM_NAME})
-    ENDIF()
+    add_subdirectory(${_FILE}/sim ./${SIM_NAME})
   ENDIF()
 ENDFOREACH()
 

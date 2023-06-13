@@ -55,6 +55,7 @@
 #include "generic_torquer_msgids.h"
 #include "nav_msgids.h"
 #include "sample_msgids.h"
+#include "generic_adcs_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -289,20 +290,20 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #89 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
   
-    /* command ID #90 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #91 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #92 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #93 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #94 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #95 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #96 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #90 - ADCS ADAC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_ADAC_UPDATE_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #91 - ADCS DI */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0300) } },
+    /* command ID #92 - ADCS AD */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0400) } },
+    /* command ID #93 - ADCS GNC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0500) } },
+    /* command ID #94 - ADCS AC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0600) } },
+    /* command ID #94 - ADCS AC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0700) } },
+    /* command ID #96 - ADCS HK */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #97 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #98 */
