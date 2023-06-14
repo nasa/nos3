@@ -112,7 +112,6 @@ SET(APPLICATION_LIST
     #
     # Components
     #
-        arducam
         generic_css
         generic_eps
         generic_fss
@@ -121,7 +120,6 @@ SET(APPLICATION_LIST
         generic_reaction_wheel
         generic_radio
         generic_torquer
-        novatel_oem615
         sample
 )
 
