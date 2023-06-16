@@ -281,7 +281,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 019 */
     {
-      /* .MessageID = */ NAV_SEND_HK_TLM,
+      /* .MessageID = */ NOVATEL_OEM615_HK_TLM_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
