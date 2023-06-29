@@ -43,6 +43,7 @@
 /*
 ** Component Include Files
 */
+#include "cam_msgids.h"
 #include "generic_css_msgids.h"
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
@@ -51,6 +52,7 @@
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
+#include "nav_msgids.h"
 #include "sample_msgids.h"
 
 TO_LAB_Subs_t TO_LAB_Subs =
@@ -82,6 +84,9 @@ TO_LAB_Subs_t TO_LAB_Subs =
     #ifndef CFE_OMIT_DEPRECATED_6_7
         {CFE_SB_MSGID_WRAP_VALUE(CFE_ES_SHELL_TLM_MID), {0, 0}, 32},
     #endif
+
+        {CFE_SB_MSGID_WRAP_VALUE(CAM_HK_TLM_MID),               {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(CAM_EXP_TLM_MID),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_HK_TLM_MID),       {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_EPS_HK_TLM_MID),       {0,0},  32},
@@ -94,6 +99,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
 	    {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(NAV_SEND_HK_TLM),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_DEVICE_TLM_MID),        {0,0},  32},
 

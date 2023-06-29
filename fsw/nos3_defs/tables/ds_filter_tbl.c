@@ -245,7 +245,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 016 */
     {
-      /* .MessageID = */ DS_UNUSED,
+      /* .MessageID = */ CAM_HK_TLM_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
@@ -257,7 +257,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 017 */
     {
-      /* .MessageID = */ DS_UNUSED,
+      /* .MessageID = */ CAM_EXP_TLM_MID,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
@@ -281,7 +281,7 @@ DS_FilterTable_t DS_FilterTable =
     },
     /* Packet Index 019 */
     {
-      /* .MessageID = */ DS_UNUSED,
+      /* .MessageID = */ NAV_SEND_HK_TLM,
       /* .Filter    = */
       {
         /* File table index, filter type, N, X, O */
