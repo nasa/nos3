@@ -63,15 +63,15 @@ gnome-terminal --tab --title='RW 0 Sim'           -- $SIM_BIN/nos3-single-simula
 gnome-terminal --tab --title='RW 1 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim1
 gnome-terminal --tab --title='RW 2 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim2
 gnome-terminal --tab --title='Torquer Sim'        -- $SIM_BIN/nos3-single-simulator generic_torquer_sim
-gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator novatel_oem615_sim
+gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator gps
 gnome-terminal --tab --title='Sample Sim'         -- $SIM_BIN/nos3-single-simulator sample_sim
 
-echo "CryptoLib..."
-mkdir $BASE_DIR/components/cryptolib/build/
-cd $BASE_DIR/components/cryptolib/build/
-export CFLAGS="-m32"
-cmake ..  && make -j2
-gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
+#echo "CryptoLib..."
+#mkdir $BASE_DIR/components/cryptolib/build/
+#cd $BASE_DIR/components/cryptolib/build/
+#export CFLAGS="-m32"
+#cmake ..  && make -j2
+#gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
 # Note: Can keep open if desired after a new gnome-profile is manually created
 #cmake .. -DDEBUG=1 && make -j2
 #gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
