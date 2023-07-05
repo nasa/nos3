@@ -63,7 +63,7 @@ gnome-terminal --tab --title='RW 0 Sim'           -- $SIM_BIN/nos3-single-simula
 gnome-terminal --tab --title='RW 1 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim1
 gnome-terminal --tab --title='RW 2 Sim'           -- $SIM_BIN/nos3-single-simulator generic-reactionwheel-sim2
 gnome-terminal --tab --title='Torquer Sim'        -- $SIM_BIN/nos3-single-simulator generic_torquer_sim
-gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator novatel_oem615_sim
+gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator gps
 gnome-terminal --tab --title='Sample Sim'         -- $SIM_BIN/nos3-single-simulator sample_sim
 
 echo "COSMOS Ground Station..."
