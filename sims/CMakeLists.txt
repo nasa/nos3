@@ -24,7 +24,7 @@ set(CXX_11 ON)
 		STRING(REGEX REPLACE "--std=c\\+\\+98" "" ITC_CXX_FLAGS ${ITC_CXX_FLAGS}) #Remove the C++98 Flag if it exists
 		endif(ITC_CXX_FLAGS)		
     set(ITC_CXX_FLAGS "${ITC_CXX_FLAGS} --std=c++11")    
-    set(CMAKE_CXX_FLAGS "-m32 -Wl,--disable-new-dtags")
+    set(CMAKE_CXX_FLAGS "-m32 -Wl,--disable-new-dtags -Werror -Wall -Wextra -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
     set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
 endif(CXX_11)
 
@@ -40,11 +40,9 @@ add_subdirectory(truth_42_sim)
 # Add Component Sims
 FILE(GLOB _ALL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../components/*)
 FOREACH(_FILE ${_ALL_FILES})
-  IF(IS_DIRECTORY ${_FILE})
+  IF(EXISTS ${_FILE}/sim/CMakeLists.txt)
     get_filename_component(SIM_NAME ${_FILE} NAME)
-    IF(NOT SIM_NAME STREQUAL "template")
-      add_subdirectory(${_FILE}/sim ./${SIM_NAME})
-    ENDIF()
+    add_subdirectory(${_FILE}/sim ./${SIM_NAME})
   ENDIF()
 ENDFOREACH()
 

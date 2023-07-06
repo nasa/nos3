@@ -89,6 +89,7 @@ SET(APPLICATION_LIST
     # Libraries
     #
         cfs_lib
+        cryptolib
         hwlib
         io_lib
     #
@@ -123,6 +124,7 @@ SET(APPLICATION_LIST
         generic_torquer
         novatel_oem615
         sample
+        generic_adcs
 )
 
 # Create Application Platform Include List
