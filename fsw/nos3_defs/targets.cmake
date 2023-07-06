@@ -137,12 +137,12 @@ SET(MISSION_CPUNAMES cpu1)
 
 # NASA Operational Simulator for Small Satellites (NOS3) - Host Linux
 SET(cpu1_PROCESSORID 1)
-SET(cpu1_APPLIST ${MISSION_GLOBAL_APPLIST})
+SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
 SET(cpu1_FILELIST cfe_es_startup.scr)
-SET(cpu1_SYSTEM cpu1)
+SET(cpu1_SYSTEM i386-linux-gnu)
 
 # USER Supplied
 #SET(cpu2_PROCESSORID 2)
-#SET(cpu2_APPLIST ${MISSION_GLOBAL_APPLIST})
+#SET(cpu2_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
 #SET(cpu2_FILELIST cfe_es_startup.scr)
 #SET(cpu2_SYSTEM cpu2)

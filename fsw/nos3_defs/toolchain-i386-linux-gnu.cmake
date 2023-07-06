@@ -9,13 +9,8 @@ SET(CMAKE_SYSTEM_PROCESSOR      i386)
 # Specify the cross compiler executables
 # Typically these would be installed in a home directory or somewhere
 # in /opt.  However in this example the system compiler is used.
-if(DEFINED ENV{TARGET_CROSS})
-  SET(CMAKE_C_COMPILER            "$ENV{TARGET_CROSS}gcc")
-  SET(CMAKE_CXX_COMPILER          "$ENV{TARGET_CROSS}g++")
-else(NOT DEFINED ENV{TARGET_CROSS})
-  SET(CMAKE_C_COMPILER            "/usr/bin/gcc")
-  SET(CMAKE_CXX_COMPILER          "/usr/bin/g++")
-endif()
+SET(CMAKE_C_COMPILER            "/usr/bin/gcc")
+SET(CMAKE_CXX_COMPILER          "/usr/bin/g++")
 
 # Configure the find commands
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
