@@ -70,8 +70,8 @@ echo "CryptoLib..."
 mkdir $BASE_DIR/components/cryptolib/build/
 cd $BASE_DIR/components/cryptolib/build/
 export CFLAGS="-m32"
-cmake ..  && make -j2
-gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
+cmake .. -DSUPPORT=1 && make -j2
+gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/support/standalone
 # Note: Can keep open if desired after a new gnome-profile is manually created
 #cmake .. -DDEBUG=1 && make -j2
 #gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
