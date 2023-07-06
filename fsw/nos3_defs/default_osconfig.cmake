@@ -33,3 +33,36 @@
 # module cannot be loaded or a file cannot be opened for some reason.
 #
 set(OSAL_CONFIG_DEBUG_PRINTF TRUE)
+
+#
+# OSAL_CONFIG_QUEUE_MAX_DEPTH
+# ------------------------
+#
+# The maximum depth of an OSAL message queue.
+# On some implementations this may affect the overall OSAL memory footprint
+# so it may be beneficial to set this limit accordingly.
+#
+# This value has been increased from the default of 50 to support performance
+# tuning for the CFDP application.
+#
+set (OSAL_CONFIG_QUEUE_MAX_DEPTH 512)
+
+#
+# OSAL_CONFIG_INCLUDE_SHELL
+# ----------------------------------
+#
+# Whether to include features which utilize the operating system shell.
+#
+# Remote Shell commands can be very powerful tool for remotely diagnosing
+# and mitigating runtime issues in the field, but also have significant
+# security implications.  If this is set to "false" then shell functionality
+# is disabled and OSAL functions which invoke the shell will return
+# OS_ERR_NOT_IMPLEMENTED.
+#
+set(OSAL_CONFIG_INCLUDE_SHELL TRUE)
+
+# The maximum number of loadable modules to support
+# Note that emulating module loading for statically-linked objects also
+# requires a slot in this table, as it still assigns an OSAL ID.
+set(OSAL_CONFIG_MAX_MODULES 40)
+

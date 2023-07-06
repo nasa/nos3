@@ -36,6 +36,10 @@ add_compile_options(
     -Wno-format-truncation      # Inhibit printf-style format truncation warnings
     -Wno-stringop-truncation    # Inhibit string operation truncation warnings
     -Wno-address-of-packed-member
+    # Build Specific
+    -DBYTE_ORDER_LE
+    -D_LINUX_OS_
+    -D_DEFAULT_SOURCE
 )
 
 if (CFE_SYSTEM_PSPNAME STREQUAL "nos-linux")

@@ -86,14 +86,14 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
         #cfs_lib
         #cryptolib
-        #hwlib
-        #io_lib
+        hwlib
+        io_lib
     #
     # cFS Apps
     #
         #cf
-        #ci
-        #ci_lab
+        ci
+        ci_lab
         ##cs
         #ds
         #fm
@@ -105,7 +105,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         #sc
         sch
         #to
-        #to_lab
+        to_lab
     #
     # Components
     #

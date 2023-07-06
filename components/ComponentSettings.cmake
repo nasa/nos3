@@ -43,10 +43,10 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-pedantic-errors"
                 )
 
-if(${TGTNAME} STREQUAL cpu1)
-    set(ITC_C_FLAGS "${ITC_C_FLAGS}"
-           "-Wformat=0")
-endif()
+#if(${TGTNAME} STREQUAL cpu1)
+#    set(ITC_C_FLAGS "${ITC_C_FLAGS}"
+#           "-Wformat=0")
+#endif()
 
 # Not Compatable with Clang
 if(CMAKE_COMPILER_IS_GNUCC)
