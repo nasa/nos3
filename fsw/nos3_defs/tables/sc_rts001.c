@@ -1,59 +1,86 @@
 #include "cfe.h"
 #include "cfe_tbl_filedef.h"
 
-#include "sc_platform_cfg.h"    /* defines table buffer size */
-#include "sc_msgdefs.h"         /* defines SC command code values */
-#include "sc_msgids.h"          /* defines SC packet msg ID's */
+#include "sc_tbldefs.h"      /* defines SC table headers */
+#include "sc_platform_cfg.h" /* defines table buffer size */
+#include "sc_msgdefs.h"      /* defines SC command code values */
+#include "sc_msgids.h"       /* defines SC packet msg ID's */
+#include "sc_msg.h"          /* defines SC message structures */
 
-/*
-** Component Includes
-*/
+/* Command Includes */
+#include "ds_msg.h"
+#include "ds_msgdefs.h"
 #include "ds_msgids.h"
+#include "lc_msg.h"
+#include "lc_msgdefs.h"
 #include "lc_msgids.h"
+#include "sample_msg.h"
 #include "sample_msgids.h"
+#include "to_cmds.h"
 #include "to_lab_msgids.h"
+#include "to_lab_msg.h"
 
-/*
-** Command packet segment flags and sequence counter
-** - 2 bits of segment flags (0xC000 = start and end of packet)
-** - 14 bits of sequence count (unused for command packets)
-*/
-#define PKT_FLAGS     0xC000
-
-/*
-** Command code defines
-*/
-#define DS_SET_APP_STATE_CC   0x0200
-#define LC_SET_LC_STATE_CC    0x0200
-#define SAMPLE_APP_NOOP_CC    0x0000
-#define SAMPLE_ENABLE_CC      0x0200
-#define SC_ENABLE_RTSGRP_CC   0x1000
-#define TO_DEBUG_ENABLE_CC    0x0200
-
-/*
-** cFE Table Header
-*/
-static CFE_TBL_FileDef_t CFE_TBL_FileDef __attribute__((__used__)) =
+/* Custom table structure, modify as needed to add desired commands */
+typedef struct
 {
-    "RTS_Table001", "SC.RTS_TBL001", "SC RTS_TBL001",
-    "sc_rts001.tbl", (SC_RTS_BUFF_SIZE * sizeof(uint16))
+    SC_RtsEntryHeader_t hdr1;
+    DS_AppStateCmd_t cmd1;
+    SC_RtsEntryHeader_t hdr2;
+    TO_LAB_EnableOutputCmd_t cmd2;
+    SC_RtsEntryHeader_t hdr3;
+    SC_RtsGrpCmd_t cmd3;
+    SC_RtsEntryHeader_t hdr4;
+    SAMPLE_NoArgs_cmd_t cmd4;
+    SC_RtsEntryHeader_t hdr5;
+    SAMPLE_NoArgs_cmd_t cmd5;
+    SC_RtsEntryHeader_t hdr6;
+    LC_SetLCState_t cmd6;
+} SC_RtsStruct001_t;
+
+/* Define the union to size the table correctly */
+typedef union
+{
+    SC_RtsStruct001_t rts;
+    uint16            buf[SC_RTS_BUFF_SIZE];
+} SC_RtsTable001_t;
+
+/* Helper macro to get size of structure elements */
+#define SC_MEMBER_SIZE(member) (sizeof(((SC_RtsStruct001_t *)0)->member))
+
+/* Used designated intializers to be verbose, modify as needed/desired */
+SC_RtsTable001_t SC_Rts001 = 
+{
+    /* 1 - Enable DS */
+    .rts.hdr1.TimeTag = 1,
+    .rts.cmd1.CmdHeader = CFE_MSG_CMD_HDR_INIT(DS_CMD_MID, SC_MEMBER_SIZE(cmd1), DS_SET_APP_STATE_CC, 0x00),
+    .rts.cmd1.EnableState = 0x0001,
+    .rts.cmd1.Padding = 0x0000,
+
+    /* 2 - Enable Debug */
+    .rts.hdr2.TimeTag = 1,
+    .rts.cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(TO_LAB_CMD_MID, SC_MEMBER_SIZE(cmd2), SC_ENABLE_RTS_CC, 0x00),
+    .rts.cmd2.Payload.dest_IP = "127.0.0.1:5013",
+
+    /* 3 - Enable RTS 3-62 */
+    .rts.hdr3.TimeTag = 1,
+    .rts.cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd3), SC_ENABLE_RTS_GRP_CC, 0x00),
+    .rts.cmd3.FirstRtsId = 3,
+    .rts.cmd3.LastRtsId = 62,
+
+    /* 4 - Sample NOOP */
+    .rts.hdr4.TimeTag = 1,
+    .rts.cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd4), SAMPLE_NOOP_CC, 0x00),
+
+    /* 5 - Sample Enable */
+    .rts.hdr5.TimeTag = 1,
+    .rts.cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd5), SAMPLE_ENABLE_CC, 0x00),
+
+    /* 6 - Enable LC */
+    .rts.hdr6.TimeTag = 1,
+    .rts.cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_SET_LC_STATE_CC, 0x00),
+    .rts.cmd6.NewLCState = LC_STATE_ACTIVE,
+    .rts.cmd6.Padding = 0x0000,
 };
 
-/*
-** RTS Table Data
-*/
-uint16 RTS_Table001[SC_RTS_BUFF_SIZE] =
-{
-/* cmd time,  <---------------------------- cmd pkt primary header ---------------------------->     <----- cmd pkt 2nd header ---->           <-- opt data ---> */
-  1,          CFE_MAKE_BIG16(DS_CMD_MID),         CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(5),      CFE_MAKE_BIG16(DS_SET_APP_STATE_CC),      0x0001, 0x0000, // Enable DS
-  1,          CFE_MAKE_BIG16(TO_LAB_CMD_MID),     CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(21),     CFE_MAKE_BIG16(TO_DEBUG_ENABLE_CC),       0x0031, 0x3237, 0x2E30, 0x2E30, 0x2E31, 0x0000, 0x0000, 0x0000, 0x0095, 0x1300, // Enable Debug, 127.0.0.1, 5013
-  1,          CFE_MAKE_BIG16(SC_CMD_MID),     CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(5),       CFE_MAKE_BIG16(SC_ENABLE_RTSGRP_CC),         0x0003, 0x003E, // Enable RTS 3-62
-  1,          CFE_MAKE_BIG16(SAMPLE_CMD_MID),     CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(1),      CFE_MAKE_BIG16(SAMPLE_APP_NOOP_CC),       // Sample Instrument NOOP
-  1,          CFE_MAKE_BIG16(SAMPLE_CMD_MID),     CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(1),      CFE_MAKE_BIG16(SAMPLE_ENABLE_CC),         // Sample Instrument Enable
-  5,          CFE_MAKE_BIG16(LC_CMD_MID),         CFE_MAKE_BIG16(PKT_FLAGS), CFE_MAKE_BIG16(5),      CFE_MAKE_BIG16(LC_SET_LC_STATE_CC),       0x0001, 0x0000, // Enable LC
-     
-};
-
-/************************/
-/*  End of File Comment */
-/************************/
+/* Macro for table structure */
+CFE_TBL_FILEDEF(SC_Rts001, SC.RTS_TBL001, SC Example RTS_TBL001, sc_rts001.tbl)

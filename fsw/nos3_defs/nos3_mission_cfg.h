@@ -156,10 +156,10 @@
 **  \par Limits
 **       Not Applicable
 */
-#define CFE_MISSION_TIME_DEF_MET_SECS 1000
+#define CFE_MISSION_TIME_DEF_MET_SECS 0
 #define CFE_MISSION_TIME_DEF_MET_SUBS 0
 
-#define CFE_MISSION_TIME_DEF_STCF_SECS 1000000
+#define CFE_MISSION_TIME_DEF_STCF_SECS 0
 #define CFE_MISSION_TIME_DEF_STCF_SUBS 0
 
 #define CFE_MISSION_TIME_DEF_LEAPS 37
@@ -182,7 +182,7 @@
 **      Second - 0 to 59
 **      Micros - 0 to 999999
 */
-#define CFE_MISSION_TIME_EPOCH_YEAR   1980
+#define CFE_MISSION_TIME_EPOCH_YEAR   2000
 #define CFE_MISSION_TIME_EPOCH_DAY    1
 #define CFE_MISSION_TIME_EPOCH_HOUR   0
 #define CFE_MISSION_TIME_EPOCH_MINUTE 0
@@ -225,7 +225,7 @@
 **  \par Limits
 **      Not Applicable
 */
-#define CFE_MISSION_TIME_FS_FACTOR 789004800
+#define CFE_MISSION_TIME_FS_FACTOR 378777600
 
 /**
 **  \cfeescfg Maximum Length of CDS Name
