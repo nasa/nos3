@@ -104,7 +104,7 @@ cf_config_table_t     CF_ConfigTable =
         {   /* Playback Channel #0 */  
             CF_ENTRY_IN_USE,                /* Playback Channel Entry In Use */
             CF_ENABLED,                     /* Dequeue Enable */
-            CF_SPACE_TO_GND_PDU_MID,        /* Space To Gnd PDU MsgId */
+            CF_PDU_TLM_MID,                 /* Space To Gnd PDU MsgId */
             100,                            /* Pending Queue Depth */
             100,                            /* History Queue Depth */
             "TOPBOutputChan0",              /* Playback Channel Name   */

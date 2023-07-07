@@ -82,10 +82,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CFE_TBL_REG_TLM_MID), {0, 0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(CFE_EVS_LONG_EVENT_MSG_MID), {0, 0}, 32},
 
-    #ifndef CFE_OMIT_DEPRECATED_6_7
-        {CFE_SB_MSGID_WRAP_VALUE(CFE_ES_SHELL_TLM_MID), {0, 0}, 32},
-    #endif
-
+        /* Component Specifics */
         {CFE_SB_MSGID_WRAP_VALUE(CAM_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(CAM_EXP_TLM_MID),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_HK_TLM_MID),       {0,0},  32},
@@ -113,4 +110,4 @@ TO_LAB_Subs_t TO_LAB_Subs =
     }
 };
 
-CFE_TBL_FILEDEF(TO_LAB_Subs, TO_LAB.TO_LAB_Subs, TO Lab Sub Tbl, to_lab_sub.tbl)
+CFE_TBL_FILEDEF(TO_LAB_Subs, TO_LAB_APP.TO_LAB_Subs, TO Lab Sub Tbl, to_lab_sub.tbl)

@@ -34,35 +34,28 @@
 #
 set(OSAL_CONFIG_DEBUG_PRINTF TRUE)
 
-#
-# OSAL_CONFIG_QUEUE_MAX_DEPTH
-# ------------------------
-#
-# The maximum depth of an OSAL message queue.
-# On some implementations this may affect the overall OSAL memory footprint
-# so it may be beneficial to set this limit accordingly.
-#
-# This value has been increased from the default of 50 to support performance
-# tuning for the CFDP application.
-#
-set (OSAL_CONFIG_QUEUE_MAX_DEPTH 512)
+#############################################
+# Resource Limits for the OS API
+#############################################
 
-#
-# OSAL_CONFIG_INCLUDE_SHELL
-# ----------------------------------
-#
-# Whether to include features which utilize the operating system shell.
-#
-# Remote Shell commands can be very powerful tool for remotely diagnosing
-# and mitigating runtime issues in the field, but also have significant
-# security implications.  If this is set to "false" then shell functionality
-# is disabled and OSAL functions which invoke the shell will return
-# OS_ERR_NOT_IMPLEMENTED.
-#
-set(OSAL_CONFIG_INCLUDE_SHELL TRUE)
+# The maximum number of concurrently-running tasks to support
+set(OSAL_CONFIG_MAX_TASKS               128)
+
+# The maximum number of queues to support
+set(OSAL_CONFIG_MAX_QUEUES              128)
+
+# The maximum number of counting semaphores to support
+set(OSAL_CONFIG_MAX_COUNT_SEMAPHORES    45)
+
+# The maximum number of binary semaphores to support
+set(OSAL_CONFIG_MAX_BIN_SEMAPHORES      45)
+
+# The maximum number of mutexes to support
+set(OSAL_CONFIG_MAX_MUTEXES             45)
 
 # The maximum number of loadable modules to support
 # Note that emulating module loading for statically-linked objects also
 # requires a slot in this table, as it still assigns an OSAL ID.
-set(OSAL_CONFIG_MAX_MODULES 40)
+set(OSAL_CONFIG_MAX_MODULES             64)
+
 

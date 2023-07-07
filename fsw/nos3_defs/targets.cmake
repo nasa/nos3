@@ -85,47 +85,48 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # Libraries
     #
         #cfs_lib
-        #cryptolib
+        cryptolib
         hwlib
         io_lib
     #
     # cFS Apps
     #
-        #cf
+        cf
         ci
         ci_lab
-        ##cs
-        #ds
-        #fm
-        ##hk
-        ##hs
-        #lc
-        ##md
-        ##mm
-        #sc
+        #cs
+        ds
+        fm
+        #hk
+        #hs
+        lc
+        #md
+        #mm
+        sc
         sch
-        #to
+        to
         to_lab
     #
     # Components
     #
-        #arducam
-        #generic_css
-        #generic_eps
-        #generic_fss
-        #generic_imu
-        #generic_mag
-        #generic_reaction_wheel
-        #generic_radio
-        #generic_torquer
-        #novatel_oem615
-        #sample
-        #generic_adcs
+        arducam
+        generic_css
+        generic_eps
+        generic_fss
+        generic_imu
+        generic_mag
+        generic_reaction_wheel
+        generic_radio
+        generic_torquer
+        novatel_oem615
+        sample
+        generic_adcs
 )
 
 # Create Application Platform Include List
 FOREACH(X ${MISSION_GLOBAL_APPLIST})
-    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
+  LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
+  LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
 ENDFOREACH(X)
 
 # FT_INSTALL_SUBDIR indicates where the black box test data files (lua scripts) should

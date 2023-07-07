@@ -820,8 +820,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE}                                       
+  //{  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  //{  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE}                                       
 };
 
 /*

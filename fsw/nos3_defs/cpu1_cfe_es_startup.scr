@@ -1,50 +1,47 @@
-CFE_LIB, Crypto.so,                 Crypto_Init_TC_Unit_Test, CRYPTO,           0,  0,     0x0, 0;
-CFE_LIB, hwlib.so,                  hwlib_Init,               HW_LIB,           0,  0,     0x0, 0;
-CFE_LIB, io_lib.so,                 IO_LibInit,               IO_LIB,           0,  0,     0x0, 0;
+CFE_LIB, crypto,                    Crypto_TC_Init,           CRYPTO,           0,  0,     0x0, 0;
+CFE_LIB, hwlib,                     hwlib_Init,               HW_LIB,           0,  0,     0x0, 0;
+CFE_LIB, io_lib,                    IO_LibInit,               IO_LIB,           0,  0,     0x0, 0;
 
-CFE_APP, sch.so,                    SCH_AppMain,              SCH,              40, 8192,  0x0, 0;
-CFE_APP, ci_lab.so,                 CI_Lab_AppMain,           CI_LAB,           90, 8192, 0x0, 0;
-CFE_APP, to_lab.so,                 TO_Lab_AppMain,           TO_LAB,           90, 8192, 0x0, 0;
+CFE_APP, cf,                        CF_AppMain,               CF,               50, 16384, 0x0, 0;
+CFE_APP, ds,                        DS_AppMain,               DS,               50, 16384, 0x0, 0;
+CFE_APP, fm,                        FM_AppMain,               FM,               50, 16384, 0x0, 0;
+CFE_APP, lc,                        LC_AppMain,               LC,               50, 16384, 0x0, 0;
+CFE_APP, sc,                        SC_AppMain,               SC,               50, 16384, 0x0, 0;
 
-CFE_APP, ci.so,                     CI_AppMain,               CI,               40, 16384, 0x0, 0;
-CFE_APP, to.so,                     TO_AppMain,               TO,               40, 16384, 0x0, 0;
+CFE_APP, arducam,                   arducam_AppMain,          CAM,              60, 8192,  0x0, 0;
+CFE_APP, generic_css,               CSS_AppMain,              CSS,              60, 8192,  0x0, 0;
+CFE_APP, generic_eps,               EPS_AppMain,              EPS,              60, 8192,  0x0, 0;
+CFE_APP, generic_fss,               FSS_AppMain,              FSS,              60, 8192,  0x0, 0;
+CFE_APP, generic_imu,               IMU_AppMain,              IMU,              60, 8192,  0x0, 0;
+CFE_APP, generic_mag,               MAG_AppMain,              MAG,              60, 8192,  0x0, 0;
+CFE_APP, generic_radio,             RADIO_AppMain,            RADIO,            60, 8192,  0x0, 0;
+CFE_APP, generic_rw,                RW_AppMain,               RW,               60, 8192,  0x0, 0;
+CFE_APP, generic_torquer,           TORQUER_AppMain,          TORQUER,          60, 8192,  0x0, 0;
+CFE_APP, novatel_oem615,            NAV_AppMain,              NAV,              60, 8192,  0x0, 0;
+CFE_APP, sample,                    SAMPLE_AppMain,           SAMPLE,           60, 8192,  0x0, 0;
+CFE_APP, generic_adcs,              ADCS_AppMain,             ADCS,             60, 8192,  0x0, 0;
 
-!
-CFE_LIB, cfs_lib.so,                CFS_LibInit,              CFS_LIB,          0,  0,     0x0, 0;
-
-CFE_APP, cf.so,                     CF_AppMain,               CF,               50, 16384, 0x0, 0;
-CFE_APP, ds.so,                     DS_AppMain,               DS,               50, 16384, 0x0, 0;
-CFE_APP, fm.so,                     FM_AppMain,               FM,               50, 16384, 0x0, 0;
-CFE_APP, lc.so,                     LC_AppMain,               LC,               50, 16384, 0x0, 0;
-CFE_APP, sc.so,                     SC_AppMain,               SC,               50, 16384, 0x0, 0;
-
-CFE_APP, arducam.so,                arducam_AppMain,          CAM,              60, 8192,  0x0, 0;
-CFE_APP, generic_css.so,            GENERIC_CSS_AppMain,      CSS,              60, 8192,  0x0, 0;
-CFE_APP, generic_eps.so,            GENERIC_EPS_AppMain,      EPS,              60, 8192,  0x0, 0;
-CFE_APP, generic_fss.so,            GENERIC_FSS_AppMain,      FSS,              60, 8192,  0x0, 0;
-CFE_APP, generic_imu.so,            GENERIC_IMU_AppMain,      IMU,              60, 8192,  0x0, 0;
-CFE_APP, generic_mag.so,            GENERIC_MAG_AppMain,      MAG,              60, 8192,  0x0, 0;
-CFE_APP, generic_radio.so,          GENERIC_RADIO_AppMain,    RADIO,            60, 8192,  0x0, 0;
-CFE_APP, generic_rw.so,             GENERIC_RW_AppMain,       RW,               60, 8192,  0x0, 0;
-CFE_APP, generic_torquer.so,        GENERIC_TORQUER_AppMain,  TORQUER,          60, 8192,  0x0, 0;
-CFE_APP, novatel_oem615.so,         novatel_oem615_AppMain,   NAV,              60, 8192,  0x0, 0;
-CFE_APP, sample.so,                 SAMPLE_AppMain,           SAMPLE,           60, 8192,  0x0, 0;
-CFE_APP, generic_adcs.so,           Generic_ADCS_AppMain,     ADCS,             60, 8192,  0x0, 0;
+CFE_APP, sch,                       SCH_AppMain,              SCH,              40, 8192,  0x0, 0;
+CFE_APP, ci_lab,                    CI_Lab_AppMain,           CI_LAB_APP,       60, 16384, 0x0, 0;
+CFE_APP, to_lab,                    TO_LAB_AppMain,           TO_LAB_APP,       70, 16384, 0x0, 0;
+CFE_APP, ci,                        CI_AppMain,               CI,               40, 16384, 0x0, 0;
+CFE_APP, to,                        TO_AppMain,               TO,               40, 16384, 0x0, 0;
 
 !
 !  ** The software will not try to parse anything after the first '!' character it sees. **
 !
-! CFE_APP, cs.so,               CS_AppMain,               CS,               55, 16384, 0x0, 0;
-! CFE_APP, hk.so,               HK_AppMain,               HK,               63, 16384, 0x0, 0;
-! CFE_APP, hs.so,               HS_AppMain,               HS,               56, 16384, 0x0, 0;
-! CFE_APP, sbn.so,              SBN_AppMain,              SBN,              63, 16384, 0x0, 0;
-! CFE_APP, md.so,               MD_AppMain,               MD,               60, 16384, 0x0, 0;
-! CFE_APP, mm.so,               MM_AppMain,               MM,               61, 16384, 0x0, 0;
+! CFE_LIB, cfs_lib,             CFS_LibInit,              CFS_LIB,          0,  0,     0x0, 0;
+! CFE_APP, cs,                  CS_AppMain,               CS,               55, 16384, 0x0, 0;
+! CFE_APP, hk,                  HK_AppMain,               HK,               63, 16384, 0x0, 0;
+! CFE_APP, hs,                  HS_AppMain,               HS,               56, 16384, 0x0, 0;
+! CFE_APP, sbn,                 SBN_AppMain,              SBN,              63, 16384, 0x0, 0;
+! CFE_APP, md,                  MD_AppMain,               MD,               60, 16384, 0x0, 0;
+! CFE_APP, mm,                  MM_AppMain,               MM,               61, 16384, 0x0, 0;
 !
-! CFE_APP, ci_lab.so,           CI_Lab_AppMain,           CI_LAB_APP,       50, 8192,  0x0, 0;
-! CFE_LIB, sample_lib.so,       SAMPLE_LibInit,           SAMPLE_LIB,       0,  0,     0x0, 0;
-! CFE_APP, sample_app.so,       SAMPLE_AppMain,           SAMPLE_APP,       51, 16384, 0x0, 0;
-! CFE_APP, to_lab.so,           TO_Lab_AppMain,           TO_LAB_APP,       50, 8192,  0x0, 0;
+! CFE_APP, ci_lab,              CI_Lab_AppMain,           CI_LAB_APP,       50, 8192,  0x0, 0;
+! CFE_LIB, sample_lib,          SAMPLE_LibInit,           SAMPLE_LIB,       0,  0,     0x0, 0;
+! CFE_APP, sample_app,          SAMPLE_AppMain,           SAMPLE_APP,       51, 16384, 0x0, 0;
+! CFE_APP, to_lab,              TO_Lab_AppMain,           TO_LAB_APP,       50, 8192,  0x0, 0;
 !
 ! Startup script fields:
 ! 1. Object Type      -- CFE_APP for an Application, or CFE_LIB for a library.
