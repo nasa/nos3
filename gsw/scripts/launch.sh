@@ -86,6 +86,6 @@ sleep 5
 
 echo "Flight Software..."
 cd $FSW_BIN
-gnome-terminal --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
+$SCRIPT_DIR/fsw_respawn.sh $FSW_BIN &
 # Note: Can keep open if desired after a new gnome-profile is manually created
 #gnome-terminal --window-with-profile=KeepOpen --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
