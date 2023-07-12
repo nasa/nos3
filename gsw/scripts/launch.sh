@@ -66,15 +66,15 @@ gnome-terminal --tab --title='Torquer Sim'        -- $SIM_BIN/nos3-single-simula
 gnome-terminal --tab --title='GPS Sim'            -- $SIM_BIN/nos3-single-simulator gps
 gnome-terminal --tab --title='Sample Sim'         -- $SIM_BIN/nos3-single-simulator sample_sim
 
-echo "CryptoLib..."
-mkdir $BASE_DIR/components/cryptolib/build/
-cd $BASE_DIR/components/cryptolib/build/
-export CFLAGS="-m32"
-cmake .. -DSUPPORT=1 && make -j2
-gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/support/standalone
-# Note: Can keep open if desired after a new gnome-profile is manually created
-#cmake .. -DDEBUG=1 && make -j2
-#gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
+#echo "CryptoLib..."
+#mkdir $BASE_DIR/components/cryptolib/build/
+#cd $BASE_DIR/components/cryptolib/build/
+#export CFLAGS="-m32"
+#cmake .. -DSUPPORT=1 && make -j2
+#gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/support/standalone
+## Note: Can keep open if desired after a new gnome-profile is manually created
+##cmake .. -DDEBUG=1 && make -j2
+##gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
 
 echo "COSMOS Ground Station..."
 cd $BASE_DIR/gsw/cosmos
@@ -86,6 +86,6 @@ sleep 5
 
 echo "Flight Software..."
 cd $FSW_BIN
-gnome-terminal --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
+gnome-terminal  --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 &
 # Note: Can keep open if desired after a new gnome-profile is manually created
-#gnome-terminal --window-with-profile=KeepOpen --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 -R PO &
+#gnome-terminal --window-with-profile=KeepOpen --title="NOS3 Flight Software" -- $FSW_BIN/core-cpu1 &
