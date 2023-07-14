@@ -7,6 +7,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 
 # cFS
+killall -q -r -9 fsw_respawn.sh
 killall -q -r -9 core-cpu*
 
 # COSMOS

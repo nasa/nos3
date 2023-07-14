@@ -88,6 +88,9 @@ gsw:
 launch:
 	./gsw/scripts/launch.sh
 
+reboot:
+	./gsw/scripts/reboot.sh
+
 log:
 	./gsw/scripts/log.sh
 
