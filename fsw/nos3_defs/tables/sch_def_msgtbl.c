@@ -53,7 +53,7 @@
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
-#include "nav_msgids.h"
+#include "novatel_oem615_msgids.h"
 #include "sample_msgids.h"
 #include "generic_adcs_msgids.h"
 
@@ -207,9 +207,9 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
     /* command ID #50 - GPS HK */
-  { { CFE_MAKE_BIG16(NAV_CMD_REQ_NAV_SCH_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
-    /* command ID #51 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(NOVATEL_OEM615_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
+    /* command ID #51 - GPS Data */
+  { { CFE_MAKE_BIG16(NOVATEL_OEM615_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0100 } },
     /* command ID #52 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #53 */
