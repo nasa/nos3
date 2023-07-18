@@ -105,7 +105,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
     
   /* slot #2 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -178,7 +178,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #12 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -252,7 +252,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #22 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -326,7 +326,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #32 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -401,7 +401,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #42 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -475,7 +475,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #52 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -547,7 +547,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #62 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -619,7 +619,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #72 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -691,7 +691,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #82 - ADCS */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
@@ -767,7 +767,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   /* slot #92 - ADCS */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  4,  2, 18, SCH_GROUP_CFS_HK }, */  /* HK Send Combined HK '3' */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  4,  3, 19, SCH_GROUP_CFS_HK }, */  /* HK Send Combined HK '4' */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_NONE },  /* GPS HK Request   */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
