@@ -77,10 +77,11 @@ gnome-terminal --tab --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build
 #gnome-terminal --window-with-profile=KeepOpen --title="CryptoLib" -- $BASE_DIR/components/cryptolib/build/bin/standalone
 
 echo "COSMOS Ground Station..."
-cd $BASE_DIR/gsw/cosmos
-export MISSION_NAME=$(echo "NOS3")
-export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
-ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
+#cd $BASE_DIR/gsw/cosmos
+#export MISSION_NAME=$(echo "NOS3")
+#export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
+#ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
+firefox localhost:2900 &
 
 sleep 5
 
