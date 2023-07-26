@@ -48,38 +48,39 @@ typedef union
 #define SC_MEMBER_SIZE(member) (sizeof(((SC_RtsStruct001_t *)0)->member))
 
 /* Used designated intializers to be verbose, modify as needed/desired */
-SC_RtsTable001_t SC_Rts001 = 
-{
-    /* 1 - Enable DS */
-    .rts.hdr1.TimeTag = 1,
-    .rts.cmd1.CmdHeader = CFE_MSG_CMD_HDR_INIT(DS_CMD_MID, SC_MEMBER_SIZE(cmd1), DS_SET_APP_STATE_CC, 0x00),
-    .rts.cmd1.EnableState = 0x0001,
-    .rts.cmd1.Padding = 0x0000,
+SC_RtsTable001_t SC_Rts001 = {
+.rts = {
+        /* 1 - Enable DS */
+        .hdr1.TimeTag = 1,
+        .cmd1.CommandHeader = CFE_MSG_CMD_HDR_INIT(DS_CMD_MID, SC_MEMBER_SIZE(cmd1), DS_SET_APP_STATE_CC, 0x00),
+        .cmd1.Payload.EnableState = 0x0001,
+        .cmd1.Payload.Padding = 0x0000,
 
-    /* 2 - Enable Debug */
-    .rts.hdr2.TimeTag = 1,
-    .rts.cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(TO_LAB_CMD_MID, SC_MEMBER_SIZE(cmd2), TO_LAB_OUTPUT_ENABLE_CC, 0x00),
-    .rts.cmd2.Payload.dest_IP = "127.0.0.1",
+        /* 2 - Enable Debug */
+        .hdr2.TimeTag = 1,
+        .cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(TO_LAB_CMD_MID, SC_MEMBER_SIZE(cmd2), TO_LAB_OUTPUT_ENABLE_CC, 0x00),
+        .cmd2.Payload.dest_IP = "127.0.0.1",
 
-    /* 3 - Enable RTS 3-62 */
-    .rts.hdr3.TimeTag = 1,
-    .rts.cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd3), SC_ENABLE_RTS_GRP_CC, 0x00),
-    .rts.cmd3.FirstRtsId = 3,
-    .rts.cmd3.LastRtsId = 62,
+        /* 3 - Enable RTS 3-64 */
+        .hdr3.TimeTag = 1,
+        .cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd3), SC_ENABLE_RTS_GRP_CC, 0x00),
+        .cmd3.FirstRtsId = 3,
+        .cmd3.LastRtsId = 64,
 
-    /* 4 - Sample NOOP */
-    .rts.hdr4.TimeTag = 1,
-    .rts.cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd4), SAMPLE_NOOP_CC, 0x00),
+        /* 4 - Sample NOOP */
+        .hdr4.TimeTag = 1,
+        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd4), SAMPLE_NOOP_CC, 0x00),
 
-    /* 5 - Sample Enable */
-    .rts.hdr5.TimeTag = 1,
-    .rts.cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd5), SAMPLE_ENABLE_CC, 0x00),
+        /* 5 - Sample Enable */
+        .hdr5.TimeTag = 1,
+        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd5), SAMPLE_ENABLE_CC, 0x00),
 
-    /* 6 - Enable LC */
-    .rts.hdr6.TimeTag = 1,
-    .rts.cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_SET_LC_STATE_CC, 0x00),
-    .rts.cmd6.NewLCState = LC_STATE_ACTIVE,
-    .rts.cmd6.Padding = 0x0000,
+        /* 6 - Enable LC */
+        .hdr6.TimeTag = 1,
+        .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_SET_LC_STATE_CC, 0x00),
+        .cmd6.NewLCState = LC_STATE_ACTIVE,
+        .cmd6.Padding = 0x0000,
+    }
 };
 
 /* Macro for table structure */

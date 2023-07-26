@@ -28,7 +28,7 @@
 CF_ConfigTable_t CF_config_table = {
     10,    /* ticks_per_second */
     16384, /* max number of bytes per wakeup to calculate r2 recv file crc */
-    25,    /* local entity id */
+    24,    /* local entity id */
     {      /* channel configuration for CF_NUM_CHANNELS */
      {
          /* channel 0 */
@@ -78,7 +78,7 @@ CF_ConfigTable_t CF_config_table = {
          "", /* throttle sem, empty string means no throttle */
          1   /* dequeue enable flag (1 = enabled) */
      }},
-    480,       /* outgoing_file_chunk_size */
+    200,       /* outgoing_file_chunk_size */
     "/cf/tmp", /* temporary file directory */
 };
 CFE_TBL_FILEDEF(CF_config_table, CF.config_table, CF config table, cf_def_config.tbl)

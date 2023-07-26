@@ -35,10 +35,16 @@
 #include "to_lab_msgids.h"
 #include "ci_lab_msgids.h"
 
-#include "fm_msgids.h"
-#include "sc_msgids.h"
+#include "ci_msgids.h"
+#include "cf_msgids.h"
 #include "ds_msgids.h"
+#include "fm_msgids.h"
+//#include "hs_msgids.h"
+//#include "hk_msgids.h"
 #include "lc_msgids.h"
+#include "sc_msgids.h"
+#include "sch_msgids.h"
+#include "to_msgids.h"
 
 /*
 ** Component Include Files
@@ -56,6 +62,12 @@
 #include "sample_msgids.h"
 #include "generic_adcs_msgids.h"
 
+/*
+** Local Structure Declarations
+*/
+#define CF_CONFIG_TLM_MID 0x08B2
+#define CF_PDU_TLM_MID    0x0FFD
+
 TO_LAB_Subs_t TO_LAB_Subs =
 {
     .Subs =
@@ -66,6 +78,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CI_LAB_HK_TLM_MID), {0, 0}, 4},
 
         /* Add these if needed */
+        {CFE_SB_MSGID_WRAP_VALUE(CF_CONFIG_TLM_MID), {0,0}, 4},
+        {CFE_SB_MSGID_WRAP_VALUE(CF_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(FM_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(SC_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(DS_HK_TLM_MID), {0,0}, 4},

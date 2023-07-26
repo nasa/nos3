@@ -33,18 +33,19 @@ typedef union
 #define SC_MEMBER_SIZE(member) (sizeof(((SC_RtsStruct005_t *)0)->member))
 
 /* Used designated intializers to be verbose, modify as needed/desired */
-SC_RtsTable005_t SC_Rts005 = 
-{
-    /* 1 - Sample Configuration 123 */
-    .rts.hdr1.TimeTag = 1,
-    .rts.cmd1.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd1), SAMPLE_CONFIG_CC, 0x00),
-    .rts.cmd1.DeviceCfg = 123,
+SC_RtsTable005_t SC_Rts005 = {    
+.rts = {
+        /* 1 - Sample Configuration 123 */
+        .hdr1.TimeTag = 1,
+        .cmd1.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd1), SAMPLE_CONFIG_CC, 0x00),
+        .cmd1.DeviceCfg = CFE_MAKE_BIG32(123),
 
-    /* 2 - Radio Proximity Run Rts5 */
-    .rts.hdr2.TimeTag = 1,
-    .rts.cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_RADIO_CMD_MID, SC_MEMBER_SIZE(cmd2), GENERIC_RADIO_PROXIMITY_CC, 0x00),
-    .rts.cmd2.SCID = 0,
-    .rts.cmd2.Payload = {0x18, 0xA9, 0xC0, 0x00, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05},
+        /* 2 - Radio Proximity Run Rts5 */
+        .hdr2.TimeTag = 1,
+        .cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_RADIO_CMD_MID, SC_MEMBER_SIZE(cmd2), GENERIC_RADIO_PROXIMITY_CC, 0x00),
+        .cmd2.SCID = 0,
+        .cmd2.Payload = {0x18, 0xA9, 0xC0, 0x00, 0x00, 0x05, 0x04, 0x00, 0x05, 0x00, 0x00, 0x00},
+    }
 };
 
 /* Macro for table structure */
