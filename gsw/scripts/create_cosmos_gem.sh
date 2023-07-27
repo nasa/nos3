@@ -1,6 +1,13 @@
 #!/bin/bash
+#
+# Convenience script for NOS3 development
+#
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
+BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
+DATE=$(date "+%Y%m%d%H%M")
+
 # Start by changing to a known location
 cd $SCRIPT_DIR/../cosmos
 
@@ -60,8 +67,17 @@ echo "" >> plugin.txt
 echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb host.docker.internal 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
 echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
+# Capture date created
+echo "" >> plugin.txt
+echo "# Created on " $DATE >> plugin.txt
+
 # Build plugin
-/opt/nos3/cosmos/openc3.sh cliroot rake build VERSION=1.0.0
+/opt/nos3/cosmos/openc3.sh cliroot rake build VERSION=1.0.$DATE
 
 # Plugin ends up in $SCRIPT_DIR/../cosmos/build/openc3-cosmos-nos3/openc3-cosmos-nos3-1.0.0.gem
+
+# Use plugin
+cd $GSW_BIN
+/opt/nos3/cosmos/openc3.sh cliroot geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
+/opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
 
