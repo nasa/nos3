@@ -84,7 +84,6 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Libraries
     #
-        #cfs_lib
         #cryptolib
         hwlib
         io_lib
@@ -94,14 +93,9 @@ list(APPEND MISSION_GLOBAL_APPLIST
         cf
         ci
         ci_lab
-        #cs
         ds
         fm
-        #hk
-        #hs
         lc
-        #md
-        #mm
         sc
         sch
         to
