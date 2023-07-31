@@ -46,6 +46,7 @@ cd ..
 cp -r ../../lib .
 
 # Create plugin.txt
+echo "Create plugin..."
 rm plugin.txt
 for i in $targets
 do
@@ -70,14 +71,23 @@ echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 # Capture date created
 echo "" >> plugin.txt
 echo "# Created on " $DATE >> plugin.txt
+echo ""
 
 # Build plugin
+echo "Build plugin..."
 /opt/nos3/cosmos/openc3.sh cliroot rake build VERSION=1.0.$DATE
+echo ""
 
-# Plugin ends up in $SCRIPT_DIR/../cosmos/build/openc3-cosmos-nos3/openc3-cosmos-nos3-1.0.0.gem
-
-# Use plugin
+# Install plugin
+echo "Install plugin..."
 cd $GSW_BIN
 /opt/nos3/cosmos/openc3.sh cliroot geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
-/opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
+echo ""
 
+# Load plugin
+echo "Load plugin..."
+/opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
+echo ""
+
+echo "Create COSMOS gem script complete!"
+echo ""
