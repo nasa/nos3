@@ -25,6 +25,7 @@
 **************************************************************************/
 
 #include "cfe.h"
+#include "cfe_endian.h"
 #include "cfe_tbl_filedef.h"
 #include "sch_platform_cfg.h"
 #include "sch_tbldefs.h"
@@ -37,6 +38,7 @@
 //#include "hk_msgids.h"
 //#include "hs_msgids.h"
 #include "lc_msgids.h"
+#include "lc_msgdefs.h"
 #include "sc_msgids.h"
 #include "sch_msgids.h"
 #include "to_msgids.h"
@@ -150,8 +152,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #24 - MD Wakeup                         */
 /*{ { CFE_MAKE_BIG16(MD_WAKEUP_MID),            CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #25 - CF Wakeup */
-  { { CFE_MAKE_BIG16(CF_WAKE_UP_REQ_CMD_MID),   CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #25 */
+  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #26 - CF HK Request */
   { { CFE_MAKE_BIG16(CF_SEND_HK_MID),           CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #27 */
