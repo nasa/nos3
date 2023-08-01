@@ -89,5 +89,6 @@ echo "Load plugin..."
 /opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
 echo ""
 
-echo "Create COSMOS gem script complete!"
+echo "Create COSMOS gem script complete."
+echo "Note that while this script is complete, COSMOS is likely still be processing behind the scenes!"
 echo ""
