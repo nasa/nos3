@@ -11,10 +11,11 @@ killall -q -r -9 fsw_respawn.sh
 killall -q -r -9 core-cpu*
 
 # COSMOS
-killall -q -9 ruby
-yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
-yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
-yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
+#killall -q -9 ruby
+#yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null
+#yes | rm $BASE_DIR/gsw/cosmos/Gemfile.lock 2> /dev/null
+#yes | rm -r $BASE_DIR/gsw/cosmos/COMPONENTS 2> /dev/null
+#killall -q -9 firefox
 
 # CryptoLib
 killall -q -r -9 standalone

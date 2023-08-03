@@ -18,7 +18,8 @@ FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
 #mkdir /tmp/uplink 2> /dev/null
 
 echo "COSMOS Ground Station..."
-cd $BASE_DIR/gsw/cosmos
-export MISSION_NAME=$(echo "NOS3")
-export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
-ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
+#cd $BASE_DIR/gsw/cosmos
+#export MISSION_NAME=$(echo "NOS3")
+#export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
+#ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
+firefox localhost:2900 &

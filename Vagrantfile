@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
         vbox.name = "nos3_20230731"
         vbox.gui = true
         ### Enable additional configuration as needed
-        #vbox.cpus = 8
-        #vbox.memory = "16384"
+        vbox.cpus = 6
+        vbox.memory = "6144"
     end
 end
