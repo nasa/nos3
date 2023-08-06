@@ -133,7 +133,7 @@
                     </connection>
                 </connections>
                 <data-provider>
-                    <type>SAMPLE_PROVIDER</type>
+                    <type>SAMPLE_42_PROVIDER</type>
                 </data-provider>
             </hardware-model>
         </simulator>
@@ -267,13 +267,13 @@
             </hardware-model>
         </simulator>
         <simulator>
-            <name>generic-reactionwheel-sim</name>
+            <name>generic-reactionwheel-sim0</name>
             <active>true</active>
             <library>libgeneric_rw_sim.so</library>
             <hardware-model>
                 <type>GENERICREACTIONWHEELHARDWARE</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw-command</node-name></connection>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw0-command</node-name></connection>
                     <connection><type>usart</type>
                         <bus-name>usart_2</bus-name>
                         <node-port>2</node-port>
@@ -288,6 +288,56 @@
                     <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <reactionwheel>0</reactionwheel>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic-reactionwheel-sim1</name>
+            <active>true</active>
+            <library>libgeneric_rw_sim.so</library>
+            <hardware-model>
+                <type>GENERICREACTIONWHEELHARDWARE</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw1-command</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_3</bus-name>
+                        <node-port>3</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4377</port>
+                    <command-port>4378</command-port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <reactionwheel>1</reactionwheel>
+                </data-provider>               
+            </hardware-model>
+        </simulator>
+        <simulator>
+            <name>generic-reactionwheel-sim2</name>
+            <active>true</active>
+            <library>libgeneric_rw_sim.so</library>
+            <hardware-model>
+                <type>GENERICREACTIONWHEELHARDWARE</type>
+                <connections>
+                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw2-command</node-name></connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_4</bus-name>
+                        <node-port>4</node-port>
+                    </connection>
+                </connections>
+                <data-provider>               
+                    <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
+                    <hostname>localhost</hostname>
+                    <port>4477</port>
+                    <command-port>4478</command-port>
+                    <max-connection-attempts>5</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <reactionwheel>2</reactionwheel>
                 </data-provider>               
             </hardware-model>
         </simulator>
@@ -386,7 +436,7 @@
                 <data-provider>               
                     <type>GENERIC_FSS_42_PROVIDER</type>
                     <hostname>localhost</hostname>
-                    <port>4279</port>
+                    <port>4281</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
@@ -420,8 +470,14 @@
                     <connection>
                         <name>gsw</name>
                         <ip>0.0.0.0</ip>
+                        <!-- Direct to ground -->
+                        <cmd-port>6010</cmd-port>
+                        <tlm-port>6011</tlm-port>
+                        <!-- CryptoLib Standalone -->
+                        <!--
                         <cmd-port>8010</cmd-port>
                         <tlm-port>8011</tlm-port>
+                        -->
                     </connection>
                     <connection>
                         <name>prox</name>
@@ -449,8 +505,8 @@
                         <node-name>imu-command</node-name>
                     </connection>
                     <connection><type>can</type>
-                        <bus-name>can_1</bus-name>
-                        <node-port>0</node-port>
+                        <bus-name>can_0</bus-name>
+                        <node-port>15</node-port>
                     </connection>
                 </connections>
                 <data-provider>

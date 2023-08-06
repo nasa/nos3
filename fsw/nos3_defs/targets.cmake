@@ -75,21 +75,16 @@ SET(MISSION_NAME "NOS3")
 # should be an integer.
 SET(SPACECRAFT_ID 42)
 
-# UI_INSTALL_SUBDIR indicates where the UI data files (included in some apps) should
-# be copied during the install process.
-SET(UI_INSTALL_SUBDIR "host/ui")
-
-# FT_INSTALL_SUBDIR indicates where the black box test data files (lua scripts) should
-# be copied during the install process.
-SET(FT_INSTALL_SUBDIR "host/functional-test")
-
-# Application List
-SET(APPLICATION_LIST
+# The "MISSION_GLOBAL_APPLIST" is a set of apps/libs that will be built
+# for every defined target.  These are built as dynamic modules
+# and must be loaded explicitly via startup script or command.
+# This list is effectively appended to every TGTx_APPLIST in targets.cmake.
+# Example:
+list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Libraries
     #
-        cfs_lib
-        cryptolib
+        #cryptolib
         hwlib
         io_lib
     #
@@ -98,14 +93,9 @@ SET(APPLICATION_LIST
         cf
         ci
         ci_lab
-        #cs
         ds
         fm
-        #hk
-        #hs
         lc
-        #md
-        #mm
         sc
         sch
         to
@@ -124,21 +114,32 @@ SET(APPLICATION_LIST
         generic_torquer
         novatel_oem615
         sample
+        generic_adcs
 )
 
 # Create Application Platform Include List
-FOREACH(X ${APPLICATION_LIST})
+FOREACH(X ${MISSION_GLOBAL_APPLIST})
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/src)
 ENDFOREACH(X)
 
+# FT_INSTALL_SUBDIR indicates where the black box test data files (lua scripts) should
+# be copied during the install process.
+SET(FT_INSTALL_SUBDIR "host/functional-test")
+
+# Each target board can have its own HW arch selection and set of included apps
+SET(MISSION_CPUNAMES cpu1)
+
 # NASA Operational Simulator for Small Satellites (NOS3) - Host Linux
-SET(TGT1_NAME cpu1)
-SET(TGT1_APPLIST ${APPLICATION_LIST})
-SET(TGT1_FILELIST cfe_es_startup.scr)
-SET(TGT1_OSAL_SYSTEM_CONFIG cpu1_osconfig.h)
+SET(cpu1_PROCESSORID 1)
+SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
+SET(cpu1_FILELIST cfe_es_startup.scr)
+SET(cpu1_SYSTEM i386-linux-gnu)
 
 # USER Supplied
-#SET(TGT2_NAME cpu2)
-#SET(TGT2_APPLIST ${APPLICATION_LIST})
-#SET(TGT2_FILELIST cfe_es_startup.scr)
-#SET(TGT2_OSAL_SYSTEM_CONFIG cpu2_osconfig.h)
+#SET(cpu2_PROCESSORID 2)
+#SET(cpu2_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
+#SET(cpu2_FILELIST cfe_es_startup.scr)
+#SET(cpu2_SYSTEM cpu2)

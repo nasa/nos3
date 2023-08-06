@@ -35,10 +35,16 @@
 #include "to_lab_msgids.h"
 #include "ci_lab_msgids.h"
 
-#include "fm_msgids.h"
-#include "sc_msgids.h"
+#include "ci_msgids.h"
+#include "cf_msgids.h"
 #include "ds_msgids.h"
+#include "fm_msgids.h"
+//#include "hs_msgids.h"
+//#include "hk_msgids.h"
 #include "lc_msgids.h"
+#include "sc_msgids.h"
+#include "sch_msgids.h"
+#include "to_msgids.h"
 
 /*
 ** Component Include Files
@@ -52,8 +58,15 @@
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
-#include "nav_msgids.h"
+#include "novatel_oem615_msgids.h"
 #include "sample_msgids.h"
+#include "generic_adcs_msgids.h"
+
+/*
+** Local Structure Declarations
+*/
+#define CF_CONFIG_TLM_MID 0x08B2
+#define CF_PDU_TLM_MID    0x0FFD
 
 TO_LAB_Subs_t TO_LAB_Subs =
 {
@@ -65,6 +78,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CI_LAB_HK_TLM_MID), {0, 0}, 4},
 
         /* Add these if needed */
+        {CFE_SB_MSGID_WRAP_VALUE(CF_CONFIG_TLM_MID), {0,0}, 4},
+        {CFE_SB_MSGID_WRAP_VALUE(CF_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(FM_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(SC_HK_TLM_MID), {0,0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(DS_HK_TLM_MID), {0,0}, 4},
@@ -81,10 +96,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CFE_TBL_REG_TLM_MID), {0, 0}, 4},
         {CFE_SB_MSGID_WRAP_VALUE(CFE_EVS_LONG_EVENT_MSG_MID), {0, 0}, 32},
 
-    #ifndef CFE_OMIT_DEPRECATED_6_7
-        {CFE_SB_MSGID_WRAP_VALUE(CFE_ES_SHELL_TLM_MID), {0, 0}, 32},
-    #endif
-
+        /* Component Specifics */
         {CFE_SB_MSGID_WRAP_VALUE(CAM_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(CAM_EXP_TLM_MID),              {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_CSS_HK_TLM_MID),       {0,0},  32},
@@ -99,11 +111,18 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
 	    {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
-        {CFE_SB_MSGID_WRAP_VALUE(NAV_SEND_HK_TLM),              {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_HK_TLM_MID),    {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID),{0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_DEVICE_TLM_MID),        {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_HK_TLM_MID),      {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_DI_MID),          {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_AD_MID),          {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_GNC_MID),         {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_AC_MID),          {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_DO_MID),          {0,0},  32},
 
     }
 };
 
-CFE_TBL_FILEDEF(TO_LAB_Subs, TO_LAB.TO_LAB_Subs, TO Lab Sub Tbl, to_lab_sub.tbl)
+CFE_TBL_FILEDEF(TO_LAB_Subs, TO_LAB_APP.TO_LAB_Subs, TO Lab Sub Tbl, to_lab_sub.tbl)

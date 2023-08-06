@@ -105,11 +105,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
     
   /* slot #2 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #3 */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  3,  2, SCH_GROUP_CFE_HK },   /* EVS HK Request */
@@ -129,7 +129,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   /* slot #5  - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 40, SCH_GROUP_NONE },   /* CAM HK Request */                                      
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                            
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 96, SCH_GROUP_NONE },   /* ADCS HK Request */       
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -142,14 +142,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #7 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                    
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #8 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -178,11 +178,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #12 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #13 */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  3,  3, SCH_GROUP_CFE_HK },   /* SB HK Request */
@@ -215,14 +215,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #17 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #18 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -252,11 +252,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #22 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #23 */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  3,  4, SCH_GROUP_CFE_HK },   /* TIME HK Request */
@@ -275,8 +275,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
 
   /* slot #25 - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 50, SCH_GROUP_CFE_HK },   /* GPS HK Request */         
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  5,  0, 50, SCH_GROUP_CFE_HK },   /* GPS HK Request */         
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_CFE_HK },  /* GPS Data Request   */                                              
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -290,14 +290,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #27 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #28 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -326,11 +326,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #32 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #33 */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  3,  5, SCH_GROUP_CFE_HK },   /* TBL HK Request */
@@ -364,14 +364,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #37 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #38 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -401,11 +401,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #42 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #43 */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  4,  3,  1, SCH_GROUP_CFE_HK },   /* ES HK Request */
@@ -437,14 +437,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #47 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #48 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -475,11 +475,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #52 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #53 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -511,14 +511,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #57 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #58 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -547,11 +547,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #62 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #63 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -583,14 +583,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #67 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #68 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -619,11 +619,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #72 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
  
   /* slot #73 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -655,14 +655,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #77 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #78 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -691,11 +691,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #82 - ADCS */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #83 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -713,7 +713,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
 
   /* slot #85 - Component HK */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
-  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  5,  2, 85, SCH_GROUP_NONE },  /* Radio HK Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  5,  4, 85, SCH_GROUP_NONE },  /* Radio HK Request */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -727,14 +727,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #87 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #88 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -767,11 +767,11 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   /* slot #92 - ADCS */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  4,  2, 18, SCH_GROUP_CFS_HK }, */  /* HK Send Combined HK '3' */
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  4,  3, 19, SCH_GROUP_CFS_HK }, */  /* HK Send Combined HK '4' */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 51, SCH_GROUP_NONE },  /* GPS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 61, SCH_GROUP_NONE },  /* FSS Data Request */
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 71, SCH_GROUP_NONE },  /* CSS Data Request */                                          
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 76, SCH_GROUP_NONE },  /* IMU Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 81, SCH_GROUP_NONE },  /* MAG Data Request */ 
 
   /* slot #93 */
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -803,14 +803,14 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 
   /* slot #97 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 90, SCH_GROUP_NONE },  /* ADCS ADAC Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 91, SCH_GROUP_NONE },  /* ADCS DI Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 92, SCH_GROUP_NONE },  /* ADCS AD Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 93, SCH_GROUP_NONE },  /* ADCS GNC Data Request */ 
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 94, SCH_GROUP_NONE },  /* ADCS AC Data Request */ 
 
   /* slot #98 */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 95, SCH_GROUP_NONE },  /* ADCS DO Data Request */ 
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
@@ -820,8 +820,8 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE}                                       
+  //{  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  //{  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE}                                       
 };
 
 /*

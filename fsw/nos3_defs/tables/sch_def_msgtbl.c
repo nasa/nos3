@@ -25,6 +25,7 @@
 **************************************************************************/
 
 #include "cfe.h"
+#include "cfe_endian.h"
 #include "cfe_tbl_filedef.h"
 #include "sch_platform_cfg.h"
 #include "sch_tbldefs.h"
@@ -37,6 +38,7 @@
 //#include "hk_msgids.h"
 //#include "hs_msgids.h"
 #include "lc_msgids.h"
+#include "lc_msgdefs.h"
 #include "sc_msgids.h"
 #include "sch_msgids.h"
 #include "to_msgids.h"
@@ -53,8 +55,9 @@
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
 #include "generic_torquer_msgids.h"
-#include "nav_msgids.h"
+#include "novatel_oem615_msgids.h"
 #include "sample_msgids.h"
+#include "generic_adcs_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -149,8 +152,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #24 - MD Wakeup                         */
 /*{ { CFE_MAKE_BIG16(MD_WAKEUP_MID),            CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } }, */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #25 - CF Wakeup */
-  { { CFE_MAKE_BIG16(CF_WAKE_UP_REQ_CMD_MID),   CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #25 */
+  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #26 - CF HK Request */
   { { CFE_MAKE_BIG16(CF_SEND_HK_MID),           CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #27 */
@@ -206,9 +209,9 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
 
     /* command ID #50 - GPS HK */
-  { { CFE_MAKE_BIG16(NAV_CMD_REQ_NAV_SCH_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
-    /* command ID #51 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(NOVATEL_OEM615_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0000 } },
+    /* command ID #51 - GPS Data */
+  { { CFE_MAKE_BIG16(NOVATEL_OEM615_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), 0x0100 } },
     /* command ID #52 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #53 */
@@ -289,20 +292,20 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #89 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
   
-    /* command ID #90 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #91 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #92 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #93 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #94 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #95 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #96 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #90 - ADCS ADAC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_ADAC_UPDATE_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
+    /* command ID #91 - ADCS DI */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0300) } },
+    /* command ID #92 - ADCS AD */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0400) } },
+    /* command ID #93 - ADCS GNC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0500) } },
+    /* command ID #94 - ADCS AC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0600) } },
+    /* command ID #94 - ADCS AC */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_CMD_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0700) } },
+    /* command ID #96 - ADCS HK */
+  { { CFE_MAKE_BIG16(GENERIC_ADCS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #97 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #98 */
