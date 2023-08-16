@@ -78,21 +78,41 @@ fi
 
 for i in $targets
 do
-    if [ "$i" != "SYSTEM" ]
+    if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
     then
+        debug=$i"_DEBUG"
+        radio=$i"_RADIO"
+        echo TARGET $i $debug >> plugin.txt
+        echo TARGET $i $radio >> plugin.txt
+    else
         echo TARGET $i $i >> plugin.txt
     fi
 done
 echo "" >> plugin.txt
+
 echo "INTERFACE DEBUG udp_interface.rb host.docker.internal 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
-    if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" ]
+    if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
     then
-        echo "   MAP_TARGET $i" >> plugin.txt
+        debug=$i"_DEBUG"
+        echo "   MAP_TARGET $debug" >> plugin.txt
+    fi
+done
+echo "   MAP_TARGET TO_DEBUG" >> plugin.txt
+echo "" >> plugin.txt
+
+echo "INTERFACE RADIO udp_interface.rb host.docker.internal 5010 5011 nil nil 128 10.0 nil" >> plugin.txt
+for i in $targets
+do
+    if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
+    then
+        radio=$i"_RADIO"
+        echo "   MAP_TARGET $radio" >> plugin.txt
     fi
 done
 echo "" >> plugin.txt
+
 echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb host.docker.internal 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
 echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
