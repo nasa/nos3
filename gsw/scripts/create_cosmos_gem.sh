@@ -3,6 +3,12 @@
 # Convenience script for NOS3 development
 #
 
+# Self escalate screipt
+if [ "$EUID" -ne 0 ]
+then
+    exec sudo -s "$0" "$@"
+fi
+
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
@@ -13,11 +19,25 @@ cd $SCRIPT_DIR/../cosmos
 
 # Delete any previous run info
 rm -rf build
+if [ -d "build" ]
+then
+    echo ""
+    echo "ERROR: Failed to delete build directory!"
+    echo ""
+    exit 1
+fi
 
 # Start generating the plugin
 mkdir build
 cd build
 /opt/nos3/cosmos/openc3.sh cliroot generate plugin nos3
+if [ ! -d "openc3-cosmos-nos3" ]
+then
+    echo ""
+    echo "ERROR: cliroot generate plugin nos3 failed!"
+    echo ""
+    exit 1
+fi
 
 # Copy targets
 mkdir openc3-cosmos-nos3/targets
@@ -48,6 +68,14 @@ cp -r ../../lib .
 # Create plugin.txt
 echo "Create plugin..."
 rm plugin.txt
+if [ -f "plugin.txt" ]
+then
+    echo ""
+    echo "ERROR: Failed to remove plugin.txt file!"
+    echo ""
+    exit 1
+fi
+
 for i in $targets
 do
     if [ "$i" != "SYSTEM" ]
@@ -76,6 +104,13 @@ echo ""
 # Build plugin
 echo "Build plugin..."
 /opt/nos3/cosmos/openc3.sh cliroot rake build VERSION=1.0.$DATE
+if [ ! -f "openc3-cosmos-nos3-1.0.$DATE.gem" ]
+then
+    echo ""
+    echo "ERROR: cliroot rake build failed!"
+    echo ""
+    exit 1
+fi
 echo ""
 
 # Install plugin
@@ -88,6 +123,9 @@ echo ""
 echo "Load plugin..."
 /opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
 echo ""
+
+# Set permissions on build files
+chmod -R 777 $BASE_DIR/gsw/cosmos/build
 
 echo "Create COSMOS gem script complete."
 echo "Note that while this script is complete, COSMOS is likely still be processing behind the scenes!"
