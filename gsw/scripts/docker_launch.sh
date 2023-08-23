@@ -4,7 +4,7 @@
 # https://docs.docker.com/engine/install/ubuntu/
 #
 
-SCRIPT_DIR=$(cd `dirname $0` && pwd)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 FSW_DIR=$BASE_DIR/fsw/build/exe/cpu1
 GSW_DIR=$BASE_DIR/gsw/cosmos
@@ -82,7 +82,7 @@ export SATNUM=1
 for (( i=1; i<=$SATNUM; i++ ))
 do
     export SC_NUM="sc_"$i
-    export SC_NETNAME="sc_"$i"_satnet"
+    export SC_NETNAME="nos3_"$SC_NUM
     export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
     # Debugging
@@ -102,7 +102,8 @@ do
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-    gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $FSW_DIR:$FSW_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=1500 ivvitc/nos3 ./core-cpu1 -R PO &
+    gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $FSW_DIR:$FSW_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --cap-add sys_nice ivvitc/nos3 ./core-cpu1 -R PO &
+    docker network connect openc3-cosmos-network nos_fsw
     echo ""
 
     # Debugging
@@ -122,14 +123,12 @@ do
     gnome-terminal --tab --title=$SC_NUM" - RW 1 Sim"          -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim1"             --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim1
     gnome-terminal --tab --title=$SC_NUM" - RW 2 Sim"          -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim2"             --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
     gnome-terminal --tab --title=$SC_NUM" - Radio Sim"         -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_radio_sim"           -h radio_sim --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
+    $DNETWORK connect openc3-cosmos-network radio_sim
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"        -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"          --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample-sim
     gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"       -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"         --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
-    docker network connect $SC_NETNAME nos_terminal
-    docker network connect $SC_NETNAME nos_udp_terminal
+    $DNETWORK connect $SC_NETNAME nos_terminal
+    $DNETWORK connect $SC_NETNAME nos_udp_terminal
     echo ""
-
-    
-
 done
 
 
@@ -140,7 +139,7 @@ sleep 1
 for (( i=1; i<=$SATNUM; i++ ))
 do
     export SC_NUM="sc_"$i
-    export SC_NETNAME=$SC_NUM"_satnet"
+    export SC_NETNAME="nos3_"$SC_NUM
     export TIMENAME=$SC_NUM"_nos_time_driver"
     $DNETWORK connect --alias nos_time_driver $SC_NETNAME nos_time_driver
 done

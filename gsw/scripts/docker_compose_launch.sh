@@ -5,7 +5,7 @@
 # https://docs.docker.com/engine/install/ubuntu/
 #
 
-export SCRIPT_DIR=$(cd `dirname $0` && pwd)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 export FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
 export SIM_DIR=$BASE_DIR/sims/build
