@@ -8,6 +8,8 @@ BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
 DATE=$(date "+%Y%m%d%H%M")
 
+OPENC3_PATH="/opt/nos3/cosmos/openc3.sh"
+
 # Start by changing to a known location
 cd $SCRIPT_DIR/../cosmos
 
@@ -17,7 +19,7 @@ rm -rf build
 # Start generating the plugin
 mkdir build
 cd build
-/opt/nos3/cosmos/openc3.sh cliroot generate plugin nos3
+$OPENC3_PATH cliroot generate plugin nos3
 
 # Copy targets
 mkdir openc3-cosmos-nos3/targets
@@ -75,18 +77,18 @@ echo ""
 
 # Build plugin
 echo "Build plugin..."
-/opt/nos3/cosmos/openc3.sh cliroot rake build VERSION=1.0.$DATE
+$OPENC3_PATH cliroot rake build VERSION=1.0.$DATE
 echo ""
 
 # Install plugin
 echo "Install plugin..."
 cd $GSW_BIN
-/opt/nos3/cosmos/openc3.sh cliroot geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
+$OPENC3_PATH cliroot geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
 echo ""
 
 # Load plugin
 echo "Load plugin..."
-/opt/nos3/cosmos/openc3.sh cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
+$OPENC3_PATH cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
 echo ""
 
 echo "Create COSMOS gem script complete."

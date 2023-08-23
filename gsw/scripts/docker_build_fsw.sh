@@ -8,7 +8,4 @@
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
 
-docker run --rm -v $BASE_DIR:$BASE_DIR -w $BASE_DIR -it ivvitc/nos3 make fsw sim
-
-# Note that GSW cannot from inside docker
-make gsw
+docker run --rm -v $BASE_DIR:$BASE_DIR -w $BASE_DIR -it ivvitc/nos3 make fsw

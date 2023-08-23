@@ -10,7 +10,7 @@
         <absolute-start-time>814048200.0</absolute-start-time>
         <sim-microseconds-per-tick>10000</sim-microseconds-per-tick>
 		<real-microseconds-per-tick>10000</real-microseconds-per-tick>
-        <nos-connection-string>tcp://0.0.0.0:12001</nos-connection-string>
+        <nos-connection-string>tcp://nos_engine_server:12001</nos-connection-string>
     </common>
 
     <simulators>
@@ -21,29 +21,16 @@
             <hardware-model>
                 <type>TimeDriver</type>
                 <connections>
-                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>time-command</node-name></connection> -->
                     <connection>
                         <type>time</type>
-                        <bus-name>command</bus-name>
-                        <node-name>time-driver</node-name>
-                    </connection>
-                    <!--
-                    <connection>
-                        <type>time</type>
-                        <nos-connection-string-override>tcp://10.10.10.101:12001</nos-connection-string-override>
+                        <nos-connection-string-override>tcp://sc_1_nos3_engine_server:12001</nos-connection-string-override>
                         <bus-name>command</bus-name>
                         <node-name>sc1-time-driver</node-name>
-                    </connection>
-                    <connection>
-                        <type>time</type>
-                        <nos-connection-string-override>tcp://10.10.10.102:12001</nos-connection-string-override>
-                        <bus-name>command</bus-name>
-                        <node-name>sc2-time-driver</node-name>
-                    </connection>
-                    -->
+                    </connection>                    
                 </connections>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>stdio-terminal</name>
             <active>true</active>
@@ -80,6 +67,7 @@
                 </startup-commands>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>udp-terminal</name>
             <active>true</active>
@@ -116,6 +104,11 @@
                 </startup-commands>
             </hardware-model>
         </simulator>
+
+        <!--                      -->
+        <!-- Component Simulators -->
+        <!--                      -->
+
         <simulator>
             <name>sample_sim</name>
             <active>true</active>
@@ -137,6 +130,7 @@
                 </data-provider>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>gps</name>
             <active>true</active>
@@ -152,7 +146,7 @@
                 </connections>
                 <data-provider>               
                     <type>GPS42SOCKET</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4245</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
@@ -166,6 +160,7 @@
                 </data-provider> -->
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>camsim</name>
             <active>true</active>
@@ -186,6 +181,7 @@
                 </spi>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_eps_sim</name>
             <active>true</active>
@@ -266,6 +262,7 @@
                 </physical>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic-reactionwheel-sim0</name>
             <active>true</active>
@@ -281,7 +278,7 @@
                 </connections>
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4277</port>
                     <command-port>4278</command-port>
                     <max-connection-attempts>5</max-connection-attempts>
@@ -291,6 +288,7 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic-reactionwheel-sim1</name>
             <active>true</active>
@@ -306,7 +304,7 @@
                 </connections>
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4377</port>
                     <command-port>4378</command-port>
                     <max-connection-attempts>5</max-connection-attempts>
@@ -316,6 +314,7 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic-reactionwheel-sim2</name>
             <active>true</active>
@@ -331,7 +330,7 @@
                 </connections>
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4477</port>
                     <command-port>4478</command-port>
                     <max-connection-attempts>5</max-connection-attempts>
@@ -341,6 +340,7 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_css_sim</name>
             <active>true</active>
@@ -356,7 +356,7 @@
                 </connections>
                 <data-provider>               
                     <type>GENERIC_CSS_42_PROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4227</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
@@ -369,6 +369,7 @@
                 </i2c>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_torquer_sim</name>
             <active>true</active>
@@ -397,6 +398,7 @@
                 </params>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>truth42sim</name>
             <active>true</active>
@@ -412,7 +414,7 @@
                 </connections>
                 <data-provider>
                     <type>TRUTH42PROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>9999</port>
                     <max-connection-attempts>10</max-connection-attempts>
                     <orbit>0</orbit>
@@ -420,6 +422,7 @@
                 </data-provider>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic-fss-sim</name>
             <active>true</active>
@@ -435,7 +438,7 @@
                 </connections>
                 <data-provider>               
                     <type>GENERIC_FSS_42_PROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4281</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
@@ -443,6 +446,7 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_radio_sim</name>
             <active>true</active>
@@ -457,19 +461,19 @@
                     </connection>
                     <connection>
                         <name>fsw</name>
-                        <ip>0.0.0.0</ip>
+                        <ip>nos_fsw</ip>
                         <ci-port>5010</ci-port>
                         <to-port>5011</to-port>
                         <radio-port>5015</radio-port>
                     </connection>
                     <connection>
                         <name>radio</name>
-                        <ip>0.0.0.0</ip>
+                        <ip>radio_sim</ip>
                         <cmd-port>5014</cmd-port>
                     </connection>
                     <connection>
                         <name>gsw</name>
-                        <ip>0.0.0.0</ip>
+                        <ip>cosmos</ip>
                         <!-- Direct to ground -->
                         <cmd-port>6010</cmd-port>
                         <tlm-port>6011</tlm-port>
@@ -481,7 +485,7 @@
                     </connection>
                     <connection>
                         <name>prox</name>
-                        <ip>0.0.0.0</ip>
+                        <ip>radio_sim</ip>
                         <rcv-port>7012</rcv-port>
                         <fsw-port>7010</fsw-port>
                         <fwd-port>7011</fdw-port>
@@ -493,6 +497,7 @@
                 </data-provider>               
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_imu_sim</name>
             <active>true</active>
@@ -511,7 +516,7 @@
                 </connections>
                 <data-provider>
                     <type>GENERIC_IMU_42_PROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4280</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
@@ -519,6 +524,7 @@
                 </data-provider>
             </hardware-model>
         </simulator>
+
         <simulator>
             <name>generic_mag_sim</name>
             <active>true</active>
@@ -537,7 +543,7 @@
                 </connections>
                 <data-provider>
                     <type>GENERIC_MAG_42_PROVIDER</type>
-                    <hostname>localhost</hostname>
+                    <hostname>fortytwo</hostname>
                     <port>4234</port>
                     <max-connection-attempts>5</max-connection-attempts>
                     <retry-wait-seconds>5</retry-wait-seconds>
@@ -545,5 +551,6 @@
                 </data-provider>
             </hardware-model>
         </simulator>
+
     </simulators>
 </nos3-configuration>

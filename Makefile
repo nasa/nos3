@@ -27,7 +27,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim checkout gsw gsm-prep launch log real-clean stop sc-launch
+LOCALTGTS := all fsw fsw-prep sim sim-prep clean clean-fsw clean-gsw clean-sim dall dfsw dsim dlaunch gsw gsw-launch launch log real-clean sc-launch stop
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -97,6 +97,18 @@ clean-gsw:
 checkout:
 	./gsw/scripts/checkout.sh
 
+dall:
+	./gsw/scripts/docker_build.sh
+
+dfsw:
+	./gsw/scripts/docker_build_fsw.sh
+
+dsim:
+	./gsw/scripts/docker_build_sim.sh
+
+dlaunch:
+	./gsw/scripts/docker_launch.sh
+
 gsw-launch:
 	./gsw/scripts/gsw.sh
 
@@ -117,4 +129,5 @@ sc-launch:
 	./gsw/scripts/sc_launch.sh
 
 stop:
+	./gsw/scripts/docker_stop.sh
 	./gsw/scripts/stop.sh
