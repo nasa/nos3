@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+source $SCRIPT_DIR/env.sh
 
 # cFS
 killall -q -r -9 fsw_respawn.sh

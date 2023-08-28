@@ -1,4 +1,12 @@
 Vagrant.configure("2") do |config|
+    ###
+    ### Notes:
+    ###   Using the provided base boxes is not required to use the software
+    ###   Base boxes are provisioned from the following location
+    ###   * https://github.com/nasa-itc/deployment
+    ###   Links to which commit was used is captured in the box release notes
+    ###   
+
     ### Uncomment one of the following to select configuration
     #config.vm.box = "nos3/rocky"
     config.vm.box = "nos3/ubuntu"

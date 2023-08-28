@@ -4,11 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
-DATE=$(date "+%Y%m%d%H%M")
-
-OPENC3_PATH="/opt/nos3/cosmos/openc3.sh"
+source $SCRIPT_DIR/env.sh
 
 # Start by changing to a known location
 cd $SCRIPT_DIR/../cosmos

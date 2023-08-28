@@ -4,11 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
-SIM_BIN=$BASE_DIR/sims/build/bin
-SIMS=$(cd $SIM_BIN; ls nos3*simulator)
-
+source $SCRIPT_DIR/env.sh
 
 echo "Simulators..."
 cd $SIM_BIN

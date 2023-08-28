@@ -4,8 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
+source $SCRIPT_DIR/env.sh
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+source $SCRIPT_DIR/env.sh
 
 echo "Cleaning up all COSMOS files..."
 yes | rm $BASE_DIR/gsw/cosmos/Gemfile 2> /dev/null

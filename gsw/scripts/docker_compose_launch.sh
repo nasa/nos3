@@ -6,19 +6,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-export BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-export FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
-export SIM_DIR=$BASE_DIR/sims/build
-export SIM_BIN=$SIM_DIR/bin
-export SIMS=$(cd $SIM_BIN; ls nos3*simulator)
-
-# Debugging
-#echo "Script directory = " $SCRIPT_DIR
-#echo "Base directory   = " $BASE_DIR
-#echo "FSW directory    = " $FSW_BIN
-#echo "Sim directory    = " $SIM_BIN
-#echo "Sim list         = " $SIMS
-#exit
+source $SCRIPT_DIR/env.sh
 
 #echo "Make /tmp folders..."
 #mkdir /tmp/data 2> /dev/null

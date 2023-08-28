@@ -4,18 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
-SIM_BIN=$BASE_DIR/sims/build/bin
-SIMS=$(cd $SIM_BIN; ls nos3*simulator)
-
-# Debugging
-#echo "Script directory = " $SCRIPT_DIR
-#echo "Base directory   = " $BASE_DIR
-#echo "FSW directory    = " $FSW_BIN
-#echo "Sim directory    = " $SIM_BIN
-#echo "Sim list         = " $SIMS
-#exit
+source $SCRIPT_DIR/env.sh
 
 #echo "Make /tmp folders..."
 #mkdir /tmp/data 2> /dev/null
@@ -55,7 +44,7 @@ gnome-terminal --tab --title="42 Truth Sim"       -- $SIM_BIN/nos3-single-simula
 gnome-terminal --tab --title='CAM Sim'            -- $SIM_BIN/nos3-single-simulator camsim
 gnome-terminal --tab --title='CSS Sim'            -- $SIM_BIN/nos3-single-simulator generic_css_sim
 gnome-terminal --tab --title='EPS Sim'            -- $SIM_BIN/nos3-single-simulator generic_eps_sim
-gnome-terminal --tab --title="FSS Sim"            -- $SIM_BIN/nos3-single-simulator generic-fss-sim
+gnome-terminal --tab --title="FSS Sim"            -- $SIM_BIN/nos3-single-simulator generic_fss_sim
 gnome-terminal --tab --title='IMU Sim'            -- $SIM_BIN/nos3-single-simulator generic_imu_sim
 gnome-terminal --tab --title='MAG Sim'            -- $SIM_BIN/nos3-single-simulator generic_mag_sim
 gnome-terminal --tab --title='Radio Sim'          -- $SIM_BIN/nos3-single-simulator generic_radio_sim
