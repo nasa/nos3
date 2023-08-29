@@ -63,11 +63,11 @@ do
     #echo "Spacecraft configuration = " $SC_CFG_FILE
     
     echo $SC_NUM " - Create spacecraft network..."
-    $DNETWORK create $SC_NETNAME
+    $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
     echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos
+    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos 2> /dev/null
     echo ""
 
     echo $SC_NUM " - 42..."
