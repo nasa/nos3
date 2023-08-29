@@ -23,7 +23,7 @@ wait
 
 # Docker cleanup
 $DCALL container prune -f > /dev/null 2>&1
-$DNETWORK ls --filter=name="nos" | xargs $DNETWORK rm > /dev/null 2>&1 & 
+$DNETWORK ls --filter=name="nos" | xargs $DNETWORK rm > /dev/null 2>&1
 
 # 42
 rm -rf /opt/nos3/42/NOS3InOut

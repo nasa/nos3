@@ -59,7 +59,7 @@ SC_RtsTable001_t SC_Rts001 = {
         /* 2 - Enable Debug */
         .hdr2.TimeTag = 1,
         .cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(TO_LAB_CMD_MID, SC_MEMBER_SIZE(cmd2), TO_LAB_OUTPUT_ENABLE_CC, 0x00),
-        .cmd2.Payload.dest_IP = "127.0.0.1",
+        .cmd2.Payload.dest_IP = "cosmos",
 
         /* 3 - Enable RTS 3-64 */
         .hdr3.TimeTag = 1,
