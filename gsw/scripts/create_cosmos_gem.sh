@@ -7,7 +7,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 
 # Start by changing to a known location
-cd $SCRIPT_DIR/../cosmos
+cd $GSW_DIR
 
 # Delete any previous run info
 rm -rf build
@@ -54,7 +54,7 @@ do
     fi
 done
 echo "" >> plugin.txt
-echo "INTERFACE DEBUG udp_interface.rb host.docker.internal 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE DEBUG udp_interface.rb nos_fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" ]
