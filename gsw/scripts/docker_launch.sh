@@ -129,10 +129,6 @@ echo ""
 
 
 echo "COSMOS Ground Station..."
-#cd $BASE_DIR/gsw/cosmos
-#export MISSION_NAME=$(echo "NOS3")
-#export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")
-#ruby Launcher -c nos3_launcher.txt --system nos3_system.txt &
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
 then
