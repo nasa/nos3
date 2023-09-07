@@ -7,4 +7,6 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
-docker run --rm -v $BASE_DIR:$BASE_DIR -w $BASE_DIR -it ivvitc/nos3 make fsw
+
+mkdir -p $BASE_DIR/fsw/build
+$DFLAGS --cpus=$NUM_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR ivvitc/nos3 make -j build-fsw

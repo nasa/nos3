@@ -74,13 +74,15 @@ do
 
     echo $SC_NUM " - 42..."
     cd /opt/nos3/42/
+    rm -rf NOS3InOut
+    cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
     xhost +local:*
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v /opt/nos3/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w /opt/nos3/42 -t ivvitc/nos3 /opt/nos3/42/42 NOS3InOut
     echo ""
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-    gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $FSW_DIR:$FSW_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --cap-add sys_nice ivvitc/nos3 ./core-cpu1 -R PO &
+    gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --cap-add sys_nice ivvitc/nos3 $SCRIPT_DIR/fsw_respawn.sh &
     echo ""
 
     # Debugging

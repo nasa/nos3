@@ -19,7 +19,7 @@ do
         pidof core-cpu1 > /dev/null
         if [ $? -eq 1 ]
         then
-            gnome-terminal --title="NOS3 Flight Software" -- $FSW_DIR/core-cpu1 -R PO
+            $FSW_DIR/core-cpu1 -R PO & 
         fi
     fi
     sleep 1
