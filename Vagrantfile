@@ -25,6 +25,6 @@ Vagrant.configure("2") do |config|
         vbox.gui = true
         ### Enable additional configuration as needed
         vbox.cpus = 6
-        vbox.memory = "6144"
+        vbox.memory = "6144" # Should always be > (cpus * 1024)
     end
 end
