@@ -22,7 +22,7 @@ if [ -f "/etc/redhat-release" ]; then
     DNETWORK="sudo docker network"
 else
     DCALL="docker"
-    DFLAGS="docker run --rm -it"
+    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u):$(id -g)"
     DCREATE="docker create --rm -it"
     DNETWORK="docker network"
 fi

@@ -8,5 +8,5 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 
-mkdir -p $BASE_DIR/sims/build
-$DFLAGS --cpus=$NUM_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_sim" -w $BASE_DIR ivvitc/nos3 make -j$NUM_CPUS build-sim
+mkdir -p $BASE_DIR/fsw/build
+$DFLAGS --cpus=$NUM_CPUS -v $BASE_DIR:$BASE_DIR -w $BASE_DIR ivvitc/nos3 bash

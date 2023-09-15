@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/bin/bash -i
 #
 # Convenience script for NOS3 development
-# https://docs.docker.com/engine/install/ubuntu/
+# Use with the Dockerfile in the deployment repository
+# https://github.com/nasa-itc/deployment
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
