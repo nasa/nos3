@@ -18,4 +18,6 @@ yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 echo "Cleaning up CryptoLib build..."
 yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 
+$DCALL system prune -f
+
 exit 0

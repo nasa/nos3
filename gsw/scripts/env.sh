@@ -15,22 +15,24 @@ if [ -d $SIM_DIR/bin ]; then
     SIMS=$(ls $SIM_BIN/nos3*simulator) 
 fi 
 
-if [ -f "/etc/redhat-release" ]; then
-    DCALL="sudo docker"
-    DFLAGS="sudo docker run --rm --group-add keep-groups -it"
-    DCREATE="sudo docker create --rm -it"
-    DNETWORK="sudo docker network"
-else
-    DCALL="docker"
-    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u):$(id -g)"
-    DCREATE="docker create --rm -it"
-    DNETWORK="docker network"
-fi
-
 DATE=$(date "+%Y%m%d%H%M")
 OPENC3_PATH="/opt/nos3/cosmos/openc3.sh"
 
 NUM_CPUS="$( nproc )"
+
+if [ -f "/etc/redhat-release" ]; then
+    DCALL="podman"
+    DFLAGS="podman run --rm --group-add keep-groups -it"
+    DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
+    DCREATE="podman create --rm -it"
+    DNETWORK="podman network"
+else
+    DCALL="docker"
+    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(stat -c '%U:%U' $SCRIPT_DIR/env.sh)"
+    DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
+    DCREATE="docker create --rm -it"
+    DNETWORK="docker network"
+fi
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR
