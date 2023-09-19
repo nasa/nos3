@@ -3,8 +3,8 @@
 # Convenience script for NOS3 development
 #
 
-SCRIPT_DIR=$(cd `dirname $0` && pwd)
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/env.sh
 
 # cFS
 killall -q -r -9 fsw_respawn.sh

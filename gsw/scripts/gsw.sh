@@ -3,9 +3,8 @@
 # Convenience script for NOS3 development
 #
 
-SCRIPT_DIR=$(cd `dirname $0` && pwd)
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
-FSW_BIN=$BASE_DIR/fsw/build/exe/cpu1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/env.sh
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

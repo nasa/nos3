@@ -43,5 +43,19 @@
 #define SAMPLE_CFG_MS_TIMEOUT       50            /* Max 255 */
 //#define SAMPLE_CFG_DEBUG
 
+/*
+** GENERIC_RADIO Configuration
+*/
+#define GENERIC_RADIO_CFG
+#define GENERIC_RADIO_CFG_PROX_DATA_SIZE   64
+#define GENERIC_RADIO_CFG_FSW_IP           "nos_fsw"
+#define GENERIC_RADIO_CFG_DEVICE_IP        "radio_sim"
+#define GENERIC_RADIO_CFG_DEVICE_DELAY_MS  10
+#define GENERIC_RADIO_CFG_UDP_PROX_TO_FSW  7010
+#define GENERIC_RADIO_CFG_UDP_FSW_TO_PROX  7011
+#define GENERIC_RADIO_CFG_UDP_FSW_TO_RADIO 5014
+#define GENERIC_RADIO_CFG_UDP_RADIO_TO_FSW 5015
+//#define GENERIC_RADIO_CFG_DEBUG
+
 
 #endif /* _cpu1_device_cfg_ */

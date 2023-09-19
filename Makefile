@@ -27,7 +27,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim checkout gsw gsm-prep launch log real-clean stop sc-launch
+LOCALTGTS := all build-fsw build-sim checkout clean clean-fsw clean-sim clean-gsw fsw gsw launch log real-clean sim stop
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -35,48 +35,26 @@ OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 .PHONY: $(LOCALTGTS) $(OTHERTGTS)
 
 #
-# Generic Commands
+# Commands
 #
 all:
 	$(MAKE) fsw
 	$(MAKE) sim
 	$(MAKE) gsw
 
-#
-# FSW
-#
-fsw:
-	$(MAKE) fsw-prep
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-
-fsw-prep:
+build-fsw:
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 
-#
-# Sims
-#
-sim:
-	$(MAKE) sim-prep
-	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
-
-sim-prep:
+build-sim:
 	mkdir -p $(SIMBUILDDIR)
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
+	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
-#
-# GSW
-#
-gsw:
-	$(MAKE) gsw-prep
-	./gsw/scripts/create_cosmos_gem.sh
+checkout:
+	./gsw/scripts/checkout.sh
 
-gsw-prep:
-	mkdir -p ./gsw/cosmos/build
-
-#
-# Clean
-#
 clean:
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
@@ -91,20 +69,14 @@ clean-sim:
 clean-gsw:
 	rm -rf gsw/cosmos/build
 
-#
-# Script Calls
-#
-checkout:
-	./gsw/scripts/checkout.sh
+fsw: 
+	./gsw/scripts/docker_build_fsw.sh
 
-gsw-launch:
-	./gsw/scripts/gsw.sh
+gsw:
+	./gsw/scripts/create_cosmos_gem.sh
 
 launch:
-	./gsw/scripts/launch.sh
-
-reboot:
-	./gsw/scripts/reboot.sh
+	./gsw/scripts/docker_launch.sh
 
 log:
 	./gsw/scripts/log.sh
@@ -113,8 +85,9 @@ real-clean:
 	$(MAKE) clean
 	./gsw/scripts/real_clean.sh
 
-sc-launch:
-	./gsw/scripts/sc_launch.sh
+sim:
+	./gsw/scripts/docker_build_sim.sh
 
 stop:
+	./gsw/scripts/docker_stop.sh
 	./gsw/scripts/stop.sh
