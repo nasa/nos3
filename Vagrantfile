@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
     ###   
 
     ### Uncomment one of the following to select configuration
-    #config.vm.box = "nos3/rocky"
+    #config.vm.box = "nos3/rocky" # Not yet updated to support
     config.vm.box = "nos3/ubuntu"
     
     ### Specify version
