@@ -1,0 +1,44 @@
+TELEMETRY GENERIC_STAR_TRACKER GENERIC_STAR_TRACKER_HK_TLM LITTLE_ENDIAN "GENERIC_STAR_TRACKER_Hk_tlm_t"
+  APPEND_ID_ITEM CCSDS_STREAMID       16 UINT 0x0935  "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_SEQUENCE       16 UINT         "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_LENGTH         16 UINT         "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_SECONDS        32 UINT         "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM    CCSDS_SUBSECS        16 UINT         "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM    CCSDS_SPARE          32 UINT         ""
+  APPEND_ITEM    CMD_ERR_COUNT         8 UINT         "Command Error Count"
+  APPEND_ITEM    CMD_COUNT             8 UINT         "Command Count"
+  APPEND_ITEM    DEVICE_ERR_COUNT      8 UINT         "Device Command Error Count"
+  APPEND_ITEM    DEVICE_COUNT          8 UINT         "Device Command Count"
+  APPEND_ITEM    DEVICE_ENABLED        8 UINT         "Device Enable Status"
+    STATE DISABLED 0
+    STATE ENABLED  1 
+  # GENERIC_STAR_TRACKER_Device_HK_tlm_t
+  APPEND_ITEM    DEVICE_COUNTER       32 UINT         "Reported Device Command Counter"
+  APPEND_ITEM    DEVICE_CONFIG        32 UINT         "Reported Device Configuration"
+  APPEND_ITEM    DEVICE_STATUS        32 UINT         "Reported Device Status"
+
+TELEMETRY GENERIC_STAR_TRACKER GENERIC_STAR_TRACKER_DATA_TLM LITTLE_ENDIAN "GENERIC_STAR_TRACKER_Device_tlm_t"
+  APPEND_ID_ITEM CCSDS_STREAMID       16 UINT 0x0936  "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_SEQUENCE       16 UINT         "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_LENGTH         16 UINT         "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_ITEM    CCSDS_SECONDS        32 UINT         "CCSDS Telemetry Secondary Header (seconds)"
+  APPEND_ITEM    CCSDS_SUBSECS        16 UINT         "CCSDS Telemetry Secondary Header (subseconds)"
+  APPEND_ITEM    CCSDS_SPARE          32 UINT         ""
+  # GENERIC_STAR_TRACKER_Device_Data_tlm_t
+  APPEND_ITEM    DEVICE_COUNTER       32 UINT         "Reported Device Command Counter"
+  APPEND_ITEM    RAW_GENERIC_STAR_TRACKER_X         16 UINT         "Raw generic_star_tracker data x component (1-65535)"
+  APPEND_ITEM    RAW_GENERIC_STAR_TRACKER_Y         16 UINT         "Raw generic_star_tracker data y component (1-65535)"
+  APPEND_ITEM    RAW_GENERIC_STAR_TRACKER_Z         16 UINT         "Raw generic_star_tracker data z component (1-65535)"
+#  APPEND_ITEM    PAD                  16 UINT         "Because the packed struct it came from has a stride address of 32 and cFS does not serialize"
+  APPEND_ITEM    GENERIC_STAR_TRACKER_X              0 DERIVED      "Generic_star_tracker data unit vector x component (-1.0 to 1.0)"
+    GENERIC_READ_CONVERSION_START FLOAT 32
+      (packet.read("RAW_GENERIC_STAR_TRACKER_X") - 32768.0)/32767.0
+    GENERIC_READ_CONVERSION_END
+  APPEND_ITEM    GENERIC_STAR_TRACKER_Y              0 DERIVED      "Generic_star_tracker data unit vector y component (-1.0 to 1.0)"
+    GENERIC_READ_CONVERSION_START FLOAT 32
+      (packet.read("RAW_GENERIC_STAR_TRACKER_Y") - 32768.0)/32767.0
+    GENERIC_READ_CONVERSION_END
+  APPEND_ITEM    GENERIC_STAR_TRACKER_Z              0 DERIVED      "Generic_star_tracker data unit vector z component (-1.0 to 1.0)"
+    GENERIC_READ_CONVERSION_START FLOAT 32
+      (packet.read("RAW_GENERIC_STAR_TRACKER_Z") - 32768.0)/32767.0
+    GENERIC_READ_CONVERSION_END
