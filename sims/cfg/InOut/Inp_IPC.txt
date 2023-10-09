@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>
-15                                      ! Number of Sockets
+16                                      ! Number of Sockets
 **********************************  Sample   *****************************
 TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
 0                                       ! AC.ID for ACS mode
@@ -7,7 +7,7 @@ TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE
 SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
 fortytwo       4242                     ! Server Host Name, Port 
 FALSE                                   ! Allow Blocking (i.e. wait on RX)
-FALSE                                   ! Echo to stdout
+TRUE                                   ! Echo to stdout
 1                                       ! Number of TX prefixes
 "SC"                                    ! Prefix 0
 **********************************  RW 0 to 42   *****************************
@@ -162,3 +162,13 @@ FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
 1                                       ! Number of TX prefixes
 "SC"                                    ! Prefix 0
+**********************************  Star Tracker   *****************************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"ST.42"                                 ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+fortytwo       4282                     ! Server Host Name, Port 
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+TRUE                                   ! Echo to stdout
+1                                       ! Number of TX prefixes
+"SC[0].AC.ST"                           ! Prefix 0
