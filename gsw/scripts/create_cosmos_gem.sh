@@ -6,6 +6,15 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 
+# Check that local NOS3 directory exists
+if [ ! -d $USER_NOS3_DIR ]; then
+    echo ""
+    echo "    Need to run make prep first!"
+    echo ""
+    exit 1
+fi
+
+
 # Start by changing to a known location
 cd $GSW_DIR
 

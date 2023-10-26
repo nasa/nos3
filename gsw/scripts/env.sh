@@ -16,11 +16,15 @@ if [ -d $SIM_DIR/bin ]; then
 fi 
 
 DATE=$(date "+%Y%m%d%H%M")
-OPENC3_PATH=$BASE_DIR/gsw/openc3-cosmos/openc3.sh
-
 NUM_CPUS="$( nproc )"
 
-# Note: Podman not yet supported
+USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
+OPENC3_DIR=$USER_NOS3_DIR/openc3-cosmos
+OPENC3_PATH=$OPENC3_DIR/openc3.sh
+
+###
+### Note: Podman not yet supported
+###
 #if [ -f "/etc/redhat-release" ]; then
 #    DCALL="podman"
 #    DFLAGS="podman run --rm --group-add keep-groups -it"
@@ -48,4 +52,6 @@ NUM_CPUS="$( nproc )"
 #echo "Docker create    = " $DCREATE
 #echo "Docker network   = " $DNETWORK
 #echo "Date             = " $DATE
+#echo "Local user .nos3 = " $USER_NOS3_DIR
+#echo "OpenC3 directory = " $OPENC3_DIR
 #echo "OpenC3 path      = " $OPENC3_PATH
