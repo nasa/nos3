@@ -31,11 +31,11 @@ fi
 # Start generating the plugin
 mkdir build
 cd build
-$OPENC3_PATH cliroot generate plugin nos3
+$OPENC3_PATH cli generate plugin nos3
 if [ ! -d "openc3-cosmos-nos3" ]
 then
     echo ""
-    echo "ERROR: cliroot generate plugin nos3 failed!"
+    echo "ERROR: cli generate plugin nos3 failed!"
     echo ""
     exit 1
 fi
@@ -123,29 +123,29 @@ echo ""
 
 # Build plugin
 echo "Build plugin..."
-$OPENC3_PATH cliroot rake build VERSION=1.0.$DATE
+$OPENC3_PATH cli rake build VERSION=1.0.$DATE
 if [ ! -f "openc3-cosmos-nos3-1.0.$DATE.gem" ]
 then
     echo ""
-    echo "ERROR: cliroot rake build failed!"
+    echo "ERROR: cli rake build failed!"
     echo ""
     exit 1
 fi
 echo ""
 
-# Install plugin
-echo "Install plugin..."
-cd $GSW_BIN
-$OPENC3_PATH cliroot geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
-echo ""
+## Install plugin
+#echo "Install plugin..."
+#cd $GSW_BIN
+#$OPENC3_PATH cli geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
+#echo ""
 
 # Load plugin
 echo "Load plugin..."
 $OPENC3_PATH cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
 echo ""
 
-# Set permissions on build files
-chmod -R 777 $BASE_DIR/gsw/cosmos/build
+## Set permissions on build files
+#chmod -R 777 $BASE_DIR/gsw/cosmos/build
 
 echo "Create COSMOS gem script complete."
 echo "Note that while this script is complete, COSMOS is likely still be processing behind the scenes!"
