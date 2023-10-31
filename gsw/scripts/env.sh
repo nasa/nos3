@@ -23,14 +23,15 @@ OPENC3_DIR=$USER_NOS3_DIR/openc3-cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
 
 ###
-### Note: Podman not yet supported
+### Notes: 
+###   Podman and/or Docker on RHEL not yet supported
 ###
 #if [ -f "/etc/redhat-release" ]; then
-#    DCALL="podman"
-#    DFLAGS="podman run --rm --group-add keep-groups -it"
+#    DCALL="docker"
+#    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
 #    DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
-#    DCREATE="podman create --rm -it"
-#    DNETWORK="podman network"
+#    DCREATE="docker create --rm -it"
+#    DNETWORK="docker network"
 #else
     DCALL="docker"
     DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"

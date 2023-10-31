@@ -20,9 +20,9 @@ echo "Prepare openc3-cosmos containers..."
 cd $OPENC3_DIR
 $OPENC3_PATH start
 
+echo "Prepare nos3 docker container..."
+$DCALL image pull ivvitc/nos3
+
 echo "Set a password in openc3-cosmos via firefox..."
 sleep 5
 firefox localhost:2900 &
-
-echo "Prepare nos3 docker container..."
-$DCALL image pull ivvitc/nos3
