@@ -130,7 +130,7 @@
                     <hostname>fortytwo</hostname>
                     <port>4242</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                 </data-provider>
             </hardware-model>
@@ -154,7 +154,7 @@
                     <hostname>fortytwo</hostname>
                     <port>4245</port>
                    <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <GPS>0</GPS>
                     <leap-seconds>37</leap-seconds>
@@ -223,10 +223,10 @@
                         <hex-status>00AA</hex-status>
                     </switch-0>
                     <switch-1>
-                        <node-name>unknown-sim-command-node</node-name>
+                        <node-name>star-tracker-command</node-name>
                         <voltage>3.30</voltage>
                         <current>0.25</current>
-                        <hex-status>0000</hex-status>
+                        <hex-status>00AA</hex-status>
                     </switch-1>
                     <switch-2>
                         <node-name>unknown-sim-command-node</node-name>
@@ -287,7 +287,7 @@
                     <port>4277</port>
                     <command-port>4278</command-port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <reactionwheel>0</reactionwheel>
                 </data-provider>               
@@ -313,7 +313,7 @@
                     <port>4377</port>
                     <command-port>4378</command-port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <reactionwheel>1</reactionwheel>
                 </data-provider>               
@@ -339,7 +339,7 @@
                     <port>4477</port>
                     <command-port>4478</command-port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <reactionwheel>2</reactionwheel>
                 </data-provider>               
@@ -364,7 +364,7 @@
                     <hostname>fortytwo</hostname>
                     <port>4227</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <42-css-scale-factor>1.0</42-css-scale-factor>
                 </data-provider>   
@@ -393,7 +393,7 @@
                     <hostname>fortytwo</hostname>
                     <command-port>4279</command-port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                 </data-provider>
                 <params>
                     <num-mtbs>3</num-mtbs>
@@ -425,7 +425,7 @@
                     <hostname>fortytwo</hostname>
                     <port>9999</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <orbit>0</orbit>
                     <spacecraft>0</spacecraft>
                 </data-provider>
@@ -450,7 +450,7 @@
                     <hostname>fortytwo</hostname>
                     <port>4281</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                 </data-provider>               
             </hardware-model>
@@ -528,7 +528,7 @@
                     <hostname>fortytwo</hostname>
                     <port>4280</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                 </data-provider>
             </hardware-model>
@@ -555,8 +555,36 @@
                     <hostname>fortytwo</hostname>
                     <port>4234</port>
                     <max-connection-attempts>20</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>5</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+
+        <simulator>
+            <name>generic_star_tracker_sim</name>
+            <active>true</active>
+            <library>libgeneric_star_tracker_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_STAR_TRACKER</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>star-tracker-command</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_10</bus-name>
+                        <node-port>10</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_STAR_TRACKER_42_PROVIDER</type>
+                    <hostname>fortytwo</hostname>
+                    <port>4282</port>
+                    <max-connection-attempts>20</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                    <star-tracker>0</star-tracker>
                 </data-provider>
             </hardware-model>
         </simulator>

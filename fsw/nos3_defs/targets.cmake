@@ -115,6 +115,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         novatel_oem615
         sample
         generic_adcs
+        generic_star_tracker
 )
 
 # Create Application Platform Include List
