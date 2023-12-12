@@ -7,9 +7,13 @@ The best source of documentation can be found at [the wiki](https://github.com/n
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
-* [Git 2.36+](https://git-scm.com/)
-* [Vagrant 2.3.4+](https://www.vagrantup.com/)
-* [VirtualBox 7.0+](https://www.virtualbox.org/)
+* Option A
+  * [Git 2.36+](https://git-scm.com/)
+  * Linux with docker and docker compose installed
+* Option B
+  * [Git 2.36+](https://git-scm.com/)
+  * [Vagrant 2.3.4+](https://www.vagrantup.com/)
+  * [VirtualBox 7.0+](https://www.virtualbox.org/)
 
 ### Installing
 1. Clone the repository `git clone https://github.com/nasa/nos3.git`
@@ -17,20 +21,33 @@ Each of the applications listed below are required prior to performing the insta
 3. Clone the submodules `git submodule update --init --recursive`
 4. Run `vagrant up` and wait to return to a prompt
     - This can take anywhere from a few minutes to hours depending on internet speeds and host PC specs
-5. Login to the nos3 user using the password `nos3123!` and get to work!
-6. Try building and running following the instructions below
+5. In VirtualBox `Devices > Upgrade Guest Additions...`
+	- Wait for this to complete
+6. Run `vagrant reload` to finish the upgrade
+7. Login to the jstar user using the password `jstar123!` and get to work!
+8. Try building and running following the instructions below
 
 ### Getting started
-By default the nos3 repository is shared into the virtual machine at `/home/nos3/Desktop/github-nos3`
+By default the nos3 repository is shared into the virtual machine at `/home/jstar/Desktop/github-nos3`
 1. Open a terminal
 2. Navigate to the nos3 repository
-  - `cd /home/nos3/Desktop/github-nos3`
-2. To build use the `make` command from the nos3 repo
-3. To run nos3 use the `make launch` command from the nos3 repo
-4. To halt nos3 use the `make stop` command from the nos3 repo
+  - `cd /home/jstar/Desktop/github-nos3`
+3. Prepare the environment with COSMOS and docker containers
+  - `make prep`
+4. Build FSW, GSW, and SIMS
+  - `make`
+5. Run NOS3 including FSW, GSW, and SIMS
+  - `make launch`
+6. Stop NOS3
+  - `make stop`
+  - Note that COSMOS will remaining running in the background until `make stop-gsw` is done
 
 ### Directory Layout
-* `components` contains the repositories for the hardware component apps; each repository contains the app, an associated sim, and COSMOS command and telemetry tables
+* `components` contains the repositories for the hardware component apps
+	- /fsw - cFS application
+	- /gsw - OpenC3 COSMOS database
+	- /sim - NOS3 simulator
+	- /support - Optional folder containing a standalone checkout application
 * `fsw` contains the repositories needed to build cFS FSW
 	- /apps - the open source cFS apps
 	- /cfe - the core flight system (cFS) source files
@@ -39,8 +56,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/nos3
 	- /psp - platform support package (PSP), enables use on multiple types of boards
 	- /tools - standard cFS provided tools
 * `gsw` contains the nos3 ground station files, and other ground based tools
-	- /ait - Ammos Instrument Toolkit (Untested for 1.05.0)
-	- /cosmos - COSMOS files
+	- /cosmos - OpenC3 COSMOS files
 	- /OrbitInviewPowerPrediction - OIPP tool for operators
 	- /scripts - convenience scripts
 * `sims` contains the nos3 simulators and configuration files
@@ -48,7 +64,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/nos3
 	- /nos_time_driver - time syncronization for all components
 	- /sim_common - common files used by component simulators including the files that define the simulator plugin architecture
 	- /sim_terminal - terminal for testing on NOS Engine busses
-	- /truth_42_sim - interface between 42 and COSMOS to provide dynamics truth data to COSMOS
+	- /truth_42_sim - interface between 42 and OpenC3 COSMOS to provide dynamics truth data
 
 ### Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the tags on this repository.

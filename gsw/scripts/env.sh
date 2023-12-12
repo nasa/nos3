@@ -16,23 +16,29 @@ if [ -d $SIM_DIR/bin ]; then
 fi 
 
 DATE=$(date "+%Y%m%d%H%M")
-OPENC3_PATH="/opt/nos3/cosmos/openc3.sh"
-
 NUM_CPUS="$( nproc )"
 
-if [ -f "/etc/redhat-release" ]; then
-    DCALL="podman"
-    DFLAGS="podman run --rm --group-add keep-groups -it"
-    DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
-    DCREATE="podman create --rm -it"
-    DNETWORK="podman network"
-else
+USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
+OPENC3_DIR=$USER_NOS3_DIR/openc3-cosmos
+OPENC3_PATH=$OPENC3_DIR/openc3.sh
+
+###
+### Notes: 
+###   Podman and/or Docker on RHEL not yet supported
+###
+#if [ -f "/etc/redhat-release" ]; then
+#    DCALL="docker"
+#    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
+#    DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
+#    DCREATE="docker create --rm -it"
+#    DNETWORK="docker network"
+#else
     DCALL="docker"
-    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(id -g $(stat -c '%G' $SCRIPT_DIR/env.sh))"
+    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
     DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
     DCREATE="docker create --rm -it"
     DNETWORK="docker network"
-fi
+#fi
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR
@@ -47,4 +53,6 @@ fi
 #echo "Docker create    = " $DCREATE
 #echo "Docker network   = " $DNETWORK
 #echo "Date             = " $DATE
+#echo "Local user .nos3 = " $USER_NOS3_DIR
+#echo "OpenC3 directory = " $OPENC3_DIR
 #echo "OpenC3 path      = " $OPENC3_PATH
