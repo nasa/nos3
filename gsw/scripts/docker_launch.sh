@@ -78,7 +78,7 @@ do
     echo ""
 
     echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    $DNETWORK connect $SC_NETNAME openc3-cosmos_openc3-operator_1 --alias cosmos 2> /dev/null
+    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos 2> /dev/null
     echo ""
 
     echo $SC_NUM " - 42..."
@@ -114,10 +114,15 @@ do
     gnome-terminal --tab --title=$SC_NUM" - RW 0 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim0"      --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim0
     gnome-terminal --tab --title=$SC_NUM" - RW 1 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim1"      --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim1
     gnome-terminal --tab --title=$SC_NUM" - RW 2 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim2"      --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
+    
     gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_radio_sim"    -h radio_sim --network=$SC_NETNAME --network-alias=radio_sim -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
+    
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample_sim
-    gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_startrk_sim"  --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
+    gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
+
+    # Note: Can keep open if desired after a new gnome-profile is manually created
+    #gnome-terminal --window-with-profile=KeepOpen --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample_sim
     echo ""
 done
 

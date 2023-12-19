@@ -14,7 +14,7 @@ echo ""
 
 echo "Clone openc3-cosmos into local user directory..."
 cd $USER_NOS3_DIR
-git clone https://github.com/nasa-itc/openc3-nos3.git --depth 1 -b main
+git clone https://github.com/nasa-itc/openc3-nos3.git --depth 1 -b main $USER_NOS3_DIR/cosmos
 git reset --hard
 echo ""
 
