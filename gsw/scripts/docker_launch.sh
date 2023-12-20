@@ -33,10 +33,6 @@ mkdir /tmp/data/inst 2> /dev/null
 mkdir /tmp/uplink 2> /dev/null
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/uplink/tmp0.so 2> /dev/null
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/uplink/tmp1.so 2> /dev/null
-# 42
-cd /opt/nos3/42/
-rm -rf NOS3InOut
-cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
 
 
 echo "Create ground networks..."
@@ -82,6 +78,7 @@ do
     echo ""
 
     echo $SC_NUM " - 42..."
+    rm -rf $USER_NOS3_DIR/42/NOS3InOut
     cp -r $BASE_DIR/sims/cfg/InOut $USER_NOS3_DIR/42/NOS3InOut
     xhost +local:*
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w /opt/nos3/42 -t ivvitc/nos3 /opt/nos3/42/42 NOS3InOut
