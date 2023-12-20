@@ -7,6 +7,8 @@ FSWBUILDDIR ?= $(CURDIR)/fsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
 export CFS_APP_PATH = ../components
+export MISSION_DEFS = ../cfg/
+export MISSIONCONFIG = ../cfg/nos3
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
