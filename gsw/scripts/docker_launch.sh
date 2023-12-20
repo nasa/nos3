@@ -79,7 +79,7 @@ do
 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
-    cp -r $BASE_DIR/sims/cfg/InOut $USER_NOS3_DIR/42/NOS3InOut
+    cp -r $BASE_DIR/cfg/InOut $USER_NOS3_DIR/42/NOS3InOut
     xhost +local:*
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w /opt/nos3/42 -t ivvitc/nos3 /opt/nos3/42/42 NOS3InOut
     echo ""
