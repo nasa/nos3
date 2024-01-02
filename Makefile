@@ -55,7 +55,7 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
-	./gsw/scripts/checkout.sh
+	./scripts/checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
@@ -72,33 +72,33 @@ clean-gsw:
 	rm -rf gsw/cosmos/build
 
 debug:
-	./gsw/scripts/docker_debug.sh
+	./scripts/docker_debug.sh
 
 fsw: 
-	./gsw/scripts/docker_build_fsw.sh
+	./scripts/docker_build_fsw.sh
 
 gsw:
-	./gsw/scripts/create_cosmos_gem.sh
+	./scripts/create_cosmos_gem.sh
 
 launch:
-	./gsw/scripts/docker_launch.sh
+	./scripts/docker_launch.sh
 
 log:
-	./gsw/scripts/log.sh
+	./scripts/log.sh
 
 prep:
-	./gsw/scripts/prepare.sh
+	./scripts/prepare.sh
 
 real-clean:
 	$(MAKE) clean
-	./gsw/scripts/real_clean.sh
+	./scripts/real_clean.sh
 
 sim:
-	./gsw/scripts/docker_build_sim.sh
+	./scripts/docker_build_sim.sh
 
 stop:
-	./gsw/scripts/docker_stop.sh
-	./gsw/scripts/stop.sh
+	./scripts/docker_stop.sh
+	./scripts/stop.sh
 
 stop-gsw:
-	./gsw/scripts/stop_gsw.sh
+	./scripts/stop_gsw.sh
