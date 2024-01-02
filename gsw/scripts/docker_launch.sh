@@ -125,7 +125,7 @@ done
 
 
 echo "NOS Time Driver..."
-sleep 5
+sleep 8
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos_time_driver --network=nos3_core -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $GND_CFG_FILE time
 sleep 1
 for (( i=1; i<=$SATNUM; i++ ))
