@@ -27,7 +27,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw debug fsw gsw launch log prep real-clean sim stop stop-gsw
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -68,6 +68,9 @@ clean-sim:
 
 clean-gsw:
 	rm -rf gsw/cosmos/build
+
+debug:
+	./gsw/scripts/docker_debug.sh
 
 fsw: 
 	./gsw/scripts/docker_build_fsw.sh

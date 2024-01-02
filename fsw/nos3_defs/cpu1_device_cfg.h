@@ -37,8 +37,8 @@
 ** SAMPLE Configuration
 */
 #define SAMPLE_CFG
-#define SAMPLE_CFG_STRING           "usart_29"
-#define SAMPLE_CFG_HANDLE           29 
+#define SAMPLE_CFG_STRING           "usart_16"
+#define SAMPLE_CFG_HANDLE           16 
 #define SAMPLE_CFG_BAUDRATE_HZ      115200
 #define SAMPLE_CFG_MS_TIMEOUT       50            /* Max 255 */
 //#define SAMPLE_CFG_DEBUG

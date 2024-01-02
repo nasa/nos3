@@ -14,9 +14,8 @@ if [ ! -d $USER_NOS3_DIR ]; then
     exit 1
 fi
 
-
 # Start by changing to a known location
-cd $GSW_DIR
+cd $OPENC3_DIR
 
 # Delete any previous run info
 rm -rf build
@@ -44,13 +43,13 @@ fi
 mkdir openc3-cosmos-nos3/targets
 cd openc3-cosmos-nos3/targets
 targets=""
-for i in $(find ../../../../../components -name target.txt) 
+for i in $(find $BASE_DIR/components -name target.txt) 
 do 
     j=$(dirname $i)
     cp -r $j .
     targets="$targets $(basename $j)"
 done
-for i in $(find ../../../config/targets -name target.txt) 
+for i in $(find $GSW_DIR/config/targets -name target.txt) 
 do 
     j=$(dirname $i)
     cp -r $j .
