@@ -104,6 +104,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # Components
     #
         arducam
+        generic_adcs
         generic_css
         generic_eps
         generic_fss
@@ -111,11 +112,10 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_mag
         generic_reaction_wheel
         generic_radio
+        generic_star_tracker
         generic_torquer
         novatel_oem615
         sample
-        generic_adcs
-        generic_star_tracker
 )
 
 # Create Application Platform Include List
