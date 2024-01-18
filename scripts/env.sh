@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+BASE_DIR=$(cd `dirname $SCRIPT_DIR` && pwd)
 FSW_DIR=$BASE_DIR/fsw/build/exe/cpu1
 GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
 GSW_DIR=$BASE_DIR/gsw/cosmos
