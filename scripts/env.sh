@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_DIR=$(cd `dirname $SCRIPT_DIR`/.. && pwd)
+BASE_DIR=$(cd `dirname $SCRIPT_DIR` && pwd)
 FSW_DIR=$BASE_DIR/fsw/build/exe/cpu1
 GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
 GSW_DIR=$BASE_DIR/gsw/cosmos
@@ -19,7 +19,7 @@ DATE=$(date "+%Y%m%d%H%M")
 NUM_CPUS="$( nproc )"
 
 USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
-OPENC3_DIR=$USER_NOS3_DIR/openc3-cosmos
+OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
 
 ###

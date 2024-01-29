@@ -7,6 +7,8 @@ FSWBUILDDIR ?= $(CURDIR)/fsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
 export CFS_APP_PATH = ../components
+export MISSION_DEFS = ../cfg/build/
+export MISSIONCONFIG = ../cfg/build/nos3
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
@@ -27,7 +29,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep real-clean sim stop stop-gsw
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -38,6 +40,7 @@ OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 # Commands
 #
 all:
+	$(MAKE) config
 	$(MAKE) fsw
 	$(MAKE) sim
 	$(MAKE) gsw
@@ -53,14 +56,16 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
-	./gsw/scripts/checkout.sh
+	./scripts/checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
 	$(MAKE) clean-gsw
+	rm -rf cfg/build
 
 clean-fsw:
+	rm -rf cfg/build/nos3_defs
 	rm -rf fsw/build
 
 clean-sim:
@@ -69,31 +74,37 @@ clean-sim:
 clean-gsw:
 	rm -rf gsw/cosmos/build
 
+config:
+	./scripts/config.sh
+
+debug:
+	./scripts/docker_debug.sh
+
 fsw: 
-	./gsw/scripts/docker_build_fsw.sh
+	./scripts/docker_build_fsw.sh
 
 gsw:
-	./gsw/scripts/create_cosmos_gem.sh
+	./scripts/create_cosmos_gem.sh
 
 launch:
-	./gsw/scripts/docker_launch.sh
+	./scripts/docker_launch.sh
 
 log:
-	./gsw/scripts/log.sh
+	./scripts/log.sh
 
 prep:
-	./gsw/scripts/prepare.sh
+	./scripts/prepare.sh
 
 real-clean:
 	$(MAKE) clean
-	./gsw/scripts/real_clean.sh
+	./scripts/real_clean.sh
 
 sim:
-	./gsw/scripts/docker_build_sim.sh
+	./scripts/docker_build_sim.sh
 
 stop:
-	./gsw/scripts/docker_stop.sh
-	./gsw/scripts/stop.sh
+	./scripts/docker_stop.sh
+	./scripts/stop.sh
 
 stop-gsw:
-	./gsw/scripts/stop_gsw.sh
+	./scripts/stop_gsw.sh
