@@ -8,6 +8,25 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 
+# Check that local NOS3 directory exists
+if [ ! -d $USER_NOS3_DIR ]; then
+    echo ""
+    echo "    Need to run make prep first!"
+    echo ""
+    exit 1
+fi
+
+# Check that configure build directory exists
+if [ ! -d $BASE_DIR/cfg/build ]; then
+    echo ""
+    echo "    Need to run make config first!"
+    echo ""
+    exit 1
+fi
+
+# 
+# Launcher
+#
 export SC_NUM="sc_1"
 export SC_NETNAME="nos3_"$SC_NUM
 export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
@@ -34,9 +53,13 @@ gnome-terminal --tab --title="NOS Terminal"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 
 echo "Checkout..."
 # Rename for your simulator under test to allow checkout
-gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample_sim
+gnome-terminal --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample_sim
+
+# Special addition for sim-to-sim support
+gnome-terminal --title="SubSim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_subsim_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE subsim_sim
 
 # Example manual build for sample checkout:
+#   make debug
 #   cd ./components/sample/support
 #   mkdir build
 #   cd build
@@ -44,6 +67,6 @@ gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --na
 #   make
 
 # Rename for your checkout under test to allow checkout
-gnome-terminal --title="Sample Sim"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR ivvitc/nos3 ./components/sample/support/build/sample_checkout
+gnome-terminal --title="Sample Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR ivvitc/nos3 ./components/sample/support/build/sample_checkout
 
 echo ""

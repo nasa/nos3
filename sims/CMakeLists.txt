@@ -35,6 +35,7 @@ include(MissionSettings.cmake)
 add_subdirectory(sim_common)
 add_subdirectory(nos_time_driver)
 add_subdirectory(sim_terminal)
+add_subdirectory(sim_to_sim)
 add_subdirectory(truth_42_sim)
 
 # Add Component Sims
