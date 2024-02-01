@@ -116,6 +116,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         sample
         generic_adcs
         generic_star_tracker
+        syn
 )
 
 # Create Application Platform Include List

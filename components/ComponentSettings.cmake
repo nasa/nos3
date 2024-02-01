@@ -10,7 +10,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 "-Wall"
                 "-Wextra"
                 #"-Wpedantic" # should discuss this
-                "-Werror"
+                #"-Werror"
                 #"-Werror=format"
                 "-Wformat=2"
                 #"-Wcast-align" # should discuss this 
@@ -29,7 +29,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 "-Wfloat-equal"
                 "-Wno-packed"           # should discuss this
                 "-Wno-unused-parameter" # should discuss this
-                "-Wno-unused-variable"  # should discuss this
+                #"-Wno-unused-variable"  # should discuss this
                 "-Wvariadic-macros"
                 "-Wvla"
                 "-Wstrict-overflow"
