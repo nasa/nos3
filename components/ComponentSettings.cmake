@@ -9,7 +9,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-std=c99"
                 "-Wall"
                 "-Wextra"
-                #"-Wpedantic" # should discuss this
+                "-Wpedantic" # should discuss this
                 #"-Werror"
                 #"-Werror=format"
                 "-Wformat=2"
@@ -40,7 +40,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-fsanitize=address"
                 #"-fstack-check"
                 #"-Weverything"
-                #"-pedantic-errors"
+                "-pedantic-errors"
                 )
 
 #if(${TGTNAME} STREQUAL cpu1)
