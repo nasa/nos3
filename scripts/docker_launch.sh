@@ -122,6 +122,10 @@ do
     gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_radio_sim"    -h radio_sim --network=$SC_NETNAME --network-alias=radio_sim -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
     
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE sample_sim
+    
+    # Special addition for sim-to-sim support
+    gnome-terminal --title="SubSim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_subsim_sim"   --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE subsim_sim
+
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_startrk_sim"  --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
     gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  --network=$SC_NETNAME -w $SIM_BIN ivvitc/nos3 ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
 
