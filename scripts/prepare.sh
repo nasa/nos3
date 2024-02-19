@@ -24,7 +24,7 @@ $OPENC3_PATH run
 echo ""
 
 echo "Prepare nos3 docker container..."
-$DCALL image pull ivvitc/nos3
+$DCALL image pull $DBOX
 echo ""
 
 echo "Set a password in openc3-cosmos via firefox..."
