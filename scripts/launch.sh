@@ -28,7 +28,7 @@ cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/uplink/tmp1.so 2> /dev/null
 echo "42..."
 cd /opt/nos3/42/
 rm -rf NOS3InOut
-cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
+cp -r $BASE_DIR/cfg/InOut /opt/nos3/42/NOS3InOut
 gnome-terminal --tab --title="42 Dynamic Simulator" -- /opt/nos3/42/42 NOS3InOut
 
 echo "Simulators..."

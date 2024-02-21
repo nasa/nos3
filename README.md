@@ -52,7 +52,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/jsta
 	- /apps - the open source cFS apps
 	- /cfe - the core flight system (cFS) source files
 	- /nos3_defs - cFS definitions to configure cFS for NOS3
-	- /osal - operating system abstraction layer (OSAL), enables building for linux and flight OS
+	- /osal - operating system abstraction layer (OSAL), enables building for Linux and flight OS
 	- /psp - platform support package (PSP), enables use on multiple types of boards
 	- /tools - standard cFS provided tools
 * `gsw` contains the nos3 ground station files, and other ground based tools
@@ -61,7 +61,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/jsta
 	- /scripts - convenience scripts
 * `sims` contains the nos3 simulators and configuration files
 	- /cfg - 42 configuration files and NOS3 top level configuration files
-	- /nos_time_driver - time syncronization for all components
+	- /nos_time_driver - time synchronization for all components
 	- /sim_common - common files used by component simulators including the files that define the simulator plugin architecture
 	- /sim_terminal - terminal for testing on NOS Engine busses
 	- /truth_42_sim - interface between 42 and OpenC3 COSMOS to provide dynamics truth data
