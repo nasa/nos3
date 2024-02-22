@@ -40,7 +40,6 @@ OPENC3_PATH=$OPENC3_DIR/openc3.sh
     DNETWORK="docker network"
 #fi
 
-#DBOX="ivvitc/nos3"
 DBOX="ivvitc/nos3-64:latest"
 
 # Debugging
