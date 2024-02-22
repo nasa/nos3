@@ -116,6 +116,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_torquer
         novatel_oem615
         sample
+        syn
 )
 
 # Create Application Platform Include List
