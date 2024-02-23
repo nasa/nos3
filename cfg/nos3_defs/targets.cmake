@@ -103,7 +103,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Components
     #
-        arducam
+        arducam/fsw
         generic_adcs
         generic_css
         generic_eps
@@ -123,6 +123,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
 FOREACH(X ${MISSION_GLOBAL_APPLIST})
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/src)
 ENDFOREACH(X)
