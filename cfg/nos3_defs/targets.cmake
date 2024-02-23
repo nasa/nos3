@@ -116,7 +116,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_torquer/fsw
         novatel_oem615/fsw
         sample/fsw
-        syn
+        syn/fsw
 )
 
 # Create Application Platform Include List
