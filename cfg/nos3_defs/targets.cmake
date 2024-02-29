@@ -103,28 +103,30 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Components
     #
-        arducam
-        generic_adcs
-        generic_css
-        generic_eps
-        generic_fss
-        generic_imu
-        generic_mag
-        generic_reaction_wheel
-        generic_radio
-        generic_star_tracker
-        generic_torquer
-        novatel_oem615
-        sample
-        syn
+        arducam/fsw
+        generic_adcs/fsw
+        generic_css/fsw
+        generic_eps/fsw
+        generic_fss/fsw
+        generic_imu/fsw
+        generic_mag/fsw
+        generic_reaction_wheel/fsw
+        generic_radio/fsw
+        generic_star_tracker/fsw
+        generic_torquer/fsw
+        novatel_oem615/fsw
+        sample/fsw
+        syn/fsw
 )
 
 # Create Application Platform Include List
 FOREACH(X ${MISSION_GLOBAL_APPLIST})
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/src)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/src)
 ENDFOREACH(X)
 
 # FT_INSTALL_SUBDIR indicates where the black box test data files (lua scripts) should
