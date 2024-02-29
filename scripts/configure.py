@@ -91,6 +91,7 @@ else:
             rw_line = ""
             sample_line = ""
             st_line = ""
+            syn_line = ""
             torquer_line = ""
             
             # Parse lines
