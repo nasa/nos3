@@ -282,6 +282,9 @@ else:
                 if line.find('RW 2 from 42') != -1:
                     if (lines.index(line)) < rw2_from_index:
                         rw2_from_index = lines.index(line) + 1
+                if line.find('Sample IPC') != -1:
+                    if (lines.index(line)) < sample_index:
+                        sample_index = lines.index(line) + 1
                 if line.find('Star Tracker IPC') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
