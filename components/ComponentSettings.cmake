@@ -9,8 +9,8 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-std=c99"
                 "-Wall"
                 "-Wextra"
-                #"-Wpedantic" # should discuss this
-                "-Werror"
+                "-Wpedantic" # should discuss this
+                #"-Werror"
                 #"-Werror=format"
                 "-Wformat=2"
                 #"-Wcast-align" # should discuss this 
@@ -29,7 +29,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 "-Wfloat-equal"
                 "-Wno-packed"           # should discuss this
                 "-Wno-unused-parameter" # should discuss this
-                "-Wno-unused-variable"  # should discuss this
+                #"-Wno-unused-variable"  # should discuss this
                 "-Wvariadic-macros"
                 "-Wvla"
                 "-Wstrict-overflow"
@@ -40,7 +40,7 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-fsanitize=address"
                 #"-fstack-check"
                 #"-Weverything"
-                #"-pedantic-errors"
+                "-pedantic-errors"
                 )
 
 #if(${TGTNAME} STREQUAL cpu1)

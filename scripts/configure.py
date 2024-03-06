@@ -56,6 +56,7 @@ else:
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
         sc_st_en = sc_root.find('components/st/enable').text
+        sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
 
         sc_gui_en = sc_root.find('gui/enable').text
@@ -90,6 +91,7 @@ else:
             rw_line = ""
             sample_line = ""
             st_line = ""
+            syn_line = ""
             torquer_line = ""
             
             # Parse lines
@@ -148,6 +150,9 @@ else:
                 if line.find('ST,') != -1:
                     if (sc_st_en == 'true'):
                         st_line = line
+                if line.find('SYN,') != -1:
+                    if (sc_syn_en == 'true'):
+                        syn_line = line
                 if line.find('TORQUER,') != -1:
                     if (sc_torquer_en == 'true'):
                         torquer_line = line
@@ -155,6 +160,7 @@ else:
         # Modify startup script per spacecraft configuration
         lines.insert(sc_startup_eof, "\n")
         lines.insert(sc_startup_eof, torquer_line)
+        lines.insert(sc_startup_eof, syn_line)
         lines.insert(sc_startup_eof, st_line)
         lines.insert(sc_startup_eof, sample_line)
         lines.insert(sc_startup_eof, rw_line)

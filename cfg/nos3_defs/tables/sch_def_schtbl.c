@@ -351,7 +351,7 @@ SCH_ScheduleEntry_t SCH_DefaultScheduleTable[SCH_TABLE_ENTRIES] =
 /*{  SCH_DISABLED, SCH_ACTIVITY_SEND_MSG,  1,  0, 24, SCH_GROUP_MD_WAKEUP }, */  /* MD Wakeup */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  5,  0, 55, SCH_GROUP_CFE_HK },   /* Sample HK Request */
   {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 56, SCH_GROUP_CFE_HK },   /* Sample Data Request */
-  {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
+  {  SCH_ENABLED,  SCH_ACTIVITY_SEND_MSG,  1,  0, 57, SCH_GROUP_CFE_HK },   /* SYN_APP Data Request */                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
   {  SCH_UNUSED,   0,      0,  0, 0,  SCH_GROUP_NONE},                                        
 

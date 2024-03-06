@@ -116,6 +116,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_torquer/fsw
         novatel_oem615/fsw
         sample/fsw
+        syn/fsw
 )
 
 # Create Application Platform Include List
@@ -139,7 +140,7 @@ SET(MISSION_CPUNAMES cpu1)
 SET(cpu1_PROCESSORID 1)
 SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
 SET(cpu1_FILELIST cfe_es_startup.scr)
-SET(cpu1_SYSTEM amd64-linux-gnu)
+SET(cpu1_SYSTEM i386-linux-gnu)
 
 # USER Supplied
 #SET(cpu2_PROCESSORID 2)
