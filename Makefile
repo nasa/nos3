@@ -84,7 +84,7 @@ fsw:
 	./scripts/docker_build_fsw.sh
 
 gsw:
-	./scripts/create_cosmos_gem.sh
+	./cfg/build/gsw_build.sh
 
 launch:
 	./scripts/docker_launch.sh

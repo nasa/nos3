@@ -1,10 +1,11 @@
 #
 # Convenience script for NOS3 development
-# Configures NOS3 flight software (FSW) based on mission XML files
+# Configures NOS3 based on mission and spacecraft XML files
 #   Script assumes run from top level directory of NOS3 repo
 #
 
 import datetime
+import os
 import xml.etree.ElementTree as ET
 
 # Parse mission configuration
@@ -15,6 +16,26 @@ print('  start-time:', mission_start_time)
 mission_start_time_utc = datetime.datetime(2000, 1, 1, 12, 0) + datetime.timedelta(seconds=float(mission_start_time))
 print('  start-time-utc:', mission_start_time_utc)
 
+# GSW
+gsw_str = 'gsw'
+gsw_cfg = mission_root.find(gsw_str).text
+print(' ', gsw_str, ':', gsw_cfg)
+gsw_identified = 0
+if (gsw_cfg == 'openc3'):
+    # Copy openc3 scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'cosmos'):
+    # Copy cosmos scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_identified == 0):
+    print('Invalid GSW in configuration file!')
+    print('Exiting due to error...')
+
+# Read number of spacecraft
 mission_number_spacecraft = mission_root.find('number-spacecraft').text
 print('  number-spacecraft:', mission_number_spacecraft)
 num_sc = int(mission_number_spacecraft)

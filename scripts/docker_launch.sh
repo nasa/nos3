@@ -131,7 +131,6 @@ do
     echo ""
 done
 
-
 echo "NOS Time Driver..."
 sleep 8
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos_time_driver --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
@@ -145,13 +144,8 @@ do
 done
 echo ""
 
-
-echo "COSMOS Ground Station..."
-pidof firefox > /dev/null
-if [ $? -eq 1 ]
-then
-    firefox localhost:2900 &
-fi
+echo "Launch GSW..."
+$BASE_DIR/cfg/build/gsw_launch.sh
 echo ""
 
 echo "Docker launch script completed!"
