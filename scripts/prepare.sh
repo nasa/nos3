@@ -5,6 +5,8 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
+echo ""
+echo ""
 
 echo "Create local user directory..."
 mkdir $USER_NOS3_DIR 2> /dev/null
@@ -20,9 +22,8 @@ git reset --hard
 echo ""
 echo ""
 
-echo "Prepare openc3-cosmos containers..."
-cd $OPENC3_DIR
-$OPENC3_PATH run
+echo "Prepare cosmos docker container..."
+$DCALL image pull ballaerospace/cosmos:4.5.0
 echo ""
 echo ""
 
@@ -38,9 +39,3 @@ cd $USER_NOS3_DIR/42
 $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -w $USER_NOS3_DIR/42 --name "nos3_42_build" $DBOX make
 echo ""
 echo ""
-
-echo "Set a password in openc3-cosmos via firefox..."
-echo "  Refresh webpage if error page shown."
-echo ""
-sleep 5
-firefox localhost:2900 &

@@ -20,4 +20,7 @@ yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 
 $DCALL system prune -f
 
+echo "Cleaning up local user directory..."
+yes | rm -r $USER_NOS3_DIR 2> /dev/null
+
 exit 0
