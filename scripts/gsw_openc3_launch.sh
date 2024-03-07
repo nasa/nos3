@@ -3,7 +3,8 @@
 # Convenience script for NOS3 development
 #
 
-SCRIPT_DIR=$( cd ../../scripts -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
 
 # Debugging
@@ -16,7 +17,7 @@ source $SCRIPT_DIR/env.sh
 #mkdir /tmp/data/hk 2> /dev/null
 #mkdir /tmp/uplink 2> /dev/null
 
-echo "COSMOS Ground Station..."
+echo "OpenC3 launch..."
 #cd $BASE_DIR/gsw/cosmos
 #export MISSION_NAME=$(echo "NOS3")
 #export PROCESSOR_ENDIANNESS=$(echo "LITTLE_ENDIAN")

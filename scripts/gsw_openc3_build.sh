@@ -3,7 +3,8 @@
 # Convenience script for NOS3 development
 #
 
-SCRIPT_DIR=$( cd ../../scripts -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
 
 # Check that local NOS3 directory exists
@@ -146,6 +147,6 @@ echo ""
 ## Set permissions on build files
 #chmod -R 777 $BASE_DIR/gsw/cosmos/build
 
-echo "Create COSMOS gem script complete."
-echo "Note that while this script is complete, COSMOS is likely still be processing behind the scenes!"
+echo "OpenC3 build script complete."
+echo "Note that while this script is complete, OpenC3 is likely still be processing behind the scenes!"
 echo ""

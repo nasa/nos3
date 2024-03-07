@@ -18,6 +18,7 @@ rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 cd $SCRIPT_DIR; $DFLAG compose down > /dev/null 2>&1
 $DCALL ps --filter=name="sc_*" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 $DCALL ps --filter=name="nos_*" -aq | xargs $DCALL stop > /dev/null 2>&1 &
+$DCALL ps --filter ancestor="ballaerospace/cosmos:4.5.0" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 
 # Intentionally wait to complete
 wait 
