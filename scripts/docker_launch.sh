@@ -41,7 +41,6 @@ mkdir /tmp/uplink 2> /dev/null
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/uplink/tmp0.so 2> /dev/null
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/uplink/tmp1.so 2> /dev/null
 
-
 echo "Create ground networks..."
 $DNETWORK create \
     --driver=bridge \
@@ -50,6 +49,9 @@ $DNETWORK create \
     nos3_core
 echo ""
 
+#echo "Launch GSW..."
+$BASE_DIR/cfg/build/gsw_launch.sh
+echo ""
 
 echo "Create NOS interfaces..."
 export GND_CFG_FILE="-f nos3-simulator.xml"
@@ -57,10 +59,8 @@ gnome-terminal --tab --title="NOS Terminal"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_udp_terminal"    --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE udp-terminal
 echo ""
 
-
 # Note only currently working with a single spacecraft
 export SATNUM=1
-
 
 #
 # Spacecraft Loop
@@ -81,7 +81,7 @@ do
     echo ""
 
     echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos 2> /dev/null
+    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos
     echo ""
 
     echo $SC_NUM " - 42..."
@@ -131,7 +131,6 @@ do
     echo ""
 done
 
-
 echo "NOS Time Driver..."
 sleep 8
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos_time_driver --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
@@ -143,15 +142,6 @@ do
     export TIMENAME=$SC_NUM"_nos_time_driver"
     $DNETWORK connect --alias nos_time_driver $SC_NETNAME nos_time_driver
 done
-echo ""
-
-
-echo "COSMOS Ground Station..."
-pidof firefox > /dev/null
-if [ $? -eq 1 ]
-then
-    firefox localhost:2900 &
-fi
 echo ""
 
 echo "Docker launch script completed!"
