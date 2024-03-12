@@ -32,14 +32,15 @@ mkdir $FSW_DIR/data/evs 2> /dev/null
 mkdir $FSW_DIR/data/hk 2> /dev/null
 mkdir $FSW_DIR/data/inst 2> /dev/null
 # GSW Side
-mkdir /tmp/data 2> /dev/null
-mkdir /tmp/data/cam 2> /dev/null
-mkdir /tmp/data/evs 2> /dev/null
-mkdir /tmp/data/hk 2> /dev/null
-mkdir /tmp/data/inst 2> /dev/null
-mkdir /tmp/uplink 2> /dev/null
-cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/uplink/tmp0.so 2> /dev/null
-cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/uplink/tmp1.so 2> /dev/null
+mkdir /tmp/nos3 2> /dev/null
+mkdir /tmp/nos3/data 2> /dev/null
+mkdir /tmp/nos3/data/cam 2> /dev/null
+mkdir /tmp/nos3/data/evs 2> /dev/null
+mkdir /tmp/nos3/data/hk 2> /dev/null
+mkdir /tmp/nos3/data/inst 2> /dev/null
+mkdir /tmp/nos3/uplink 2> /dev/null
+cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so 2> /dev/null
+cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so 2> /dev/null
 
 echo "Create ground networks..."
 $DNETWORK create \
