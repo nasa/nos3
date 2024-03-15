@@ -84,7 +84,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Libraries
     #
-        #cryptolib
+        cryptolib
         hwlib
         io_lib
     #
