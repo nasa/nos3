@@ -1,6 +1,10 @@
 <<<<<<<<<<<<<<<<<  42:  Command Script File  >>>>>>>>>>>>>>>>>
-0.0 SC[0] Cmd Angles = [0.0 0.0 0.0] deg, Seq = 123 wrt L Frame
 EOF
+
+0.0 SC[0] qrl = [0.0  0.0  0.0  1.0]
+1000.0 SC[0] qrl = [0.0  1.0  0.0  0.0]
+2000.0 Point SC[0].B[0] Primary Vector [0.0 0.0 1.0] at VELOCITY
+2000.0 Point SC[0].B[0] Secondary Vector [1.0 0.0 0.0] at SUN
 
 ##############################################################
 # All lines after EOF are ignored
@@ -19,11 +23,14 @@ EOF
 
 # Sim-related commands
 %lf DTSIM = %lf
-%lf SC[%ld].RotDOF %s
+%lf SC[%ld].DynMethod %s
 %lf SC[%ld].G[%ld].RotLocked[%ld] %s
 %lf SC[%ld].G[%ld].TrnLocked[%ld] %s
 %lf Impart Impulsive Delta-V of [%lf %lf %lf] m/s in Frame %c to Orb[%ld]
    %c can be N or L
+%lf SC[%ld].LoopGain = %lf
+%lf SC[%ld].LoopDelay = %lf
+%lf SC[%ld].GainAndDelayActive = %s
 
 # GUI-related commands
 %lf POV.Host.SC %ld
@@ -33,7 +40,7 @@ EOF
 %lf Banner = "Banner in Quotes"
 %lf GL Output Step = %lf
 %lf POV CmdRange = %lf
-%lf POV CmdSeq = %li
+%lf POV CmdSeq = %ld
 %lf POV CmdAngle = [%lf %lf %lf] deg
 %lf POV CmdPermute = [%lf %lf %lf; %lf %lf %lf; %lf %lf %lf]
 %lf POV TimeToGo = %lf
@@ -66,8 +73,6 @@ EOF
 %lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with %c-frame Vector [%lf %lf %lf]
    # %c-frame can be H, N, or L
 %lf Align SC[%ld].B[%ld] %s Vector [%lf %lf %lf] with SC[%ld].B[%ld] vector [%lf %lf %lf]
-%lf SC[%ld].Thr[%ld] %s
-   %s is OFF or ON
 Event Eclipse Entry SC[%ld] qrl = [%lf %lf %lf %lf]
 Event Eclipse Exit SC[%ld] qrl = [%lf %lf %lf %lf]
 Event Eclipse Entry SC[%ld] Cmd Angles = [%lf %lf %lf] deg, Seq = %ld wrt %c Frame
