@@ -21,7 +21,7 @@ Each of the applications listed below are required prior to performing the insta
 3. Clone the submodules `git submodule update --init --recursive`
 4. Run `vagrant up` and wait to return to a prompt
     - This can take anywhere from a few minutes to hours depending on internet speeds and host PC specs
-_It may also be wise at around this stage to shutdown the VM once it starts and to allocate it more resources if possible, preferably at least 4 cores and 8 GB of RAM, preferably more._
+_It may also be wise at around this stage to shutdown the VM once it starts and to allocate it more resources if possible, preferably at least 4 cores and 8 GB of RAM, preferably 8 cores and 16 GB of RAM._
 5. In VirtualBox `Devices > Upgrade Guest Additions...`
 	- Wait for this to complete
 6. Run `vagrant reload` to finish the upgrade
