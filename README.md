@@ -21,6 +21,7 @@ Each of the applications listed below are required prior to performing the insta
 3. Clone the submodules `git submodule update --init --recursive`
 4. Run `vagrant up` and wait to return to a prompt
     - This can take anywhere from a few minutes to hours depending on internet speeds and host PC specs
+_It may also be wise at around this stage to shutdown the VM once it starts and to allocate it more resources if possible, preferably at least 4 cores and 8 GB of RAM, preferably more._
 5. In VirtualBox `Devices > Upgrade Guest Additions...`
 	- Wait for this to complete
 6. Run `vagrant reload` to finish the upgrade
@@ -45,7 +46,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/jsta
 ### Directory Layout
 * `components` contains the repositories for the hardware component apps
 	- /fsw - cFS application
-	- /gsw - OpenC3 COSMOS database
+	- /gsw - OpenC3 (or Ball Aerospace) COSMOS database
 	- /sim - NOS3 simulator
 	- /support - Optional folder containing a standalone checkout application
 * `fsw` contains the repositories needed to build cFS FSW
@@ -56,7 +57,7 @@ By default the nos3 repository is shared into the virtual machine at `/home/jsta
 	- /psp - platform support package (PSP), enables use on multiple types of boards
 	- /tools - standard cFS provided tools
 * `gsw` contains the nos3 ground station files, and other ground based tools
-	- /cosmos - OpenC3 COSMOS files
+	- /cosmos - OpenC3 (or Ball Aerospace) COSMOS files
 	- /OrbitInviewPowerPrediction - OIPP tool for operators
 	- /scripts - convenience scripts
 * `sims` contains the nos3 simulators and configuration files
