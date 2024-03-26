@@ -44,6 +44,6 @@ gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --na
 #   make
 
 # Rename for your checkout under test to allow checkout
-gnome-terminal --title="Sample Sim"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/support/build/sample_checkout
+gnome-terminal --window-with-profile=KeepOpen --title="Sample f' test"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX /home/jstar/Desktop/github-nos3/components/sample/fprime/build/sample_checkout
 
 echo ""
