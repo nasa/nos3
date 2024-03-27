@@ -80,6 +80,7 @@ clean-sim:
 clean-gsw:
 	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
+	rm -rf /tmp/nos3
 
 config:
 	./scripts/config.sh
