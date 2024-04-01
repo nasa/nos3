@@ -18,6 +18,7 @@ fi
 DATE=$(date "+%Y%m%d%H%M")
 NUM_CPUS="$( nproc )"
 
+USERDIR=$(cd ~/ && pwd)
 USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
 OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
@@ -40,7 +41,8 @@ OPENC3_PATH=$OPENC3_DIR/openc3.sh
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20240306"
+#DBOX="ivvitc/nos3-64:20240306"
+DBOX="ivvitc/nos3-64:fprime"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

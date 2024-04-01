@@ -10,6 +10,7 @@ source $SCRIPT_DIR/env.sh
 
 export SC_NUM="sc_1"
 export SC_NETNAME="nos3_"$SC_NUM
+# export SC_NETNAME="host"
 export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
 echo "Create spacecraft network..."
@@ -44,6 +45,6 @@ gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --na
 #   make
 
 # Rename for your checkout under test to allow checkout
-gnome-terminal --window-with-profile=KeepOpen --title="Sample f' test"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/fprime/build/sample_checkout
+# gnome-terminal --window-with-profile=KeepOpen --title="Sample f' test"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/fprime/build/sample_checkout
 
 echo ""
