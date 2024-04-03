@@ -10,6 +10,7 @@ source $SCRIPT_DIR/env.sh
 
 export SC_NUM="sc_1"
 export SC_NETNAME="nos3_"$SC_NUM
+# export SC_NETNAME="host"
 export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
 echo "Create spacecraft network..."
