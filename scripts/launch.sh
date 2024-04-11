@@ -51,6 +51,7 @@ gnome-terminal --tab --title='RW 2 Sim'           -- $SIM_BIN/nos3-single-simula
 gnome-terminal --tab --title='Sample Sim'         -- $SIM_BIN/nos3-single-simulator sample_sim
 gnome-terminal --tab --title='Torquer Sim'        -- $SIM_BIN/nos3-single-simulator generic_torquer_sim
 gnome-terminal --tab --title="NOS Time Driver"    -- $SIM_BIN/nos3-single-simulator time
+gnome-terminal --tab --title="SYNOPSIS Sim"       -- $SIM_BIN/nos3-single-simulator synopsis
 
 #echo "CryptoLib..."
 #mkdir $BASE_DIR/components/cryptolib/build/

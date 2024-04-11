@@ -73,6 +73,7 @@ clean-sim:
 
 clean-gsw:
 	rm -rf gsw/cosmos/build
+	rm -rf /tmp/nos3
 
 config:
 	./scripts/config.sh
@@ -84,7 +85,7 @@ fsw:
 	./scripts/docker_build_fsw.sh
 
 gsw:
-	./scripts/create_cosmos_gem.sh
+	./cfg/build/gsw_build.sh
 
 launch:
 	./scripts/docker_launch.sh

@@ -1,10 +1,11 @@
 #
 # Convenience script for NOS3 development
-# Configures NOS3 flight software (FSW) based on mission XML files
+# Configures NOS3 based on mission and spacecraft XML files
 #   Script assumes run from top level directory of NOS3 repo
 #
 
 import datetime
+import os
 import xml.etree.ElementTree as ET
 
 # Parse mission configuration
@@ -15,6 +16,26 @@ print('  start-time:', mission_start_time)
 mission_start_time_utc = datetime.datetime(2000, 1, 1, 12, 0) + datetime.timedelta(seconds=float(mission_start_time))
 print('  start-time-utc:', mission_start_time_utc)
 
+# GSW
+gsw_str = 'gsw'
+gsw_cfg = mission_root.find(gsw_str).text
+print(' ', gsw_str, ':', gsw_cfg)
+gsw_identified = 0
+if (gsw_cfg == 'openc3'):
+    # Copy openc3 scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'cosmos'):
+    # Copy cosmos scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_identified == 0):
+    print('Invalid GSW in configuration file!')
+    print('Exiting due to error...')
+
+# Read number of spacecraft
 mission_number_spacecraft = mission_root.find('number-spacecraft').text
 print('  number-spacecraft:', mission_number_spacecraft)
 num_sc = int(mission_number_spacecraft)
@@ -56,6 +77,7 @@ else:
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
         sc_st_en = sc_root.find('components/st/enable').text
+        sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
 
         sc_gui_en = sc_root.find('gui/enable').text
@@ -90,6 +112,7 @@ else:
             rw_line = ""
             sample_line = ""
             st_line = ""
+            syn_line = ""
             torquer_line = ""
             
             # Parse lines
@@ -148,6 +171,9 @@ else:
                 if line.find('ST,') != -1:
                     if (sc_st_en == 'true'):
                         st_line = line
+                if line.find('SYN,') != -1:
+                    if (sc_syn_en == 'true'):
+                        syn_line = line
                 if line.find('TORQUER,') != -1:
                     if (sc_torquer_en == 'true'):
                         torquer_line = line
@@ -155,6 +181,7 @@ else:
         # Modify startup script per spacecraft configuration
         lines.insert(sc_startup_eof, "\n")
         lines.insert(sc_startup_eof, torquer_line)
+        lines.insert(sc_startup_eof, syn_line)
         lines.insert(sc_startup_eof, st_line)
         lines.insert(sc_startup_eof, sample_line)
         lines.insert(sc_startup_eof, rw_line)
@@ -276,6 +303,9 @@ else:
                 if line.find('RW 2 from 42') != -1:
                     if (lines.index(line)) < rw2_from_index:
                         rw2_from_index = lines.index(line) + 1
+                if line.find('Sample IPC') != -1:
+                    if (lines.index(line)) < sample_index:
+                        sample_index = lines.index(line) + 1
                 if line.find('Star Tracker IPC') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
