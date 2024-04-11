@@ -46,9 +46,9 @@ class cfg_gui(QWidget):
         self.ui.pushButton_simClean.clicked.connect(lambda: self.clean("sim", self.ui.pushButton_simClean))
 
         # Launch Tab
-        self.ui.pushButton_play.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Starting NOS3 Time Driver'"]))
+        #self.ui.pushButton_play.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Starting NOS3 Time Driver'"]))
         self.ui.pushButton_stop.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make stop"))
-        self.ui.pushButton_pause.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Pausing NOS3 Time Driver'"]))
+        #self.ui.pushButton_pause.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Pausing NOS3 Time Driver'"]))
         self.ui.pushButton_launch.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make launch"))
         self.ui.comboBox_run.currentIndexChanged.connect(self.run_ForUntil)
 
@@ -303,20 +303,20 @@ class cfg_gui(QWidget):
         self.switchConfig(1)
 
     # Starts a Bash process to execute args, redirects output to given textbox, not used for now
-    def startBashProcess(self, textbox:QTextEdit, args:list):
-        process = QProcess()
-        process.start("bash", [item for item in args])
+    #def startBashProcess(self, textbox:QTextEdit, args:list):
+        #process = QProcess()
+        #process.start("bash", [item for item in args])
 
-        process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
-        process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
+        #process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
+        #process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
 
-        process.waitForFinished()
-        process.close()
+        #process.waitForFinished()
+        #process.close()
 
     # Test for gnome-terminal instead of bash, also uses startCommand() instead of start()
     def gnome_terminal(self, textbox:QTextEdit, command:str):
         process = QProcess()
-        print(command)
+        #print(command)
         process.startCommand(f'gnome-terminal -- {command}')
 
         process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
