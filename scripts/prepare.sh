@@ -39,3 +39,10 @@ cd $USER_NOS3_DIR/42
 $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -w $USER_NOS3_DIR/42 --name "nos3_42_build" $DBOX make
 echo ""
 echo ""
+
+echo "Prepare Igniter..."
+pip3 install pyside6
+cd $BASE_DIR
+python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
+echo ""
+echo ""
