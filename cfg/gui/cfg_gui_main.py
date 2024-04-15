@@ -307,7 +307,7 @@ class cfg_gui(QWidget):
     # Test for gnome-terminal instead of bash, also uses startCommand() instead of start()
     def gnome_terminal(self, textbox:QTextEdit, command:str):
         process = QProcess()
-        process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; read line" ')
+        process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; echo Done; read line" ')
 
         process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
         process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
