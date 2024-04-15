@@ -47,8 +47,10 @@ class cfg_gui(QWidget):
 
         # Launch Tab
         #self.ui.pushButton_play.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Starting NOS3 Time Driver'"]))
+        self.ui.pushButton_play.setDisabled(1)
         self.ui.pushButton_stop.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make stop"))
         #self.ui.pushButton_pause.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Pausing NOS3 Time Driver'"]))
+        self.ui.pushButton_pause.setDisabled(1)
         self.ui.pushButton_launch.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make launch"))
         self.ui.comboBox_run.currentIndexChanged.connect(self.run_ForUntil)
 
@@ -77,7 +79,7 @@ class cfg_gui(QWidget):
 
         # TODO: change to dynamically pull apps/components from xml file or directory
         applications = ['cf', 'ds', 'fm', 'lc', 'sc']
-        components = ['adcs', 'cam', 'css', 'eps', 'fss', 'gps', 'imu', 'mag', 'radio', 'rw', 'sample', 'st', 'torquer']
+        components = ['adcs', 'cam', 'css', 'eps', 'fss', 'gps', 'imu', 'mag', 'radio', 'rw', 'sample', 'st', 'syn', 'torquer']
 
         i = 0
         while layout.itemAt(i) != None:
@@ -302,29 +304,16 @@ class cfg_gui(QWidget):
         # Update Spacecraft Config Text to first SC config listed in master config
         self.switchConfig(1)
 
-    # Starts a Bash process to execute args, redirects output to given textbox, not used for now
-    #def startBashProcess(self, textbox:QTextEdit, args:list):
-        #process = QProcess()
-        #process.start("bash", [item for item in args])
-
-        #process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
-        #process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
-
-        #process.waitForFinished()
-        #process.close()
-
     # Test for gnome-terminal instead of bash, also uses startCommand() instead of start()
     def gnome_terminal(self, textbox:QTextEdit, command:str):
         process = QProcess()
-        #print(command)
-        process.startCommand(f'gnome-terminal -- {command}')
+        process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; read line" ')
 
         process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
         process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
 
         process.waitForFinished(msecs=-1)
         textbox.append(f'>> {command}...')
-        #process.close()
 
     # Placeholder clean command
     def clean(self, software:str, button:QPushButton):
