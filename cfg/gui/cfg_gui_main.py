@@ -2,15 +2,12 @@ from pathlib import Path
 from PySide6.QtWidgets import QWidget, QApplication, QFileDialog, QTextEdit, QPushButton, QDateTimeEdit, QLabel, QCheckBox, QVBoxLayout, QSizePolicy, QDoubleSpinBox, QLayout, QMessageBox
 from PySide6.QtCore import QProcess, QDateTime
 from PySide6.QtGui import QTextCharFormat
-
+from cfg_gui_ui import Ui_Form
 import sys, re, xmltodict, datetime, threading
 import xml.etree.ElementTree as ET
 
-from cfg_gui_ui import Ui_Form
-
-
 # TODO: Update master xml sc-x-cfg filename if modified in sc config (in progress)
-
+# TODO: disableButtons(), enableButtons() not working as intended due to the gnome-terminal handling the command externally
 
 class cfg_gui(QWidget):
     def __init__(self, *args, **kwargs):
@@ -45,7 +42,7 @@ class cfg_gui(QWidget):
         self.ui.pushButton_gswClean.clicked.connect(lambda: self.clean("gsw", self.ui.pushButton_gswClean))
         self.ui.pushButton_simClean.clicked.connect(lambda: self.clean("sim", self.ui.pushButton_simClean))
 
-        # Launch Tab
+        # Launch Tab (Time Driver controls disabled)
         #self.ui.pushButton_play.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Starting NOS3 Time Driver'"]))
         self.ui.pushButton_play.setDisabled(1)
         self.ui.pushButton_stop.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make stop"))
@@ -77,7 +74,7 @@ class cfg_gui(QWidget):
         filename = text.split('\n')[0]
         childXml = xmltodict.parse(text.split('\n', 2)[2])
 
-        # TODO: change to dynamically pull apps/components from xml file or directory
+        # TODO: change to dynamically pull apps/components from xml file or directory, but how?
         applications = ['cf', 'ds', 'fm', 'lc', 'sc']
         components = ['adcs', 'cam', 'css', 'eps', 'fss', 'gps', 'imu', 'mag', 'radio', 'rw', 'sample', 'st', 'syn', 'torquer']
 
@@ -307,6 +304,8 @@ class cfg_gui(QWidget):
     # Test for gnome-terminal instead of bash, also uses startCommand() instead of start()
     def gnome_terminal(self, textbox:QTextEdit, command:str):
         process = QProcess()
+
+        # `read line` is to hold the terminal open after execution, allows errors to be seen
         process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; echo Done; read line" ')
 
         process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
@@ -324,7 +323,7 @@ class cfg_gui(QWidget):
             command = f'make clean-{software}'
         
         self.buttonColor(button)
-        t1 = threading.Thread(target=self.thread_Bash(textbox, button, command), name='t1')
+        t1 = threading.Thread(target=self.thread_gnome(textbox, button, command), name='t1')
         t1.start()
         
     # Placeholder build command, assumes make prep already ran, same with clean commands
@@ -336,11 +335,11 @@ class cfg_gui(QWidget):
             command = f'make {software}'
 
         self.buttonColor(button)
-        t1 = threading.Thread(target=self.thread_Bash(textbox, button, command), name='t1')
+        t1 = threading.Thread(target=self.thread_gnome(textbox, button, command), name='t1')
         t1.start()
     
     # Button/Bash function wrapper for threads
-    def thread_Bash(self, textbox:QTextEdit, button:QPushButton, command:str):
+    def thread_gnome(self, textbox:QTextEdit, button:QPushButton, command:str):
         self.disableButtons(button)
         self.gnome_terminal(textbox, command)
         self.enableButtons(button)
