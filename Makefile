@@ -109,3 +109,6 @@ stop:
 
 stop-gsw:
 	./scripts/stop_gsw.sh
+
+igniter:
+	./scripts/igniter_launch.sh
