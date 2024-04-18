@@ -41,7 +41,7 @@ echo ""
 echo ""
 
 echo "Prepare Igniter..."
-pip3 install pyside6
+pip3 install pyside6 xmltodict
 cd $BASE_DIR
 python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
 echo ""
