@@ -7,6 +7,8 @@ FSWBUILDDIR ?= $(CURDIR)/fsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
 export CFS_APP_PATH = ../components
+export MISSION_DEFS = ../cfg/build/
+export MISSIONCONFIG = ../cfg/build/nos3
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
@@ -27,7 +29,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all fsw fsw-prep pack sim sim-prep clean clean-fsw clean-sim checkout gsw gsm-prep launch log real-clean stop sc-launch
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep real-clean sim stop stop-gsw
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -35,54 +37,35 @@ OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 .PHONY: $(LOCALTGTS) $(OTHERTGTS)
 
 #
-# Generic Commands
+# Commands
 #
 all:
+	$(MAKE) config
 	$(MAKE) fsw
 	$(MAKE) sim
 	$(MAKE) gsw
 
-#
-# FSW
-#
-fsw:
-	$(MAKE) fsw-prep
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-
-fsw-prep:
+build-fsw:
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 
-#
-# Sims
-#
-sim:
-	$(MAKE) sim-prep
-	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
-
-sim-prep:
+build-sim:
 	mkdir -p $(SIMBUILDDIR)
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
+	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
-#
-# GSW
-#
-gsw:
-	$(MAKE) gsw-prep
-	./gsw/scripts/create_cosmos_gem.sh
+checkout:
+	./scripts/checkout.sh
 
-gsw-prep:
-	mkdir -p ./gsw/cosmos/build
-
-#
-# Clean
-#
 clean:
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
 	$(MAKE) clean-gsw
+	rm -rf cfg/build
 
 clean-fsw:
+	rm -rf cfg/build/nos3_defs
 	rm -rf fsw/build
 
 clean-sim:
@@ -90,31 +73,39 @@ clean-sim:
 
 clean-gsw:
 	rm -rf gsw/cosmos/build
+	rm -rf /tmp/nos3
 
-#
-# Script Calls
-#
-checkout:
-	./gsw/scripts/checkout.sh
+config:
+	./scripts/config.sh
 
-gsw-launch:
-	./gsw/scripts/gsw.sh
+debug:
+	./scripts/docker_debug.sh
+
+fsw: 
+	./scripts/docker_build_fsw.sh
+
+gsw:
+	./cfg/build/gsw_build.sh
 
 launch:
-	./gsw/scripts/launch.sh
-
-reboot:
-	./gsw/scripts/reboot.sh
+	./scripts/docker_launch.sh
 
 log:
-	./gsw/scripts/log.sh
+	./scripts/log.sh
+
+prep:
+	./scripts/prepare.sh
 
 real-clean:
 	$(MAKE) clean
-	./gsw/scripts/real_clean.sh
+	./scripts/real_clean.sh
 
-sc-launch:
-	./gsw/scripts/sc_launch.sh
+sim:
+	./scripts/docker_build_sim.sh
 
 stop:
-	./gsw/scripts/stop.sh
+	./scripts/docker_stop.sh
+	./scripts/stop.sh
+
+stop-gsw:
+	./scripts/stop_gsw.sh

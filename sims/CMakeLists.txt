@@ -24,8 +24,8 @@ set(CXX_11 ON)
 		STRING(REGEX REPLACE "--std=c\\+\\+98" "" ITC_CXX_FLAGS ${ITC_CXX_FLAGS}) #Remove the C++98 Flag if it exists
 		endif(ITC_CXX_FLAGS)		
     set(ITC_CXX_FLAGS "${ITC_CXX_FLAGS} --std=c++11")    
-    set(CMAKE_CXX_FLAGS "-m32 -Wl,--disable-new-dtags -Werror -Wall -Wextra -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
-    set(CMAKE_SHARED_LINKER_FLAGS "-m32 -Wl,--disable-new-dtags")
+    set(CMAKE_CXX_FLAGS "-Wl,--disable-new-dtags -Werror -Wall -Wextra -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
+    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(CXX_11)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
@@ -48,8 +48,8 @@ ENDFOREACH()
 
 # Install configuration files to bin
 set(sim_cfg
-    cfg/nos_engine_server_config.json
-    cfg/nos3-simulator.xml
-    cfg/sim_log_config.xml
+    ../cfg/build/sims/nos_engine_server_config.json
+    ../cfg/build/sims/nos3-simulator.xml
+    ../cfg/build/sims/sim_log_config.xml
 )
 install(FILES ${sim_cfg} DESTINATION bin COMPONENT config)

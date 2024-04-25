@@ -5,12 +5,12 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-set(ARCHITECTURE_STRING "i386")
+set(ARCHITECTURE_STRING "amd64")
 
 set(ITC_C_FLAGS "")     #Used for C
 set(ITC_CCXX_FLAGS "")  #Works for both C/C++
 set(CLANG_OVERRIDE "")
-set(BOOST_LIBRARYDIR /usr/lib/i386-linux-gnu)
+set(BOOST_LIBRARYDIR /usr/lib/amd64-linux-gnu)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message(STATUS "Clang detected. MissionSettings will invoke GCC Compile Flags")
@@ -29,9 +29,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CLANG_OVERRIDE)
     set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS} -fdiagnostics-show-option")
 
     message(STATUS "Setting compiler options...")
-    set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS} -fPIC")
-    set(CMAKE_SHARED_LINKER_FLAGS "-fpic")
-    set(CMAKE_EXE_LINKER_FLAGS "-fpic")
+    #set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS} -fPIC")
+    #set(CMAKE_SHARED_LINKER_FLAGS "-fpic")
+    #set(CMAKE_EXE_LINKER_FLAGS "-fpic")
     
     CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_VISIBILITY)
 
