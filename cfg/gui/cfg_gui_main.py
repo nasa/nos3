@@ -5,9 +5,10 @@ from PySide6.QtGui import QTextCharFormat
 from cfg_gui_ui import Ui_Form
 import sys, re, xmltodict, datetime, threading
 import xml.etree.ElementTree as ET
+import os
 
 # TODO: Update master xml sc-x-cfg filename if modified in sc config (in progress)
-# TODO: disableButtons(), enableButtons() not working as intended due to the gnome-terminal handling the command externally
+# TODO: disableButtons(), enableButtons() not working as intended due to the gnome-terminal thread handling the commands externally
 
 class cfg_gui(QWidget):
     def __init__(self, *args, **kwargs):
@@ -52,6 +53,9 @@ class cfg_gui(QWidget):
         #self.ui.comboBox_run.currentIndexChanged.connect(self.run_ForUntil)
         self.ui.comboBox_run.setDisabled(1)
         self.ui.lineEdit_secondsEntry.setDisabled(1)
+
+        # Load Default Config
+        self.reloadConfig(f'{os.path.dirname(os.path.abspath(__file__))}/../nos3-mission.xml')
 
     # Replaces the textbox on launch tab with a date/time box and vice versa
     def run_ForUntil(self):
@@ -353,7 +357,7 @@ class cfg_gui(QWidget):
         button.setStyleSheet('QPushButton {background-color: green;}')
         self.prevButtonPressed = button
 
-    # Disable build/clean buttons while another is being ran
+    # Disable build/clean buttons while another is being ran (not working)
     def disableButtons(self, button:QPushButton):
         index = self.ui.gridLayout_buildCleanButtons.count()-1
         while index >= 0:
@@ -362,7 +366,7 @@ class cfg_gui(QWidget):
                 widget.setDisabled(1)
             index -= 1
 
-    # Enable build/clean buttons after process is done running
+    # Enable build/clean buttons after process is done running (not working)
     def enableButtons(self, button:QPushButton):
         index = self.ui.gridLayout_buildCleanButtons.count()-1
         while index >= 0:
