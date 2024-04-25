@@ -77,7 +77,11 @@ This project is licensed under the NOSA (NASA Open Source Agreement) License.
 Please report issues and request features on the GitHub tracking system - [NOS3 Issues](https://www.github.com/nasa/nos3/issues).
 
 ## Contributions
-If you would like to contribute to the repository, please complete the [NOS3_Indv_CLA](./doc/NOS3_Indv_CLA.pdf) form and submit it to gsfc-softwarerequest@mail.nasa.gov with John.P.Lucas@nasa.gov copied. Next please create an issue capturing work to be done noting you intend to work it, a related branch, and submit a pull request when ready and we'll work to get it integrated.
+If you would like to contribute to the repository, please complete this [NASA Form][def] and submit it to gsfc-softwarerequest@mail.nasa.gov with John.P.Lucas@nasa.gov CC'ed.
+Next, please create an issue describing the work to be performed noting that you intend to work it, create a related branch, and submit a pull request when ready. When complete, we will review and work to get it integrated.
 
 ## Support
 If this project interests you or if you have any questions, please feel free to contact any developer directly or email `support@nos3.org`.
+
+
+[def]: https://github.com/nasa/nos3/files/14578604/NOS3_Invd_CLA.pdf "NOS3 NASA Contributor Form PDF"
