@@ -49,7 +49,9 @@ class cfg_gui(QWidget):
         #self.ui.pushButton_pause.clicked.connect(lambda: self.startBashProcess(self.ui.textEdit_launchConsole, ["-lc", "echo '>> Pausing NOS3 Time Driver'"]))
         self.ui.pushButton_pause.setDisabled(1)
         self.ui.pushButton_launch.clicked.connect(lambda: self.gnome_terminal(self.ui.textEdit_launchConsole, "make launch"))
-        self.ui.comboBox_run.currentIndexChanged.connect(self.run_ForUntil)
+        #self.ui.comboBox_run.currentIndexChanged.connect(self.run_ForUntil)
+        self.ui.comboBox_run.setDisabled(1)
+        self.ui.lineEdit_secondsEntry.setDisabled(1)
 
     # Replaces the textbox on launch tab with a date/time box and vice versa
     def run_ForUntil(self):
