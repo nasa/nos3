@@ -45,11 +45,12 @@
 #include "cfe_msgids.h"
 #include "ds_msgids.h"
 
+#include "sample_msgids.h"
+
 /* #include "ci_lab_msgids.h"  */
 /* #include "to_lab_msgids.h"  */
 
 /* #include "cs_msgids.h"  */
-/* #include "ds_msgids.h"  */
 /* #include "fm_msgids.h"  */
 /* #include "hk_msgids.h"  */
 /* #include "hs_msgids.h"  */
@@ -196,11 +197,11 @@ DS_FilterTable_t DS_FilterTable = {
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED}}},
      /* Packet Index 014 */
-     {/* .MessageID = */ CFE_SB_MSGID_RESERVED,
+     {/* .MessageID = */ CFE_SB_MSGID_WRAP_VALUE(SAMPLE_REQ_HK_MID),
       /* .Filter    = */
       {/* File table index, filter type, N, X, O */
-       {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
-       {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
+       {FILE_ALL_APP_HK_PKTS, DS_BY_COUNT, 1, 1, 0},
+       {FILE_ALL_APP_TLM_PKTS, DS_BY_COUNT, 1, 1, 0},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED}}},
      /* Packet Index 015 */
