@@ -317,7 +317,7 @@ class cfg_gui(QWidget):
         process = QProcess()
 
         # `read line` is to hold the terminal open after execution, allows errors to be seen
-        process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; echo Done; read line" ')
+        process.startCommand(f'gnome-terminal --tab -- bash -c "{command}; echo Done. Press ENTER to close.; read line" ')
 
         process.readyReadStandardOutput.connect(lambda: textbox.append(process.readAllStandardOutput().data().decode()))
         process.readyReadStandardError.connect(lambda: textbox.append(process.readAllStandardError().data().decode()))
