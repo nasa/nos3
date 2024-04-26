@@ -492,10 +492,10 @@
     </rect>
    </property>
    <property name="tabShape">
-    <enum>QTabWidget::Rounded</enum>
+    <enum>QTabWidget::TabShape::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -511,7 +511,7 @@
       </rect>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -568,7 +568,7 @@
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item alignment="Qt::AlignTop">
+       <item alignment="Qt::AlignmentFlag::AlignTop">
         <widget class="QScrollArea" name="scrollArea">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -580,10 +580,10 @@
           <bool>true</bool>
          </property>
          <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
          </property>
          <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
+          <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
          </property>
          <property name="widgetResizable">
           <bool>true</bool>
@@ -593,8 +593,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>613</width>
-            <height>297</height>
+            <width>84</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -605,7 +605,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
+            <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
            </property>
           </layout>
          </widget>
@@ -703,7 +703,7 @@
       <string>Console Output</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
      <property name="flat">
       <bool>false</bool>
@@ -773,96 +773,103 @@
     <widget class="QFrame" name="frame_2">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>10</x>
        <y>20</y>
-       <width>421</width>
+       <width>641</width>
        <height>81</height>
       </rect>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <widget class="QFrame" name="frame">
       <property name="geometry">
        <rect>
         <x>79</x>
         <y>0</y>
-        <width>341</width>
+        <width>561</width>
         <height>80</height>
        </rect>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::Shape::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <widget class="QWidget" name="gridLayoutWidget_2">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>340</width>
+         <width>561</width>
          <height>80</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_buildCleanButtons">
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pushButton_fswClean">
-          <property name="text">
-           <string>FSW</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_fswBuild">
-          <property name="text">
-           <string>FSW</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton_gswClean">
-          <property name="text">
-           <string>GSW</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_simClean">
+         <widget class="QPushButton" name="pushButton_cleanAll">
           <property name="text">
-           <string>SIM</string>
+           <string>All</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QPushButton" name="pushButton_simBuild">
-          <property name="text">
-           <string>SIM</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pushButton_gswBuild">
-          <property name="text">
-           <string>GSW</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
          <widget class="QPushButton" name="pushButton_buildAll">
           <property name="text">
            <string>All</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="3">
-         <widget class="QPushButton" name="pushButton_cleanAll">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pushButton_fswBuild">
           <property name="text">
-           <string>All</string>
+           <string>FSW</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButton_cfgBuild">
+          <property name="text">
+           <string>CFG</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="pushButton_simClean">
+          <property name="text">
+           <string>SIM</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QPushButton" name="pushButton_simBuild">
+          <property name="text">
+           <string>SIM</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="pushButton_gswBuild">
+          <property name="text">
+           <string>GSW</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButton_fswClean">
+          <property name="text">
+           <string>FSW</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButton_gswClean">
+          <property name="text">
+           <string>GSW</string>
           </property>
          </widget>
         </item>
@@ -879,10 +886,10 @@
        </rect>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::Shape::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <widget class="QWidget" name="verticalLayoutWidget">
        <property name="geometry">
@@ -900,7 +907,7 @@
            <string>Build</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -917,10 +924,10 @@
        </rect>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::Shape::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <widget class="QWidget" name="verticalLayoutWidget_2">
        <property name="geometry">
@@ -938,7 +945,7 @@
            <string>Clean</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -1039,7 +1046,7 @@
        <string>NOS3 Time Driver</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
       <property name="flat">
        <bool>false</bool>
@@ -1141,7 +1148,7 @@
           <string/>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>

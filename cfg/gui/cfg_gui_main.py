@@ -35,6 +35,7 @@ class cfg_gui(QWidget):
         
         # Build Tab
         self.ui.pushButton_buildAll.clicked.connect(lambda: self.build("all", self.ui.pushButton_buildAll))
+        self.ui.pushButton_cfgBuild.clicked.connect(lambda: self.build("config", self.ui.pushButton_cfgBuild))
         self.ui.pushButton_fswBuild.clicked.connect(lambda: self.build("fsw", self.ui.pushButton_fswBuild))
         self.ui.pushButton_gswBuild.clicked.connect(lambda: self.build("gsw", self.ui.pushButton_gswBuild))
         self.ui.pushButton_simBuild.clicked.connect(lambda: self.build("sim", self.ui.pushButton_simBuild))

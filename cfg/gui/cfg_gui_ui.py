@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'cfg_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.7.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,15 +16,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
-    QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QScrollArea, QSizePolicy, QSpinBox,
-    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
+    QGroupBox, QHBoxLayout, QLabel, QLayout,
+    QLineEdit, QPushButton, QScrollArea, QSizePolicy,
+    QSpinBox, QTabWidget, QTextEdit, QVBoxLayout,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(655, 655)
+        Form.resize(658, 655)
         palette = QPalette()
         brush = QBrush(QColor(0, 0, 0, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -101,13 +102,13 @@ class Ui_Form(object):
         self.tabWidget = QTabWidget(Form)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setGeometry(QRect(0, 0, 661, 661))
-        self.tabWidget.setTabShape(QTabWidget.Rounded)
+        self.tabWidget.setTabShape(QTabWidget.TabShape.Rounded)
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
         self.lineEdit_curConfig = QLineEdit(self.tab)
         self.lineEdit_curConfig.setObjectName(u"lineEdit_curConfig")
         self.lineEdit_curConfig.setGeometry(QRect(130, 20, 421, 26))
-        self.lineEdit_curConfig.setAlignment(Qt.AlignCenter)
+        self.lineEdit_curConfig.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_curConfig.setReadOnly(True)
         self.pushButton_browse = QPushButton(self.tab)
         self.pushButton_browse.setObjectName(u"pushButton_browse")
@@ -126,15 +127,29 @@ class Ui_Form(object):
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.scrollArea = QScrollArea(self.horizontalLayoutWidget_6)
         self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy)
         self.scrollArea.setAutoFillBackground(True)
-        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.scrollArea.setWidgetResizable(False)
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 627, 297))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 84, 28))
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
+        self.scrollAreaWidgetContents.setSizePolicy(sizePolicy1)
+        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        self.horizontalLayout_6.addWidget(self.scrollArea, 0, Qt.AlignTop)
+        self.horizontalLayout_6.addWidget(self.scrollArea, 0, Qt.AlignmentFlag.AlignTop)
 
         self.spinBox_configNumber = QSpinBox(self.groupBox_scConfig)
         self.spinBox_configNumber.setObjectName(u"spinBox_configNumber")
@@ -167,7 +182,7 @@ class Ui_Form(object):
         self.groupBox_8 = QGroupBox(self.tab_2)
         self.groupBox_8.setObjectName(u"groupBox_8")
         self.groupBox_8.setGeometry(QRect(10, 120, 631, 491))
-        self.groupBox_8.setAlignment(Qt.AlignCenter)
+        self.groupBox_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.groupBox_8.setFlat(False)
         self.groupBox_8.setCheckable(False)
         self.textEdit_buildConsole = QTextEdit(self.groupBox_8)
@@ -182,65 +197,70 @@ class Ui_Form(object):
         self.textEdit_buildConsole.setReadOnly(True)
         self.frame_2 = QFrame(self.tab_2)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setGeometry(QRect(110, 20, 421, 81))
-        self.frame_2.setFrameShape(QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.frame_2.setGeometry(QRect(10, 20, 641, 81))
+        self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
         self.frame = QFrame(self.frame_2)
         self.frame.setObjectName(u"frame")
-        self.frame.setGeometry(QRect(79, 0, 341, 80))
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setGeometry(QRect(79, 0, 561, 80))
+        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayoutWidget_2 = QWidget(self.frame)
         self.gridLayoutWidget_2.setObjectName(u"gridLayoutWidget_2")
-        self.gridLayoutWidget_2.setGeometry(QRect(0, 0, 340, 80))
+        self.gridLayoutWidget_2.setGeometry(QRect(0, 0, 561, 80))
         self.gridLayout_buildCleanButtons = QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_buildCleanButtons.setObjectName(u"gridLayout_buildCleanButtons")
         self.gridLayout_buildCleanButtons.setContentsMargins(0, 0, 0, 0)
-        self.pushButton_fswClean = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_fswClean.setObjectName(u"pushButton_fswClean")
+        self.pushButton_cleanAll = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_cleanAll.setObjectName(u"pushButton_cleanAll")
 
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_fswClean, 1, 1, 1, 1)
-
-        self.pushButton_fswBuild = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_fswBuild.setObjectName(u"pushButton_fswBuild")
-
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_fswBuild, 0, 1, 1, 1)
-
-        self.pushButton_gswClean = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_gswClean.setObjectName(u"pushButton_gswClean")
-
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_gswClean, 1, 2, 1, 1)
-
-        self.pushButton_simClean = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_simClean.setObjectName(u"pushButton_simClean")
-
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_simClean, 1, 0, 1, 1)
-
-        self.pushButton_simBuild = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_simBuild.setObjectName(u"pushButton_simBuild")
-
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_simBuild, 0, 0, 1, 1)
-
-        self.pushButton_gswBuild = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_gswBuild.setObjectName(u"pushButton_gswBuild")
-
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_gswBuild, 0, 2, 1, 1)
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_cleanAll, 1, 0, 1, 1)
 
         self.pushButton_buildAll = QPushButton(self.gridLayoutWidget_2)
         self.pushButton_buildAll.setObjectName(u"pushButton_buildAll")
 
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_buildAll, 0, 3, 1, 1)
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_buildAll, 0, 0, 1, 1)
 
-        self.pushButton_cleanAll = QPushButton(self.gridLayoutWidget_2)
-        self.pushButton_cleanAll.setObjectName(u"pushButton_cleanAll")
+        self.pushButton_fswBuild = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_fswBuild.setObjectName(u"pushButton_fswBuild")
 
-        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_cleanAll, 1, 3, 1, 1)
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_fswBuild, 0, 2, 1, 1)
+
+        self.pushButton_cfgBuild = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_cfgBuild.setObjectName(u"pushButton_cfgBuild")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_cfgBuild, 0, 1, 1, 1)
+
+        self.pushButton_simClean = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_simClean.setObjectName(u"pushButton_simClean")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_simClean, 1, 4, 1, 1)
+
+        self.pushButton_simBuild = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_simBuild.setObjectName(u"pushButton_simBuild")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_simBuild, 0, 4, 1, 1)
+
+        self.pushButton_gswBuild = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_gswBuild.setObjectName(u"pushButton_gswBuild")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_gswBuild, 0, 3, 1, 1)
+
+        self.pushButton_fswClean = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_fswClean.setObjectName(u"pushButton_fswClean")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_fswClean, 1, 2, 1, 1)
+
+        self.pushButton_gswClean = QPushButton(self.gridLayoutWidget_2)
+        self.pushButton_gswClean.setObjectName(u"pushButton_gswClean")
+
+        self.gridLayout_buildCleanButtons.addWidget(self.pushButton_gswClean, 1, 3, 1, 1)
 
         self.frame_3 = QFrame(self.frame_2)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setGeometry(QRect(0, 0, 81, 41))
-        self.frame_3.setFrameShape(QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QFrame.Raised)
+        self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayoutWidget = QWidget(self.frame_3)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
         self.verticalLayoutWidget.setGeometry(QRect(0, 0, 81, 41))
@@ -249,15 +269,15 @@ class Ui_Form(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.label_4 = QLabel(self.verticalLayoutWidget)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setAlignment(Qt.AlignCenter)
+        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_4)
 
         self.frame_4 = QFrame(self.frame_2)
         self.frame_4.setObjectName(u"frame_4")
         self.frame_4.setGeometry(QRect(0, 40, 81, 41))
-        self.frame_4.setFrameShape(QFrame.StyledPanel)
-        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayoutWidget_2 = QWidget(self.frame_4)
         self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
         self.verticalLayoutWidget_2.setGeometry(QRect(0, 0, 81, 41))
@@ -266,7 +286,7 @@ class Ui_Form(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.label_5 = QLabel(self.verticalLayoutWidget_2)
         self.label_5.setObjectName(u"label_5")
-        self.label_5.setAlignment(Qt.AlignCenter)
+        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.label_5)
 
@@ -318,7 +338,7 @@ class Ui_Form(object):
         self.groupBox_9 = QGroupBox(self.groupBox_control)
         self.groupBox_9.setObjectName(u"groupBox_9")
         self.groupBox_9.setGeometry(QRect(10, 60, 611, 451))
-        self.groupBox_9.setAlignment(Qt.AlignCenter)
+        self.groupBox_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.groupBox_9.setFlat(False)
         self.groupBox_9.setCheckable(False)
         self.textEdit_launchConsole = QTextEdit(self.groupBox_9)
@@ -347,7 +367,7 @@ class Ui_Form(object):
 
         self.lineEdit_secondsEntry = QLineEdit(self.horizontalLayoutWidget_3)
         self.lineEdit_secondsEntry.setObjectName(u"lineEdit_secondsEntry")
-        self.lineEdit_secondsEntry.setAlignment(Qt.AlignCenter)
+        self.lineEdit_secondsEntry.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout_runForUntil.addWidget(self.lineEdit_secondsEntry)
 
@@ -355,7 +375,7 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -372,14 +392,15 @@ class Ui_Form(object):
         self.pushButton_saveAs.setText(QCoreApplication.translate("Form", u"Save As...", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"Config", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("Form", u"Console Output", None))
-        self.pushButton_fswClean.setText(QCoreApplication.translate("Form", u"FSW", None))
+        self.pushButton_cleanAll.setText(QCoreApplication.translate("Form", u"All", None))
+        self.pushButton_buildAll.setText(QCoreApplication.translate("Form", u"All", None))
         self.pushButton_fswBuild.setText(QCoreApplication.translate("Form", u"FSW", None))
-        self.pushButton_gswClean.setText(QCoreApplication.translate("Form", u"GSW", None))
+        self.pushButton_cfgBuild.setText(QCoreApplication.translate("Form", u"CFG", None))
         self.pushButton_simClean.setText(QCoreApplication.translate("Form", u"SIM", None))
         self.pushButton_simBuild.setText(QCoreApplication.translate("Form", u"SIM", None))
         self.pushButton_gswBuild.setText(QCoreApplication.translate("Form", u"GSW", None))
-        self.pushButton_buildAll.setText(QCoreApplication.translate("Form", u"All", None))
-        self.pushButton_cleanAll.setText(QCoreApplication.translate("Form", u"All", None))
+        self.pushButton_fswClean.setText(QCoreApplication.translate("Form", u"FSW", None))
+        self.pushButton_gswClean.setText(QCoreApplication.translate("Form", u"GSW", None))
         self.label_4.setText(QCoreApplication.translate("Form", u"Build", None))
         self.label_5.setText(QCoreApplication.translate("Form", u"Clean", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("Form", u"Build", None))
