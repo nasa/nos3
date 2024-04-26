@@ -32,9 +32,9 @@ class cfg_gui(QWidget):
         self.ui.pushButton_save.clicked.connect(lambda: self.saveXML("save"))
         self.ui.pushButton_saveAs.clicked.connect(lambda: self.saveXML("saveAs"))
         self.ui.spinBox_configNumber.valueChanged.connect(lambda: self.switchConfig(self.ui.spinBox_configNumber.value()))
-        pixmap = QPixmap('resources/JSTAR-transparent.png')
+        pixmap = QPixmap('./cfg/gui/resources/JSTAR-transparent.png')
         self.ui.label_jstarLogo.setPixmap(pixmap)
-        pixmap = QPixmap('resources/nos3.png')
+        pixmap = QPixmap('./cfg/gui/resources/nos3.png')
         self.ui.label_nos3Logo.setPixmap(pixmap)
         
         # Build Tab
