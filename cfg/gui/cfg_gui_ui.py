@@ -138,7 +138,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 84, 28))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 613, 68))
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -176,6 +176,15 @@ class Ui_Form(object):
         self.pushButton_saveAs = QPushButton(self.tab)
         self.pushButton_saveAs.setObjectName(u"pushButton_saveAs")
         self.pushButton_saveAs.setGeometry(QRect(330, 590, 94, 26))
+        self.label_nos3Logo = QLabel(self.tab)
+        self.label_nos3Logo.setObjectName(u"label_nos3Logo")
+        self.label_nos3Logo.setGeometry(QRect(30, 585, 161, 41))
+        self.label_nos3Logo.setScaledContents(True)
+        self.label_jstarLogo = QLabel(self.tab)
+        self.label_jstarLogo.setObjectName(u"label_jstarLogo")
+        self.label_jstarLogo.setGeometry(QRect(450, 585, 171, 41))
+        self.label_jstarLogo.setScaledContents(True)
+        self.label_jstarLogo.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
@@ -375,7 +384,7 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(Form)
@@ -390,6 +399,8 @@ class Ui_Form(object):
         self.groupBox_masterConfig.setTitle(QCoreApplication.translate("Form", u"Master Config", None))
         self.pushButton_save.setText(QCoreApplication.translate("Form", u"Save", None))
         self.pushButton_saveAs.setText(QCoreApplication.translate("Form", u"Save As...", None))
+        self.label_nos3Logo.setText("")
+        self.label_jstarLogo.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("Form", u"Config", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("Form", u"Console Output", None))
         self.pushButton_cleanAll.setText(QCoreApplication.translate("Form", u"All", None))

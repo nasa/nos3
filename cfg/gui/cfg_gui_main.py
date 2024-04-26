@@ -1,7 +1,7 @@
 from pathlib import Path
 from PySide6.QtWidgets import QWidget, QApplication, QFileDialog, QTextEdit, QPushButton, QDateTimeEdit, QLabel, QCheckBox, QVBoxLayout, QSizePolicy, QDoubleSpinBox, QLayout, QMessageBox
 from PySide6.QtCore import QProcess, QDateTime
-from PySide6.QtGui import QTextCharFormat
+from PySide6.QtGui import QTextCharFormat, QPixmap
 from cfg_gui_ui import Ui_Form
 import sys, re, xmltodict, datetime, threading
 import xml.etree.ElementTree as ET
@@ -32,6 +32,10 @@ class cfg_gui(QWidget):
         self.ui.pushButton_save.clicked.connect(lambda: self.saveXML("save"))
         self.ui.pushButton_saveAs.clicked.connect(lambda: self.saveXML("saveAs"))
         self.ui.spinBox_configNumber.valueChanged.connect(lambda: self.switchConfig(self.ui.spinBox_configNumber.value()))
+        pixmap = QPixmap('resources/JSTAR-transparent.png')
+        self.ui.label_jstarLogo.setPixmap(pixmap)
+        pixmap = QPixmap('resources/nos3.png')
+        self.ui.label_nos3Logo.setPixmap(pixmap)
         
         # Build Tab
         self.ui.pushButton_buildAll.clicked.connect(lambda: self.build("all", self.ui.pushButton_buildAll))
