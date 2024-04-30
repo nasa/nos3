@@ -18,6 +18,7 @@ class cfg_gui(QWidget):
         self.ui.setupUi(self)
         self.setFixedSize(655, 655)
         self.setWindowTitle("NOS3 Igniter - Version 0.0.1")
+        self.setWindowIcon(QPixmap(f'{os.path.dirname(os.path.abspath(__file__))}/resources/nos3_original.png'))
 
         # globals
         self.dateTimeEdit = QDateTimeEdit()
@@ -32,9 +33,9 @@ class cfg_gui(QWidget):
         self.ui.pushButton_save.clicked.connect(lambda: self.saveXML("save"))
         self.ui.pushButton_saveAs.clicked.connect(lambda: self.saveXML("saveAs"))
         self.ui.spinBox_configNumber.valueChanged.connect(lambda: self.switchConfig(self.ui.spinBox_configNumber.value()))
-        pixmap = QPixmap(f'{os.path.dirname(os.path.abspath(__file__))}/resources/JSTAR-transparent.png')
+        pixmap = QPixmap(f'{os.path.dirname(os.path.abspath(__file__))}/resources/JSTAR-transparent_original.png')
         self.ui.label_jstarLogo.setPixmap(pixmap)
-        pixmap = QPixmap(f'{os.path.dirname(os.path.abspath(__file__))}/resources/nos3.png')
+        pixmap = QPixmap(f'{os.path.dirname(os.path.abspath(__file__))}/resources/nos3_original.png')
         self.ui.label_nos3Logo.setPixmap(pixmap)
         
         # Build Tab
