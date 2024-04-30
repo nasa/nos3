@@ -4,6 +4,7 @@
 BUILDTYPE ?= debug
 INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
+GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
 export CFS_APP_PATH = ../components
@@ -45,6 +46,11 @@ all:
 	$(MAKE) sim
 	$(MAKE) gsw
 
+build-cryptolib:
+	mkdir -p $(GSWBUILDDIR)
+	cd $(GSWBUILDDIR) && cmake $(PREP_OPTS) -DSUPPORT=1 ../../components/cryptolib
+	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
+
 build-fsw:
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
@@ -72,6 +78,7 @@ clean-sim:
 	rm -rf sims/build
 
 clean-gsw:
+	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
 
@@ -85,6 +92,7 @@ fsw:
 	./scripts/docker_build_fsw.sh
 
 gsw:
+	./scripts/docker_build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
 launch:
