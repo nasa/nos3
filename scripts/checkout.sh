@@ -45,7 +45,7 @@ gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --na
 #   make
 
 # Rename for your checkout under test to allow checkout
-gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fprime_launch.sh
+gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
 
 echo ""
 
