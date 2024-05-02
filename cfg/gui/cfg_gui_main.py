@@ -27,6 +27,8 @@ class cfg_gui(QWidget):
         self.defaultStyleSheet = self.ui.pushButton_buildAll.styleSheet()       # Saves default stylesheet to return button color to normal, buttonColor()
         self.setup = 0                                                          # Allows for switchConfig() to initially be called without calling saveText()
         self.configNumTrack = 0                                                 # Tracks the index of the previous SC config when switching to another index
+        self.defaultConfig = f'{os.path.dirname(os.path.abspath(__file__))}/../nos3-mission.xml'
+        self.config_path = self.defaultConfig
 
         # Config Tab
         self.ui.pushButton_browse.clicked.connect(self.browseConfig)
@@ -61,7 +63,7 @@ class cfg_gui(QWidget):
         self.ui.lineEdit_secondsEntry.setDisabled(1)
 
         # Load Default Config
-        self.reloadConfig(f'{os.path.dirname(os.path.abspath(__file__))}/../nos3-mission.xml')
+        self.reloadConfig(self.defaultConfig)
 
     # Replaces the textbox on launch tab with a date/time box and vice versa
     def run_ForUntil(self):
