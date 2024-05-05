@@ -62,7 +62,7 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
-	./scripts/checkout.sh
+	./scripts/docker_checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
