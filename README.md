@@ -7,15 +7,17 @@ The best source of documentation can be found at [the wiki](https://github.com/n
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
-* Option A
+* Option A, you already use Linux
   * [Git 2.36+](https://git-scm.com/)
   * Linux with docker and docker compose installed
-* Option B
+* Option B, deployment of a virtual machine (VM)
   * [Git 2.36+](https://git-scm.com/)
   * [Vagrant 2.3.4+](https://www.vagrantup.com/)
   * [VirtualBox 7.0+](https://www.virtualbox.org/)
 
 ### Installing
+Option B only.
+Will provision a VM with all required packages installed to be used immediately.
 1. Clone the repository `git clone https://github.com/nasa/nos3.git`
 2. `cd nos3`
 3. Clone the submodules `git submodule update --init --recursive`
