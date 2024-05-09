@@ -46,9 +46,17 @@ all:
 	$(MAKE) gsw
 
 build-fsw:
-	mkdir -p $(FSWBUILDDIR)
-	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+	ifeq($(FLIGHT_SOFTWARE), fprime)
+		cd fsw/fprime/fprime-nos3
+		. fprime-venv/bin/activate
+		fprime-util build
+	endif
+	
+	ifeq($(FLIGHT_SOFTWARE), cfs)
+		mkdir -p $(FSWBUILDDIR)
+		cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
+		$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+	endif
 
 build-sim:
 	mkdir -p $(SIMBUILDDIR)
@@ -67,6 +75,9 @@ clean:
 clean-fsw:
 	rm -rf cfg/build/nos3_defs
 	rm -rf fsw/build
+	rm -rf fsw/fprime/fprime-nos3/build-artifacts
+	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
+	rm -rf fsw/fprime/fprime-nos3/fprime-venv
 
 clean-sim:
 	rm -rf sims/build
@@ -85,7 +96,7 @@ fprime:
 	./scripts/fprime.sh
 
 fsw: 
-	./scripts/docker_build_fsw.sh
+	./cfg/build/docker_build_fsw.sh
 
 gsw:
 	./cfg/build/gsw_build.sh

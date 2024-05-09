@@ -5,7 +5,7 @@
 # https://github.com/nasa-itc/deployment
 #
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[1]}" )/scripts" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 
 export SC_NUM="sc_1"
