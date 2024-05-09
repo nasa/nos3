@@ -60,6 +60,11 @@ gnome-terminal --tab --title="NOS Terminal"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_udp_terminal"    --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE udp-terminal
 echo ""
 
+# If OnAIR is desired, the following section should be run:
+echo "Launching OnAIR..."
+gnome-terminal --tab --title="OnAIR"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "OnAIR" --network=nos3_core -w $SIM_BIN $DBOX ./python driver.py onair/config/redis_example.ini
+echo ""
+
 # Note only currently working with a single spacecraft
 export SATNUM=1
 
