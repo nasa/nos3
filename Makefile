@@ -96,7 +96,7 @@ fprime:
 	./scripts/fprime.sh
 
 fsw: 
-	./cfg/build/docker_build_fsw.sh
+	./cfg/build/fsw_build.sh
 
 gsw:
 	./cfg/build/gsw_build.sh
