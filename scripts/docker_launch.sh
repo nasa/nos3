@@ -61,9 +61,14 @@ gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 echo ""
 
 # If OnAIR is desired, the following section should be run:
+ONAIR_DIR=/home/onair_dev/nos3/sims/OnAIR
+
 echo "Launching OnAIR..."
-gnome-terminal --tab --title="OnAIR"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "OnAIR" --network=nos3_core -w $SIM_BIN $DBOX ./python driver.py onair/config/redis_example.ini
+gnome-terminal --tab --title="OnAIR"    -- docker run --rm -it -v $BASE_DIR:/home/onair_dev/nos3 --name "OnAIR" --network=nos3_core -w $ONAIR_DIR onair #python driver.py 
+sleep 1
+docker exec -d  OnAIR python driver.py
 echo ""
+
 
 # Note only currently working with a single spacecraft
 export SATNUM=1

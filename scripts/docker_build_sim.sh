@@ -24,5 +24,11 @@ if [ ! -d $BASE_DIR/cfg/build ]; then
     exit 1
 fi
 
+
 mkdir -p $BASE_DIR/sims/build
 $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_sim" -w $BASE_DIR $DBOX make -j$NUM_CPUS build-sim
+
+# Added stuff for OnAIR
+cd $BASE_DIR/sims/OnAIR
+docker build -t onair .
+
