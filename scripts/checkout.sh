@@ -37,6 +37,8 @@ echo "Checkout..."
 # Rename for your simulator under test to allow checkout
 gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample_sim
 
+#testing star tracker
+gnome-terminal --tab --title="Generic Star Tracker" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
 # Example manual build for sample checkout:
 #   cd ./components/sample/support
 #   mkdir build
