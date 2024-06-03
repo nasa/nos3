@@ -101,6 +101,12 @@ list(APPEND MISSION_GLOBAL_APPLIST
         to
         to_lab
     #
+    # OnAIR
+    #
+        sbn
+        sbn_client
+        sbn_tcp
+    #
     # Components
     #
         arducam/fsw
