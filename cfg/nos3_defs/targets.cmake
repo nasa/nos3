@@ -105,7 +105,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
         sbn
         sbn_client
-        sbn_tcp
+        #sbn_tcp
     #
     # Components
     #
