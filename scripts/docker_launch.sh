@@ -61,7 +61,7 @@ gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 echo ""
 
 # If OnAIR is desired, the following section should be run:
-ONAIR_DIR=/home/onair_dev/nos3/sims/OnAIR
+ONAIR_DIR=/home/onair_dev/nos3/components/OnAIR
 
 echo "Launching OnAIR..."
 gnome-terminal --tab --title="OnAIR"    -- docker run --rm -it -v $BASE_DIR:/home/onair_dev/nos3 --name "OnAIR" --network=nos3_core -w $ONAIR_DIR onair #python driver.py 
