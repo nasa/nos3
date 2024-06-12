@@ -40,7 +40,7 @@ OPENC3_PATH=$OPENC3_DIR/openc3.sh
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20240430"
+DBOX="ivvitc/nos3-64:dev"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR
