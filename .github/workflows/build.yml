@@ -1,0 +1,22 @@
+name: Build
+
+on: 
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+    fsw:
+      # Container setup
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:dev
+      steps:
+        - uses: actions/checkout@v2
+        - name: Update
+          run: sudo apt-get update
+        - name: Install dependencies
+          run: sudo apt-get install -y python3
+        - name: fsw
+          run: make config fsw
