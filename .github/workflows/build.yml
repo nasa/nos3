@@ -15,8 +15,10 @@ jobs:
           with:
             submodules: 'true'
         - name: Update
-          run: sudo apt-get update
+          run: apt-get update
         - name: Install dependencies
-          run: sudo apt-get install -y python3
+          run: apt-get install -y python3
+        - name: prep
+          run: make prep
         - name: fsw
           run: make config fsw
