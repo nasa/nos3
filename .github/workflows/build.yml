@@ -6,7 +6,6 @@ on:
 
 jobs:
     fsw:
-      # Container setup
       runs-on: ubuntu-latest
       container:
         image: ivvitc/nos3-64:dev
@@ -26,3 +25,24 @@ jobs:
           run: mkdir ./fsw/build
         - name: build
           run: make build-fsw
+
+    sim:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:dev
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: recursive
+        - name: Update
+          run: apt-get update
+        - name: Install dependencies
+          run: apt-get install -y python3 docker docker.io
+        - name: prep
+          run: make prep
+        - name: config
+          run: make config  
+        - name: build directory
+          run: mkdir ./sims/build
+        - name: build
+          run: make build-sim
