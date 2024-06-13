@@ -2,9 +2,7 @@ name: Build
 
 on: 
   push:
-    branches: [ main, dev ]
   pull_request:
-    branches: [ main, dev ]
 
 jobs:
     fsw:
@@ -14,6 +12,8 @@ jobs:
         image: ivvitc/nos3-64:dev
       steps:
         - uses: actions/checkout@v2
+          with:
+            submodules: 'true'
         - name: Update
           run: sudo apt-get update
         - name: Install dependencies
