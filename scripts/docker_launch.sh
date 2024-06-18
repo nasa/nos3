@@ -60,16 +60,6 @@ gnome-terminal --tab --title="NOS Terminal"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR
 gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_udp_terminal"    --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE udp-terminal
 echo ""
 
-# If OnAIR is desired, the following section should be run:
-ONAIR_DIR=/home/onair_dev/nos3/components/OnAIR
-
-echo "Launching OnAIR..."
-gnome-terminal --tab --title="OnAIR"    -- docker run --rm -it -v $BASE_DIR:/home/onair_dev/nos3 --name "OnAIR" --network=nos3_core -w $ONAIR_DIR onair #python driver.py 
-sleep 1
-docker exec -d  OnAIR python driver.py
-echo ""
-
-
 # Note only currently working with a single spacecraft
 export SATNUM=1
 
@@ -100,6 +90,11 @@ do
     cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
     xhost +local:*
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
+    echo ""
+
+    echo $SC_NUM " - OnAIR..."
+    ONAIR_DIR=$BASE_DIR/components/OnAIR
+    gnome-terminal --tab --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name "OnAIR" --network=$SC_NETNAME -w $ONAIR_DIR onair python driver.py 
     echo ""
 
     echo $SC_NUM " - Flight Software..."
