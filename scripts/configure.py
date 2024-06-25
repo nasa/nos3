@@ -263,7 +263,7 @@ else:
         rw1_from_index = 999
         rw2_to_index = 999
         rw2_from_index = 999
-        sample_index = 999
+        #sample_index = 999
         st_index = 999
         torquer_index = 999
 
@@ -303,9 +303,9 @@ else:
                 if line.find('RW 2 from 42') != -1:
                     if (lines.index(line)) < rw2_from_index:
                         rw2_from_index = lines.index(line) + 1
-                if line.find('Sample IPC') != -1:
-                    if (lines.index(line)) < sample_index:
-                        sample_index = lines.index(line) + 1
+                #if line.find('Sample IPC') != -1:
+                #    if (lines.index(line)) < sample_index:
+                #        sample_index = lines.index(line) + 1
                 if line.find('Star Tracker IPC') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
@@ -331,8 +331,8 @@ else:
             lines[rw1_from_index] = ipc_off
             lines[rw2_to_index] = ipc_off
             lines[rw2_from_index] = ipc_off
-        if (sc_sample_en != 'true'):
-            lines[sample_index] = ipc_off
+        #if (sc_sample_en != 'true'):
+        #    lines[sample_index] = ipc_off
         if (sc_st_en != 'true'):
             lines[st_index] = ipc_off
         if (sc_torquer_en != 'true'):
