@@ -113,6 +113,32 @@
         <!--                      -->
         <!-- Component Simulators -->
         <!--                      -->
+        <newsim>
+            <name>newsim_sim</name>
+            <active>true</active>
+            <library>libnewsim_sim.so</library>
+            <hardware-model>
+                <type>NEWSIM</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>newsim-command</node-name>
+                    </connection>
+                    <connection><type>usart</type>
+                        <bus-name>usart_27</bus-name>
+                        <node-port>27</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>NEWSIM_42_PROVIDER</type>
+                    <hostname>fortytwo</hostname>
+                    <port>4251</port>
+                    <max-connection-attempts>20</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                </data-provider>
+            </hardware-model>
+        </simulator>
 
         <simulator>
             <name>sample_sim</name>
