@@ -104,8 +104,8 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # OnAIR
     #
         sbn
+        sbn_tcp
         sbn_client
-        #sbn_tcp
     #
     # Components
     #

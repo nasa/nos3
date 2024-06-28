@@ -26,5 +26,4 @@ else()
   set(MISSION_RESOURCEID_MODE "SIMPLE") # less type safe, but more backward compatible
 endif (OMIT_DEPRECATED)
 
-#set(ENV{CFS_APP_PATH} "baseline_apps:apps/sbn/modules/protocol")
-
+SET(ENV{CFS_APP_PATH} "baseline_apps:apps/sbn/modules/protocol:../components:")
