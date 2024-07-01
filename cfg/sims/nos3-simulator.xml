@@ -423,6 +423,29 @@
         </simulator>
 
         <simulator>
+            <name>generic_thruster_sim</name>
+            <active>true</active>
+            <library>libgeneric_thruster_sim.so</library>
+            <hardware-model>
+                <type>GENERIC_THRUSTER</type>
+                <connections>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>thruster-command</node-name>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>GENERIC_THRUSTER_42_PROVIDER</type>
+                    <hostname>fortytwo</hostname>
+                    <command-port>4280</command-port>
+                    <max-connection-attempts>30</max-connection-attempts>
+                    <retry-wait-seconds>1</retry-wait-seconds>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+
+        <simulator>
             <name>truth42sim</name>
             <active>true</active>
             <library>libtruth_42_sim.so</library>

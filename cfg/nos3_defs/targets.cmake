@@ -113,6 +113,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_reaction_wheel/fsw
         generic_radio/fsw
         generic_star_tracker/fsw
+        generic_thruster/fsw
         generic_torquer/fsw
         novatel_oem615/fsw
         sample/fsw
