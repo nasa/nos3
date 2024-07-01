@@ -21,11 +21,10 @@ echo ""
 # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
 
 #echo "42..."
-#cd /opt/nos3/42/
-#rm -rf NOS3InOut
-#cp -r $BASE_DIR/sims/cfg/InOut /opt/nos3/42/NOS3InOut
+#rm -rf $USER_NOS3_DIR/42/NOS3InOut
+#cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
 #xhost +local:*
-#gnome-terminal --window-with-profile=KeepOpen --title="42" -- $DFLAGS -e DISPLAY=$DISPLAY -v /opt/nos3/42/NOS3InOut:/opt/nos3/42/NOS3InOut -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w /opt/nos3/42 -t $DBOX /opt/nos3/42/42 NOS3InOut
+#gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
 #echo ""
 
 echo "NOS Core..."
@@ -50,6 +49,7 @@ gnome-terminal --tab --title="Generic Star Tracker" -- $DFLAGS -v $SIM_DIR:$SIM_
 
 # Rename for your checkout under test to allow checkout
 gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
+#gnome-terminal --title="Sample Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/support/build/sample_checkout
 
 echo ""
 

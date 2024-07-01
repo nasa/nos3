@@ -28,17 +28,21 @@
 add_compile_options(
     #-std=c99                    # Target the C99 standard (without gcc extensions)
     #-pedantic                   # Issue all the warnings demanded by strict ISO C
-    -Wall                       # Warn about most questionable operations
+    #-Wall                       # Warn about most questionable operations
     #-Wstrict-prototypes         # Warn about missing prototypes
-    -Wwrite-strings             # Warn if not treating string literals as "const"
-    -Wpointer-arith             # Warn about suspicious pointer operations
+    #-Wwrite-strings             # Warn if not treating string literals as "const"
+    #-Wpointer-arith             # Warn about suspicious pointer operations
     #-Werror                     # Treat warnings as errors (code should be clean)
-    -Wno-address-of-packed-member
+    #-Wno-address-of-packed-member
     # Build Specific
     -DBYTE_ORDER_LE
     -D_LINUX_OS_
     -D_DEFAULT_SOURCE
 )
+
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wstrict-prototypes -pedantic -Werror")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wwrite-strings -Wpointer-arith -Wno-address-of-packed-member")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 
 if (CFE_SYSTEM_PSPNAME STREQUAL "nos-linux")
     # find itc cmake module path

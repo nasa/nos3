@@ -4,6 +4,7 @@
 BUILDTYPE ?= debug
 INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
+GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 
 export CFS_APP_PATH = ../components
@@ -45,6 +46,11 @@ all:
 	$(MAKE) sim
 	$(MAKE) gsw
 
+build-cryptolib:
+	mkdir -p $(GSWBUILDDIR)
+	cd $(GSWBUILDDIR) && cmake $(PREP_OPTS) -DSUPPORT=1 ../../components/cryptolib
+	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
+
 build-fsw:
 	ifeq($(FLIGHT_SOFTWARE), fprime)
 		cd fsw/fprime/fprime-nos3
@@ -64,7 +70,7 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
-	./scripts/checkout.sh
+	./scripts/docker_checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
@@ -83,6 +89,7 @@ clean-sim:
 	rm -rf sims/build
 
 clean-gsw:
+	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
 
@@ -99,6 +106,7 @@ fsw:
 	./cfg/build/fsw_build.sh
 
 gsw:
+	./scripts/docker_build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
 launch:
@@ -123,3 +131,6 @@ stop:
 
 stop-gsw:
 	./scripts/stop_gsw.sh
+
+igniter:
+	./scripts/igniter_launch.sh

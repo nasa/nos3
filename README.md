@@ -7,15 +7,17 @@ The best source of documentation can be found at [the wiki](https://github.com/n
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
-* Option A
+* Option A, you already use Linux
   * [Git 2.36+](https://git-scm.com/)
   * Linux with docker and docker compose installed
-* Option B
+* Option B, deployment of a virtual machine (VM)
   * [Git 2.36+](https://git-scm.com/)
   * [Vagrant 2.3.4+](https://www.vagrantup.com/)
   * [VirtualBox 7.0+](https://www.virtualbox.org/)
 
 ### Installing
+Option B only.
+Will provision a VM with all required packages installed to be used immediately.
 1. Clone the repository `git clone https://github.com/nasa/nos3.git`
 2. `cd nos3`
 3. Clone the submodules `git submodule update --init --recursive`
@@ -77,7 +79,11 @@ This project is licensed under the NOSA (NASA Open Source Agreement) License.
 Please report issues and request features on the GitHub tracking system - [NOS3 Issues](https://www.github.com/nasa/nos3/issues).
 
 ## Contributions
-If you would like to contribute to the repository, please complete the [NOS3_Indv_CLA](./doc/NOS3_Indv_CLA.pdf) form and submit it to gsfc-softwarerequest@mail.nasa.gov with John.P.Lucas@nasa.gov copied. Next please create an issue capturing work to be done noting you intend to work it, a related branch, and submit a pull request when ready and we'll work to get it integrated.
+If you would like to contribute to the repository, please complete this [NASA Form][def] and submit it to gsfc-softwarerequest@mail.nasa.gov with John.P.Lucas@nasa.gov CC'ed.
+Next, please create an issue describing the work to be performed noting that you intend to work it, create a related branch, and submit a pull request when ready. When complete, we will review and work to get it integrated.
 
 ## Support
 If this project interests you or if you have any questions, please feel free to contact any developer directly or email `support@nos3.org`.
+
+
+[def]: https://github.com/nasa/nos3/files/14578604/NOS3_Invd_CLA.pdf "NOS3 NASA Contributor Form PDF"
