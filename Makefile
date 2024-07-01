@@ -122,7 +122,7 @@ test-fsw:
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-	cd $(FSWBUILDDIR)/amd64-linux-gnu/default_cpu1 && ctest -O ctest.log
+	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
 
 igniter:
 	./scripts/igniter_launch.sh
