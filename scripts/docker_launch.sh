@@ -94,7 +94,7 @@ do
 
     echo $SC_NUM " - OnAIR..."
     ONAIR_DIR=$BASE_DIR/components/OnAIR
-    gnome-terminal --tab --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_OnAIR" --network=$SC_NETNAME -w $ONAIR_DIR onair python3 driver.py 
+    gnome-terminal --tab --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_onair" --network=$SC_NETNAME -w $ONAIR_DIR onair python3 driver.py 
     echo ""
 
     echo $SC_NUM " - Flight Software..."
