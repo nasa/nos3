@@ -18,21 +18,25 @@ SBN_ConfTbl_t SBN_ConfTbl = {.ProtocolModules = {{/* [0] */
                                             {
                                                 {/* [0] */
                                                  .ProcessorID   = 1,
-                                                 .SpacecraftID  = 0x42,
+                                                //  .SpacecraftID  = 0x42,
+                                                 .SpacecraftID  = 0x2A,
                                                  .NetNum        = 0,
                                                  .ProtocolName  = "TCP",
                                                 //.Filters      = {"Remap"},
                                                 //.Address      = "172.40.1.1:2234",
-                                                 .Address      = "127.0.0.1:2234",
+                                                 .Address      = "sc_1_nos3_fsw:2234",
 
                                                 .TaskFlags    = SBN_TASK_POLL},
                                                 {/* [1] */
                                                  .ProcessorID   = 2,
-                                                 .SpacecraftID  = 0x42,
+                                                //  .SpacecraftID  = 0x42,
+                                                 .SpacecraftID  = 0x2A,
                                                  .NetNum        = 0,
                                                  .ProtocolName  = "TCP",
                                                 //.Filters      = {"Remap"},
-                                                 .Address      = "127.0.0.1:2235",
+                                                
+                                                //  .Address      = "127.0.0.1:2235",
+                                                 .Address      = "sc_1_onair:2235",
 
                                                  .TaskFlags     = SBN_TASK_POLL},
                                         },
