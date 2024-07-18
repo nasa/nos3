@@ -32,11 +32,11 @@ $DCALL image pull $DBOX
 echo ""
 echo ""
 
-echo "Prepare OnAir docker container..."
-cd $BASE_DIR/components/OnAIR
-docker build -t onair .
-echo ""
-echo ""
+# echo "Prepare OnAir docker container..."
+# cd $BASE_DIR/components/OnAIR
+# docker build -t onair .
+# echo ""
+# echo ""
 
 echo "Prepare 42..."
 cd $USER_NOS3_DIR
