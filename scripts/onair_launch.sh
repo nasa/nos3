@@ -5,6 +5,6 @@
 
 python3.10 -m pip install setuptools wheel coverage numpy pytest pytest-mock pytest-randomly redis
 
-sleep 30
+sleep 25
 
 python3.10 driver.py
