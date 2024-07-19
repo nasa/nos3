@@ -31,6 +31,11 @@ if (gsw_cfg == 'cosmos'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'ait'):
+    # Copy ait scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')

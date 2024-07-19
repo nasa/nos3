@@ -26,6 +26,16 @@ $DCALL image pull ballaerospace/cosmos:4.5.0
 echo ""
 echo ""
 
+echo "Prepare ait docker container..."
+$DCALL image pull ghcr.io/sphinxdefense/gsw-ait:main
+echo ""
+echo ""
+
+echo "Prepare ttc docker container..."
+$DCALL image pull ghcr.io/sphinxdefense/ttc-command:main
+echo ""
+echo ""
+
 echo "Prepare nos3 docker container..."
 $DCALL image pull $DBOX
 echo ""
