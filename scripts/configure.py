@@ -27,7 +27,7 @@ if (gsw_cfg == 'openc3'):
     os.system('cp ./scripts/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'cosmos'):
-    # Copy cosmos scripts into ./cfg/build
+    # Copy cosmos scripts into ./cfg/build``
     gsw_identified = 1
     os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
@@ -62,6 +62,7 @@ else:
         sc_cf_en = sc_root.find('applications/cf/enable').text
         sc_ds_en = sc_root.find('applications/ds/enable').text
         sc_fm_en = sc_root.find('applications/fm/enable').text
+        sc_hs_en = sc_root.find('applications/hs/enable').text
         sc_lc_en = sc_root.find('applications/lc/enable').text
         sc_sc_en = sc_root.find('applications/sc/enable').text
 
@@ -98,6 +99,7 @@ else:
             cf_line = ""
             ds_line = ""
             fm_line = ""
+            hs_line = ""
             lc_line = ""
             sc_line = ""
             adcs_line = ""
@@ -129,6 +131,9 @@ else:
                 if line.find('FM,') != -1:
                     if (sc_fm_en == 'true'):
                         fm_line = line
+                if line.find('HS,') != -1:
+                    if (sc_hs_en == 'true'):
+                        hs_line = line
                 if line.find('LC,') != -1:
                     if (sc_lc_en == 'true'):
                         lc_line = line
@@ -196,6 +201,7 @@ else:
         lines.insert(sc_startup_eof, adcs_line)
         lines.insert(sc_startup_eof, sc_line)
         lines.insert(sc_startup_eof, lc_line)
+        lines.insert(sc_startup_eof, hs_line)
         lines.insert(sc_startup_eof, fm_line)
         lines.insert(sc_startup_eof, ds_line)
         lines.insert(sc_startup_eof, cf_line)
