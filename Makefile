@@ -110,6 +110,9 @@ prep:
 prep-gsw:
 	./scripts/gsw_startup.sh
 
+prep-sat:
+	./scripts/sat_startup.sh
+
 real-clean:
 	$(MAKE) clean
 	./scripts/real_clean.sh
@@ -119,6 +122,9 @@ sim:
 
 start-gsw:
 	./scripts/docker_launch_gsw.sh
+
+start-sat:
+	./scripts/docker_launch_sat.sh
 
 stop:
 	./scripts/docker_stop.sh
