@@ -19,12 +19,21 @@ Vagrant.configure("2") do |config|
         owner: 'jstar', group:'vboxsf', automount:'true', 
         mount_options: ["dmode=0770", "fmode=0770"]
 
-    ### General configuration
-    config.vm.provider "virtualbox" do |vbox|
-        vbox.name = "nos3_20231101"
-        vbox.gui = true
-        ### Enable additional configuration as needed
-        vbox.cpus = 4
-        vbox.memory = "8192"
+    ### VM Setup
+    config.vm.define "sv" do |sv|
+    end
+
+    config.vm.define "fsw", autostart: false, primary: false do |fsw|
+        fsw.vm.network :private_network, ip: "10.0.0.101"
+    end
+
+    config.vm.define "gsw", autostart: false, primary: false do |gsw|
+        gsw.vm.network :private_network, ip: "10.0.0.102"
+    end
+
+    config.vm.provider "virtualbox" do |vb|
+        vb.gui = true
+        vb.cpus = 4
+        vb.memory = "8192"
     end
 end
