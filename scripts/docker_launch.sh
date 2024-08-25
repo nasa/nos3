@@ -94,13 +94,12 @@ do
 
     echo $SC_NUM " - OnAIR..."
     ONAIR_DIR=$BASE_DIR/components/OnAIR
-    gnome-terminal --tab --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_onair" --network=$SC_NETNAME -w $ONAIR_DIR -t $DBOX $SCRIPT_DIR/onair_launch.sh #python3.10 driver.py 
+    gnome-terminal --window-with-profile=KeepOpen --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_onair" --network=$SC_NETNAME -w $ONAIR_DIR -t $DBOX python3.10 driver.py
     echo ""
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
     gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice $DBOX $SCRIPT_DIR/fsw_respawn.sh &
-    #gnome-terminal --window-with-profile=KeepOpen --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice $DBOX $FSW_DIR/core-cpu1 -R PO &
     echo ""
 
     # Debugging
