@@ -113,6 +113,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_reaction_wheel/fsw
         generic_radio/fsw
         generic_star_tracker/fsw
+        generic_thruster/fsw
         generic_torquer/fsw
         novatel_oem615/fsw
         sample/fsw
@@ -145,7 +146,11 @@ SET(MISSION_CPUNAMES cpu1)
 SET(cpu1_PROCESSORID 1)
 SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
 SET(cpu1_FILELIST cfe_es_startup.scr)
-SET(cpu1_SYSTEM amd64-linux-gnu)
+if (ENABLE_UNIT_TESTS)
+    SET(cpu1_SYSTEM amd64-posix)
+else() 
+    SET(cpu1_SYSTEM amd64-nos3)
+endif()
 
 # USER Supplied
 #SET(cpu2_PROCESSORID 2)
