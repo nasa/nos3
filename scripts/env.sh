@@ -44,7 +44,7 @@ INFLUXDB_ADMIN_PASSWORD=admin_password
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20240430"
+DBOX="ivvitc/nos3-64:20240618"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

@@ -23,18 +23,21 @@
 /* Custom table structure, modify as needed to add desired commands */
 typedef struct
 {
+    /* 1 - Enable DS */
     SC_RtsEntryHeader_t hdr1;
     DS_AppStateCmd_t cmd1;
+    /* 2 - Enable Debug */
     SC_RtsEntryHeader_t hdr2;
     TO_LAB_EnableOutputCmd_t cmd2;
+    /* 3 - Enable RTS 3-64 */
     SC_RtsEntryHeader_t hdr3;
     SC_RtsGrpCmd_t cmd3;
+    /* 4 - Enable LC */
     SC_RtsEntryHeader_t hdr4;
-    SAMPLE_NoArgs_cmd_t cmd4;
+    LC_SetLCState_t cmd4;
+    /* 5 - Start RTS 3 (Safe Mode) */
     SC_RtsEntryHeader_t hdr5;
-    SAMPLE_NoArgs_cmd_t cmd5;
-    SC_RtsEntryHeader_t hdr6;
-    LC_SetLCState_t cmd6;
+    SC_RtsCmd_t cmd5;
 } SC_RtsStruct001_t;
 
 /* Define the union to size the table correctly */
@@ -67,21 +70,18 @@ SC_RtsTable001_t SC_Rts001 = {
         .cmd3.FirstRtsId = 3,
         .cmd3.LastRtsId = 64,
 
-        /* 4 - Sample NOOP */
+        /* 4 - Enable LC */
         .hdr4.TimeTag = 1,
-        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd4), SAMPLE_NOOP_CC, 0x00),
+        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd4), LC_SET_LC_STATE_CC, 0x00),
+        .cmd4.NewLCState = LC_STATE_ACTIVE,
+        .cmd4.Padding = 0x0000,
 
-        /* 5 - Sample Enable */
+        /* 5 - Start RTS 3 (Safe Mode) */
         .hdr5.TimeTag = 1,
-        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd5), SAMPLE_ENABLE_CC, 0x00),
-
-        /* 6 - Enable LC */
-        .hdr6.TimeTag = 1,
-        .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_SET_LC_STATE_CC, 0x00),
-        .cmd6.NewLCState = LC_STATE_ACTIVE,
-        .cmd6.Padding = 0x0000,
+        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd5), SC_START_RTS_CC, 0x00),
+        .cmd5.RtsId = 3,
     }
 };
 
 /* Macro for table structure */
-CFE_TBL_FILEDEF(SC_Rts001, SC.RTS_TBL001, SC Example RTS_TBL001, sc_rts001.tbl)
+CFE_TBL_FILEDEF(SC_Rts001, SC.RTS_TBL001, POR RTS001, sc_rts001.tbl)

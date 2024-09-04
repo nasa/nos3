@@ -61,6 +61,11 @@ build-sim:
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
+build-test:
+	mkdir -p $(FSWBUILDDIR)
+	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+
 checkout:
 	./scripts/docker_checkout.sh
 
@@ -117,6 +122,9 @@ stop:
 
 stop-gsw:
 	./scripts/stop_gsw.sh
+
+test-fsw:
+	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
 
 igniter:
 	./scripts/igniter_launch.sh
