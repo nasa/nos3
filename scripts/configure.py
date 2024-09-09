@@ -26,9 +26,13 @@ if (fsw_cfg == 'fprime'):
     fsw_identified = 1
     os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
     os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/fprime.sh ./scripts/docker_launch.sh')
 
 if (fsw_cfg == 'cfs'):
     fsw_identified = 1
+    # os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    # os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/cfs_cosmos.sh ./scripts/docker_launch.sh')
 
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
