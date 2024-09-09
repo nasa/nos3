@@ -7,5 +7,5 @@
 
 cd fsw/fprime/fprime-nos3/
 . fprime-venv/bin/activate
-fprime-util build
+# fprime-util build
 fprime-gds --gui-port 5000 --gui-addr 0.0.0.0
