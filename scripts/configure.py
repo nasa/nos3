@@ -27,12 +27,14 @@ if (fsw_cfg == 'fprime'):
     os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
     os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
     os.system('cp ./scripts/fprime.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/fprime_build_fsw.sh ./scripts/docker_build_fsw.sh')
 
 if (fsw_cfg == 'cfs'):
     fsw_identified = 1
     # os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
     # os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
     os.system('cp ./scripts/cfs_cosmos.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/cfs_build_fsw.sh ./scripts/docker_build_fsw.sh')
 
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
@@ -53,6 +55,8 @@ if (gsw_cfg == 'openc3'):
 if (gsw_cfg == 'cosmos'):
     # Copy cosmos scripts into ./cfg/build
     gsw_identified = 1
+    os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'fprime'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')

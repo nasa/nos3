@@ -10,6 +10,7 @@ GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
 GSW_DIR=$BASE_DIR/gsw/cosmos
 SIM_DIR=$BASE_DIR/sims/build
 SIM_BIN=$SIM_DIR/bin
+FLIGHT_SOFTWARE=fprime
 
 if [ -d $SIM_DIR/bin ]; then
     SIMS=$(ls $SIM_BIN/nos3*simulator) 
@@ -41,7 +42,8 @@ OPENC3_PATH=$OPENC3_DIR/openc3.sh
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20240618"
+# DBOX="ivvitc/nos3-64:20240618"
+DBOX="ivvitc/nos3-64:dev"
 # DBOX="ivvitc/nos3-64:fprime"
 
 # Debugging

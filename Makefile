@@ -52,17 +52,20 @@ build-cryptolib:
 	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
 
 build-fsw:
-	ifeq($(FLIGHT_SOFTWARE), fprime)
-		cd fsw/fprime/fprime-nos3
-		. fprime-venv/bin/activate
-		fprime-util build
-	endif
+
+
+ifeq ($(FLIGHT_SOFTWARE), fprime)
+	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
 	
-	ifeq($(FLIGHT_SOFTWARE), cfs)
-		mkdir -p $(FSWBUILDDIR)
-		cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
-		$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-	endif
+endif
+
+ifeq ($(FLIGHT_SOFTWARE), cfs)
+	mkdir -p $(FSWBUILDDIR)
+	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+else
+	pwd
+endif
 
 build-sim:
 	mkdir -p $(SIMBUILDDIR)
@@ -103,7 +106,8 @@ fprime:
 	./scripts/fprime.sh
 
 fsw: 
-	./cfg/build/fsw_build.sh
+	./scripts/docker_build_fsw.sh
+	# ./cfg/build/fsw_build.sh
 
 gsw:
 	./scripts/docker_build_cryptolib.sh
