@@ -101,12 +101,6 @@ list(APPEND MISSION_GLOBAL_APPLIST
         to
         to_lab
     #
-    # OnAIR
-    #
-        sbn
-        sbn_tcp
-        sbn_client
-    #
     # Components
     #
         arducam/fsw
@@ -123,6 +117,13 @@ list(APPEND MISSION_GLOBAL_APPLIST
         novatel_oem615/fsw
         sample/fsw
         syn/fsw
+    #
+    # OnAIR
+    #
+        sbn
+        sbn_tcp
+        sbn_client
+        onair
 )
 
 # Create Application Platform Include List
