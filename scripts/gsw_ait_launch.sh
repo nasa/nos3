@@ -9,4 +9,11 @@ source $SCRIPT_DIR/env.sh
 export GSW="ait"
 
 echo "AIT launch..."
-gnome-terminal --tab --title="AIT" -- docker run --rm -it -v $BASE_DIR:$BASE_DIR -v /tmp/nos3:/tmp/nos3 --name ait -h ait -p 8001:8001 --network=nos3_core ghcr.io/sphinxdefense/gsw-ait:main "source ~/.bashrc && ait-server"
+cd $BASE_DIR/gsw/ait
+gnome-terminal --window-with-profile=KeepOpen --title="AIT" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v /tmp/nos3:/tmp/nos3 -w $BASE_DIR/gsw/ait --name ait -h ait -p 8001:8001 --network=nos3_core $DBOX "export AIT_CONFIG=$BASE_DIR/gsw/ait ; ait-server"
+
+pidof firefox > /dev/null
+if [ $? -eq 1 ]
+then
+    firefox localhost:80 &
+fi
