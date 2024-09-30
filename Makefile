@@ -107,7 +107,6 @@ fprime:
 
 fsw: 
 	./scripts/docker_build_fsw.sh
-	# ./cfg/build/fsw_build.sh
 
 gsw:
 	./scripts/docker_build_cryptolib.sh
