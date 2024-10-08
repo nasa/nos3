@@ -85,8 +85,8 @@ do
     alias="cosmos"
     if [ "${GSW:-cosmos_openc3-operator_1}" == "ait" ]; then
             alias="ait"
-            docker run --rm -d -h influxdb --name influxdb -p 8086:8086 -e INFLUXDB_DB=$INFLUXDB_DB -e INFLUXDB_ADMIN_USER=$INFLUXDB_ADMIN_USER -e INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD --network=nos3_core influxdb:1.8
-            docker run --rm -d --name ttc-command -p 80:80 --network=nos3_core ghcr.io/sphinxdefense/ttc-command:main
+            #docker run --rm -d -h influxdb --name influxdb -p 8086:8086 -e INFLUXDB_DB=$INFLUXDB_DB -e INFLUXDB_ADMIN_USER=$INFLUXDB_ADMIN_USER -e INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD --network=nos3_core influxdb:1.8
+            #docker run --rm -d --name ttc-command -p 80:80 --network=nos3_core ghcr.io/sphinxdefense/ttc-command:main
     fi
 
     echo $SC_NUM " - Connect GSW " "${GSW:-cosmos_openc3-operator_1}" " to spacecraft network..."

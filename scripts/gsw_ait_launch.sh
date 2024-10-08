@@ -9,4 +9,13 @@ source $SCRIPT_DIR/env.sh
 export GSW="ait"
 
 echo "AIT launch..."
-gnome-terminal --tab --title="AIT" -- docker run --rm -it -v $BASE_DIR:$BASE_DIR -v /tmp/nos3:/tmp/nos3 --name ait -h ait -p 8001:8001 --network=nos3_core ghcr.io/sphinxdefense/gsw-ait:main "source ~/.bashrc && ait-server"
+#gnome-terminal --tab --title="AIT" -- docker run --rm -it -v $BASE_DIR:$BASE_DIR -v /tmp/nos3:/tmp/nos3 --name ait -h ait -p 8001:8001 --network=nos3_core ghcr.io/sphinxdefense/gsw-ait:main "source ~/.bashrc && ait-server"
+gnome-terminal --title="AIT" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v /tmp/nos3:/tmp/nos3 -w $BASE_DIR/gsw/ait -e AIT_ROOT=$BASE_DIR/gsw/ait -e AIT_CONFIG=$BASE_DIR/gsw/ait/gswait/config/config.yaml --name cosmos_openc3-operator_1 -h ait -p 8080:8080 --network=nos3_core $DBOX ait-server
+
+sleep 3
+
+pidof firefox > /dev/null
+if [ $? -eq 1 ]
+then
+    firefox http://localhost:8080 &
+fi
