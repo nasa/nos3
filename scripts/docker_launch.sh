@@ -82,17 +82,10 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    #alias="cosmos"
-    #if [ "${GSW:-cosmos_openc3-operator_1}" == "ait" ]; then
-    #        alias="ait"
-    #        docker run --rm -d -h influxdb --name influxdb -p 8086:8086 -e INFLUXDB_DB=$INFLUXDB_DB -e INFLUXDB_ADMIN_USER=$INFLUXDB_ADMIN_USER -e INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD --network=nos3_core influxdb:1.8
-    #        docker run --rm -d --name ttc-command -p 80:80 --network=nos3_core ghcr.io/sphinxdefense/ttc-command:main
-    #fi
-
-    #echo $SC_NUM " - Connect GSW " "${GSW:-cosmos_openc3-operator_1}" " to spacecraft network..."
-    #$DNETWORK connect  $SC_NETNAME "${GSW:-cosmos_openc3-operator_1}" --alias $alias --alias active-gs
-    #echo ""
-
+    echo $SC_NUM " - Connect GSW to spacecraft network..."
+    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias active-gs
+    echo ""
+ 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
     cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
