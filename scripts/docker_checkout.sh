@@ -1,4 +1,3 @@
-
 #!/bin/bash -i
 #
 # Convenience script for NOS3 development
@@ -11,7 +10,6 @@ source $SCRIPT_DIR/env.sh
 
 export SC_NUM="sc_1"
 export SC_NETNAME="nos3_"$SC_NUM
-# export SC_NETNAME="host"
 export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
 echo "Create spacecraft network..."
@@ -38,9 +36,10 @@ echo "Checkout..."
 gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample_sim
 
 #testing star tracker
-gnome-terminal --tab --title="Generic Star Tracker" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
+# gnome-terminal --tab --title="Generic Star Tracker" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
 #testing generic mag
 # gnome-terminal --tab --title="Generic Mag" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_mag_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_mag_sim
+
 # Example manual build for sample checkout:
 #   cd ./components/sample/support
 #   mkdir build
@@ -49,17 +48,17 @@ gnome-terminal --tab --title="Generic Star Tracker" -- $DFLAGS -v $SIM_DIR:$SIM_
 #   make
 
 # Rename for your checkout under test to allow checkout
-gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
-#gnome-terminal --title="Sample Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/support/build/sample_checkout
+# gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
+gnome-terminal --title="Sample Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/support/build/sample_checkout
 
 echo ""
 
-sleep 1
+# sleep 1
 
-urlIP=$(docker container inspect sc_1_sample_checkout | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+# urlIP=$(docker container inspect sc_1_sample_checkout | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
 
-sleep 10
+# sleep 10
 
-firefox ${urlIP}:5000
+# firefox ${urlIP}:5000
 
-echo ""
+# echo ""
