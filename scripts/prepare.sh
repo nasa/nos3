@@ -27,11 +27,6 @@ mkdir $USER_NOS3_DIR/42 2> /dev/null
 echo ""
 echo ""
 
-echo "Preparing FPrime FSW"
-echo $DFLAGS_CPUS $DBOX
-$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR --name "fprime_prepare" -w $BASE_DIR $DBOX ./scripts/prep_fprime.sh
-echo ""
-echo ""
 
 echo "Clone openc3-cosmos into local user directory..."
 cd $USER_NOS3_DIR
