@@ -52,9 +52,26 @@ $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -w $USER_NO
 echo ""
 echo ""
 
-echo "Prepare Igniter..."
+echo "NOS3 required preparations complete!"
+echo "Proceeding to optional additions."
+echo ""
+echo ""
+
+echo "Prepare Igniter (optional)..."
 pip3 install pyside6 xmltodict
 cd $BASE_DIR
 python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
+echo ""
+echo ""
+
+sleep 3
+echo ""
+echo ""
+
+echo "NOS3 prep script complete:"
+echo "  Some above optional installations may have failed, that's ok. You just may not have those extra features."
+echo "  You can choose to use the Igniter GUI or close it in favor of the command line."
+echo "  To launch igniter again simply run the following in the terminal:"
+echo "    make igniter"
 echo ""
 echo ""

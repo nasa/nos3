@@ -34,6 +34,5 @@ rm -rf /tmp/gpio*
 # COSMOS
 yes | rm $GSW_DIR/Gemfile > /dev/null 2>&1
 yes | rm $GSW_DIR/Gemfile.lock > /dev/null 2>&1
-yes | rm -r $GSW_DIR/COMPONENTS > /dev/null 2>&1
 
 exit 0

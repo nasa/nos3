@@ -47,6 +47,7 @@
 ** Component Include Files
 */
 #include "cam_msgids.h"
+#include "generic_adcs_msgids.h"
 #include "generic_css_msgids.h"
 #include "generic_eps_msgids.h"
 #include "generic_fss_msgids.h"
@@ -54,12 +55,11 @@
 #include "generic_mag_msgids.h"
 #include "generic_radio_msgids.h"
 #include "generic_reaction_wheel_msgids.h"
+#include "generic_star_tracker_msgids.h"
+#include "generic_thruster_msgids.h"
 #include "generic_torquer_msgids.h"
 #include "novatel_oem615_msgids.h"
 #include "sample_msgids.h"
-#include "generic_adcs_msgids.h"
-#include "generic_star_tracker_msgids.h"
-
 #include "syn_msgids.h"
 
 /*
@@ -326,8 +326,8 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #104 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
-    /* command ID #105 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+    /* command ID #105 - Thruster HK */
+  { { CFE_MAKE_BIG16(GENERIC_THRUSTER_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #106 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #107 */
