@@ -94,7 +94,7 @@ do
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-    gnome-terminal --tab --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
+    gnome-terminal --title="FPrime"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./scripts/fsw_fprime_launch.sh
 
 
     echo ""
@@ -156,6 +156,10 @@ urlIP=$(docker container inspect sc_1_sample_checkout | grep -i IPAddress | grep
 
 sleep 10
 
-firefox ${urlIP}:5000
+pidof firefox > /dev/null
+if [ $? -eq 1 ]
+then
+    firefox ${urlIP}:5000 & 
+fi
 
 echo "Docker launch script completed!"
