@@ -52,6 +52,7 @@ echo ""
 
 
 echo "Launch GSW..."
+echo ""
 source $BASE_DIR/cfg/build/gsw_launch.sh
 
 
@@ -82,15 +83,8 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    alias="cosmos"
-    if [ "${GSW:-cosmos_openc3-operator_1}" == "ait" ]; then
-            alias="ait"
-            docker run --rm -d -h influxdb --name influxdb -p 8086:8086 -e INFLUXDB_DB=$INFLUXDB_DB -e INFLUXDB_ADMIN_USER=$INFLUXDB_ADMIN_USER -e INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD --network=nos3_core influxdb:1.8
-            docker run --rm -d --name ttc-command -p 80:80 --network=nos3_core ghcr.io/sphinxdefense/ttc-command:main
-    fi
-
     echo $SC_NUM " - Connect GSW " "${GSW:-cosmos_openc3-operator_1}" " to spacecraft network..."
-    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos_openc3-operator_1}" --alias $alias --alias active-gs
+    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos_openc3-operator_1}" --alias cosmos --alias active-gs
     echo ""
 
     echo $SC_NUM " - 42..."
@@ -102,14 +96,11 @@ do
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-
-
+    # Debugging
+    # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
     gnome-terminal --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice $DBOX $SCRIPT_DIR/fsw_respawn.sh &
     #gnome-terminal --window-with-profile=KeepOpen --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_nos_fsw" -h nos_fsw --network=$SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice $DBOX $FSW_DIR/core-cpu1 -R PO &
     echo ""
-
-    # Debugging
-    # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
 
     echo $SC_NUM " - CryptoLib..."
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone

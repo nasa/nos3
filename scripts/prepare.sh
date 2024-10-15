@@ -15,27 +15,6 @@ mkdir $USER_NOS3_DIR/42 2> /dev/null
 echo ""
 echo ""
 
-echo "Clone openc3-cosmos into local user directory..."
-cd $USER_NOS3_DIR
-git clone https://github.com/nasa-itc/openc3-nos3.git --depth 1 -b main $USER_NOS3_DIR/cosmos
-echo ""
-echo ""
-
-echo "Prepare cosmos docker container..."
-$DCALL image pull ballaerospace/cosmos:4.5.0
-echo ""
-echo ""
-
-echo "Prepare ait docker container..."
-$DCALL image pull ghcr.io/sphinxdefense/gsw-ait:main
-echo ""
-echo ""
-
-echo "Prepare ttc docker container..."
-$DCALL image pull ghcr.io/sphinxdefense/ttc-command:main
-echo ""
-echo ""
-
 echo "Prepare nos3 docker container..."
 $DCALL image pull $DBOX
 echo ""

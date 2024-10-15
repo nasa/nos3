@@ -8,3 +8,6 @@ SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
 
 echo "AIT build..."
+$DCALL image pull ghcr.io/sphinxdefense/gsw-ait:main
+$DCALL image pull ghcr.io/sphinxdefense/ttc-command:main
+echo ""
