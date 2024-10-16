@@ -22,6 +22,10 @@ USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
 OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
 
+INFLUXDB_DB=ait
+INFLUXDB_ADMIN_USER=ait
+INFLUXDB_ADMIN_PASSWORD=admin_password
+
 ###
 ### Notes: 
 ###   Podman and/or Docker on RHEL not yet supported
@@ -40,7 +44,7 @@ OPENC3_PATH=$OPENC3_DIR/openc3.sh
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20240618"
+DBOX="ivvitc/nos3-64:20241010"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

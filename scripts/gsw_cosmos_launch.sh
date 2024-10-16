@@ -6,6 +6,7 @@
 CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
+export GSW="cosmos_openc3-operator_1"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR
