@@ -16,10 +16,36 @@ print('  start-time:', mission_start_time)
 mission_start_time_utc = datetime.datetime(2000, 1, 1, 12, 0) + datetime.timedelta(seconds=float(mission_start_time))
 print('  start-time-utc:', mission_start_time_utc)
 
+# FSW
+fsw_str = 'fsw'
+fsw_cfg = mission_root.find(fsw_str).text
+print(' ', fsw_str, ':', fsw_cfg)
+fsw_identified = 0
+
+if (fsw_cfg == 'fprime'):
+    fsw_identified = 1
+    os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/fprime.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/fprime_build_fsw.sh ./scripts/docker_build_fsw.sh')
+
+if (fsw_cfg == 'cfs'):
+    fsw_identified = 1
+    # os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    # os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/cfs_cosmos.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/cfs_build_fsw.sh ./scripts/docker_build_fsw.sh')
+
+if (fsw_identified == 0):
+    print('Invalid FSW in configuration file!')
+    print('Exiting due to error...')
+
+
 # GSW
 gsw_str = 'gsw'
 gsw_cfg = mission_root.find(gsw_str).text
 print(' ', gsw_str, ':', gsw_cfg)
+
 gsw_identified = 0
 if (gsw_cfg == 'openc3'):
     # Copy openc3 scripts into ./cfg/build
@@ -31,6 +57,11 @@ if (gsw_cfg == 'cosmos'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'fprime'):
+    # Copy fprime scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_fprime_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'ait'):
     # Copy ait scripts into ./cfg/build
     gsw_identified = 1

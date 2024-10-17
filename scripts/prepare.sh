@@ -3,6 +3,18 @@
 # Convenience script for NOS3 development
 #
 
+FLIGHT_SOFTWARE="cFS"
+
+read_xml ()
+{
+    local IFS=\>
+    read -d \< ENTITY CONTENT
+    local ret=$?
+    TAG_NAME=${ENTITY%% *}
+    ATTRIBUTES=${ENTITY#* }
+    return $ret
+}
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
 echo ""

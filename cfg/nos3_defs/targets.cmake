@@ -103,35 +103,43 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Components
     #
-        arducam/fsw
-        generic_adcs/fsw
-        generic_css/fsw
-        generic_eps/fsw
-        generic_fss/fsw
-        generic_imu/fsw
-        generic_mag/fsw
-        generic_reaction_wheel/fsw
-        generic_radio/fsw
-        generic_star_tracker/fsw
-        generic_thruster/fsw
-        generic_torquer/fsw
-        novatel_oem615/fsw
-        sample/fsw
-        syn/fsw
+        arducam/fsw/cfs
+        generic_adcs/fsw/cfs
+        generic_css/fsw/cfs
+        generic_eps/fsw/cfs
+        generic_fss/fsw/cfs
+        generic_imu/fsw/cfs
+        generic_mag/fsw/cfs
+        generic_reaction_wheel/fsw/cfs
+        generic_radio/fsw/cfs
+        generic_star_tracker/fsw/cfs
+        generic_thruster/fsw/cfs
+        generic_torquer/fsw/cfs
+        novatel_oem615/fsw/cfs
+        sample/fsw/cfs
+        syn/fsw/cfs
 )
 
 # Create Application Platform Include List
 FOREACH(X ${MISSION_GLOBAL_APPLIST})
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/mission_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/mission_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/mission_inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/platform_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
-    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/public_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/src)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/src)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/src)
 ENDFOREACH(X)
 

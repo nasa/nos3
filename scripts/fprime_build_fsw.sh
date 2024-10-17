@@ -24,6 +24,8 @@ if [ ! -d $BASE_DIR/cfg/build ]; then
     exit 1
 fi
 
-chmod g+s $BASE_DIR/sims
-mkdir -p $BASE_DIR/sims/build
-$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_sim" -w $BASE_DIR $DBOX make -j$NUM_CPUS build-sim
+# Make flight software build directory
+mkdir -p $BASE_DIR/fsw/build
+
+# Build
+$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR $DBOX make -j$NUM_CPUS -e FLIGHT_SOFTWARE=fprime build-fsw
