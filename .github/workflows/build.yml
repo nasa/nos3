@@ -13,18 +13,14 @@ jobs:
         - uses: actions/checkout@v4
           with:
             submodules: recursive
-        - name: Update
-          run: apt-get update
-        - name: Install dependencies
-          run: apt-get install -y python3 docker docker.io
-        - name: prep
-          run: make prep
         - name: config
           run: make config  
         - name: build directory
           run: mkdir ./fsw/build
         - name: build
-          run: make build-fsw
+          run: make build-test
+        - name: test
+          run: make test-fsw
 
     sim:
       runs-on: ubuntu-latest
@@ -34,12 +30,6 @@ jobs:
         - uses: actions/checkout@v2
           with:
             submodules: recursive
-        - name: Update
-          run: apt-get update
-        - name: Install dependencies
-          run: apt-get install -y python3 docker docker.io
-        - name: prep
-          run: make prep
         - name: config
           run: make config  
         - name: build directory
