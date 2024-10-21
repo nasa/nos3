@@ -23,4 +23,8 @@ $DCALL system prune -f
 echo "Cleaning up local user directory..."
 yes | rm -r $USER_NOS3_DIR 2> /dev/null
 
+echo "Removing superfluous Docker networks and such..."
+yes | docker network prune
+yes | docker swarm leave --force
+
 exit 0
