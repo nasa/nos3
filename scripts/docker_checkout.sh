@@ -35,11 +35,13 @@ echo " Checkout..."
 # Rename for your simulator under test to allow checkout, uncomment if already exists
 
 # Example manual build for sample checkout:
+#   make debug
 #   cd ./components/sample/support
 #   mkdir build
 #   cd build
 #   cmake .. -DTGTNAME=cpu1
 #   make
+#   exit
 
 ##
 ## Arducam
