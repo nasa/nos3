@@ -1,7 +1,6 @@
 name: Build
 
 on: 
-  push:
   pull_request:
 
 jobs:
@@ -10,8 +9,9 @@ jobs:
       container:
         image: ivvitc/nos3-64:20241010
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v4
           with:
+            fetch-depth: 1
             submodules: recursive
         - name: config
           run: make config  
@@ -27,8 +27,9 @@ jobs:
       container:
         image: ivvitc/nos3-64:20241010
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v4
           with:
+            fetch-depth: 1
             submodules: recursive
         - name: config
           run: make config  
