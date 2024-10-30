@@ -95,7 +95,7 @@ do
     echo $SC_NUM " - OnAIR..."
     gnome-terminal --window-with-profile=KeepOpen --title=$SC_NUM" - OnAIR" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_onair" --network=$SC_NETNAME -w $FSW_DIR -t $DBOX $SCRIPT_DIR/onair_launch.sh
     echo ""
-    
+
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
     # Debugging
