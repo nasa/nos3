@@ -15,6 +15,11 @@ if [ ! -d $USER_NOS3_DIR ]; then
     exit 1
 fi
 
+echo "Clone openc3-cosmos into local user directory..."
+cd $USER_NOS3_DIR
+git clone https://github.com/nasa-itc/openc3-nos3.git --depth 1 -b main $USER_NOS3_DIR/cosmos
+echo ""
+
 echo "Prepare openc3-cosmos containers..."
 cd $OPENC3_DIR
 $OPENC3_PATH run

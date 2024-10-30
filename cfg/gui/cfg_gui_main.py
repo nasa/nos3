@@ -90,7 +90,7 @@ class cfg_gui(QWidget):
 
         # TODO: change to dynamically pull apps/components from xml file or directory, but how?
         applications = ['cf', 'ds', 'fm', 'lc', 'sc']
-        components = ['adcs', 'cam', 'css', 'eps', 'fss', 'gps', 'imu', 'mag', 'radio', 'rw', 'sample', 'st', 'syn', 'torquer']
+        components = ['adcs', 'cam', 'css', 'eps', 'fss', 'gps', 'imu', 'mag', 'radio', 'rw', 'sample', 'st', 'syn', 'torquer', 'thruster']
 
         i = 0
         while layout.itemAt(i) != None:

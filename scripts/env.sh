@@ -18,9 +18,14 @@ fi
 DATE=$(date "+%Y%m%d%H%M")
 NUM_CPUS="$( nproc )"
 
+USERDIR=$(cd ~/ && pwd)
 USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
 OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
+
+INFLUXDB_DB=ait
+INFLUXDB_ADMIN_USER=ait
+INFLUXDB_ADMIN_PASSWORD=admin_password
 
 ###
 ### Notes: 

@@ -16,10 +16,36 @@ print('  start-time:', mission_start_time)
 mission_start_time_utc = datetime.datetime(2000, 1, 1, 12, 0) + datetime.timedelta(seconds=float(mission_start_time))
 print('  start-time-utc:', mission_start_time_utc)
 
+# FSW
+fsw_str = 'fsw'
+fsw_cfg = mission_root.find(fsw_str).text
+print(' ', fsw_str, ':', fsw_cfg)
+fsw_identified = 0
+
+if (fsw_cfg == 'fprime'):
+    fsw_identified = 1
+    os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/fprime.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/fprime_build_fsw.sh ./scripts/docker_build_fsw.sh')
+
+if (fsw_cfg == 'cfs'):
+    fsw_identified = 1
+    # os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    # os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
+    os.system('cp ./scripts/cfs_cosmos.sh ./scripts/docker_launch.sh')
+    os.system('cp ./scripts/cfs_build_fsw.sh ./scripts/docker_build_fsw.sh')
+
+if (fsw_identified == 0):
+    print('Invalid FSW in configuration file!')
+    print('Exiting due to error...')
+
+
 # GSW
 gsw_str = 'gsw'
 gsw_cfg = mission_root.find(gsw_str).text
 print(' ', gsw_str, ':', gsw_cfg)
+
 gsw_identified = 0
 if (gsw_cfg == 'openc3'):
     # Copy openc3 scripts into ./cfg/build
@@ -31,6 +57,16 @@ if (gsw_cfg == 'cosmos'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'fprime'):
+    # Copy fprime scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_fprime_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'ait'):
+    # Copy ait scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
@@ -79,6 +115,7 @@ else:
         sc_st_en = sc_root.find('components/st/enable').text
         sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
+        sc_thruster_en = sc_root.find('components/thruster/enable').text
 
         sc_gui_en = sc_root.find('gui/enable').text
         sc_orbit_tipoff_x = sc_root.find('orbit/tipoff_x').text
@@ -114,6 +151,7 @@ else:
             st_line = ""
             syn_line = ""
             torquer_line = ""
+            thruster_line = ""
             
             # Parse lines
             for line in lines:
@@ -177,10 +215,14 @@ else:
                 if line.find('TORQUER,') != -1:
                     if (sc_torquer_en == 'true'):
                         torquer_line = line
+                if line.find('THRUSTER,') != -1:
+                    if (sc_thruster_en == 'true'):
+                        thruster_line = line
 
         # Modify startup script per spacecraft configuration
         lines.insert(sc_startup_eof, "\n")
         lines.insert(sc_startup_eof, torquer_line)
+        lines.insert(sc_startup_eof, thruster_line)
         lines.insert(sc_startup_eof, syn_line)
         lines.insert(sc_startup_eof, st_line)
         lines.insert(sc_startup_eof, sample_line)
@@ -263,9 +305,10 @@ else:
         rw1_from_index = 999
         rw2_to_index = 999
         rw2_from_index = 999
-        sample_index = 999
+        #sample_index = 999
         st_index = 999
         torquer_index = 999
+        thruster_index = 999
 
         with open('./cfg/InOut/Inp_IPC.txt', 'r') as fp:
             lines = fp.readlines()
@@ -303,15 +346,18 @@ else:
                 if line.find('RW 2 from 42') != -1:
                     if (lines.index(line)) < rw2_from_index:
                         rw2_from_index = lines.index(line) + 1
-                if line.find('Sample IPC') != -1:
-                    if (lines.index(line)) < sample_index:
-                        sample_index = lines.index(line) + 1
+                #if line.find('Sample IPC') != -1:
+                #    if (lines.index(line)) < sample_index:
+                #        sample_index = lines.index(line) + 1
                 if line.find('Star Tracker IPC') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
                 if line.find('Torquer IPC') != -1:
                     if (lines.index(line)) < torquer_index:
                         torquer_index = lines.index(line) + 1
+                if line.find('Thruster IPC') != -1:
+                    if (lines.index(line)) < thruster_index:
+                        thruster_index = lines.index(line) + 1
         
         ipc_off = 'OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n'
         if (sc_css_en != 'true'):
@@ -331,12 +377,14 @@ else:
             lines[rw1_from_index] = ipc_off
             lines[rw2_to_index] = ipc_off
             lines[rw2_from_index] = ipc_off
-        if (sc_sample_en != 'true'):
-            lines[sample_index] = ipc_off
+        #if (sc_sample_en != 'true'):
+        #    lines[sample_index] = ipc_off
         if (sc_st_en != 'true'):
             lines[st_index] = ipc_off
         if (sc_torquer_en != 'true'):
             lines[torquer_index] = ipc_off
+        if (sc_thruster_en != 'true'):
+            lines[thruster_index] = ipc_off
 
         with open('./cfg/build/InOut/Inp_IPC.txt', 'w') as fp:
             lines = "".join(lines)
@@ -359,6 +407,7 @@ else:
         sample_index = 999
         st_index = 999
         torquer_index = 999
+        thruster_index = 999
 
         with open('./cfg/build/sims/nos3-simulator.xml', 'r') as fp:
             lines = fp.readlines()
@@ -405,6 +454,9 @@ else:
                 if line.find('generic_torquer_sim</name>') != -1:
                     if (lines.index(line)) < torquer_index:
                         torquer_index = lines.index(line) + 1
+                if line.find('generic_thruster_sim</name>') != -1:
+                    if (lines.index(line)) < thruster_index:
+                        thruster_index = lines.index(line) + 1
 
         sim_disabled = '            <active>false</active>\n'
         if (sc_cam_en != 'true'):
@@ -433,6 +485,8 @@ else:
             lines[st_index] = sim_disabled
         if (sc_torquer_en != 'true'):
             lines[torquer_index] = sim_disabled
+        if (sc_thruster_en != 'true'):
+            lines[thruster_index] = sim_disabled
 
         with open('./cfg/build/sims/nos3-simulator.xml', 'w') as fp:
             lines = "".join(lines)

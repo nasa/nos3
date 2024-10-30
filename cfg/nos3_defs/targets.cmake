@@ -103,41 +103,53 @@ list(APPEND MISSION_GLOBAL_APPLIST
     #
     # Components
     #
-        arducam/fsw
-        generic_adcs/fsw
-        generic_css/fsw
-        generic_eps/fsw
-        generic_fss/fsw
-        generic_imu/fsw
-        generic_mag/fsw
-        generic_reaction_wheel/fsw
-        generic_radio/fsw
-        generic_star_tracker/fsw
-        generic_torquer/fsw
-        novatel_oem615/fsw
-        sample/fsw
-        syn/fsw
+        arducam/fsw/cfs
+        generic_adcs/fsw/cfs
+        generic_css/fsw/cfs
+        generic_eps/fsw/cfs
+        generic_fss/fsw/cfs
+        generic_imu/fsw/cfs
+        generic_mag/fsw/cfs
+        generic_reaction_wheel/fsw/cfs
+        generic_radio/fsw/cfs
+        generic_star_tracker/fsw/cfs
+        generic_thruster/fsw/cfs
+        generic_torquer/fsw/cfs
+        novatel_oem615/fsw/cfs
+        sample/fsw/cfs
+        syn/fsw/cfs
+
     #
     # OnAIR
     #
-        sbn
-        sbn_tcp
-        sbn_client
-        onair
+    sbn
+    sbn_tcp
+    sbn_client
+    onair
 )
 
 # Create Application Platform Include List
 FOREACH(X ${MISSION_GLOBAL_APPLIST})
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/mission_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/mission_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/mission_inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/platform_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/platform_inc)
-    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/platform_inc)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/public_inc)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
+
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/../shared)
+
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/src)
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/src)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/src)
 ENDFOREACH(X)
 
@@ -152,7 +164,11 @@ SET(MISSION_CPUNAMES cpu1)
 SET(cpu1_PROCESSORID 1)
 SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
 SET(cpu1_FILELIST cfe_es_startup.scr)
-SET(cpu1_SYSTEM amd64-linux-gnu)
+if (ENABLE_UNIT_TESTS)
+    SET(cpu1_SYSTEM amd64-posix)
+else() 
+    SET(cpu1_SYSTEM amd64-nos3)
+endif()
 
 # USER Supplied
 #SET(cpu2_PROCESSORID 2)
