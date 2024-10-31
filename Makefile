@@ -72,11 +72,6 @@ build-sim:
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
-build-test:
-	mkdir -p $(FSWBUILDDIR)
-	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-
 checkout:
 	./scripts/docker_checkout.sh
 
@@ -113,6 +108,9 @@ fprime:
 fsw: 
 	./scripts/docker_build_fsw.sh
 
+fsw-launch:
+	./scripts/launch_fsw.sh
+
 gsw:
 	./scripts/docker_build_cryptolib.sh
 	./cfg/build/gsw_build.sh
@@ -126,6 +124,12 @@ log:
 prep:
 	./scripts/prepare.sh
 
+prep-gsw:
+	./scripts/gsw_startup.sh
+
+prep-sat:
+	./scripts/sat_startup.sh
+
 real-clean:
 	$(MAKE) clean
 	./scripts/real_clean.sh
@@ -133,15 +137,18 @@ real-clean:
 sim:
 	./scripts/docker_build_sim.sh
 
+start-gsw:
+	./scripts/docker_launch_gsw.sh
+
+start-sat:
+	./scripts/docker_launch_sat.sh
+
 stop:
 	./scripts/docker_stop.sh
 	./scripts/stop.sh
 
 stop-gsw:
 	./scripts/stop_gsw.sh
-
-test-fsw:
-	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
 
 igniter:
 	./scripts/igniter_launch.sh
