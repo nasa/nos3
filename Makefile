@@ -90,23 +90,23 @@ clean-gsw:
 	rm -rf /tmp/nos3
 
 config:
-	./scripts/config.sh
+	./scripts/cfg/config.sh
 
 debug:
 	./scripts/docker_debug.sh
 
 fprime:
-	./scripts/fprime.sh
+	./scripts/fsw/fprime.sh
 
 fsw: 
 	./scripts/docker_build_fsw.sh
 
-fsw-launch:
-	./scripts/launch_fsw.sh
-
 gsw:
-	./scripts/docker_build_cryptolib.sh
+	./scripts/gsw/docker_build_cryptolib.sh
 	./cfg/build/gsw_build.sh
+
+igniter:
+	./scripts/igniter_launch.sh
 
 launch:
 	./scripts/docker_launch.sh
@@ -115,17 +115,13 @@ log:
 	./scripts/log.sh
 
 prep:
-	./scripts/prepare.sh
+	./scripts/cfg/prepare.sh
 
 prep-gsw:
-	./scripts/gsw_startup.sh
+	./scripts/cfg/prep_gsw.sh
 
 prep-sat:
-	./scripts/sat_startup.sh
-
-real-clean:
-	$(MAKE) clean
-	./scripts/real_clean.sh
+	./scripts/cfg/prep_sat.sh
 
 sim:
 	./scripts/docker_build_sim.sh
@@ -138,10 +134,10 @@ start-sat:
 
 stop:
 	./scripts/docker_stop.sh
-	./scripts/stop.sh
 
 stop-gsw:
-	./scripts/stop_gsw.sh
+	./scripts/gsw/stop_gsw.sh
 
-igniter:
-	./scripts/igniter_launch.sh
+uninstall:
+	$(MAKE) clean
+	./scripts/cfg/uninstall.sh

@@ -18,13 +18,13 @@ yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 echo "Cleaning up CryptoLib build..."
 yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 
-$DCALL system prune -f
+$DCALL system prune -f 2> /dev/null
 
 echo "Cleaning up local user directory..."
 yes | rm -r $USER_NOS3_DIR 2> /dev/null
 
 echo "Removing superfluous Docker networks and such..."
-yes | docker network prune
-yes | docker swarm leave --force
+yes | docker network prune -f 2> /dev/null
+yes | docker swarm leave --force 2> /dev/null
 
 exit 0
