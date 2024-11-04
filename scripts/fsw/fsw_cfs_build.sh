@@ -5,8 +5,9 @@
 # https://github.com/nasa-itc/deployment
 #
 
+# Note this is copied to ./cfg/build as part of `make config`
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source $SCRIPT_DIR/../env.sh
+source $SCRIPT_DIR/../../scripts/env.sh
 
 # Check that local NOS3 directory exists
 if [ ! -d $USER_NOS3_DIR ]; then
@@ -28,4 +29,4 @@ fi
 mkdir -p $BASE_DIR/fsw/build
 
 # Build
-$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR $DBOX make -j$NUM_CPUS -e FLIGHT_SOFTWARE=fprime build-fsw
+$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR $DBOX make -j$NUM_CPUS -e FLIGHT_SOFTWARE=cfs build-fsw

@@ -30,7 +30,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fprime fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep real-clean sim stop stop-gsw
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -93,13 +93,10 @@ config:
 	./scripts/cfg/config.sh
 
 debug:
-	./scripts/docker_debug.sh
-
-fprime:
-	./scripts/fsw/fprime.sh
+	./scripts/debug.sh
 
 fsw: 
-	./scripts/docker_build_fsw.sh
+	./cfg/build/fsw_build.sh
 
 gsw:
 	./scripts/gsw/docker_build_cryptolib.sh
@@ -109,7 +106,7 @@ igniter:
 	./scripts/igniter_launch.sh
 
 launch:
-	./scripts/docker_launch.sh
+	./cfg/build/launch.sh
 
 log:
 	./scripts/log.sh
