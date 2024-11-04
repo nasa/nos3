@@ -66,7 +66,7 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
-	./scripts/docker_checkout.sh
+	./scripts/checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
@@ -99,7 +99,7 @@ fsw:
 	./cfg/build/fsw_build.sh
 
 gsw:
-	./scripts/gsw/docker_build_cryptolib.sh
+	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
 igniter:
@@ -121,16 +121,16 @@ prep-sat:
 	./scripts/cfg/prep_sat.sh
 
 sim:
-	./scripts/docker_build_sim.sh
+	./scripts/build_sim.sh
 
 start-gsw:
-	./scripts/docker_launch_gsw.sh
+	./scripts/gsw/launch_gsw.sh
 
 start-sat:
-	./scripts/docker_launch_sat.sh
+	./scripts/fsw/launch_sat.sh
 
 stop:
-	./scripts/docker_stop.sh
+	./scripts/stop.sh
 
 stop-gsw:
 	./scripts/gsw/stop_gsw.sh
