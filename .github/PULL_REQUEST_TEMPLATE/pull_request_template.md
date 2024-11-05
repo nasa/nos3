@@ -1,7 +1,7 @@
 ### All Submissions:
 
 * [ ] Have you followed the guidelines in our Contributing document?
-* [ ] Have you checked to ensure there aren't other open [Pull Requests](nasa/nos3/pulls) for the same update/change?
+* [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/nasa/nos3/pulls) for the same update/change?
 
 <!-- You can erase any parts of this template not applicable to your Pull Request. -->
 
