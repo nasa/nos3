@@ -5,8 +5,9 @@
 # https://github.com/nasa-itc/deployment
 #
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[1]}" )/scripts" && pwd )
 source $SCRIPT_DIR/env.sh
+
 
 # Check that local NOS3 directory exists
 if [ ! -d $USER_NOS3_DIR ]; then
@@ -24,8 +25,7 @@ if [ ! -d $BASE_DIR/cfg/build ]; then
     exit 1
 fi
 
-# Make ground software build directory
-mkdir -p $BASE_DIR/gsw/build
+# Make flight software build directory
+mkdir -p $BASE_DIR/fsw/build
 
-# Build
-$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_cryptolib" -w $BASE_DIR $DBOX make -j$NUM_CPUS build-cryptolib
+$DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR $DBOX make -j$NUM_CPUS -e FLIGHT_SOFTWARE=fprime build-fsw

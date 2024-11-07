@@ -5,9 +5,9 @@
 # https://github.com/nasa-itc/deployment
 #
 
+# Note this is copied to ./cfg/build as part of `make config`
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source $SCRIPT_DIR/env.sh
-
+source $SCRIPT_DIR/../../scripts/env.sh
 
 # Check that local NOS3 directory exists
 if [ ! -d $USER_NOS3_DIR ]; then
