@@ -30,7 +30,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fprime fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep real-clean sim stop stop-gsw
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -52,19 +52,12 @@ build-cryptolib:
 	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
 
 build-fsw:
-
-
 ifeq ($(FLIGHT_SOFTWARE), fprime)
 	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
-	
-endif
-
-ifeq ($(FLIGHT_SOFTWARE), cfs)
+else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-else
-	pwd
 endif
 
 build-sim:
@@ -72,13 +65,8 @@ build-sim:
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
-build-test:
-	mkdir -p $(FSWBUILDDIR)
-	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
-
 checkout:
-	./scripts/docker_checkout.sh
+	./scripts/checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
@@ -102,46 +90,51 @@ clean-gsw:
 	rm -rf /tmp/nos3
 
 config:
-	./scripts/config.sh
+	./scripts/cfg/config.sh
 
 debug:
-	./scripts/docker_debug.sh
-
-fprime:
-	./scripts/fprime.sh
+	./scripts/debug.sh
 
 fsw: 
-	./scripts/docker_build_fsw.sh
+	./cfg/build/fsw_build.sh
 
 gsw:
-	./scripts/docker_build_cryptolib.sh
+	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
+igniter:
+	./scripts/igniter_launch.sh
+
 launch:
-	./scripts/docker_launch.sh
+	./cfg/build/launch.sh
 
 log:
 	./scripts/log.sh
 
 prep:
-	./scripts/prepare.sh
+	./scripts/cfg/prepare.sh
 
-real-clean:
-	$(MAKE) clean
-	./scripts/real_clean.sh
+prep-gsw:
+	./scripts/cfg/prep_gsw.sh
+
+prep-sat:
+	./scripts/cfg/prep_sat.sh
 
 sim:
-	./scripts/docker_build_sim.sh
+	./scripts/build_sim.sh
+
+start-gsw:
+	./scripts/gsw/launch_gsw.sh
+
+start-sat:
+	./scripts/fsw/launch_sat.sh
 
 stop:
-	./scripts/docker_stop.sh
 	./scripts/stop.sh
 
 stop-gsw:
-	./scripts/stop_gsw.sh
+	./scripts/gsw/stop_gsw.sh
 
-test-fsw:
-	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
-
-igniter:
-	./scripts/igniter_launch.sh
+uninstall:
+	$(MAKE) clean
+	./scripts/cfg/uninstall.sh

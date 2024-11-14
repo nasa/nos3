@@ -23,7 +23,7 @@ Will provision a VM with all required packages installed to be used immediately.
 3. Clone the submodules `git submodule update --init --recursive`
 4. Run `vagrant up` and wait to return to a prompt
     - This can take anywhere from a few minutes to hours depending on internet speeds and host PC specs
-_It may also be wise at around this stage to shutdown the VM once it starts and to allocate it more resources if possible, preferably at least 4 cores and 8 GB of RAM, preferably 8 cores and 16 GB of RAM._
+_It may also be wise at around this stage to shutdown the VM once it starts and to allocate it more resources if possible, preferably 8 cores and 16 GB of RAM._
 5. In VirtualBox `Devices > Upgrade Guest Additions...`
 	- Wait for this to complete
 6. Run `vagrant reload` to finish the upgrade
@@ -43,37 +43,24 @@ By default the nos3 repository is shared into the virtual machine at `/home/jsta
   - `make launch`
 6. Stop NOS3
   - `make stop`
-  - Note that COSMOS will remaining running in the background until `make stop-gsw` is done
+  - Note that OpenC3, if in use, will remaining running in the background until `make stop-gsw` is done
+
+To uninstall the hidden directories created, run `make uninstall`.
 
 ### Directory Layout
+* `cfg` contains the configuration files for the mission and spacecraft
 * `components` contains the repositories for the hardware component apps
-	- /fsw - cFS application
-	- /gsw - OpenC3 (or Ball Aerospace) COSMOS database
-	- /sim - NOS3 simulator
-	- /support - Optional folder containing a standalone checkout application
+* `docs` contains various documentation related to the project
 * `fsw` contains the repositories needed to build cFS FSW
-	- /apps - the open source cFS apps
-	- /cfe - the core flight system (cFS) source files
-	- /nos3_defs - cFS definitions to configure cFS for NOS3
-	- /osal - operating system abstraction layer (OSAL), enables building for Linux and flight OS
-	- /psp - platform support package (PSP), enables use on multiple types of boards
-	- /tools - standard cFS provided tools
 * `gsw` contains the nos3 ground station files, and other ground based tools
-	- /cosmos - OpenC3 (or Ball Aerospace) COSMOS files
-	- /OrbitInviewPowerPrediction - OIPP tool for operators
-	- /scripts - convenience scripts
+* `scripts` contains various convenience scripts
 * `sims` contains the nos3 simulators and configuration files
-	- /cfg - 42 configuration files and NOS3 top level configuration files
-	- /nos_time_driver - time synchronization for all components
-	- /sim_common - common files used by component simulators including the files that define the simulator plugin architecture
-	- /sim_terminal - terminal for testing on NOS Engine busses
-	- /truth_42_sim - interface between 42 and OpenC3 COSMOS to provide dynamics truth data
 
 ### Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the tags on this repository.
 
 ### License
-This project is licensed under the NOSA (NASA Open Source Agreement) License. 
+This project is licensed under the NOSA 1.3 (NASA Open Source Agreement) License. 
 
 # Issues and Features
 Please report issues and request features on the GitHub tracking system - [NOS3 Issues](https://www.github.com/nasa/nos3/issues).
