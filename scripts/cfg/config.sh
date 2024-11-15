@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source $SCRIPT_DIR/env.sh
+source $SCRIPT_DIR/../env.sh
 
 # Make flight software configuration directory
 mkdir -p $BASE_DIR/cfg/build
@@ -15,4 +15,4 @@ cp -r $BASE_DIR/cfg/nos3_defs $BASE_DIR/cfg/build/
 cp -r $BASE_DIR/cfg/sims $BASE_DIR/cfg/build/
 
 # Configure flight software
-python3 $SCRIPT_DIR/configure.py
+python3 $SCRIPT_DIR/cfg/configure.py

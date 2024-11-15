@@ -96,6 +96,9 @@ list(APPEND MISSION_GLOBAL_APPLIST
         ds
         fm
         lc
+        sbn
+        sbn_tcp
+        sbn_client
         sc
         sch
         to
@@ -104,6 +107,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # Components
     #
         arducam/fsw/cfs
+        onair
         generic_adcs/fsw/cfs
         generic_css/fsw/cfs
         generic_eps/fsw/cfs
@@ -137,6 +141,8 @@ FOREACH(X ${MISSION_GLOBAL_APPLIST})
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/public_inc)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/public_inc)
+
+    LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/../shared)
 
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/src)
     LIST(APPEND APPLICATION_PLATFORM_INC_LIST ${${X}_MISSION_DIR}/fsw/cfs/src)
