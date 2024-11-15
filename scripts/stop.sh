@@ -12,7 +12,7 @@ source $SCRIPT_DIR/env.sh
 rm -rf /tmp/gpio_fake
 
 # NOS3 Stored HK
-rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
+#rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 
 # Docker stop
 cd $SCRIPT_DIR; $DFLAG compose down > /dev/null 2>&1

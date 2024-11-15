@@ -3,18 +3,19 @@
 #
 BUILDTYPE ?= debug
 INSTALLPREFIX ?= exe
-FSWBUILDDIR ?= $(CURDIR)/fsw/build
-GSWBUILDDIR ?= $(CURDIR)/gsw/build
-SIMBUILDDIR ?= $(CURDIR)/sims/build
+NOS3BUILDDIR ?= /tmp/nos3
+FSWBUILDDIR ?= $(NOS3BUILDDIR)/fsw
+GSWBUILDDIR ?= $(NOS3BUILDDIR)/gsw
+SIMBUILDDIR ?= $(NOS3BUILDDIR)/sims
 
 export CFS_APP_PATH = ../components
-export MISSION_DEFS = ../cfg/build/
-export MISSIONCONFIG = ../cfg/build/nos3
+export MISSION_DEFS = /tmp/nos3/cfg/nos3_defs
+export MISSIONCONFIG = nos3
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
 # These are only needed for the "prep" target but they are computed globally anyway.
-PREP_OPTS :=
+PREP_OPTS := -DMISSION_DEFS=$(MISSION_DEFS)
 
 ifneq ($(INSTALLPREFIX),)
 PREP_OPTS += -DCMAKE_INSTALL_PREFIX=$(INSTALLPREFIX)
@@ -48,7 +49,7 @@ all:
 
 build-cryptolib:
 	mkdir -p $(GSWBUILDDIR)
-	cd $(GSWBUILDDIR) && cmake $(PREP_OPTS) -DSUPPORT=1 ../../components/cryptolib
+	cd $(GSWBUILDDIR) && cmake -DSUPPORT=1 $(CURDIR)/components/cryptolib
 	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
 
 build-fsw:
@@ -56,13 +57,13 @@ ifeq ($(FLIGHT_SOFTWARE), fprime)
 	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
 else
 	mkdir -p $(FSWBUILDDIR)
-	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
+	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) $(CURDIR)/fsw/cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 endif
 
 build-sim:
 	mkdir -p $(SIMBUILDDIR)
-	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
+	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) $(CURDIR)/sims
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 checkout:
@@ -72,7 +73,8 @@ clean:
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
 	$(MAKE) clean-gsw
-	rm -rf cfg/build
+	./scripts/clean.sh
+	rm -rf $(NOS3BUILDDIR)
 
 clean-fsw:
 	rm -rf cfg/build/nos3_defs
@@ -80,14 +82,16 @@ clean-fsw:
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
+	rm -rf $(FSWBUILDDIR)
 
 clean-sim:
-	rm -rf sims/build
+	rm -rf $(SIMBUILDDIR)
 
 clean-gsw:
 	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
+	rm -rf $(GSWBUILDDIR)
 
 config:
 	./scripts/cfg/config.sh
@@ -96,17 +100,17 @@ debug:
 	./scripts/debug.sh
 
 fsw: 
-	./cfg/build/fsw_build.sh
+	$(NOS3BUILDDIR)/cfg/fsw_build.sh $(CURDIR)
 
 gsw:
 	./scripts/gsw/build_cryptolib.sh
-	./cfg/build/gsw_build.sh
+	$(NOS3BUILDDIR)/cfg/gsw_build.sh $(CURDIR)
 
 igniter:
 	./scripts/igniter_launch.sh
 
 launch:
-	./cfg/build/launch.sh
+	$(NOS3BUILDDIR)/cfg/launch.sh $(CURDIR)
 
 log:
 	./scripts/log.sh

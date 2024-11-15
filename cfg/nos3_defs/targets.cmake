@@ -97,7 +97,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         fm
         lc
         sbn
-        sbn_tcp
+        sbn/modules/protocol/sbn_tcp
         sbn_client
         sc
         sch

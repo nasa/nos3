@@ -3,9 +3,9 @@
 # Convenience script for NOS3 development
 #
 
-CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
-source $SCRIPT_DIR/env.sh
+# Note the first argument passed is expected to be the BASE_DIR of the NOS3 repository
+source $1/scripts/env.sh
+
 export GSW="cosmos_openc3-operator_1"
 
 # Debugging

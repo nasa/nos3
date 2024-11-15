@@ -24,12 +24,12 @@ fsw_identified = 0
 
 if (fsw_cfg == 'fprime'):
     fsw_identified = 1
-    os.system('cp ./scripts/fsw/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
-    os.system('cp ./scripts/fsw/fsw_fprime_launch.sh ./cfg/build/launch.sh')
+    os.system('cp ./scripts/fsw/fsw_fprime_build.sh /tmp/nos3/cfg/fsw_build.sh')
+    os.system('cp ./scripts/fsw/fsw_fprime_launch.sh /tmp/nos3/cfg/launch.sh')
 if (fsw_cfg == 'cfs'):
     fsw_identified = 1
-    os.system('cp ./scripts/fsw/fsw_cfs_build.sh ./cfg/build/fsw_build.sh')
-    os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
+    os.system('cp ./scripts/fsw/fsw_cfs_build.sh /tmp/nos3/cfg/fsw_build.sh')
+    os.system('cp ./scripts/fsw/fsw_cfs_launch.sh /tmp/nos3/cfg/launch.sh')
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
     print('Exiting due to error...')
@@ -41,25 +41,25 @@ print(' ', gsw_str, ':', gsw_cfg)
 
 gsw_identified = 0
 if (gsw_cfg == 'openc3'):
-    # Copy openc3 scripts into ./cfg/build
+    # Copy openc3 scripts into /tmp/nos3
     gsw_identified = 1
-    os.system('cp ./scripts/gsw/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_openc3_build.sh /tmp/nos3/cfg/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_openc3_launch.sh /tmp/nos3/cfg/gsw_launch.sh')
 if (gsw_cfg == 'cosmos'):
-    # Copy cosmos scripts into ./cfg/build
+    # Copy cosmos scripts into /tmp/nos3
     gsw_identified = 1
-    os.system('cp ./scripts/gsw/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_build.sh /tmp/nos3/cfg/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh /tmp/nos3/cfg/gsw_launch.sh')
 if (gsw_cfg == 'fprime'):
-    # Copy fprime scripts into ./cfg/build
+    # Copy fprime scripts into /tmp/nos3
     gsw_identified = 1
-    os.system('cp ./scripts/gsw/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw/gsw_fprime_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_fprime_build.sh /tmp/nos3/cfg/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_fprime_launch.sh /tmp/nos3/cfg/gsw_launch.sh')
 if (gsw_cfg == 'ait'):
-    # Copy ait scripts into ./cfg/build
+    # Copy ait scripts into /tmp/nos3
     gsw_identified = 1
-    os.system('cp ./scripts/gsw/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_ait_build.sh /tmp/nos3/cfg/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_ait_launch.sh /tmp/nos3/cfg/gsw_launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
@@ -242,7 +242,7 @@ else:
         lines.insert(sc_startup_eof, cf_line)
                         
         # Write startup script file
-        with open('./cfg/build/nos3_defs/cpu1_cfe_es_startup.scr', 'w') as fp:
+        with open('/tmp/nos3/cfg/nos3_defs/cpu1_cfe_es_startup.scr', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)
 
@@ -273,7 +273,7 @@ else:
         lines[date_index] = mission_start_time_utc.strftime('%m %d %Y') + '  !  Date (UTC) (Month, Day, Year)\n'
         lines[time_index] = mission_start_time_utc.strftime('%H %M %S') + '  !  Time (UTC) (Hr,Min,Sec)\n'
 
-        with open('./cfg/build/InOut/Inp_Sim.txt', 'w') as fp:
+        with open('/tmp/nos3/cfg/InOut/Inp_Sim.txt', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)
 
@@ -288,7 +288,7 @@ else:
         
         lines[tipoff_index] = sc_orbit_tipoff_x + ' ' + sc_orbit_tipoff_y + ' ' + sc_orbit_tipoff_z + '  ! Ang Vel (deg/sec)\n'
 
-        with open('./cfg/build/InOut/SC_NOS3.txt', 'w') as fp:
+        with open('/tmp/nos3/cfg/InOut/SC_NOS3.txt', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)
 
@@ -385,7 +385,7 @@ else:
         if (sc_thruster_en != 'true'):
             lines[thruster_index] = ipc_off
 
-        with open('./cfg/build/InOut/Inp_IPC.txt', 'w') as fp:
+        with open('/tmp/nos3/cfg/InOut/Inp_IPC.txt', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)
 
@@ -408,7 +408,7 @@ else:
         torquer_index = 999
         thruster_index = 999
 
-        with open('./cfg/build/sims/nos3-simulator.xml', 'r') as fp:
+        with open('/tmp/nos3/cfg/sims/nos3-simulator.xml', 'r') as fp:
             lines = fp.readlines()
             for line in lines:
                 if line.find('camsim</name>') != -1:
@@ -487,6 +487,6 @@ else:
         if (sc_thruster_en != 'true'):
             lines[thruster_index] = sim_disabled
 
-        with open('./cfg/build/sims/nos3-simulator.xml', 'w') as fp:
+        with open('/tmp/nos3/cfg/sims/nos3-simulator.xml', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)

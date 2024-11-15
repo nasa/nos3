@@ -48,8 +48,8 @@ ENDFOREACH()
 
 # Install configuration files to bin
 set(sim_cfg
-    ../cfg/build/sims/nos_engine_server_config.json
-    ../cfg/build/sims/nos3-simulator.xml
-    ../cfg/build/sims/sim_log_config.xml
+    /tmp/nos3/cfg/sims/nos_engine_server_config.json
+    /tmp/nos3/cfg/sims/nos3-simulator.xml
+    /tmp/nos3/cfg/sims/sim_log_config.xml
 )
 install(FILES ${sim_cfg} DESTINATION bin COMPONENT config)
