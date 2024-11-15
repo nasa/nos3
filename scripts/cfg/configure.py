@@ -92,6 +92,7 @@ else:
         sc_ds_en = sc_root.find('applications/ds/enable').text
         sc_fm_en = sc_root.find('applications/fm/enable').text
         sc_lc_en = sc_root.find('applications/lc/enable').text
+        sc_sbn_en = sc_root.find('applications/sbn/enable').text 
         sc_sc_en = sc_root.find('applications/sc/enable').text
 
         sc_adcs_en = sc_root.find('components/adcs/enable').text
@@ -129,6 +130,7 @@ else:
             ds_line = ""
             fm_line = ""
             lc_line = ""
+            sbn_line = ""
             sc_line = ""
             adcs_line = ""
             cam_line = ""
@@ -163,6 +165,9 @@ else:
                 if line.find('LC,') != -1:
                     if (sc_lc_en == 'true'):
                         lc_line = line
+                if line.find('SBN,') != -1:
+                    if (sc_sbn_en == 'true'):
+                        sbn_line = line
                 if line.find('SC,') != -1:
                     if (sc_sc_en == 'true'):
                         sc_line = line
@@ -230,6 +235,7 @@ else:
         lines.insert(sc_startup_eof, cam_line)
         lines.insert(sc_startup_eof, adcs_line)
         lines.insert(sc_startup_eof, sc_line)
+        lines.insert(sc_startup_eof, sbn_line)
         lines.insert(sc_startup_eof, lc_line)
         lines.insert(sc_startup_eof, fm_line)
         lines.insert(sc_startup_eof, ds_line)
