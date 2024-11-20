@@ -50,8 +50,9 @@ $DNETWORK create \
     nos3_core
 echo ""
 
-#echo "Launch GSW..."
-$BASE_DIR/cfg/build/gsw_launch.sh $BASE_DIR
+echo "Launch GSW..."
+echo ""
+source $USER_NOS3_BUILD_DIR/cfg/gsw_launch.sh $BASE_DIR
 echo ""
 
 echo "Create NOS interfaces..."
@@ -87,7 +88,7 @@ do
 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
-    cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
+    cp -r $USER_NOS3_BUILD_DIR/cfg/InOut $USER_NOS3_DIR/42/NOS3InOut
     xhost +local:*
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
     echo ""
@@ -101,7 +102,7 @@ do
     # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
 
     echo $SC_NUM " - CryptoLib..."
-    gnome-terminal --tab --title=$SC_NUM" - CryptoLib" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib" -- $DFLAGS -v $USER_NOS3_BUILD_DIR:$USER_NOS3_BUILD_DIR --name $SC_NUM"_cryptolib"  --network=$SC_NETNAME --network-alias=cryptolib -w $USER_NOS3_BUILD_DIR/gsw $DBOX ./support/standalone
     echo ""
 
     echo $SC_NUM " - Simulators..."

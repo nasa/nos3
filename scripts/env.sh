@@ -42,7 +42,7 @@ INFLUXDB_ADMIN_PASSWORD=admin_password
 #    DNETWORK="docker network"
 #else
     DCALL="docker"
-    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
+    DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
     DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
     DCREATE="docker create --rm -it"
     DNETWORK="docker network"

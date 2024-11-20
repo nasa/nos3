@@ -74,24 +74,18 @@ clean:
 	$(MAKE) clean-sim
 	$(MAKE) clean-gsw
 	./scripts/clean.sh
-	rm -rf $(NOS3BUILDDIR)
 
 clean-fsw:
-	rm -rf cfg/build/nos3_defs
-	rm -rf fsw/build
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
-	rm -rf $(FSWBUILDDIR)
+	./scripts/fsw/fsw_clean.sh
 
 clean-sim:
-	rm -rf $(SIMBUILDDIR)
+	./scripts/sim/sim_clean.sh
 
 clean-gsw:
-	rm -rf gsw/build
-	rm -rf gsw/cosmos/build
-	rm -rf /tmp/nos3
-	rm -rf $(GSWBUILDDIR)
+	./scripts/gsw/gsw_clean.sh
 
 config:
 	./scripts/cfg/config.sh
@@ -125,7 +119,7 @@ prep-sat:
 	./scripts/cfg/prep_sat.sh
 
 sim:
-	./scripts/build_sim.sh
+	./scripts/sim/build_sim.sh
 
 start-gsw:
 	./scripts/gsw/launch_gsw.sh
