@@ -71,7 +71,7 @@ ifeq ($(FLIGHT_SOFTWARE), fprime)
 	# TODO
 else
 	mkdir -p $(FSWBUILDDIR)
-	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
+	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true $(CURDIR)/fsw/cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 endif
 
