@@ -66,6 +66,15 @@ build-sim:
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) $(CURDIR)/sims
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
+build-test:
+ifeq ($(FLIGHT_SOFTWARE), fprime)
+	# TODO
+else
+	mkdir -p $(FSWBUILDDIR)
+	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+endif
+
 checkout:
 	./scripts/checkout.sh
 
@@ -132,6 +141,9 @@ stop:
 
 stop-gsw:
 	./scripts/gsw/stop_gsw.sh
+
+test-fsw:
+	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
 
 uninstall:
 	$(MAKE) clean
