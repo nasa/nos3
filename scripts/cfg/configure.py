@@ -21,7 +21,6 @@ fsw_str = 'fsw'
 fsw_cfg = mission_root.find(fsw_str).text
 print(' ', fsw_str, ':', fsw_cfg)
 fsw_identified = 0
-
 if (fsw_cfg == 'fprime'):
     fsw_identified = 1
     os.system('cp ./scripts/fsw/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
@@ -38,7 +37,6 @@ if (fsw_identified == 0):
 gsw_str = 'gsw'
 gsw_cfg = mission_root.find(gsw_str).text
 print(' ', gsw_str, ':', gsw_cfg)
-
 gsw_identified = 0
 if (gsw_cfg == 'openc3'):
     # Copy openc3 scripts into ./cfg/build
@@ -60,6 +58,11 @@ if (gsw_cfg == 'ait'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'yamcs'):
+    # Copy yamcs scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
