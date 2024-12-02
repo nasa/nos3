@@ -36,3 +36,21 @@ jobs:
           run: make config  
         - name: build
           run: make build-sim
+
+    sample:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20241010
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
+        - name: make debug
+          run: make debug
+        - name: make config
+          run: make config
+        - name: make build-test
+          run: make build-test
+        - name: coverage tests
+          run: cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
