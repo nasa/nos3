@@ -51,7 +51,5 @@ jobs:
           run: make config
         - name: build-test
           run: make build-test
-        - name: source makefile
-          run: source Makefile
-        - name: coverage tests
-          run: cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
+        - name: sample
+          run: make coverage-sample

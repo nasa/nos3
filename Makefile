@@ -101,6 +101,9 @@ clean-gsw:
 config:
 	./scripts/cfg/config.sh
 
+coverage-sample:
+	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
+
 debug:
 	./scripts/debug.sh
 
