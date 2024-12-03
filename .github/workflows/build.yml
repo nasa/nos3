@@ -47,9 +47,11 @@ jobs:
           with:
             fetch-depth: 1
             submodules: recursive
-        - name: make config
+        - name: config
           run: make config
-        - name: make build-test
+        - name: build-test
           run: make build-test
+        - name: source makefile
+          run: source Makefile
         - name: coverage tests
           run: cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
