@@ -47,9 +47,13 @@ jobs:
           with:
             fetch-depth: 1
             submodules: recursive
+        - name: install dependencies
+          run: apt-get install -y lcov
         - name: config
           run: make config
         - name: build-test
           run: make build-test
+        - name: code coverage
+          run: make gcov
         - name: sample
           run: make coverage-sample
