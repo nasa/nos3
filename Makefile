@@ -108,11 +108,6 @@ config:
 coverage-sample:
 	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
 
-coverage: 
-	lcov --capture --directory $(FSWBUILDDIR)/amd64-posix/default_cpu1 --output-file coverage.info;
-    lcov --remove coverage.info '$(FSWBUILDDIR)/amd64-posix/default_cpu1/*' --output-file coverage.info;
-    genhtml coverage.info --output-directory coverage;
-
 debug:
 	./scripts/debug.sh
 
