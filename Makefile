@@ -11,6 +11,10 @@ export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
 export MISSIONCONFIG = ../cfg/build/nos3
 
+# Enable coverage flags
+CFLAGS += -g -O0 --coverage
+LDFLAGS += --coverage
+
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
 # These are only needed for the "prep" target but they are computed globally anyway.

@@ -50,12 +50,20 @@ jobs:
         - name: Update
           run: apt-get update
         - name: install dependencies
-          run: apt-get install -y lcov
+          run: apt-get install -y gcc lcov genhtml
         - name: config
           run: make config
         - name: build-test
           run: make build-test
-        - name: code coverage
-          run: make gcov
         - name: sample
           run: make coverage-sample
+        - name: Generate Coverage Report
+          run: |
+            lcov --capture --directory . --output-file coverage.info
+            lcov --remove coverage.info '/usr/*' --output-file coverage.info
+            genhtml coverage.info --output-directory coverage
+        - name: Upload Coverage Report as Artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: coverage-report
+            path: coverage
