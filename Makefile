@@ -110,7 +110,7 @@ coverage-sample:
 
 coverage: 
 	lcov --capture --directory $(FSWBUILDDIR)/amd64-posix/default_cpu1 --output-file coverage.info
-    lcov --remove coverage.info '/usr/*' --output-file coverage.info
+    lcov --remove coverage.info '$(FSWBUILDDIR)/amd64-posix/default_cpu1/*' --output-file coverage.info
     genhtml coverage.info --output-directory coverage
 
 debug:
