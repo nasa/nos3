@@ -11,9 +11,6 @@ export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
 export MISSIONCONFIG = ../cfg/build/nos3
 
-# Enable coverage flags
-CFLAGS += -g -O0 --coverage
-LDFLAGS += --coverage
 
 # The "prep" step requires extra options that are specified via enviroment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
@@ -32,7 +29,6 @@ ifneq ($(BUILDTYPE),)
 PREP_OPTS += -DCMAKE_BUILD_TYPE=$(BUILDTYPE)
 endif
 
-PREP_OPTS += $(CFLAGS)
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
@@ -77,7 +73,7 @@ ifeq ($(FLIGHT_SOFTWARE), fprime)
 else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
-	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+	$(MAKE) --no-print-directory CFLAGS="-Wall -Wextra -g --coverage" -C $(FSWBUILDDIR) mission-install
 endif
 
 checkout:
