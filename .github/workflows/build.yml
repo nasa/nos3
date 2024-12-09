@@ -59,10 +59,11 @@ jobs:
           run: make coverage-sample
         - name: Generate Coverage Report
           run: |
-            lcov --capture --directory ./components/sample --output-file coverage.info
+            cd ./fsw/build
+            lcov --capture --directory . --output-file coverage.info
             genhtml coverage.info --output-directory coverage
         - name: Upload Coverage Report as Artifact
           uses: actions/upload-artifact@v3
           with:
             name: coverage-report
-            path: coverage
+            path: /fsw/build/coverage
