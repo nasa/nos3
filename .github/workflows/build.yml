@@ -55,14 +55,83 @@ jobs:
           run: make config
         - name: build-test
           run: make build-test
-        - name: sample
+        - name: make test-fsw
           run: make test-fsw
         - name: Generate Coverage Report
           run: |
-            cd ./fsw/build
-            lcov --capture --directory . --include "*sample*" --output-file coverage.info
+            lcov --capture --directory . --output-file coverage.info
             genhtml coverage.info --output-directory coverage
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v5
           with:
             token: 040717d0-b624-470e-be41-d08720135088
+
+    Local-Test-Build:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20241010
+
+      steps:
+        # Checks out a copy of your repository on the ubuntu-latest machine
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
+
+        - name: Update
+          run: apt-get update
+        - name: install dependencies
+          run: apt-get install -y gcc lcov
+        - name: config
+          run: make config
+        - name: build-test
+          run: make build-test
+
+        # Setup the build system
+        - name: Set up for build
+          run: |
+            cp ./fsw/cfe/cmake/Makefile.sample Makefile
+            cp -r ./fsw/cfe/cmake/sample_defs sample_defs
+            make prep
+            make -C build mission-prebuild
+
+        # Build the code
+        - name: Build
+          run: |
+            make -C build/native/default_cpu1/config
+            make -C build/native/default_cpu1/core_api
+            make -C build/native/default_cpu1/core_private
+            make -C build/native/default_cpu1/es
+            make -C build/native/default_cpu1/evs
+            make -C build/native/default_cpu1/fs
+            make -C build/native/default_cpu1/msg
+            make -C build/native/default_cpu1/resourceid
+            make -C build/native/default_cpu1/sb
+            make -C build/native/default_cpu1/sbr
+            make -C build/native/default_cpu1/tbl
+            make -C build/native/default_cpu1/time
+
+        # Initialize lcov and test the code
+        - name: Test
+          run: |
+            lcov --capture --initial --directory build --output-file coverage_base.info
+            (cd build/native/default_cpu1/config && ctest --output-on-failure)
+            (cd build/native/default_cpu1/core_api && ctest --output-on-failure)
+            (cd build/native/default_cpu1/core_private && ctest --output-on-failure)
+            (cd build/native/default_cpu1/es && ctest --output-on-failure)
+            (cd build/native/default_cpu1/evs && ctest --output-on-failure)
+            (cd build/native/default_cpu1/fs && ctest --output-on-failure)
+            (cd build/native/default_cpu1/msg && ctest --output-on-failure)
+            (cd build/native/default_cpu1/resourceid && ctest --output-on-failure)
+            (cd build/native/default_cpu1/sb && ctest --output-on-failure)
+            (cd build/native/default_cpu1/sbr && ctest --output-on-failure)
+            (cd build/native/default_cpu1/tbl && ctest --output-on-failure)
+            (cd build/native/default_cpu1/time && ctest --output-on-failure)
+
+        - name: Calculate Coverage
+          run: |
+            lcov --capture --rc lcov_branch_coverage=1 --directory build --output-file coverage_test.info
+            lcov --rc lcov_branch_coverage=1 --add-tracefile coverage_base.info --add-tracefile coverage_test.info --output-file coverage_total.info
+            genhtml coverage_total.info --branch-coverage --output-directory lcov
+
+
