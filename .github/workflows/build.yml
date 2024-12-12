@@ -56,15 +56,13 @@ jobs:
         - name: build-test
           run: make build-test
         - name: sample
-          run: make coverage-sample
+          run: make test-fsw
         - name: Generate Coverage Report
           run: |
             cd ./fsw/build
             lcov --capture --directory . --include "*sample*" --output-file coverage.info
             genhtml coverage.info --output-directory coverage
-        - name: Upload Coverage Report as Artifact
-          uses: actions/upload-artifact@v4
+        - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
           with:
-            name: coverage-report
-            path: ./fsw/build/coverage
-            retention-days: 30
+            token: 040717d0-b624-470e-be41-d08720135088
