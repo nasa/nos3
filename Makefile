@@ -6,6 +6,7 @@ INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
 GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
+COVERAGEDIR ?= $(CURDIR)/coverage
 
 export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
@@ -103,7 +104,7 @@ clean-gsw:
 config:
 	./scripts/cfg/config.sh
 
-coverage-sample:
+coverage:
 	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
 
 debug:
@@ -111,6 +112,15 @@ debug:
 
 fsw: 
 	./cfg/build/fsw_build.sh
+
+# cp ./fsw/build/amd64-posix/default_cpu1/apps/sample/fsw/cfs/unit-test/CMakeFiles/coverage-sample-ALL-object.dir/media/sf_nos3/components/sample/fsw/cfs/src/sample_app.c.gcda ./fsw/build/amd64-posix/default_cpu1/apps/sample/fsw/cfs/CMakeFiles/sample.dir/src
+gcov:
+	mkdir -p coverage
+	apt update && apt install lcov -y
+	$(MAKE) test-fsw
+	echo "=================== GCOV ===================="
+	lcov -c --directory . --output-file ~/../media/sf_nos3/coverage/results.info
+	genhtml ${COVERAGEDIR}/results.info --output-directory ${COVERAGEDIR}/results
 
 gsw:
 	./scripts/gsw/build_cryptolib.sh
