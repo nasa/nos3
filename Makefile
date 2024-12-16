@@ -119,8 +119,8 @@ gcov:
 	apt update && apt install lcov -y
 	$(MAKE) test-fsw
 	echo "=================== GCOV ===================="
-	lcov -c --directory . --exclude $(CURDIR)/fsw/apps/io_lib/ --output-file $(CURDIR)/coverage/results.info
-	genhtml ${COVERAGEDIR}/results.info --output-directory ${COVERAGEDIR}/results
+	lcov -c --directory . --exclude ./fsw/apps/io_lib/ --output-file ${COVERAGEDIR}/coverage.info
+	genhtml ${COVERAGEDIR}/coverage.info --output-directory ${COVERAGEDIR}/results
 
 gsw:
 	./scripts/gsw/build_cryptolib.sh
