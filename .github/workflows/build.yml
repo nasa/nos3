@@ -56,10 +56,10 @@ jobs:
         - name: build-test
           run: make build-test
         - name: make test-fsw
-          run: make test-fsw
+          run: make coverage
         - name: Generate Coverage Report
           run: |
-            lcov --capture --directory . --exclude ./fsw/apps/io_lib/ --output-file coverage.info
+            lcov --capture --directory . --output-file coverage.info
             genhtml coverage.info --output-directory coverage
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v5

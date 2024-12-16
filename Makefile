@@ -105,7 +105,7 @@ config:
 	./scripts/cfg/config.sh
 
 coverage:
-	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -R ".*sample.*"
+	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && rm -r $(FSWBUILDDIR)/amd64-posix/default_cpu1/apps/io_lib && ctest -R ".*sample.*"
 
 debug:
 	./scripts/debug.sh
