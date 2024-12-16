@@ -119,7 +119,7 @@ gcov:
 	apt update && apt install lcov -y
 	$(MAKE) test-fsw
 	echo "=================== GCOV ===================="
-	lcov -c --directory . --output-file ~/../media/sf_nos3/coverage/results.info
+	lcov -c --directory . --exclude $(CURDIR)/fsw/apps/io_lib/ --output-file $(CURDIR)/coverage/results.info
 	genhtml ${COVERAGEDIR}/results.info --output-directory ${COVERAGEDIR}/results
 
 gsw:
