@@ -58,9 +58,7 @@ jobs:
         - name: make test-fsw
           run: make coverage
         - name: Generate Coverage Report
-          run: |
-            lcov --capture --directory . --output-file coverage.info
-            genhtml coverage.info --output-directory coverage
+          run: make gcov
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v5
           with:
