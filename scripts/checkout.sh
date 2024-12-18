@@ -62,6 +62,15 @@ gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $U
 echo ""
 gnome-terminal --tab --title=$SC_NUM" - FSS Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_fss_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_fss_sim
 gnome-terminal --title="FSS Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fss_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_fss/fsw/standalone/build/generic_fss_checkout
+echo ""
+
+##
+## Reaction Wheels (RW)
+##
+gnome-terminal --tab --title=$SC_NUM" - RW_0 Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_0_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim0
+gnome-terminal --tab --title=$SC_NUM" - RW_1 Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_1_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim1
+gnome-terminal --tab --title=$SC_NUM" - RW_2 Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_2_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
+gnome-terminal --title="RW Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_rw_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_reaction_wheel/fsw/standalone/build/generic_reaction_wheel_checkout
 
 ##
 ## Sample
