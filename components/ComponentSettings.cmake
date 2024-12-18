@@ -39,8 +39,6 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-fstack-protector-all"
                 #"-fsanitize=address"
                 #"-fstack-check"
-                "-fprofile-arcs"
-                "-ftest-coverage"
                 #"-Weverything"
                 "-pedantic-errors"
                 )

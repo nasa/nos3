@@ -33,7 +33,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config coverage-sample debug fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep sim stop stop-gsw uninstall
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -113,7 +113,6 @@ debug:
 fsw: 
 	./cfg/build/fsw_build.sh
 
-# cp ./fsw/build/amd64-posix/default_cpu1/apps/sample/fsw/cfs/unit-test/CMakeFiles/coverage-sample-ALL-object.dir/media/sf_nos3/components/sample/fsw/cfs/src/sample_app.c.gcda ./fsw/build/amd64-posix/default_cpu1/apps/sample/fsw/cfs/CMakeFiles/sample.dir/src
 gcov:
 	mkdir -p coverage
 	apt update && apt install lcov -y
