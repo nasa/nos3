@@ -6,14 +6,14 @@ INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
 GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
-COVERAGEDIR ?= $(CURDIR)/coverage
+COVERAGEDIR ?= $(CURDIR)/fsw/build/amd64-posix/default_cpu1
 
 export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
 export MISSIONCONFIG = ../cfg/build/nos3
 
 
-# The "prep" step requires extra options that are specified via enviroment variables.
+# The "prep" step requires extra options that are specified via environment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
 # These are only needed for the "prep" target but they are computed globally anyway.
 PREP_OPTS :=
@@ -74,7 +74,7 @@ ifeq ($(FLIGHT_SOFTWARE), fprime)
 else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
-	$(MAKE) --no-print-directory CFLAGS="-Wall -Wextra -g --coverage" -C $(FSWBUILDDIR) mission-install
+	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 endif
 
 checkout:
@@ -111,13 +111,9 @@ fsw:
 	./cfg/build/fsw_build.sh
 
 gcov:
-	rm -rf $(FSWBUILDDIR)/../apps/io_lib
-	mkdir -p coverage
-	apt update && apt install lcov -y
-	$(MAKE) test-fsw
-	echo "=================== GCOV ===================="
-	lcov -c --directory . --output-file ${COVERAGEDIR}/coverage.info
-	genhtml ${COVERAGEDIR}/coverage.info --output-directory ${COVERAGEDIR}/results
+	cd $(COVERAGEDIR) && ctest -O ctest.log
+	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
+	genhtml $(COVERAGEDIR)/coverage.info --output-directory $$(COVERAGEDIR)/results
 
 gsw:
 	./scripts/gsw/build_cryptolib.sh
@@ -157,7 +153,7 @@ stop-gsw:
 	./scripts/gsw/stop_gsw.sh
 
 test-fsw:
-	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
+	cd $(COVERAGEDIR) && ctest -O ctest.log
 
 uninstall:
 	$(MAKE) clean

@@ -10,7 +10,7 @@ jobs:
     fsw:
       runs-on: ubuntu-latest
       container:
-        image: ivvitc/nos3-64:20241010
+        image: ivvitc/nos3-64:20241219
       steps:
         - uses: actions/checkout@v4
           with:
@@ -26,7 +26,7 @@ jobs:
     sim:
       runs-on: ubuntu-latest
       container:
-        image: ivvitc/nos3-64:20241010
+        image: ivvitc/nos3-64:20241219
       steps:
         - uses: actions/checkout@v4
           with:
@@ -40,9 +40,7 @@ jobs:
     coverage:
       runs-on: ubuntu-latest
       container:
-        image: ivvitc/nos3-64:20241010
-      env:
-        ITC_C_FLAGS: "-fprofile-arcs -ftest-coverage"
+        image: ivvitc/nos3-64:20241219
       steps:
         - uses: actions/checkout@v4
           with:
