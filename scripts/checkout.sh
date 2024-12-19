@@ -47,9 +47,11 @@ echo " Checkout..."
 ##
 #gnome-terminal --tab --title="Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample_sim
 #gnome-terminal --title="Sample Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_sample_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/sample/fsw/standalone/build/sample_checkout
-#generic_torquer
-gnome-terminal --tab --title=$SC_NUM" - novetel_oem615 Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_novetel_oem615_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE novetel_oem615_sim
-gnome-terminal --title="novetel_oem61 Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_novetel_oem615_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/novetel_oem615/fsw/standalone/build/novatel_oem615_checkout
+
+#novatel_oem615
+gnome-terminal --tab --title="gps"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_gps"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE gps
+gnome-terminal --title="novatel_oem615_checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_novatel_oem615_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/novatel_oem615/fsw/standalone/build/novatel_oem615_checkout
+
 
 # sleep 1
 # urlIP=$(docker container inspect sc_1_sample_checkout | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
