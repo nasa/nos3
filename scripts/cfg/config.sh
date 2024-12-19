@@ -14,5 +14,7 @@ cp -r $BASE_DIR/cfg/InOut $BASE_DIR/cfg/build/
 cp -r $BASE_DIR/cfg/nos3_defs $BASE_DIR/cfg/build/
 cp -r $BASE_DIR/cfg/sims $BASE_DIR/cfg/build/
 
+$BASE_DIR/components/cryptolib/support/scripts/update_env.sh
+
 # Configure flight software
 python3 $SCRIPT_DIR/cfg/configure.py
