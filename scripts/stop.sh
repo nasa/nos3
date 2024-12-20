@@ -16,6 +16,7 @@ rm -rf $BASE_DIR/fsw/build/exe/cpu1/scratch/*
 
 # Docker stop
 cd $SCRIPT_DIR; $DFLAG compose down > /dev/null 2>&1
+$DCALL ps --filter ancestor="$DBOX" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 $DCALL ps --filter=name="sc_*" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 $DCALL ps --filter=name="nos_*" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 $DCALL ps --filter=name="ait*" -aq | xargs $DCALL stop > /dev/null 2>&1 &
