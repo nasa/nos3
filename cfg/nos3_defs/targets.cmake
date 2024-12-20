@@ -96,6 +96,9 @@ list(APPEND MISSION_GLOBAL_APPLIST
         ds
         fm
         lc
+        sbn
+        sbn_tcp
+        sbn_client
         sc
         sch
         to
@@ -104,6 +107,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # Components
     #
         arducam/fsw/cfs
+        onair
         generic_adcs/fsw/cfs
         generic_css/fsw/cfs
         generic_eps/fsw/cfs

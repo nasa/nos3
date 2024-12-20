@@ -21,52 +21,48 @@ fsw_str = 'fsw'
 fsw_cfg = mission_root.find(fsw_str).text
 print(' ', fsw_str, ':', fsw_cfg)
 fsw_identified = 0
-
 if (fsw_cfg == 'fprime'):
     fsw_identified = 1
-    os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
-    os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
-    os.system('cp ./scripts/fprime.sh ./scripts/docker_launch.sh')
-    os.system('cp ./scripts/fprime_build_fsw.sh ./scripts/docker_build_fsw.sh')
-
+    os.system('cp ./scripts/fsw/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
+    os.system('cp ./scripts/fsw/fsw_fprime_launch.sh ./cfg/build/launch.sh')
 if (fsw_cfg == 'cfs'):
     fsw_identified = 1
-    # os.system('cp ./scripts/fsw_fprime_build.sh ./cfg/build/fsw_build.sh')
-    # os.system('cp ./scripts/fsw_fprime_launch.sh ./cfg/build/fsw_launch.sh')
-    os.system('cp ./scripts/cfs_cosmos.sh ./scripts/docker_launch.sh')
-    os.system('cp ./scripts/cfs_build_fsw.sh ./scripts/docker_build_fsw.sh')
-
+    os.system('cp ./scripts/fsw/fsw_cfs_build.sh ./cfg/build/fsw_build.sh')
+    os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
     print('Exiting due to error...')
-
 
 # GSW
 gsw_str = 'gsw'
 gsw_cfg = mission_root.find(gsw_str).text
 print(' ', gsw_str, ':', gsw_cfg)
-
 gsw_identified = 0
 if (gsw_cfg == 'openc3'):
     # Copy openc3 scripts into ./cfg/build
     gsw_identified = 1
-    os.system('cp ./scripts/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_openc3_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_openc3_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'cosmos'):
     # Copy cosmos scripts into ./cfg/build
     gsw_identified = 1
-    os.system('cp ./scripts/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'fprime'):
     # Copy fprime scripts into ./cfg/build
     gsw_identified = 1
-    os.system('cp ./scripts/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw_fprime_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_fprime_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_fprime_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_cfg == 'ait'):
     # Copy ait scripts into ./cfg/build
     gsw_identified = 1
-    os.system('cp ./scripts/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
-    os.system('cp ./scripts/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_ait_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_ait_launch.sh ./cfg/build/gsw_launch.sh')
+if (gsw_cfg == 'yamcs'):
+    # Copy yamcs scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_launch.sh ./cfg/build/gsw_launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
@@ -99,6 +95,7 @@ else:
         sc_ds_en = sc_root.find('applications/ds/enable').text
         sc_fm_en = sc_root.find('applications/fm/enable').text
         sc_lc_en = sc_root.find('applications/lc/enable').text
+        sc_sbn_en = sc_root.find('applications/sbn/enable').text 
         sc_sc_en = sc_root.find('applications/sc/enable').text
 
         sc_adcs_en = sc_root.find('components/adcs/enable').text
@@ -121,6 +118,7 @@ else:
         sc_orbit_tipoff_x = sc_root.find('orbit/tipoff_x').text
         sc_orbit_tipoff_y = sc_root.find('orbit/tipoff_y').text
         sc_orbit_tipoff_z = sc_root.find('orbit/tipoff_z').text
+        sc_sim_truth_en = sc_root.find('sim/sim_truth_interface').text
 
         ###
         ### Flight Software - Startup Script
@@ -136,6 +134,7 @@ else:
             ds_line = ""
             fm_line = ""
             lc_line = ""
+            sbn_line = ""
             sc_line = ""
             adcs_line = ""
             cam_line = ""
@@ -170,6 +169,9 @@ else:
                 if line.find('LC,') != -1:
                     if (sc_lc_en == 'true'):
                         lc_line = line
+                if line.find('SBN,') != -1:
+                    if (sc_sbn_en == 'true'):
+                        sbn_line = line
                 if line.find('SC,') != -1:
                     if (sc_sc_en == 'true'):
                         sc_line = line
@@ -237,6 +239,7 @@ else:
         lines.insert(sc_startup_eof, cam_line)
         lines.insert(sc_startup_eof, adcs_line)
         lines.insert(sc_startup_eof, sc_line)
+        lines.insert(sc_startup_eof, sbn_line)
         lines.insert(sc_startup_eof, lc_line)
         lines.insert(sc_startup_eof, fm_line)
         lines.insert(sc_startup_eof, ds_line)
@@ -309,6 +312,7 @@ else:
         st_index = 999
         torquer_index = 999
         thruster_index = 999
+        truth_index = 999
 
         with open('./cfg/InOut/Inp_IPC.txt', 'r') as fp:
             lines = fp.readlines()
@@ -358,6 +362,9 @@ else:
                 if line.find('Thruster IPC') != -1:
                     if (lines.index(line)) < thruster_index:
                         thruster_index = lines.index(line) + 1
+                if line.find('Truth data') != -1:
+                    if (lines.index(line)) < truth_index:
+                        truth_index = lines.index(line) + 1
         
         ipc_off = 'OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n'
         if (sc_css_en != 'true'):
@@ -385,6 +392,8 @@ else:
             lines[torquer_index] = ipc_off
         if (sc_thruster_en != 'true'):
             lines[thruster_index] = ipc_off
+        if (sc_sim_truth_en != 'true'):
+            lines[truth_index] = ipc_off
 
         with open('./cfg/build/InOut/Inp_IPC.txt', 'w') as fp:
             lines = "".join(lines)

@@ -2,18 +2,9 @@
 #
 # Convenience script for NOS3 development
 #
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/../env.sh
 
-FLIGHT_SOFTWARE="cFS"
-
-read_xml ()
-{
-    local IFS=\>
-    read -d \< ENTITY CONTENT
-    local ret=$?
-    TAG_NAME=${ENTITY%% *}
-    ATTRIBUTES=${ENTITY#* }
-    return $ret
-}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/env.sh
@@ -42,6 +33,11 @@ echo ""
 
 echo "NOS3 required preparations complete!"
 echo "Proceeding to optional additions."
+echo ""
+echo ""
+
+echo "Preparing Shared Folders for Fprime..."
+mkdir $USER_FPRIME_PATH 2> /dev/null
 echo ""
 echo ""
 
