@@ -56,15 +56,15 @@ jobs:
           run: make config
         - name: build-test
           run: |
-            export CFLAGS="-fprofile-arcs -ftest-coverage -fcondition-coverage -g"
+            export CFLAGS="-fprofile-arcs -ftest-coverage  -g"
             make build-test
         # - name: Generate Coverage Report
         #   run: make gcov
         - name: Generate Coverage Report and Badges
           run: |
             mkdir -p docs/coverage
-            gcovr --verbose --txt-metric branch --xml-pretty --exclude-unreachable-branches -o docs/coverage/coverage_report.xml
-            gcovr --verbose --txt-metric branch --html --html-details -o docs/coverage/coverage_report.html
+            gcovr --branches --xml-pretty --exclude-unreachable-branches -o docs/coverage/coverage_report.xml
+            gcovr --branches --html --html-details -o docs/coverage/coverage_report.html
             LINE_COVERAGE=$(grep -oP '(?<=<coverage line-rate=")[0-9.]+(?=")' docs/coverage/coverage_report.xml | head -n 1)
             BRANCH_COVERAGE=$(grep -oP '(?<=branch-rate=")[0-9.]+(?=")' docs/coverage/coverage_report.xml | head -n 1)
             LINE_COVERAGE_PERCENT=$(printf "%.0f" $(echo "$LINE_COVERAGE * 100" | bc))
