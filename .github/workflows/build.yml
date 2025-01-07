@@ -46,16 +46,47 @@ jobs:
           with:
             fetch-depth: 1
             submodules: recursive
+        - name: Configure Safe Directory
+          run: git config --global --add safe.directory $GITHUB_WORKSPACE
         - name: Update
           run: apt-get update
         - name: install dependencies
-          run: apt-get install -y gcc lcov
+          run: apt-get install -y gcc lcov gcovr bc
         - name: config
           run: make config
         - name: build-test
-          run: make build-test
-        - name: Generate Coverage Report
-          run: make gcov
+          run: |
+            export CFLAGS="-fprofile-arcs -ftest-coverage -fcondition-coverage -g"
+            make build-test
+        # - name: Generate Coverage Report
+        #   run: make gcov
+        - name: Generate Coverage Report and Badges
+          run: |
+            mkdir -p docs/coverage
+            gcovr --verbose --txt-metric branch --xml-pretty --exclude-unreachable-branches -o docs/coverage/coverage_report.xml
+            gcovr --verbose --txt-metric branch --html --html-details -o docs/coverage/coverage_report.html
+            LINE_COVERAGE=$(grep -oP '(?<=<coverage line-rate=")[0-9.]+(?=")' docs/coverage/coverage_report.xml | head -n 1)
+            BRANCH_COVERAGE=$(grep -oP '(?<=branch-rate=")[0-9.]+(?=")' docs/coverage/coverage_report.xml | head -n 1)
+            LINE_COVERAGE_PERCENT=$(printf "%.0f" $(echo "$LINE_COVERAGE * 100" | bc))
+            BRANCH_COVERAGE_PERCENT=$(printf "%.0f" $(echo "$BRANCH_COVERAGE * 100" | bc))
+            if [ "$LINE_COVERAGE_PERCENT" -ge 80 ]; then LINE_COLOR="brightgreen"; elif [ "$LINE_COVERAGE_PERCENT" -ge 50 ]; then LINE_COLOR="yellow"; else LINE_COLOR="red"; fi
+            if [ "$BRANCH_COVERAGE_PERCENT" -ge 80 ]; then BRANCH_COLOR="brightgreen"; elif [ "$BRANCH_COVERAGE_PERCENT" -ge 50 ]; then BRANCH_COLOR="yellow"; else BRANCH_COLOR="red"; fi
+            curl -o docs/coverage/line-coverage-badge.svg "https://img.shields.io/badge/line%20coverage-${LINE_COVERAGE_PERCENT}%25-${LINE_COLOR}"
+            curl -o docs/coverage/branch-coverage-badge.svg "https://img.shields.io/badge/branch%20coverage-${BRANCH_COVERAGE_PERCENT}%25-${BRANCH_COLOR}"
+        - name: Commit Coverage Badges
+          run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add docs/coverage/line-coverage-badge.svg
+            git add docs/coverage/branch-coverage-badge.svg
+            git commit -m "Update coverage badges" || echo "No changes to commit"
+            git push origin HEAD
+          
+        - name: Archive Coverage Directory
+          uses: actions/upload-artifact@v3
+          with:
+            name: coverage-artifacts
+            path: docs/coverage
         - name: Upload coverage reports to Codecov
           uses: codecov/codecov-action@v5
           with:
