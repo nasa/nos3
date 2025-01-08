@@ -21,6 +21,7 @@ yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 echo "Cleaning up local user directory..."
 $DFLAGS -v $USER_NOS3_DIR:$USER_NOS3_DIR $DBOX rm -rf $USER_NOS3_DIR
 rm -rf $USER_NOS3_DIR/*
+rm -rf $USER_FPRIME_PATH
 
 yes | rm -rf $USER_NOS3_DIR/.m2 2> /dev/null
 yes | rm -rf $USER_NOS3_DIR 2> /dev/null

@@ -118,6 +118,7 @@ else:
         sc_orbit_tipoff_x = sc_root.find('orbit/tipoff_x').text
         sc_orbit_tipoff_y = sc_root.find('orbit/tipoff_y').text
         sc_orbit_tipoff_z = sc_root.find('orbit/tipoff_z').text
+        sc_sim_truth_en = sc_root.find('sim/sim_truth_interface').text
 
         ###
         ### Flight Software - Startup Script
@@ -311,6 +312,7 @@ else:
         st_index = 999
         torquer_index = 999
         thruster_index = 999
+        truth_index = 999
 
         with open('./cfg/InOut/Inp_IPC.txt', 'r') as fp:
             lines = fp.readlines()
@@ -360,6 +362,9 @@ else:
                 if line.find('Thruster IPC') != -1:
                     if (lines.index(line)) < thruster_index:
                         thruster_index = lines.index(line) + 1
+                if line.find('Truth data') != -1:
+                    if (lines.index(line)) < truth_index:
+                        truth_index = lines.index(line) + 1
         
         ipc_off = 'OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n'
         if (sc_css_en != 'true'):
@@ -387,6 +392,8 @@ else:
             lines[torquer_index] = ipc_off
         if (sc_thruster_en != 'true'):
             lines[thruster_index] = ipc_off
+        if (sc_sim_truth_en != 'true'):
+            lines[truth_index] = ipc_off
 
         with open('./cfg/build/InOut/Inp_IPC.txt', 'w') as fp:
             lines = "".join(lines)
