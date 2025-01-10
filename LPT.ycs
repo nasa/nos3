@@ -1,0 +1,649 @@
+{
+  "$schema": "https://yamcs.org/schema/stack.schema.json",
+  "steps": [
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CF_NOOP",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CF_SEND_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_ES_NOOP",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_EVS_NO_OPERATION",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_SB_NOOP",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_TBL_NOOP",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_TBL_TLM_REG",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_TIME_DIAG_TLM",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/CFS/CMD/CFE_TIME_NOOP",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/CFS/CF_HKPACKET/CMDCOUNTER"
+        },
+        {
+          "parameter": "/CFS/CFE_ES_HKPACKET/CMDCOUNTER"
+        },
+        {
+          "parameter": "/CFS/CFE_EVS_TLMPKT/COMMANDCOUNTER"
+        },
+        {
+          "parameter": "/CFS/CFE_SB_HKMSG/COMMANDCNT"
+        },
+        {
+          "parameter": "/CFS/CFE_TBL_HKPACKET/CMDCOUNTER"
+        },
+        {
+          "parameter": "/CFS/CFE_TIME_DIAGPACKET/CURRENTMET_SECONDS"
+        },
+        {
+          "parameter": "/CFS/CFE_TIME_DIAGPACKET/CURRENTMET_SUBSECONDS"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_EPS/CMD/GENERIC_EPS_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_EPS/CMD/GENERIC_EPS_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_EPS/GENERIC_EPS_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_EPS/GENERIC_EPS_HK_TLM/RAW_BATTERY_VOLTAGE"
+        },
+        {
+          "parameter": "/GENERIC_EPS/GENERIC_EPS_HK_TLM/RAW_BATTERY_TEMPERATURE"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_CSS/CMD/GENERIC_CSS_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_CSS/CMD/GENERIC_CSS_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_CSS/CMD/GENERIC_CSS_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_CSS/CMD/GENERIC_CSS_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_0"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_1"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_2"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_3"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_4"
+        },
+        {
+          "parameter": "/GENERIC_CSS/GENERIC_CSS_DATA_TLM/RAW_CSS_5"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_FSS/CMD/GENERIC_FSS_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_FSS/CMD/GENERIC_FSS_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_FSS/CMD/GENERIC_FSS_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_FSS/CMD/GENERIC_FSS_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_FSS/GENERIC_FSS_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_FSS/GENERIC_FSS_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_FSS/GENERIC_FSS_DATA_TLM/GENERIC_FSS_ALPHA"
+        },
+        {
+          "parameter": "/GENERIC_FSS/GENERIC_FSS_DATA_TLM/GENERIC_FSS_BETA"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_IMU/CMD/GENERIC_IMU_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_IMU/CMD/GENERIC_IMU_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_IMU/CMD/GENERIC_IMU_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_IMU/CMD/GENERIC_IMU_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_HK_TLM/DEVICE_STATUS"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/X_ANGULAR_ACCELERATION"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/X_LINEAR_ACCELERATION"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/Y_ANGULAR_ACCELERATION"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/Y_LINEAR_ACCELERATION"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/Z_ANGULAR_ACCELERATION"
+        },
+        {
+          "parameter": "/GENERIC_IMU/GENERIC_IMU_DATA_TLM/Z_LINEAR_ACCELERATION"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_MAG/CMD/GENERIC_MAG_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_MAG/CMD/GENERIC_MAG_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_MAG/CMD/GENERIC_MAG_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_MAG/CMD/GENERIC_MAG_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_MAG/GENERIC_MAG_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_MAG/GENERIC_MAG_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_MAG/GENERIC_MAG_DATA_TLM/RAW_MAG_X"
+        },
+        {
+          "parameter": "/GENERIC_MAG/GENERIC_MAG_DATA_TLM/RAW_MAG_Y"
+        },
+        {
+          "parameter": "/GENERIC_MAG/GENERIC_MAG_DATA_TLM/RAW_MAG_Z"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/NOVATEL_OEM615/CMD/NOVATEL_OEM615_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/NOVATEL_OEM615/CMD/NOVATEL_OEM615_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/NOVATEL_OEM615/CMD/NOVATEL_OEM615_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/NOVATEL_OEM615/CMD/NOVATEL_OEM615_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_HK_TLM/DEVICE_STATUS"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/ECEF_X"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/ECEF_Y"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/ECEF_Z"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/VEL_X"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/VEL_Y"
+        },
+        {
+          "parameter": "/NOVATEL_OEM615/NOVATEL_OEM615_DATA_TLM/VEL_Z"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/SAMPLE/CMD/SAMPLE_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 50
+      }
+    },
+    {
+      "type": "command",
+      "name": "/SAMPLE/CMD/SAMPLE_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/SAMPLE/CMD/SAMPLE_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/SAMPLE/CMD/SAMPLE_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/ARDUCAM/CMD/CAM_EXP3_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 500
+      }
+    },
+    {
+      "type": "command",
+      "name": "/ARDUCAM/CMD/CAM_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/ARDUCAM/CMD/CAM_SEND_HK_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/ARDUCAM/CMD/CAM_HW_CHECK_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/ARDUCAM/ARDUCAM_HK_TLM_T/COMMANDCOUNT"
+        },
+        {
+          "parameter": "/ARDUCAM/ARDUCAM_EXP_TLM_T/CAM_DATA"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_RADIO/CMD/GENERIC_RADIO_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_RADIO/CMD/GENERIC_RADIO_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_RADIO/GENERIC_RADIO_HK_TLM/CMD_COUNT"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_REACTION_WHEEL/CMD/GENERIC_RW_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_REACTION_WHEEL/CMD/GENERIC_RW_REQ_DATA_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_REACTION_WHEEL/GENRW_HK_TLM_T/COMMAND_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_REACTION_WHEEL/GENRW_HK_TLM_T/MOMENTUM_NMS_0"
+        },
+        {
+          "parameter": "/GENERIC_REACTION_WHEEL/GENRW_HK_TLM_T/MOMENTUM_NMS_1"
+        },
+        {
+          "parameter": "/GENERIC_REACTION_WHEEL/GENRW_HK_TLM_T/MOMENTUM_NMS_2"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_TORQUER/CMD/GENERIC_TORQUER_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_TORQUER/CMD/GENERIC_TORQUER_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_TORQUER/CMD/GENERIC_TORQUER_SEND_HK_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_DIRECTION_0"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_DIRECTION_1"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_DIRECTION_2"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_PERCENT_ON_0"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_PERCENT_ON_1"
+        },
+        {
+          "parameter": "/GENERIC_TORQUER/GENERIC_TORQUER_HK_TLM_T/TORQUER_PERCENT_ON_2"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_THRUSTER/CMD/GENERIC_THRUSTER_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_THRUSTER/CMD/GENERIC_THRUSTER_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_THRUSTER/CMD/GENERIC_THRUSTER_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_THRUSTER/GENERIC_THRUSTER_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_THRUSTER/GENERIC_THRUSTER_HK_TLM/DEVICE_ENABLED"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_ADCS/CMD/GENERIC_ADCS_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_ADCS/CMD/GENERIC_ADCS_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_ADCS/GENERIC_ADCS_HK_TLM/CMD_COUNT"
+        }
+      ]
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_STAR_TRACKER/CMD/GENERIC_STAR_TRACKER_ENABLE_CC",
+      "extraOptions": [],
+      "arguments": [],
+      "advancement": {
+        "wait": 100
+      }
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_STAR_TRACKER/CMD/GENERIC_STAR_TRACKER_NOOP_CC",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_STAR_TRACKER/CMD/GENERIC_STAR_TRACKER_REQ_DATA",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "command",
+      "name": "/GENERIC_STAR_TRACKER/CMD/GENERIC_STAR_TRACKER_REQ_HK",
+      "extraOptions": [],
+      "arguments": []
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_HK_TLM/CMD_COUNT"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_HK_TLM/DEVICE_ENABLED"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_DATA_TLM/STAR_TRACKER_IS_VALID"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_DATA_TLM/STAR_TRACKER_Q0"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_DATA_TLM/STAR_TRACKER_Q1"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_DATA_TLM/STAR_TRACKER_Q2"
+        },
+        {
+          "parameter": "/GENERIC_STAR_TRACKER/GENERIC_STAR_TRACKER_DATA_TLM/STAR_TRACKER_Q3"
+        }
+      ]
+    }
+  ],
+  "advancement": {
+    "acknowledgment": "Acknowledge_Sent",
+    "wait": 50
+  }
+}
