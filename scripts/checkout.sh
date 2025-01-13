@@ -71,8 +71,11 @@ cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
 xhost +local:*
 gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
 echo ""
-/bin/bash $SCRIPT_DIR/gsw/launch_gsw.sh
-gnome-terminal --tab --title=$SC_NUM" - Radio Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_radio_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
+/bin/bash $SCRIPT_DIR/cosmos_launch.sh
+sleep 10
+
+# gnome-terminal --tab --title=$SC_NUM" - Radio Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_radio_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
+gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_radio_sim"    -h radio_sim --network=$SC_NETNAME --network-alias=radio_sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
 gnome-terminal --title="Radio Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_generic_radio_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_radio/fsw/standalone/build/generic_radio_checkout
 
 #rm -rf $USER_NOS3_DIR/42/NOS3InOut
