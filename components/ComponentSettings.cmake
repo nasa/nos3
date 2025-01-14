@@ -41,6 +41,8 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 #"-fstack-check"
                 #"-Weverything"
                 "-pedantic-errors"
+                "-fprofile-arcs" # code coverage
+                "-ftest-coverage" # ^
                 )
 
 #if(${TGTNAME} STREQUAL cpu1)
