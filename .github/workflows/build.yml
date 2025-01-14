@@ -80,8 +80,7 @@ jobs:
             git config user.email "actions@github.com"
             if ! git diff --quiet -- docs/coverage/line-coverage-badge.svg; then git add docs/coverage/line-coverage-badge.svg; fi
             if ! git diff --quiet -- docs/coverage/branch-coverage-badge.svg; then git add docs/coverage/branch-coverage-badge.svg; fi
-            git fetch origin ${{ github.head_ref }}
-            git pull origin ${{ github.head_ref }}
+            git log origin/${{ github.head_ref }}..HEAD
             git commit -m "Update coverage badges" || echo "No changes to commit"
             git push origin HEAD:refs/heads/${{ github.head_ref }} --force-with-lease
           
