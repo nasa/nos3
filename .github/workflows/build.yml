@@ -78,10 +78,10 @@ jobs:
           run: |
             git config user.name "github-actions"
             git config user.email "actions@github.com"
-            git add docs/coverage/line-coverage-badge.svg
-            git add docs/coverage/branch-coverage-badge.svg
+            if ! git diff --quiet -- docs/coverage/line-coverage-badge.svg; then git add docs/coverage/line-coverage-badge.svg; fi
+            if ! git diff --quiet -- docs/coverage/branch-coverage-badge.svg; then git add docs/coverage/branch-coverage-badge.svg; fi
             git commit -m "Update coverage badges" || echo "No changes to commit"
-            git push origin HEAD
+            git push origin HEAD:refs/heads/${{ github.ref_name }}
           
         - name: Archive Coverage Directory
           uses: actions/upload-artifact@v4
