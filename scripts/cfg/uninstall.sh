@@ -19,18 +19,23 @@ echo "Cleaning up CryptoLib build..."
 yes | rm $BASE_DIR/minicom.cap 2> /dev/null
 
 echo "Cleaning up local user directory..."
-$DFLAGS -v $USER_NOS3_DIR:$USER_NOS3_DIR $DBOX rm -rf $USER_NOS3_DIR
+if docker ps -a --format "{{.Names}}" | grep -q "^${DBOX}$"; then
+    rm -f "${USER_NOS3_DIR}"
+fi
 rm -rf $USER_NOS3_DIR/*
 rm -rf $USER_FPRIME_PATH
 
 yes | rm -rf $USER_NOS3_DIR/.m2 2> /dev/null
 yes | rm -rf $USER_NOS3_DIR 2> /dev/null
 
-echo "Removing containers..."
-$DCALL system prune -f 2> /dev/null
+echo "Removing NOS Based containers..."
+yes 2> /dev/null | $DCALL images --format "{{.Repository}}:{{.Tag}}" | grep '^ivvitc' | xargs -r docker rmi  
 
-echo "Removing container networks..."
-yes | docker network prune -f 2> /dev/null
-yes | docker swarm leave --force 2> /dev/null
+
+echo "Removing NOS Based container networks..."
+yes | $DNETWORK ls --format "{{.Name}}" | grep '^nos3_' | xargs -r docker network rm 2> /dev/null
+
+# yes | docker network prune -f 2> /dev/null
+yes | $DCALL swarm leave --force 2> /dev/null
 
 exit 0
