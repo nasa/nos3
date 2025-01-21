@@ -469,11 +469,11 @@ else:
 
         sim_disabled = '            <active>false</active>\n'
         if (sc_cam_en != 'true'):
-            lines[css_index] = sim_disabled
+            lines[cam_index] = sim_disabled
         if (sc_css_en != 'true'):
             lines[css_index] = sim_disabled
         if (sc_eps_en != 'true'):
-            lines[css_index] = sim_disabled
+            lines[eps_index] = sim_disabled
         if (sc_fss_en != 'true'):
             lines[fss_index] = sim_disabled
         if (sc_gps_en != 'true'):
@@ -483,7 +483,7 @@ else:
         if (sc_mag_en != 'true'):
             lines[mag_index] = sim_disabled
         if (sc_radio_en != 'true'):
-            lines[mag_index] = sim_disabled
+            lines[radio_index] = sim_disabled
         if (sc_rw_en != 'true'):
             lines[rw0_index] = sim_disabled
             lines[rw1_index] = sim_disabled
