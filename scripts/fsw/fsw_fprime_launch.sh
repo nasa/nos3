@@ -71,6 +71,7 @@ for (( i=1; i<=$SATNUM; i++ ))
 do
     export SC_NUM="sc_"$i
     export SC_NETNAME="nos3_"$SC_NUM
+    # export SC_NETNAME="host"
     export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
     # Debugging
@@ -97,7 +98,7 @@ do
     cd $FSW_DIR
     gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
     echo ""
-
+    # -p 5000:5000 -p 50050:50050 -p 50000:50000
     # Debugging
     # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
 
@@ -157,5 +158,8 @@ if [ $? -eq 1 ]
 then
     firefox ${urlIP}:5000 & 
 fi
+
+
+gnome-terminal --tab --title=$SC_NUM" - fprime python script" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --network=$SC_NETNAME -w $SIM_BIN $DBOX ./$SCRIPT_DIR/gsw/fprime_gds_python.sh 
 
 echo "Docker launch script completed!"

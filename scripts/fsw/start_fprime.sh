@@ -11,4 +11,6 @@ source $SCRIPT_DIR/../env.sh
 
 cd $BASE_DIR/fsw/fprime/fprime-nos3
 . fprime-venv/bin/activate
+# fprime-gds #http://127.0.0.1:5000
 fprime-gds --gui-port 5000 --gui-addr 0.0.0.0
+# cd fsw/fprime/fprme-nos3
