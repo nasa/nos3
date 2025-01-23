@@ -64,9 +64,20 @@ echo "Checkout..."
 #gnome-terminal --tab --title="Arducam Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_cam_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE camsim
 #gnome-terminal --title="Arducam Checkout"   -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_arducam_checkout"   --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/arducam/fsw/standalone/build/arducam_checkout
 
-# ##
-# ## Fine Sun Sensor (FSS)
-# ##
+##
+## Coarse Sun Sensor (CSS)
+##
+# rm -rf $USER_NOS3_DIR/42/NOS3InOut
+# cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
+# xhost +local:*
+# gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
+# echo ""
+# gnome-terminal --tab --title=$SC_NUM" - CSS Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_css_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_css_sim
+# gnome-terminal --title="CSS Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_css_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_css/fsw/standalone/build/generic_css_checkout
+
+##
+## Fine Sun Sensor (FSS)
+##
 # rm -rf $USER_NOS3_DIR/42/NOS3InOut
 # cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
 # xhost +local:*
@@ -74,6 +85,17 @@ echo "Checkout..."
 # echo ""
 # gnome-terminal --tab --title=$SC_NUM" - FSS Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_fss_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_fss_sim
 # gnome-terminal --title="FSS Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fss_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_fss/fsw/standalone/build/generic_fss_checkout
+
+##
+## Electrical Power System (EPS)
+##
+# rm -rf $USER_NOS3_DIR/42/NOS3InOut
+# cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
+# xhost +local:*
+# gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
+# echo ""
+# gnome-terminal --tab --title=$SC_NUM" - EPS Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_eps_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_eps_sim
+# gnome-terminal --title="EPS Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_eps_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_eps/fsw/standalone/build/generic_eps_checkout
 
 ##
 ## Generic Radio
