@@ -20,6 +20,8 @@ NUM_CPUS="$( nproc )"
 
 USERDIR=$(cd ~/ && pwd)
 USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
+USER_FPRIME_PATH=$USERDIR/.cookiecutter_replay
+
 OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
 
@@ -45,7 +47,7 @@ INFLUXDB_ADMIN_PASSWORD=admin_password
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20241010"
+DBOX="ivvitc/nos3-64:20241219"
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR
