@@ -10,6 +10,7 @@ GSW_BIN=$BASE_DIR/gsw/cosmos/build/openc3-cosmos-nos3
 GSW_DIR=$BASE_DIR/gsw/cosmos
 SIM_DIR=$BASE_DIR/sims/build
 SIM_BIN=$SIM_DIR/bin
+COMPONENT_DIR=$SCRIPT_DIR/../components
 
 if [ -d $SIM_DIR/bin ]; then
     SIMS=$(ls $SIM_BIN/nos3*simulator) 
