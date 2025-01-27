@@ -156,7 +156,16 @@ COSMOS 5 is an open source ground system provided via OpenC3 (originally develop
 
 The link to a Ground Station is completed by two applications in cFS. These are the command ingest (CI) and telemetry output (TO) applications. In NOS3 these apps utilize UDP to communicate and are not meant for flight operations. Communications is further split between the Debug and Radio channels, which connect to different UDP ports, the former directly, the second through the Radio Component. The Debug CI and TO links are active by default, however Radio TO link is closed by default on start-up, but can be activated by sending a specific command packet. Commanding is done by using the Command Sender tool in COSMOS 5, accessible from the main screen. The Radio TO link can be started using the target named ‘CFS_RADIO’ with a single command to ‘TO_ENABLE_OUTPUT’. Once sent, the TO app will reply stating that telemetry is enabled. This is demonstrated in the screenshot below. It should be noted that only telemetry listed in the ‘cfg/nos3_defs/tables/to_config.c’ will be captured. Additional telemetry can be appended as necessary.
 
+
 ![COSMOS_Radio_Activation](./_static/COSMOS5_Radio_Active.png)
+
+### AIT
+
+While AIT appears to be functionaly.  It is not currently in a maintained state.  It is provied as a proof of concept.  The pieces that are actively maintained are those in the default configuration.
+
+### F Prime GDS
+
+FPrime flight software is provided by JPL.  it is not currently in a maintained state within the NOS3 project.  It is proved currently as a proof of concept.  The pieces that are actively maintained are those in the default configuration.  However, FPrime will be maintained and integrated into the default configurations of NOS3 in the very near future.
 
 ## Selecting Ground System
 
