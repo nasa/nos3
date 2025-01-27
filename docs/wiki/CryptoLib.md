@@ -6,6 +6,5 @@ CryptoLib provides a software-only solution using the CCSDS Space Data Link Secu
 To get started with CryptoLib, you can visit the [GitHub repository](https://github.com/nasa/CryptoLib/wiki#what-is-cryptolib) maintained by NASA. The documentation provides detailed information on usage, configuration, and testing.
 
 
-TODO:  
-
-Link to Read the Docs once available
+ReadTheDocs:
+[Cryptolib ReadTheDocs](https://nasa-cryptolib.readthedocs.io/en/latest/)
