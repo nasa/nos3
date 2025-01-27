@@ -55,6 +55,7 @@ Do not modify these files/directories/submodules other than as specified in _Wha
   * apps - core Flight Software applications
   * build - flight software build artifacts location
   * cfe - core Flight Executive
+  * fprime - JPL Flight Executive
   * nos3_defs - Mission specific definitions.  These should be customized.
   * osal - Operating System Abstraction Layer
   * psp - Platform Support Package
@@ -63,13 +64,17 @@ Do not modify these files/directories/submodules other than as specified in _Wha
   * ait - AIT configuration files
   * cosmos - COSMOS configuration files.  Only one file in here should be customized.
   * OrbitInviewPowerPrediction
-  * scripts - Convenience scripts.  Only launch.sh should be customized.
+  * yamcs - YAMCS ( /jæmz/ ) Yet another Mission Control System
+    * yamcs_studio - Addin for designing CMD/TML user layouts, displaying telemetry, etc.
+    * openmct - Addin for displaying telemetry
+* scripts - Convenience scripts.
+  * cfg - configuration scripts
+  * fsw - flight software scripts
+  * gsw - ground software scripts
 * sims
   * build - simulations build artifacts location
-  * cfg - configuration data for simulators and for the 42 dynamics simulator.  These should be customized.
   * nos_time_driver - core functionality to drive time throughout flight software, simulators, and 42
   * sim_common - core common framework code for implementing the plugin system and other core functionality of simulators
-  * sim_server - core configuration file for the NOS Engine Standalone Server
   * sim_terminal - core functionality to provide a terminal for out of band control of hardware simulators
   * truth_42_sim - core functionality to forward 42 dynamical truth data to COSMOS for telemetry displays
 

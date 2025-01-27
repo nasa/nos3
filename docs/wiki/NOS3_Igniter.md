@@ -2,11 +2,11 @@
 
 Igniter is installed and displayed via `make prep` and can be brought back up via `make igniter`.
 
-Igniter is a tool for NOS3 that provides a simple Graphical User Interface to manage NOS3 Configurations, Components, Apps, and the like to allow the user to customize the simulator to use only the components and apps they want or need. It also allows users to configure different spacecraft in a constellation differently if that is desired. One can load a configuration file, and then edit each spacecraft's configuration separately in the GUI if they desire. Igniter is split into 3 main views: the Configuration Tab, the Build Tab, and the Launch Tab.
+Igniter is a tool for NOS3 that provides a simple Graphical User Interface to manage NOS3 Configurations, Components, Apps, and the like to allow the user to customize NOS3 to use only the components and apps they want or need. It also allows users to configure different spacecraft in a constellation differently if that is desired. One can load a configuration file, and then edit each spacecraft's configuration separately in the GUI if they desire. Igniter is split into 3 main views: the Configuration Tab, the Build Tab, and the Launch Tab.
 
 ## The Configution Tab
 
-In order to load a configuration, the user simply needs to click browse next to the current configuation box and select their desired configuation. Configuration files are simple XML documents, and are separated into two main types: the Master Config and the Spacecraft Configs. There is only one Master Config for each Simulation, but there may be multiple Spacecraft Configs.
+In order to load a configuration, the user simply needs to click browse next to the current configuation box and select their desired configuation. Configuration files are simple XML documents, and are separated into two main types: the Master Config and the Spacecraft Configs. There is only one Master Config for NOS3, but there may be multiple Spacecraft Configs.
 
 - The Master Config, contains parameters for the number of satellites being simulated, the mission start time, and links to the configs for each individual spacecraft.
    

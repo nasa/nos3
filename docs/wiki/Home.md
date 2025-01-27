@@ -81,10 +81,6 @@ NOS3 isn't a substitute for hardware testing, just a tool to augment the number 
 
 During Integration and Testing (I&T) activities, NOS3 provides valuable capabilities. It enables you to perform integration testing of your satellite system, validate the operational procedures, and verify the overall system performance. NOS3 allows you to conduct end-to-end simulations, test different mission scenarios, and assess the behavior of the satellite system under various conditions.
 
-### What are NOS3 uses during operation?
-
-During mission operation, NOS3 can continue to be used for several purposes. It can support mission planning and rehearsal activities, aid in real time operations monitoring and analysis, and assist in anomaly resolution and fault diagnosis. NOS3 allows operators to simulate and evaluate different operational scenarios, predict the behavior of the satellite system, and make informed decisions based on the simulated environment.
-
 ### How to a move from software / simulator to hardware once it arrives?
 
 NOS3 isn't a substitute for hardware testing, just a tool to augment the number of types of tests possible. The component development flow includes the development of a standalone checkout application that can more rapidly be developed, deployed, and tested on hardware. The flight software will use the same functions and code developed and tested through that process allowing focus to shift to data flow and system level tests cleanly.

@@ -1,5 +1,5 @@
 # cFS Tables
-Several cFS Apps rely on tables ton configure them. The main ones that are preconfigured by NOS3 are the ones for cf, ds, fm, hk, sc, sch, and to. The main ones the user would likely want to configure for their mission and the ds, sc, and sch tables.
+Several cFS Apps rely on tables to configure them. The main ones that are preconfigured by NOS3 are the ones for cf, ds, fm, hk, sc, sch, and to. The main ones the user would likely want to configure for their mission and the ds, sc, and sch tables.
 
 ## DS Tables
 DS, or Data Storage, utilizes three main tables - the File Table, the Filter Table, and the Indices table. The Indices table can likely be left as default in most cases, leaving the File and Filter tables as the main ones you would likely want to reconfigure.
@@ -17,7 +17,7 @@ The image above is the default event packet log file for NOS3, and shows the fol
 * Basename sets the base filename of the file
 * Extension sets the file extension for the file (".ds" by default)
 * FileNameType defines whether you are rolling the file (and thus extending the filename) by time or count.
-* EnableState defines if the file start out as enabled or disabled. If enabled, it will collect data from simulation start. If disabled, the user must manually activate it using a command before it starts collecting data
+* EnableState defines if the file starts out as enabled or disabled. If enabled, it will collect data from simulation start. If disabled, the user must manually activate it using a command before it starts collecting data
 * MaxFileSize defines the max size of a file before it is rolled (in bytes by default, so multiples of 1024 increase to KB, MB, GB, etc)
 * MaxFileAge defines the max age of a file before it is rolled (in seconds)
 * SequenceCount is only used if rolling by count. Otherwise can be left as DS_UNUSED. If used, will define the starting count for the file

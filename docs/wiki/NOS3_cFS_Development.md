@@ -24,12 +24,12 @@ As an example, the Clyde Space EPS I/O functionality is well defined in the user
 
 In order to use NOS3 with cFS, modifications are required to the open-source release. The recommended method for using NOS3 is described in the NOS3 User’s Guide, in which these modifications have already been made. If not using the cFS included with the NOS3 release, it is recommended to use the CMAKE build system, as the legacy build is not currently supported. The necessary changes are described below, where `proj` is the cFS directory being integrated.
 
-1. Edit the `targets.cmake` file in the `fsw/nos3_defs` folder to include the list of applications to be built. Set the target name and system as shown below.
+1. Edit the `targets.cmake` file in the `cfg/nos3_defs` folder to include the list of applications to be built. Set the target name and system as shown below.
 ```cmake
 SET(TGT1_NAME linux)
 SET(TGT1_SYSTEM linux)
 ```
-2. Edit the `toolchain-linux.cmake` file from the `fsw/nos3_defs` directory.
+2. Edit the `toolchain-linux.cmake` file from the `cfg/nos3_defs` directory.
 3. Edit the `nos-linux` PSP from the `fsw/psp/fsw` directory.
 4. Add to the `components` directory as needed.
 5. Create `fsw/apps/hwlib` or edit the `fsw/apps/hwlib` directory.
@@ -46,42 +46,104 @@ The NOS3 source is the best resource for examples to aid in writing a new NOS3 d
 
 #### Application and Hardware Library
 
-The application that is communicating with hardware will require the I/O calls to be implemented exactly as provided by the OBC manufacturer. The NAV application makes certain calls to a Novatel GPS over the UART from the OBC. Not all of the GPS functionality is necessary to be exercised by the NAV application, so the low level calls to the UART are wrapped in functions in the hardware library, and the NAV app includes this library. As an example, the NAV application will be commanded to get the current Position/Velocity/Time reading, and will make the call `NAV_ReadAvailableData` as seen in the following code excerpt. Notice the include statement for the hardware library.
+The application that is communicating with hardware will require the I/O calls to be implemented exactly as provided by the OBC manufacturer. The NAV application makes certain calls to a Novatel GPS over the UART from the OBC. Not all of the GPS functionality is necessary to be exercised by the NAV application, so the low level calls to the UART are wrapped in functions in the hardware library, and the NAV app includes this library. As an example, the NAV application will be commanded to get the current Position/Velocity/Time reading, and will make the call `NOVATEL_OEM615_ChildProcessRequestData` as seen in the following code excerpt. 
 
 ```c
-#include “hwlib.h”
-/* some code removed for readability see components/novatel_oem615/fsw/src/nav_app.c */
-/* Request NAV data */
-case NAV_REQ_DATA_CC:
-    CFE_EVS_SendEvent(NAV_CMD_REQ_DATA_EID, CFE_EVS_DEBUG,"Request NAV GPS Data");
-    /* todo - fix the 1024 hard coded number */
-    DataBuffer = (uint8_t *)malloc((1024) * sizeof(uint8_t));
-    /* Read the GPS data from the UART */
-    NAV_ReadAvailableData(DataBuffer, &DataLen);
-    GPSSerialiation GPSData = NAV_ParseOEM615Bestxyza(DataBuffer, DataLen);
-```
-
-The function `NAV_ReadAvailableData` is a wrapper for the low level UART calls to the OBC driver. The function can be seen in the following code excerpt. This code must include the hardware library, as seen in the first line of the excerpt, which includes the OBC drivers itself. The function calls beginning with `uart_` are from the OBC driver.
-
-```c
-#include ”hwlib.h”
-/* some code removed for readability see components/novatel_oem615/fsw/src/nav_app.c */
-static void NAV_ReadAvailableData(uint8 DataBuffer[], int32 *DataLen)
+int32 NOVATEL_OEM615_ChildProcessRequestData(NOVATEL_OEM615_Device_Data_tlm_t* data)
 {
-    int32 i = 0;
-    /* check how many bytes are waiting on the uart */
-    *DataLen = uart_bytes_available(NAV_UART.handle);
-    //OS_printf("NAV_ReadAvailableData(): gps messages waiting: %ld bytes\n", (long int)*DataLen);
-    /* declare an out buffer to hold that data */
-    if (*DataLen > 0)
+    uint32 status;
+
+    if (OS_MutSemTake(NOVATEL_OEM615_AppData.HkDataMutex) == OS_SUCCESS)
     {
-        /* grab the bytes */
-        uart_read_port(NAV_UART.handle, DataBuffer, *DataLen);
+        status = NOVATEL_OEM615_ChildProcessReadData(&NOVATEL_OEM615_AppData.Novatel_oem615Uart, data);
+
+        OS_MutSemGive(NOVATEL_OEM615_AppData.HkDataMutex);
     }
     else
     {
-        /* OS_printf("GPS_ReadAvailableData(): gps uart data len is 0\n"); */
+        CFE_EVS_SendEvent(NOVATEL_OEM615_MUT_REQUEST_DATA_ERR_EID, CFE_EVS_EventType_ERROR, 
+                "NOVATEL_OEM615: Request device data for child task reported error obtaining mutex");
+        status = CFE_ES_RunStatus_APP_ERROR;
     }
+    return status;
+}
+```
+
+The function `NOVATEL_OEM615_ChildProcessReadData` is a wrapper for the low level UART calls to the OBC driver. The function can be seen in the following code excerpt. The function calls beginning with `uart_` are from the OBC driver.
+
+```c
+int32_t NOVATEL_OEM615_RequestData(uart_info_t* uart_device, NOVATEL_OEM615_Device_Data_tlm_t* data)
+{
+    int32_t status = OS_SUCCESS;
+    int32_t bytes = 0;
+    int32_t bytes_available = 0;
+    char *token;
+
+    status = NOVATEL_OEM615_CommandDevice(uart_device, NOVATEL_OEM615_DEVICE_REQ_DATA_CMD, 0);
+    if (status == OS_SUCCESS)
+    {
+        /* check how many bytes are waiting on the uart */
+        bytes_available = uart_bytes_available(uart_device);
+        if (bytes_available > 0)
+        {
+            uint8_t* temp_read_data = (uint8_t*)calloc(bytes_available, sizeof(uint8_t));
+            /* Read all existing data on uart port */
+            bytes = uart_read_port(uart_device, temp_read_data, bytes_available);
+            if (bytes != bytes_available)
+            {
+                #ifdef NOVATEL_OEM615_CFG_DEBUG
+                    OS_printf("  NOVATEL_OEM615_RequestData: Bytes read != to requested! \n");
+                #endif
+                status = OS_ERROR;
+                free(temp_read_data);
+            }
+            else
+            {
+                /* search uart data for token signifying start of bestxyza gps data packet */
+                #ifdef NOVATEL_OEM615_CFG_DEBUG
+                    OS_printf(" ALL UART BYTES READ FROM BUFFER: \n");
+                    for (int i=0;i<bytes;i++)
+                    {
+                        OS_printf("%02x", temp_read_data[i]);
+                    }
+                    OS_printf(" DONE PRINTING ALL UART BYTES READ FROM BUFFER \n");
+                #endif
+                token = strtok_r((char*)temp_read_data, ",", &saveptr);
+                if ((token != NULL) && (strncmp(token, "#BESTXYZA", 9) == 0)) 
+                {
+                    #ifdef NOVATEL_OEM615_CFG_DEBUG
+                        OS_printf(" DATA TOKEN FOUND = %s\n", token);
+                    #endif
+                    
+                    NOVATEL_OEM615_ParseBestXYZA(data);
+                }
+                else
+                {
+                    #ifdef NOVATEL_OEM615_CFG_DEBUG
+                        OS_printf("  NOVATEL_OEM615_RequestData: No #BESTXYZA token found when reading uart port! \n");
+                    #endif
+                    status = OS_ERROR;
+                    free(temp_read_data);
+                }
+            }
+        }
+        else
+        {
+            #ifdef NOVATEL_OEM615_CFG_DEBUG
+                OS_printf("  NOVATEL_OEM615_RequestData: No data available when attempting to read from uart port! \n");
+            #endif
+            status = OS_ERROR;
+        }
+    }
+    else
+    {
+        #ifdef NOVATEL_OEM615_CFG_DEBUG
+            OS_printf("  NOVATEL_OEM615_RequestData: CommandDevice returned error with status = %s! \n", status);
+        #endif
+        status = OS_ERROR;
+    }
+    return status;
+}
 ```
 
 ### The NOS3 Driver
@@ -110,5 +172,5 @@ The function above is used to return the number of bytes available from the USAR
 
 ### Build System
 
-The build system must be able to properly select the correct driver source code based on the target being compiled. In this case, CMake is used by both cFS and NOS3 and can accomplish this swap easily. As described earlier the `targets.cmake` file in `fsw/nos3_defs` provides an example of how to include driver source code; an example Cmake build file may be found in `components/novatel_oem615/CmakeList.txt`.
+The build system must be able to properly select the correct driver source code based on the target being compiled. In this case, CMake is used by both cFS and NOS3 and can accomplish this swap easily. As described earlier the `targets.cmake` file in `fsw/nos3_defs` provides an example of how to include driver source code; an example Cmake build file may be found in `components/novatel_oem615/fsw/cfs/CMakeLists.tx`.
 
