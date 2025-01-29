@@ -3,7 +3,15 @@ The NASA Operational Simulator for Small Satellites (NOS3) is a suite of tools d
 NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.
 
 ## Documentation
-The best source of documentation can be found at [the wiki](https://github.com/nasa/nos3/wiki) or [NOS3](http://www.nos3.org).
+The best source of documentation can be found at [NOS3 - ReadTheDocs](https://nos3.readthedocs.io/en/latest/).  The Wiki linked to the NOS3 repository is in the process of being deprecated.  While the information may be close to accurate there, it is not the source of truth, and will be removed in the near future.  Please refer to the ReadTheDocs page, or build the documentation locally yourself.
+
+Documentation Dependencies:
+> python3-sphinx, python3-sphinx-rtd-theme, phythin3-myst-parser
+
+Build from the docs/wiki directory:  `make html`
+
+---
+
 
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
