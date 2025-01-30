@@ -96,7 +96,7 @@ do
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-    gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
+    gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -p 0.0.0.0:5000:5000 -p 0.0.0.0:50050:50050 -p 0.0.0.0:50000:50000 -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
     echo ""
     # -p 5000:5000 -p 50050:50050 -p 50000:50000
     # Debugging
@@ -151,15 +151,19 @@ sleep 1
 
 urlIP=$(docker container inspect sc_1_fprime | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
 
-sleep 10
+# sleep 10 #commenting this out works
+# sleep 1
+# while ! pgrep -x "firefox" >/dev/null; do
+#     sleep 1 &
+# done
 
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
 then
-    firefox ${urlIP}:5000 & 
+    firefox --new-tab ${urlIP}:5000 & 
 fi
 
 
-gnome-terminal --tab --title=$SC_NUM" - fprime python script" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --network=$SC_NETNAME -w $SIM_BIN $DBOX ./$SCRIPT_DIR/gsw/fprime_gds_python.sh 
+# gnome-terminal --tab --title=$SC_NUM" - fprime python script" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --network=$SC_NETNAME -w $SIM_BIN $DBOX ./$SCRIPT_DIR/gsw/fprime_gds_python.sh 
 
 echo "Docker launch script completed!"

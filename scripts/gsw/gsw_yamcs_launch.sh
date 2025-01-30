@@ -3,6 +3,22 @@
 # Convenience script for NOS3 development
 #
 
+# # Function to check if a Firefox window exists
+# wait_for_firefox_window() {
+#   while ! wmctrl -l | grep -i "firefox" >/dev/null; do
+#     sleep 0.5
+#   done
+# }
+
+# # Run the wait function in the background
+# wait_for_firefox_window &
+
+# # Continue without holding the terminal and open a new tab when ready
+# (
+#   wait_for_firefox_window
+#   firefox --new-tab "$1"
+# ) &
+
 CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
@@ -13,5 +29,9 @@ gnome-terminal --tab --title="YAMCS" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v $USER_
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
 then
-    sleep 20 && firefox localhost:8090 &
+    # wait_for_firefox_window &
+    sleep 20 && firefox --new-tab localhost:8090 &
 fi
+
+
+
