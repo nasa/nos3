@@ -137,4 +137,10 @@ echo "Checkout..."
 # sleep 10
 # firefox ${urlIP}:5000
 
+##
+## Generic Star Tracker
+##
+gnome-terminal --tab --title=$SC_NUM" - Star Tracker Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
+gnome-terminal --title="Star Tracker Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_generic_star_tracker_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_star_tracker/fsw/standalone/build/generic_star_tracker_checkout
+
 echo ""
