@@ -119,6 +119,16 @@ echo "Checkout..."
 #gnome-terminal --tab --title=$SC_NUM" - RW 2 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim2"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
 #gnome-terminal --title="RW Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_rw_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_reaction_wheel/fsw/standalone/build/generic_reaction_wheel_checkout
 
+##
+## Generic Star Tracker
+##
+# rm -rf $USER_NOS3_DIR/42/NOS3InOut
+# cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
+# xhost +local:*
+# gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
+# echo ""
+# gnome-terminal --tab --title=$SC_NUM" - Star Tracker Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
+# gnome-terminal --title="Star Tracker Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_generic_star_tracker_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_star_tracker/fsw/standalone/build/generic_star_tracker_checkout
 
 ##
 ## Sample
@@ -136,16 +146,5 @@ echo "Checkout..."
 # urlIP=$(docker container inspect sc_1_sample_checkout | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
 # sleep 10
 # firefox ${urlIP}:5000
-
-##
-## Generic Star Tracker
-##
-rm -rf $USER_NOS3_DIR/42/NOS3InOut
-cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
-xhost +local:*
-gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"_fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
-echo ""
-gnome-terminal --tab --title=$SC_NUM" - Star Tracker Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_generic_star_tracker_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
-gnome-terminal --title="Star Tracker Checkout" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_generic_star_tracker_checkout" --network=$SC_NETNAME -w $BASE_DIR $DBOX ./components/generic_star_tracker/fsw/standalone/build/generic_star_tracker_checkout
 
 echo ""
