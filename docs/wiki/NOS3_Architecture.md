@@ -12,6 +12,7 @@ Above is a very basic architecture description of NOS. The image depicts several
 
 ![NOS Basic Architecture](./_static/NOS_YAMCS_Connections.drawio.png)
 
+---
 
 The image above shows basic connectivity between Ground Station and Flight software.  Full connectivity is not shown, but basic docker network connections, and specific ports are shown in order to aid users in knowing what communication happens on which ports and which networks, and how to connect different applications as neccary.
 
