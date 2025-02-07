@@ -3,26 +3,20 @@ NOS3 runs typically runs using Docker on a Linux Virtual Machine (VM), although 
 
 ## Basic Architecture
 
-```{drawio} _static/NOS_Basic.drawio
-:format: png
-:transparency: true
-:page-index: 0
+![NOS Basic Architecture](../_images/NOS_Basic.png)
 
 Above is a very basic architecture description of NOS. The image depicts several docker containers running within a virtualized system on a host machine.  Within the virtualized environment exists a ground station, connections to flight software, and many componenets and simulators, as well as a dynamics engine, all kept in-sync through NOS Engine busses, and time control within NOS Server. 
 
 ---
 ## GSW (YAMCS) Connectivity to FSW
-```{drawio} _static/NOS_YAMCS_Connections.drawio
-:format: png
-:transparency: true
-:page-index: 0
 
+![NOS Basic Architecture](../_images/NOS_YAMCS_Connections.png)
 The image above shows basic connectivity between Ground Station and Flight software.  Full connectivity is not shown, but basic docker network connections, and specific ports are shown in order to aid users in knowing what communication happens on which ports and which networks, and how to connect different applications as neccary.
 
 ---
 ## **Current Docker Architecture**
 
-![image](./_static/NOS3-Container-Deployment.png)
+<!-- ![image](./_static/NOS3-Container-Deployment.png) -->
 
 Every process in NOS3 runs in its own container (as is best practice) and Docker networks are used to separate different groups of containers from one another.  On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, the latter being the default.  This is the ground software with which the satellite(s) can be commanded.  Each satellite consists of a group of containers placed in its own network, illustrated in the grey cloud and labeled 'nos3_sc_1'.  Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3_core'.
 

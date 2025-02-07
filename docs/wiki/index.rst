@@ -29,3 +29,12 @@ NOS3 Index
    NOS3_Igniter.md
    CryptoLib.md
    NOS3_Con_Ops.md
+
+.. raw:: html
+
+   <hr>
+
+.. drawio-image:: _static/NOS_Basic.drawio
+   :format: png
+   :transparency: true
+   :page-index: 0
