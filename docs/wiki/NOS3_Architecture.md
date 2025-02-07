@@ -1,6 +1,24 @@
 # Architecture
 NOS3 runs typically runs using Docker on a Linux Virtual Machine (VM), although any computer running Linux and capable of using Docker will work.  The figure below shows the current architecture and Docker networking and structure.
 
+## Basic Architecture
+
+```{drawio} _static/NOS_Basic.drawio
+:format: png
+:transparency: true
+:page-index: 0
+
+Above is a very basic architecture description of NOS. The image depicts several docker containers running within a virtualized system on a host machine.  Within the virtualized environment exists a ground station, connections to flight software, and many componenets and simulators, as well as a dynamics engine, all kept in-sync through NOS Engine busses, and time control within NOS Server. 
+
+---
+## GSW (YAMCS) Connectivity to FSW
+```{drawio} _static/NOS_YAMCS_Connections.drawio
+:format: png
+:transparency: true
+:page-index: 0
+
+The image above shows basic connectivity between Ground Station and Flight software.  Full connectivity is not shown, but basic docker network connections, and specific ports are shown in order to aid users in knowing what communication happens on which ports and which networks, and how to connect different applications as neccary.
+
 ---
 ## **Current Docker Architecture**
 
