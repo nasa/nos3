@@ -38,6 +38,7 @@ html_theme_options = {
     "titles_only": False,
 }
 
+drawio_headless = False
 html_use_index = False
 html_static_path = ['_static']
 html_css_files = ['custom.css']
