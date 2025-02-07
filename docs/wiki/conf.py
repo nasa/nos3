@@ -15,7 +15,6 @@ author = 'NASA-JSTAR'
 
 extensions = [
     'myst_parser',
-    'sphinxcontrib.drawio'
 ]
 
 source_suffix = {
