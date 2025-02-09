@@ -16,12 +16,12 @@ Build from the docs/wiki directory:  `make html`
 ### Prerequisites
 Each of the applications listed below are required prior to performing the installation procedure:
 * Option A, you already use Linux
-  * [Git 2.36+](https://git-scm.com/)
+  * [Git 2.47+](https://git-scm.com/)
   * Linux with docker and docker compose installed
 * Option B, deployment of a virtual machine (VM)
-  * [Git 2.36+](https://git-scm.com/)
-  * [Vagrant 2.3.4+](https://www.vagrantup.com/)
-  * [VirtualBox 7.0+](https://www.virtualbox.org/)
+  * [Git 2.47+](https://git-scm.com/)
+  * [Vagrant 2.4.3+](https://www.vagrantup.com/)
+  * [VirtualBox 7.1.6+](https://www.virtualbox.org/)
 
 ### Installing
 Option B only.
