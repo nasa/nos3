@@ -23,9 +23,11 @@ NOS3 Index
    NOS3_Component_Directory.md
    NOS3_42.md
    NOS3_cFS_Development.md
+   NOS3_Fprime.md
    NOS3_Custom_cFS_Table_Guide.md
    NOS3_OIPP.md
    NOS3_OnAIR.md
    NOS3_Igniter.md
    CryptoLib.md
    NOS3_Con_Ops.md
+
