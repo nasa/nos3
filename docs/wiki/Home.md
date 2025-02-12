@@ -105,4 +105,8 @@ According to the [NASA Software Classification guidelines](https://nodis3.gsfc.n
     - NASA's cFS is safety-critical flight software. Make sure you are building your applications to specification and that you are properly using the PSP and OSAL calls from within your apps.
     - It is best to **_not_** run cFS as sudo. If you are doing this, make sure you have configured for your host or are providing appropriate run-time arguments with cFS.
 6. Can NOS3 be run across multiple computers?
-    - Yes - the satellite and ground software can be split apart and run on their own VMs. The instructions can be found [here](https://github.com/nasa/nos3/wiki/NOS3-Build-and-Run-on-Multiple-VMs).
+    - Yes, the satellite and ground software can be split apart and run on their own VMs. The instructions can be found [here](https://github.com/nasa/nos3/wiki/NOS3-Build-and-Run-on-Multiple-VMs).
+7. Can the disk space be resized in the provided Virtual Machine?
+    - Yes, the Vagrantfile can be edited to change the maximum size of a new VM pending some additional terminal commands are done as sudo
+    - `growpart /dev/sda 3`
+    - `lvextend -l +100%FREE -r /dev/mapper/ubuntu--vg-ubuntu--lv`

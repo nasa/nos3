@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
         mount_options: ["dmode=0770", "fmode=0770"]
 
     ### General configuration
+    config.vm.disk :disk, size: "64GB", primary: true
     config.vm.provider "virtualbox" do |vbox|
         vbox.name = "nos3_20231101"
         vbox.gui = true
@@ -27,4 +28,7 @@ Vagrant.configure("2") do |config|
         vbox.cpus = 4
         vbox.memory = "8192"
     end
+
+    ### Extend the partition to use all available space
+    config.vm.provision "shell", inline: "growpart /dev/sda 3 && lvextend -l +100%FREE -r /dev/mapper/ubuntu--vg-ubuntu--lv"
 end
