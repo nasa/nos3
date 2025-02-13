@@ -51,9 +51,9 @@ $DNETWORK create \
     nos3_core
 echo ""
 
-#echo "Launch GSW..."
-$BASE_DIR/cfg/build/gsw_launch.sh
-echo ""
+# #echo "Launch GSW..."
+# $BASE_DIR/cfg/build/gsw_launch.sh
+# echo ""
 
 echo "Create NOS interfaces..."
 export GND_CFG_FILE="-f nos3-simulator.xml"
@@ -146,7 +146,10 @@ do
 done
 echo ""
 
-    
+#echo "Launch GSW..."
+$BASE_DIR/cfg/build/gsw_launch.sh
+echo ""
+
 sleep 1
 
 urlIP=$(docker container inspect sc_1_fprime | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
