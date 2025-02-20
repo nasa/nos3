@@ -1,4 +1,5 @@
 # Ground Systems
+
 NOS3 supports YAMCS, COSMOS 4, COSMOS 5, Fprime, and AIT ground software out of the box. There is a parameter in the master configuration file to switch between them. COSMOS 4 is lighter weight and easy to use, while COSMOS 5 is more performance heavy and slightly more difficult to use, but is actively developed.
 
 ## YAMCS - Yet Another Mission Control System
@@ -180,4 +181,5 @@ The screenshot below shows the default, COSMOS 4 configuration. Note that in ord
 All communications to, from, and internal to cFS, regardless of which Ground System you are using, are formatted using the CCSDS standard packet type with the secondary header enabled. This secondary header allows the specific command to be passed to the application specified in the primary header. COSMOS requires knowledge of these commands and telemetry structures to be able to construct and interpret them as needed. An example is provided below:
 
 ![COSMOS Command Structure](./_static/COSMOS-CNT-Structure.png)
+
 
