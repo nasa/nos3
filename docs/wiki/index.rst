@@ -1,5 +1,4 @@
 NASA Operational Simulator for Small Satellites
-
 ==================
 
 Welcome to the NASA Operational Simulator for Small Satellites (NOS3) User's Manual and Developer's Guide.
