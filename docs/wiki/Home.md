@@ -46,6 +46,9 @@ NOS3 can be distilled down into various configurable modules that make up the en
     - It is best to **_not_** run cFS as sudo. If you are doing this, make sure you have configured for your host or are providing appropriate run-time arguments with cFS.
 6. Can NOS3 be run across multiple computers?
     - Yes, the satellite and ground software can be split apart and run on their own VMs. The instructions can be found [here](https://github.com/nasa/nos3/wiki/NOS3-Build-and-Run-on-Multiple-VMs).
+7. I am having trouble with windows line endings (\r) while building, what should I do?
+    - Inside nos3/ directory run the following command in the terminal: `find . -type f -print0 | xargs -0 dos2unix`
+    
 
 ### Why should NOS3 be used?
 
