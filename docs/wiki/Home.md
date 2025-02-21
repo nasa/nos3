@@ -37,7 +37,7 @@ NOS3 can be distilled down into various configurable modules that make up the en
 2. NOS Engine bus ports fail on launch
     - NOS Engine allows dynamic connections and disconnects and ensures ports are closed before connecting. Ports may work again after an initial "Not connect".
 3. When the cFS flight software starts it cannot find my application or startup script
-    - Make sure that your application is built correctly and the shared object library (.so) is present. Likewise, ensure that the app name is correctly listed in `fsw/nos3_defs/cpuN_cfe_es_startup.scr` and `fsw/nos3_defs/targets.cmake`.
+    - Make sure that your application is built correctly and the shared object library (.so) is present. Likewise, ensure that the app name is correctly listed in `cfg/nos3_defs/cpuN_cfe_es_startup.scr` and `cfg/nos3_defs/targets.cmake`.
     - For further information, please check the NASA/cFS git repository and documentation.
 4. How do I connect my own standalone flight software?
     - Be sure to have all port numbers consistent between all components in NOS3, including 42.

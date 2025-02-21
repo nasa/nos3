@@ -172,5 +172,5 @@ The function above is used to return the number of bytes available from the USAR
 
 ### Build System
 
-The build system must be able to properly select the correct driver source code based on the target being compiled. In this case, CMake is used by both cFS and NOS3 and can accomplish this swap easily. As described earlier the `targets.cmake` file in `fsw/nos3_defs` provides an example of how to include driver source code; an example Cmake build file may be found in `components/novatel_oem615/fsw/cfs/CMakeLists.tx`.
+The build system must be able to properly select the correct driver source code based on the target being compiled. In this case, CMake is used by both cFS and NOS3 and can accomplish this swap easily. As described earlier the `targets.cmake` file in `cfg/nos3_defs` provides an example of how to include driver source code; an example Cmake build file may be found in `components/novatel_oem615/fsw/cfs/CMakeLists.tx`.
 
