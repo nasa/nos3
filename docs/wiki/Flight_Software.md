@@ -1,12 +1,27 @@
 # Flight Software
 
-TODO
-...
+Flight Software (FSW) is responsible for operating and navigating your spacecraft throughout its mission. NOS3 creates an environment that allows a user to simulate and end-to-end mission with a spacecraft using cFS. NOS3 Flight software is defaulted to use cFS, however F' FSW is integrated into NOS3 as well to provide another FSW system for users to explore.
 
 ## Standalone Checkout
+In NOS3, Standalone Checkouts are used to verify component functionality with your Components Simulation. Following the steps below will create a simple terminal interface to interact with the Simulation. Checkouts are to be used to test your component without connecting your component to NOS3 in its entirety, therefore providing a proof of concept of operations.
 
-TODO
-...
+The below example is a reference for the sample component.
+
+To build the standalone version, assuming starting from top level NOS3 repository:
+* make debug
+* cd ./components/sample/support
+* mkdir build
+* cd build
+* cmake .. 
+  * Can override target selection by adding `-DTGTNAME=cpu1`
+* make
+
+To run the standalone version, assuming starting rom the top level NOS3 repository:
+* Follow the build steps above
+* make
+* make checkout
+  * Launches NOS Engine, NOS Time Driver, NOS Terminal, Sample Sim, and Sample Checkout
+* make stop
 
 ## core Flight System (cFS)
 
