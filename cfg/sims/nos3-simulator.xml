@@ -639,5 +639,32 @@
             </hardware-model>
         </simulator>
 
+        <simulator>
+            <name>blackboard_sim</name>
+            <active>true</active>
+            <library>libblackboard_sim.so</library>
+            <hardware-model>
+                <type>BLACKBOARD</type>
+                <connections>
+                    <connection><type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>blackboard-sim-command-node</node-name>
+                    </connection>
+                    <connection><type>shmem</type>
+                        <bus-name>nos3_shmem</bus-name>
+                        <node-port>nos3_mutex</node-port>
+                    </connection>
+                </connections>
+                <data-provider>
+                    <type>BLACKBOARD_42_PROVIDER</type>
+                    <hostname>fortytwo</hostname>
+                    <port>4285</port>
+                    <max-connection-attempts>10</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
+                </data-provider>
+            </hardware-model>
+        </simulator>
+
     </simulators>
 </nos3-configuration>
