@@ -6,12 +6,14 @@ INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
 GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
+COVERAGEDIR ?= $(CURDIR)/fsw/build/amd64-posix/default_cpu1
 
 export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
 export MISSIONCONFIG = ../cfg/build/nos3
 
-# The "prep" step requires extra options that are specified via enviroment variables.
+
+# The "prep" step requires extra options that are specified via environment variables.
 # Certain special ones should be passed via cache (-D) options to CMake.
 # These are only needed for the "prep" target but they are computed globally anyway.
 PREP_OPTS :=
@@ -28,9 +30,10 @@ ifneq ($(BUILDTYPE),)
 PREP_OPTS += -DCMAKE_BUILD_TYPE=$(BUILDTYPE)
 endif
 
+
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gsw launch log prep real-clean sim stop stop-gsw
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gcov gsw launch log prep sim stop stop-gsw uninstall
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -52,9 +55,13 @@ build-cryptolib:
 	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
 
 build-fsw:
+ifeq ($(FLIGHT_SOFTWARE), fprime)
+	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
+else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+endif
 
 build-sim:
 	mkdir -p $(SIMBUILDDIR)
@@ -62,12 +69,16 @@ build-sim:
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
 build-test:
+ifeq ($(FLIGHT_SOFTWARE), fprime)
+	# TODO
+else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) -DENABLE_UNIT_TESTS=true ../cfe
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
+endif
 
 checkout:
-	./scripts/docker_checkout.sh
+	./scripts/checkout.sh
 
 clean:
 	$(MAKE) clean-fsw
@@ -78,6 +89,9 @@ clean:
 clean-fsw:
 	rm -rf cfg/build/nos3_defs
 	rm -rf fsw/build
+	rm -rf fsw/fprime/fprime-nos3/build-artifacts
+	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
+	rm -rf fsw/fprime/fprime-nos3/fprime-venv
 
 clean-sim:
 	rm -rf sims/build
@@ -88,43 +102,59 @@ clean-gsw:
 	rm -rf /tmp/nos3
 
 config:
-	./scripts/config.sh
+	./scripts/cfg/config.sh
 
 debug:
-	./scripts/docker_debug.sh
+	./scripts/debug.sh
 
 fsw: 
-	./scripts/docker_build_fsw.sh
+	./cfg/build/fsw_build.sh
+
+gcov:
+	cd $(COVERAGEDIR) && ctest -O ctest.log
+	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
+	genhtml $(COVERAGEDIR)/coverage.info --output-directory $$(COVERAGEDIR)/results
 
 gsw:
-	./scripts/docker_build_cryptolib.sh
+	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
+igniter:
+	./scripts/igniter_launch.sh
+
 launch:
-	./scripts/docker_launch.sh
+	./cfg/build/launch.sh
 
 log:
 	./scripts/log.sh
 
 prep:
-	./scripts/prepare.sh
+	./scripts/cfg/prepare.sh
 
-real-clean:
-	$(MAKE) clean
-	./scripts/real_clean.sh
+prep-gsw:
+	./scripts/cfg/prep_gsw.sh
+
+prep-sat:
+	./scripts/cfg/prep_sat.sh
 
 sim:
-	./scripts/docker_build_sim.sh
+	./scripts/build_sim.sh
+
+start-gsw:
+	./scripts/gsw/launch_gsw.sh
+
+start-sat:
+	./scripts/fsw/launch_sat.sh
 
 stop:
-	./scripts/docker_stop.sh
 	./scripts/stop.sh
 
 stop-gsw:
-	./scripts/stop_gsw.sh
+	./scripts/gsw/stop_gsw.sh
 
 test-fsw:
-	cd $(FSWBUILDDIR)/amd64-posix/default_cpu1 && ctest -O ctest.log
+	cd $(COVERAGEDIR) && ctest -O ctest.log
 
-igniter:
-	./scripts/igniter_launch.sh
+uninstall:
+	$(MAKE) clean
+	./scripts/cfg/uninstall.sh

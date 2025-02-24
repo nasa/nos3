@@ -1,48 +1,71 @@
 name: Build
 
 on: 
-  push:
   pull_request:
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: true
 
 jobs:
     fsw:
       runs-on: ubuntu-latest
       container:
-        image: ivvitc/nos3-64:20240618
+        image: ivvitc/nos3-64:20250124
       steps:
         - uses: actions/checkout@v4
           with:
+            fetch-depth: 1
             submodules: recursive
-        - name: Update
-          run: apt-get update
-        - name: Install dependencies
-          run: apt-get install -y python3 docker docker.io
-        - name: prep
-          run: make prep
         - name: config
           run: make config  
-        - name: build directory
-          run: mkdir ./fsw/build
         - name: build
-          run: make build-fsw
+          run: make build-test
+        - name: test
+          run: make test-fsw
 
     sim:
       runs-on: ubuntu-latest
       container:
-        image: ivvitc/nos3-64:20240618
+        image: ivvitc/nos3-64:20250124
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v4
           with:
+            fetch-depth: 1
             submodules: recursive
-        - name: Update
-          run: apt-get update
-        - name: Install dependencies
-          run: apt-get install -y python3 docker docker.io
-        - name: prep
-          run: make prep
         - name: config
           run: make config  
-        - name: build directory
-          run: mkdir ./sims/build
         - name: build
           run: make build-sim
+
+    coverage:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20250124
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  
+            submodules: recursive
+        - name: Configure Safe Directory
+          run: git config --global --add safe.directory $GITHUB_WORKSPACE
+        - name: Update
+          run: apt-get update
+        - name: install dependencies
+          run: apt-get install -y gcc lcov gcovr bc
+        - name: config
+          run: make config
+        - name: build-test
+          run: |
+            export CFLAGS="-fprofile-arcs -ftest-coverage -g"
+            make build-test
+            make test-fsw
+        - name: Archive Coverage Directory
+          uses: actions/upload-artifact@v4
+          with:
+            name: coverage-artifacts
+            path: docs/coverage
+        - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: 040717d0-b624-470e-be41-d08720135088
+    

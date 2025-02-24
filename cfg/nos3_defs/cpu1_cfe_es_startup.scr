@@ -1,4 +1,4 @@
-CFE_LIB, crypto,                    Crypto_SC_Init,           CRYPTO,           0,  0,     0x0, 0;
+CFE_LIB, cryptolib,                 Crypto_SC_Init,           CRYPTOLIB,        0,  0,     0x0, 0;
 CFE_LIB, hwlib,                     hwlib_Init,               HW_LIB,           0,  0,     0x0, 0;
 CFE_LIB, io_lib,                    IO_LibInit,               IO_LIB,           0,  0,     0x0, 0;
 
@@ -12,10 +12,13 @@ CFE_APP, to_lab,                    TO_LAB_AppMain,           TO_LAB_APP,       
 !
 !  ** The software will not try to parse anything after the first '!' character it sees. **
 !
+! In NOS3, these are moved as part of the `make config` process depending on what is enabled
+!
 CFE_APP, cf,                        CF_AppMain,               CF,               50, 32768, 0x0, 0;
 CFE_APP, ds,                        DS_AppMain,               DS,               51, 32768, 0x0, 0;
 CFE_APP, fm,                        FM_AppMain,               FM,               52, 32768, 0x0, 0;
 CFE_APP, lc,                        LC_AppMain,               LC,               53, 32768, 0x0, 0;
+CFE_APP, sbn,                       SBN_AppMain,              SBN,              63, 32768, 0x0, 0;
 CFE_APP, sc,                        SC_AppMain,               SC,               54, 32768, 0x0, 0;
 
 CFE_APP, generic_adcs,              ADCS_AppMain,             ADCS,             60, 32768, 0x0, 0;
@@ -38,7 +41,6 @@ CFE_LIB, cfs_lib,                   CFS_LibInit,              CFS_LIB,          
 CFE_APP, cs,                        CS_AppMain,               CS,               55, 16384, 0x0, 0;
 CFE_APP, hk,                        HK_AppMain,               HK,               63, 16384, 0x0, 0;
 CFE_APP, hs,                        HS_AppMain,               HS,               56, 16384, 0x0, 0;
-CFE_APP, sbn,                       SBN_AppMain,              SBN,              63, 16384, 0x0, 0;
 CFE_APP, md,                        MD_AppMain,               MD,               60, 16384, 0x0, 0;
 CFE_APP, mm,                        MM_AppMain,               MM,               61, 16384, 0x0, 0;
 
