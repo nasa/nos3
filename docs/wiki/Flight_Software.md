@@ -204,10 +204,10 @@ To create a NOS3 component in NOS3, first enter the nos3 debug by
 running **make debug** in the nos3/ directory.
 
 After running make debug, navigate to the
-**fsw/F-Prime/F-Prime-nos3/Components** directory.
+**fsw/fprime/fprime-nos3/Components** directory.
 
 Here you can create a new F-Prime component by running the following
-command: **F-Prime-util new –component**
+command: **fprime-util new –component**
 
 Note, you do not need to run the F-Prime virtual python environment in
 order to use the F-Prime framework tools to create an F-Prime project.
@@ -216,15 +216,15 @@ why the make debug is used to generate the new component in F-Prime.
 
 For more information on how to create F-Prime projects, components,
 deployments, etc. You can see the F-Prime documentation found here:
-[https://nasa.github.io/F-Prime/](https://nasa.github.io/fprime/)
+[https://nasa.github.io/fprime/](https://nasa.github.io/fprime/)
 
 The Helloworld tutorial helps a user understand how to use F-Prime and
 how to get started with developing using the F-Prime FSW framework. This
 tutorial explains how to setup an F-Prime project, however a user can
-use the existing F-Prime project found in NOS3. That is F-Prime-nos3/
-which is found under **fsw/F-Prime/**. The Helloworld tutorial also
+use the existing F-Prime project found in NOS3. That is fprime-nos3/
+which is found under **fsw/fprime/**. The Helloworld tutorial also
 describes how to create basic F-Prime connections to launch a new
-component in the F-Prime-gds.
+component in the F-Prime gds.
 
 The Nos3 Developers were able to utilize NOS3 Component fidelity to
 communicate to simulations in NOS3 without having to start from scratch
@@ -247,7 +247,7 @@ cmake files in the Deployment directory
 
 Here we explain how we synchronize time from NOS3 to with F-Prime by
 creating our own passive F-Prime component. This component can be found
-under fsw/F-Prime/F-Prime-nos3/Components. There you will find the cpp
+under fsw/fprime/fprime-nos3/Components. There you will find the cpp
 and fpp files that make up the Nos3Time component in F-Prime. These
 files are explained in more detail below.
 
@@ -260,7 +260,7 @@ NOS Engine supplies time on a created bus interface.
 
 The interface is created with the following nos engine connection string:
 ```
-“tcp://nos\_engine\_server:12000”
+“tcp://nos_engine_server:12000”
 ```
 
  
@@ -278,10 +278,8 @@ NOS Engine create bus command, and the add call back command:
 
  
 ```
-NE\_create\_bus(hub, ENGINE\_BUS\_NAME, ENGINE\_SERVER\_URI);
-
-NE\_bus\_add\_time\_tick\_callback(F-Prime\_Bus,
-F-Prime\_NosTickCallback);
+Fprime_Bus = NE_create_bus(hub, ENGINE_BUS_NAME, ENGINE_SERVER_URI);
+NE_bus_add_time_tick_callback(Fprime_Bus, Fprime_NosTickCallback);
 ```
 
  
@@ -290,23 +288,22 @@ A callback function should look similar to the following:
 
  
 ```
-void F-Prime\_NosTickCallback(NE\_SimTime time)
-
+void Fprime_NosTickCallback(NE_SimTime time)
 {
-    pthread\_mutex\_lock(&F-Prime\_sim\_time\_mutex);
-    F-Prime\_sim\_time = time;
-    pthread\_mutex\_unlock(&F-Prime\_sim\_time\_mutex);
+    pthread_mutex_lock(&Fprime_sim_time_mutex);
+    Fprime_sim_time = time;
+    pthread_mutex_unlock(&Fprime_sim_time_mutex);
 }
 ```
 
 The local function, relative to the F-Prime component,
-F-Prime\_NosTickCallback is used to retrieve the ticks (each tic is 100
+FPrime\_NosTickCallback() is used to retrieve the ticks (each tick is 100
 seconds). Then simple math is performed to place the seconds (upper U32
 ) and microseconds (lower U32) into the F-Prime time.set call described
 later in this documentation.
 
 This will pull time from the bus, and store it in a time variable
-(F-Prime\_sim\_time). This variable holds the number of ticks that have
+(Fprime\_sim\_time). This variable holds the number of ticks that have
 been supplied on the created bus. This variable is a tick counter
 variable. To convert to actual time, users will need to manipulate the
 ticks into seconds and micro seconds for F-Prime. This is done utilizing
@@ -337,11 +334,10 @@ time connections instance nos3Time
 After the component has been integrated into the deployment, and
 references to posix time removed, the component and GUI will now use the
 new NOS3Time after manipulating the timeGetPort\_handler (in
-Nos3Time.cpp undercomponents) as such:
+Nos3Time.cpp under components) as such:
 
 ```
-time.set(TB\_WORKSTATION\_TIME,0, Nos3Time\_upper,
-Nos3Time\_lower);
+time.set(TB_WORKSTATION_TIME,0, Nos3Time_upper, Nos3Time_lower);
 ```
 
 Note, we are overwriting the F-Prime time base workstation enum, but one
@@ -353,6 +349,6 @@ F-Prime.
 
 ### F-Prime Documentation links:
 
-* F-Prime github Docs: [https://nasa.github.io/F-Prime/](https://nasa.github.io/fprime/)
-* F-Prime cpp Docs: [https://nasa.github.io/F-Prime/UsersGuide/api/c++/html/index.html](https://nasa.github.io/fprime/UsersGuide/api/c++/html/index.html)
-* F-Prime fpp Docs: [https://nasa.github.io/F-Prime/UsersGuide/user/fpp-user-guide.html](https://nasa.github.io/fprime/UsersGuide/user/fpp-user-guide.html)
+* F-Prime github Docs: [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/)
+* F-Prime cpp Docs: [https://nasa.github.io/fprime/UsersGuide/api/c++/html/index.html](https://nasa.github.io/fprime/UsersGuide/api/c++/html/index.html)
+* F-Prime fpp Docs: [https://nasa.github.io/fprime/UsersGuide/user/fpp-user-guide.html](https://nasa.github.io/fprime/UsersGuide/user/fpp-user-guide.html)
