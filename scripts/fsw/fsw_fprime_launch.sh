@@ -83,9 +83,9 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    # echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    # $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos
-    # echo ""
+    echo $SC_NUM " - Connect COSMOS to spacecraft network..."
+    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos
+    echo ""
 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
@@ -96,11 +96,8 @@ do
 
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
-    gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -p 0.0.0.0:5000:5000 -p 0.0.0.0:50050:50050 -p 0.0.0.0:50000:50000 -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
+    gnome-terminal --window --title="FPrime" -- $DFLAGS -p 0.0.0.0:5000:5000 -p 0.0.0.0:50050:50050 -p 0.0.0.0:50000:50000 -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
     echo ""
-    # -p 5000:5000 -p 50050:50050 -p 50000:50000
-    # Debugging
-    # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
 
     echo $SC_NUM " - CryptoLib..."
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
@@ -160,13 +157,16 @@ urlIP=$(docker container inspect sc_1_fprime | grep -i IPAddress | grep -oE "\b(
 #     sleep 1 &
 # done
 
+URLIP_YAMCS=$(docker container inspect yamcs-operator_1 | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
+
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
 then
     firefox --new-tab ${urlIP}:5000 & 
 fi
 
+urlIP_fprime=${urlIP}
 
-# gnome-terminal --tab --title=$SC_NUM" - fprime python script" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --network=$SC_NETNAME -w $SIM_BIN $DBOX ./$SCRIPT_DIR/gsw/fprime_gds_python.sh 
+gnome-terminal --window --title="fprime Python Script"  -- $DFLAGS -e URLIP_FPRIME=$urlIP_fprime -e URLIP_YAMCS=$URLIP_YAMCS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_fprime_gds_hook" --network=$SC_NETNAME -h nos_fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/gsw/fprime_gds_python.sh
 
 echo "Docker launch script completed!"

@@ -92,6 +92,7 @@ clean-fsw:
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
+	rm -rf fsw/fprime/fprime-nos3/logs
 
 clean-sim:
 	rm -rf sims/build
