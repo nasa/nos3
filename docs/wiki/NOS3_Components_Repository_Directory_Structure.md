@@ -6,11 +6,11 @@ NOS3 is comprised of a core set of common code and a custom set of application/s
 NOS3 has been reorganized around the foundational concept of a component.  The intent is that a spacecraft be made up of a core set of common functionality and then a custom set of components.  Each component is represented by a cFS application which is placed in an `fsw` subdirectory of the component.  In order for the COSMOS ground software to control the component application, a component has a collection of COSMOS command and telemetry tables which are placed in a `gsw` subdirectory of the component.  In many cases (but not all), a component is a hardware component on the spacecraft and thus it is appropriate to have a NOS3 hardware simulator for the component which is placed in a `sims` subdirectory of the component.
 
 ### How the build finds components
-1.  Flight software:  Each component is listed in the fsw/nos3_defs/targets.cmake file.  The location of the components directory is specified by the CFS_APP_PATH environment variable in the top level Makefile.
+1.  Flight software:  Each component is listed in the cfg/nos3_defs/targets.cmake file.  The location of the components directory is specified by the CFS_APP_PATH environment variable in the top level Makefile.
 2.  Simulators:  The sims/CMakeLists.txt file has logic to include all non-template simulators found in the components directory.
 
 ### How launch finds components
-1.  Flight software:  Flight software is located at fsw/build/exe/cpuN/core-cpuN.  The cf subdirectory contains a shared object library for each flight software app built.  The cf subdirectory also contains the cfe_es_startup.scr startup script that lists the apps and components to execute as part of flight software; this script is created during the build process from startup scripts in the fsw/nos3_defs directory.
+1.  Flight software:  Flight software is located at fsw/build/exe/cpuN/core-cpuN.  The cf subdirectory contains a shared object library for each flight software app built.  The cf subdirectory also contains the cfe_es_startup.scr startup script that lists the apps and components to execute as part of flight software; this script is created during the build process from startup scripts in the cfg/nos3_defs directory.
 2.  Simulators:  The script gsw/scripts/launch.sh is hardwired with the list of simulators to launch.
 
 ### How COSMOS finds components
@@ -22,7 +22,7 @@ Most of the subdirectories/submodules of the NOS3 repository are common core cod
 
 1.  components
     1.  Add a repository submodule for each component that you need for your spacecraft
-2.  fsw/nos3_defs
+2.  cfg/nos3_defs
     1.  targets.cmake - Add the list of components to be built as part of flight software to this file
     2.  cpuN_cfe_es_startup.scr - Add the list of component apps to be run as part of flight software to this file
     3.  Customize other files in this directory as appropriate
@@ -56,7 +56,7 @@ Do not modify these files/directories/submodules other than as specified in _Wha
   * build - flight software build artifacts location
   * cfe - core Flight Executive
   * fprime - JPL Flight Executive
-  * nos3_defs - Mission specific definitions.  These should be customized.
+  * nos3_defs - Mission specific definitions.  These should be customized (found under nos3/cfg/nos3_defs).
   * osal - Operating System Abstraction Layer
   * psp - Platform Support Package
   * tools - miscellaneous cFS tools

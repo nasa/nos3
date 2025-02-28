@@ -12,5 +12,5 @@ gnome-terminal --tab --title="YAMCS" -- $DFLAGS  -e COMPONENT_DIR=$COMPONENT_DIR
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
 then
-    sleep 20 && firefox localhost:8090 &
+    sleep 30 && firefox localhost:8090 &
 fi
