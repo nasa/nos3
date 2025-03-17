@@ -19,7 +19,7 @@ do
         pidof core-cpu1 > /dev/null
         if [ $? -eq 1 ]
         then
-            $FSW_DIR/core-cpu1 -R PO & 
+            valgrind $FSW_DIR/core-cpu1 -R PO & 
         fi
     fi
     sleep 1

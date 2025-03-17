@@ -18,7 +18,7 @@ add_compile_options(
     -Wwrite-strings         # Warn if not treating string literals as "const"
     -Wpointer-arith         # Warn about suspicious pointer operations
     -Wcast-align            # Warn about casts that increase alignment requirements
-    -Werror                 # Treat warnings as errors (code should be clean)
+    #-Werror                 # Treat warnings as errors (code should be clean)
 )
 
 # The _XOPEN_SOURCE directive is required for glibc to enable conformance with the

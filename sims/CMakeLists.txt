@@ -25,6 +25,7 @@ set(CXX_11 ON)
 		endif(ITC_CXX_FLAGS)		
     set(ITC_CXX_FLAGS "${ITC_CXX_FLAGS} --std=c++11")    
     set(CMAKE_CXX_FLAGS "-Wl,--disable-new-dtags -Werror -Wall -Wextra -pedantic -Wno-vla -Wwrite-strings -Wpointer-arith -Wcast-align")
+    # -fsanitize=address")
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(CXX_11)
 

@@ -29,9 +29,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CLANG_OVERRIDE)
     set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS} -fdiagnostics-show-option")
 
     message(STATUS "Setting compiler options...")
-    #set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS} -fPIC")
-    #set(CMAKE_SHARED_LINKER_FLAGS "-fpic")
-    #set(CMAKE_EXE_LINKER_FLAGS "-fpic")
+    set(ITC_CCXX_FLAGS "${ITC_CCXX_FLAGS}") 
+    # -fsanitize=address")
+    # set(CMAKE_SHARED_LINKER_FLAGS "-fsanitize=address")
+    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
     
     CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_VISIBILITY)
 

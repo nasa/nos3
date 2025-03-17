@@ -6,6 +6,7 @@ endif()
 include(CheckCCompilerFlag)
 
 set(ITC_C_FLAGS "${ITC_C_FLAGS}"
+                "-g"
                 #"-std=c99"
                 "-Wall"
                 "-Wextra"
@@ -36,13 +37,14 @@ set(ITC_C_FLAGS "${ITC_C_FLAGS}"
                 "-Wstrict-overflow=5"
                 "-fdiagnostics-show-option"
                 #"-Wstack-protector"
-                #"-fstack-protector-all"
-                #"-fsanitize=address"
-                #"-fstack-check"
+                "-fstack-protector-all" # "-fstack-protector-strong"
+                # "-fsanitize=address"
+                # "-fstack-check"
                 #"-Weverything"
                 "-pedantic-errors"
                 "-fprofile-arcs" # code coverage
                 "-ftest-coverage" # ^
+                "-D_FORTIFY_SOURCE=2"
                 )
 
 #if(${TGTNAME} STREQUAL cpu1)
