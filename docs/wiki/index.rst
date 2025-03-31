@@ -18,3 +18,4 @@ This documentation is designed to provide information for users and developers t
    Simulators.md
    Design_Reference_Mission.md
    STF_FSW_Development_Plan.md
+   Nominal_Operations.md
