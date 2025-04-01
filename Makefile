@@ -120,7 +120,7 @@ gsw:
 	./cfg/build/gsw_build.sh
 
 igniter:
-	./scripts/igniter_launch.sh
+	./scripts/cfg/igniter_launch.sh
 
 launch:
 	./cfg/build/launch.sh
