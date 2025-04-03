@@ -4,18 +4,15 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$SCRIPT_DIR/env.sh"
 
-if [ ! -d $USER_NOS3_DIR ]; then
-    echo ""
-    echo "    Need to run make prep first!"
-    echo ""
-    exit 1
+if [ ! -d "$USER_NOS3_DIR" ]; then
+    echo "CI: USER_NOS3_DIR not found, running 'make prep'..."
+    make prep
 fi
 
-if [ ! -d $BASE_DIR/cfg/build ]; then
-    echo ""
-    echo "    Need to run make config first!"
-    echo ""
-    exit 1
+# Auto-run make config if needed
+if [ ! -d "$BASE_DIR/cfg/build" ]; then
+    echo "CI: BASE_DIR/cfg/build not found, running 'make config'..."
+    make config
 fi
 
 sudo mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
