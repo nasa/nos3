@@ -74,29 +74,17 @@ jobs:
             name: coverage-artifacts
             path: docs/coverage
               
-    systemtest:
-      needs: [fsw, sim]
+    system-test:
       runs-on: ubuntu-latest
-      container:
-        image: ivvitc/nos3-64:20250124
+      needs: [fsw, sim]
       steps:
         - uses: actions/checkout@v4
           with:
-            fetch-depth: 1
             submodules: recursive
-
-        - name: Minimal CI-safe 'prep'
-          run: |
-            mkdir -p ~/.nos3
-            git clone --depth=1 https://github.com/nasa-itc/42.git ~/.nos3/42
-            mkdir -p fsw/build/exe/cpu1/data/{cam,evs,hk,inst}
-            mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
-
-        - name: CI-safe config
-          run: make config
-
-        - name: Make launch script executable
+        - name: Set up Docker (if needed)
+          uses: docker/setup-buildx-action@v3
+        - name: Make script executable
           run: chmod +x scripts/ci_launch.sh
-
-        - name: Run headless NOS3 launch
+        - name: Run Headless Launch Script
           run: ./scripts/ci_launch.sh
+
