@@ -76,23 +76,31 @@ jobs:
               
     ci_launch:
       runs-on: ubuntu-latest
-      container:
-        image: ivvitc/nos3-64:20250124
+
       steps:
         - name: Checkout repository
           uses: actions/checkout@v4
           with:
-            fetch-depth: 1
             submodules: recursive
 
-        - name: Make prep and config
-          run: |
-            make prep
-            make config
-            make
+        - name: Pull NOS3 Docker image
+          run: docker pull ivvitc/nos3-64:20250124
 
-        - name: Run Headless CI Launch
+        - name: Run CI inside NOS3 container
           run: |
-            chmod +x scripts/ci_launch.sh
-            ./scripts/ci_launch.sh
+            docker run --rm -v ${{ github.workspace }}:/workspace \
+              -w /workspace \
+              --name nos3_ci \
+              ivvitc/nos3-64:20250124 \
+              bash -c "
+                make prep &&
+                make config &&
+                chmod +x scripts/ci_launch.sh &&
+                ./scripts/ci_launch.sh
+              "
+
+        - name: Cleanup (if needed)
+          if: always()
+          run: |
+            docker ps -aq | xargs -r docker rm -f
 
