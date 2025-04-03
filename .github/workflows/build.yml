@@ -70,4 +70,28 @@ jobs:
           with:
             name: coverage-artifacts
             path: docs/coverage
+        
+    system-test:
+      runs-on: ubuntu-latest
+      needs: [fsw, sim]
+      container:
+        image: ivvitc/nos3-64:20250124
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
+        - name: Make config
+          run: make config
+        - name: Launch NOS3 and Run System Test
+          run: |
+            chmod +x scripts/ci_launch.sh
+            ./scripts/ci_launch.sh
+        - name: Clean up all Docker containers
+          if: always()
+          run: |
+            echo "Stopping all containers..."
+            docker stop $(docker ps -aq) || true
+            docker rm $(docker ps -aq) || true
+
     
