@@ -74,38 +74,46 @@ jobs:
     #         name: coverage-artifacts
     #         path: docs/coverage
                   
-  system-test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+    system-test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+        - name: Install Docker (official repo)
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y \
+              ca-certificates \
+              curl \
+              gnupg \
+              lsb-release
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io lsb-release
+            sudo install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+              sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+              https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-      - name: Pull NOS3 Docker image
-        run: docker pull ivvitc/nos3-64:20250124
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      - name: Run NOS3 CI Pipeline
-        run: |
-          docker run --rm --privileged \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            --name nos3_ci \
-            ivvitc/nos3-64:20250124 \
-            bash -c "
-              make prep &&
-              make config &&
-              chmod +x scripts/ci_launch.sh &&
-              ./scripts/ci_launch.sh
-            "
+        - name: Run NOS3 Launch
+          run: |
+            docker run --rm --privileged \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "${GITHUB_WORKSPACE}:/workspace" \
+              -w /workspace \
+              --name nos3_ci \
+              ivvitc/nos3-64:20250124 \
+              bash -c "
+                make prep &&
+                make config &&
+                chmod +x scripts/ci_launch.sh &&
+                ./scripts/ci_launch.sh
+              "
