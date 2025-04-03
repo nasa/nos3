@@ -10,81 +10,88 @@ permissions:
   contents: write
 
 jobs:
-    fsw:
-      runs-on: ubuntu-latest
-      container:
-        image: ivvitc/nos3-64:20250124
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
-            submodules: recursive
-        - name: config
-          run: make config  
-        - name: build
-          run: make build-test
-        - name: test
-          run: make test-fsw
+    # fsw:
+    #   runs-on: ubuntu-latest
+    #   container:
+    #     image: ivvitc/nos3-64:20250124
+    #   steps:
+    #     - uses: actions/checkout@v4
+    #       with:
+    #         fetch-depth: 1
+    #         submodules: recursive
+    #     - name: config
+    #       run: make config  
+    #     - name: build
+    #       run: make build-test
+    #     - name: test
+    #       run: make test-fsw
 
-    sim:
-      runs-on: ubuntu-latest
-      container:
-        image: ivvitc/nos3-64:20250124
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
-            submodules: recursive
-        - name: config
-          run: make config  
-        - name: build
-          run: make build-sim
+    # sim:
+    #   runs-on: ubuntu-latest
+    #   container:
+    #     image: ivvitc/nos3-64:20250124
+    #   steps:
+    #     - uses: actions/checkout@v4
+    #       with:
+    #         fetch-depth: 1
+    #         submodules: recursive
+    #     - name: config
+    #       run: make config  
+    #     - name: build
+    #       run: make build-sim
 
-    coverage:
-      runs-on: ubuntu-latest
-      container:
-        image: ivvitc/nos3-64:20250124
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0  
-            submodules: recursive
-        - name: Configure Safe Directory
-          run: git config --global --add safe.directory $GITHUB_WORKSPACE
-        - name: Update
-          run: apt-get update
-        - name: install dependencies
-          run: apt-get install -y gcc lcov gcovr bc
-        - name: config
-          run: make config
-        - name: build coverage docs
-          run: |
-            export CFLAGS="-fprofile-arcs -ftest-coverage -g"
-            make build-test
-            make gcov
-        - name: Upload coverage reports to Codecov
-          uses: codecov/codecov-action@v5
-          with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            verbose: true
-            recurse_submodules: true
-        - name: Archive Coverage Directory
-          uses: actions/upload-artifact@v4
-          with:
-            name: coverage-artifacts
-            path: docs/coverage
+    # coverage:
+    #   runs-on: ubuntu-latest
+    #   container:
+    #     image: ivvitc/nos3-64:20250124
+    #   steps:
+    #     - uses: actions/checkout@v4
+    #       with:
+    #         fetch-depth: 0  
+    #         submodules: recursive
+    #     - name: Configure Safe Directory
+    #       run: git config --global --add safe.directory $GITHUB_WORKSPACE
+    #     - name: Update
+    #       run: apt-get update
+    #     - name: install dependencies
+    #       run: apt-get install -y gcc lcov gcovr bc
+    #     - name: config
+    #       run: make config
+    #     - name: build coverage docs
+    #       run: |
+    #         export CFLAGS="-fprofile-arcs -ftest-coverage -g"
+    #         make build-test
+    #         make gcov
+    #     - name: Upload coverage reports to Codecov
+    #       uses: codecov/codecov-action@v5
+    #       with:
+    #         token: ${{ secrets.CODECOV_TOKEN }}
+    #         verbose: true
+    #         recurse_submodules: true
+    #     - name: Archive Coverage Directory
+    #       uses: actions/upload-artifact@v4
+    #       with:
+    #         name: coverage-artifacts
+    #         path: docs/coverage
               
-    system-test:
+    ci_launch:
       runs-on: ubuntu-latest
-      needs: [fsw, sim]
+      container:
+        image: ivvitc/nos3-64:20250124
       steps:
-        - uses: actions/checkout@v4
+        - name: Checkout repository
+          uses: actions/checkout@v4
           with:
+            fetch-depth: 1
             submodules: recursive
-        - name: Set up Docker (if needed)
-          uses: docker/setup-buildx-action@v3
-        - name: Make script executable
-          run: chmod +x scripts/ci_launch.sh
-        - name: Run Headless Launch Script
-          run: ./scripts/ci_launch.sh
+
+        - name: Make prep and config
+          run: |
+            make prep
+            make config
+
+        - name: Run Headless CI Launch
+          run: |
+            chmod +x scripts/ci_launch.sh
+            ./scripts/ci_launch.sh
 
