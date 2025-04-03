@@ -73,34 +73,31 @@ jobs:
     #       with:
     #         name: coverage-artifacts
     #         path: docs/coverage
-              
-    ci_launch:
-      runs-on: ubuntu-latest
+                  
+    nos3_ci:
+        runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-          with:
-            submodules: recursive
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+            with:
+              submodules: recursive
 
-        - name: Pull NOS3 Docker image
-          run: docker pull ivvitc/nos3-64:20250124
+          - name: Pull NOS3 Docker image
+            run: docker pull ivvitc/nos3-64:20250124
 
-        - name: Run CI inside NOS3 container
-          run: |
-            docker run --rm -v ${{ github.workspace }}:/workspace \
-              -w /workspace \
-              --name nos3_ci \
-              ivvitc/nos3-64:20250124 \
-              bash -c "
-                make prep &&
-                make config &&
-                chmod +x scripts/ci_launch.sh &&
-                ./scripts/ci_launch.sh
-              "
-
-        - name: Cleanup (if needed)
-          if: always()
-          run: |
-            docker ps -aq | xargs -r docker rm -f
+          - name: Launch CI inside NOS3 container
+            run: |
+              docker run --rm --privileged \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v ${{ github.workspace }}:/workspace \
+                -w /workspace \
+                --name nos3_ci \
+                ivvitc/nos3-64:20250124 \
+                bash -c "
+                  make prep &&
+                  make config &&
+                  chmod +x scripts/ci_launch.sh &&
+                  ./scripts/ci_launch.sh
+                "
 
