@@ -74,30 +74,38 @@ jobs:
     #         name: coverage-artifacts
     #         path: docs/coverage
                   
-    nos3_ci:
-        runs-on: ubuntu-latest
+  system-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-        steps:
-          - name: Checkout repository
-            uses: actions/checkout@v4
-            with:
-              submodules: recursive
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
 
-          - name: Pull NOS3 Docker image
-            run: docker pull ivvitc/nos3-64:20250124
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io lsb-release
 
-          - name: Launch CI inside NOS3 container
-            run: |
-              docker run --rm --privileged \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                -v ${{ github.workspace }}:/workspace \
-                -w /workspace \
-                --name nos3_ci \
-                ivvitc/nos3-64:20250124 \
-                bash -c "
-                  make prep &&
-                  make config &&
-                  chmod +x scripts/ci_launch.sh &&
-                  ./scripts/ci_launch.sh
-                "
+      - name: Pull NOS3 Docker image
+        run: docker pull ivvitc/nos3-64:20250124
 
+      - name: Run NOS3 CI Pipeline
+        run: |
+          docker run --rm --privileged \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            --name nos3_ci \
+            ivvitc/nos3-64:20250124 \
+            bash -c "
+              make prep &&
+              make config &&
+              chmod +x scripts/ci_launch.sh &&
+              ./scripts/ci_launch.sh
+            "
