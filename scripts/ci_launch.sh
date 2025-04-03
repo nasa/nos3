@@ -13,7 +13,7 @@ fi
 if [ ! -d "$BASE_DIR/cfg/build" ]; then
     echo "CI: BASE_DIR/cfg/build not found, running 'make config'..."
     make config
-fi
+fi 
 
 sudo mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
 sudo mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
