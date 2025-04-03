@@ -1,4 +1,4 @@
-#!/bin/bash -i
+#!/bin/bash 
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -15,8 +15,8 @@ if [ ! -d "$BASE_DIR/cfg/build" ]; then
     make config
 fi 
 
-sudo mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
-sudo mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
+mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
+mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so 2>/dev/null || true
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so 2>/dev/null || true
 
