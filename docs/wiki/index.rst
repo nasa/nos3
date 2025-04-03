@@ -10,7 +10,6 @@ This documentation is designed to provide information for users and developers t
 
    Home.md
    Getting_Started.md
-   Igniter.md
    Architecture.md
    Flight_Software.md
    Ground_Software.md

@@ -10,7 +10,7 @@ From STF-1, NOS3 was born as an architecture for new missions to baseline and le
 NOS3 is a virtual spacecraft environment enabling development, testing, and training for users.  
 Its component-based structure facilitates integration of software modules, enabling developers to simulate spacecraft behavior, test instrument interfaces, and perform software/hardware integration. 
 
-## Modules
+### Modules
 
 NOS3 can be distilled down into various configurable modules that make up the environment:
 * Flight Software
