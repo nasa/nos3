@@ -1,7 +1,10 @@
 name: NOS3 CI
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   system-test:
@@ -11,11 +14,8 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Docker permissions
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo usermod -aG docker $USER
+      - name: Check Docker version
+        run: docker version
 
       - name: Prepare environment
         run: |
@@ -98,7 +98,20 @@ jobs:
           sleep 10  # Give everything time to settle
           docker exec -it cosmos_openc3-operator_1 ruby /cosmos/system_test.rb
 
+      - name: Collect COSMOS and FSW logs
+        if: always()
+        run: |
+          mkdir -p logs
+          docker logs cosmos_openc3-operator_1 > logs/cosmos.log || true
+          docker logs sc_1_nos_engine_server > logs/nos_engine.log || true
+          docker logs sc_1_nos_fsw > logs/fsw.log || true
 
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nos3-logs
+          path: logs/
 
 # name: Build
 
