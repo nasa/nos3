@@ -18,4 +18,12 @@ This documentation is designed to provide information for users and developers t
    Simulators.md
    Design_Reference_Mission.md
    STF_FSW_Development_Plan.md
+<<<<<<< HEAD
    Nominal_Operations.md
+=======
+   Requirements.md
+   Verification_and_Validation_Plan.md
+   RTM.md
+   Limited_Performance_Tests.md
+   Comprehensive_Performance_Tests.md
+>>>>>>> dev

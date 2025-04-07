@@ -58,4 +58,8 @@ set(OSAL_CONFIG_MAX_MUTEXES             45)
 # requires a slot in this table, as it still assigns an OSAL ID.
 set(OSAL_CONFIG_MAX_MODULES             64)
 
+# Note that even with this enabled, OSAL will still _attempt_ to create
+# resources as requested, this only makes it so the overall request will
+# continue, regardless of whether the privileged operation succeeded or not.
+set(OSAL_CONFIG_DEBUG_PERMISSIVE_MODE TRUE)
 

@@ -106,6 +106,7 @@ else:
         sc_gps_en = sc_root.find('components/gps/enable').text
         sc_imu_en = sc_root.find('components/imu/enable').text
         sc_mag_en = sc_root.find('components/mag/enable').text
+        sc_mgr_en = sc_root.find('components/mgr/enable').text
         sc_radio_en = sc_root.find('components/radio/enable').text
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
@@ -144,6 +145,7 @@ else:
             gps_line = ""
             imu_line = ""
             mag_line = ""
+            mgr_line = ""
             radio_line = ""
             rw_line = ""
             sample_line = ""
@@ -196,6 +198,9 @@ else:
                 if line.find('MAG,') != -1:
                     if (sc_mag_en == 'true'):
                         mag_line = line
+                if line.find('MGR,') != -1:
+                    if (sc_mgr_en == 'true'):
+                        mgr_line = line
                 if line.find('RADIO,') != -1:
                     if (sc_radio_en == 'true'):
                         radio_line = line
@@ -231,6 +236,7 @@ else:
         lines.insert(sc_startup_eof, rw_line)
         lines.insert(sc_startup_eof, radio_line)
         lines.insert(sc_startup_eof, mag_line)
+        lines.insert(sc_startup_eof, mgr_line)
         lines.insert(sc_startup_eof, imu_line)
         lines.insert(sc_startup_eof, gps_line)
         lines.insert(sc_startup_eof, fss_line)
