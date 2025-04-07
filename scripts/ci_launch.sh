@@ -1,22 +1,25 @@
-#!/bin/bash 
+#!/bin/bash -i
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$SCRIPT_DIR/env.sh"
 
-if [ ! -d "$USER_NOS3_DIR" ]; then
-    echo "CI: USER_NOS3_DIR not found, running 'make prep'..."
-    make prep
+if [ ! -d $USER_NOS3_DIR ]; then
+    echo ""
+    echo "    Need to run make prep first!"
+    echo ""
+    exit 1
 fi
 
-# Auto-run make config if needed
-if [ ! -d "$BASE_DIR/cfg/build" ]; then
-    echo "CI: BASE_DIR/cfg/build not found, running 'make config'..."
-    make config
-fi 
+if [ ! -d $BASE_DIR/cfg/build ]; then
+    echo ""
+    echo "    Need to run make config first!"
+    echo ""
+    exit 1
+fi
 
-mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
-mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
+sudo mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
+sudo mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so 2>/dev/null || true
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so 2>/dev/null || true
 
@@ -118,4 +121,11 @@ for (( i=1; i<=$SATNUM; i++ )); do
 
 done
 
-echo "Docker launch script completed!"
+
+# Final message
+echo "Docker launch script completed!  "
+echo "Beginning System Test Script!  "
+
+sleep 5
+/bin/bash scripts/system_tests.sh
+
