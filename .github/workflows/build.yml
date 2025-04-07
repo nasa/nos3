@@ -1,244 +1,119 @@
-name: NOS3 CI
+name: Build
 
-on:
+on: 
   pull_request:
 
+env:
+  CTEST_OUTPUT_ON_FAILURE: true
+
+permissions:
+  contents: write
+
 jobs:
-  system-test:
-    name: NOS3 System Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+    fsw:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20250124
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
+        - name: config
+          run: make config  
+        - name: build
+          run: make build-test
+        - name: test
+          run: make test-fsw
 
-      - name: Check Docker version
-        run: docker version
+    sim:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20250124
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
+        - name: config
+          run: make config  
+        - name: build
+          run: make build-sim
 
-      - name: Build config artifacts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y make cmake
-          make prep
-          make config
-
-      - name: Prepare environment
-        run: |
-          mkdir -p $HOME/.nos3_data
-          sudo mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
-          cp fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so || true
-          cp fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so || true
-
-      - name: Create core network
-        run: |
-          docker network rm nos3_core || true
-          docker network create --driver=bridge --subnet=192.168.41.0/24 --gateway=192.168.41.1 nos3_core
-
-      - name: Launch COSMOS GSW
-        run: |
-          docker run -d --name cosmos_openc3-operator_1 \
-            --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
-            -v "$PWD/gsw/config:/cosmos/config:ro" \
-            -v "$PWD/gsw:/cosmos" \
-            -v "$PWD/scripts:/scripts:ro" \
-            -v /tmp/nos3:/tmp/nos3 \
-            --network=nos3_core \
-            -w /cosmos/tools \
-            ballaerospace/cosmos:4.5.0 tail -f /dev/null
-
-      - name: Launch CmdTlmServer in COSMOS
-        run: |
-          docker exec cosmos_openc3-operator_1 bash -c "apt update && apt install -y xvfb"
-          docker exec -d cosmos_openc3-operator_1 bash -c "xvfb-run ruby CmdTlmServer /cosmos/config/tools/cmd_tlm_server/cmd_tlm_server.txt"
-
-      - name: Create spacecraft network and launch components
-        run: |
-          CFG_FILE="-f nos3-simulator.xml"
-          SATNUM=1
-
-          docker network rm nos3_sc_1 || true
-          docker network create nos3_sc_1
-          docker network connect nos3_sc_1 cosmos_openc3-operator_1 --alias cosmos --alias active-gs
-
-          if [ ! -d cfg/build/InOut ]; then
-            echo "ERROR: cfg/build/InOut not found. Did make config fail?"
-            exit 1
-          fi
-
-          cp -r cfg/build/InOut $HOME/.nos3_data/NOS3InOut
-
-          docker run -d --name sc_1_42 --network=nos3_sc_1 \
-            -e DISPLAY=$DISPLAY \
-            -v "$HOME/.nos3_data:$HOME/.nos3_data" \
-            -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
-            -w "$HOME/.nos3_data/42" ivvitc/nos3-64:20250124 ./42 NOS3InOut
-
-          docker run -dit --name sc_1_nos_fsw --network=nos3_sc_1 \
-            -v "$PWD:/mnt/workspace" -w "/mnt/workspace/fsw/build/exe/cpu1" \
-            -e LD_LIBRARY_PATH=/mnt/workspace/fsw:/usr/lib:/usr/local/lib \
-            --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice \
-            ivvitc/nos3-64:20250124 ./core-cpu1 -R PO
-
-          docker run -d --name sc_1_cryptolib --network=nos3_sc_1 \
-            -v "$PWD:/mnt/workspace" -w "/mnt/workspace/gsw/build" \
-            --network-alias=cryptolib \
-            ivvitc/nos3-64:20250124 ./support/standalone
-
-          docker run -dit --name sc_1_nos_engine_server --network=nos3_sc_1 \
-            -v "$PWD/sim:/mnt/sim" -w "/mnt/sim" \
-            ivvitc/nos3-64:20250124 /usr/bin/nos_engine_server_standalone -f /mnt/sim/nos_engine_server_config.json
-
-          docker run -d --name sc_1_truth42sim --network=nos3_sc_1 \
-            -v "$PWD/sim:/mnt/sim" -w "/mnt/sim" \
-            ivvitc/nos3-64:20250124 ./nos3-single-simulator $CFG_FILE truth42sim
-
-          for sim in \
-              camsim generic_css_sim generic_eps_sim generic_fss_sim \
-              gps generic_imu_sim generic_mag_sim \
-              generic-reactionwheel-sim0 generic-reactionwheel-sim1 \
-              generic-reactionwheel-sim2 generic_radio_sim sample_sim \
-              generic_star_tracker_sim generic_thruster_sim generic_torquer_sim; do
-              docker run -d --name sc_1_${sim} --network=nos3_sc_1 \
-                -v "$PWD/sim:/mnt/sim" -w "/mnt/sim" \
-                ivvitc/nos3-64:20250124 ./nos3-single-simulator $CFG_FILE $sim
-          done
-
-      - name: Run COSMOS system test
-        run: |
-          sleep 10  # Give everything time to settle
-          docker exec -it cosmos_openc3-operator_1 ruby /cosmos/system_test.rb
-
-      - name: Collect COSMOS and FSW logs
-        if: always()
-        run: |
-          mkdir -p logs
-          docker logs cosmos_openc3-operator_1 > logs/cosmos.log || true
-          docker logs sc_1_nos_engine_server > logs/nos_engine.log || true
-          docker logs sc_1_nos_fsw > logs/fsw.log || true
-
-      - name: Upload test logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: nos3-logs
-          path: logs/
-
-
-# name: Build
-
-# on: 
-#   pull_request:
-
-# env:
-#   CTEST_OUTPUT_ON_FAILURE: true
-
-# permissions:
-#   contents: write
-
-# jobs:
-#     # fsw:
-#     #   runs-on: ubuntu-latest
-#     #   container:
-#     #     image: ivvitc/nos3-64:20250124
-#     #   steps:
-#     #     - uses: actions/checkout@v4
-#     #       with:
-#     #         fetch-depth: 1
-#     #         submodules: recursive
-#     #     - name: config
-#     #       run: make config  
-#     #     - name: build
-#     #       run: make build-test
-#     #     - name: test
-#     #       run: make test-fsw
-
-#     # sim:
-#     #   runs-on: ubuntu-latest
-#     #   container:
-#     #     image: ivvitc/nos3-64:20250124
-#     #   steps:
-#     #     - uses: actions/checkout@v4
-#     #       with:
-#     #         fetch-depth: 1
-#     #         submodules: recursive
-#     #     - name: config
-#     #       run: make config  
-#     #     - name: build
-#     #       run: make build-sim
-
-#     # coverage:
-#     #   runs-on: ubuntu-latest
-#     #   container:
-#     #     image: ivvitc/nos3-64:20250124
-#     #   steps:
-#     #     - uses: actions/checkout@v4
-#     #       with:
-#     #         fetch-depth: 0  
-#     #         submodules: recursive
-#     #     - name: Configure Safe Directory
-#     #       run: git config --global --add safe.directory $GITHUB_WORKSPACE
-#     #     - name: Update
-#     #       run: apt-get update
-#     #     - name: install dependencies
-#     #       run: apt-get install -y gcc lcov gcovr bc
-#     #     - name: config
-#     #       run: make config
-#     #     - name: build coverage docs
-#     #       run: |
-#     #         export CFLAGS="-fprofile-arcs -ftest-coverage -g"
-#     #         make build-test
-#     #         make gcov
-#     #     - name: Upload coverage reports to Codecov
-#     #       uses: codecov/codecov-action@v5
-#     #       with:
-#     #         token: ${{ secrets.CODECOV_TOKEN }}
-#     #         verbose: true
-#     #         recurse_submodules: true
-#     #     - name: Archive Coverage Directory
-#     #       uses: actions/upload-artifact@v4
-#     #       with:
-#     #         name: coverage-artifacts
-#     #         path: docs/coverage
+    coverage:
+      runs-on: ubuntu-latest
+      container:
+        image: ivvitc/nos3-64:20250124
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  
+            submodules: recursive
+        - name: Configure Safe Directory
+          run: git config --global --add safe.directory $GITHUB_WORKSPACE
+        - name: Update
+          run: apt-get update
+        - name: install dependencies
+          run: apt-get install -y gcc lcov gcovr bc
+        - name: config
+          run: make config
+        - name: build coverage docs
+          run: |
+            export CFLAGS="-fprofile-arcs -ftest-coverage -g"
+            make build-test
+            make gcov
+        - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            verbose: true
+            recurse_submodules: true
+        - name: Archive Coverage Directory
+          uses: actions/upload-artifact@v4
+          with:
+            name: coverage-artifacts
+            path: docs/coverage
                   
-#     system-test:
-#       runs-on: ubuntu-latest
-#       steps:
-#         - name: Checkout repository
-#           uses: actions/checkout@v4
-#           with:
-#             fetch-depth: 1
-#             submodules: recursive
+    system-test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+            submodules: recursive
 
-#         - name: Install Docker (official repo)
-#           run: |
-#             sudo apt-get update
-#             sudo apt-get install -y \
-#               ca-certificates \
-#               curl \
-#               gnupg \
-#               lsb-release
+        - name: Install Docker (official repo)
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y \
+              ca-certificates \
+              curl \
+              gnupg \
+              lsb-release
 
-#             sudo install -m 0755 -d /etc/apt/keyrings
-#             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-#               sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-#             echo \
-#               "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-#               https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
-#               sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            sudo install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+              sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+              https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-#             sudo apt-get update
-#             sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-#         - name: Run NOS3 Launch
-#           run: |
-#             docker run --rm --privileged \
-#               -v /var/run/docker.sock:/var/run/docker.sock \
-#               -v "${GITHUB_WORKSPACE}:/workspace" \
-#               -w /workspace \
-#               --name nos3_ci \
-#               ivvitc/nos3-64:20250124 \
-#               bash -c "
-#                 make prep &&
-#                 make config &&
-#                 chmod +x scripts/ci_launch.sh &&
-#                 ./scripts/ci_launch.sh
-#               "
+        - name: Run NOS3 Launch
+          run: |
+            docker run --rm --privileged \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "${GITHUB_WORKSPACE}:/workspace" \
+              -w /workspace \
+              --name nos3_ci \
+              ivvitc/nos3-64:20250124 \
+              bash -c "
+                make prep &&
+                make config &&
+                chmod +x scripts/ci_launch.sh &&
+                ./scripts/ci_launch.sh
+              "
