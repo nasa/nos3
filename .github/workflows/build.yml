@@ -14,6 +14,13 @@ jobs:
       - name: Check Docker version
         run: docker version
 
+      - name: Build config artifacts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make cmake
+          make prep
+          make config
+
       - name: Prepare environment
         run: |
           mkdir -p $HOME/.nos3_data
@@ -51,6 +58,11 @@ jobs:
           docker network rm nos3_sc_1 || true
           docker network create nos3_sc_1
           docker network connect nos3_sc_1 cosmos_openc3-operator_1 --alias cosmos --alias active-gs
+
+          if [ ! -d cfg/build/InOut ]; then
+            echo "ERROR: cfg/build/InOut not found. Did make config fail?"
+            exit 1
+          fi
 
           cp -r cfg/build/InOut $HOME/.nos3_data/NOS3InOut
 
@@ -109,6 +121,7 @@ jobs:
         with:
           name: nos3-logs
           path: logs/
+
 
 # name: Build
 
