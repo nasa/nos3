@@ -120,7 +120,7 @@ gsw:
 	./cfg/build/gsw_build.sh
 
 igniter:
-	./scripts/igniter_launch.sh
+	./scripts/cfg/igniter_launch.sh
 
 launch:
 	./cfg/build/launch.sh
@@ -153,7 +153,7 @@ stop-gsw:
 	./scripts/gsw/stop_gsw.sh
 
 test-fsw:
-	cd $(COVERAGEDIR) && ctest -O ctest.log
+	cd $(COVERAGEDIR) && ctest --output-on-failure -O ctest.log
 
 uninstall:
 	$(MAKE) clean

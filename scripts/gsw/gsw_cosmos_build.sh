@@ -11,9 +11,11 @@ echo "COSMOS build..."
 $DCALL image pull ballaerospace/cosmos:4.5.0
 mkdir $GSW_DIR/COMPONENTS 2> /dev/null
 rm -r $GSW_DIR/COMPONENTS/* 2> /dev/null
+cp -r $GSW_DIR/config/targets/SIM_CMDBUS_BRIDGE $GSW_DIR/COMPONENTS/
 for i in $(find $BASE_DIR/components/ -name "gsw" -type d)
 do
     #echo "$i"
     cp -r $i/* $GSW_DIR/COMPONENTS/
+    cp $i/*.txt $GSW_DIR/COMPONENTS/SIM_CMDBUS_BRIDGE/cmd_tlm/ 2> /dev/null
 done
 echo ""
