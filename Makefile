@@ -8,7 +8,7 @@ GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 COVERAGEDIR ?= $(CURDIR)/fsw/build/amd64-posix/default_cpu1
 
-export SYSTEM_TEST_FILE_PATH = system_test.rb
+export SYSTEM_TEST_FILE_PATH = /scripts/gsw/system_test.rb
 
 export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
@@ -83,11 +83,12 @@ checkout:
 	./scripts/checkout.sh
 
 ci-launch:
-	@export SYSTEM_TEST_FILE_PATH="/cosmos/system_test.rb" && \
-	./scripts/ci_launch.sh
+	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
+	./scripts/ci_launch.sh && \
+	./scripts/stop.sh
 
 system-tests:
-	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
+	@export SYSTEM_TEST_FILE_PATH=../..$(SYSTEM_TEST_FILE_PATH) && \
 	./cfg/build/launch.sh && \
 	./scripts/system_tests.sh
 
