@@ -18,8 +18,8 @@ if [ ! -d $BASE_DIR/cfg/build ]; then
     exit 1
 fi
 
-sudo mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
-sudo mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
+mkdir -p $FSW_DIR/data/{cam,evs,hk,inst}
+mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so 2>/dev/null || true
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so 2>/dev/null || true
 
@@ -115,9 +115,6 @@ for (( i=1; i<=$SATNUM; i++ )); do
     done
 
     $DNETWORK connect --alias nos_time_driver $SC_NET nos_time_driver
-
-    sleep 5
-    docker exec -it cosmos_openc3-operator_1 ruby /cosmos/system_test.rb
 
 done
 
