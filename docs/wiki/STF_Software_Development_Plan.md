@@ -1,5 +1,6 @@
-# STF - FSW Development Plan
+# STF - Software Development Plan
 Note: Simulation To Flight (STF) is a design reference mission attempting to follow Class A practices
+
 ## Required Materials
 
 | Website/Support System | Reference #/URL|
@@ -23,7 +24,7 @@ This section describes the organization, roles and responsibilities, and plan fo
 The Project Development Teams (PDT) is led by the PDL and is comprised of one or more Development Teams consisting of Development Engineers (DEs) lead by a Development Team Lead (DTL); a Test Team consisting of Test Engineers (TEs) led by a Test Team Lead (TTL).
 ### TODO - add diagram of what is described above.
 
-### Roles, Responsiblities, Authority, and Accountablility:
+### Roles, Responsibilities, Authority, and Accountability:
 
 | Role | Role Description |
 | ---------------------- | ---------------------- |
@@ -38,7 +39,7 @@ The Project Development Teams (PDT) is led by the PDL and is comprised of one or
 
 ### Project Life Cycle:
 The PDT will use an Evolutionary Development model on this project. Table todo describes each life cycle phase in terms of the major activities conducted during the phase, the major products produced during the phase, the major stakeholders involved, and the criteria for exiting (i.e., completing) the phase. The documentation for this effort is reflected in the list of documents provided in the “Products” portion of the table in each phase.
-### TODO create example table for refernece above
+### TODO create example table for reference above
 
 ### Life Cycle Reviews:
 The PDL regularly holds reviews of software activities, status, performance metrics and assessment/analysis results with the project stakeholders and track issues to resolution [SWE-018] [SWE-143].  
@@ -61,7 +62,7 @@ STF will utilize the core Flight System (cFS) and several of the standard applic
 ### Software Workflow:
 ![Software_Workflow](./_static/Software_Workflow.png)
 
-The above workflow enables rapid development and prototyping due to the NASA Operational Simulator for Small Satellites (NOS) environment. This essentially is a virtual spacecraft which enables development and has been baselined as a kickoff point for the STF effort. 
+The above workflow enables rapid development and prototyping due to the NASA Operational Simulator for Small Satellites (NOS3) environment. This essentially is a virtual spacecraft which enables development and has been baselined as a kickoff point for the STF effort. 
 
 ### Software Implementation:
 The project will implement the requirements and design into software code using the environments and tool described Later in this document [SWE-060]. The development team will use the following software coding standard(s), for ensuring code quality, maintainability, safety, coding styles, and including secure coding practices [SWE-061] [SWE-207]:
@@ -88,7 +89,7 @@ Additional minor releases as expected to be completed as needed for specific tes
 This section describes the facilities, equipment, libraries, and tools that the PDT will use to develop and test the system.
 
 ### Development and Test Facilities and Equipment:
-As mentioned in previous sections, the NASA Operational Simulator for Small Satellites (NOS) has been leveraged on STF to provide a starting point for development. This environment was tailored to include the necessary toolchains and other development tools to provide a single environment for all development and testing of software. 
+As mentioned in previous sections, the NASA Operational Simulator for Small Satellites (NOS3) has been leveraged on STF to provide a starting point for development. This environment was tailored to include the necessary toolchains and other development tools to provide a single environment for all development and testing of software. 
 
 ## Verification and Validation:
 

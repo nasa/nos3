@@ -13,13 +13,8 @@ This documentation is designed to provide information for users and developers t
    Architecture.md
    Flight_Software.md
    Ground_Software.md
-   Components.md
    Simulators.md
-   Design_Reference_Mission.md
-   Nominal_Operations.md
-   STF_FSW_Development_Plan.md
-   Requirements.md
-   Verification_and_Validation_Plan.md
-   RTM.md
-   Limited_Performance_Tests.md
-   Comprehensive_Performance_Tests.md
+   Components.md
+   STF_ConOps.md
+   STF_Software_Development_Plan.md
+   STF_VV_Plan.md
