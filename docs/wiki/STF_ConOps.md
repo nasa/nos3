@@ -1,4 +1,4 @@
-# Simulation To Flight (STF) Concept of Operations (ConOps)
+# STF - Concept of Operations (ConOps)
 
 The design reference mission provided with the NASA Operational Simulator for Small Satellites (NOS3) is called Simulation To Flight (STF).
 STF is a generic mission implementation with documentation to exercise the NOS3 use cases.
@@ -21,7 +21,7 @@ The below requirements would not be complete enough for a standard NASA mission,
 
 * Level 0 - Mission Objectives
   * L0-01: STF shall collect science over the United States: Continental United States (CONUS), Alaska (AK), and Hawaii (HI).
-  * L0-02: STF shall not collect science anywhere except over the United States.
+  * L0-02: STF shall limit science collection to near the United States.
   * L0-03: STF shall have automated on-board science with fault detection and correction.
   * L0-04: STF shall collect science data for a duration of at least 3 months.
   * L0-05: STF shall get all science data to the ground in under 24 hours from collection.
@@ -54,8 +54,8 @@ For STF, the physical subsystems are broken down into the following:
 ### Payload
 
 The STF payload has undergone many updates and continues to evolve with each generation of the mission.
-Currently, the STF payload is a sensor studying precipitation over the US.
-This payload will safe itself if it detects an anomaly contained in it's own subsystems.
+The payload is a sensor studying precipitation over the US.
+This payload will safe itself if it detects an anomaly contained in its own subsystems.
 If an anomaly is detected, communications are to cease and a power cycle should occur prior to continuing operations.
 Due to the nature of the instrument, these are expected and the science teams will take care of data drops in post processing once the data is received.
 
@@ -70,7 +70,8 @@ Third is the Science Operations Center (SOC) which performs data post processing
 
 Ground stations provide the radio frequency (RF) link between the spacecraft and the MOC.
 A number of data type conversions and wrapping occur to get data to and from these kinds of networks.
-The STF implementation in NOS3 does not perform any translations for this as the provided commercial APIs simply data our data directly, packages it, and the radio itself handles the translation back into the original form provided.
+The STF implementation in NOS3 does not perform any translations for this.
+The provided commercial APIs simply accept our data, package, and transmit it while and the radio hardware handles the translation back into the original form provided.
 
 ### Mission Operations Center (MOC)
 
@@ -87,7 +88,7 @@ This document was written in a time of flux in determining these steps and as su
 
 A spacecraft operator is a trained professional responsible for day-to-day management, control, and monitoring of a spacecraft.
 While traditionally spacecraft have required operators, a recently push for "lights out" operations has been noted.
-This "lights out" or autonomous operations is the goal of the STF mission, but is to established once the vehicle is on orbit.
+This "lights out" or autonomous operation is the goal of the STF mission, but is to developed once the vehicle is on orbit and procedures are proven.
 Notifications to spacecraft operators would be generated for them to get to a console to resolve any issues as they arise.
 
 ### Spacecraft Modes
@@ -138,8 +139,8 @@ Near the end of the pass, the spacecraft operator should disable the spacecraft 
 After the pass, the spacecraft operator should also kickoff any procedures needed to process the telemetry and files received during the pass.
 
 ### Contingency Operations
-During, prior, or after a pass, anomalies may occur with the ground software, the ground station, or the spacecraft software.
-Example anomalies may be that the ground software does not connect to the ground station, the spacecraft radio does not respond to commanding, an experiment is inoperable, or a component failed.
+Anomalies may occur with the ground software, the ground station, or the spacecraft software.
+Examples of these may be that the ground software does not connect to the ground station, the spacecraft radio does not respond to commanding, an experiment is inoperable, or another spacecraft component failed.
 If the anomaly is minor, the spacecraft operators may be able to correct it in real time.
 Otherwise, the spacecraft operators can confirm the vehicle is safe and take the issue offline to study the anomaly in more detail.
 This may include bringing in more experienced personnel to guide them in formulating future pass plans to address the anomaly and to develop anomaly reports once the anomaly is resolved.

@@ -1,4 +1,4 @@
-# Simulation To Flight (STF) Verification and Validation (V&V) Plan
+# STF - Verification and Validation (V&V) Plan
 
 ## 1 Introduction
 This verification and validation plan applies to the NASA Operational Simulator for Small Satellites (NOS3) and its Simulation to Flight (STF) design reference mission.  

@@ -16,5 +16,6 @@ This documentation is designed to provide information for users and developers t
    Simulators.md
    Components.md
    STF_ConOps.md
+   STF_QuickLook.md
    STF_Software_Development_Plan.md
    STF_VV_Plan.md
