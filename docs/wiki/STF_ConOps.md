@@ -81,7 +81,7 @@ We are such a heavy user of the commercial ground station that they always seem 
 
 ### Science Operations Center (SOC)
 
-The SOC is always changing the in manner is stores raw, post-processes into various science data produces, and makes that data available to the public.
+The SOC is always changing the manner it stores raw data, post-processes into various science data produces, and makes that data available to the public.
 This document was written in a time of flux in determining these steps and as such has omitted details of this to be captured elsewhere.
 
 ## Operations
@@ -127,7 +127,7 @@ The operator should formulate a game plan of goals for the pass including comman
 Because each pass may be a brief amount of time (roughly eight minutes in Low Earth Orbit), the operator should determine beforehand what data is to be downlinked during the pass and what other operations should be performed during the pass.
 The operator should log into the console where they will be commanding/controlling the satellite and make sure that all ground software applications and windows are functional and ready prior to official connection.
 
-During the pass, the first thing the spacecraft operator should do is command the spacecraft radio to be enabled.
+During the pass, the first thing the spacecraft operator should do is command the spacecraft radio transmitter.
 The next thing the spacecraft operator should do is request and confirm key health and status telemetry for the spacecraft including what mode the spacecraft is in, the state of charge of the battery, and any other indicators of error.
 The operator should also see that the command and telemetry counters are incrementing as commanding is performed and telemetry is received.
 Once this necessary information has been collected, the spacecraft operator should issue commands to start or stop relative time sequences, to start telemetry collection, to uplink or downlink files, to command the state of the spacecraft and any onboard experiments, etc.  
@@ -135,7 +135,7 @@ The spacecraft operator should also manage the onboard storage of the spacecraft
 The spacecraft operator should also monitor the health and status of the spacecraft during the pass.
 Essentially, each pass should begin with confirming the spacecraft mode and general health, and then proceed to sending commands to change the state of the spacecraft or its onboard experiments.  This latter category also includes downlinking data from the spacecraft to the ground, which is likely what will comprise the bulk of most passes.
 
-Near the end of the pass, the spacecraft operator should disable the spacecraft radio.
+Near the end of the pass, the spacecraft operator should disable the spacecraft radio transmitter.
 After the pass, the spacecraft operator should also kickoff any procedures needed to process the telemetry and files received during the pass.
 
 ### Contingency Operations

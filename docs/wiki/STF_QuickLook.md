@@ -19,7 +19,7 @@ The EPS switches are linked to the following:
 ## Data
 
 Data generation and storage are vital.
-A balance between anomalies can be quickly identified and diagnosed along side maximizing science data collection must occur.
+A balance must be between quickly identifying anomalies and maximizing science data collection.
 
 ### Schedule
 
@@ -30,8 +30,9 @@ A single command can occur during each of these 100 slots.
   * Pre-defined commands that can be used in the actual schedule
   * This includes full command definitions and no logic to change them without a new table being uploaded
 * [./cfg/nos3_defs/tables/sch_def_schtbl.c](../../cfg/nos3_defs/tables/sch_def_schtbl.c)
-  * 100 schedule slots, each with it's own execution window in the 100Hz
-  * Defines the frequency in seconds, offset to send frequency in seconds, and command references the schedule message table
+  * 100 schedule slots, each with its own execution window in the 100Hz
+  * Defines the frequency in seconds, offset to sending window in seconds to allow balancing of schedule, and command references
+    * Sending window example: assuming two packets at a five second frequency, one could execute at 0 and other at 2 seconds into the window
   * A request may occur in multiple slots, typically done to be faster than the 1Hz default maximum frequency
 
 ### Data Storage (DS)
@@ -41,10 +42,10 @@ This does not capture simply prints to the console, but all telemetry published 
 * [./cfg/nos3_defs/tables/ds_file_tbl.c](../../cfg/nos3_defs/tables/ds_file_tbl.c)
   * Configure the files to be created detailing naming convention (time or count), location in memory, maximum size and age
 * [./cfg/nos3_defs/tables/ds_filter_tbl.c](../../cfg/nos3_defs/tables/ds_filter_tbl.c)
-  * Ideally has an index for each packets produced by the spacecraft
-  * Provides details for what to do each each file type and enables down sampling
+  * Ideally has an index for each packet produced by the spacecraft
+  * Provides details for down sample (if desired) for each defined file type
 
-For STF the ADCS and component HK data is stored at 10Hz while the all science and console logs are stored.
+For STF, the ADCS and component HK data is down sampled to be stored at 0.1Hz while the all science data and console logs are stored.
 All data is stored in a single file type for simplicity in operations and enabling data in time to be captured together.
 
 ## Fault Detection and Correction (FDC)
