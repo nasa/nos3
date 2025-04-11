@@ -8,6 +8,8 @@ GSWBUILDDIR ?= $(CURDIR)/gsw/build
 SIMBUILDDIR ?= $(CURDIR)/sims/build
 COVERAGEDIR ?= $(CURDIR)/fsw/build/amd64-posix/default_cpu1
 
+export SYSTEM_TEST_FILE_PATH = /scripts/gsw/system_test.rb
+
 export CFS_APP_PATH = ../components
 export MISSION_DEFS = ../cfg/build/
 export MISSIONCONFIG = ../cfg/build/nos3
@@ -80,6 +82,29 @@ endif
 checkout:
 	./scripts/checkout.sh
 
+#This could currently break if not using COSMOS in the config.
+ci-launch:
+	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
+	./scripts/ci_launch.sh && \
+	./scripts/system_tests.sh && \
+	./scripts/stop.sh
+
+#This could currently break if not using COSMOS in the config.
+system-tests:
+	@export SYSTEM_TEST_FILE_PATH=../..$(SYSTEM_TEST_FILE_PATH) && \
+	./cfg/build/launch.sh && \
+	./scripts/system_tests.sh
+
+#Be sure that your nos3-mission.xml has been set to YAMCS
+yamcs-operator:
+	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
+	./scripts/ci_launch.sh --use-yamcs
+
+#Be sure that your nos3-mission.xml has been set to COSMOS
+cosmos-operator:
+	@export SYSTEM_TEST_FILE_PATH=../..$(SYSTEM_TEST_FILE_PATH) && \
+	./scripts/ci_launch.sh --use-cosmos-gui 
+
 clean:
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
@@ -120,7 +145,7 @@ gsw:
 	./cfg/build/gsw_build.sh
 
 igniter:
-	./scripts/igniter_launch.sh
+	./scripts/cfg/igniter_launch.sh
 
 launch:
 	./cfg/build/launch.sh
@@ -153,7 +178,7 @@ stop-gsw:
 	./scripts/gsw/stop_gsw.sh
 
 test-fsw:
-	cd $(COVERAGEDIR) && ctest -O ctest.log
+	cd $(COVERAGEDIR) && ctest --output-on-failure -O ctest.log
 
 uninstall:
 	$(MAKE) clean
