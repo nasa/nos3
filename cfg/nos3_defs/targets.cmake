@@ -107,7 +107,6 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # Components
     #
         arducam/fsw/cfs
-        onair
         generic_adcs/fsw/cfs
         generic_css/fsw/cfs
         generic_eps/fsw/cfs
@@ -119,7 +118,9 @@ list(APPEND MISSION_GLOBAL_APPLIST
         generic_star_tracker/fsw/cfs
         generic_thruster/fsw/cfs
         generic_torquer/fsw/cfs
+        mgr/fsw/cfs
         novatel_oem615/fsw/cfs
+        onair
         sample/fsw/cfs
         syn/fsw/cfs
 )
