@@ -10,16 +10,14 @@ This documentation is designed to provide information for users and developers t
 
    Home.md
    Getting_Started.md
-   Igniter.md
    Architecture.md
    Flight_Software.md
    Ground_Software.md
    Components.md
+   Generating_NOS3_Component.md
    Simulators.md
-   Design_Reference_Mission.md
-   STF_FSW_Development_Plan.md
-   Requirements.md
-   Verification_and_Validation_Plan.md
-   RTM.md
-   Limited_Performance_Tests.md
-   Comprehensive_Performance_Tests.md
+   STF_ConOps.md
+   STF_QuickLook.md
+   STF_Software_Development_Plan.md
+   STF_VV_Plan.md
+   Scenario_Demo.md

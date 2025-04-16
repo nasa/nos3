@@ -10,7 +10,7 @@ From STF-1, NOS3 was born as an architecture for new missions to baseline and le
 NOS3 is a virtual spacecraft environment enabling development, testing, and training for users.  
 Its component-based structure facilitates integration of software modules, enabling developers to simulate spacecraft behavior, test instrument interfaces, and perform software/hardware integration. 
 
-## Modules
+### Modules
 
 NOS3 can be distilled down into various configurable modules that make up the environment:
 * Flight Software
@@ -86,4 +86,11 @@ The ground software in NOS3 can be used for command and control for hardware tes
 
 During I&T activities, NOS3 enables you to perform integration testing of your satellite system, validate the operational procedures, and verify the overall system performance.
 NOS3 allows you to conduct end-to-end simulations, test different mission scenarios, and assess the behavior of the satellite system under various conditions.
+
+### How do I create a new component in NOS3?
+
+You can reference the **Generating a New Component** section of the documentation. Here it will guide you through how to generate a component in NOS3. 
+
+Link: [Generating a New Component](Generating_NOS3_Component.md)
+
 

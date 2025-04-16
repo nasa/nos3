@@ -1,4 +1,0 @@
-# Design Reference Mission
-
-TODO
-
