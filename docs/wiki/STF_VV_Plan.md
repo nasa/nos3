@@ -1,11 +1,13 @@
-# Verification and Validation Plan
+# STF - Verification and Validation (V&V) Plan
+
 ## 1 Introduction
-This verification and validation plan applies to the NASA Operational Simulator (NOS).  
-NOS is described in more detail in the Read the Docs Wiki and section 3.
+This verification and validation plan applies to the NASA Operational Simulator for Small Satellites (NOS3) and its Simulation to Flight (STF) design reference mission.  
+NOS3 is described in more detail in the Read the Docs Wiki and section 3.
 
 ### 1.1 Purpose and Scope
-NOS is a suite of tools developed by NASA's Katherine Johnson Independent Verification and Validation (IV&V) Facility to aid in areas such as software development, integration & test (I&T), mission operations/training, verification and validation (V&V), and software systems check-out. 
-NOS provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.
+NOS3 is a suite of tools developed by NASA's Katherine Johnson Independent Verification and Validation (IV&V) Facility to aid in areas such as software development, integration & test (I&T), mission operations/training, verification and validation (V&V), and software systems check-out. 
+NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.
+NOS3 provides an example mission implementation called STF where various use cases are demonstrated.
 
 The purpose of this plan is to identify the activities that will establish compliance with the requirements (verification) and to establish that the system will meet the customers' expectations (validation).
 
@@ -16,10 +18,7 @@ This group has the authority to approve changes to this plan.
 ## 2 Applicable and Reference Documents
 ### 2.1 Applicable Documents
 1. [Read the Docs Wiki](https://nos3.readthedocs.io/en/latest)
-2. [Comprehensive Performance Tests](Comprehensive_Performance_Tests.md)
-3. [Limited Performance Tests](Limited_Performance_Tests.md)
-4. [Requirements](requirements.txt)
-5. [Requirements Traceability Matrix (RTM)](RTM.md)
+2. [STF Concept of Operations](STF_ConOps.md)
 
 ### 2.2 Reference Documents
 1. [Software Development / Management Plan](Software_Development_Management_Plan.md)
@@ -134,7 +133,7 @@ The output products of the verification and validation activities include test p
 - I&T:  Integration and Test
 - IV&V:  Independent Verification and Validation
 - JSTAR:  Jon McBride Software Testing and Research
-- NOS:  NASA Operational Simulator
+- NOS3:  NASA Operational Simulator for Small Satellites
 - RTM:  Requirements Traceability Matrix
 - V&V:  Verification and Validation
 - YAMCS:  Yet Another Mission Control System
