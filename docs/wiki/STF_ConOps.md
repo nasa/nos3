@@ -106,6 +106,7 @@ The STF spacecraft has three modes:
   * Sub-modes exist within for charging and science data collection and are automatically switched between depending on location
   * Has a number of additional fault detections, if any are realized go to safe mode
 
+
 ![STF Modes](./_static/STF_Modes.png)
 
 ### Launch and Commissioning
@@ -119,6 +120,28 @@ Commissioning activities will involve testing each physical component on the spa
 Nominally the spacecraft will autonomously transition between sub-modes within the spacecraft science mode.
 Should any fault be detected the spacecraft will fail back into safe mode.
 A spacecraft operator will need to investigate the cause and take any desired action in correction prior to returning to science mode.
+
+### Science Mode
+
+Science Mode is based on data collection above specific regions of interest. 
+In this example, we are interested in turning on our Sample Instrument over three different regions: Alaska, Hawaii, and the Continental US (CONUS).
+We achieve the region bounds by drawing boxes over our regions of interest, and using GPS coordinates to know when it is appropriate to automatically turn on the instrument, and then when to halt doing science as we exit an area of interest.
+Therefore, Science Mode requires Latitude and Longitudes from the GPS to function appropriately.
+
+Science Mode is configured by ground commands. With the spacecraft in Safe Mode, the operator can configure the desired science regions by sending the appropriate commands, e.g. MGR_SET_CONUS_CC.
+
+![Enabling the CONUS Region](./_static/Enable_Command.png)
+
+Region status is verified by using the Packet Viewer to see which regions are enabled or disabled.
+
+![Verifying Region Status](./_static/Region_Status.png)
+
+With the science regions configured, if commissioning has been complete, the operator can send the MGR App command to Set_Mode to Science.
+
+At a moderate level of detail, the Limit Checker App utilizes Actionpoints (APs) to determine when to perform the functions needed for science. When a Limit Checker Actionpoint is tripped, it causes a sequence of commands to be sent to flight software. These sequences of events are called Relative Time Sequences (RTSs).
+An example of the Modes, APs, and their associated RTSs is shown at a moderate level of detail below.
+
+![Modes, APs, RTSs in Moderate Detail](./_static/conops_medium.png)
 
 #### Per Pass Operations
 Prior to the pass, the spacecraft operator should make note of the contact start and end times.
