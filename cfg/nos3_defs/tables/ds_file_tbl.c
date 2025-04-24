@@ -55,15 +55,6 @@
 **       when creating ground system database entries that require
 **       file index numbers for command arguments.
 */
-#define FILE_ALL_EVENTS 0
-
-#define FILE_ALL_APP_HK_PKTS  1
-#define FILE_ALL_APP_TLM_PKTS 2
-
-#define FILE_ALL_HW_TLM_PKTS 3
-
-#define FILE_CFE_APP_HK_PKTS  4
-#define FILE_CFE_APP_TLM_PKTS 5
 
 /*
 ** Sample Destination File Table Data
@@ -162,20 +153,20 @@ DS_DestFileTable_t DS_DestFileTable = {
             /* .MaxFileAge    = */ (60 * 60 * 2),     /* 2 hours */
             /* .SequenceCount = */ 5000,
         },
-        /* File Index 06 */
+        /* File Index 06  - Sample Instrument Data */
         {
 #if (DS_MOVE_FILES == true)
             /* .Movename      = */ DS_EMPTY_STRING,
 #endif
-            /* .Pathname      = */ DS_EMPTY_STRING,
-            /* .Basename      = */ DS_EMPTY_STRING,
-            /* .Extension     = */ DS_EMPTY_STRING,
+            /* .Pathname      = */ "/data/inst",
+            /* .Basename      = */ "id",
+            /* .Extension     = */ ".ds",
 
-            /* .FileNameType  = */ DS_UNUSED,
-            /* .EnableState   = */ DS_UNUSED,
-            /* .MaxFileSize   = */ DS_UNUSED,
-            /* .MaxFileAge    = */ DS_UNUSED,
-            /* .SequenceCount = */ DS_UNUSED,
+            /* .FileNameType  = */ DS_BY_TIME,
+            /* .EnableState   = */ DS_ENABLED,
+            /* .MaxFileSize   = */ (1024 * 1024 * 2), /* 2 M-bytes */
+            /* .MaxFileAge    = */ (60 * 60 * 2),     /* 2 hours */
+            /* .SequenceCount = */ 6000,
         },
         /* File Index 07 */
         {

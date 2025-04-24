@@ -1,6 +1,8 @@
 #
 # Top Level Mission Makefile
 #
+.PHONY: help
+
 BUILDTYPE ?= debug
 INSTALLPREFIX ?= exe
 FSWBUILDDIR ?= $(CURDIR)/fsw/build
@@ -47,7 +49,7 @@ OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 #
 # Commands
 #
-all:
+all: ## Build everything: config, fsw, sim, gsw
 	@if [ ! -f ./cfg/build/current_config_path.txt ]; then \
 		echo "Running make config (initial)..."; \
 		$(MAKE) config; \
@@ -58,13 +60,12 @@ all:
 	$(MAKE) sim
 	$(MAKE) gsw
 
-
-build-cryptolib:
+build-cryptolib: ## Build CryptoLib Component
 	mkdir -p $(GSWBUILDDIR)
 	cd $(GSWBUILDDIR) && cmake $(PREP_OPTS) -DSUPPORT=1 ../../components/cryptolib
 	$(MAKE) --no-print-directory -C $(GSWBUILDDIR)
 
-build-fsw:
+build-fsw: ## Build the flight software (cFS or F')
 ifeq ($(FLIGHT_SOFTWARE), fprime)
 	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
 else
@@ -73,12 +74,12 @@ else
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 endif
 
-build-sim:
+build-sim: ## Build Simulator
 	mkdir -p $(SIMBUILDDIR)
 	cd $(SIMBUILDDIR) && cmake -DCMAKE_INSTALL_PREFIX=$(SIMBUILDDIR) ..
 	$(MAKE) --no-print-directory -C $(SIMBUILDDIR) install
 
-build-test:
+build-test: ## Build unit tests
 ifeq ($(FLIGHT_SOFTWARE), fprime)
 	# TODO
 else
@@ -87,104 +88,169 @@ else
 	$(MAKE) --no-print-directory -C $(FSWBUILDDIR) mission-install
 endif
 
-checkout:
+checkout: ## Run a checkout application (may require reconfiguration)
 	./scripts/checkout.sh
 
 #This could currently break if not using COSMOS in the config.
-ci-launch:
+ci-launch: ## Headless Launch for System Testing
 	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
 	./scripts/ci_launch.sh && \
 	./scripts/system_tests.sh && \
 	./scripts/stop.sh
 
 #This could currently break if not using COSMOS in the config.
-system-tests:
+system-tests: ## System Testing with GUI
 	@export SYSTEM_TEST_FILE_PATH=../..$(SYSTEM_TEST_FILE_PATH) && \
 	./cfg/build/launch.sh && \
 	./scripts/system_tests.sh
 
 #Be sure that your nos3-mission.xml has been set to YAMCS
-yamcs-operator:
+yamcs-operator:  ## Launch as a YAMCS operator viewpoint
 	@export SYSTEM_TEST_FILE_PATH=$(SYSTEM_TEST_FILE_PATH) && \
 	./scripts/ci_launch.sh --use-yamcs
 
 #Be sure that your nos3-mission.xml has been set to COSMOS
-cosmos-operator:
+cosmos-operator: ## Launch as a COSMOS operator viewpoint
 	@export SYSTEM_TEST_FILE_PATH=../..$(SYSTEM_TEST_FILE_PATH) && \
 	./scripts/ci_launch.sh --use-cosmos-gui 
 
-clean:
+clean: ## Clean all build files and configurations
 	$(MAKE) clean-fsw
 	$(MAKE) clean-sim
 	$(MAKE) clean-gsw
 	rm -rf cfg/build
 
-clean-fsw:
+clean-fsw: ## Clean only flight software build artifacts
 	rm -rf cfg/build/nos3_defs
 	rm -rf fsw/build
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
 
-clean-sim:
+clean-sim: ## Clean only simulator build artifacts
 	rm -rf sims/build
 
-clean-gsw:
+clean-gsw: ## Clean only GSW build artifacts
 	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
 
 
-config:
+config: ## Run configuration setup
 	@if [ -n "$(SC1_CFG)" ]; then \
 		SC1_CFG="$(SC1_CFG)" ./scripts/cfg/config.sh; \
 	else \
 		./scripts/cfg/config.sh; \
 	fi
 
-debug:
+debug: ## Launch the debug container terminal
 	./scripts/debug.sh
 
-fsw: 
+fsw:  ## Build Flight Software binaries
 	./cfg/build/fsw_build.sh
 
-gcov:
+gcov: ## Build Code Coverage results
 	cd $(COVERAGEDIR) && ctest -O ctest.log
 	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
 	genhtml $(COVERAGEDIR)/coverage.info --output-directory $(COVERAGEDIR)/results
 
-gsw:
+gsw: ## Build Ground Software binaries
 	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
 
-igniter:
+help: ## Display this help message
+	@echo ""
+	@echo "Usage: make <target>"
+	@echo ""
+	@printf "%-20s %s\n" "all"           "Build everything: config, fsw, sim, gsw"
+	@printf "%-20s %s\n" "clean"         "Clean all build files and configurations"
+	@printf "%-20s %s\n" "help"          "Display this help message"
+	@printf "%-20s %s\n" "help-all"      "Display advanced help information"
+	@printf "%-20s %s\n" "launch"        "Launch NOS3 System"
+	@printf "%-20s %s\n" "prep"          "Prepare full development environment"
+	@printf "%-20s %s\n" "stop"          "Stop entire system"
+	@printf "%-20s %s\n" "uninstall"     "Remove all build artifacts and containers"
+
+
+help-all: ## Displays advanced help information
+	@echo ""
+	@echo "Usage: make <target>"
+	@echo ""
+
+	@echo "Setup:"
+	@printf "\t%-20s %s\n" "prep"           "Prepare full development environment"
+	@printf "\t%-20s %s\n" "prep-gsw"       "Prepare Ground Software"
+	@printf "\t%-20s %s\n" "prep-sat"       "Prepare Satellite IP Routes"
+	@printf "\t%-20s %s\n" "start-gsw"      "Launch Ground Software"
+	@printf "\t%-20s %s\n" "start-sat"      "Satellite Launch"
+
+	@echo ""
+	@echo "Building:"
+	@printf "\t%-20s %s\n" "build-cryptolib" "Build CryptoLib Component"
+	@printf "\t%-20s %s\n" "build-fsw"      "Build the Flight Software (cFS or F')"
+	@printf "\t%-20s %s\n" "build-sim"      "Build Simulator"
+	@printf "\t%-20s %s\n" "build-test"     "Build Unit Tests"
+	@printf "\t%-20s %s\n" "config"			"Configuration Setup.  Optional: [SC1_CFG=spacecraft/sc-minimal-config.xml]"
+	@printf "\t%-20s %s\n" "igniter"        "Launch Configuration GUI Igniter"
+
+	@echo ""
+	@echo "Running:"
+	@printf "\t%-20s %s\n" "checkout"       "Run a checkout application (may require reconfiguration)"
+	@printf "\t%-20s %s\n" "debug"          "Launch the debug container terminal"
+	@printf "\t%-20s %s\n" "fsw"            "Build Flight Software Binaries"
+	@printf "\t%-20s %s\n" "gcov"           "Build Code Coverage Results"
+	@printf "\t%-20s %s\n" "gsw"            "Build Ground Software Binaries"
+	@printf "\t%-20s %s\n" "sim"            "Build Simulation Binaries"
+	@printf "\t%-20s %s\n" "cosmos-operator" "Launch as COSMOS operator viewpoint - requires configuration"
+	@printf "\t%-20s %s\n" "yamcs-operator" "Launch as YAMCS operator viewpoint - requires configuration"
+
+	@echo ""
+	@echo "Testing:"
+	@printf "\t%-20s %s\n" "ci-launch"      "Headless Launch for System Testing"
+	@printf "\t%-20s %s\n" "system-tests"   "GUI Launch for System Testing"
+	@printf "\t%-20s %s\n" "test-fsw"       "Test Flight Software"
+
+	@echo ""
+	@echo "Cleanup:"
+	@printf "\t%-20s %s\n" "clean"          "Clean all build files and configurations"
+	@printf "\t%-20s %s\n" "clean-fsw"      "Clean only Flight Software build artifacts"
+	@printf "\t%-20s %s\n" "clean-gsw"      "Clean only Ground Software build artifacts"
+	@printf "\t%-20s %s\n" "clean-sim"      "Clean only Simulation build artifacts"
+	@printf "\t%-20s %s\n" "log"            "Log Outputs"
+	@printf "\t%-20s %s\n" "stop"           "Stop entire System"
+	@printf "\t%-20s %s\n" "stop-gsw"       "Stop Ground Software"
+	@printf "\t%-20s %s\n" "uninstall"      "Remove all build artifacts and containers"
+
+
+
+igniter: ## Launch Configuration GUI Igniter
 	./scripts/cfg/igniter_launch.sh
 
-launch:
+launch: ## Launch NOS3 System
 	./cfg/build/launch.sh
 
-log:
+log: ## Log outputs
 	./scripts/log.sh
 
-prep:
+prep: ## Prepare full development enviornment
 	./scripts/cfg/prepare.sh
 
-prep-gsw:
+prep-gsw: ## Prepare Ground Software
 	./scripts/cfg/prep_gsw.sh
 
-prep-sat:
+prep-sat: ## Prepare Satelite IP Routes
 	./scripts/cfg/prep_sat.sh
 
-sim:
+sim: ## Build Sims
 	./scripts/build_sim.sh
 
-start-gsw:
+start-gsw: ## Launch Ground Software
 	./scripts/gsw/launch_gsw.sh
 
-start-sat:
+start-sat: ## Satellite Launch
 	./scripts/fsw/launch_sat.sh
 
-stop:
+stop: ## Stop entire system
 	./scripts/stop.sh
 	@if [ -f ./cfg/build/current_config_path.txt ]; then \
 	  echo "Cleaning up temporary config file..."; \
@@ -198,12 +264,12 @@ stop:
 
 
 
-stop-gsw:
+stop-gsw: ## Stop Ground Sfotware
 	./scripts/gsw/stop_gsw.sh
 
-test-fsw:
+test-fsw: ## Test Flight Software 
 	cd $(COVERAGEDIR) && ctest --output-on-failure -O ctest.log
 
-uninstall:
+uninstall: ## Remove all build artifacts
 	$(MAKE) clean
 	./scripts/cfg/uninstall.sh

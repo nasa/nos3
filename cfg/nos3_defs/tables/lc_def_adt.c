@@ -185,7 +185,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 0,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -199,7 +199,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 1,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -213,7 +213,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 2,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -227,7 +227,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 3,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -241,7 +241,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 4,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -255,7 +255,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 5,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -269,7 +269,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 6,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -283,7 +283,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 7,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -297,7 +297,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 8,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -311,7 +311,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 9,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -325,7 +325,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 10,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -339,7 +339,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 11,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -353,7 +353,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 12,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -367,7 +367,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 13,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -381,7 +381,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 14,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -395,7 +395,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 15,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -409,7 +409,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 16,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -423,7 +423,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 17,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -437,7 +437,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 18,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -451,7 +451,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 19,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -465,7 +465,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 20,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -479,7 +479,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 21,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -493,7 +493,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 22,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -507,7 +507,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 23,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -521,165 +521,216 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 24,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
           0, LC_RPN_EQUAL}},
 
-    /* #25 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #25 Science_Reboot to Science */
+    {.DefaultState      = LC_APSTATE_PASSIVE,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 25,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 25,
+     .EventText         = {"Sci_Reboot transition to Sci Now"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_25) */
+          25, LC_RPN_EQUAL}},
 
-    /* #26 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #26 Enable Science Mode */
+    {.DefaultState      = LC_APSTATE_PASSIVE,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 26,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 26,
+     .EventText         = {"Enabling Science Mode"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_26) */
+          26, LC_RPN_EQUAL}},
 
-    /* #27 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #27 Science Mode: Low Power */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 27,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 27,
+     .EventText         = {"SciMode: Low Power"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_27) */
+          27, LC_RPN_EQUAL}},
 
-    /* #28 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #28 Science Mode: Recharged */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 28,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 28,
+     .EventText         = {"SciMode: Recharged"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_28) */
+          28, LC_RPN_EQUAL}},
 
-    /* #29 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #29 Science Mode: EXIT Science Mode */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 29,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 29,
+     .EventText         = {"SciMode: Exit Sci Mode"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_29) */
+          29, LC_RPN_EQUAL}},
 
-    /* #30 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #30 Science Mode: Entering AK Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 30,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 30,
+     .EventText         = {"SciMode: Entering AK Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_30) && (WP_31) && (WP_32) && (WP_33) && (WP_34) */
+          30, 31, 
+          LC_RPN_AND,
+          32,
+          LC_RPN_AND,
+          33,  
+          LC_RPN_AND,
+          34, 
+          LC_RPN_AND, 
+          LC_RPN_EQUAL}},
 
-    /* #31 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #31 Science Mode: Entering CONUS Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 31,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 31,
+     .EventText         = {"SciMode: Entering CONUS Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_35) && (WP_36) && (WP_37) && (WP_38) && (WP_39) */
+          35, 36, 
+          LC_RPN_AND,
+          37,
+          LC_RPN_AND,
+          38,  
+          LC_RPN_AND,
+          39, 
+          LC_RPN_AND, 
+          LC_RPN_EQUAL}},
 
-    /* #32 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #32 Science Mode: Entering HI Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 32,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 32,
+     .EventText         = {"SciMode: Entering HI Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* (WP_40) && (WP_41) && (WP_42) && (WP_43) && (WP_44) */
+          40, 41, 
+          LC_RPN_AND,
+          42,
+          LC_RPN_AND,
+          43,  
+          LC_RPN_AND,
+          44, 
+          LC_RPN_AND, 
+          LC_RPN_EQUAL}},
 
-    /* #33 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #33 Science Mode: Left AK Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 33,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 33,
+     .EventText         = {"SciMode: Left AK Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* !((WP_30) && (WP_31) && (WP_32) && (WP_33) && (WP_34)) */
+          30, 31, 
+          LC_RPN_AND,
+          32,
+          LC_RPN_AND,
+          33,  
+          LC_RPN_AND,
+          34, 
+          LC_RPN_AND,
+          LC_RPN_NOT, 
+          LC_RPN_EQUAL}},
 
-    /* #34 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #34 Science Mode: Left CONUS Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 34,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 34,
+     .EventText         = {"SciMode: Left CONUS Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {//* !((WP_35) && (WP_36) && (WP_37) && (WP_38) && (WP_39)) */
+          35, 36, 
+          LC_RPN_AND,
+          37,
+          LC_RPN_AND,
+          38,  
+          LC_RPN_AND,
+          39, 
+          LC_RPN_AND,
+          LC_RPN_NOT, 
+          LC_RPN_EQUAL}},
 
-    /* #35 (unused) */
-    {.DefaultState      = LC_ACTION_NOT_USED,
+    /* #35 Science Mode: Left HI Region */
+    {.DefaultState      = LC_APSTATE_DISABLED,
      .MaxPassiveEvents  = 0,
      .MaxPassFailEvents = 0,
      .MaxFailPassEvents = 0,
-     .RTSId             = 0,
-     .MaxFailsBeforeRTS = 0,
+     .RTSId             = 35,
+     .MaxFailsBeforeRTS = 1,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
-     .EventText         = {" "},
+     .EventID           = LC_BASE_AP_EID + 35,
+     .EventText         = {"SciMode: Left HI Region"},
      .RPNEquation =
-         {/* (WP_0) */
-          0, LC_RPN_EQUAL}},
+         {/* !((WP_40) && (WP_41) && (WP_42) && (WP_43) && (WP_44)) */
+          40, 41, 
+          LC_RPN_AND,
+          42,
+          LC_RPN_AND,
+          43,  
+          LC_RPN_AND,
+          44, 
+          LC_RPN_AND,
+          LC_RPN_NOT, 
+          LC_RPN_EQUAL}},
 
     /* #36 (unused) */
     {.DefaultState      = LC_ACTION_NOT_USED,
@@ -689,7 +740,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 36,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -703,7 +754,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 37,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -717,7 +768,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 38,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -731,7 +782,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 39,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -745,7 +796,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 40,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -759,7 +810,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 41,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -773,7 +824,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 42,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -787,7 +838,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 43,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -801,7 +852,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 44,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -815,7 +866,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 45,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -829,7 +880,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 46,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -843,7 +894,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 47,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -857,7 +908,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 48,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -871,7 +922,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 49,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -885,7 +936,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 50,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -899,7 +950,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 51,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -913,7 +964,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 52,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -927,7 +978,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 53,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -941,7 +992,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 54,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -955,7 +1006,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 55,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -969,7 +1020,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 56,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -983,7 +1034,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 57,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -997,7 +1048,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 58,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1011,7 +1062,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 59,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1025,7 +1076,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 60,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1039,7 +1090,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 61,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1053,7 +1104,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 62,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1067,7 +1118,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 63,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1081,7 +1132,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 64,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1095,7 +1146,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 65,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1109,7 +1160,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 66,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1123,7 +1174,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 67,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1137,7 +1188,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 68,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1151,7 +1202,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 69,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1165,7 +1216,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 70,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1179,7 +1230,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 71,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1193,7 +1244,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 72,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1207,7 +1258,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 73,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1221,7 +1272,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 74,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1235,7 +1286,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 75,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1249,7 +1300,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 76,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1263,7 +1314,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 77,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1277,7 +1328,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 78,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1291,7 +1342,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 79,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1305,7 +1356,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 80,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1319,7 +1370,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 81,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1333,7 +1384,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 82,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1347,7 +1398,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 83,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1361,7 +1412,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 84,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1375,7 +1426,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 85,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1389,7 +1440,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 86,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1403,7 +1454,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 87,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1417,7 +1468,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 88,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1431,7 +1482,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 89,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1445,7 +1496,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 90,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1459,7 +1510,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 91,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1473,7 +1524,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 92,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1487,7 +1538,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 93,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1501,7 +1552,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 94,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1515,7 +1566,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 95,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1529,7 +1580,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 96,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1543,7 +1594,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 97,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1557,7 +1608,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 98,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1571,7 +1622,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 99,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1585,7 +1636,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 100,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1599,7 +1650,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 101,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1613,7 +1664,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 102,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1627,7 +1678,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 103,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1641,7 +1692,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 104,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1655,7 +1706,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 105,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1669,7 +1720,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 106,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1683,7 +1734,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 107,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1697,7 +1748,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 108,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1711,7 +1762,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 109,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1725,7 +1776,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 110,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1739,7 +1790,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 111,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1753,7 +1804,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 112,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1767,7 +1818,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 113,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1781,7 +1832,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 114,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1795,7 +1846,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 115,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1809,7 +1860,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 116,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1823,7 +1874,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 117,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1837,7 +1888,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 118,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1851,7 +1902,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 119,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1865,7 +1916,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 120,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1879,7 +1930,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 121,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1893,7 +1944,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 122,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1907,7 +1958,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 123,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1921,7 +1972,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 124,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1935,7 +1986,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 125,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1949,7 +2000,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 126,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1963,7 +2014,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 127,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1977,7 +2028,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 128,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -1991,7 +2042,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 129,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2005,7 +2056,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 130,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2019,7 +2070,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 131,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2033,7 +2084,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 132,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2047,7 +2098,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 133,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2061,7 +2112,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 134,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2075,7 +2126,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 135,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2089,7 +2140,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 136,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2103,7 +2154,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 137,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2117,7 +2168,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 138,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2131,7 +2182,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 139,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2145,7 +2196,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 140,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2159,7 +2210,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 141,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2173,7 +2224,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 142,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2187,7 +2238,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 143,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2201,7 +2252,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 144,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2215,7 +2266,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 145,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2229,7 +2280,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 146,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2243,7 +2294,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 147,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2257,7 +2308,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 148,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2271,7 +2322,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 149,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2285,7 +2336,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 150,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2299,7 +2350,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 151,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2313,7 +2364,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 152,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2327,7 +2378,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 153,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2341,7 +2392,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 154,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2355,7 +2406,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 155,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2369,7 +2420,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 156,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2383,7 +2434,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 157,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2397,7 +2448,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 158,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2411,7 +2462,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 159,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2425,7 +2476,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 160,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2439,7 +2490,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 161,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2453,7 +2504,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 162,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2467,7 +2518,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 163,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2481,7 +2532,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 164,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2495,7 +2546,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 165,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2509,7 +2560,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 166,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2523,7 +2574,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 167,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2537,7 +2588,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 168,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2551,7 +2602,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 169,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2565,7 +2616,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 170,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2579,7 +2630,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 171,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2593,7 +2644,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 172,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2607,7 +2658,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 173,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2621,7 +2672,7 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 174,
      .EventText         = {" "},
      .RPNEquation =
          {/* (WP_0) */
@@ -2635,7 +2686,9 @@ LC_ADTEntry_t LC_DefaultADT[LC_MAX_ACTIONPOINTS] = {
      .RTSId             = 0,
      .MaxFailsBeforeRTS = 0,
      .EventType         = CFE_EVS_EventType_INFORMATION,
-     .EventID           = 0,
+     .EventID           = LC_BASE_AP_EID + 175,
      .EventText         = {" "},
-     .RPNEquation       = {              /* (WP_0) */
-                     0, LC_RPN_EQUAL}}}; /* end LC_DefaultADT */
+     .RPNEquation       = 
+         {/* (WP_0) */
+          0, LC_RPN_EQUAL}}
+    }; /* end LC_DefaultADT */
