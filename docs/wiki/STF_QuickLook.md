@@ -68,8 +68,8 @@ A summary of the current Watchpoints are captured below:
 | ------------ | ----- |
 |WP #25 | MGR SPACECRAFT_MODE = Science_Reboot|
 |WP #26 | MGR SPACECRAFT_MODE = Science|
-|WP #27 | EPS BATTERY_VOLTAGE < 60|
-|WP #28 | EPS BATTERY_VOLTAGE > 90|
+|WP #27 | EPS BATTERY_VOLTAGE < 60% (24240mV)|
+|WP #28 | EPS BATTERY_VOLTAGE > 90% (24960mV)|
 |WP #29 | MGR SPACECRAFT_MODE = Safe Mode|
 |WP #30 | AK BOUNDS: GPS LAT < 71.35|
 |WP #31 | AK BOUNDS: GPS LAT > 51.22|
@@ -139,6 +139,7 @@ A summary of the current RTSs for the STF mission are captured below:
   * Lower power in MGR, SS_NO_SCIENCE_LOW_POWER
   * Disable AP30 - AP35
   * Disable instrument application
+  * Disable instrument EPS switch
   * Reset AP28
   * Set AP28 active
 * [sc_rts028.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts028.c) - Science, Recharged resuming
@@ -150,39 +151,46 @@ A summary of the current RTSs for the STF mission are captured below:
   * Stop science in MGR, SS_EXITED_SCIENCE_MODE
   * Disable AP27 - AP35
   * Disable instrument application
+  * Disable instrument EPS switch
   * Reset AP26
   * Set AP26 active
 * [sc_rts030.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts030.c) - Science, Over AK
   * Start science in MGR, SS_SCIENCE_OVER_AK
   * Increment science pass counter
+  * Enable instrument EPS switch
   * Enable instrument application
   * Reset AP33
   * Set AP33 active 
 * [sc_rts031.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts031.c) - Science, Over CONUS
   * Start science in MGR, SS_SCIENCE_OVER_CONUS
   * Increment science pass counter
+  * Enable instrument EPS switch
   * Enable instrument application
   * Reset AP34
   * Set AP34 active
 * [sc_rts032.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts032.c) - Science, Over HI
   * Start science in MGR, SS_SCIENCE_OVER_HI
   * Increment science pass counter
+  * Enable instrument EPS switch
   * Enable instrument application
   * Reset AP35
   * Set AP35 active
 * [sc_rts033.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts033.c) - Science Idle, Left AK
   * Stop science in MGR, SS_NO_SCIENCE_LEFT_AK
   * Disable instrument application
+  * Disable instrument EPS switch
   * Reset AP31
   * Set AP31 active
 * [sc_rts034.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts034.c) - Science Idle, Left CONUS
   * Stop science in MGR, SS_NO_SCIENCE_LEFT_CONUS
   * Disable instrument application
+  * Disable instrument EPS switch
   * Reset AP31
   * Set AP31 active
 * [sc_rts035.c](https://github.com/nasa/nos3/blob/dev/cfg/nos3_defs/tables/sc_rts035.c) - Science Idle, Left HI
   * Stop science in MGR, SS_NO_SCIENCE_LEFT_HI
   * Disable instrument application
+  * Disable instrument EPS switch
   * Reset AP31
   * Set AP31 active
 
