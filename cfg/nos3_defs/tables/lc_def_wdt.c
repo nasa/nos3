@@ -42,7 +42,7 @@
 #include "mgr_app.h"
 #include "novatel_oem615_msgids.h"
 
-#define GENERIC_EPS_MID_MSG CFE_SB_MSGID_WRAP_VALUE(GENERIC_EPS_HK_TLM_MID) 
+#define GENERIC_EPS_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(GENERIC_EPS_HK_TLM_MID) 
 #define NOVATEL_OEM615_DEVICE_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID)
 #define MGR_HK_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(MGR_HK_TLM_MID)
 
@@ -435,26 +435,26 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] = {
 
     /* #27 (EPS BATTERY_VOLTAGE < 60) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
+        .DataType                   = LC_DATA_UWORD_LE,
         .OperatorID                 = LC_OPER_LT,
-        .MessageID                  = GENERIC_EPS_MID_MSG,
-        .WatchpointOffset           = 0,
+        .MessageID                  = GENERIC_EPS_TLM_MSG,
+        .WatchpointOffset           = 20,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned16 = 24240,
     },
 
     /* #28 (EPS BATTERY_VOLTAGE > 90) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
+        .DataType                   = LC_DATA_UWORD_LE,
         .OperatorID                 = LC_OPER_GT,
-        .MessageID                  = GENERIC_EPS_MID_MSG,
-        .WatchpointOffset           = 0,
+        .MessageID                  = GENERIC_EPS_TLM_MSG,
+        .WatchpointOffset           = 20,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned16 = 24960,
     },
 
     /* #29 (MGR SPACECRAFT_MODE = Safe Mode) */

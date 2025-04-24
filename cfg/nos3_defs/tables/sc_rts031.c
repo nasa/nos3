@@ -10,6 +10,9 @@
 /* Command Includes */
 #include "cam_app.h"
 #include "generic_radio_app.h"
+#include "generic_eps_app.h"
+#include "generic_eps_msgids.h"
+#include "generic_eps_msg.h"
 #include "sample_app.h"
 #include "lc_app.h"
 #include "lc_msgids.h"
@@ -31,15 +34,18 @@ typedef struct
     /* 2 - Increment Science Pass Counter */
     SC_RtsEntryHeader_t hdr2;
     MGR_NoArgs_cmd_t cmd2;
-    /* 3 - Enable Instrument Application */
+    /* 3 - Enable Instrument Switch on EPS*/
     SC_RtsEntryHeader_t hdr3;
-    SAMPLE_NoArgs_cmd_t cmd3;
-    /* 4 - Reset AP 34 - Leaving CONUS Region */
+    GENERIC_EPS_Switch_cmd_t cmd3;
+    /* 4 - Enable Instrument Application */
     SC_RtsEntryHeader_t hdr4;
-    LC_ResetAPStats_t cmd4;
-    /* 5 - Enable AP 34 - Leaving CONUS Region */
+    SAMPLE_NoArgs_cmd_t cmd4;
+    /* 5 - Reset AP 34 - Leaving CONUS Region */
     SC_RtsEntryHeader_t hdr5;
-    LC_SetAPState_t cmd5;
+    LC_ResetAPStats_t cmd5;
+    /* 6 - Enable AP 34 - Leaving CONUS Region */
+    SC_RtsEntryHeader_t hdr6;
+    LC_SetAPState_t cmd6;
 } SC_RtsStruct031_t;
 
 /* Define the union to size the table correctly */
@@ -62,19 +68,24 @@ SC_RtsTable031_t SC_Rts031 = {
         /* 2 - Increment Science Pass Counter */
         .hdr2.TimeTag = 1,
         .cmd2.CmdHeader = CFE_MSG_CMD_HDR_INIT(MGR_CMD_MID, SC_MEMBER_SIZE(cmd2), MGR_SCI_PASS_INC_CC, 0x00),
-        /* 3 - Enable Instrument Application */
+        /* 3 - Enable Instrument Switch on EPS*/
         .hdr3.TimeTag = 1,
-        .cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd3), SAMPLE_ENABLE_CC, 0x00),
-        /* 4 - Reset AP 34 - Leaving CONUS Region */
+        .cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd3), GENERIC_EPS_SWITCH_CC, 0x00),
+        .cmd3.SwitchNumber = 0,
+        .cmd3.State = 0xAA,
+        /* 4 - Enable Instrument Application */
         .hdr4.TimeTag = 1,
-        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd4), LC_RESET_AP_STATS_CC, 0x00),
-        .cmd4.APNumber = 34,
-        .cmd4.Padding = 0,
-        /* 5 - Enable AP 34 - Leaving CONUS Region */
+        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd4), SAMPLE_ENABLE_CC, 0x00),
+        /* 5 - Reset AP 34 - Leaving CONUS Region */
         .hdr5.TimeTag = 1,
-        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd5), LC_SET_AP_STATE_CC, 0x00),
+        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd5), LC_RESET_AP_STATS_CC, 0x00),
         .cmd5.APNumber = 34,
-        .cmd5.NewAPState = LC_APSTATE_ACTIVE,
+        .cmd5.Padding = 0,
+        /* 6 - Enable AP 34 - Leaving CONUS Region */
+        .hdr6.TimeTag = 1,
+        .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_SET_AP_STATE_CC, 0x00),
+        .cmd6.APNumber = 34,
+        .cmd6.NewAPState = LC_APSTATE_ACTIVE,
     }
 };
 

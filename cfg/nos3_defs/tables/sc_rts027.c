@@ -10,6 +10,9 @@
 /* Command Includes */
 #include "cam_app.h"
 #include "generic_radio_app.h"
+#include "generic_eps_app.h"
+#include "generic_eps_msgids.h"
+#include "generic_eps_msg.h"
 #include "sample_app.h"
 #include "lc_app.h"
 #include "lc_msgids.h"
@@ -49,12 +52,15 @@ typedef struct
     /* 8 Disable Instrument Application */
     SC_RtsEntryHeader_t hdr8;
     SAMPLE_NoArgs_cmd_t cmd8;
-    /* 9 - Reset AP 28 - Science Recharged */
+    /* 9 - Disable Instrument Switch on EPS*/
     SC_RtsEntryHeader_t hdr9;
-    LC_ResetAPStats_t cmd9;
-    /* 10 - Enable AP 28 - Science Recharged*/
+    GENERIC_EPS_Switch_cmd_t cmd9;
+    /* 9 - Reset AP 28 - Science Recharged */
     SC_RtsEntryHeader_t hdr10;
-    LC_SetAPState_t cmd10;
+    LC_ResetAPStats_t cmd10;
+    /* 10 - Enable AP 28 - Science Recharged*/
+    SC_RtsEntryHeader_t hdr11;
+    LC_SetAPState_t cmd11;
 } SC_RtsStruct027_t;
 
 /* Define the union to size the table correctly */
@@ -107,16 +113,21 @@ SC_RtsTable027_t SC_Rts027 = {
         /* 8 Disable Instrument Application */
         .hdr8.TimeTag = 1,
         .cmd8.CmdHeader = CFE_MSG_CMD_HDR_INIT(SAMPLE_CMD_MID, SC_MEMBER_SIZE(cmd8), SAMPLE_DISABLE_CC, 0x00),
-        /* 9 - Reset Science AP 28 - Science Recharged */
+        /* 9 - Disable Instrument Switch on EPS*/
         .hdr9.TimeTag = 1,
-        .cmd9.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd9), LC_RESET_AP_STATS_CC, 0x00),
-        .cmd9.APNumber = 28,
-        .cmd9.Padding = 0,
-        /* 10 - Enable Science AP 28 - Science Recharged */
+        .cmd9.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd9), GENERIC_EPS_SWITCH_CC, 0x00),
+        .cmd9.SwitchNumber = 0,
+        .cmd9.State = 0x00,
+        /* 10 - Reset Science AP 28 - Science Recharged */
         .hdr10.TimeTag = 1,
-        .cmd10.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd10), LC_SET_AP_STATE_CC, 0x00),
+        .cmd10.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd10), LC_RESET_AP_STATS_CC, 0x00),
         .cmd10.APNumber = 28,
-        .cmd10.NewAPState = LC_APSTATE_ACTIVE,
+        .cmd10.Padding = 0,
+        /* 11 - Enable Science AP 28 - Science Recharged */
+        .hdr11.TimeTag = 1,
+        .cmd11.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd11), LC_SET_AP_STATE_CC, 0x00),
+        .cmd11.APNumber = 28,
+        .cmd11.NewAPState = LC_APSTATE_ACTIVE,
     }
 };
 

@@ -91,52 +91,53 @@ SC_RtsTable026_t SC_Rts026 = {
         .cmd2.LastRtsId = 32,
         /* 3-7 - Reset Science APs */
         // AP27 - Low Power
-        // AP29 - Go to Safe Mode
-        // AP30 - Do Science AK
-        // AP31 - Do Science CONUS
-        // AP32 - Do Science HI
         .hdr3.TimeTag = 1,
         .cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd3), LC_RESET_AP_STATS_CC, 0x00),
         .cmd3.APNumber = 27,
         .cmd3.Padding = 0,
+        // AP29 - Go to Safe Mode
         .hdr4.TimeTag = 1,
         .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd4), LC_RESET_AP_STATS_CC, 0x00),
         .cmd4.APNumber = 29,
         .cmd4.Padding = 0,
+        // AP30 - Do Science AK
         .hdr5.TimeTag = 1,
         .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd5), LC_RESET_AP_STATS_CC, 0x00),
         .cmd5.APNumber = 30,
         .cmd5.Padding = 0,
+        // AP31 - Do Science CONUS
         .hdr6.TimeTag = 1,
         .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd6), LC_RESET_AP_STATS_CC, 0x00),
         .cmd6.APNumber = 31,
         .cmd6.Padding = 0,
+        // AP32 - Do Science HI
         .hdr7.TimeTag = 1,
         .cmd7.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd7), LC_RESET_AP_STATS_CC, 0x00),
         .cmd7.APNumber = 32,
         .cmd7.Padding = 1,
         /* 8-12 - Enable Science APs */
         // AP27 - Low Power
-        // AP29 - Go to Safe Mode
-        // AP30 - Do Science AK
-        // AP31 - Do Science CONUS
-        // AP32 - Do Science HI
         .hdr8.TimeTag = 1,
         .cmd8.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd8), LC_SET_AP_STATE_CC, 0x00),
         .cmd8.APNumber = 27,
         .cmd8.NewAPState = LC_APSTATE_ACTIVE,
+        // AP29 - Go to Safe Mode
+        .hdr9.TimeTag = 1,
         .cmd9.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd9), LC_SET_AP_STATE_CC, 0x00),
         .cmd9.APNumber = 29,
         .cmd9.NewAPState = LC_APSTATE_ACTIVE,
-        .hdr10.TimeTag = 0,
+        // AP30 - Do Science AK
+        .hdr10.TimeTag = 1,
         .cmd10.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd10), LC_SET_AP_STATE_CC, 0x00),
         .cmd10.APNumber = 30,
         .cmd10.NewAPState = LC_APSTATE_ACTIVE,
-        .hdr11.TimeTag = 0,
+        // AP31 - Do Science CONUS
+        .hdr11.TimeTag = 1,
         .cmd11.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd11), LC_SET_AP_STATE_CC, 0x00),
         .cmd11.APNumber = 31,
         .cmd11.NewAPState = LC_APSTATE_ACTIVE,
-        .hdr12.TimeTag = 0,
+        // AP32 - Do Science HI
+        .hdr12.TimeTag = 1,
         .cmd12.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd12), LC_SET_AP_STATE_CC, 0x00),
         .cmd12.APNumber = 32,
         .cmd12.NewAPState = LC_APSTATE_ACTIVE,
