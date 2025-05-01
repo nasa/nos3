@@ -27,8 +27,6 @@ By the end of this scenario, you should be able to:
 Before running this scenario, ensure the following:
 
 * You have completed NOS3 installation from [Getting Started](./Getting_Started.md)
-* The `sample_checkout` binary has been built
-  * You can verify this by checking that `components/sample/fsw/standalone/build/sample_checkout` exists
 * You are working from the top level of the NOS3 repository
 
 ---
@@ -47,17 +45,36 @@ If you want to bring up the entire simulation environment:
 
 ```bash
 make launch
+make stop
 ```
 
 You may minimize the NOS3 Launcher, but do not close it.
 
 ---
 
-## Step 3: Launch the Sample Checkout App in GDB
+### Step 3: Build the Sample Checkout App
+
+```bash
+./scripts/checkout.sh
+make stop
+make debug
+cd components/sample/fsw/standalone/
+mkdir build
+cd build
+cmake .. -DTGTNAME=cpu1
+make
+exit
+```
+
+---
+
+### Step 4: Launch the Sample Checkout App in GDB
 
 Open a new terminal and run the following `gnome-terminal` command to launch the `sample_checkout` binary inside `gdb`:
 
 ```bash
+source ./scripts/checkout.sh
+make checkout
 gnome-terminal --title="Sample Checkout (gdb)" -- $DFLAGS -it \
   -v $BASE_DIR:$BASE_DIR \
   --name $SC_NUM"_sample_checkout_debug" \
@@ -70,7 +87,7 @@ gnome-terminal --title="Sample Checkout (gdb)" -- $DFLAGS -it \
 
 ---
 
-## Step 4: Use GDB
+### Step 5: Use GDB
 
 Once inside the GDB session, you can:
 
@@ -93,9 +110,10 @@ Once inside the GDB session, you can:
   info locals
   ```
 
-To quit GDB:
+To quit GDB and exit the Sample Simulator, NOS Engine, etc.:
 ```gdb
 quit
+make stop
 ```
 
 ---
