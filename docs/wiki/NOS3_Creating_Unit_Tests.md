@@ -51,28 +51,28 @@ there is this segment of code.
 * The FcnCode is the command code is a key part of understanding the mechanics of NOS3, it is how the flight system is able to know which command is being sent and in this case specifies which command is being tested. 
 * The Size = sizeof(TestMsg.Noop) is how the length of the command is set, the key thing here is that commands without accompanying arguments all share one size, however other commmands that have arguments, in this case config, need to have a different size specified in the union struct at the top of the function
 * The
-  ``UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);``
-  ``UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);``
-  ``UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &Size, sizeof(Size), false);``
+  `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);`
+  `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);`
+  `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetSize), &Size, sizeof(Size), false);`
   lines specify the command string to be sent to cfs and is how the command is sent to the `sample_device.c file`
 * `SAMPLE_ProcessGroundCommand();` Runs the command
 * `UtAssert_True(EventTest.MatchCount == 1, "SAMPLE_CMD_NOOP_INF_EID generated (``%u)",` checks the results
                   `(unsigned int)EventTest.MatchCount);`
 
 # Building/Running the tests and generating a coverage report
-* ``% make clean``
-* ``% make config``
-* ``% make prep``
-* ``% make``
-* ``% make debug``
-* ``% export CFLAGS="-fprofile-arcs -ftest-coverage -g" (.github/workflows/build.yml)``
-* ``% make build-test``
-* ``% make test-fsw``
-* ``% mkdir -p doc/coverage``
-* ``% gcovr --gcov-ignore-parse-errors --xml-pretty -o doc/coverage/coverage_report.xml``
-* ``% gcovr --gcov-ignore-parse-errors --html --html-details -o doc/coverage/coverage_report.html``
-* ``% exit``
-* ``% firefox doc/coverage/coverage_report.html``
+* `% make clean`
+* `% make config`
+* `% make prep`
+* `% make`
+* `% make debug`
+* `% export CFLAGS="-fprofile-arcs -ftest-coverage -g" (.github/workflows/build.yml)`
+* `% make build-test`
+* `% make test-fsw`
+* `% mkdir -p doc/coverage`
+* `% gcovr --gcov-ignore-parse-errors --xml-pretty -o doc/coverage/coverage_report.xml`
+* `% gcovr --gcov-ignore-parse-errors --html --html-details -o doc/coverage/coverage_report.html`
+* `% exit`
+* `% firefox doc/coverage/coverage_report.html`
 
 `The coverage_report.html` file will display the code coverage and tests result for every file in the directory
 
