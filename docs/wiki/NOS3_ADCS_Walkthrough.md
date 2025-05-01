@@ -18,7 +18,7 @@ Before running the scenario, ensure the following steps are completed:
   - [Running](https://github.com/nasa/nos3/blob/6fc41656447de78689dedfc770c0809dddad6231/docs/wiki/Getting_Started.md#running)
     
 ## Introduction
-    The Attitude Determination and Control System (ADCS) is different from our other components, as instead of interfacing with a sensor or actuator directly, it serves as a sensor fusion component, taking in the inputs from various sensors and actuators, and using them to orient and navigate the craft as specified. NOS3's ADCS comes equipped with four main modes: Passive, Sunsafe, Inertial, and BDOT.
+The Attitude Determination and Control System (ADCS) is different from our other components, as instead of interfacing with a sensor or actuator directly, it serves as a sensor fusion component, taking in the inputs from various sensors and actuators, and using them to orient and navigate the craft as specified. NOS3's ADCS comes equipped with four main modes: Passive, Sunsafe, Inertial, and BDOT.
     
 ## Modes
 - Passive turns ADCS control of the craft off, leaving it to manual commands of the actuators.
@@ -39,7 +39,7 @@ Before running the scenario, ensure the following steps are completed:
 - Thrusters are not linked into ADCS or fully developed for this example mission, but they would allow orbital adjustments and navigation in the linear axes, rather than rotational adjustments like the other actuators.
   
 ## Ingest and Output:
-  As this mission uses cFS, it is built on a bus-based architecture, where all messages are published to a single bus, which other components can subscribe to. Thus, ADCS's sensor fusion works by subscribing to the various sensors' messages in ADCS, so it can read them into itself and act on them. If you would like more information, look at the "generic_adcs_ingest.c" file.
+As this mission uses cFS, it is built on a bus-based architecture, where all messages are published to a single bus, which other components can subscribe to. Thus, ADCS's sensor fusion works by subscribing to the various sensors' messages in ADCS, so it can read them into itself and act on them. If you would like more information, look at the "generic_adcs_ingest.c" file.
 
 Then, when ADCS needs to command an actuator, you would need to build and send a command message for that actuator from ADCS in order to control it. If you would like more information, look at the "generic_adcs_output.c" file.
 
