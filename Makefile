@@ -140,6 +140,11 @@ gcov:
 	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
 	genhtml $(COVERAGEDIR)/coverage.info --output-directory $(COVERAGEDIR)/results
 
+code-coverage: build-test test-fsw
+	mkdir -p doc/coverage
+	gcovr --gcov-ignore-parse-errors --xml-pretty -o doc/coverage/coverage_report.xml
+	gcovr --gcov-ignore-parse-errors --html --html-details -o doc/coverage/coverage_report.html
+
 gsw:
 	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
