@@ -439,25 +439,25 @@ else:
                 if line.find('camsim</name>') != -1:
                     if (lines.index(line)) < cam_index:
                         cam_index = lines.index(line) + 1
-                if line.find('css_sim</name>') != -1:
+                if line.find('css-sim</name>') != -1:
                     if (lines.index(line)) < css_index:
                         css_index = lines.index(line) + 1
-                if line.find('eps_sim</name>') != -1:
+                if line.find('eps-sim</name>') != -1:
                     if (lines.index(line)) < eps_index:
                         eps_index = lines.index(line) + 1
-                if line.find('fss_sim</name>') != -1:
+                if line.find('fss-sim</name>') != -1:
                     if (lines.index(line)) < fss_index:
                         fss_index = lines.index(line) + 1
                 if line.find('gps</name>') != -1:
                     if (lines.index(line)) < gps_index:
                         gps_index = lines.index(line) + 1
-                if line.find('imu_sim</name>') != -1:
+                if line.find('imu-sim</name>') != -1:
                     if (lines.index(line)) < imu_index:
                         imu_index = lines.index(line) + 1
-                if line.find('mag_sim</name>') != -1:
+                if line.find('mag-sim</name>') != -1:
                     if (lines.index(line)) < mag_index:
                         mag_index = lines.index(line) + 1
-                if line.find('radio_sim</name>') != -1:
+                if line.find('radio-sim</name>') != -1:
                     if (lines.index(line)) < radio_index:
                         radio_index = lines.index(line) + 1
                 if line.find('reactionwheel-sim0</name>') != -1:
@@ -469,16 +469,16 @@ else:
                 if line.find('reactionwheel-sim2</name>') != -1:
                     if (lines.index(line)) < rw2_index:
                         rw2_index = lines.index(line) + 1
-                if line.find('sample_sim</name>') != -1:
+                if line.find('sample-sim</name>') != -1:
                     if (lines.index(line)) < sample_index:
                         sample_index = lines.index(line) + 1
-                if line.find('star_tracker_sim</name>') != -1:
+                if line.find('star-tracker-sim</name>') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
-                if line.find('generic_torquer_sim</name>') != -1:
+                if line.find('generic-torquer-sim</name>') != -1:
                     if (lines.index(line)) < torquer_index:
                         torquer_index = lines.index(line) + 1
-                if line.find('generic_thruster_sim</name>') != -1:
+                if line.find('generic-thruster-sim</name>') != -1:
                     if (lines.index(line)) < thruster_index:
                         thruster_index = lines.index(line) + 1
 
