@@ -37,6 +37,17 @@
 #include "lc_extern_typedefs.h"
 #include "lc_tbldefs.h"
 
+#include "generic_eps_msgids.h"
+#include "mgr_msgids.h"
+#include "mgr_app.h"
+#include "novatel_oem615_msgids.h"
+
+#define GENERIC_EPS_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(GENERIC_EPS_HK_TLM_MID) 
+#define NOVATEL_OEM615_DEVICE_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID)
+#define MGR_HK_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(MGR_HK_TLM_MID)
+
+// static const CFE_SB_MsgId_t testId = CFE_SB_ValueToMsgId(TEST_MID);
+
 /*************************************************************************
 ** Examples
 ** (note that comment delimiters have been changed to '**')
@@ -398,244 +409,244 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] = {
         .ComparisonValue.Unsigned32 = 0,
     },
 
-    /* #25 (unused) */
+    /* #25 (MGR SPACECRAFT_MODE = Science_Reboot) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 18,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = MGR_SCIENCE_REBOOT_MODE,
     },
 
-    /* #26 (unused) */
+    /* #26 (MGR SPACECRAFT_MODE = Science) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 18,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = MGR_SCIENCE_MODE,
     },
 
-    /* #27 (unused) */
+    /* #27 (EPS BATTERY_VOLTAGE < 60) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UWORD_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = GENERIC_EPS_TLM_MSG,
+        .WatchpointOffset           = 20,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned16 = 24240,
     },
 
-    /* #28 (unused) */
+    /* #28 (EPS BATTERY_VOLTAGE > 90) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UWORD_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = GENERIC_EPS_TLM_MSG,
+        .WatchpointOffset           = 20,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned16 = 24960,
     },
 
-    /* #29 (unused) */
+    /* #29 (MGR SPACECRAFT_MODE = Safe Mode) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 18,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = MGR_SAFE_MODE,
     },
 
-    /* #30 (unused) */
+    /* #30 (AK BOUNDS: GPS LAT < 71.35) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = 71.35f,
     },
 
-    /* #31 (unused) */
+    /* #31 (AK BOUNDS: GPS LAT > 51.22) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = 51.22f,
     },
 
-    /* #32 (unused) */
+    /* #32 (AK BOUNDS: GPS LON < -129.99) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = -129.99f,
     },
 
-    /* #33 (unused) */
+    /* #33 (AK BOUNDS: GPS LON > -179.15) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    =-179.15f,
     },
 
-    /* #34 (unused) */
+    /* #34 (MGR AK_STATUS = ENABLED) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 34,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = 1,
     },
 
-    /* #35 (unused) */
+    /* #35 (CONUS BOUNDS: GPS LAT < 49.38) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = 49.38f,
     },
 
-    /* #36 (unused) */
+    /* #36 (CONUS BOUNDS: GPS LAT > 24.52) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+       .ComparisonValue.Float32     = 24.52f,
     },
 
-    /* #37 (unused) */
+    /* #37 (CONUS BOUNDS: GPS LON < -66.95) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = -66.95f,
     },
 
-    /* #38 (unused) */
+    /* #38 (CONUS BOUNDS: GPS LON > -125) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = -125.0f,
     },
 
-    /* #39 (unused) */
+    /* #39 (MGR CONUS_STATUS = ENABLED) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 35,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = 1,
     },
 
-    /* #40 (unused) */
+    /* #40 (HI BOUNDS: GPS LAT < 28.4) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = 28.4f,
     },
 
-    /* #41 (unused) */
+    /* #41 (HI BOUNDS: GPS LAT > 18.9) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 78,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Float32    = 18.9f,
     },
 
-    /* #42 (unused) */
+    /* #42 (HI BOUNDS: GPS LON < -154.8) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_LT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+       .ComparisonValue.Float32    = -154.8f,
     },
 
-    /* #43 (unused) */
+    /* #43 (HI BOUNDS: GPS LON > -178.7) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_FLOAT_LE,
+        .OperatorID                 = LC_OPER_GT,
+        .MessageID                  = NOVATEL_OEM615_DEVICE_TLM_MSG,
+        .WatchpointOffset           = 82,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+       .ComparisonValue.Float32    = -178.7f,
     },
 
-    /* #44 (unused) */
+    /* #44 (MGR HI_STATUS = ENABLED) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_EQ,
+        .MessageID                  = MGR_HK_TLM_MSG,
+        .WatchpointOffset           = 36,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
-        .ComparisonValue.Unsigned32 = 0,
+        .ComparisonValue.Unsigned8  = 1,
     },
 
     /* #45 (unused) */

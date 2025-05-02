@@ -19,6 +19,10 @@
 #include "to_cmds.h"
 #include "to_lab_msgids.h"
 #include "to_lab_msg.h"
+#include "lc_msgids.h"
+#include "lc_app.h"
+#include "mgr_msgids.h"
+#include "mgr_app.h"
 
 /* Custom table structure, modify as needed to add desired commands */
 typedef struct
@@ -38,6 +42,27 @@ typedef struct
     /* 5 - Start RTS 3 (Safe Mode) */
     SC_RtsEntryHeader_t hdr5;
     SC_RtsCmd_t cmd5;
+    /* 6 - Enable Science Transition RTS 26 */
+    SC_RtsEntryHeader_t hdr6;
+    SC_RtsCmd_t cmd6;
+    /* 7 - Reset Science Mode AP */
+    SC_RtsEntryHeader_t hdr7;
+    LC_ResetAPStats_t cmd7;
+    /* 8 - Enable Science Mode AP */
+    SC_RtsEntryHeader_t hdr8;
+    LC_SetAPState_t cmd8;
+    /* 9 - Enable Science_Reboot to Science Mode RTS 25 */
+    SC_RtsEntryHeader_t hdr9;
+    SC_RtsCmd_t cmd9;
+    /* 10 - Reset Science_Reboot to Science AP */
+    SC_RtsEntryHeader_t hdr10;
+    LC_ResetAPStats_t cmd10;
+    /* 11 - Enable Science_Reboot to Science AP */
+    SC_RtsEntryHeader_t hdr11;
+    LC_SetAPState_t cmd11;
+    /* 12 - Update Science Status in MGR */
+    SC_RtsEntryHeader_t hdr12;
+    MGR_U8_cmd_t cmd12;
 } SC_RtsStruct001_t;
 
 /* Define the union to size the table correctly */
@@ -80,6 +105,47 @@ SC_RtsTable001_t SC_Rts001 = {
         .hdr5.TimeTag = 1,
         .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd5), SC_START_RTS_CC, 0x00),
         .cmd5.RtsId = 3,
+
+        /* 6 - Enable Science Transition RTS: (26) */
+        .hdr6.TimeTag = 0,
+        .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd6), SC_ENABLE_RTS_CC, 0x00),
+        .cmd6.RtsId = 26,
+        .cmd6.Padding = 0,
+
+        /* 7 - Reset Science Mode AP */
+        .hdr7.TimeTag = 1,
+        .cmd7.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd7), LC_RESET_AP_STATS_CC, 0x00),
+        .cmd7.APNumber = 26,
+        .cmd7.Padding = 0,
+
+        /* 8 - Enable Science Mode AP */
+        .hdr8.TimeTag = 1,
+        .cmd8.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd8), LC_SET_AP_STATE_CC, 0x00),
+        .cmd8.APNumber = 26,
+        .cmd8.NewAPState = LC_APSTATE_ACTIVE,
+
+        /* 9 - Enable Science Reboot to Science RTS: (25) */
+        .hdr9.TimeTag = 0,
+        .cmd9.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd9), SC_ENABLE_RTS_CC, 0x00),
+        .cmd9.RtsId = 25,
+        .cmd9.Padding = 0,
+
+        /* 10 - Reset Science_Reboot to Science Mode AP 25 */
+        .hdr10.TimeTag = 1,
+        .cmd10.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd10), LC_RESET_AP_STATS_CC, 0x00),
+        .cmd10.APNumber = 25,
+        .cmd10.Padding = 0,
+
+        /* 11 - Enable Science_Reboot to Science Mode AP 25*/
+        .hdr11.TimeTag = 1,
+        .cmd11.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd11), LC_SET_AP_STATE_CC, 0x00),
+        .cmd11.APNumber = 25,
+        .cmd11.NewAPState = LC_APSTATE_ACTIVE,
+
+        /* 12 - Set Science Status to Off to avoid Confusion with reloaded Science Status */
+        .hdr12.TimeTag = 1,
+        .cmd12.CmdHeader = CFE_MSG_CMD_HDR_INIT(MGR_CMD_MID, SC_MEMBER_SIZE(cmd12), MGR_UPDATE_SCI_STATUS_CC, 0x00),
+        .cmd12.U8 = SS_SCIENCE_OFF,
     }
 };
 
