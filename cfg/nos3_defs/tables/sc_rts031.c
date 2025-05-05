@@ -49,7 +49,7 @@ typedef struct
     /* 5 - Set ADCS to INERTIAL_MODE */
     SC_RtsEntryHeader_t hdr5;
     Generic_ADCS_Mode_cmd_t cmd5;
-    /* 6 - Set ADCS INERTIAL Quaternion to 1, 0, 0, 1 */
+    /* 6 - Set ADCS INERTIAL Quaternion to 0, 0, 0, 1 */
     SC_RtsEntryHeader_t hdr6;
     Generic_ADCS_Quat_cmd_t cmd6;
     /* 7 - Enable Instrument Switch on EPS*/
@@ -98,13 +98,10 @@ SC_RtsTable031_t SC_Rts031 = {
         .hdr5.TimeTag = 5,
         .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_ADCS_CMD_MID, SC_MEMBER_SIZE(cmd5), GENERIC_ADCS_SET_MODE_CC, 0x00),
         .cmd5.Mode = INERTIAL_MODE,
-        /* 6 - Set ADCS Inertial Quaternion to 1, 0, 0, 1 */
+        /* 6 - Set ADCS Inertial Quaternion to 0, 0, 0, 1 */
         .hdr6.TimeTag = 5,
         .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_ADCS_CMD_MID, SC_MEMBER_SIZE(cmd6), GENERIC_ADCS_INERTIAL_QUATERNION_CC, 0x00),
-        .cmd6.qbn[0] = 1,
-        .cmd6.qbn[1] = 0,
-        .cmd6.qbn[2] = 0,
-        .cmd6.qbn[3] = 1,
+        .cmd6.qbn = {0.0, 0.0, 0.0, 1.0},
         /* 7 - Enable Instrument Switch on EPS*/
         .hdr7.TimeTag = 1,
         .cmd7.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd7), GENERIC_EPS_SWITCH_CC, 0x00),
