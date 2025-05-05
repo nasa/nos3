@@ -55,8 +55,8 @@ As discussed in planning, this is a process that will require 4 extra commands:
  - Enabling the Star Tracker cFS Application
  - Setting the ADCS Mode to `INERTIAL_MODE`
  - Setting the ADCS Inertial Quaternion to `[0, 0, 0, 1]` 
-	 - _(Note: For this, we needed to switch the ADCS Command Structure for the Quaternion command to use `float` instead of `double` (which was used originally and is used elsewhere in ADCS) for this, as doubles are not
-     currently compatible with cFS tables. This may be switched back once a patch is worked into NOS3, and cFS if it hasn't been already)_
+	 - _Note: For this, we needed to switch the ADCS Command Structure for the Quaternion command to use `float` instead of `double` (which was used originally and is used elsewhere in ADCS) for this, as doubles are not
+     currently compatible with cFS tables. This may be switched back once a patch is worked into NOS3, and cFS if it hasn't been already_
 
 To achieve this, three areas of each RTS table needs to be changed:
 - The required headers for Star Tracker and ADCS need to be added to the `#include` section of the file
