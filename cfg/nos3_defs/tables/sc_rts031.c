@@ -101,7 +101,7 @@ SC_RtsTable031_t SC_Rts031 = {
         /* 6 - Set ADCS Inertial Quaternion to 0, 0, 0, 1 */
         .hdr6.TimeTag = 5,
         .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_ADCS_CMD_MID, SC_MEMBER_SIZE(cmd6), GENERIC_ADCS_INERTIAL_QUATERNION_CC, 0x00),
-        .cmd6.qbn = {0.0, 0.0, 0.0, 1.0},
+        .cmd6.qbn = {0.0f, 0.0f, 0.0f, 1.0f},
         /* 7 - Enable Instrument Switch on EPS*/
         .hdr7.TimeTag = 1,
         .cmd7.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd7), GENERIC_EPS_SWITCH_CC, 0x00),
