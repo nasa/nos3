@@ -23,14 +23,14 @@ With a terminal navigated to the top level of your NOS3 repository:
 
 Once you are in the unit-test folder
 * Run the command `ls`
-* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output, if any files are missing, again copy from the sample component or generate with the sample script
+* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output. If any files are missing copy from the sample component or generate with the sample script
 * Open the `CMakeLists.txt` file
-* Check that the name of the component files being included match the component you are working with, if not change them to match. Then close the file
+* Check that the name matches the component you are working with. If not change them to match. Then close the file
 * Navigate to the `coveragetest/`
 * Run the command `ls` again, you should see `coveragetest_sample_app.c  sample_app_coveragetest_common.h` as the two files within this directory
 * The `coveragetest_sample_app.c` is the file you will be writing the unit tests in
 * `cd ..` out of `coveragetest`
-* Run `cd inc` and open the `ut_sample_app.h` ensure here that the name of the files being included matches the component you intend to work on
+* Run `cd inc` and open `ut_sample_app.h` then ensure here that the filenames being included matches the component you intend to work on
 * Finally `cd ..`, `cd stubs`, and `ls`
 * You should see `libuart_stubs.c  sample_device_stubs.c`
 * Check both files to make sure the component name matches the one you are working
@@ -38,13 +38,13 @@ Once you are in the unit-test folder
 * open `coveragetest_sample_app.c`
 
 # Writing Unit Tests
-* Inside the coveragetest_sample_app.c file
+* Look inside the `coveragetest_sample_app.c` file
 * This file is where you will write your actual unit tests
-* Within the coveragetest file you will see an array of existing functions such as `Test_SAMPLE_AppMain`, `Test_SAMPLE_AppInit`, `Test_SAMPLE_ProcessCommandPacket`,`Test_SAMPLE_ReportHousekeeping`, etc
+* Within the coveragetest file you will see an array of existing functions such as `Test_SAMPLE_AppMain`, `Test_SAMPLE_AppInit`, `Test_SAMPLE_ProcessCommandPacket`,`Test_SAMPLE_ReportHousekeeping`, etc.
 * These functions are split up this way to interact directly with similarly named functions in the `sample/fsw/cfs/src/sample_device.c` file
 
 # Example of NOOP Test
-* As a specific example whithin the `Test_SAMPLE_ProcessGroundCommand` function, where a majority of our commands are tested 
+* As a specific example within the `Test_SAMPLE_ProcessGroundCommand` function, where a majority of our commands are tested 
 ![alt text](image.png)
 there is this segment of code.
 
