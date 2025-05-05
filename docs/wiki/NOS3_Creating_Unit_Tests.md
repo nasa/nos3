@@ -48,8 +48,8 @@ Once you are in the unit-test folder
 ![alt text](image.png)
 there is this segment of code.
 
-* The FcnCode is the command code is a key part of understanding the mechanics of NOS3, it is how the flight system is able to know which command is being sent and in this case specifies which command is being tested. 
-* The Size = sizeof(TestMsg.Noop) is how the length of the command is set, the key thing here is that commands without accompanying arguments all share one size, however other commmands that have arguments, in this case config, need to have a different size specified in the union struct at the top of the function
+* The FcnCode is the command code. It is a key part of understanding the mechanics of NOS3. It is how the flight system is able to know which command is being sent and in this case specifies which command is being tested. 
+* The `Size = sizeof(TestMsg.Noop)` is how the length of the command is set. The key thing here is that commands without accompanying arguments all share one size, however other commmands that have arguments, in this case config, need to have a different size specified in the union struct at the top of the function
 * The
   `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);`
   `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);`
