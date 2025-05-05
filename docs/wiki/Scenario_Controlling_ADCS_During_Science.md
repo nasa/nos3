@@ -60,8 +60,13 @@ As discussed in planning, this is a process that will require 4 extra commands:
 
 To achieve this, three areas of each RTS table needs to be changed:
 - The required headers for Star Tracker and ADCS need to be added to the `#include` section of the file
+  ![adcsDuringScience_EnableIncludes](https://github.com/user-attachments/assets/e64a40dd-705a-4f68-80dd-c6358fe4320e)
 - Add the extra commands and headers to the RTS in that section, and shift any existing headers and commands to accommodate
+  ![adcsDuringScience_EnableHeaders](https://github.com/user-attachments/assets/6d3f7a8a-cefb-4c07-9251-b498ba87a542)
 - Add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
+  ![adcsDuringScience_EnableCommands](https://github.com/user-attachments/assets/800147f0-33e1-4172-a16b-43df9faba11e)
+
+Note that the above changes need to be done in RTS tables 30, 31, and 32. 30 is shown for ease. The commands should be the same, but where they are located may vary depending on what else the table is doing (though in this case, these 3 tables are quite similar). You can go through each aformentioned table to see how the changes are adapted for that table in particular.
 
 ### Part B: Disabling Inertial Mode and Resetting to Sunsafe
 As discussed in planning, this is a process that will require 3 extra commands:
@@ -71,8 +76,13 @@ As discussed in planning, this is a process that will require 3 extra commands:
 
 To achieve this, three areas of each RTS table needs to be changed:
 - The required headers for Star Tracker and ADCS need to be added to the `#include` section of the file
+  ![adcsDuringScience_DisableIncludes](https://github.com/user-attachments/assets/aaf1abde-139e-4c90-b397-1e1f854b9951)
 - Add the extra commands and headers to the RTS in that section, and shift any existing headers and commands to accommodate
+  ![adcsDuringScience_DisableHeaders](https://github.com/user-attachments/assets/4cc073ee-8276-43bf-afee-82ce609dc10b)
 - Add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
+  ![adcsDuringScience_DisableCommands](https://github.com/user-attachments/assets/45af81af-928b-48e0-aa2b-ddfc551edd55)
+
+Note that the above changes need to be done in RTS tables 27, 29, 33, 34, and 35. 33 is shown for ease. The commands should be the same, but where they are located will vary depending on what else the table is doing. You can go through each aformentioned table to see how the changes are adapted for that table in particular.
 
 ## Step 3: Verifying Intended Behavior
 With this, you should be able to test that it works by bringing up NOS3, launching COSMOS, and commanding the craft to have the various regions enabled and to enter Science Mode. 
