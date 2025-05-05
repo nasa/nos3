@@ -39,7 +39,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gcov gsw launch log prep sim stop stop-gsw uninstall
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw code-coverage config debug fsw gcov gsw help help-all launch log prep sim stop stop-gsw uninstall
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -122,6 +122,7 @@ clean: ## Clean all build files and configurations
 
 clean-fsw: ## Clean only flight software build artifacts
 	rm -rf cfg/build/nos3_defs
+	rm -rf docs/coverage/coverage_report.*
 	rm -rf fsw/build
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
@@ -155,11 +156,12 @@ gcov: ## Build Code Coverage results
 	genhtml $(COVERAGEDIR)/coverage.info --output-directory $(COVERAGEDIR)/results
 
 code-coverage: ## Build code coverage file
-	build-test 
-	test-fsw
-	mkdir -p doc/coverage
-	gcovr --gcov-ignore-parse-errors --xml-pretty -o doc/coverage/coverage_report.xml
-	gcovr --gcov-ignore-parse-errors --html --html-details -o doc/coverage/coverage_report.html
+	$(MAKE) build-test 
+	$(MAKE) test-fsw
+	mkdir -p docs/coverage
+	gcovr --gcov-ignore-parse-errors --merge-mode-functions=merge-use-line-0 --xml-pretty -o docs/coverage/coverage_report.xml
+	gcovr --gcov-ignore-parse-errors --merge-mode-functions=merge-use-line-0 --html --html-details -o docs/coverage/coverage_report.html
+	chmod 777 ./docs/coverage/coverage_report.*
 
 gsw: ## Build Ground Software binaries
 	./scripts/gsw/build_cryptolib.sh
