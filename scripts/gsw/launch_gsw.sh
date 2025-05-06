@@ -48,7 +48,7 @@ $DNETWORK create \
     --subnet=192.168.41.0/24 \
     --gateway=192.168.41.1 \
     --attachable \
-    nos3_core
+    nos3-core
 
 
 echo "Launch GSW..."

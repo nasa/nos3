@@ -49,12 +49,12 @@ mkdir -p /tmp/nos3/data/{cam,evs,hk,inst} /tmp/nos3/uplink
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/cfe_es_startup.scr /tmp/nos3/uplink/tmp0.so 2>/dev/null || true
 cp $BASE_DIR/fsw/build/exe/cpu1/cf/sample.so /tmp/nos3/uplink/tmp1.so 2>/dev/null || true
 
-$DNETWORK rm nos3_core 2>/dev/null || true
+$DNETWORK rm nos3-core 2>/dev/null || true
 $DNETWORK create \
     --driver=bridge \
     --subnet=192.168.41.0/24 \
     --gateway=192.168.41.1 \
-    nos3_core
+    nos3-core
 
 echo "Launch GSW..."
 
@@ -66,7 +66,7 @@ if [ "$GSW" == "cosmos" ]; then
       -v "$GSW_DIR:/cosmos" \
       -v "$BASE_DIR/scripts:/scripts:ro" \
       -v /tmp/nos3:/tmp/nos3 \
-      --network=nos3_core \
+      --network=nos3-core \
       -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
       -e DISPLAY=$DISPLAY \
       -e QT_X11_NO_MITSHM=1 \
@@ -79,7 +79,7 @@ if [ "$GSW" == "cosmos" ]; then
   $DCALL exec -d cosmos_openc3-operator_1 bash -c "xvfb-run ruby CmdTlmServer /cosmos/config/tools/cmd_tlm_server/cmd_tlm_server.txt"
 
 elif [ "$GSW" == "cosmos-gui" ]; then
-    $DFLAGS -v $BASE_DIR:$BASE_DIR -dit -v /tmp/nos3:/tmp/nos3 -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e PROCESSOR_ENDIANNESS="LITTLE_ENDIAN" -w $GSW_DIR --name cosmos_openc3-operator_1 --network=nos3_core ballaerospace/cosmos:4.5.0
+    $DFLAGS -v $BASE_DIR:$BASE_DIR -dit -v /tmp/nos3:/tmp/nos3 -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e PROCESSOR_ENDIANNESS="LITTLE_ENDIAN" -w $GSW_DIR --name cosmos_openc3-operator_1 --network=nos3-core ballaerospace/cosmos:4.5.0
 
     echo ""
     echo "Please quickly click the COSMOS Ok button to launch"
@@ -102,7 +102,7 @@ elif [ "$GSW" == "yamcs" ]; then
   $DCALL run -dit \
       --name cosmos_openc3-operator_1 \
       --hostname cosmos \
-      --network=nos3_core \
+      --network=nos3-core \
       --network-alias=cosmos \
       -p 8090:8090 -p 5012:5012 \
       -e COMPONENT_DIR=$COMPONENT_DIR \
@@ -119,21 +119,21 @@ elif [ "$GSW" == "yamcs" ]; then
 fi
 
 ### Connections
-$DCALL run -dit --name nos_terminal --network=nos3_core \
+$DCALL run -dit --name nos-terminal --network=nos3-core \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-single-simulator -f nos3-simulator.xml stdio-terminal
 
-$DCALL run -dit --name nos_udp_terminal --network=nos3_core \
+$DCALL run -dit --name nos-udp-terminal --network=nos3-core \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-single-simulator -f nos3-simulator.xml udp-terminal
 
-$DCALL run -dit --name nos_sim_bridge --network=nos3_core \
+$DCALL run -dit --name nos_sim_bridge --network=nos3-core \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-sim-cmdbus-bridge -f nos3-simulator.xml
 
 CFG_FILE="-f nos3-simulator.xml"
 
-$DCALL run -dit --name nos_time_driver --network=nos3_core \
+$DCALL run -dit --name nos_time_driver --network=nos3-core \
     --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-single-simulator -f nos3-simulator.xml time
@@ -208,8 +208,8 @@ for (( i=1; i<=$SATNUM; i++ )); do
     $DNETWORK connect --alias nos_time_driver $SC_NET nos_time_driver
 
     echo "Connecting ground simulators to spacecraft network..."
-    $DNETWORK connect $SC_NET nos_terminal
-    $DNETWORK connect $SC_NET nos_udp_terminal
+    $DNETWORK connect $SC_NET nos-terminal
+    $DNETWORK connect $SC_NET nos-udp-terminal
     $DNETWORK connect $SC_NET nos_sim_bridge
 done
 
