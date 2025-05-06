@@ -136,7 +136,6 @@ clean-gsw: ## Clean only GSW build artifacts
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
 
-
 config: ## Run configuration setup
 	@if [ -n "$(SC1_CFG)" ]; then \
 		SC1_CFG="$(SC1_CFG)" ./scripts/cfg/config.sh; \
@@ -155,7 +154,7 @@ gcov: ## Build Code Coverage results
 	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
 	genhtml $(COVERAGEDIR)/coverage.info --output-directory $(COVERAGEDIR)/results
 
-code-coverage: ## Build code coverage file
+code-coverage: ## Build code coverage file, does not work via shared folders in VirtualBox
 	$(MAKE) build-test 
 	$(MAKE) test-fsw
 	mkdir -p docs/coverage
@@ -179,7 +178,7 @@ help: ## Display this help message
 	@printf "%-20s %s\n" "prep"          "Prepare full development environment"
 	@printf "%-20s %s\n" "stop"          "Stop entire system"
 	@printf "%-20s %s\n" "uninstall"     "Remove all build artifacts and containers"
-
+	@echo ""
 
 help-all: ## Displays advanced help information
 	@echo ""
@@ -215,7 +214,7 @@ help-all: ## Displays advanced help information
 
 	@echo ""
 	@echo "Testing:"
-	@printf "\t%-20s %s\n" "code-coverage"  "Build tests and produce code coverage report"
+	@printf "\t%-20s %s\n" "code-coverage"  "Produce code coverage report (does not work via shared folders)"
 	@printf "\t%-20s %s\n" "ci-launch"      "Headless Launch for System Testing"
 	@printf "\t%-20s %s\n" "system-tests"   "GUI Launch for System Testing"
 	@printf "\t%-20s %s\n" "test-fsw"       "Test Flight Software"
@@ -230,8 +229,7 @@ help-all: ## Displays advanced help information
 	@printf "\t%-20s %s\n" "stop"           "Stop entire System"
 	@printf "\t%-20s %s\n" "stop-gsw"       "Stop Ground Software"
 	@printf "\t%-20s %s\n" "uninstall"      "Remove all build artifacts and containers"
-
-
+	@echo ""
 
 igniter: ## Launch Configuration GUI Igniter
 	./scripts/cfg/igniter_launch.sh
@@ -271,8 +269,6 @@ stop: ## Stop entire system
 	  fi; \
 	  rm -f ./cfg/build/current_config_path.txt; \
 	fi
-
-
 
 stop-gsw: ## Stop Ground Sfotware
 	./scripts/gsw/stop_gsw.sh
