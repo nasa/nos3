@@ -106,7 +106,7 @@ do
     fi
 done
 echo "" >> plugin.txt
-echo "INTERFACE DEBUG udp_interface.rb nos_fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE DEBUG udp_interface.rb nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
@@ -118,7 +118,7 @@ done
 echo "   MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
-echo "INTERFACE RADIO udp_interface.rb radio_sim 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE RADIO udp_interface.rb radio-sim 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]

@@ -74,7 +74,7 @@ With a terminal navigated to the top level of your NOS3 repository:
 * Let's command the radio to transmit
   * It is common that the spacecraft radio is always listening for commands, but doesn't transmit unless enabled
   * In the Command Sender let's change to use the CFS TO_ENABLE_OUTPUT command
-    * The default arguments of DEST_IP 'radio_sim' and DEST_PORT '5011' work for this
+    * The default arguments of DEST_IP 'radio-sim' and DEST_PORT '5011' work for this
 
 ![Scenario Demo - TO Enable Output](./_static/scenario_demo/scenario_demo_to_enable.png)
 

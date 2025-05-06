@@ -127,7 +127,7 @@ $DCALL run -dit --name nos-udp-terminal --network=nos3-core \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-single-simulator -f nos3-simulator.xml udp-terminal
 
-$DCALL run -dit --name nos_sim_bridge --network=nos3-core \
+$DCALL run -dit --name nos-sim-bridge --network=nos3-core \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-sim-cmdbus-bridge -f nos3-simulator.xml
 
@@ -161,7 +161,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro -w "$USER_NOS3_DIR/42" $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
 
     echo "$SC_NUM - Flight Software..."
-    $DCALL run -dit --name ${SC_NUM}_nos_fsw -h nos_fsw --network=$SC_NET \
+    $DCALL run -dit --name ${SC_NUM}-nos-fsw -h nos-fsw --network=$SC_NET \
         --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         -v "$BASE_DIR:$BASE_DIR" -v "$FSW_DIR:$FSW_DIR" -v "$SCRIPT_DIR:$SCRIPT_DIR" \
         -e USER=$(whoami) -e LD_LIBRARY_PATH=$FSW_DIR:/usr/lib:/usr/local/lib \
@@ -195,7 +195,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
 
         if [[ "$sim" == "generic_radio_sim" ]]; then
             $DCALL run -d --name ${SC_NUM}_${sim} --network=$SC_NET \
-                -h radio_sim --network-alias=radio_sim \
+                -h radio-sim --network-alias=radio-sim \
                 -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
                 ./nos3-single-simulator $CFG_FILE $sim
         else
@@ -210,7 +210,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
     echo "Connecting ground simulators to spacecraft network..."
     $DNETWORK connect $SC_NET nos-terminal
     $DNETWORK connect $SC_NET nos-udp-terminal
-    $DNETWORK connect $SC_NET nos_sim_bridge
+    $DNETWORK connect $SC_NET nos-sim-bridge
 done
 
 echo "Docker headless launch script completed!"

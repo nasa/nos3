@@ -101,7 +101,7 @@ COSMOS may command cFS to send telemetry back to COSMOS by:
     3. Click `Send`
 
   _Note: In current versions of NOS3, this debug output should already be set up by default. However, to enable Radio Telemetry, follow the same steps 
-except go to `CFS_RADIO`, and run the command with the `DEST_IP` of `'radio_sim'` and the `DEST_PORT` of `5011`, or whatever values fit your setup._ 
+except go to `CFS_RADIO`, and run the command with the `DEST_IP` of `'radio-sim'` and the `DEST_PORT` of `5011`, or whatever values fit your setup._ 
    
 ![COSMOS4EnableRadio](./_static/COSMOS4_Enable_Radio.png)
 
