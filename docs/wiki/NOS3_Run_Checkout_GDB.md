@@ -39,20 +39,9 @@ Before running this scenario, ensure the following:
 make
 ```
 
-### Step 2: (Optional) Launch the Full Scenario
-
-If you want to bring up the entire simulation environment:
-
-```bash
-make launch
-make stop
-```
-
-You may minimize the NOS3 Launcher, but do not close it.
-
 ---
 
-### Step 3: Build the Sample Checkout App
+### Step 2: Build the Sample Checkout App
 
 ```bash
 ./scripts/checkout.sh
@@ -68,22 +57,24 @@ exit
 
 ---
 
-### Step 4: Launch the Sample Checkout App in GDB
+### Step 3: Edit the checkout script
 
-Open a new terminal and run the following `gnome-terminal` command to launch the `sample_checkout` binary inside `gdb`:
+We want the checkout script to launch the sample simulator.
+We also want it to launch the sample checkout app under GDB.
+Edit `./scripts/checkout.sh` as follows:
+- Uncomment lines 164 (sample sim) and 165 (sample checkout)
+- Insert `gdb` on line 165 between "$DBOX" and "./components/sample/fsw/standalone/build/sample_checkout"
+
+### Step 4: Launch the Sample Sim and launch the Sample Checkout App in GDB
+
+Open a new terminal and run the following `gnome-terminal` command:
 
 ```bash
-source ./scripts/checkout.sh
-make checkout
-gnome-terminal --title="Sample Checkout (gdb)" -- $DFLAGS -it \
-  -v $BASE_DIR:$BASE_DIR \
-  --name $SC_NUM"_sample_checkout_debug" \
-  --network=$SC_NETNAME \
-  -w $BASE_DIR $DBOX \
-  gdb ./components/sample/fsw/standalone/build/sample_checkout
+./scripts/checkout.sh
 ```
 
 > 🔧 **Note:** This assumes your environment variables (e.g., `$DFLAGS`, `$BASE_DIR`, `$SC_NUM`, `$DBOX`, `$SC_NETNAME`) are set as in a typical NOS3 session.
+This should be done by the `checkout.sh` script.
 
 ---
 
