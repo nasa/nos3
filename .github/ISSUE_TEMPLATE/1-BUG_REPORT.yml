@@ -8,28 +8,18 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: Please enter a detailed description of the bug.  Use the template below as necessary
       value: |
-        Branch Name: eg. Dev, Main or https://github.com/USERNAME/REPO-NAME
+        Define the problem.
 
-        Reproduction Steps:
-          1. Go to ''...'
-          2. Click on '...'
-          3. Scroll to '...'
-          4. See Error
+        Capture the setup:
+        * Which branch and git hash used
+        * Any changes in configuration
 
-        If applicable, screenshots can be attached to better explain the problem:
-        ![LINK-ALT-TEXT](LINK.png)
+        Steps to recreate:
+        * ...
 
-        Copy and Paste any relevant Logs:
-
-        > Paste Logs here
-
-        Utilize the dropdown below, or describe the impacted environment:
-
-        > How/Where are you building.
-        
-      render: bash  
+        Add logs or screenshots as desired.
+                
     validations:
       required: true
   
@@ -37,8 +27,8 @@ body:
     id: os
     attributes:
       label: "OS"
-      description: What is the impacted environment ?
-      multiple: false
+      description: What is the impacted environment?
+      multiple: true
       options:
         - Windows (Direct Clone)
         - Windows (Shared Folders)
@@ -48,6 +38,7 @@ body:
         - Mac (Shared Folders)
     validations:
       required: false
+
   - type: markdown
     attributes:
       value: "Optional: Please apply any labels or types as necessary - leave blank for unknown."
