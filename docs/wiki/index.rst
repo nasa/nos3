@@ -21,3 +21,4 @@ This documentation is designed to provide information for users and developers t
    STF_Software_Development_Plan.md
    STF_VV_Plan.md
    Scenario_Demo.md
+   Scenario_Controlling_ADCS_During_Science.md
