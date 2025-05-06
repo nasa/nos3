@@ -4,7 +4,7 @@ This scenario was developed to demonstrate how to create a unit testing framewor
 
 # Learning Goals 
 
-By the end of this scenario you should be able to 
+By the end of this scenario you should be able to: 
 * Create unit tests to check the functionality of NOS3 satellite components and their commands
 * Create unit tests for a brand new component or add to an existing test suite
 * Reach full coverage for all relevant files within a component
@@ -14,6 +14,9 @@ Before running the scenario, ensure the following steps are completed:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
+
+Note that the `make code-coverage` command can only be run if NOS3 is cloned directly into the Linux environment.
+The command will not work if using shared folders from your host into VirtualBox (install option A).
 
 # File Structure Exploration
 With a terminal navigated to the top level of your NOS3 repository:
@@ -54,21 +57,16 @@ Once you are in the unit-test folder
                   `(unsigned int)EventTest.MatchCount);`
 
 # Building/Running the tests and generating a coverage report
-* `% make clean`
-* `% make config`
-* `% make prep`
-* `% make`
-* `% make debug`
-* `% export CFLAGS="-fprofile-arcs -ftest-coverage -g" (.github/workflows/build.yml)`
-* `% make build-test`
-* `% make test-fsw`
-* `% mkdir -p doc/coverage`
-* `% gcovr --gcov-ignore-parse-errors --xml-pretty -o doc/coverage/coverage_report.xml`
-* `% gcovr --gcov-ignore-parse-errors --html --html-details -o doc/coverage/coverage_report.html`
-* `% exit`
-* `% firefox doc/coverage/coverage_report.html`
 
-********Replace the above with "make code-coverage" between "make debug" and "exit"********
+Note that the `make code-coverage` command can only be run if NOS3 is cloned directly into the Linux environment.
+The command will not work if using shared folders from your host into VirtualBox (install option A).
+
+* `make clean`
+* `make config`
+* `make debug`
+* `make code-coverage -j`
+* `exit`
+* `firefox docs/coverage/coverage_report.html`
 
 `The coverage_report.html` file will display the code coverage and tests result for every file in the directory.
 
