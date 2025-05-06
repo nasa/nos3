@@ -1,6 +1,6 @@
 # Scenario - Unit Test Creation
 
-This scenario was developed to give trainees a walkthough of how to create a unit testing framework for a component within NOS3.
+This scenario was developed to demonstrate how to create a unit testing framework for a component within NOS3.
 
 # Learning Goals 
 
@@ -18,38 +18,32 @@ Before running the scenario, ensure the following steps are completed:
 # File Structure Exploration
 With a terminal navigated to the top level of your NOS3 repository:
 * `cd /nos3/components/sample/fsw/cfs/unit-test`
-* If there is no unit-test directory within the cfs directory of your component, either copy one from sample or generate one with the sample script
-* Ensure that the unit-test folder you are working from is within the fsw/cfs/ directory
+* If there is no unit-test directory within the cfs directory of your component, either copy one from sample or generate one with the sample script.
+* Ensure that the unit-test folder where you are working is within the fsw/cfs/ directory.
 
 Once you are in the unit-test folder
 * Run the command `ls`
-* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output. If any files are missing copy from the sample component or generate with the sample script
-* Open the `CMakeLists.txt` file
-* Check that the name matches the component you are working with. If not change them to match. Then close the file
-* Navigate to the `coveragetest/`
-* Run the command `ls` again, you should see `coveragetest_sample_app.c  sample_app_coveragetest_common.h` as the two files within this directory
-* The `coveragetest_sample_app.c` is the file you will be writing the unit tests in
-* `cd ..` out of `coveragetest`
-* Run `cd inc` and open `ut_sample_app.h` then ensure here that the filenames being included matches the component you intend to work on
-* Finally `cd ..`, `cd stubs`, and `ls`
-* You should see `libuart_stubs.c  sample_device_stubs.c`
-* Check both files to make sure the component name matches the one you are working
+* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output. If any files are missing copy them from the sample component or generate with the sample script.
+* Open the `CMakeLists.txt` file.
+* Check that the name matches the component you are working with. If not change them to match. Then close the file.
+* Navigate to the `coveragetest/` and run `ls` again.  You should see `coveragetest_sample_app.c  sample_app_coveragetest_common.h` as the two files within this directory. The `coveragetest_sample_app.c` is where you will be writing the unit tests.
+* `cd ..` out of `coveragetest`, run `cd inc`, and open `ut_sample_app.h`.  Then ensure that the filenames being included here match the component you intend to work on.
+* Finally `cd ..`, `cd stubs`, and `ls`.  You should see `libuart_stubs.c  sample_device_stubs.c`.
+* Again, check both files to make sure the component name matches the one with which you are working.
 * `cd ..` and `cd coveragetest/`
 * open `coveragetest_sample_app.c`
 
 # Writing Unit Tests
-* Look inside the `coveragetest_sample_app.c` file
-* This file is where you will write your actual unit tests
+* Look inside the `coveragetest_sample_app.c` file. This file is where you will write your actual unit tests.
 * Within the coveragetest file you will see an array of existing functions such as `Test_SAMPLE_AppMain`, `Test_SAMPLE_AppInit`, `Test_SAMPLE_ProcessCommandPacket`,`Test_SAMPLE_ReportHousekeeping`, etc.
-* These functions are split up this way to interact directly with similarly named functions in the `sample/fsw/cfs/src/sample_device.c` file
+* These functions are split up this way to interact directly with similarly named functions in the `sample/fsw/cfs/src/sample_device.c` file.
 
 # Example of NOOP Test
-* As a specific example within the `Test_SAMPLE_ProcessGroundCommand` function, where a majority of our commands are tested 
-![alt text](image.png)
-there is this segment of code.
+* The following is a specific example of a test, found within the `Test_SAMPLE_ProcessGroundCommand` function:
+![Unit Test Example](_static/new_unit_tests/Unit_Test_Example.png)
 
-* The FcnCode is the command code. It is a key part of understanding the mechanics of NOS3. It is how the flight system is able to know which command is being sent and in this case specifies which command is being tested. 
-* The `Size = sizeof(TestMsg.Noop)` is how the length of the command is set. The key thing here is that commands without accompanying arguments all share one size, however other commmands that have arguments, in this case config, need to have a different size specified in the union struct at the top of the function
+* The FcnCode is the command code. It is a key part of understanding the mechanics of NOS3. It is how the flight system is able to know which command is being sent and - in this case - specifies which command is being tested. 
+* The `Size = sizeof(TestMsg.Noop)` is how the length of the command is set. The key thing here is that commands without accompanying arguments all share one size.  Commmands that have arguments associated with them, in this case config, need to have a different size specified in the union struct at the top of the function.
 * The
   `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetMsgId), &TestMsgId, sizeof(TestMsgId), false);`
   `UT_SetDataBuffer(UT_KEY(CFE_MSG_GetFcnCode), &FcnCode, sizeof(FcnCode), false);`
@@ -74,9 +68,11 @@ there is this segment of code.
 * `% exit`
 * `% firefox doc/coverage/coverage_report.html`
 
-`The coverage_report.html` file will display the code coverage and tests result for every file in the directory
+********Replace the above with "make code-coverage" between "make debug" and "exit"********
 
-The resulting file should look like this when opened
+`The coverage_report.html` file will display the code coverage and tests result for every file in the directory.
 
-![alt text](image-1.png)
+The resulting file should look like this when opened:
+
+![Coverage Report](_static/new_unit_tests/Coverage_Report.png)
 
