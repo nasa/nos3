@@ -155,7 +155,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
     cp -r $BASE_DIR/cfg/build/InOut $USER_NOS3_DIR/42/NOS3InOut
     xhost +local:*
-    $DCALL run -d --name ${SC_NUM}_fortytwo -h fortytwo --network=$SC_NET \
+    $DCALL run -d --name ${SC_NUM}-fortytwo -h fortytwo --network=$SC_NET \
         --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         -e DISPLAY=$DISPLAY -v "$USER_NOS3_DIR:$USER_NOS3_DIR" \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro -w "$USER_NOS3_DIR/42" $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
