@@ -169,7 +169,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
         $DBOX bash -c "cd $FSW_DIR && exec ./core-cpu1 -R PO"
 
     echo "$SC_NUM - CryptoLib..."
-    $DCALL run -d --name ${SC_NUM}_cryptolib --network=$SC_NET \
+    $DCALL run -d --name ${SC_NUM}-cryptolib --network=$SC_NET \
         --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         --network-alias=cryptolib \
         -v "$BASE_DIR:$BASE_DIR" -w "$BASE_DIR/gsw/build" $DBOX ./support/standalone
@@ -181,7 +181,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
         -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
         /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
 
-    $DCALL run -dit --name ${SC_NUM}_truth42sim --network=$SC_NET \
+    $DCALL run -dit --name ${SC_NUM}-truth42sim --network=$SC_NET \
         -h truth42sim --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
         ./nos3-single-simulator $CFG_FILE truth42sim
