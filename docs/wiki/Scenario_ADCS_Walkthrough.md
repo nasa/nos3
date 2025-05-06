@@ -22,20 +22,54 @@ The Attitude Determination and Control System (ADCS) is different from other com
     
 ## Modes
 - Passive mode turns ADCS control of the spacecraft off, leaving it to manual commands of the actuators.
+
+  ![ADCSWalkthrough_Passive](https://github.com/user-attachments/assets/0c56fd62-48f5-40c7-935d-1d0623697dfa)
+
 - Sunsafe mode utilizes the Fine Sun Sensor and Coarse Sun Sensor to determine if the spacecraft is in sun and the orientation between the spacecraft body frame and the sun unit vector, and then uses the reaction wheels and magnetorquers to keep the spacecraft pointing in an optimal charging position while not in eclipse.
+  
+  ![ADCSWalkthrough_Sunsafe](https://github.com/user-attachments/assets/9c6d060a-7a1c-40f3-9fe6-fbba0077a46e)
+
 - Inertial mode utilizes the Star Tracker and Inertial Measurement Unit data and the reaction wheels and magnetorquers to orient the spacecraft relative to an inertial frame of reference.
+  
+  ![ADCSWalkthrough_InertialMode](https://github.com/user-attachments/assets/9359778c-a36e-4f3f-9a64-02d490d457cc)
+
 - BDOT mode uses the IMU and Magnetometer data and the reaction wheels and magnetorquers to stabilize the spacecraft and damp the rotation rate to approach zero.
+
+  ![ADCSWalkthrough_BDOT](https://github.com/user-attachments/assets/f0e2e847-b81c-4221-9648-2fdcc48461f6)
 
 ## Sensors
 - The Coarse Sun Sensors (CSS) are located on each face of the spacecraft and provide a voltage output based on how much light is shining on them. This gives a rough idea of if a particular face is in the sun.
+  
+  ![ADCSWalkthrough_CSS](https://github.com/user-attachments/assets/559ceff7-8410-4cb9-bd8a-0e382bd24412)
+
 - The Fine Sun Sensor (FSS) provides a more accurate reading of the spacecraft's orientation relative to the sun, as long as the sensor is in sun.
+  
+  ![ADCSWalkthrough_FSS](https://github.com/user-attachments/assets/b010228f-e52c-42d8-b89d-a52d95128f73)
+
 - The Inertial Measurement Unit (IMU) utilizes accelerometers and gyroscopes to measure the linear acceleration and angular rate, respectively.
+  
+  ![ADCSWalkthrough_IMU](https://github.com/user-attachments/assets/afdb96a7-1fdc-46e7-a9a8-016015e656ee)
+
 - The Magnetometer (MAG) measures the spacecraft's orientation relative to the Earth's magnetic field. This allows the spacecraft to know which direction each magnetorquer will move the spacecraft by relating the body frame of the spacecraft with the Earth's magnetic field.
+  
+  ![ADCSWalkthrough_MAG](https://github.com/user-attachments/assets/74f746d8-7e3d-4b60-a619-918e23c9148b)
+
 - The Star Tracker (ST) uses images of the stars and a star catalog to determine the spacecraft orientation with respect to a fixed inertial frame of reference.
   
+  ![ADCSWalkthrough_StarTracker](https://github.com/user-attachments/assets/cbc26d4a-718c-4e17-b8c8-9c14504df716)
+
 ## Actuators:
 - The Reaction Wheels (RWs) are rotating flywheels which allow the spacecraft to generate torque, rotate, and point itself. There is one for each axis, which can be spun in either direction on that axis.
+
+  ![ADCSWalkthrough_ReactionWheelTLM](https://github.com/user-attachments/assets/f24917e9-1b6c-4e0c-a951-f1d38f377668)
+  ![ADCSWalkthrough_ReactionWheel_SunsafeCommands](https://github.com/user-attachments/assets/4af6668e-69b8-4e98-b7bf-06d42b59f6b0)
+  ![ADCSWalkthrough_ReactionWheel_ManualCommands](https://github.com/user-attachments/assets/ef461643-5b78-41ed-abfb-a6d4f8c720cb)
+
 - The Magnetorquers, or Torquers, utilize electromagnets and the Earth's magnetic field to produce weaker torques than the Reaction Wheels, aligned to the Earth's magnetic field.
+
+  ![ADCSWalkthrough_TorquerTLM](https://github.com/user-attachments/assets/7bcffb7d-61a0-4457-86c4-6ef5523b1b94)
+  ![ADCSWalkthrough_Torquer_SunsafeCommands](https://github.com/user-attachments/assets/de3a2875-0790-4534-a715-5d36d31b66ff)
+
 - Thrusters are not linked into ADCS or fully developed for this example mission, but they would allow orbital adjustments and navigation in the linear axes, rather than rotational adjustments like the other actuators.
   
 ## Ingest and Output:
