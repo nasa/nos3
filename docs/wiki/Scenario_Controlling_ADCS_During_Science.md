@@ -86,12 +86,18 @@ Note that the above changes need to be done in RTS tables 27, 29, 33, 34, and 35
 
 ## Step 3: Verifying Intended Behavior
 With this, you should be able to test that it works by bringing up NOS3, launching COSMOS, and commanding the craft to have the various regions enabled and to enter Science Mode. 
+![adcsDuringScience_EnableAlaska](https://github.com/user-attachments/assets/581b6510-3c56-4ef3-80fd-219d63a37471)
+![adcsDuringScience_EnableCONUS](https://github.com/user-attachments/assets/07b36a4b-af76-419f-86d7-32af6af0a543)
+![adcsDuringScience_EnableHawaii](https://github.com/user-attachments/assets/5f1386ff-6747-4205-952d-6e541f5628de)
+![adcsDuringScience_ScienceMode](https://github.com/user-attachments/assets/04b82d2b-c266-4743-b70a-834652e348c2)
 
 Then, launch your Telemetry Grapher to the EPS_Test preset, and add your Star Tracker's Enabled Value and the EPS Switch 1 State to the bottom table, with the former on the left axis, the latter on the right axis and 
-shifted by -85.0 (Star Tracker Enabled should be similar to Sample Enabled's configuration, and the EPS Switch 1 should be similar to the EPS Switch 0's configuration). 
-
-Then, once it enters Science Active, verify that all 4 variables flipped from their low, disabled states to their high, enabled states. You can then verify that when it leaves CONUS, or that if you manually go to 
-Safe Mode, or that if you set the state of charge below 60% with the Sim Bridge commands, you observe that they go back to their disabled states once the associated RTS has finished running.
+shifted by -85.0 (Star Tracker Enabled should be similar to Sample Enabled's configuration, and the EPS Switch 1 should be similar to the EPS Switch 0's configuration). Then, once it enters Science Active, verify that 
+all 4 variables flipped from their low, disabled states to their high, enabled states. You can then verify that when it leaves CONUS, or that if you manually go to Safe Mode, or that if you set the state of charge
+below 60% with the Sim Bridge commands, you observe that they go back to their disabled states once the associated RTS has finished running.
+![adcsDuringScience_SciencePass](https://github.com/user-attachments/assets/f7414a42-973b-483b-aacf-ecbff497035c)
+![adcsDuringScience_SciencePass_SimBridgePowerExit](https://github.com/user-attachments/assets/bdafd3ff-6eb5-4bc3-8795-1d2a2a2cf0b6)
+![adcsDuringScience_SciencePass_SimBridgePowerReentry_CONUSExit](https://github.com/user-attachments/assets/21e16bab-78e0-4c9c-901d-488c27a75c9a)
 
 ## Conclusions
 At this point, you should be comfortable with the thought process behind making adaptations to a mission to meet new needs, and adapting RTS tables to do so. In future Scenarios, we will build upon this with more 
