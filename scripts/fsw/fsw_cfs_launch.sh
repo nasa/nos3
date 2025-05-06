@@ -32,6 +32,9 @@ mkdir $FSW_DIR/data/cam 2> /dev/null
 mkdir $FSW_DIR/data/evs 2> /dev/null
 mkdir $FSW_DIR/data/hk 2> /dev/null
 mkdir $FSW_DIR/data/inst 2> /dev/null
+touch $FSW_DIR/data/dummy.txt
+echo "1234567890" > $FSW_DIR/data/dummy.txt
+truncate -s 1M $FSW_DIR/data/dummy.txt
 # GSW Side
 mkdir /tmp/nos3 2> /dev/null
 mkdir /tmp/nos3/data 2> /dev/null
@@ -59,6 +62,8 @@ echo "Create NOS interfaces..."
 export GND_CFG_FILE="-f nos3-simulator.xml"
 gnome-terminal --tab --title="NOS Terminal"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_terminal"        --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE stdio-terminal
 gnome-terminal --tab --title="NOS UDP Terminal"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_udp_terminal"    --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE udp-terminal
+gnome-terminal --tab --title="NOS CmdBus Bridge"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name "nos_sim_bridge"      --network=nos3_core -w $SIM_BIN $DBOX ./nos3-sim-cmdbus-bridge $GND_CFG_FILE
+
 echo ""
 
 # Note only currently working with a single spacecraft
@@ -116,6 +121,7 @@ do
     
     $DNETWORK connect $SC_NETNAME nos_terminal
     $DNETWORK connect $SC_NETNAME nos_udp_terminal
+    $DNETWORK connect $SC_NETNAME nos_sim_bridge
 
     # Component simulators
     gnome-terminal --tab --title=$SC_NUM" - CAM Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_cam_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE camsim
@@ -132,7 +138,7 @@ do
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample_sim
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_startrk_sim"  --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
     gnome-terminal --tab --title=$SC_NUM" - Thruster Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_thruster_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_thruster_sim
-    gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
+    gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  -h trq_sim --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
     echo ""
 done
 
