@@ -70,6 +70,9 @@ typedef struct
     /* 14 - Enable AP 26 - Go to Science Mode */
     SC_RtsEntryHeader_t hdr14;
     LC_SetAPState_t cmd14;
+    /* 15 - Disable AP 36 - Sample Device Fail in Science Mode */
+    SC_RtsEntryHeader_t hdr15;
+    LC_SetAPState_t cmd15;
 } SC_RtsStruct029_t;
 
 /* Define the union to size the table correctly */
@@ -152,6 +155,11 @@ SC_RtsTable029_t SC_Rts029 = {
         .cmd14.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd14), LC_SET_AP_STATE_CC, 0x00),
         .cmd14.APNumber = 26,
         .cmd14.NewAPState = LC_APSTATE_ACTIVE,
+        /* 15 - Disable AP 36 - Sample Device Fail in Science Mode*/
+        .hdr15.TimeTag = 1,
+        .cmd15.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd15), LC_SET_AP_STATE_CC, 0x00),
+        .cmd15.APNumber = 36,
+        .cmd15.NewAPState = LC_APSTATE_DISABLED,
     }
 };
 /* Macro for table structure */
