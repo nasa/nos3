@@ -25,6 +25,7 @@ This documentation is designed to provide information for users and developers t
    Scenario_Nominal_Ops.md
    Scenario_ADCS_Walkthrough.md
    Scenario_Fault_Science.md
+   Scenario_Patching.md
    Scenario_Controlling_ADCS_During_Science.md
    Scenario_SimulatorExpansion.md
    Scenario_Creating_Unit_Tests.md
