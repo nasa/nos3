@@ -29,3 +29,4 @@ This documentation is designed to provide information for users and developers t
    Scenario_SimulatorExpansion.md
    Scenario_Creating_Unit_Tests.md
    Scenario_Run_Checkout_GDB.md
+   Scenario_Low_Power.md
