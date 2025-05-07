@@ -21,7 +21,7 @@ Before running the scenario, ensure the following steps are completed:
 * No additional file changes or special setup is needed for this scenario.
 * It is assumed for this scenario that the user understands how to command the Spacecraft with COSMOS, verify Telemetry via the Packet Viewer, and locate the FSW terminal window.
 
-## Scenario Walkthrough
+## Walkthrough
 This scenario is an interesting one, and not exactly uncommon. We have a satellite on orbit that is behaving... oddly. Everything worked during integration and testing on the ground. On orbit however, something is different. Our Science Instrument is locking up intermittently on orbit - and that instrument is the entire reason the spacecraft exists!
 
 We reviewed the telemetry, and our scientists have found that we can detect this error if two criteria are met:

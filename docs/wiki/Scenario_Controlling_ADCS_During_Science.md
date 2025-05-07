@@ -2,6 +2,8 @@
 
 This scenario was developed to demonstrate how to adapt an existing mission to changing science goals, with the specific example of a request for a different pointing routine during Science Mode.
 
+This scenario was last updated on 5/7/25 and leveraged the `dev` branch at the time [53d4627].
+
 ## Learning Goals
 By the end of this scenario you should be able to:
 - Understanding how to plan effectively before making changes to ensure you 
@@ -71,7 +73,7 @@ To achieve this, three areas of each RTS table need to be changed:
 - Finally, add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
   ![adcsDuringScience_EnableCommands](https://github.com/user-attachments/assets/800147f0-33e1-4172-a16b-43df9faba11e)
 
-Note that although the changes are only shown in RTS table 30, they will need to be made in RTS tables 30, 31, and 32. The commands should be the same, but their location may vary depending on what else the table is doing (though in this case, these 3 tables are quite similar). You can go through each aformentioned table to see how the changes are adapted for that table in particular.
+Note that although the changes are only shown in RTS table 30, they will need to be made in RTS tables 30, 31, and 32. The commands should be the same, but their location may vary depending on what else the table is doing (though in this case, these 3 tables are quite similar). You can go through each aforementioned table to see how the changes are adapted for that table in particular.
 
 ### Part B: Disabling Inertial Mode and Resetting to Sunsafe
 As discussed in planning, this is a process that will require 3 extra commands:
@@ -87,7 +89,7 @@ To achieve this, three areas of each RTS table needs to be changed:
 - Finally, add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
   ![adcsDuringScience_DisableCommands](https://github.com/user-attachments/assets/45af81af-928b-48e0-aa2b-ddfc551edd55)
 
-As above, the changes are only shown in RTS table 33, but they will need to be made to tables 27, 29, 33, 34, and 35. The commands should be the same, but where they are located will vary depending on what else the table is doing. You can go through each aformentioned table to see how the changes are adapted for that table in particular.
+As above, the changes are only shown in RTS table 33, but they will need to be made to tables 27, 29, 33, 34, and 35. The commands should be the same, but where they are located will vary depending on what else the table is doing. You can go through each aforementioned table to see how the changes are adapted for that table in particular.
 
 ## Step 3: Verifying Intended Behavior
 With this, you should be able to test that it works by bringing up NOS3, launching COSMOS, and commanding the craft to enable data collection over the various regions and to enter Science Mode. 
