@@ -40,7 +40,7 @@ typedef struct
     /* 2 - Disable AP 27 - Science, Low Power */
     SC_RtsEntryHeader_t hdr2;
     LC_SetAPState_t cmd2;
-    /* 3 - Disbale AP 28 - Science, Recharged */
+    /* 3 - Disable AP 28 - Science, Recharged */
     SC_RtsEntryHeader_t hdr3;
     LC_SetAPState_t cmd3;
     /* 4 - Disable AP 29 - Return to Safe Mode */
@@ -85,6 +85,9 @@ typedef struct
     /* 17 - Enable AP 26 - Go to Science Mode */
     SC_RtsEntryHeader_t hdr17;
     LC_SetAPState_t cmd17;
+    /* 18 - Disable AP 36 - Sample Device Fail in Science Mode */
+    SC_RtsEntryHeader_t hdr18;
+    LC_SetAPState_t cmd18;
 } SC_RtsStruct029_t;
 
 /* Define the union to size the table correctly */
@@ -179,6 +182,11 @@ SC_RtsTable029_t SC_Rts029 = {
         .cmd17.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd17), LC_SET_AP_STATE_CC, 0x00),
         .cmd17.APNumber = 26,
         .cmd17.NewAPState = LC_APSTATE_ACTIVE,
+        /* 18 - Disable AP 36 - Sample Device Fail in Science Mode*/
+        .hdr18.TimeTag = 1,
+        .cmd18.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd18), LC_SET_AP_STATE_CC, 0x00),
+        .cmd18.APNumber = 36,
+        .cmd18.NewAPState = LC_APSTATE_DISABLED,
     }
 };
 /* Macro for table structure */

@@ -41,12 +41,14 @@
 #include "mgr_msgids.h"
 #include "mgr_app.h"
 #include "novatel_oem615_msgids.h"
+#include "sample_msgids.h"
 
 #define GENERIC_EPS_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(GENERIC_EPS_HK_TLM_MID) 
 #define NOVATEL_OEM615_DEVICE_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID)
 #define MGR_HK_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(MGR_HK_TLM_MID)
+#define SAMPLE_HK_TLM_MSG CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID)
 
-// static const CFE_SB_MsgId_t testId = CFE_SB_ValueToMsgId(TEST_MID);
+
 
 /*************************************************************************
 ** Examples
@@ -397,12 +399,12 @@ LC_WDTEntry_t LC_DefaultWDT[LC_MAX_WATCHPOINTS] = {
         .ComparisonValue.Unsigned32 = 0,
     },
 
-    /* #24 (unused) */
+    /* #24 (Sample Device Status, != 0 is BAD) */
     {
-        .DataType                   = LC_WATCH_NOT_USED,
-        .OperatorID                 = LC_NO_OPER,
-        .MessageID                  = CFE_SB_MSGID_RESERVED,
-        .WatchpointOffset           = 0,
+        .DataType                   = LC_DATA_UBYTE,
+        .OperatorID                 = LC_OPER_NE,
+        .MessageID                  = SAMPLE_HK_TLM_MSG,
+        .WatchpointOffset           = 29,
         .BitMask                    = LC_NO_BITMASK,
         .CustomFuncArgument         = 0,
         .ResultAgeWhenStale         = 0,
