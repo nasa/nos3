@@ -9,7 +9,7 @@ This is useful for:
 * Inspecting memory or variable values during runtime
 * Tracing faults or validating application behavior
 
----
+This scenario was last updated on 5/7/25 and leveraged the `dev` branch at the time [1209324].
 
 ## Learning Goals
 
@@ -20,18 +20,17 @@ By the end of this scenario, you should be able to:
 * Inspect variables and function call flow at runtime
 * Integrate low-level debugging into a NOS3 simulation workflow
 
----
-
 ## Prerequisites
 
-Before running this scenario, ensure the following:
-
-* You have completed NOS3 installation from [Getting Started](./Getting_Started.md)
+Before running the scenario, ensure the following steps are completed:
+* [Getting Started](./Getting_Started.md)
+  * [Installation](./Getting_Started.md#installation)
+  * [Running](./Getting_Started.md#running)
 * You are working from the top level of the NOS3 repository
 
 ---
 
-## Launch Instructions
+## Walkthrough
 
 ### Step 1: Build NOS3
 
@@ -40,7 +39,6 @@ make
 ```
 
 ---
-
 ### Step 2: Build the Sample Checkout App
 
 ```bash
@@ -56,7 +54,6 @@ exit
 ```
 
 ---
-
 ### Step 3: Edit the checkout script
 
 We want the checkout script to launch the sample simulator.
@@ -73,11 +70,10 @@ Open a new terminal and run the following `gnome-terminal` command:
 ./scripts/checkout.sh
 ```
 
-> 🔧 **Note:** This assumes your environment variables (e.g., `$DFLAGS`, `$BASE_DIR`, `$SC_NUM`, `$DBOX`, `$SC_NETNAME`) are set as in a typical NOS3 session.
+**Note:** This assumes your environment variables (e.g., `$DFLAGS`, `$BASE_DIR`, `$SC_NUM`, `$DBOX`, `$SC_NETNAME`) are set as in a typical NOS3 session.
 This should be done by the `checkout.sh` script.
 
 ---
-
 ### Step 5: Use GDB
 
 Once inside the GDB session, you can:
@@ -108,8 +104,7 @@ make stop
 ```
 
 ---
-
-## Optional: Enable TUI Mode
+### Optional: Enable TUI Mode
 
 If your container supports `ncurses`, you can add `-tui` to enable the GDB text-based UI:
 
@@ -118,7 +113,6 @@ gdb -tui ./components/sample/fsw/standalone/build/sample_checkout
 ```
 
 ---
-
-## Conclusion
+### Conclusion
 
 You have now successfully launched a NOS3 sample component with `gdb` attached, allowing real-time interactive debugging. This is a powerful way to test payload logic and simulate edge cases directly inside your NOS3 development loop.
