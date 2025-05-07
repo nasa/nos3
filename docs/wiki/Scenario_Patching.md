@@ -1,7 +1,7 @@
 #Scenario - Patching an App or Table
 
 This scenario was developed to explain and demonstrate the process by which a satellite operator could patch an app or table onboard a satellite, using NASA Operational Simulator for Small Satellites (NOS3).
-It demonstrates the extension of ground software (GSW) from merely commanding to sending up updated code for an app or table. 
+It demonstrates the use of ground software (GSW) to go from merely commanding to sending up updated code for an app or table. 
 
 ## Learning Goals
 
@@ -16,7 +16,7 @@ Before running the scenario, ensure the following has been completed:
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
 
-It may also be helpful to have gone through the "Scenario_Nominal_Ops.md" prior to this one.
+It may also be helpful to have gone through the "Scenario_Nominal_Ops.md" prior to this one, as well as "Scenario_cFS.md".
 
 ## Walkthrough
 
@@ -44,4 +44,5 @@ The other two parameters are CLASS and DEST_ID:
 
 
 
-For this scenario, we will make use of the `make cosmos-operator` command.  This command launches all of NOS3, but only shows COSMOS (since that is all that would be seen by a spacecraft operator in a real scenario).  
+For those wishing to slightly extend this scenario, they may wish to try running again but with the `make cosmos-operator` command instead of `make launch`.  The former command launches all of NOS3, but only shows COSMOS (since that is all that would be seen by a spacecraft operator in a real scenario).  
+
