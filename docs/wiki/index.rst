@@ -22,9 +22,12 @@ This documentation is designed to provide information for users and developers t
    STF_VV_Plan.md
    Scenario_Demo.md
    Scenario_cFS.md
+   Scenario_COSMOS.md
+   Scenario_Commissioning.md
    Scenario_Nominal_Ops.md
    Scenario_ADCS_Walkthrough.md
    Scenario_Fault_Science.md
+   Scenario_Patching.md
    Scenario_Controlling_ADCS_During_Science.md
    Scenario_SimulatorExpansion.md
    Scenario_Creating_Unit_Tests.md

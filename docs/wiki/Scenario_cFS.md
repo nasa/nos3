@@ -163,6 +163,7 @@ With a terminal navigated to the top level of your NOS3 repository:
 
 ![Scenario cFS - LC SC](./_static/scenario_cfs/scenario_cfs_lc_sc.png)
 
+---
 ### Additional References
 
 Some additional references and training related to cFS may be found at the following links:
