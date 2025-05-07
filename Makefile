@@ -39,7 +39,7 @@ endif
 
 # The "LOCALTGTS" defines the top-level targets that are implemented in this makefile
 # Any other target may also be given, in that case it will simply be passed through.
-LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw config debug fsw gcov gsw launch log prep sim stop stop-gsw uninstall
+LOCALTGTS := all checkout clean clean-fsw clean-sim clean-gsw code-coverage config debug fsw gcov gsw help help-all launch log prep sim stop stop-gsw uninstall
 OTHERTGTS := $(filter-out $(LOCALTGTS),$(MAKECMDGOALS))
 
 # As this makefile does not build any real files, treat everything as a PHONY target
@@ -122,6 +122,7 @@ clean: ## Clean all build files and configurations
 
 clean-fsw: ## Clean only flight software build artifacts
 	rm -rf cfg/build/nos3_defs
+	rm -rf docs/coverage/coverage_report.*
 	rm -rf fsw/build
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
@@ -134,7 +135,6 @@ clean-gsw: ## Clean only GSW build artifacts
 	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
-
 
 config: ## Run configuration setup
 	@if [ -n "$(SC1_CFG)" ]; then \
@@ -154,6 +154,14 @@ gcov: ## Build Code Coverage results
 	lcov -c --directory . --output-file $(COVERAGEDIR)/coverage.info
 	genhtml $(COVERAGEDIR)/coverage.info --output-directory $(COVERAGEDIR)/results
 
+code-coverage: ## Build code coverage file, does not work via shared folders in VirtualBox
+	$(MAKE) build-test 
+	$(MAKE) test-fsw
+	mkdir -p docs/coverage
+	gcovr --gcov-ignore-parse-errors --merge-mode-functions=merge-use-line-0 --xml-pretty -o docs/coverage/coverage_report.xml
+	gcovr --gcov-ignore-parse-errors --merge-mode-functions=merge-use-line-0 --html --html-details -o docs/coverage/coverage_report.html
+	chmod 777 ./docs/coverage/coverage_report.*
+
 gsw: ## Build Ground Software binaries
 	./scripts/gsw/build_cryptolib.sh
 	./cfg/build/gsw_build.sh
@@ -170,7 +178,7 @@ help: ## Display this help message
 	@printf "%-20s %s\n" "prep"          "Prepare full development environment"
 	@printf "%-20s %s\n" "stop"          "Stop entire system"
 	@printf "%-20s %s\n" "uninstall"     "Remove all build artifacts and containers"
-
+	@echo ""
 
 help-all: ## Displays advanced help information
 	@echo ""
@@ -206,6 +214,7 @@ help-all: ## Displays advanced help information
 
 	@echo ""
 	@echo "Testing:"
+	@printf "\t%-20s %s\n" "code-coverage"  "Produce code coverage report (does not work via shared folders)"
 	@printf "\t%-20s %s\n" "ci-launch"      "Headless Launch for System Testing"
 	@printf "\t%-20s %s\n" "system-tests"   "GUI Launch for System Testing"
 	@printf "\t%-20s %s\n" "test-fsw"       "Test Flight Software"
@@ -220,8 +229,7 @@ help-all: ## Displays advanced help information
 	@printf "\t%-20s %s\n" "stop"           "Stop entire System"
 	@printf "\t%-20s %s\n" "stop-gsw"       "Stop Ground Software"
 	@printf "\t%-20s %s\n" "uninstall"      "Remove all build artifacts and containers"
-
-
+	@echo ""
 
 igniter: ## Launch Configuration GUI Igniter
 	./scripts/cfg/igniter_launch.sh
@@ -261,8 +269,6 @@ stop: ## Stop entire system
 	  fi; \
 	  rm -f ./cfg/build/current_config_path.txt; \
 	fi
-
-
 
 stop-gsw: ## Stop Ground Sfotware
 	./scripts/gsw/stop_gsw.sh
