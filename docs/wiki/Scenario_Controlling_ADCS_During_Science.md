@@ -15,14 +15,14 @@ By the end of this scenario you should be able to:
 ## Prerequisites
 Before running the scenario, ensure the following steps are completed:
 
-- [Getting Started](https://github.com/nasa/nos3/blob/6fc41656447de78689dedfc770c0809dddad6231/docs/wiki/Getting_Started.md)
-    - [Installation](https://github.com/nasa/nos3/blob/6fc41656447de78689dedfc770c0809dddad6231/docs/wiki/Getting_Started.md#installation)
-    - [Running](https://github.com/nasa/nos3/blob/6fc41656447de78689dedfc770c0809dddad6231/docs/wiki/Getting_Started.md#running)
+* [Getting Started](./Getting_Started.md)
+  * [Installation](./Getting_Started.md#installation)
+  * [Running](./Getting_Started.md#running)
 
-You should also review the following lessons before this one:
-- [STF - Quick Look](https://github.com/nasa/nos3/blob/6fc41656447de78689dedfc770c0809dddad6231/docs/wiki/STF_QuickLook.md)
-- ADCS Walkthrough (TODO: Add Link)
-- Scenario - Adding FDC Check for Sample Disabled to Science Mode (TODO: Add Link)
+You should also review the following before beginning this scenario:
+- [STF - Quick Look](./STF_QuickLook.md)
+* [Scenario - ADCS Walkthrough](./Scenario_ADCS_Walkthrough.md)
+* [Scenario - Device Fault in Science Mode](./Scenario_Fault_Science.md)
 
 ## Introduction
 For this scenario, we can assume the following setup: 
