@@ -2,14 +2,14 @@
 
 This scenario was developed to demonstrate how to create a unit testing framework for a component within NOS3.
 
-# Learning Goals 
+## Learning Goals 
 
 By the end of this scenario you should be able to: 
 * Create unit tests to check the functionality of NOS3 satellite components and their commands
 * Create unit tests for a brand new component or add to an existing test suite
 * Reach full coverage for all relevant files within a component
 
-# Prerequisites 
+## Prerequisites 
 Before running the scenario, ensure the following steps are completed:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
@@ -18,7 +18,9 @@ Before running the scenario, ensure the following steps are completed:
 Note that the `make code-coverage` command can only be run if NOS3 is cloned directly into the Linux environment.
 The command will not work if using shared folders from your host into VirtualBox (install option A).
 
-# File Structure Exploration
+## Walkthrough
+
+### File Structure Exploration
 With a terminal navigated to the top level of your NOS3 repository:
 * `cd /nos3/components/sample/fsw/cfs/unit-test`
 * If there is no unit-test directory within the cfs directory of your component, either copy one from sample or generate one with the sample script.
@@ -36,12 +38,14 @@ Once you are in the unit-test folder
 * `cd ..` and `cd coveragetest/`
 * open `coveragetest_sample_app.c`
 
-# Writing Unit Tests
+---
+### Writing Unit Tests
 * Look inside the `coveragetest_sample_app.c` file. This file is where you will write your actual unit tests.
 * Within the coveragetest file you will see an array of existing functions such as `Test_SAMPLE_AppMain`, `Test_SAMPLE_AppInit`, `Test_SAMPLE_ProcessCommandPacket`,`Test_SAMPLE_ReportHousekeeping`, etc.
 * These functions are split up this way to interact directly with similarly named functions in the `sample/fsw/cfs/src/sample_device.c` file.
 
-# Example of NOOP Test
+---
+### Example of NOOP Test
 * The following is a specific example of a test, found within the `Test_SAMPLE_ProcessGroundCommand` function:
 ![Unit Test Example](_static/new_unit_tests/Unit_Test_Example.png)
 
@@ -56,7 +60,8 @@ Once you are in the unit-test folder
 * `UtAssert_True(EventTest.MatchCount == 1, "SAMPLE_CMD_NOOP_INF_EID generated (``%u)",` checks the results
                   `(unsigned int)EventTest.MatchCount);`
 
-# Building/Running the tests and generating a coverage report
+---
+### Building/Running the tests and generating a coverage report
 
 Note that the `make code-coverage` command can only be run if NOS3 is cloned directly into the Linux environment.
 The command will not work if using shared folders from your host into VirtualBox (install option A).
