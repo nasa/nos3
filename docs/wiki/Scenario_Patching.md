@@ -46,6 +46,7 @@ First, we will try adjusting an RTS in NOS3 and running it as a simulator/FlatSa
 ![RTS006 Before Edits](./_static/scenario_patching/rts006_pre_edits.png)
  * Edit this to send NOOP commands to the sample simulator three times, once every five seconds, until it looks something like the following:
 ![RTS006 Edited](./_static/scenario_patching/rts006_edited.png)
+ * Also include `#include "sample_app.h"` at the top, or there will be a compiler error.
 
 In a real scenario, nothing would be pushed directly to the spacecraft without first being tested.  We will do this in NOS3 by running the typical sequence of commands:
  * `make clean && make`
