@@ -13,6 +13,12 @@
 #include "generic_eps_app.h"
 #include "generic_eps_msgids.h"
 #include "generic_eps_msg.h"
+#include "generic_adcs_msg.h"
+#include "generic_adcs_msgids.h"
+#include "generic_adcs_adac.h"
+#include "generic_star_tracker_app.h"
+#include "generic_star_tracker_msgids.h"
+#include "generic_star_tracker_msg.h"
 #include "sample_app.h"
 #include "lc_app.h"
 #include "lc_msgids.h"
@@ -34,7 +40,7 @@ typedef struct
     /* 2 - Disable AP 27 - Science, Low Power */
     SC_RtsEntryHeader_t hdr2;
     LC_SetAPState_t cmd2;
-    /* 3 - Disbale AP 28 - Science, Recharged */
+    /* 3 - Disable AP 28 - Science, Recharged */
     SC_RtsEntryHeader_t hdr3;
     LC_SetAPState_t cmd3;
     /* 4 - Disable AP 29 - Return to Safe Mode */
@@ -64,12 +70,24 @@ typedef struct
     /* 12 - Disable Instrument Switch on EPS*/
     SC_RtsEntryHeader_t hdr12;
     GENERIC_EPS_Switch_cmd_t cmd12;
-    /* 13 - Reset AP 26 - Go to Science Mode */
+    /* 13 - Set ADCS to SUNSAFE_MODE */
     SC_RtsEntryHeader_t hdr13;
-    LC_ResetAPStats_t cmd13;
-    /* 14 - Enable AP 26 - Go to Science Mode */
+    Generic_ADCS_Mode_cmd_t cmd13;
+    /* 14 Disable Star Tracker Application */
     SC_RtsEntryHeader_t hdr14;
-    LC_SetAPState_t cmd14;
+    GENERIC_STAR_TRACKER_NoArgs_cmd_t cmd14;
+    /* 15 - Disable Star Tracker Switch on EPS*/
+    SC_RtsEntryHeader_t hdr15;
+    GENERIC_EPS_Switch_cmd_t cmd15;
+    /* 16 - Reset AP 26 - Go to Science Mode */
+    SC_RtsEntryHeader_t hdr16;
+    LC_ResetAPStats_t cmd16;
+    /* 17 - Enable AP 26 - Go to Science Mode */
+    SC_RtsEntryHeader_t hdr17;
+    LC_SetAPState_t cmd17;
+    /* 18 - Disable AP 36 - Sample Device Fail in Science Mode */
+    SC_RtsEntryHeader_t hdr18;
+    LC_SetAPState_t cmd18;
 } SC_RtsStruct029_t;
 
 /* Define the union to size the table correctly */
@@ -142,16 +160,33 @@ SC_RtsTable029_t SC_Rts029 = {
         .cmd12.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd12), GENERIC_EPS_SWITCH_CC, 0x00),
         .cmd12.SwitchNumber = 0,
         .cmd12.State = 0x00,
-        /* 13 - Reset AP 26 - Go to Science Mode */
-        .hdr13.TimeTag = 1,
-        .cmd13.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd13), LC_RESET_AP_STATS_CC, 0x00),
-        .cmd13.APNumber = 26,
-        .cmd13.Padding = 0,
-        /* 14 - Enable AP 26 - Go to Science Mode */
+        /* 13 - Set ADCS to SUNSAFE_MODE */
+        .hdr13.TimeTag = 5,
+        .cmd13.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_ADCS_CMD_MID, SC_MEMBER_SIZE(cmd13), GENERIC_ADCS_SET_MODE_CC, 0x00),
+        .cmd13.Mode = SUNSAFE_MODE,
+        /* 14 - Disable Star Tracker Application */
         .hdr14.TimeTag = 1,
-        .cmd14.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd14), LC_SET_AP_STATE_CC, 0x00),
-        .cmd14.APNumber = 26,
-        .cmd14.NewAPState = LC_APSTATE_ACTIVE,
+        .cmd14.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_STAR_TRACKER_CMD_MID, SC_MEMBER_SIZE(cmd14), GENERIC_STAR_TRACKER_DISABLE_CC, 0x00),
+        /* 15 - Disable Star Tracker Switch on EPS*/
+        .hdr15.TimeTag = 1,
+        .cmd15.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd15), GENERIC_EPS_SWITCH_CC, 0x00),
+        .cmd15.SwitchNumber = 1,
+        .cmd15.State = 0x00,
+        /* 16 - Reset AP 26 - Go to Science Mode */
+        .hdr16.TimeTag = 1,
+        .cmd16.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd16), LC_RESET_AP_STATS_CC, 0x00),
+        .cmd16.APNumber = 26,
+        .cmd16.Padding = 0,
+        /* 17 - Enable AP 26 - Go to Science Mode */
+        .hdr17.TimeTag = 1,
+        .cmd17.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd17), LC_SET_AP_STATE_CC, 0x00),
+        .cmd17.APNumber = 26,
+        .cmd17.NewAPState = LC_APSTATE_ACTIVE,
+        /* 18 - Disable AP 36 - Sample Device Fail in Science Mode*/
+        .hdr18.TimeTag = 1,
+        .cmd18.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd18), LC_SET_AP_STATE_CC, 0x00),
+        .cmd18.APNumber = 36,
+        .cmd18.NewAPState = LC_APSTATE_DISABLED,
     }
 };
 /* Macro for table structure */
