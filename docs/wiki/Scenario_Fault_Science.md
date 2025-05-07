@@ -2,6 +2,8 @@
 
 This scenario was developed to provide the user with an example of how the spacecraft can perform Fault Detection & Correction (FDC). It also defines Actionpoint (AP), Watchpoint (WP), and Real-Time Sequence (RTS), as well as giving examples of their use in the Limit Checker (LC) and Stored Command (SC) applications in cFS FSW.
 
+This scenario was last updated on 5/7/25 and leveraged the `dev` branch at the time [53d4627].
+
 ## Learning Goals
 
 By the end of this scenario, you should be able to:
@@ -19,7 +21,7 @@ Before running the scenario, ensure the following steps are completed:
 * No additional file changes or special setup is needed for this scenario.
 * It is assumed for this scenario that the user understands how to command the Spacecraft with COSMOS, verify Telemetry via the Packet Viewer, and locate the FSW terminal window.
 
-## Scenario Walkthrough
+## Walkthrough
 This scenario is an interesting one, and not exactly uncommon. We have a satellite on orbit that is behaving... oddly. Everything worked during integration and testing on the ground. On orbit however, something is different. Our Science Instrument is locking up intermittently on orbit - and that instrument is the entire reason the spacecraft exists!
 
 We reviewed the telemetry, and our scientists have found that we can detect this error if two criteria are met:
@@ -32,7 +34,7 @@ Our job, as flight software and ground software experts, is to make this happen!
 
 Follow the walkthrough below to see what the finished product looks like.
 
-Before starting, make sure to launch NOS3 in the default misson configuration in your nos3-mission.xml (sc-mission-config.xml).
+Before starting, make sure to launch NOS3 in the default mission configuration in your nos3-mission.xml (sc-mission-config.xml).
 
 ---
 ### Commanding the Spacecraft into Science mode.
@@ -155,6 +157,6 @@ Using the diagram below, we see that our new AP should be turned on when we ente
 ---
 ### Conclusions
 
-The user is now able to fault the sample device and have the spaceraft recover itself. Also, the user should have gained a better understanding of what an WP, AP, and RTS are and what they do in the cFS.
+The user is now able to fault the sample device and have the spacecraft recover itself. Also, the user should have gained a better understanding of what an WP, AP, and RTS are and what they do in the cFS.
 
 
