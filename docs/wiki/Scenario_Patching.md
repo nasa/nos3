@@ -24,5 +24,24 @@ Using `make launch`, launch NOS3 and open COSMOS as in previous scenarios:
 
 ![Scenario Patching - Organized NOS3](./_static/scenario_demo/scenario_demo_organized.png)
 
+Now, go to the COSMOS Command Sender and select "CFDP" in the upper-left hand corner and "SEND_FILE" to the right:
+
+![COSMOS CFDP](./_static/scenario_patching/scenario_patching_CFDP.png)
+
+This COSMOS command allows us to send a new file from the ground station to a simulated spacecraft on orbit.  Looking into the list of parameters, one can see a path to a local file (SRCFILENAME) and to a remote, spacecraft file (DSTFILENAME). 
+
+The other two parameters are CLASS and DEST_ID:  
+ * The CLASS denotes whether to use Class 1 or Class 2 data transfers:
+    * Class 1 transfers are equivalent to UDP, so any data lost is lost for good.
+    * Class 2 transfers are equivalent to TCP, and use the ACK/NAK process to confirm transmission of the data.
+ * Class 2 is typically preferred, and this is also true for patching the spacecraft, where a partial file could cause significant problems.  Accordingly, we will leave the CLASS parameter as 2.
+ * DEST_ID determines where the data is being sent.  More specifically, it will only change when multiple spacecraft are present to receive data.  Accordingly, we will also leave it as-is.  
 
 
+
+
+
+
+
+
+For this scenario, we will make use of the `make cosmos-operator` command.  This command launches all of NOS3, but only shows COSMOS (since that is all that would be seen by a spacecraft operator in a real scenario).  
