@@ -34,30 +34,28 @@ resolved. You are called by the MOC to triage the situation and provide an in-fl
 In order to set up this scenario, a few configuration changes need to be made to simulate the scenario above. First, you will need to set the starting time of the mission to `814202000.526` in your `cfg/nos3_mission.xml`. 
 This should set you into a situation with an evening/night science pass over the US.
 
-(picture here)
+![lowPower_TimeChange](https://github.com/user-attachments/assets/f2e5acdc-ade7-4cc8-9f20-a37a618c3034)
 
 Additionally, you will need to go into the `cfg/InOut/Orb_LEO.txt` file and change the `True Anomaly` parameter from `0.0` to `75.0`. This should start your spacecraft in a position near Alaska.
 
-(picture here)
+![lowPower_OrbitChange](https://github.com/user-attachments/assets/5f91c250-49c3-4de4-ae80-70a9315ecc3e)
 
 Finally, you will want to change your `<battery-charge-state>` parameter under the EPS section of your `cfg/sim/nos3-simulator.xml` from `1.0`, which denotes a 100% state of charge, to around `0.65`, which would denote a 
 65% charge. This will simulate the craft already being in a fairly low power state from other operations.
 
-(picture here)
+![lowPower_ChargeChange](https://github.com/user-attachments/assets/63d5801e-e672-40e1-b53e-1155b8a05978)
 
 From there, rebuild and launch NOS3 as you would normally. I would encourage also minimizing the 42 GUI and FSW consoles and using COSMOS for all your information, as this would put you in a perspective most similar to 
 that of an Operator in the MOC.
 - _Note: In the future, you could launch NOS3 in operator mode with `make cosmos-operator` and follow the instructions in the terminal to make sure everything launches. This would put you in a more operator-like 
 mode to start, though the 42 GUI will still launch. However, this feature is still in development, so simply using `make launch` as usual is advised._
 
-(picture here)
-
 From there, wait a few moments then open the Script Runner and Telemetry Grapher. In Telemetry Grapher, launch the `EPS_test.rb` and then hit Start. This will track your power level and switch/in sun statuses in the 
 graph. Then, go to Script Runner, hit open, and go to `cosmos/procedures`. Then select `PassSetupEPSCheck_LowPowerScen.rb` in the new window, and once it is open, hit Start. This is the setup and test file the MOC ran 
 that seems to have caused the issue. It was intended to test the EPS, and then set up Science Mode. Then, let the simulator run, and observe that the power starts dropping after the science pass starts as you would 
 expect, but then the science pass stops prematurely, and the power is still draining despite that. This is the point where you would enter to begin triage with the night approaching.
 
-(picture here)
+![lowPower_SetupGraph](https://github.com/user-attachments/assets/ac93d422-d69f-48b1-90b3-5168bee88aa0)
 
 ## Step 2 - Identification and Triage
 This section will cover how to utilize tools in COSMOS and a logical thinking process to pinpoint points of failure that may be causing the issue.
@@ -67,18 +65,18 @@ Since the issue appears to be with an unexpected power drain, even during daytim
 in the `Target` dropdown. There should be only one Packet for it, so simply scroll through and observe. Switches 0 and 1, which are used, should be off, but you may notice that switch 7, which should be unused, is on and 
 drawing quite a bit of power.
 
-(picture here)
+![lowPower_Switch7On](https://github.com/user-attachments/assets/592dc0ff-debf-45ae-a4c3-7f3d852379f5)
 
 The temporary fix at this stage would be to go to your command sender and command switch 7 off manually, and verify that it turns off in your Telemetry Viewer. This should at least decrease the power draw to safer levels.
 
-(picture here)
+![lowPower_Switch7Off](https://github.com/user-attachments/assets/6c5230b7-42e3-4f7a-8187-19cf95657a70)
 
 ### Part B: Finding the Cause
 Now that the issue has been identified and temporarily fixed, the next move should be to determine what may have caused the problem. The first two places that should come to mind to look are a faulty RTS table which has 
 the switch being activated, or an errant ground command. In this case, if we check the script that was run to set up the pass, you may notice an errant switch command, which turns on switch 7. This seems to be the point 
 of failure here, so you should assure it is removed or fixed for future passes.
 
-(picture here)
+![lowPower_ScriptError](https://github.com/user-attachments/assets/0733a212-6fd2-42a8-8b92-7312f8b14086)
 
 If it was *not* in the ground script, then you would likely wish to assure that backup versions of the RTS tables that have been checked for the error are sent up to overwrite any currently onboard, as discussed in the 
 In-Flight Patching Scenario. Though, with the error identified, and the speed of discharged observed, the Operations Team deems it wise to add in some sort of failsafe to assure operator error cannot lead to the complete 
