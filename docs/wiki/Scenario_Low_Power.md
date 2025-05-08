@@ -1,11 +1,12 @@
 # Scenario - Low Power
 
 This scenario was developed to demonstrate how to identify and resolve an emergency situation that develops in flight, specifically one related to low power.
+
 ## Learning Goals
 By the end of this scenario you should be able to:
 - Analyze a complex situation with limited information to determine the cause of an anomaly
 - Learn about low power contingencies in space operations
-- Learn how to patch a mission in flight to
+- Learn how to patch a mission in flight to correct such an anomaly
 
 ## Prerequisites
 Before running the scenario, ensure the following steps are completed:
@@ -20,18 +21,18 @@ You should also likely review the following lessons before this one:
 - [Scenario - In Flight Patching](https://github.com/nasa/nos3/blob/dev/docs/wiki/Scenario_Patching.md)
 - [Scenario - Adding FDC Check for Sample Disabled to Science Mode](https://github.com/nasa/nos3/blob/dev/docs/wiki/Scenario_Fault_Science.md)
 - [Scenario - Commanding ADCS in Science Mode](https://github.com/nasa/nos3/blob/dev/docs/wiki/Scenario_Controlling_ADCS_During_Science.md)
-## Introduction
-The goal of this scenario is to build off of much of the knowledge gained in previous scenarios to identify and solve a low power issue that develops on-orbit during mission operations. The following is the situation
-presented:
 
-You are the Software Maintenance Team for the STF mission. It has launched, been commissioned, and has been running over the US. Its power state has slowly decline over time, though still within normal limits, and still 
-recharging during daytime when science data is not being gathered or a pass is not being taken. The Mission Operations Center (MOC) reports that, after a routine partial check of the EPS sent from the ground based off the 
-System Tests for EPS, and reactivation of Science Mode for the next Pass, Active Science was inhibited due to a low power state, and the satellite is not charging at normal during the last few minutes before it enters 
-eclipse, but instead discharging. With it entering eclipse shortly, there is concern that the craft will drop to a dangerously low power state before it can charge again, assuming whatever is preventing charging is 
+## Introduction
+The goal of this scenario is to build off of much of the knowledge gained in previous scenarios to identify and solve a low power issue that develops on-orbit during mission operations. The following is the situation presented:
+
+You are a member of the Software Maintenance Team for the STF mission. It has launched, been commissioned, and has been running over the US. Its power state has slowly declined over time, though still within normal limits, and 
+is still recharging during daytime when science data is not being gathered or a pass is not being taken. The Mission Operations Center (MOC) reports that they have conducted a routine partial check of the EPS, which
+was sent from the ground based off the System Tests for EPS.  While conducting this and reactivating Science Mode in preparation for the next pass,  Active Science was inhibited due to a low power state.  The satellite is also
+not charging as normal, but is actively discharging. With it entering eclipse shortly, there is concern that the craft will drop to a dangerously low power state before it can charge again, assuming whatever is preventing charging is 
 resolved. You are called by the MOC to triage the situation and provide an in-flight patch to try and save the mission.
 
 ## Step 1 - Scenario Setup
-In order to set up this scenario, a few configuration changes need to be made to simulate the scenario above. First, you will need to set the starting time of the mission to `814202000.526` in your `cfg/nos3_mission.xml`. 
+In order to set up this scenario, a few configuration changes need to be made to NOS3. First, you will need to set the starting time of the mission to `814202000.526` in your `cfg/nos3_mission.xml`. 
 This should set you into a situation with an evening/night science pass over the US.
 
 ![lowPower_TimeChange](https://github.com/user-attachments/assets/f2e5acdc-ade7-4cc8-9f20-a37a618c3034)
@@ -45,54 +46,54 @@ Finally, you will want to change your `<battery-charge-state>` parameter under t
 
 ![lowPower_ChargeChange](https://github.com/user-attachments/assets/63d5801e-e672-40e1-b53e-1155b8a05978)
 
-From there, rebuild and launch NOS3 as you would normally. I would encourage also minimizing the 42 GUI and FSW consoles and using COSMOS for all your information, as this would put you in a perspective most similar to 
+From there, rebuild and launch NOS3 as you would normally. I would also encourage minimizing the 42 GUI and FSW consoles and using COSMOS for all your information, as this would put you in a perspective most similar to 
 that of an Operator in the MOC.
 - _Note: In the future, you could launch NOS3 in operator mode with `make cosmos-operator` and follow the instructions in the terminal to make sure everything launches. This would put you in a more operator-like 
 mode to start, though the 42 GUI will still launch. However, this feature is still in development, so simply using `make launch` as usual is advised._
 
-From there, wait a few moments then open the Script Runner and Telemetry Grapher. In Telemetry Grapher, launch the `EPS_test.rb` and then hit Start. This will track your power level and switch/in sun statuses in the 
-graph. Then, go to Script Runner, hit open, and go to `cosmos/procedures`. Then select `PassSetupEPSCheck_LowPowerScen.rb` in the new window, and once it is open, hit Start. This is the setup and test file the MOC ran 
+From there, wait a few moments, then open the Script Runner and Telemetry Grapher. In Telemetry Grapher, launch the `EPS_test.rb` and then hit Start. This will track your power level and switch/in sun statuses in the 
+graph. Then, go to Script Runner, hit open, and go to `cosmos/procedures`. Select `PassSetupEPSCheck_LowPowerScen.rb` in the new window, and once it is open, hit Start. This is the setup and test file the MOC ran 
 that seems to have caused the issue. It was intended to test the EPS, and then set up Science Mode. Then, let the simulator run, and observe that the power starts dropping after the science pass starts as you would 
 expect, but then the science pass stops prematurely, and the power is still draining despite that. This is the point where you would enter to begin triage with the night approaching.
 
 ![lowPower_SetupGraph](https://github.com/user-attachments/assets/ac93d422-d69f-48b1-90b3-5168bee88aa0)
 
 ## Step 2 - Identification and Triage
-This section will cover how to utilize tools in COSMOS and a logical thinking process to pinpoint points of failure that may be causing the issue.
+This section will cover how to utilize a combination of tools in COSMOS and a logical thinking process to precisely identify points of failure that may be causing the issue.
 
 ### Part A: Pinpointing Possible Issues
-Since the issue appears to be with an unexpected power drain, even during daytime, the first place that should make sense to look would be the EPS Telemetry. Go to your Packet Viewer window, and navigate to `GENERIC_EPS` 
+Since the issue appears to be an unexpected power drain, even during daytime, the first place that should make sense to look would be the EPS Telemetry. Go to your Packet Viewer window, and navigate to `GENERIC_EPS` 
 in the `Target` dropdown. There should be only one Packet for it, so simply scroll through and observe. Switches 0 and 1, which are used, should be off, but you may notice that switch 7, which should be unused, is on and 
 drawing quite a bit of power.
 
 ![lowPower_Switch7On](https://github.com/user-attachments/assets/592dc0ff-debf-45ae-a4c3-7f3d852379f5)
 
-The temporary fix at this stage would be to go to your command sender and command switch 7 off manually, and verify that it turns off in your Telemetry Viewer. This should at least decrease the power draw to safer levels.
+The temporary fix at this stage would be to go to your Command Sender and command switch 7 off manually, and verify that it turns off in your Telemetry Viewer. This should at least decrease the power draw to safer levels.
 
 ![lowPower_Switch7Off](https://github.com/user-attachments/assets/6c5230b7-42e3-4f7a-8187-19cf95657a70)
 
 ### Part B: Finding the Cause
-Now that the issue has been identified and temporarily fixed, the next move should be to determine what may have caused the problem. The first two places that should come to mind to look are a faulty RTS table which has 
-the switch being activated, or an errant ground command. In this case, if we check the script that was run to set up the pass, you may notice an errant switch command, which turns on switch 7. This seems to be the point 
-of failure here, so you should assure it is removed or fixed for future passes.
+Now that the issue has been identified and temporarily fixed, the next move should be to determine what may have caused the problem. The first two places that should come to mind as likely culprits are a faulty RTS table (which 
+is incorrectly activating the switch), or an errant ground command. In this case, if we check the script that was run to set up the pass, you may notice an errant switch command, which turns on switch 7. This seems to be the point 
+of failure here, so you should be sure it is removed or fixed for future passes.
 
 ![lowPower_ScriptError](https://github.com/user-attachments/assets/0733a212-6fd2-42a8-8b92-7312f8b14086)
 
-If it was *not* in the ground script, then you would likely wish to assure that backup versions of the RTS tables that have been checked for the error are sent up to overwrite any currently onboard, as discussed in the 
-In-Flight Patching Scenario. Though, with the error identified, and the speed of discharged observed, the Operations Team deems it wise to add in some sort of failsafe to assure operator error cannot lead to the complete 
-death of the craft.
+If it was *not* in the ground script, then the next place to check would be whether the backup versions of the RTS tables that have been checked for the error are sent up to overwrite any currently onboard, as discussed in the 
+In-Flight Patching Scenario. Although in this case the problem has been solved, given the error identified, and the speed of discharged observed, the Operations Team deems it wise to add in some sort of failsafe to ensure 
+that possible future operator error cannot lead to the complete death of the craft.
 
 ## Step 3 - Planning the Failsafe
 As emphasized in previous scenarios, before any changes to mission behavior are made, one should consider what exactly needs to be done, how to do it, where the changes need to be made, and any new edge cases that may 
 arise from this new behavior.
 
 ### Part A: Determining Scope
-In this case, we want to add a new case where, if the battery gets below a critical level, it will go into a known, safe state. We may also want to make sure any existing power-related triggers go to a fully determined 
-EPS state, though that is up to your discretion. The Avionics Team reports that the battery being used should be recoverable as long as it does not drop below 25%. Thus, 40% is deemed a safe cutoff margin to go into a 
+In this case, we want to add a new contingency where, if the battery gets below a critical level, it will go into a known, safe state. We may also want to make sure any existing power-related triggers go to a fully determined 
+EPS state, though that is up to your discretion. The Avionics Team reports that the spacecraft battery should be recoverable as long as it does not drop below 25%. Thus, 40% is deemed a safe cutoff margin to go into a 
 known safe state in the case of extreme power loss while still being able to survive a night and recharge. 
 
-This means we will need a new LC Watchpoint for 40% power, designed similarly to the existing 60% watchpoint, and we will need to assure it is activated when entering Science Mode. Then, we need to create a new RTS that 
-will transition to Safe Mode if the watchpoint is triggered. Additionally, if it *is* determined that we want to add additional safety measures to our existing low power Science Pause at 60%, we would need to modify that 
+This means we will need a new LC Watchpoint for 40% power, designed similarly to the existing 60% watchpoint, and we will need to ensure it is activated when entering Science Mode. Then, we need to create a new RTS that 
+will transition to Safe Mode if the watchpoint is triggered. Finally, if it *is* determined that we want to add additional safety measures to our existing low power Science Pause at 60%, we would need to modify that 
 RTS as well.
 
 ### Part B: Determining Modifications for Behavior
