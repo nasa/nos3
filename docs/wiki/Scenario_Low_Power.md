@@ -98,7 +98,7 @@ RTS as well.
 
 ### Part B: Determining Modifications for Behavior
 Now that we've determined the scope, we need to consider what is necessary for these changes. The LC tables and RTS tables will need to be modified or added as shown in the FDC Check Scenario to add a new watchpoint at 
-40% power, and to ensure it is activated. Then, any safe mode transitions need to add new commands to turn off all switches (including any that are not being currently). Existing RTSs only turn switches 0 and 1 off, so 
+40% power, and to ensure it is activated. Then, any safe mode transitions need to add new commands to turn off all switches (including any that are not being currently used). Existing RTSs only turn switches 0 and 1 off, so 
 new commands for switches 2 through 7 need to be added. The new Safe Mode Entry tables should also have switches 0 through 7 and any associated apps (in this case Sample and Star Tracker) turned off or disabled, 
 respectively.
 
@@ -113,7 +113,7 @@ Implementation is left open for you to determine based on previous lessons, but 
 the planned behavior.  Then, it will be necessary to either reboot the system and compile the new tables that way, or compile the tables in a testing environment such as NOS3, copy the compiled .tbl files during execution, and utilize 
 CFDP and cFS's existing table commands to hot swap in the new tables (as shown in the In Flight Patching Scenario).
 
-## Step 3: Verifying Intended Behavior
+## Step 5: Verifying Intended Behavior
 With this all completed, you should be able to confirm that it works by bringing up NOS3, launching COSMOS, and running the low power scenario as described in Step 1, but with your patches. Then, observe the telemetry 
 and see if it enters your mode at 40%. Also, if you added the commands to toggle all switches off at 60% power, then confirm that charging resumes for any remaining daylight after the spacecraft enters science passive. 
 You can also test your patches through the Sim Bridge commands by manually setting your state of charge to 40% and making sure the failsafe triggers.
