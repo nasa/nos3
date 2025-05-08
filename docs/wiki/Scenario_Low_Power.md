@@ -98,26 +98,26 @@ RTS as well.
 
 ### Part B: Determining Modifications for Behavior
 Now that we've determined the scope, we need to consider what is necessary for these changes. The LC tables and RTS tables will need to be modified or added as shown in the FDC Check Scenario to add a new watchpoint at 
-40% power, and to assure it is activated. Then, any safe mode transitions need to add new commands added to turn off any switches that are not being currently. Currently, only switches 0 and 1 are being turned off, so 
-thus new commands for switches 2 through 7 need to be added, and the new Safe Mode Entry tables should have switches 0 through 7 and any associated apps (in this case Sample and Star Tracker) turned off or disabled, 
+40% power, and to ensure it is activated. Then, any safe mode transitions need to add new commands to turn off all switches (including any that are not being currently). Existing RTSs only turn switches 0 and 1 off, so 
+new commands for switches 2 through 7 need to be added. The new Safe Mode Entry tables should also have switches 0 through 7 and any associated apps (in this case Sample and Star Tracker) turned off or disabled, 
 respectively.
 
 ### Part C: Considering Edge Cases
-Finally, now that we've determined what is necessary to achieve that behavior during Science Mode, we need to consider the new issues and edge cases that creates for when we leave active Science Mode or transition to 
-Safe Mode. Due to the nature of this, most edge cases should be covered, but it must be assured these changes are added to all safe mode transitions, and all power-related transitions if deemed necessary. Additionally, 
+Finally, now that we've determined what is necessary to achieve the desired behavior during Science Mode, we need to consider the new issues and edge cases that may arise when we leave active Science Mode or transition to 
+Safe Mode. Due to the nature of this change, most edge cases should be covered, but it must be confirmed that these changes are added to all safe mode transitions, and all power-related transitions if deemed necessary. Additionally, 
 with a copy error starting all of this issue, there should be abundant caution to avoid that in the new tables. That is another point where testing in simulation software, such as NOS3, becomes extremely valuable in 
 actual operations - to assure that all the edge cases are tested and that patches do not have unintended negative consequences or points of failure.
 
 ## Step 4: Implementation
-Implementation is left open for you to determine based on previous lessons, but the basic steps would be to add the watchpoint, add any new RTS tables and modify the existing ones to use this watchpoint and reflect the 
-planned behavior, and then to either reboot the system and compile the new tables that way, or compile the tables in a testing environment such as NOS3, copy the compiled .tbl files during execution, and then utilize 
-CFDP and cFS's existing table commands to hot swap in the new tables as shown in the In Flight Patching Scenario.
+Implementation is left open for you to determine based on previous lessons, but the basic steps would be to add the watchpoint, add any new RTS tables, and modify the existing ones to use this watchpoint to reflect
+the planned behavior.  Then, it will be necessary to either reboot the system and compile the new tables that way, or compile the tables in a testing environment such as NOS3, copy the compiled .tbl files during execution, and utilize 
+CFDP and cFS's existing table commands to hot swap in the new tables (as shown in the In Flight Patching Scenario).
 
 ## Step 3: Verifying Intended Behavior
-With this, you should be able to test that it works by bringing up NOS3, launching COSMOS, and running the low power scenario as described in Step 1, but with your patches. Then, observe the telemetry and see if it 
-enters your mode at 40%, and that if you added the commands to toggle all switches off at 60% power, then observe that charging resumes for any remaining daylight after it enters science passive. If necessary, you can 
-test your patches through the Sim Bridge commands by manually setting your state of charge to 40% and making sure the failsafe triggers.
+With this all completed, you should be able to confirm that it works by bringing up NOS3, launching COSMOS, and running the low power scenario as described in Step 1, but with your patches. Then, observe the telemetry 
+and see if it enters your mode at 40%. Also, if you added the commands to toggle all switches off at 60% power, then confirm that charging resumes for any remaining daylight after the spacecraft enters science passive. 
+You can also test your patches through the Sim Bridge commands by manually setting your state of charge to 40% and making sure the failsafe triggers.
 
 ## Conclusions
-Hopefully, through this Scenario, you have gained a degree of confidence in putting all the previous lessons together to address a real scenario and see it successfully resolved, and gained a better understanding of 
-how to find the cause of an emergency utilizing the data available to a spacecraft operator on the ground..
+Hopefully, through this Scenario, you have gained a degree of confidence in putting all the previous lessons together to address a real scenario and see it successfully resolved, as well as gaining a better understanding of 
+how to find the cause of an emergency utilizing only the data available to a spacecraft operator on the ground.
