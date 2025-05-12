@@ -46,12 +46,12 @@ Finally, you will want to change your `<battery-charge-state>` parameter under t
 
 ![lowPower_ChargeChange](https://github.com/user-attachments/assets/63d5801e-e672-40e1-b53e-1155b8a05978)
 
-From there, rebuild and launch NOS3 as you would normally. I would also encourage minimizing the 42 GUI and FSW consoles and using COSMOS for all your information, as this would put you in a perspective most similar to 
+Now, rebuild and launch NOS3 as you would normally. I would also encourage minimizing the 42 GUI and FSW consoles and using COSMOS for all your information, as this would put you in a perspective most similar to 
 that of an Operator in the MOC.
 - _Note: In the future, you could launch NOS3 in operator mode with `make cosmos-operator` and follow the instructions in the terminal to make sure everything launches. This would put you in a more operator-like 
 mode to start, though the 42 GUI will still launch. However, this feature is still in development, so simply using `make launch` as usual is advised._
 
-From there, wait a few moments, then open the Script Runner and Telemetry Grapher. In Telemetry Grapher, launch the `EPS_test.rb` and then hit Start. This will track your power level and switch/in sun statuses in the 
+Wait 30 seconds, then open the Script Runner and Telemetry Grapher. In Telemetry Grapher, launch the `EPS_test.txt` and then hit Start. This will track your power level and switch/in sun statuses in the 
 graph. Then, go to Script Runner, hit open, and go to `cosmos/procedures`. Select `PassSetupEPSCheck_LowPowerScen.rb` in the new window, and once it is open, hit Start. This is the setup and test file the MOC ran 
 that seems to have caused the issue. It was intended to test the EPS, and then set up Science Mode. Then, let the simulator run, and observe that the power starts dropping after the science pass starts as you would 
 expect, but then the science pass stops prematurely, and the power is still draining despite that. This is the point where you would enter to begin triage with the night approaching.
