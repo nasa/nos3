@@ -18,7 +18,7 @@
 
 /* 
 ** *****************************
-** RTS 025 - Enable Science Mode
+** RTS 025 - Science_Reboot to Science
 ** *****************************
 */
 

@@ -10,14 +10,25 @@ This documentation is designed to provide information for users and developers t
 
    Home.md
    Getting_Started.md
-   Architecture.md
-   Flight_Software.md
-   Ground_Software.md
-   Components.md
-   Generating_NOS3_Component.md
-   Simulators.md
+   NOS3_Architecture.md
+   NOS3_Flight_Software.md
+   NOS3_Ground_Software.md
+   NOS3_Components.md
+   NOS3_Generating_Component.md
+   NOS3_Simulators.md
    STF_ConOps.md
    STF_QuickLook.md
    STF_Software_Development_Plan.md
    STF_VV_Plan.md
    Scenario_Demo.md
+   Scenario_cFS.md
+   Scenario_COSMOS.md
+   Scenario_Commissioning.md
+   Scenario_Nominal_Ops.md
+   Scenario_ADCS_Walkthrough.md
+   Scenario_Fault_Science.md
+   Scenario_Patching.md
+   Scenario_Controlling_ADCS_During_Science.md
+   Scenario_SimulatorExpansion.md
+   Scenario_Creating_Unit_Tests.md
+   Scenario_Run_Checkout_GDB.md
