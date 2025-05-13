@@ -18,18 +18,23 @@ Before running the scenario, ensure the following steps are completed:
   * [Running](./Getting_Started.md#running)
 * No additional file changes or special setup is needed for this scenario
 
-## Walkthrough
+## Outline
 
 First, we would run a script (or launch NOS3) with some conditions to create/cause a rapid tumbling problem.
 
 ### Determining the Problem
 
-Before attempting any remediations, it is necessary to determine the cause of the problem.  In the case of rapid tumbling, the spacecraft could have begun spinning due to a malfunction in one of the reaction wheels, or from some external cause.
+Before attempting any remediations, it is necessary to determine the cause of the problem.  In the case of rapid tumbling, the spacecraft could have begun spinning due to a malfunction in one of the reaction wheels, or from some external cause.  This can be determined by checking (in COSMOS) the state of the IMU, as below:
 
-If the problem is due to something in the spacecraft itself, that root problem must first be remedied before trying to solve the rapid tumbling.
+![Scenario Rapid Tumbling - IMU](./_static/scenario_rapid_tumbling/IMU_Rapid_Tumbling.png)
+
+If the problem is due to something in the spacecraft itself, that root problem must first be remedied before trying to solve the rapid tumbling.  As NOS3 presently exists, however, there is no way for the reaction wheels to be "stuck on", or the like, and therefore we can go to the next section.
 
 ### Solving the Problem
 
-If the problem is due to the environment (but the spacecraft itself is fine), all that must be done is to put the spacecraft into safe mode and tell it to go into either BDot mode (the purpose of which is to reduce rotational speed to zero) or to point at the Sun (which will likewise require the rotational speed to go to zero). 
+If the problem is due to the environment (but the spacecraft itself is fine), all that must be done is to put the spacecraft into safe mode and tell it to go into either BDot mode (the purpose of which is to reduce rotational speed to zero) or to point at the Sun (which will likewise require the rotational speed to go to zero).  The image below shows the menu in COSMOS, with BDOT highlighted; basically any spacecraft mode other than "PASSIVE" will work, however.
 
+![Scenario Rapid Tumbling - ADCS Commanding](./_static/scenario_rapid_tumbling/ADCS_To_BDOT_Mode.png)
+
+This concludes the description of a rapid tumbling scenario.  
 
