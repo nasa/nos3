@@ -30,6 +30,6 @@ If the problem is due to something in the spacecraft itself, that root problem m
 
 ### Solving the Problem
 
-If the problem is due to the environment (but the spacecraft itself is fine), all that must be done is to put the spacecraft into safe mode and tell it to point at the Sun. 
+If the problem is due to the environment (but the spacecraft itself is fine), all that must be done is to put the spacecraft into safe mode and tell it to go into either BDot mode (the purpose of which is to reduce rotational speed to zero) or to point at the Sun (which will likewise require the rotational speed to go to zero). 
 
 
