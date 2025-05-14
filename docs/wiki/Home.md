@@ -6,11 +6,11 @@
 
 The Jon McBride Software Test and Research (JSTAR) laboratory at NASA's Katherine Johnson Independent Verification and Validation (IV&V) facility is proud to provide an example of technologies it leverages daily to the space community.
 The JSTAR team built West Virginia's first satellite, Simulation-To-Flight-1 (STF-1) to demonstrate the lifecycle value of a software-only operational simulator.
-From STF-1, NOS3 was was born as an architecture for new missions to baseline and leverage as a starting point.
+From STF-1, NOS3 was born as an architecture for new missions to baseline and leverage as a starting point.
 NOS3 is a virtual spacecraft environment enabling development, testing, and training for users.  
 Its component-based structure facilitates integration of software modules, enabling developers to simulate spacecraft behavior, test instrument interfaces, and perform software/hardware integration. 
 
-## Modules
+### Modules
 
 NOS3 can be distilled down into various configurable modules that make up the environment:
 * Flight Software
@@ -80,14 +80,17 @@ By customizing and extending the existing components or creating new ones, you c
 NOS3 isn't a substitute for hardware testing, just a tool to augment the number of types of tests possible.
 The component development flow includes the development of a standalone checkout application that can more rapidly be developed, deployed, and tested on hardware.
 The flight software will use the same functions and code developed and tested through that process allowing focus to shift to data flow and system level tests cleanly.
+The ground software in NOS3 can be used for command and control for hardware testing.
 
-### What can NOS3 give me during Integration and Testing (I&T) ?
+### What can NOS3 give me during Integration and Testing (I&T)?
 
 During I&T activities, NOS3 enables you to perform integration testing of your satellite system, validate the operational procedures, and verify the overall system performance.
 NOS3 allows you to conduct end-to-end simulations, test different mission scenarios, and assess the behavior of the satellite system under various conditions.
 
-### How to a move from software / simulator to hardware once it arrives?
+### How do I create a new component in NOS3?
 
-NOS3 isn't a substitute for hardware testing, just a tool to augment the number of types of tests possible.
-The component development flow includes the development of a standalone checkout application that can more rapidly be developed, deployed, and tested on hardware.
-The flight software will use the same functions and code developed and tested through that process allowing focus to shift to data flow and system level tests cleanly.
+You can reference the **Generating a New Component** section of the documentation. Here it will guide you through how to generate a component in NOS3. 
+
+Link: [Generating a New Component](Generating_NOS3_Component.md)
+
+

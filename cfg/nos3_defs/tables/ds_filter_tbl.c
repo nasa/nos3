@@ -36,6 +36,7 @@
 #include "cfe_tbl_filedef.h"
 #include "ds_platform_cfg.h"
 #include "ds_extern_typedefs.h"
+#include "ds_indices.h"
 #include "ds_msg.h"
 
 /*
@@ -68,15 +69,6 @@
 **       when creating command database entries that require file
 **       index numbers for command arguments.
 */
-#define FILE_ALL_EVENTS 0
-
-#define FILE_ALL_APP_HK_PKTS  1
-#define FILE_ALL_APP_TLM_PKTS 2
-
-#define FILE_ALL_HW_TLM_PKTS 3
-
-#define FILE_CFE_APP_HK_PKTS  4
-#define FILE_CFE_APP_TLM_PKTS 5
 
 /*
 ** Sample packet filter table data
@@ -205,10 +197,10 @@ DS_FilterTable_t DS_FilterTable = {
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED}}},
      /* Packet Index 015 */
-     {/* .MessageID = */ CFE_SB_MSGID_RESERVED,
+     {/* .MessageID = */  CFE_SB_MSGID_WRAP_VALUE(SAMPLE_DEVICE_TLM_MID),
       /* .Filter    = */
       {/* File table index, filter type, N, X, O */
-       {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
+       {FILE_ALL_SAMPLE_INST_DATA, DS_BY_COUNT, 1, 1, 0},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED},
        {DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED, DS_UNUSED}}},

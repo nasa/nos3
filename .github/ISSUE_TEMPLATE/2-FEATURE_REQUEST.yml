@@ -1,4 +1,4 @@
-name: "New Issue"
+name: "Feature Request"
 description: Create a new ticket for a new request
 labels: [
   "NewIssue"
@@ -6,13 +6,17 @@ labels: [
 body:
   - type: markdown
     attributes:
-      value: "Please add a short descriptive title to describe the issue."
+      value: "Please add a short descriptive title to feature request."
   - type: textarea
-    id: summary
+    id: description
     attributes:
-      label: "Summary"
-      description: Describe the issue or request.
-      placeholder: Provide examples of the issue or request.
+      label: "Description"
+      value: |
+        Provide details related to the new feature.
+                
+      render: bash  
     validations:
       required: true
-
+  - type: markdown
+    attributes:
+      value: "Optional: Please apply any labels or types as necessary - leave blank for unknown."

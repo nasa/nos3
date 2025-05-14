@@ -32,9 +32,12 @@
 /**********************
 *     DS Index IDs
 ***********************/
-#define FILE_EVENT_PKTS            0
-#define FILE_CAM_PKTS              1
-#define FILE_HK_PKTS               2
-#define FILE_SAMPLE_PKTS           3
+#define FILE_ALL_EVENTS 0
+#define FILE_ALL_APP_HK_PKTS  1
+#define FILE_ALL_APP_TLM_PKTS 2
+#define FILE_ALL_HW_TLM_PKTS 3
+#define FILE_CFE_APP_HK_PKTS  4
+#define FILE_CFE_APP_TLM_PKTS 5
+#define FILE_ALL_SAMPLE_INST_DATA  6
 
 #endif /* _DS_INDICES_H_ */
