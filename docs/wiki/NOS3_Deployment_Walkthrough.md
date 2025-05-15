@@ -61,5 +61,4 @@ sudo apt-get update
 * Run `sudo apt update` to start
 * Then run `sudo apt install python3-pip python3-venv python3-dev`
 * cd into your top level nos3 directory
-* Run `python3 -m venv .venv` and `source .venv/bin/activate` this will spawn a python virtual environment and enable it so that pip packages installed from make prep are localized to this directory
-
+* Run `python3 -m venv .venv` and `source .venv/bin/activate` this will spawn a python virtual environment and enable it so that pip packages installed from make prep are localized to this directory.
