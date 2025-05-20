@@ -7,4 +7,4 @@ sleep 10
 # Set of System Tests to be called
 
 #Sample
-docker exec -it cosmos_openc3-operator_1 ruby $SYSTEM_TEST_FILE_PATH
+docker exec -it cosmos-openc3-operator-1 ruby $SYSTEM_TEST_FILE_PATH

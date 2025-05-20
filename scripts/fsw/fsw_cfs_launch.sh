@@ -84,8 +84,8 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    echo $SC_NUM " - Connect GSW " "${GSW:-cosmos_openc3-operator_1}" " to spacecraft network..."
-    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos_openc3-operator_1}" --alias cosmos --alias active-gs
+    echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
+    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs
     echo ""
 
     echo $SC_NUM " - 42..."
@@ -141,14 +141,14 @@ done
 
 echo "NOS Time Driver..."
 sleep 8
-gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos_time_driver --network=nos3-core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
+gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network=nos3-core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 sleep 1
 for (( i=1; i<=$SATNUM; i++ ))
 do
     export SC_NUM="sc0"$i
     export SC_NETNAME="nos3-"$SC_NUM
-    export TIMENAME=$SC_NUM"_nos_time_driver"
-    $DNETWORK connect --alias nos_time_driver $SC_NETNAME nos_time_driver
+    export TIMENAME=$SC_NUM"-nos-time-driver"
+    $DNETWORK connect --alias nos-time-driver $SC_NETNAME nos-time-driver
 done
 echo ""
 

@@ -60,7 +60,7 @@ echo "Launch GSW..."
 
 if [ "$GSW" == "cosmos" ]; then
   echo "Launching COSMOS..."
-  $DCALL run -d --name cosmos_openc3-operator_1 \
+  $DCALL run -d --name cosmos-openc3-operator-1 \
       --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
       -v "$GSW_DIR/config:/cosmos/config:ro" \
       -v "$GSW_DIR:/cosmos" \
@@ -75,11 +75,11 @@ if [ "$GSW" == "cosmos" ]; then
       ballaerospace/cosmos:4.5.0 tail -f /dev/null
 
   sleep 5
-  $DCALL exec cosmos_openc3-operator_1 bash -c "apt update && apt install -y xvfb"
-  $DCALL exec -d cosmos_openc3-operator_1 bash -c "xvfb-run ruby CmdTlmServer /cosmos/config/tools/cmd_tlm_server/cmd_tlm_server.txt"
+  $DCALL exec cosmos-openc3-operator-1 bash -c "apt update && apt install -y xvfb"
+  $DCALL exec -d cosmos-openc3-operator-1 bash -c "xvfb-run ruby CmdTlmServer /cosmos/config/tools/cmd_tlm_server/cmd_tlm_server.txt"
 
 elif [ "$GSW" == "cosmos-gui" ]; then
-    $DFLAGS -v $BASE_DIR:$BASE_DIR -dit -v /tmp/nos3:/tmp/nos3 -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e PROCESSOR_ENDIANNESS="LITTLE_ENDIAN" -w $GSW_DIR --name cosmos_openc3-operator_1 --network=nos3-core ballaerospace/cosmos:4.5.0
+    $DFLAGS -v $BASE_DIR:$BASE_DIR -dit -v /tmp/nos3:/tmp/nos3 -v /tmp/.X11-unix:/tmp/.X11-unix:ro -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e PROCESSOR_ENDIANNESS="LITTLE_ENDIAN" -w $GSW_DIR --name cosmos-openc3-operator-1 --network=nos3-core ballaerospace/cosmos:4.5.0
 
     echo ""
     echo "Please quickly click the COSMOS Ok button to launch"
@@ -100,7 +100,7 @@ elif [ "$GSW" == "yamcs" ]; then
   echo "Directories Created"
 
   $DCALL run -dit \
-      --name cosmos_openc3-operator_1 \
+      --name cosmos-openc3-operator-1 \
       --hostname cosmos \
       --network=nos3-core \
       --network-alias=cosmos \
@@ -149,7 +149,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
 
     echo "$SC_NUM - Create spacecraft network..."
     echo "$SC_NUM - Connect GSW to spacecraft network..."
-    $DNETWORK connect $SC_NET cosmos_openc3-operator_1 --alias cosmos --alias active-gs
+    $DNETWORK connect $SC_NET cosmos-openc3-operator-1 --alias cosmos --alias active-gs
 
     echo "$SC_NUM - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
@@ -205,7 +205,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
         fi
     done
 
-    $DNETWORK connect --alias nos_time_driver $SC_NET nos_time_driver
+    $DNETWORK connect --alias nos-time-driver $SC_NET nos-time-driver
 
     echo "Connecting ground simulators to spacecraft network..."
     $DNETWORK connect $SC_NET nos-terminal
