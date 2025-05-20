@@ -176,7 +176,7 @@ for (( i=1; i<=$SATNUM; i++ )); do
 
     echo "$SC_NUM - Simulators..."
     echo "$SC_NUM - NOS Engine Server..."
-    $DCALL run -dit --name ${SC_NUM}_nos_engine_server -h nos_engine_server --network=$SC_NET \
+    $DCALL run -dit --name ${SC_NUM}-nos-engine-server -h nos-engine-server --network=$SC_NET \
         --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
         /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json

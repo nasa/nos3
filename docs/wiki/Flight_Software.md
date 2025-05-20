@@ -260,7 +260,7 @@ NOS Engine supplies time on a created bus interface.
 
 The interface is created with the following nos engine connection string:
 ```
-“tcp://nos_engine_server:12000”
+“tcp://nos-engine-server:12000”
 ```
 
  
