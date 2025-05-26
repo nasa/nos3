@@ -4,7 +4,7 @@ This scenario was developed to provide an overview of the NASA Operational Simul
 It demonstrates the flight software (FSW), ground software (GSW), and simulation interactions within NOS3.
 It also serves as a template for additional scenarios to be developed and added to the environment to cover various use cases.
 
-This scenario was last updated on 5/23/25 and leveraged the `dev` branch at the time [95488ce].
+This scenario was last updated on 05/26/2025 and leveraged the `dev` branch at the time [b87b2f92].
 
 ## Learning Goals
 

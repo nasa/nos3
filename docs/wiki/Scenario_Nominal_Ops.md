@@ -3,20 +3,20 @@
 This scenario was developed to explain and demonstrate the standard (nominal) operation of a satellite pass for a satellite in orbit, using NASA Operational Simulator for Small Satellites (NOS3).
 It demonstrates the use of the ground software (GSW) for commanding and for the expected return telemetry, as well as making use of flight software (FSW) and simulators.
 
-This scenario was last updated on INSERT_DATE_HERE and leveraged the `dev` branch at the time [TIME_HERE].
+This scenario was last updated on 05/26/2025 and leveraged the `dev` branch at the time [b87b2f92].
 
 ## Learning Goals
 
 By the end of this scenario, you should be able to:
- * Connect to the simulated spacecraft at the beginning of a simulated pass
- * Send commands to change state or downlink data
- * Understand what portions of NOS3 would be accessible or visible in the context of a real satellite
- * Recognize anomalous telemetry
- * Take a simulated pass with NOS3
+ * Connect to the simulated spacecraft at the beginning of a simulated pass.
+ * Send commands to change state or downlink data.
+ * Understand what portions of NOS3 would be accessible or visible in the context of a real satellite.
+ * Recognize anomalous telemetry.
+ * Take a simulated pass with NOS3.
 
 ## Prerequisites
 
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
