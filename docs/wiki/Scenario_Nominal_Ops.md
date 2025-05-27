@@ -43,6 +43,7 @@ Before you can do anything else with the spacecraft, you must connect to it.
 In the following script, this is done at least partly automatically (the `RADIO` interface is connected automatically), but with a real satellite this would have to be done first, in conjunction with the ground station and at the appropriate time for when your particular satellite would be in range.  Note that the COSMOS `DEBUG` interface is supposed to be like having a direct interface to the spacecraft from the ground system using a debug port; while the COSMOS `RADIO` interface is supposed to be like interfacing the ground system to the spacecraft using a radio.
 
 ### Execute the pass script
+
 Open the script runner from the `NOS3 Launcher`.
 In the script runner, perform `File->Open...` and choose the `gsw/cosmos/config/targets/MISSION/procedures/nominal_ops.rb` script.
 Press `Start`:
@@ -70,7 +71,7 @@ The first task is to confirm that spacecraft telemetry is nominal by checking th
 Both can be confirmed by use of the `NOOP` command.
 On an actual spacecraft, the only information to which you would have access would be COSMOS and its associated outputs.
 As such, we will start by looking only at those to confirm that the spacecraft is in a nominal state before looking at other, simulation only, sources of information.
-Among the COSMOS windows, make sure the Command Sender and Packet Viewer are both visible, and in both, navigate to the `GENERIC_IMU` Target:
+Among the COSMOS windows, make sure the Command Sender and Packet Viewer are both visible, and in both, navigate to the `GENERIC_IMU_RADIO` Target:
 
 ![Scenario Nominal - COSMOS1](./_static/scenario_nominal_ops/COSMOS_before_test.png)
 
@@ -122,23 +123,22 @@ Do the same with the Packet Viewer, like so:
 
 Notice the various commands listed in the dropdown menu.
 For this we will be sending one to activate science mode (this tells the spacecraft that it's OK to perform science when conditions allow).
-This is done by selecting the Command `MGR_SET_MODE_CC` and, in the dropdown menu therein, selecting `SCIENCE_ACTIVE` as the mode, and then pressing `Send`:
+This is done by selecting the Command `MGR_SET_MODE_CC` and, in the dropdown menu therein, selecting `SCIENCE` as the mode, and then pressing `Send`:
 
 ![Scenario Nominal - Set Science Mode](./_static/scenario_nominal_ops/Science_Mode_cmd.png)
 
-Once sent, the `SPACECRAFT_MODE` in the Packet Viewer should switch to `SCIENCE_ACTIVE`.
-This change can also be seen in the Flight Software (FSW) terminal (`SCIENCE_ACTIVE` is mode 3).
+Once sent, the `SPACECRAFT_MODE` in the Packet Viewer should switch to `SCIENCE`.
+This change can also be seen in the Flight Software (FSW) terminal (`SCIENCE` is mode 3).
 
 ### Downlink Data
 
-Next we will go through an example of downlinking data.
-This is the other thing likely to be done during a pass. 
+Next we will go through an example of downlinking data, as this is the other thing likely to be done during a pass. 
 
 Our example will be to downlink a file from the on-board data storage using the Consultative Committee for Space Data System Standards (CCSDS) File Delivery Protocol (CFDP).
-This will be done using the `CFDP` and `CFS_RADIO` targets.
-First, check telemetry for Target `CFDP` and Packet `CFDP_ENGINE_HK`.
-Make sure `ENG_INPROGRESSTRANS` is 0, indicating that no file transfer is currently in progress.
-In the same packet, make note of the value of `ENG_TOTALSUCCESSTRANS`.
+* This will be done using the `CFDP` and `CFS_RADIO` targets.
+* First, check telemetry for Target `CFDP` and Packet `CFDP_ENGINE_HK`.
+* Make sure `ENG_INPROGRESSTRANS` is 0, indicating that no file transfer is currently in progress.
+* In the same packet, make note of the value of `ENG_TOTALSUCCESSTRANS`.
 Next, in the command sender window, using Target `CFS_RADIO`, issue command `CF_TX_FILE` with Parameters `CLASS 1 - NO FEEDBACK`, `KEEP`, `CHAN 0`, PRIORITY `1`, DEST_ID `0x18`, SRCFILENAME `'/data/dummy.txt'`, DSTFILENAME `'/tmp/nos3/data/dummy.txt'`.
 The Command Sender and Packet Viewer windows below reflect these choices:
 

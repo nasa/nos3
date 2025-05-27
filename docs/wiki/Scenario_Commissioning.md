@@ -65,7 +65,7 @@ Using the above questions, take a few minutes to look through the COSMOS Packet 
 ---
 ### Writing a Commissioning Skeleton
 
-* In a text editor, preferably VS Code, navigate to gsw/cosmos/config/targets/MISSION/procedures and create a new file 'my_commissioning.rb'
+* In a text editor, such as VSCode, navigate to gsw/cosmos/config/targets/MISSION/procedures and create a new file 'my_commissioning.rb'
 * In the first line, write 'require 'mission_lib'
 
 Let's add Ruby comments to help us navigate what we'll be doing for our commissioning, add the following lines with a blank line or two in between
