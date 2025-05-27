@@ -55,8 +55,8 @@ The core Flight System (cFS) was developed to achieve the following goals:
   * core Flight Executive:
     * The core Flight Executive (cFE) is a portable, platform-independent framework that creates an application runtime environment by providing services that are common to most flight applications.
     * cFE Services include the following:
-      * Event Services (EVS) manage the software system and create an application runtime environment.
-      * Executive Services (ES) provide a service for sending, filtering, and logging event messages.
+      * Executive Services (ES) manage the software system and create an application runtime environment.
+      * Event Services (EVS) provide a service for sending, filtering, and logging event messages.
       * Table Services (TBL) manage application table images.
       * Time Services (TIME) manage the spacecraft time.
       * Software Bus (SB) provides an application publish/subscribe message service.
@@ -167,5 +167,5 @@ Additional version info is printed for each "Module" loaded, and then:
 ### Additional References
 
 Some additional references and training related to cFS may be found at the following links:
-* https://github.com/nasa/cFS
-* https://ntrs.nasa.gov/api/citations/20205000691/downloads/TM%2020205000691.pdf
+* [cFS Github](https://github.com/nasa/cFS)
+* [NASA cFS Training](https://ntrs.nasa.gov/api/citations/20205000691/downloads/TM%2020205000691.pdf)
