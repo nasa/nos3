@@ -74,7 +74,7 @@ The Attitude Determination and Control System (ADCS) is different from other com
 ![ADCSWalkthrough_TorquerTLM](https://github.com/user-attachments/assets/7bcffb7d-61a0-4457-86c4-6ef5523b1b94)
 ![ADCSWalkthrough_Torquer_SunsafeCommands](https://github.com/user-attachments/assets/de3a2875-0790-4534-a715-5d36d31b66ff)
 
-* Thrusters are not linked into ADCS or fully developed for this example mission, but they would allow orbital adjustments and navigation in the linear axes, rather than rotational adjustments like the other actuators.
+* Thrusters are not linked into ADCS or fully developed for this example mission, but they would allow orbital adjustments and navigation in the linear axes.  When used together, they can also be used to allow adjustments in the rotational axes, and serve in this role on deep space missions, where they achieve a similar end as the magnetorquers in Earth orbit.
   
 ### Ingest and Output:
 As this mission uses cFS, it is built on a bus-based architecture, where all messages are published to a single bus, which other components can subscribe to. Thus, ADCS's sensor fusion works by subscribing to the various sensors' messages in ADCS, so it can read them into itself and act on them. This subscription process happens in the `Generic_ADCS_AppInit` method of **/nos3/components/generic_adcs/fsw/cfs/src/generic_adcs_app.c**. As can be observed there, it subscribes to other cFS apps for the sensors/actuators (MAG, FSS, CSS, IMU, RW, and ST), but also subscribes to or initializes to various 42 configurations tied to ADCS, specifically Inp_DI.txt, Inp_ADAC.txt, and Inp_DO.txt. This assures it is properly linked in with our dynamics simulator.

@@ -88,7 +88,7 @@ This document was written in a time of flux in determining these steps and as su
 
 A spacecraft operator is a trained professional responsible for day-to-day management, control, and monitoring of a spacecraft.
 While traditionally spacecraft have required operators, a recently push for "lights out" operations has been noted.
-This "lights out" or autonomous operation is the goal of the STF mission, but is to developed once the vehicle is on orbit and procedures are proven.
+This "lights out" or autonomous operation is the goal of the STF mission, but would be developed after the vehicle is on orbit and any procedures are proven.
 Notifications to spacecraft operators would be generated for them to get to a console to resolve any issues as they arise.
 
 ### Spacecraft Modes
