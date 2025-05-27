@@ -35,14 +35,14 @@ Then, launch NOS3 (using `make launch`) and open COSMOS using the `COSMOS` butto
 
 ![Scenario Nominal - COSMOS](./_static/scenario_demo/scenario_demo_cosmos.png)
 
-## Taking a pass automatically via scripting
+### Taking a pass automatically via scripting
 
-### Connect to the Spacecraft
+#### Connect to the Spacecraft
 
 Before you can do anything else with the spacecraft, you must connect to it.
 In the following script, this is done at least partly automatically (the `RADIO` interface is connected automatically), but with a real satellite this would have to be done first, in conjunction with the ground station and at the appropriate time for when your particular satellite would be in range.  Note that the COSMOS `DEBUG` interface is supposed to be like having a direct interface to the spacecraft from the ground system using a debug port; while the COSMOS `RADIO` interface is supposed to be like interfacing the ground system to the spacecraft using a radio.
 
-### Execute the pass script
+#### Execute the pass script
 
 Open the script runner from the `NOS3 Launcher`.
 In the script runner, perform `File->Open...` and choose the `gsw/cosmos/config/targets/MISSION/procedures/nominal_ops.rb` script.
@@ -55,17 +55,17 @@ This script will approximate several aspects of taking a pass including enabling
 **_NOTE:_** The user must select `Go` in the script runner window when they are done commanding for the pass, since the script does not stop and disconnect COSMOS automatically.
 Also, typical passes are of short duration (8-10 minutes) and it is up to the operator to keep track of time and when the pass ends.
 
-## Taking a pass manually
+### Taking a pass manually
 
-### Connect to the Spacecraft
+#### Connect to the Spacecraft
 
 Before you can do anything else with the spacecraft, you must connect to it.
 With a real satellite this would have to be done first, in conjunction with the ground station and at the appropriate time for when your particular satellite would be in range.
 For NOS3, commanding is always connected to the `RADIO` interface, but telemetry can be connected to the `RADIO` interface using the command `CFS_RADIO TO_ENABLE_OUTPUT with DEST_IP 'radio_sim', DEST_PORT 5011`.
 
-### Confirm Telemetry is Nominal
+#### Confirm Telemetry is Nominal
 
-#### COSMOS Alone
+##### COSMOS Alone
 
 The first task is to confirm that spacecraft telemetry is nominal by checking that data is being downlinked and that commands are being sent.
 Both can be confirmed by use of the `NOOP` command.
@@ -90,7 +90,7 @@ EPS telemetry should also show `BATT_VOLTAGE` as a healthy state of charge (e.g.
 
 ![Scenario Nominal - COSMOS3](./_static/scenario_nominal_ops/COSMOS_EPS_Testing.png)
 
-#### 42 and the Simulator
+##### 42 and the Simulator
 
 On an actual mission, COSMOS commands and telemetry would be all the information you have available.
 When running in a simulator, however, there is more information to which you have access, and which can tell you in fairly short order about the state of the spacecraft and whether it's in nominal operations.
@@ -107,7 +107,7 @@ The 42 Map window will show the spacecraft location over the Earth:
 
 ![Scenario Nominal - 42 Cam](./_static/scenario_nominal_ops/42_Nominal.png)
 
-### Send Commands
+#### Send Commands
 
 Once the spacecraft is known to be in a nominal state, the next step is to either send commands or to downlink data.
 This scenario will provide an example of each.
@@ -130,7 +130,7 @@ This is done by selecting the Command `MGR_SET_MODE_CC` and, in the dropdown men
 Once sent, the `SPACECRAFT_MODE` in the Packet Viewer should switch to `SCIENCE`.
 This change can also be seen in the Flight Software (FSW) terminal (`SCIENCE` is mode 3).
 
-### Downlink Data
+#### Downlink Data
 
 Next we will go through an example of downlinking data, as this is the other thing likely to be done during a pass. 
 

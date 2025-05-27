@@ -62,7 +62,7 @@ The Attitude Determination and Control System (ADCS) is different from other com
   
 ![ADCSWalkthrough_StarTracker](https://github.com/user-attachments/assets/cbc26d4a-718c-4e17-b8c8-9c14504df716)
 
-### Actuators:
+### Actuators
 * The Reaction Wheels (RWs) are rotating flywheels which allow the spacecraft to generate torque, rotate, and point itself. There is one for each axis, which can be spun in either direction on that axis.
 
 ![ADCSWalkthrough_ReactionWheelTLM](https://github.com/user-attachments/assets/f24917e9-1b6c-4e0c-a951-f1d38f377668)
@@ -76,7 +76,7 @@ The Attitude Determination and Control System (ADCS) is different from other com
 
 * Thrusters are not linked into ADCS or fully developed for this example mission, but they would allow orbital adjustments and navigation in the linear axes.  When used together, they can also be used to allow adjustments in the rotational axes, and serve in this role on deep space missions, where they achieve a similar end as the magnetorquers in Earth orbit.
   
-### Ingest and Output:
+### Ingest and Output
 As this mission uses cFS, it is built on a bus-based architecture, where all messages are published to a single bus, which other components can subscribe to. Thus, ADCS's sensor fusion works by subscribing to the various sensors' messages in ADCS, so it can read them into itself and act on them. This subscription process happens in the `Generic_ADCS_AppInit` method of **/nos3/components/generic_adcs/fsw/cfs/src/generic_adcs_app.c**. As can be observed there, it subscribes to other cFS apps for the sensors/actuators (MAG, FSS, CSS, IMU, RW, and ST), but also subscribes to or initializes to various 42 configurations tied to ADCS, specifically Inp_DI.txt, Inp_ADAC.txt, and Inp_DO.txt. This assures it is properly linked in with our dynamics simulator.
 
 Then, as the ADCS app processes commands, it will filter out its own ground commands and telemetry requests, and then check for each of the telemetry packets from the aforementioned sensors. At this point, it will call ingest methods on those to parse out the data into its own "*structs*", and update its own telemetry points. If you would like more information, look at the "generic_adcs_ingest.c" file. This file can be found in **/nos3/components/generic_adcs/fsw/cfs/src/generic_adcs_ingest.c**.
@@ -85,5 +85,5 @@ This data is then used internally by the ADAC (Attitude Determination and Attitu
 
 Then, those commands built by ADAC are sent out through the output methods, which build proper CCSDS packets which may be sent over the cFS bus, which will then be received by the associated actuator and processed to produced the desired effect. If you would like more information, look at the "generic_adcs_output.c" file. This file can be found in **/nos3/components/generic_adcs/fsw/cfs/src/generic_adcs_output.c**.
 
-### Example:
+### Example
 For Sunsafe mode, the ADCS system will take in the values for the sun vector from FSS and CSS, and their validity signals. It will then utilize that telemetry to determine if the spacecraft is in sun and the orientation between the spacecraft body frame and the sun unit vector. ADCS will then send torque commands to orient the spacecraft to properly face the sun. If you would like to see how it works in code, look at the 'AC_sunsafe' method in **/nos3/components/generic_adcs/fsw/cfs/src/generic_adcs_adac.c**. This file can be found in **/nos3/components/generic_adcs/fsw/cfs/src/**.
