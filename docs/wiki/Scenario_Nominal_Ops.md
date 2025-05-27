@@ -86,7 +86,7 @@ Note also that there can be a few second delay between sending the command and t
 
 The other component which should be checked to ensure nominal operations is the electrical power system, or EPS.
 Check that the EPS is sending telemetry and is able to receive commands by sending a `NOOP` command and verifying that the command counter increases.
-EPS telemetry should also show `BATT_VOLTAGE` as a healthy state of charge (e.g. greater than 23V).
+EPS telemetry should also show `BATT_VOLTAGE` as a healthy state of charge (e.g. greater than 24V).
 
 ![Scenario Nominal - COSMOS3](./_static/scenario_nominal_ops/COSMOS_EPS_Testing.png)
 
@@ -116,7 +116,7 @@ For an example of sending a command, we will direct the spacecraft to enter scie
 The example spacecraft in NOS3 conducts science using the sample instrument when over the US; it has to be activated into science mode, however, to start performing science.
 We will do so via COSMOS.
 
-First, navigate to the Command Sender and go to the Target `MGR`.
+First, navigate to the Command Sender and go to the Target `MGR_RADIO`.
 Do the same with the Packet Viewer, like so:
 
 ![Scenario Nominal - Science Mode commands](./_static/scenario_nominal_ops/MGR_cmd_and_tlm.png)

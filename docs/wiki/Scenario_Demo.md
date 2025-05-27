@@ -108,6 +108,10 @@ Let's see if we can command the sample instrument payload:
 * Looking at the sample HK telemetry, you may have noticed it has series of `DEVICE_*` telemetry points:
   * These are specifically relating to the application talking to the device itself.
 
+Before enabling the sample instrument, the data in the Packet Viewer will show up as pink.  This indicates that either no data has been received, or that the data is old and 'stale':
+
+![Scenario Demo - Stale HK Data](./_static/scenario_demo/scenario_demo_stale_data.png)
+
 Let's enable the sample application and see what happens.
 
 ![Scenario Demo - Sample Enable](./_static/scenario_demo/scenario_demo_sample_enable.png)
