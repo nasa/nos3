@@ -37,14 +37,15 @@ To run NOS3 in VirtualBox you will need to install Git, Vagrant, and VirtualBox.
 Clone and set up the directory using a Git Bash terminal:
 * `git clone https://github.com/nasa/nos3.git`
 
-<TODO: Insert image here showing successful git clone>
+![ScenarioInstallationClone](./_static/scenario_installation/scenario_installation_clone.png)
 
 * `cd nos3`
 * `git pull`
 * `git submodule update --init --recursive`
 
-<TODO: Insert image here showing successful git submodule update>
+![ScenarioInstallationSubmoduleUpdate](./_static/scenario_installation/scenario_installation_submodule_update.png)
 
+You can run submodule update again if anything failed during the first attempt, if all successful it simply reports nothing as shown above.
 Note that the repository we just cloned will be shared into the VM in the default setup.
 Such a setup means you can edit the code locally on your host and then still build and run inside the Virtual Machine.
 This can be useful in allowing a user to have the same IDE for multiple projects, but may require running `dos2unix` on certain files for everything to work properly. 
@@ -104,10 +105,12 @@ Now that Docker has been added to the apt repository, simply use apt to install 
 In order to get Docker running properly without having to use sudo, it may be necessary to create a docker group and add the current user to it:
 * `sudo groupadd docker`
 * `sudo usermod -aG docker $USER`
+* `sudo reboot now`
 
 #### NOS3 install
 Now, clone NOS3 directly into the VM:
 * `git clone https://github.com/nasa/nos3`
+* `cd nos3`
 * `git submodule update --init --recursive`
 
 #### Python setup
@@ -123,6 +126,3 @@ Finally, cd into your top level NOS3 directory and run
 * `source .venv/bin/activate` 
 
 This will spawn a python virtual environment and enable it so that pip packages installed from make prep are localized to this directory.
-
-
-
