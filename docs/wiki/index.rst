@@ -30,5 +30,8 @@ This documentation is designed to provide information for users and developers t
    Scenario_Patching.md
    Scenario_Controlling_ADCS_During_Science.md
    Scenario_SimulatorExpansion.md
-   Scenario_Creating_Unit_Tests.md
+   Scenario_Low_Power.md
+   Scenario_Rapid_Tumbling.md
    Scenario_Run_Checkout_GDB.md
+   Scenario_Creating_Unit_Tests.md
+   Scenario_Flight_Build.md
