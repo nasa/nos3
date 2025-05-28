@@ -13,6 +13,12 @@
 #include "generic_eps_app.h"
 #include "generic_eps_msgids.h"
 #include "generic_eps_msg.h"
+#include "generic_adcs_msg.h"
+#include "generic_adcs_msgids.h"
+#include "generic_adcs_adac.h"
+#include "generic_star_tracker_app.h"
+#include "generic_star_tracker_msgids.h"
+#include "generic_star_tracker_msg.h"
 #include "sample_app.h"
 #include "lc_app.h"
 #include "lc_msgids.h"
@@ -37,12 +43,21 @@ typedef struct
     /* 3 - Disable Instrument Switch on EPS*/
     SC_RtsEntryHeader_t hdr3;
     GENERIC_EPS_Switch_cmd_t cmd3;
-    /* 4 - Reset AP 31 - Do Science, Entering HI Region */
+    /* 4 - Set ADCS to SUNSAFE_MODE */
     SC_RtsEntryHeader_t hdr4;
-    LC_ResetAPStats_t cmd4;
-    /* 5 - Enable AP 31 - Do Science, Entering HI Region */
+    Generic_ADCS_Mode_cmd_t cmd4;
+    /* 5 - Disable Star Tracker Application */
     SC_RtsEntryHeader_t hdr5;
-    LC_SetAPState_t cmd5;
+    GENERIC_STAR_TRACKER_NoArgs_cmd_t cmd5;
+    /* 6 - Disable Star Tracker Switch on EPS*/
+    SC_RtsEntryHeader_t hdr6;
+    GENERIC_EPS_Switch_cmd_t cmd6;
+    /* 7 - Reset AP 31 - Do Science, Entering HI Region */
+    SC_RtsEntryHeader_t hdr7;
+    LC_ResetAPStats_t cmd7;
+    /* 8 - Enable AP 31 - Do Science, Entering HI Region */
+    SC_RtsEntryHeader_t hdr8;
+    LC_SetAPState_t cmd8;
 } SC_RtsStruct035_t;
 
 /* Define the union to size the table correctly */
@@ -70,16 +85,28 @@ SC_RtsTable035_t SC_Rts035 = {
         .cmd3.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd3), GENERIC_EPS_SWITCH_CC, 0x00),
         .cmd3.SwitchNumber = 0,
         .cmd3.State = 0x00,
-        /* 4 - Reset AP 32 - Do Science, Entering HI Region */
-        .hdr4.TimeTag = 1,
-        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd4), LC_RESET_AP_STATS_CC, 0x00),
-        .cmd4.APNumber = 32,
-        .cmd4.Padding = 0,
-        /* 5 - Enable AP 32 - Do Science, Entering HI Region */
+        /* 4 - Set ADCS to SUNSAFE_MODE */
+        .hdr4.TimeTag = 5,
+        .cmd4.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_ADCS_CMD_MID, SC_MEMBER_SIZE(cmd4), GENERIC_ADCS_SET_MODE_CC, 0x00),
+        .cmd4.Mode = SUNSAFE_MODE,
+        /* 5 - Disable Star Tracker Application */
         .hdr5.TimeTag = 1,
-        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd5), LC_SET_AP_STATE_CC, 0x00),
-        .cmd5.APNumber = 32,
-        .cmd5.NewAPState = LC_APSTATE_ACTIVE,
+        .cmd5.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_STAR_TRACKER_CMD_MID, SC_MEMBER_SIZE(cmd5), GENERIC_STAR_TRACKER_DISABLE_CC, 0x00),
+        /* 6 - Disable Star Tracker Switch on EPS*/
+        .hdr6.TimeTag = 1,
+        .cmd6.CmdHeader = CFE_MSG_CMD_HDR_INIT(GENERIC_EPS_CMD_MID, SC_MEMBER_SIZE(cmd6), GENERIC_EPS_SWITCH_CC, 0x00),
+        .cmd6.SwitchNumber = 1,
+        .cmd6.State = 0x00,
+        /* 7 - Reset AP 32 - Do Science, Entering HI Region */
+        .hdr7.TimeTag = 1,
+        .cmd7.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd7), LC_RESET_AP_STATS_CC, 0x00),
+        .cmd7.APNumber = 32,
+        .cmd7.Padding = 0,
+        /* 8 - Enable AP 32 - Do Science, Entering HI Region */
+        .hdr8.TimeTag = 1,
+        .cmd8.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd8), LC_SET_AP_STATE_CC, 0x00),
+        .cmd8.APNumber = 32,
+        .cmd8.NewAPState = LC_APSTATE_ACTIVE,
     }
 };
 

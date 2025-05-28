@@ -32,6 +32,9 @@ mkdir $FSW_DIR/data/cam 2> /dev/null
 mkdir $FSW_DIR/data/evs 2> /dev/null
 mkdir $FSW_DIR/data/hk 2> /dev/null
 mkdir $FSW_DIR/data/inst 2> /dev/null
+touch $FSW_DIR/data/dummy.txt
+echo "1234567890" > $FSW_DIR/data/dummy.txt
+truncate -s 1M $FSW_DIR/data/dummy.txt
 # GSW Side
 mkdir /tmp/nos3 2> /dev/null
 mkdir /tmp/nos3/data 2> /dev/null

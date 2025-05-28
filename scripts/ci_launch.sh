@@ -133,15 +133,15 @@ $DCALL run -dit --name nos-sim-bridge --network=nos3-core \
 
 CFG_FILE="-f nos3-simulator.xml"
 
-$DCALL run -dit --name nos_time_driver --network=nos3-core \
+$DCALL run -dit --name nos-time-driver --network=nos3-core \
     --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
     -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
     ./nos3-single-simulator -f nos3-simulator.xml time
 
 SATNUM=1
 for (( i=1; i<=$SATNUM; i++ )); do
-    SC_NUM="sc_$i"
-    SC_NET="nos3_${SC_NUM}"
+    SC_NUM="sc0"$i
+    SC_NET="nos3-"$SC_NUM
     CFG_FILE="-f nos3-simulator.xml"
 
     $DNETWORK rm $SC_NET 2>/dev/null || true
@@ -161,12 +161,11 @@ for (( i=1; i<=$SATNUM; i++ )); do
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro -w "$USER_NOS3_DIR/42" $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
 
     echo "$SC_NUM - Flight Software..."
-    $DCALL run -dit --name ${SC_NUM}-nos-fsw -h nos-fsw --network=$SC_NET \
-        --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
+    $DCALL run -dit --name ${SC_NUM}_nos_fsw -h nos-fsw --network=$SC_NET \
         -v "$BASE_DIR:$BASE_DIR" -v "$FSW_DIR:$FSW_DIR" -v "$SCRIPT_DIR:$SCRIPT_DIR" \
         -e USER=$(whoami) -e LD_LIBRARY_PATH=$FSW_DIR:/usr/lib:/usr/local/lib \
-        --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice \
-        $DBOX bash -c "cd $FSW_DIR && exec ./core-cpu1 -R PO"
+        -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice \
+        $DBOX bash -c "exec ./core-cpu1 -R PO"
 
     echo "$SC_NUM - CryptoLib..."
     $DCALL run -d --name ${SC_NUM}-cryptolib --network=$SC_NET \
@@ -187,14 +186,14 @@ for (( i=1; i<=$SATNUM; i++ )); do
         ./nos3-single-simulator $CFG_FILE truth42sim
 
     for sim in \
-        camsim generic_css_sim generic_eps_sim generic_fss_sim \
-        gps generic_imu_sim generic_mag_sim \
+        camsim generic-css-sim generic-eps-sim generic-fss-sim \
+        gps generic-imu-sim generic-mag-sim \
         generic-reactionwheel-sim0 generic-reactionwheel-sim1 \
-        generic-reactionwheel-sim2 generic_radio_sim sample_sim \
-        generic_star_tracker_sim generic_thruster_sim generic_torquer_sim; do
+        generic-reactionwheel-sim2 generic-radio-sim sample-sim \
+        generic-star-tracker-sim generic-thruster-sim generic-torquer-sim; do
 
         if [[ "$sim" == "generic_radio_sim" ]]; then
-            $DCALL run -d --name ${SC_NUM}_${sim} --network=$SC_NET \
+            $DCALL run -d --name ${SC_NUM}-${sim} --network=$SC_NET \
                 -h radio-sim --network-alias=radio-sim \
                 -v "$SIM_DIR:$SIM_DIR" -w "$SIM_BIN" $DBOX \
                 ./nos3-single-simulator $CFG_FILE $sim

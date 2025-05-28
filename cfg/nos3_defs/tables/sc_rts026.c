@@ -61,9 +61,12 @@ typedef struct
     /* 12 - Enable Science AP 32 - Do Science HI */
     SC_RtsEntryHeader_t hdr12;
     LC_SetAPState_t cmd12;
-    /* 13 - Update Science Status in MGR */
+    /* 13 - Sample Device Status, != 0 is BAD */
     SC_RtsEntryHeader_t hdr13;
-    MGR_U8_cmd_t cmd13;
+    LC_SetAPState_t cmd13;
+    /* 14 - Update Science Status in MGR */
+    SC_RtsEntryHeader_t hdr14;
+    MGR_U8_cmd_t cmd14;
 } SC_RtsStruct026_t;
 
 /* Define the union to size the table correctly */
@@ -141,10 +144,15 @@ SC_RtsTable026_t SC_Rts026 = {
         .cmd12.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd12), LC_SET_AP_STATE_CC, 0x00),
         .cmd12.APNumber = 32,
         .cmd12.NewAPState = LC_APSTATE_ACTIVE,
-        /* 13 - Manager Note: Science Initialized */
+        // AP36 - Sample Device Status, != 0 is BAD
         .hdr13.TimeTag = 1,
-        .cmd13.CmdHeader = CFE_MSG_CMD_HDR_INIT(MGR_CMD_MID, SC_MEMBER_SIZE(cmd13), MGR_UPDATE_SCI_STATUS_CC, 0x00),
-        .cmd13.U8 = SS_SCIENCE_INITIALIZED,
+        .cmd13.CmdHeader = CFE_MSG_CMD_HDR_INIT(LC_CMD_MID, SC_MEMBER_SIZE(cmd13), LC_SET_AP_STATE_CC, 0x00),
+        .cmd13.APNumber = 36,
+        .cmd13.NewAPState = LC_APSTATE_ACTIVE,
+        /* 14 - Manager Note: Science Initialized */
+        .hdr14.TimeTag = 1,
+        .cmd14.CmdHeader = CFE_MSG_CMD_HDR_INIT(MGR_CMD_MID, SC_MEMBER_SIZE(cmd14), MGR_UPDATE_SCI_STATUS_CC, 0x00),
+        .cmd14.U8 = SS_SCIENCE_INITIALIZED,
     }
 };
 

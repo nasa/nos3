@@ -436,6 +436,8 @@ else:
         with open('./cfg/build/sims/nos3-simulator.xml', 'r') as fp:
             lines = fp.readlines()
             for line in lines:
+                if line.find('<absolute-start-time>') != -1:
+                    lines[lines.index(line)] = "        <absolute-start-time>{}</absolute-start-time>\n".format(mission_start_time)
                 if line.find('camsim</name>') != -1:
                     if (lines.index(line)) < cam_index:
                         cam_index = lines.index(line) + 1

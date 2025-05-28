@@ -130,18 +130,19 @@ Therefore, Science Mode requires Latitude and Longitudes from the GPS to functio
 
 Science Mode is configured by ground commands. With the spacecraft in Safe Mode, the operator can configure the desired science regions by sending the appropriate commands, e.g. MGR_SET_CONUS_CC.
 
-![Enabling the CONUS Region](./_static/Enable_Command.png)
+
+![Enabling the CONUS Region](./_static/Enable_Conus.png)
 
 Region status is verified by using the Packet Viewer to see which regions are enabled or disabled.
 
-![Verifying Region Status](./_static/Region_Status.png)
+![Verifying Region Status](./_static/Conus_Status.png)
 
 With the science regions configured, if commissioning has been complete, the operator can send the MGR App command to Set_Mode to Science.
 
 At a moderate level of detail, the Limit Checker App utilizes Actionpoints (APs) to determine when to perform the functions needed for science. When a Limit Checker Actionpoint is tripped, it causes a sequence of commands to be sent to flight software. These sequences of events are called Relative Time Sequences (RTSs).
 An example of the Modes, APs, and their associated RTSs is shown at a moderate level of detail below.
 
-![Modes, APs, RTSs in Moderate Detail](./_static/conops_medium.png)
+![Modes, APs, RTSs in Moderate Detail](./_static/Conops_Medium.png)
 
 #### Per Pass Operations
 Prior to the pass, the spacecraft operator should make note of the contact start and end times.
