@@ -28,6 +28,8 @@ Steps:
   * In the VirtualBox toolbar select `Devices > Upgrade Guest Additions...`
   * Reboot the VM and then try the building and running steps below
 
+For additional details see [Scenario - Installation](./Scenario_Install.md).
+
 ## Running
 
 From inside your new VM or existing Linux environment:
@@ -50,6 +52,8 @@ From inside your new VM or existing Linux environment:
 * Do it all again starting at `make` until you have a custom mission
 
 If you no longer want NOS3 installed, you can run `make uninstall` to undo the initial prep step.
+
+For additional details see [Scenario - Demonstration](./Scenario_Demo.md).
 
 ## Igniter
 
