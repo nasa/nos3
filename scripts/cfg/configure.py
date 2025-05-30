@@ -313,6 +313,7 @@ else:
 
         # Inp_IPC.txt
         css_index = 999
+        eps_index = 999
         fss_index = 999
         gps_index = 999
         imu_index = 999
@@ -335,6 +336,9 @@ else:
                 if line.find('CSS IPC') != -1:
                     if (lines.index(line)) < css_index:
                         css_index = lines.index(line) + 1
+                if line.find('EPS IPC') != -1:
+                    if (lines.index(line)) < eps_index:
+                        eps_index = lines.index(line) + 1
                 if line.find('FSS IPC') != -1:
                     if (lines.index(line)) < fss_index:
                         fss_index = lines.index(line) + 1
@@ -384,6 +388,8 @@ else:
         ipc_off = 'OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n'
         if (sc_css_en != 'true'):
             lines[css_index] = ipc_off
+        if (sc_eps_en != 'true'):
+            lines[eps_index] = ipc_off
         if (sc_fss_en != 'true'):
             lines[fss_index] = ipc_off
         if (sc_gps_en != 'true'):
