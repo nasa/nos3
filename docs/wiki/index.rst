@@ -9,7 +9,7 @@ This documentation is designed to provide information for users and developers t
    :caption: Documentation:
 
    Home.md
-   Getting_Started.md
+   NOS3_Getting_Started.md
    NOS3_Architecture.md
    NOS3_Flight_Software.md
    NOS3_Ground_Software.md
@@ -20,6 +20,7 @@ This documentation is designed to provide information for users and developers t
    STF_QuickLook.md
    STF_Software_Development_Plan.md
    STF_VV_Plan.md
+   Scenario_Install.md
    Scenario_Demo.md
    Scenario_cFS.md
    Scenario_COSMOS.md
@@ -30,5 +31,8 @@ This documentation is designed to provide information for users and developers t
    Scenario_Patching.md
    Scenario_Controlling_ADCS_During_Science.md
    Scenario_SimulatorExpansion.md
-   Scenario_Creating_Unit_Tests.md
+   Scenario_Low_Power.md
+   Scenario_Rapid_Tumbling.md
    Scenario_Run_Checkout_GDB.md
+   Scenario_Creating_Unit_Tests.md
+   Scenario_Flight_Build.md

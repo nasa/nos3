@@ -141,7 +141,7 @@ $DCALL run -dit --name nos_time_driver --network=nos3_core \
 SATNUM=1
 for (( i=1; i<=$SATNUM; i++ )); do
     SC_NUM="sc_$i"
-    SC_NET="nos3_${SC_NUM}"
+    SC_NET="nos3_"$SC_NUM
     CFG_FILE="-f nos3-simulator.xml"
 
     $DNETWORK rm $SC_NET 2>/dev/null || true
@@ -162,11 +162,10 @@ for (( i=1; i<=$SATNUM; i++ )); do
 
     echo "$SC_NUM - Flight Software..."
     $DCALL run -dit --name ${SC_NUM}_nos_fsw -h nos_fsw --network=$SC_NET \
-        --log-driver json-file --log-opt max-size=5m --log-opt max-file=3 \
         -v "$BASE_DIR:$BASE_DIR" -v "$FSW_DIR:$FSW_DIR" -v "$SCRIPT_DIR:$SCRIPT_DIR" \
         -e USER=$(whoami) -e LD_LIBRARY_PATH=$FSW_DIR:/usr/lib:/usr/local/lib \
-        --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice \
-        $DBOX bash -c "cd $FSW_DIR && exec ./core-cpu1 -R PO"
+        -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice \
+        $DBOX bash -c "exec ./core-cpu1 -R PO"
 
     echo "$SC_NUM - CryptoLib..."
     $DCALL run -d --name ${SC_NUM}_cryptolib --network=$SC_NET \
