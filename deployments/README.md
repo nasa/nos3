@@ -27,7 +27,17 @@ graph TD;
   %% thruster-->|uart:29|uart-bus
 
   fortytwo[fortytwo]-->|tx:4245|gps
-  %% gps-->|uart:1|uart-bus
+  gps-sim-->|s|gps-app-->cfs
+  css-sim-->|s|css-app-->cfs
+  gps-->|uart:1|uart-bus
+
+  subgraph gps
+    gps-sim
+  end
+
+  subgraph cfs
+    gps-app;
+  end
 
   fortytwo[fortytwo]-->|tx:4277|css
   %% css-->|64|i2c:2
@@ -71,6 +81,7 @@ graph TD;
     time
 
 end
+
 
   subgraph reaction_wheels
     rw0;
@@ -144,8 +155,6 @@ end
 
   class client plain;
   class cluster cluster;
-
-  
 ```
 
 ## docker ps

@@ -5,6 +5,8 @@ PROVIDER=${2:-podman} #
 
 MY_PWD=${PWD}
 
+source ./scripts/functions/deployment.sh
+
 #------------------------------------------------------------------------------
 # A script to generate k8s deployment, service... yaml files and apply them
 #------------------------------------------------------------------------------
@@ -18,38 +20,7 @@ NODE_SELECTOR=docker-desktop
 
 K8S_MODE='docker-desktop' # if this value is different from K8S_CONTEXT, target remote k8s on aws
 
-# TODO: is spacecraft bus analogous to k8s replica?
-
-# TODO: create network per spacecraft to encapsulate simulated components
-
-# TODO: attach spacecraft network to nos3_core network
-
-# TODO: nos3_core network per mission or per ops center?
-# TODO: nos_terminal per per mission or per ops center?
-# TODO: nos_udp_terminal per mission or per ops center?
-
-# TODO: namespace per mission-spacecraft
-
-# TODO: simulated hw component per sc
-  # gnome-terminal --tab --title=$SC_NUM" - CAM Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_cam_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE camsim
-  # gnome-terminal --tab --title=$SC_NUM" - CSS Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_css_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_css_sim
-  # gnome-terminal --tab --title=$SC_NUM" - EPS Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_eps_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_eps_sim
-  # gnome-terminal --tab --title=$SC_NUM" - FSS Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_fss_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_fss_sim
-  # gnome-terminal --tab --title=$SC_NUM" - GPS Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_gps_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE gps
-  # gnome-terminal --tab --title=$SC_NUM" - IMU Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_imu_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_imu_sim
-  # gnome-terminal --tab --title=$SC_NUM" - MAG Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_mag_sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_mag_sim
-  # gnome-terminal --tab --title=$SC_NUM" - RW 0 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim0"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim0
-  # gnome-terminal --tab --title=$SC_NUM" - RW 1 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim1"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim1
-  # gnome-terminal --tab --title=$SC_NUM" - RW 2 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_rw_sim2"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
-  # gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_radio_sim"    -h radio_sim --network=$SC_NETNAME --network-alias=radio_sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_radio_sim
-  # gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_sample_sim"   --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample_sim
-  # gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_startrk_sim"  --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_star_tracker_sim
-  # gnome-terminal --tab --title=$SC_NUM" - Thruster Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_thruster_sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_thruster_sim
-  # gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"_torquer_sim"  --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic_torquer_sim
-
-# TODO: time driver per mission
-  # gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos_time_driver --network=nos3_core -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
-
+# kubectl --context kind-myorg-dev-missions-exp  apply -k .
 #------------------------------------------------------------------------------
 NOS3_CONFIG=$(cat ./scripts/nos3.yaml  | yq 'explode(.)' | grep -iv '^null$')
 #------------------------------------------------------------------------------
@@ -123,10 +94,7 @@ kubectl config set-context ${K8S_CONTEXT}
 #------------------------------------------------------------------------------
 # TODO: put these in one file
 IMAGE_REGISTRY=registry.appdat.jsc.nasa.gov
-IMAGE_URI=${IMAGE_REGISTRY}/ssmo/images/ssmo/nos3/nos3-base:20250217
-
-# MISSION_GIT_USER=SSMO_IMAGES
-# MISSION_GIT_TOKEN=$(cat ~/.appdat/images/SSMO_IMAGES)
+#IMAGE_URI=${IMAGE_REGISTRY}/ssmo/images/ssmo/nos3/nos3-base:20250217
 
 IMAGE_REGISTRY_USER=${USER}
 IMAGE_REGISTRY_PASSWORD=$(cat ~/.appdat/images/SSMO_IMAGES)
@@ -295,7 +263,13 @@ echo "    Created blank ${KUSTOMIZATION_FILE_SC}"
     SIM_BIN=$(echo "${_PATHS}" | yq '.SIM_BIN')
     SIMULATOR_BIN=$(echo "${_PATHS}" | yq '.SIMULATOR_BIN')
     LOG_CONFIG=$(echo "${_PATHS}" | yq '.LOG_CONFIG')
-    CFG_FILE=$(echo "${_PATHS}" | yq '.CFG_FILE')
+
+# TODO: note SC_CFG_FILE below
+    CFG_FILE=$(echo "${_PATHS}" | yq '.SC_CFG_FILE')
+# TODO: TBD wrt to GND
+    GND_CFG_FILE=$(echo "${_PATHS}" | yq '.GND_CFG_FILE')
+
+    IMAGE_URI=$(echo "${_PATHS}" | yq '.IMAGE_URI')
 
     METADATA_NAME=${MISSION}-${SC}-${COMPONENT}
     DEPLOYMENT=${MISSION}-${SC}-${COMPONENT}
@@ -343,7 +317,7 @@ metadata:
   labels:
     app: ${K8S_NAMESPACE}-${COMPONENT}
 spec:
-  replicas: ${REPLICAS}
+  replicas: 0
   selector:
     matchLabels:
       app: ${K8S_NAMESPACE}-${COMPONENT}
@@ -399,11 +373,12 @@ ${nodeSelector}
             value: ${LOG_CONFIG}
           - name: CFG_FILE
             value: ${CFG_FILE}
+          # - name: SC_CFG_FILE
+          #   value: ${SC_CFG_FILE}
+          # - name: GND_CFG_FILE
+          #   value: ${GND_CFG_FILE}
           - name: NETWORK
             value: ${K8S_NAMESPACE}
-# PROVIDER_MISSION_PATH=/ssmo-dev/git/appdat.jsc.nasa.gov/ssmo/missions/ssmo/dev/nos3/
-# CFG_FILE=${PROVIDER_MISSION_PATH}/missions/nos301/spacecraft/sc1/services/nos3/nos3-simulator.xml
-#            value: /builds/nos3/sims/build/bin/nos3-simulator.xml
           - name: COMPONENT_NAME
             value: ${COMPONENT}
 EOF
@@ -417,7 +392,7 @@ echo "      Created ${DEPLOYMENT_FILE_COMPONENT}"
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${K8S_NAMESPACE}-${COMPONENT}
+  name: ${COMPONENT}
   namespace: ${K8S_NAMESPACE}
 spec:
   selector:
@@ -462,6 +437,8 @@ echo "      Created ${SERVICE_FILE_COMPONENT}"
       NOS3_SIMULATOR_BIN: ${SIMULATOR_BIN}
       LOG_CONFIG: ${LOG_CONFIG}
       CFG_FILE: ${CFG_FILE}
+      # SC_CFG_FILE: ${SC_CFG_FILE}
+      # GND_CFG_FILE: ${GND_CFG_FILE}
       COMPONENT_NAME: ${COMPONENT}
     privileged: true
     networks:
@@ -509,17 +486,17 @@ do
   # resource names, to be used with context, cluster, namespace, pods, and services
   RESOURCE_NAME=${REALM}-${MISSION}
 
-#  REALM=docker-desktop
+  REALM=docker-desktop
 
   # contexts/clusters
-  K8S_CONTEXT=${REALM} #${RESOURCE_NAME}
+  K8S_CONTEXT=${REALM}
   K8S_CLUSTER=${K8S_CONTEXT}
   K8S_USER=${K8S_CONTEXT}
 
 #  kind delete cluster --name ${K8S_CLUSTER} || true
-  kind create cluster --name ${K8S_CLUSTER} || true
+#  kind create cluster --name ${K8S_CLUSTER} || true
 
-  K8S_CONTEXT_PREFIX=kind-
+#  K8S_CONTEXT_PREFIX=kind-
   K8S_CONTEXT=${K8S_CONTEXT_PREFIX}${K8S_CONTEXT}
 
   # set and use context

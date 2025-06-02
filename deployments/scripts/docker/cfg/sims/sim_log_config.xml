@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log:logging xmlns:log="http://itc.ivv.nasa.gov/1.0/log_conf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://itc.ivv.nasa.gov/1.0/log_conf http://itc.ivv.nasa.gov/1.0/log_conf"
+>
+
+   <log:logger name="nos3.sim" level="DEBUG">
+      <log:target id="stdio" />
+      <log:target id="file" />
+   </log:logger>
+
+   <log:target id="stdio" format="%t [%l] - %s" impl="stdio" />
+
+   <!-- <log:target id="remote" format="%s" impl="remote">
+      <log:arg key="host" value="1.2.3.4" />
+      <log:arg key="port" value="12345" />
+   </log:target>
+   -->
+   <log:target id="file" format="%t [%l] - %s" impl="file">   
+      <log:arg key="filename" value="nos3-sim-log.txt" />
+      <log:arg key="rollover" value="true" />
+      <log:arg key="overwrite" value="true" />
+   </log:target>
+
+</log:logging>

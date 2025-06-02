@@ -18,8 +18,16 @@ defaults:
         /builds/nos3/sims/build/bin/nos3-single-simulator
       LOG_CONFIG: &LOG_CONFIG
         /builds/nos3/sims/build/bin/sim_log_config.xml
-      CFG_FILE: &CFG_FILE
+      # CFG_FILE: &CFG_FILE
+      #   /builds/nos3/sims/build/bin/nos3-simulator.xml
+      SC_CFG_FILE: &SC_CFG_FILE
         /builds/nos3/sims/build/bin/nos3-simulator.xml
+      GND_CFG_FILE: &GND_CFG_FILE
+        /builds/nos3/sims/build/bin/nos3-simulator.xml
+      IMAGE_REGISTRY: &IMAGE_REGISTRY
+        registry.appdat.jsc.nasa.gov
+      IMAGE_URI: &IMAGE_URI
+        registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
     container: &container
       PATHS: 
         << : *PATHS
@@ -155,20 +163,13 @@ missions:
         - sc1:
             enabled: true
             components: 
-              << : *hw_components
-        - sc2:
-            enabled: false
-            components: 
-              << : *hw_components
-              # camsim:
-              #   container:
-              #     resources:
-              #       limits:
-              #         memory: "128Mi"
-              #         cpu: "125m"
-              #       requests:
-              #         memory: "128Mi"
-              #         cpu: "125m"
+              # << : *hw_components
+              gps:
+                name: gps
+                replicas: 1
+                container: 
+                  << : *container
+
   - m02:
       enabled: false
       spacecraft:
