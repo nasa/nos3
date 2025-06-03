@@ -3,7 +3,7 @@
 This scenario was developed to explain and demonstrate the standard (nominal) operation of a satellite pass for a satellite in orbit, using NASA Operational Simulator for Small Satellites (NOS3).
 It demonstrates the use of the ground software (GSW) for commanding and for the expected return telemetry, as well as making use of flight software (FSW) and simulators.
 
-This scenario was last updated on 05/26/2025 and leveraged the `dev` branch at the time [b87b2f92].
+This scenario was last updated on 06/03/2025 and leveraged the `dev` branch at the time [b87b2f92].
 
 ## Learning Goals
 
@@ -60,8 +60,13 @@ Also, typical passes are of short duration (8-10 minutes) and it is up to the op
 #### Connect to the Spacecraft
 
 Before you can do anything else with the spacecraft, you must connect to it.
-With a real satellite this would have to be done first, in conjunction with the ground station and at the appropriate time for when your particular satellite would be in range.
-For NOS3, commanding is always connected to the `RADIO` interface, but telemetry can be connected to the `RADIO` interface using the command `CFS_RADIO TO_ENABLE_OUTPUT with DEST_IP 'radio_sim', DEST_PORT 5011`.
+With a real satellite this would have to be done first, in conjunction with the ground station and at the appropriate time for when your particular satellite would be in range.  In NOS3, however:
+* Commanding is always connected to the `RADIO` interface.
+* Telemetry can be connected to the `RADIO` interface by:
+  * Navigate to the `CFS_RADIO` target in the COSMOS Command Sender.
+  * Send the command `TO_ENABLE_OUTPUT` to the `CFS_RADIO`.
+    * DEST_IP = 'radio_sim'
+    * DEST_PORT = '5011'
 
 #### Confirm Telemetry is Nominal
 
@@ -114,16 +119,17 @@ This scenario will provide an example of each.
 
 For an example of sending a command, we will direct the spacecraft to enter science mode.
 The example spacecraft in NOS3 conducts science using the sample instrument when over the US; it has to be activated into science mode, however, to start performing science.
-We will do so via COSMOS.
-
-First, navigate to the Command Sender and go to the Target `MGR_RADIO`.
-Do the same with the Packet Viewer, like so:
+We will do so via COSMOS:
+* Navigate the Command Sender to the Target `MGR_RADIO`.
+* Navigate the Packet Viewer to `MGR_RADIO`.
 
 ![Scenario Nominal - Science Mode commands](./_static/scenario_nominal_ops/MGR_cmd_and_tlm.png)
 
 Notice the various commands listed in the dropdown menu.
-For this we will be sending one to activate science mode (this tells the spacecraft that it's OK to perform science when conditions allow).
-This is done by selecting the Command `MGR_SET_MODE_CC` and, in the dropdown menu therein, selecting `SCIENCE` as the mode, and then pressing `Send`:
+For this we will be sending one to activate science mode (this tells the spacecraft that it's OK to perform science when conditions allow):
+* Select the command `MGR_SET_MODE_CC`.
+* In this command's dropdown menu, select `SCIENCE` as the mode.
+* Click `Send`:
 
 ![Scenario Nominal - Set Science Mode](./_static/scenario_nominal_ops/Science_Mode_cmd.png)
 
@@ -139,18 +145,33 @@ Our example will be to downlink a file from the on-board data storage using the 
 * First, check telemetry for Target `CFDP` and Packet `CFDP_ENGINE_HK`.
 * Make sure `ENG_INPROGRESSTRANS` is 0, indicating that no file transfer is currently in progress.
 * In the same packet, make note of the value of `ENG_TOTALSUCCESSTRANS`.
-Next, in the command sender window, using Target `CFS_RADIO`, issue command `CF_TX_FILE` with Parameters `CLASS 1 - NO FEEDBACK`, `KEEP`, `CHAN 0`, PRIORITY `1`, DEST_ID `0x18`, SRCFILENAME `'/data/dummy.txt'`, DSTFILENAME `'/tmp/nos3/data/dummy.txt'`.
+Next, in the Command Sender window, add a command to downlink data:
+* Set Target to `CFS_RADIO`.
+* Issue command `CF_TX_FILE` with the following parameters:
+  * `CLASS 1 - NO FEEDBACK`
+  * `KEEP`
+  * `CHAN 0`
+  * PRIORITY `1`
+  * DEST_ID `0x18`
+  * SRCFILENAME `'/data/dummy.txt'`
+  * DSTFILENAME `'/tmp/nos3/data/dummy.txt'`
 The Command Sender and Packet Viewer windows below reflect these choices:
 
 ![Scenario Nominal - CFDP Before Transfer](./_static/scenario_nominal_ops/CFDP_before_transfer.png)
 
-After pressing `Send` in the Command Sender, the Packet Viewer window for Target `CFDP` and Packet `CFDP_ENGINE_HK` will show an increasing `ENG_PDUSRECEIVED` and `ENG_INPROGRESSTRANS` will be 1, indicating that a file transfer is currently in progress.
-These windows are shown below:
+After pressing `Send` in the Command Sender, switch to the Packet Viewer window:
+* Look at target `CFDP`, and packet `CFDP_ENGINE_HK`:
+  * `ENG_PDUSRECEIVED` will be increasing.
+  * `ENG_INPROGRESSTRANS` will be equal to 1.
+* These two markers indicate a file transfer is currently in progress.
+* These windows are shown below:
 
 ![Scenario Nominal - CFDP During Transfer](./_static/scenario_nominal_ops/CFDP_during_transfer.png)
 
-At the completion of the transfer, the Packet Viewer window for Target `CFDP` and Packet `CFDP_ENGINE_HK` will show `ENG_DOWN_LASTFILEDOWNLINKED` as the destination filename and `ENG_TOTALSUCCESSTRANS` should have increased by 1 over the value noted above.
-This is shown below:
+Once the transfer is completed:
+* The Packet Viewer window for Target `CFDP` and Packet `CFDP_ENGINE_HK` will show `ENG_DOWN_LASTFILEDOWNLINKED` as the destination filename.
+* `ENG_TOTALSUCCESSTRANS` should have increased by 1 over the value noted above.
+* This is shown below:
 
 ![Scenario Nominal - CFDP After Transfer](./_static/scenario_nominal_ops/CFDP_after_transfer.png)
 
