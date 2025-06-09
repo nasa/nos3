@@ -6,7 +6,7 @@ In the real world, post-launch and pre-operations represent an important time to
 Before science can begin, subsystems need to be checked for nominal states and health.
 Once these are confirmed, science can be performed and basic 'control' of the spacecraft can be driven by the science team.
 
-This scenario was last updated on 5/26/25 and leveraged the `dev` branch at the time [c35cf24].
+This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [c35cf24].
 
 ## Learning Goals
 

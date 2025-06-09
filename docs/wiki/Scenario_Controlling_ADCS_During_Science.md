@@ -2,7 +2,7 @@
 
 This scenario was developed to demonstrate how to adapt an existing mission to changing science goals, with the specific example of a request for a different pointing routine during Science Mode.
 
-This scenario was last updated on 5/7/25 and leveraged the `dev` branch at the time [53d4627].
+This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [53d4627].
 
 ## Learning Goals
 By the end of this scenario you should be able to:
@@ -13,7 +13,7 @@ By the end of this scenario you should be able to:
 - Understand how to test these changes and related edge cases in NOS3
 
 ## Prerequisites
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
