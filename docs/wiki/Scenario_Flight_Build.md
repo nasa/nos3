@@ -86,7 +86,7 @@ A few cFS modifications must be made to ensure we setup our new target:
     * If your target isn't running such an OS, you'd need to edit the `OSAL_SYSTEM_OSTYPE` and review the additional "Build Specific" section of this file.
 * Modify [./cfg/nos3_defs/arch_build_custom.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/arch_build_custom.cmake#L43):
   * Remove `-Werror` from the `CMAKE_C_FLAGS` string.
-* Delete the following table modifications; without them here, cFS will leverage the defaults stored in each app:
+* Delete the following tables; without them here, cFS will leverage the defaults stored in each app:
   * `./cfg/nos3_defs/tables/sch_def_msgtbl.c`
   * `./cfg/nos3_defs/tables/sch_def_schtbl.c`
   * `./cfg/nos3_defs/tables/to_lab_sub.c`
@@ -200,8 +200,6 @@ SET(cpu2_SYSTEM arm64-posix)
 
 Additionally you need to copy each `./cfg/nos3_defs/cpu1*` file in the same directory with the `cpu2*` prefix instead.
 This change of name will enable further configuration of those specifically for our flight target, necessary since it will be different than our NOS3 build (cpu1).
-Note that, for this RPI example, we will probably not need to edit any of these files to make it work.  This has yet to be confirmed, though.
-***Note that for this RPI example we will need to edit the likely don't need to modify any of these to make it work, but this has yet to be confirmed.***
 
 ---
 ### Building the Flight Target
