@@ -94,7 +94,7 @@ message_box("Battery bus voltage reported to be #{battery_bus_voltage} volts.", 
 What we've accomplished above is a block that:
 * Checks if we're ready to check a telemetry point.
 * Waits for a fresh value for that telemetry packet.
-* And finally, clearly prints the value to screen.
+* And finally, clearly prints the value to a screen.
 
 Now, with the EPS Voltage Check as a template, fill in the items needed for our state, and anomalous reboots.
 
@@ -110,7 +110,7 @@ We still need to finish our blocks for turning on the instrument, and configurin
   4) Generates a prompt to disable the sample device
   5) Disables the Sample Instrument
 
-Now, we will configure science mode. The difference between this and the above commands is that the science mode commands take arguments, whereas above we didn't need arguments in the above commands.
+Now, we will configure science mode. The difference between this and the above commands is that the science mode commands take arguments, whereas we didn't need arguments in the above commands.
 
 * A sample Enable Science Region command looks like: `_cmd("MGR_RADIO MGR_SET_AK_CC with AK_STATUS ENABLE")_`
 * Using the above as a template, write a new section to our script that will:

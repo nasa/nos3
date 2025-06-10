@@ -29,7 +29,7 @@ COSMOS is a suite of applications that can be used to control a set of embedded 
 
 ![Scenario COSMOS - Architecture](./_static/scenario_cosmos/scenario_cosmos_architecture.png)
 
-COSMOS implements a client-server architecture with the Command and Telemetry Server and the various other tools typically acting as clients to retrieve data. The Command and Telemetry Server connects to the Targets (green circles) and communicates with them, both sending commands and receives telemetry (status data). Targets are the items you’re trying to control or from which you're trying to get status. The arrows from the Server to the Targets indicate Interfaces which can be over TCP/IP, serial, UDP/IP, or a custom interface that you define. Yellow boxes indicate data items like configuration files, log files, reports, etc.
+COSMOS implements a client-server architecture with the Command and Telemetry Server and the various other tools typically acting as clients to retrieve data. The Command and Telemetry Server connects to the Targets (green circles) and communicates with them, both sending commands and receiving telemetry (status data). Targets are the items you’re trying to control or from which you're trying to get status. The arrows from the Server to the Targets indicate Interfaces which can be over TCP/IP, serial, UDP/IP, or a custom interface that you define. Yellow boxes indicate data items like configuration files, log files, reports, etc.
 
 While the initial NOS3 demonstration utilized COSMOS, a lot of the specifics were glossed over. As such, we will replicate some portions of prior scenarios below, but go substantially further into detail.
 With a terminal navigated to the top level of your NOS3 repository:
@@ -51,7 +51,7 @@ Let's review the components that open when you click the top left "COSMOS" butto
 * Command Sender:
   * This component allows operators to search, select, and send commands to targets, with both standard (debug) and RADIO interface options in NOS3.
 * Packet Viewer:
-  * This component provides real-time telemetry visualization tool that displays raw and derived telemetry values with automated updates and unit conversions.
+  * This component provides a real-time telemetry visualization tool that displays raw and derived telemetry values with automated updates and unit conversions.
 
 Each of these tools has a number of features useful to an operator:
 * Command and Telemetry Server:

@@ -56,7 +56,7 @@ Run `make stop` to clean up.
 
 ### Enhance the Sample simulator to retrieve additional data from 42
 
-Now that we can see the data, we have decided that getting the body vector (bvb) information would be useful:
+Now that we can see the data, we have decided that getting the magnetic field vector (bvb) information would be useful:
 * Edit the `components/sample/sim/src/sample_data_point.cpp` file.
 * Add another key to extract the "SC[0].bvb" data.
 * Add line to get value for key.
