@@ -9,28 +9,30 @@ This is useful for:
 * Inspecting memory or variable values during runtime
 * Tracing faults or validating application behavior
 
-This scenario was last updated on 5/7/25 and leveraged the `dev` branch at the time [1209324].
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [1209324].
 
 ## Learning Goals
 
 By the end of this scenario, you should be able to:
 
-* Launch the sample checkout application within a `gdb` session inside Docker
-* Set breakpoints and run the application interactively
-* Inspect variables and function call flow at runtime
-* Integrate low-level debugging into a NOS3 simulation workflow
+* Launch the sample checkout application within a `gdb` session inside Docker.
+* Set breakpoints and run the application interactively.
+* Inspect variables and function call flow at runtime.
+* Integrate low-level debugging into a NOS3 simulation workflow.
 
 ## Prerequisites
 
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
-* You are working from the top level of the NOS3 repository
+* Also be sure you are working from the top level of the NOS3 repository.
 
 ---
 
 ## Walkthrough
+
+gdb, or the Gnu Debugger, is useful for debugging processes at the command line.  In order to run it with a component in, the following steps are necessary:
 
 ### Step 1: Build NOS3
 
@@ -53,14 +55,16 @@ make
 exit
 ```
 
+Now that both NOS3 and the sample checkout app have been built, we have to edit the checkout script.
+
 ---
 ### Step 3: Edit the checkout script
 
 We want the checkout script to launch the sample simulator.
 We also want it to launch the sample checkout app under GDB.
 Edit `./scripts/checkout.sh` as follows:
-- Uncomment lines 164 (sample sim) and 165 (sample checkout)
-- Insert `gdb` on line 165 between "$DBOX" and "./components/sample/fsw/standalone/build/sample_checkout"
+* Uncomment lines 164 (sample sim) and 165 (sample checkout)
+* Insert `gdb` on line 165 between "$DBOX" and "./components/sample/fsw/standalone/build/sample_checkout"
 
 ### Step 4: Launch the Sample Sim and launch the Sample Checkout App in GDB
 
@@ -70,8 +74,8 @@ Open a new terminal and run the following `gnome-terminal` command:
 ./scripts/checkout.sh
 ```
 
-**Note:** This assumes your environment variables (e.g., `$DFLAGS`, `$BASE_DIR`, `$SC_NUM`, `$DBOX`, `$SC_NETNAME`) are set as in a typical NOS3 session.
-This should be done by the `checkout.sh` script.
+**Note: This assumes your environment variables (e.g., `$DFLAGS`, `$BASE_DIR`, `$SC_NUM`, `$DBOX`, `$SC_NETNAME`) are set as in a typical NOS3 session.
+This should be done by the `checkout.sh` script.**
 
 ---
 ### Step 5: Use GDB

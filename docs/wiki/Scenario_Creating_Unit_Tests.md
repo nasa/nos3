@@ -2,15 +2,17 @@
 
 This scenario was developed to demonstrate how to create a unit testing framework for a component within NOS3.
 
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [b87b2f92].
+
 ## Learning Goals 
 
 By the end of this scenario you should be able to: 
-* Create unit tests to check the functionality of NOS3 satellite components and their commands
-* Create unit tests for a brand new component or add to an existing test suite
-* Reach full coverage for all relevant files within a component
+* Create unit tests to check the functionality of NOS3 satellite components and their commands.
+* Create unit tests for a brand new component or add to an existing test suite.
+* Reach full coverage for all relevant files within a component.
 
 ## Prerequisites 
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
@@ -26,9 +28,9 @@ With a terminal navigated to the top level of your NOS3 repository:
 * If there is no unit-test directory within the cfs directory of your component, either copy one from sample or generate one with the sample script.
 * Ensure that the unit-test folder where you are working is within the fsw/cfs/ directory.
 
-Once you are in the unit-test folder
-* Run the command `ls`
-* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output. If any files are missing copy them from the sample component or generate with the sample script.
+Once you are in the unit-test folder:
+* Run the command `ls`.
+* You should see `CMakeLists.txt  coveragetest/  inc/  stubs/` as the output. If any files are missing, copy them from the sample component or use the sample script to generate them.
 * Open the `CMakeLists.txt` file.
 * Check that the name matches the component you are working with. If not change them to match. Then close the file.
 * Navigate to the `coveragetest/` and run `ls` again.  You should see `coveragetest_sample_app.c  sample_app_coveragetest_common.h` as the two files within this directory. The `coveragetest_sample_app.c` is where you will be writing the unit tests.
@@ -40,13 +42,13 @@ Once you are in the unit-test folder
 
 ---
 ### Writing Unit Tests
-* Look inside the `coveragetest_sample_app.c` file. This file is where you will write your actual unit tests.
+Look inside the `coveragetest_sample_app.c` file. This file is where you will write your actual unit tests.
 * Within the coveragetest file you will see an array of existing functions such as `Test_SAMPLE_AppMain`, `Test_SAMPLE_AppInit`, `Test_SAMPLE_ProcessCommandPacket`,`Test_SAMPLE_ReportHousekeeping`, etc.
 * These functions are split up this way to interact directly with similarly named functions in the `sample/fsw/cfs/src/sample_device.c` file.
 
 ---
 ### Example of NOOP Test
-* The following is a specific example of a test, found within the `Test_SAMPLE_ProcessGroundCommand` function:
+The following is a specific example of a test, found within the `Test_SAMPLE_ProcessGroundCommand` function:
 ![Unit Test Example](_static/new_unit_tests/Unit_Test_Example.png)
 
 * The FcnCode is the command code. It is a key part of understanding the mechanics of NOS3. It is how the flight system is able to know which command is being sent and - in this case - specifies which command is being tested. 
