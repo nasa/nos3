@@ -35,7 +35,7 @@ Some terminology should be clarified before we begin:
 
 Identifying the flight target is the first priority.
 For this scenario we're going to be adding a Raspberry Pi (64-bit ARM) target.
-A quick internet search suggested using the `gcc-arm-linux-gnueabihf` and `g++-arm-linux-gnueabihf` toolchains that are readily available for install from the package manager.
+The 64-bit compiler packages to use for this are `gcc-aarch64-linux-gnu` and `g++-aarch64-linux-gnu` toolchains; both are readily available for install from the package manager.
 
 Installing the above toolchain directly to the VM or your host machine won't work for NOS3 as we leverage Docker containers to build and run everything.
 Let's start by editing what is going to be included in this docker file.
