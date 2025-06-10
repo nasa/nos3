@@ -73,11 +73,11 @@ As discussed in planning, this is a process that will require 4 extra commands:
 
 To achieve this, three areas of each RTS table need to be changed:
 * The required headers for Star Tracker and ADCS need to be added to the `#include` section of the file, as below:
-  ![adcsDuringScience_EnableIncludes](https://github.com/user-attachments/assets/e64a40dd-705a-4f68-80dd-c6358fe4320e)
+  ![adcsDuringScience_EnableIncludes](_static/scenario_adcs_during_science/enable_includes.png)
 * Then, add the extra commands and headers to the RTS in that section, and shift any existing headers and commands to accommodate:
-  ![adcsDuringScience_EnableHeaders](https://github.com/user-attachments/assets/6d3f7a8a-cefb-4c07-9251-b498ba87a542)
+  ![adcsDuringScience_EnableHeaders](_static/scenario_adcs_during_science/enable_headers.png)
 * Finally, add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
-  ![adcsDuringScience_EnableCommands](https://github.com/user-attachments/assets/800147f0-33e1-4172-a16b-43df9faba11e)
+  ![adcsDuringScience_EnableCommands](_static/scenario_adcs_during_science/enable_commands.png)
 
 Although the changes are only shown in RTS table 30, they will need to be made in RTS tables 30, 31, and 32. The commands should be the same, but their location may vary depending on what else the table is doing (though in this case, these 3 tables are quite similar). You can go through each of the aforementioned tables to see how the changes are adapted for that table in particular.
 
@@ -89,20 +89,20 @@ As discussed in planning, this is a process that will require 3 extra commands:
 
 To achieve this, three areas of each RTS table need to be changed:
 * The required headers for Star Tracker and ADCS need to be added to the `#include` section of the file.
-  ![adcsDuringScience_DisableIncludes](https://github.com/user-attachments/assets/aaf1abde-139e-4c90-b397-1e1f854b9951)
+  ![adcsDuringScience_DisableIncludes](_static/scenario_adcs_during_science/enable_includes.png)
 * Then, add the extra commands and headers to the RTS in that section, and shift any existing headers and commands to accommodate.
-  ![adcsDuringScience_DisableHeaders](https://github.com/user-attachments/assets/4cc073ee-8276-43bf-afee-82ce609dc10b)
+  ![adcsDuringScience_DisableHeaders](_static/scenario_adcs_during_science/enable_headers.png)
 * Finally, add the definitions for those commands and headers to the actual execution section of the RTS, and shift pre-existing commands to accommodate.
-  ![adcsDuringScience_DisableCommands](https://github.com/user-attachments/assets/45af81af-928b-48e0-aa2b-ddfc551edd55)
+  ![adcsDuringScience_DisableCommands](_static/scenario_adcs_during_science/enable_commands.png)
 
 As above, the changes are only shown in RTS table 33, but they will need to be made to tables 27, 29, 33, 34, and 35. The commands should be the same, but where they are located will vary depending on what else the table is doing. You can go through each of the aforementioned tables to see how the changes are adapted for that table in particular.
 
 ### Step 3: Verifying Intended Behavior
 With this, you should be able to test that it works by bringing up NOS3, launching COSMOS, and commanding the craft to enable data collection over the various regions and to enter Science Mode. Then:
-![adcsDuringScience_EnableAlaska](https://github.com/user-attachments/assets/581b6510-3c56-4ef3-80fd-219d63a37471)
-![adcsDuringScience_EnableCONUS](https://github.com/user-attachments/assets/07b36a4b-af76-419f-86d7-32af6af0a543)
-![adcsDuringScience_EnableHawaii](https://github.com/user-attachments/assets/5f1386ff-6747-4205-952d-6e541f5628de)
-![adcsDuringScience_ScienceMode](https://github.com/user-attachments/assets/04b82d2b-c266-4743-b70a-834652e348c2)
+![adcsDuringScience_EnableAlaska](_static/scenario_adcs_during_science/enable_AK.png)
+![adcsDuringScience_EnableCONUS](_static/scenario_adcs_during_science/enable_CONUS.png)
+![adcsDuringScience_EnableHawaii](_static/scenario_adcs_during_science/enable_HI.png)
+![adcsDuringScience_ScienceMode](_static/scenario_adcs_during_science/enable_science_mode.png)
 
 * Launch your Telemetry Grapher to the EPS_TEST preset.
 * Add your Star Tracker's Enabled value and the EPS Switch 1 state to the bottom table:
@@ -113,9 +113,9 @@ With this, you should be able to test that it works by bringing up NOS3, launchi
 Once the vehicle enters Science Active, verify that:
 * All 4 variables have flipped from their low, disabled states to their high, enabled states. 
 * When the spacecraft leaves CONUS, goes to Safe Mode (manually or otherwise), or has its state of charge go below 60% (which you can cause with the Sim Bridge commands) you observe that the switches return to their disabled states once the associated RTS has finished running.
-![adcsDuringScience_SciencePass](https://github.com/user-attachments/assets/f7414a42-973b-483b-aacf-ecbff497035c)
-![adcsDuringScience_SciencePass_SimBridgePowerExit](https://github.com/user-attachments/assets/bdafd3ff-6eb5-4bc3-8795-1d2a2a2cf0b6)
-![adcsDuringScience_SciencePass_SimBridgePowerReentry_CONUSExit](https://github.com/user-attachments/assets/21e16bab-78e0-4c9c-901d-488c27a75c9a)
+![adcsDuringScience_SciencePass](_static/scenario_adcs_during_science/science_pass.png)
+![adcsDuringScience_SciencePass_SimBridgePowerExit](_static/scenario_adcs_during_science/science_pass_simbridge_power_exit.png)
+![adcsDuringScience_SciencePass_SimBridgePowerReentry_CONUSExit](_static/scenario_adcs_during_science/science_pass_simbridge_power_reentry.png)
 
 ### Conclusion
 At this point, you should be comfortable with the thought process behind making changes to a mission to meet new needs, adapting the RTS tables to do so. In future Scenarios, we will build upon this with more complex scenarios that may develop in flight.

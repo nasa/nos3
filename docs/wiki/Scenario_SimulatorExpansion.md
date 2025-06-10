@@ -1,49 +1,52 @@
 # Scenario - Simulator Expansion
 
-This scenario was developed to capture how to expand a simulator.
+This scenario was developed to explain how to expand a simulator.
 In this scenario, we will expand the Sample simulator to use additional data from 42.
-This scenario will show how data flows through the entire system.
-This data starts at 42, passes to the simulator, who talks to the component application, that publishes COSMOS telemetry.
+This scenario will show how data flows through the entire system: The data starts at 42, passes to the simulator, which talks to the component application, and then that component application publishes COSMOS telemetry.
+
+This scenario was last updated on 06/06/2025 and leveraged the `dev` branch at the time [53d4627].
 
 ## Learning Goals
 
 By the end of this scenario, you should be able to:
-* Turn on 42 output in the 42 window
-* Enhance the Sample simulator to retrieve additional data from 42
-* Enhance the Sample simulator to provide additional data to flight software
-* Enhance the Sample flight software to receive additional data from the simulator and to provide additional telemetry for the additional data
-* Enhance the Sample telemetry definition to view additional telemetry for the additional data
-* Run NOS3 and view the additional data in the Sample telemetry
+* Turn on 42 output in the 42 window.
+* Enhance the Sample simulator to retrieve additional data from 42.
+* Enhance the Sample simulator to provide additional data to flight software.
+* Enhance the Sample flight software to receive additional data from the simulator and to provide additional telemetry for the additional data.
+* Enhance the Sample telemetry definition to view additional telemetry for the additional data.
+* Run NOS3 and view the additional data in the Sample telemetry.
 
 ## Prerequisites
 
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
-* No additional file changes or special setup is needed for this scenario
+* No additional file changes or special setup is needed for this scenario.
 
 ## Walkthrough
 
 ### Turn on 42 output in the 42 window
-Edit `cfg/sims/nos3-simulator.xml`.
-Locate the "sample_sim" simulator section.  
-Comment out the "SAMPLE_PROVIDER" section and uncomment the "SAMPLE_42_PROVIDER" section.
+* Edit `cfg/sims/nos3-simulator.xml`.
+* Locate the "sample_sim" simulator section.  
+* Comment out the "SAMPLE_PROVIDER" section and uncomment the "SAMPLE_42_PROVIDER" section:
 
 ![Scenario Simulator Expansion - Sample Provider](./_static/scenario_simulator_expansion/scenario_sample_provider.png)
 
-Edit `cfg/InOut/Inp_IPC.txt`.
-Add an 11 line section to the end that is like the previous section.  Change the filename to "SAMPLE.42" and the host port to "4242" and echo to stdout to "TRUE".
+* Edit `cfg/InOut/Inp_IPC.txt`.
+* Add an 11 line section to the end that is like the previous section.  
+  * Change the filename to "SAMPLE.42".
+  * Change the host port to "4242" and echo to stdout to "TRUE".
 
 ![Scenario Simulator Expansion - Inp_IPC.txt](./_static/scenario_simulator_expansion/inp_ipc.png)
 
-Change line 2 to be one more than the current value.
-Run `make`, then `make launch`
-The 42 window should now show 42 output.
+* Change line 2 to be one more than the current value.
+* Run `make`, then `make launch`
+* The 42 window should now show 42 output.
 
 ![Scenario Simulator Expansion - 42 Output](./_static/scenario_simulator_expansion/42_output.png)
 
-Run `make stop`.
+* Run `make stop`.
 
 ### Enhance the Sample simulator to retrieve additional data from 42
 Edit the `components/sample/sim/src/sample_data_point.cpp` file.
