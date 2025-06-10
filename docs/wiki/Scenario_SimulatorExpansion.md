@@ -68,7 +68,7 @@ Now that we can see the data, we have decided that getting the body vector (bvb)
 
 ![Scenario Simulator Expansion - sample_data_point.hpp](./_static/scenario_simulator_expansion/sample_data_point.hpp.png)
 
-### Enhance the Sample simulator to provide additional data to flight software
+### Expand the Sample Simulator 
 
 The sample simulator is now receiving the additional data we selected, but it is not currently being used or sent anywhere.  We can change that, passing the data back to the FSW:
 * Edit the `components/sample/sim/src/sample_hardware_model.cpp` file.
@@ -81,27 +81,34 @@ Now, to test, we will launch everything:
 * The 42 window should now show 42 output and the sample sim window should show a connection to get the 42 data.
 * Run `make stop`.
 
-### Enhance the Sample flight software to receive additional data from the simulator and to provide additional telemetry for the additional data
+### Enhance the Sample Flight Software 
 
-Next, we will 
-Edit the `components/sample/fsw/shared/sample_device.c` file.
-Add "bvb" data reads in the "SAMPLE_RequestData()" function. 
+Next, we will expand the capabilities of the sample_device:
+* Edit the `components/sample/fsw/shared/sample_device.c` file.
+* Add "bvb" data reads in the "SAMPLE_RequestData()" function. 
 **Note, since we have increased our data buffer, we are changing the conditional to check read_data indices 18 and 19 in order to find the appropriate trailer message.**
 
 ![Scenario Simulator Expansion - sample_device.c](./_static/scenario_simulator_expansion/sample_device.c.png)
 
-Edit the `components/sample/fsw/shared/sample_device.h` file.
-Add "bvb" members to the "SAMPLE_Device_Data_tlm_t" structure.
+* Edit the `components/sample/fsw/shared/sample_device.h` file.
+* Add "bvb" members to the "SAMPLE_Device_Data_tlm_t" structure.
 
 ![Scenario Simulator Expansion - sample_device.h](./_static/scenario_simulator_expansion/sample_device.h.png)
 
-### Enhance the Sample telemetry definition to view additional telemetry for the additional data
-Edit the `components/sample/gsw/SAMPLE/cmd_tlm/SAMPLE_TLM.txt` telemetry definition file.
-Add "bvb" telemetry points to the "SAMPLE_DATA_TLM" telemetry packet.
+### Enhance the Sample Telemetry Definition 
+
+Lastly, we will expand the Sample telemetry definition to include the bvb data:
+* Edit the `components/sample/gsw/SAMPLE/cmd_tlm/SAMPLE_TLM.txt` telemetry definition file.
+* Add "bvb" telemetry points to the "SAMPLE_DATA_TLM" telemetry packet.
 
 ![Scenario Simulator Expansion - SAMPLE_TLM_txt](./_static/scenario_simulator_expansion/SAMPLE_TLM.txt.png)
 
 ### Run NOS3 and view the additional data in the Sample telemetry
-Run `make clean`, then `make`, and`make launch`.
+
+Once the simulator expansion has been accomplished as above, we can test it by running NOS3. It should look something like the following:
 
 ![Scenario Simulator Expansion - TRUTH and SAMPLE packets](./_static/scenario_simulator_expansion/TRUTH_and_SAMPLE_packets.png)
+
+### Conclusion
+
+In this scenario, we have added additional 42 data to the Sample app. The process is largely similar for expanding or enhancing any of the simulators, even an entirely original one.
