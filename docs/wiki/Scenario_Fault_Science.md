@@ -2,7 +2,7 @@
 
 This scenario was developed to provide the user with an example of how the spacecraft can perform Fault Detection & Correction (FDC). It also defines Actionpoints (AP), Watch Points (WP), and Real-Time Sequences (RTS), as well as giving examples of their use in the Limit Checker (LC) and Stored Command (SC) applications in cFS FSW.
 
-This scenario was last updated on 06/06/2025 and leveraged the `dev` branch at the time [53d4627].
+This scenario was last updated on 06/06/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 

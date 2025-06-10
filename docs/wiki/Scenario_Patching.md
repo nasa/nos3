@@ -3,7 +3,7 @@
 This scenario was developed to explain and demonstrate the process by which a satellite operator could patch an app or table onboard a satellite, using NASA Operational Simulator for Small Satellites (NOS3).
 It demonstrates the use of NOS3 to test a patch, and subsequently the use of ground software (GSW) to go from merely commanding to sending updated code for an app or table. 
 
-This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [57fc16c].
+This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 

@@ -2,6 +2,8 @@
 
 This scenario was developed to demonstrate how to identify and resolve an emergency situation that develops in flight, specifically one related to low power.
 
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [a3e7c100].
+
 ## Learning Goals
 By the end of this scenario you should be able to:
 * Analyze a complex situation with limited information to determine the cause of an anomaly.

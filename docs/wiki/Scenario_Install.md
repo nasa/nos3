@@ -2,7 +2,7 @@
 
 This scenario was developed to capture the NASA Operational Simulator for Small Satellites (NOS3) installation process.
 
-This scenario was last updated on 05/28/2025 and leveraged the `dev` branch [900f0e9].
+This scenario was last updated on 05/28/2025 and leveraged the `dev` branch [a3e7c100].
 
 ## Learning Goals
 By the end of this scenario, you should be able to:

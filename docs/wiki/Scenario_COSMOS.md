@@ -4,7 +4,7 @@ This scenario was developed to provide an overview of the Ball Aerospace COSMOS 
 COSMOS is a comprehensive ground software suite developed by Ball Aerospace that provides command and control capabilities for embedded systems, particularly spacecraft.
 In the NOS3 environment, COSMOS serves as the primary ground software interface.
 
-This scenario was last updated on 5/26/25 and leveraged the `dev` branch at the time [46cfa02].
+This scenario was last updated on 5/26/25 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 

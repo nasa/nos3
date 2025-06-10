@@ -9,7 +9,7 @@ This is useful for:
 * Inspecting memory or variable values during runtime
 * Tracing faults or validating application behavior
 
-This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [1209324].
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 

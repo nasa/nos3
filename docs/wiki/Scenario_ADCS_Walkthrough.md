@@ -2,7 +2,7 @@
 
 This scenario was developed to provide a walkthrough of NOS3's basic Attitude Determination and Control System (ADCS).
 
-This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [c37ab5b].
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 By the end of this scenario you should be able to:

@@ -3,19 +3,19 @@
 This scenario was developed to demonstrate the process of integrating a flight toolchain into the NOS3 environment.
 While NOS3 does not support processor emulation, you can still build both for NOS3 and for other targets.
 
-This scenario was last updated on 5/22/25 and leveraged the `dev` branch [900f0e9].
+This scenario was last updated on 5/22/25 and leveraged the `dev` branch [a3e7c100].
 
 ## Learning Goals
 
 By the end of this scenario, you should be able to:
-* Integrate a flight toolchain into docker
-* Build the develop docker container and select it for use
-* Update the configuration files in NOS3 to build for another target
-* Build flight software for the desired target
+* Integrate a flight toolchain into docker.
+* Build the develop docker container and select it for use.
+* Update the configuration files in NOS3 to build for another target.
+* Build flight software for the desired target.
 
 ## Prerequisites
 
-Before running the scenario, ensure the following steps are completed:
+Before running the scenario, complete the following steps:
 * [Getting Started](./Getting_Started.md)
   * [Installation](./Getting_Started.md#installation)
   * [Running](./Getting_Started.md#running)
@@ -25,8 +25,8 @@ Before running the scenario, ensure the following steps are completed:
 ## Walkthrough
 
 Some terminology should be clarified before we begin:
-* When mentioning a "target" this could be a specific setup for a development or the flight processor for example.
-  * We'll be assuming this is the flight processor for this example.
+* A "target" could refer to a specific setup for development or to the flight processor.
+  * In this example, we'll use "target" to refer to the flight processor.
 * A toolchain for the target will be required to enable cross compilation.
   * Be sure to select the correct toolchain required for your particular effort!
 
@@ -35,18 +35,18 @@ Some terminology should be clarified before we begin:
 
 Identifying the flight target is the first priority.
 For this scenario we're going to be adding a Raspberry Pi (64-bit ARM) target.
-A quick google search pointed me to the `gcc-arm-linux-gnueabihf` and `g++-arm-linux-gnueabihf` toolchains that are readily available for install from the package manager.
+A quick internet search suggested using the `gcc-arm-linux-gnueabihf` and `g++-arm-linux-gnueabihf` toolchains that are readily available for install from the package manager.
 
-Installing the above toolchain directly to the VM or your host machine won't work for NOS3 as we leverage docker containers to build and run everything.
+Installing the above toolchain directly to the VM or your host machine won't work for NOS3 as we leverage Docker containers to build and run everything.
 Let's start by editing what is going to be included in this docker file.
 As a prerequisite we asked you clone the nasa-itc/deployment repository, open the `./deployment/Dockerfile` for editing.
 
-The [DockerFile](https://github.com/nasa-itc/deployment/blob/2ec5f5748cbca37e00e7b21b0b7084e50df077f7/Dockerfile) is using staged builds in order to expedite testing as new things are added.
-The start of each stage begins with the `FROM` statement.
-At the time of writing, see above link, we have the following breakdown:
-* nos0 - initial packages installed via apt-get and pip3
-* nos1 - installation of the NOS3 middleware, NOS Engine and ITC Common
-* nos2 - installation of CryptoLib
+The [DockerFile](https://github.com/nasa-itc/deployment/blob/2ec5f5748cbca37e00e7b21b0b7084e50df077f7/Dockerfile) uses staged builds in order to expedite testing as new things are added:
+* The start of each stage begins with the `FROM` statement.
+* At the time of writing, see above link, we have the following breakdown:
+  * nos0 - initial packages installed via apt-get and pip3
+  * nos1 - installation of the NOS3 middleware, NOS Engine and ITC Common
+  * nos2 - installation of CryptoLib
 
 We're going to extend this existing file with the following stage:
 ```
@@ -59,41 +59,41 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 ```
 
-Once we'ved added and saved the above, we can follow the steps at the top of the Dockerfile from a terminal to build this container locally:
+Once we've added and saved the above, we can follow the steps at the top of the Dockerfile from a terminal to build this container locally:
 * cd deployment
 * docker build -t rpi_flight .
 
 ---
 ### NOS3 Modifications
 
-We can go ahead and start editing the files in NOS3 while that container builds as it takes awhile.
-From the NOS3 repo edit the following:
-* [./scripts/env.sh](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/scripts/env.sh#L51)
-  * The `DBOX` line should be updated to use the new box name and version
-  * `DBOX="rpi_flight:latest"`
+We can go ahead and start editing the files in NOS3 while that container builds as it takes awhile:
+* From the NOS3 repo edit the following:
+  * [./scripts/env.sh](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/scripts/env.sh#L51)
+    * The `DBOX` line should be updated to use the new box name and version
+    * `DBOX="rpi_flight:latest"`
 
-Note that technically from this point on we don't have any other top level NOS3 modifications, but are modifying the underlying FSW in use.
-This will enable us to still build for and run NOS3 as we have, in addition to building FSW only for our desired flight target so that we can test it on a development board or FlatSat as they are available for use.
+Note that, from this point on, we don't technically have any other top level NOS3 modifications. We are directly modifying the underlying FSW.
+This will enable us to still build and run NOS3 as we have, while also building FSW specifically for our desired flight target. This will permit the continuing use of NOS3 for development while also letting us test it on a development board or FlatSat as they are available for use.
 
 ---
 ### cFS Modifications
 
 A few cFS modifications must be made to ensure we setup our new target:
-* Copy [./cfg/nos3_defs/toolchain-amd64-posix.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/toolchain-amd64-posix.cmake) in place and name it `toolchain-arm64-posix.cmake`
-  * Edit the `CMAKE_C_COMPILER` to be `/usr/bin/arm-linux-gnueabihf-gcc`
-  * Edit the `CMAKE_CXX_COMPILER` to be `/usr/bin/arm-linux-gnueabihf-g++`
-  * Note that because our example RPI is running posix linux we do not need to change anything else in this file
-    * If your target isn't you'd need to edit the `OSAL_SYSTEM_OSTYPE` and review the additional "Build Specific" section of this file
-* Modify [./cfg/nos3_defs/arch_build_custom.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/arch_build_custom.cmake#L43)
-  * Remove `-Werror` from the `CMAKE_C_FLAGS` string
-* Delete the following table modifications, without them here cFS will leverage the defaults stored in each app
+* Copy [./cfg/nos3_defs/toolchain-amd64-posix.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/toolchain-amd64-posix.cmake) in place and name it `toolchain-arm64-posix.cmake`.
+  * Edit the `CMAKE_C_COMPILER` to be `/usr/bin/arm-linux-gnueabihf-gcc`.
+  * Edit the `CMAKE_CXX_COMPILER` to be `/usr/bin/arm-linux-gnueabihf-g++`.
+  * Note that because our example RPI is running posix linux we do not need to change anything else in this file.
+    * If your target isn't running such an OS, you'd need to edit the `OSAL_SYSTEM_OSTYPE` and review the additional "Build Specific" section of this file.
+* Modify [./cfg/nos3_defs/arch_build_custom.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/arch_build_custom.cmake#L43):
+  * Remove `-Werror` from the `CMAKE_C_FLAGS` string.
+* Delete the following table modifications; without them here, cFS will leverage the defaults stored in each app:
   * `./cfg/nos3_defs/tables/sch_def_msgtbl.c`
   * `./cfg/nos3_defs/tables/sch_def_schtbl.c`
   * `./cfg/nos3_defs/tables/to_lab_sub.c`
 * [./cfg/nos3_defs/targets.cmake](https://github.com/nasa/nos3/blob/900f0e9eb5754014cec1a43fb630adae6d93bec5/cfg/nos3_defs/targets.cmake)
-  * This file lists all the libraries and applications included in the build
-  * The NOS3 spacecraft configuration file simply changes what is run, but we build everything every time to keep things easy with dependencies
-  * Replace this file with that is below noting that a number of targets are commented out due to missing libraries needed on our flight target:
+  * This file lists all the libraries and applications included in the build.
+  * The NOS3 spacecraft configuration file simply changes what is run, but we build everything every time to keep things easy with dependencies.
+  * Replace this file with the one reproduced below, noting that a number of targets are commented out due to missing libraries needed on our flight target:
 ```
 SET(MISSION_NAME "NOS3")
 
@@ -199,8 +199,9 @@ SET(cpu2_SYSTEM arm64-posix)
 ```
 
 Additionally you need to copy each `./cfg/nos3_defs/cpu1*` file in the same directory with the `cpu2*` prefix instead.
-This will enable further configuration of those specifically for our flight target as it will be different tha our NOS3 build (cpu1).
-Note that for this RPI example we will need to edit the likely don't need to modify any of these to make it work, but this has yet to be confirmed.
+This change of name will enable further configuration of those specifically for our flight target, necessary since it will be different than our NOS3 build (cpu1).
+Note that, for this RPI example, we will probably not need to edit any of these files to make it work.  This has yet to be confirmed, though.
+***Note that for this RPI example we will need to edit the likely don't need to modify any of these to make it work, but this has yet to be confirmed.***
 
 ---
 ### Building the Flight Target
@@ -213,3 +214,6 @@ From our terminal at the top level of the NOS3 repository we've been editing, yo
 Both the NOS3 build (cpu1) and the flight target (cpu2) will be built for FSW with simulators also building for use with NOS3.
 The NOS3 files can be found at `./fsw/build/exe/cpu1` while the flight target is at `./fsw/build/exe/cpu2`.
 Note you'll need everything in that directory and subdirectories in addition to launching cFS from that location.
+
+### Conclusion
+Through this Scenario, you learned how to build NOS3 for use in flight - while also maintaining its availability for development.

@@ -2,15 +2,15 @@
 
 This scenario was developed to demonstrate how to adapt an existing mission to changing science goals, with the specific example of a request for a different pointing routine during Science Mode.
 
-This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [53d4627].
+This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 By the end of this scenario you should be able to:
-- Understand how to plan effectively before making changes to ensure you:
-    - Identify everything you need to do to cover the behavior you intend. 
-    - Ensure things are returned to a known state afterwards.
-- Understand how to modify existing RTSs to match new parameters.
-- Understand how to test these changes and related edge cases in NOS3.
+* Understand how to plan effectively before making changes to ensure you:
+  * Identify everything you need to do to cover the behavior you intend. 
+  * Ensure things are returned to a known state afterwards.
+* Understand how to modify existing RTSs to match new parameters.
+* Understand how to test these changes and related edge cases in NOS3.
 
 ## Prerequisites
 Before running the scenario, complete the following steps:

@@ -4,7 +4,7 @@ For a variety of reasons, a spacecraft can begin rotating out-of-control on orbi
 
 At present, however, NOS3 runs slowly enough that working through a rapid tumbling scenario takes too long.  As such, this document will merely describe the steps one would follow, without providing anything with which to follow along.
 
-This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [b87b2f92].
+This scenario was last updated on 06/10/2025 and leveraged the `dev` branch at the time [a3e7c100].
 
 ## Learning Goals
 
