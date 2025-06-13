@@ -113,6 +113,10 @@ Now, clone NOS3 directly into the VM:
 * `cd nos3`
 * `git submodule update --init --recursive`
 
+Before NOS3 can be run, it has to have the containers and such things downloaded.  For the user's convenience, we have a command `make prep` which does this all automatically.  As such, after cloning NOS3, run:
+* `make prep`
+* Ensure that everything runs without trouble and that no warnings or errors are evident.
+
 #### Python setup
 
 First, be sure that everything is up-to-date:
