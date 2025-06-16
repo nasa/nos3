@@ -13,6 +13,7 @@
 #   echo "HEALTHCHECK_PORT variable is not set; therefore, not starting health check action. Optional. Proceeding"
 # fi
 
-$SCRIPT_DIR/fsw/fsw_respawn.sh
+pkill -f fsw_respawn.sh || true
+pkill -f core-cpu1 || true
 
-tail -f /dev/null
+$SCRIPT_DIR/fsw/fsw_respawn.sh

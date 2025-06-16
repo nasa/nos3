@@ -5,7 +5,7 @@ PROVIDER=${2:-podman} #
 
 MY_PWD=${PWD}
 
-source ./scripts/functions/deployment.sh
+#source ./scripts/functions/deployment.sh
 
 #------------------------------------------------------------------------------
 # A script to generate k8s deployment, service... yaml files and apply them

@@ -20,3 +20,5 @@ wget https://github.com/nasa-itc/deployment/raw/refs/heads/main/nos3_filestore/p
 wget https://github.com/nasa-itc/deployment/raw/refs/heads/main/nos3_filestore/packages/ubuntu/nos-engine-Release_1.6.2_amd64.deb && \
   apt install ./nos-engine-Release_1.6.2_amd64.deb && \
   rm ./nos-engine-Release_1.6.2_amd64.deb
+
+tail -f /dev/null

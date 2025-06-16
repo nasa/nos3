@@ -163,13 +163,31 @@ missions:
         - sc1:
             enabled: true
             components: 
-              # << : *hw_components
+              fortytwo:
+                name: fsw
+                replicas: 1
+                container: 
+                  << : *container
+              fsw:
+                name: fsw
+                replicas: 1
+                container: 
+                  << : *container
+              nos-engine-server:
+                name: nos-engine-server
+                replicas: 1
+                container: 
+                  << : *container
+              time:
+                name: time
+                replicas: 1
+                container: 
+                  << : *container
               gps:
                 name: gps
                 replicas: 1
                 container: 
                   << : *container
-
   - m02:
       enabled: false
       spacecraft:
