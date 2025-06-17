@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>
-1                                       ! Number of Sockets
+2                                       ! Number of Sockets
 **********************************  GPS IPC  *****************************
 TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
 0                                       ! AC.ID for ACS mode
@@ -10,3 +10,19 @@ FALSE                                   ! Allow Blocking (i.e. wait on RX)
 FALSE                                   ! Echo to stdout
 1                                       ! Number of TX prefixes
 "SC"                                    ! Prefix 0
+**********************************  Truth data to sim to pass to COSMOS ********************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+0                                       ! AC.ID for ACS mode
+"State.42"                              ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+fortytwo       9999                     ! Server Host Name, Port
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+FALSE                                   ! Echo to stdout
+7                                       ! Number of TX prefixes
+"SC[0].PosR"                            ! Prefix 0
+"SC[0].VelR"                            ! Prefix 1
+"SC[0].svb"                             ! Prefix 2
+"SC[0].bvb"                             ! Prefix 3
+"SC[0].Hvb"                             ! Prefix 4
+"SC[0].B[0]"                            ! Prefix 5
+"Orb"                                   ! Prefix 6

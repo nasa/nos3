@@ -4,6 +4,14 @@ services:
   nos3-fortytwo:
     image: docker.io/haisamido/42:master
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '3'
+    #       memory: "2048MB"
+    #     reservations:
+    #       cpus: '1'
+    #       memory: "2048MB"
     container_name: sc_1_fortytwo
     hostname: fortytwo
     working_dir: "/opt/nasa-itc/"
@@ -22,6 +30,14 @@ services:
   nos3-fsw:
     image: docker.io/haisamido/nos3-base:20250217
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: sc_1_nos_fsw
     hostname: nos_fsw
     working_dir: /builds/nos3/fsw/build/exe/cpu1
@@ -41,6 +57,14 @@ services:
   nos3-nos_engine_server:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: sc_1_nos_engine_server
     hostname: nos_engine_server
     working_dir: /builds/nos3/sims/build/bin
@@ -60,6 +84,14 @@ services:
   nos3-gps:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: sc_1_gps_sim
     hostname: sc_1_gps_sim
     working_dir: /builds/nos3/sims/build/bin
@@ -73,6 +105,14 @@ services:
   nos3-time:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: nos_time_driver
     hostname: nos_time_driver
     working_dir: /builds/nos3/sims/build/bin
@@ -92,6 +132,14 @@ services:
   nos3-gsw:
     image: docker.io/haisamido/nos3-base:20250217
     attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '3'
+    #       memory: "2048MB"
+    #     reservations:
+    #       cpus: '1'
+    #       memory: "2048MB"
     container_name: cosmos_openc3-operator_1
     hostname: cosmos
     working_dir: "${HOME}/.nos3/yamcs"
@@ -115,6 +163,15 @@ services:
 
   nos3-truth42sim:
     image: docker.io/haisamido/nos3-base:20250217
+    attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: sc_1_truth42sim
     hostname: truth42sim
     working_dir: "/builds/nos3/sims/build/bin"
@@ -132,6 +189,15 @@ services:
 
   nos3-nos_terminal:
     image: docker.io/haisamido/nos3-base:20250217
+    attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: nos_terminal
     hostname: nos_terminal
     working_dir: "/builds/nos3/sims/build/bin"
@@ -149,6 +215,15 @@ services:
 
   nos3-nos_udp_terminal:
     image: docker.io/haisamido/nos3-base:20250217
+    attach: true
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: "128M"
+    #       cpus: ".100"
+    #     reservations:
+    #       memory: "128M"
+    #       cpus: ".100"
     container_name: nos_udp_terminal
     hostname: nos_udp_terminal
     working_dir: "/builds/nos3/sims/build/bin"
