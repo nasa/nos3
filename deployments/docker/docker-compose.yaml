@@ -13,6 +13,7 @@ services:
     ports:
       - "30090:80"
     environment:
+      HEALTHCHECK_PORT: 60000
       DISPLAY: ":1"
     networks:
       - nos3_sc_1
@@ -31,6 +32,8 @@ services:
       rtprio: 99
     cap_add:
       - sys_nice
+    environment:
+      HEALTHCHECK_PORT: 60000
     networks:
       - nos3_sc_1
       - nos3_core
@@ -45,6 +48,8 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/builds/nos3/sims/build/bin/nos_engine_server_config.json
     tty: true
+    environment:
+      HEALTHCHECK_PORT: 60000
     networks:
       nos3_sc_1:
         aliases: 
@@ -59,6 +64,8 @@ services:
     hostname: sc_1_gps_sim
     working_dir: /builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f nos3-simulator.xml gps"
+    environment:
+      HEALTHCHECK_PORT: 60000
     networks:
       - nos3_sc_1
       - nos3_core
@@ -75,10 +82,63 @@ services:
     tty: true
     stdin_open: true
     privileged: true
+    environment:
+      HEALTHCHECK_PORT: 60000
     networks:
       - nos3_sc_1
       - nos3_core
 
+  nos3-truth42sim:
+    image: docker.io/haisamido/nos3-base:20250217
+    container_name: sc_1_truth42sim
+    hostname: truth42sim
+    working_dir: "/builds/nos3/sims/build/bin"
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+    networks:
+      - nos3_sc_1
+      - nos3_core
+
+  nos3-nos_terminal:
+    image: docker.io/haisamido/nos3-base:20250217
+    container_name: nos_terminal
+    hostname: nos_terminal
+    working_dir: "/builds/nos3/sims/build/bin"
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+    networks:
+      - nos3_sc_1
+      - nos3_core
+
+  nos3-nos_udp_terminal:
+    image: docker.io/haisamido/nos3-base:20250217
+    container_name: nos_udp_terminal
+    hostname: nos_udp_terminal
+    working_dir: "/builds/nos3/sims/build/bin"
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+    networks:
+      - nos3_sc_1
+      - nos3_core
+  
 networks:
   nos3_core:
     driver: bridge
