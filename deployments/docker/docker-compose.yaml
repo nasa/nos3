@@ -3,37 +3,34 @@ name: nos3-m01-sc01
 services:
   nos3-fortytwo:
     image: docker.io/haisamido/42:master
-    attach: false
+    attach: true
     container_name: sc_1_fortytwo
+    hostname: fortytwo
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
-    hostname: fortytwo
-    user: root
     volumes:
       - ${PWD}/../nos3/cfg/sims/InOut:/opt/nasa-itc/42/InOut
     ports:
       - "30090:80"
     environment:
       DISPLAY: ":1"
-    privileged: true
     networks:
       - nos3_sc_1
       - nos3_core
 
   nos3-fsw:
     image: docker.io/haisamido/nos3-base:20250217
+    attach: true
     container_name: sc_1_nos_fsw
     hostname: nos_fsw
-    command: "./core-cpu1 -R PO"
     working_dir: /builds/nos3/fsw/build/exe/cpu1
+    command: "./core-cpu1 -R PO"
     sysctls:
       fs.mqueue.msg_max: 10000
     ulimits:
       rtprio: 99
     cap_add:
       - sys_nice
-    tty: true
-    stdin_open: true
     networks:
       - nos3_sc_1
       - nos3_core
@@ -45,11 +42,9 @@ services:
     hostname: nos_engine_server
     working_dir: /builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
-    tty: true
-    stdin_open: true
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/builds/nos3/sims/build/bin/nos_engine_server_config.json
-    privileged: true
+    tty: true
     networks:
       nos3_sc_1:
         aliases: 
@@ -61,11 +56,9 @@ services:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
     container_name: sc_1_gps_sim
+    hostname: sc_1_gps_sim
     working_dir: /builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f nos3-simulator.xml gps"
-    tty: true
-    stdin_open: true
-    privileged: true
     networks:
       - nos3_sc_1
       - nos3_core
@@ -74,13 +67,13 @@ services:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
     container_name: nos_time_driver
+    hostname: nos_time_driver
     working_dir: /builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml time"
-    hostname: nos_time_driver
-    tty: true
-    stdin_open: true
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
     privileged: true
     networks:
       - nos3_sc_1

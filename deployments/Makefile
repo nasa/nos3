@@ -36,26 +36,20 @@ IMAGE_URI_PREBUILT=ghcr.io/ericstoneking/42:latest
 EXTERNAL_VNC_PORT_PB=15801
 CONTAINER_NAME_PB=$(GIT_REPO)${IMAGE_SUFFIX}-${EXTERNAL_VNC_PORT_PB}
 
-# pull-prebuilt: ## Pull pre-built 42-x-vnc image
-# 	${CONTAINER_BIN} pull ${IMAGE_URI_PREBUILT}
-x=${HOME}/development/github.com/haisamido/nos3/cfg/InOut
-
 DOCKER_DIR=./docker
 K8S_DIR=./kubernetes
 
-down:
+down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
-up: down
+up: down ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose up -d --remove-orphans
+
+up-attached: down
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose up --remove-orphans
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh
-
-info: ## show info
-	@echo
-	@echo "open browser to http://localhost:${EXTERNAL_VNC_PORT}/vnc.html and click on 'Connect'"
-	@echo
 
 #---
 RESET  = \033[0m
@@ -66,8 +60,7 @@ LINE   = $(PURPLE)--------------------------------------------------------------
 help:
 	@echo
 	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------------"
-	@printf "\033[37m%-30s\033[0m %s\n" "# This Makefile can be used to run build, bring up, and bring down, in vnc "
-	@printf "\033[37m%-30s\033[0m %s\n" "#   open: http://localhost:${VNC_PORT}/vnc.html "
+	@printf "\033[37m%-30s\033[0m %s\n" "# Makefile targets                                                                       "
 	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------------"
 	@echo 
 	@printf "\033[37m%-30s\033[0m %s\n" "#-target-----------------------description-----------------------------------------------"
