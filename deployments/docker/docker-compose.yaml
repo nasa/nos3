@@ -88,12 +88,37 @@ services:
       - nos3_sc_1
       - nos3_core
 
+# TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
+  nos3-gsw:
+    image: docker.io/haisamido/nos3-base:20250217
+    attach: true
+    container_name: cosmos_openc3-operator_1
+    hostname: cosmos
+    working_dir: "${HOME}/.nos3/yamcs"
+    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+    volumes:
+      - ${HOME}/.nos3/yamcs:${HOME}/.nos3/yamcs
+    ports:
+      - "8090:8090"
+      - "5012:5012"
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      COMPONENT_DIR: "/builds/nos3/components"
+      HEALTHCHECK_PORT: 60000
+    networks:
+      nos3_sc_1:
+        aliases: 
+          - cosmos
+      nos3_core:
+
   nos3-truth42sim:
     image: docker.io/haisamido/nos3-base:20250217
     container_name: sc_1_truth42sim
     hostname: truth42sim
     working_dir: "/builds/nos3/sims/build/bin"
-    command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml truth42sim"
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
