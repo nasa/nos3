@@ -19,54 +19,67 @@ Note that it is assumed telemetry messages are also within range, but just follo
   * Protocol(s): I2C and SPI
   * MSGID range: 0x18C8 - 0x18CA
   * Perf_IDs: 105, 106  
+  * Fprime Base ID: 0xF900
 * Coarse Sun Sensors (CSS)
   * Protocol(s): I2C
   * MSGID range: 0x1910 - 0x1911
   * Perf_IDs: 600, 601
+  * Fprime Base ID: 0xE300
 * Electrical Power System (EPS)
   * Protocol(s): I2C
   * MSGID range: 0x191A - 0x191B
   * Perf_IDs: 401
+  * Fprime Base ID: 0xE200
 * Fine Sun Sensors (FSS)
   * Protocol(s): SPI
   * MSGID range: 0x1920 - 0x1921
   * Perf_IDs: 510, 511
+  * Fprime Base ID: 0xE400
 * Global Positioning System (GPS) - Novatel OEM615
   * Protocol(s): streaming UART
   * MSGID range: 0x1870 - 0x1871
   * Perf_IDs: 48
+  * Fprime Base ID: WIP
 * Inertial Measurement Unit (IMU)
   * Protocol(s): CAN
   * MSGID range: 0x1925 - 0x1926
   * Perf_IDs: 530, 531
+  * Fprime Base ID: 0xE600
 * Magnetometer
   * Protocol(s): SPI
   * MSGID range: 0x192A - 0x192B
   * Perf_IDs: 540, 541
+  * Fprime Base ID: 0xEF00
 * Radio
   * Protocol(s): Sockets
   * MSGID range: 0x1930 - 0x1931
   * Perf_IDs: 520
+  * Fprime Base ID: 0xE100
 * Reaction Wheel
   * Protocol(s): UART
   * MSGID range: 0x1992 - 0x1993
   * Perf_IDs: 77
+  * Fprime Base ID: 0xE700
 * Sample
   * Protocol(s): UART
   * MSGID range: 0x18FA - 0x18FB
   * Perf_IDs: 500
+  * Fprime Base ID: 0x0F00
 * Star Tracker
   * Protocol(s): SpaceWire
   * MSGID range: 0x1935 - 0x1936
   * Perf_IDs: 550
+  * Fprime Base ID: 0xE000
 * Torquers
   * Protocol(s): PWM via HWLIB's TRQ commands
   * MSGID range: 0x193A - 0x193B
   * Perf_IDs: 505
+  * Fprime Base ID: 0xE900
 * Thrusters
   * Protocol(s):  UART
   * MSGID range: 0x18EA - 0x18EB
   * Perf IDs: 508
+  * Fprime Base ID: 0xE500
 
 ### Component Development
 
