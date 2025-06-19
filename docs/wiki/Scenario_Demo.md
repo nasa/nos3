@@ -21,6 +21,7 @@ Before running the scenario, complete the following steps:
 * [Getting Started](./NOS3_Getting_Started.md)
   * [Installation](./NOS3_Getting_Started.md#installation)
   * [Running](./NOS3_Getting_Started.md#running)
+
 No additional file changes or special setup is needed for this scenario.
 
 ## Walkthrough
