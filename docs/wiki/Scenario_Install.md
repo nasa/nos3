@@ -12,8 +12,8 @@ By the end of this scenario, you should be able to:
 ## Prerequisites
 
 There are no prerequisites for this scenario, but reading the Installation instructions may help: 
-* [Getting Started](./Getting_Started.md)
-  * [Installation](./Getting_Started.md#installation)
+* [Getting Started](./NOS3_Getting_Started.md)
+  * [Installation](./NOS3_Getting_Started.md#installation)
 
 ## Walkthrough
 

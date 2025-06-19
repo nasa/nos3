@@ -14,9 +14,9 @@ By the end of this scenario, you should be able to:
 ## Prerequisites
 
 Before running the scenario, complete the following steps:
-* [Getting Started](./Getting_Started.md)
-  * [Installation](./Getting_Started.md#installation)
-  * [Running](./Getting_Started.md#running)
+* [Getting Started](./NOS3_Getting_Started.md)
+  * [Installation](./NOS3_Getting_Started.md#installation)
+  * [Running](./NOS3_Getting_Started.md#running)
 
 It may also be helpful to have gone through both the [Scenario - Nominal Operations](./Scenario_Nominal_Ops.md) and [Scenario - cFS](./Scenario_cFS.md) prior to this one.
 

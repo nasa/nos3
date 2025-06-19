@@ -25,9 +25,9 @@ By the end of this scenario, you should be able to:
 ## Prerequisites
 
 Before running the scenario, complete the following steps:
-* [Getting Started](./Getting_Started.md)
-  * [Installation](./Getting_Started.md#installation)
-  * [Running](./Getting_Started.md#running)
+* [Getting Started](./NOS3_Getting_Started.md)
+  * [Installation](./NOS3_Getting_Started.md#installation)
+  * [Running](./NOS3_Getting_Started.md#running)
 * [Scenario - Demonstration](./Scenario_Demo.md)
 * Modify the top level [./cfg/nos3-mission.xml](https://github.com/nasa/nos3/blob/122d9fbb3d8095f8614b8cd18f188d10e643a08a/cfg/nos3-mission.xml)
   * Change `<sc-1-cfg>spacecraft/sc-mission-config.xml</sc-1-cfg>` to `<sc-1-cfg>spacecraft/sc-minimal-config.xml</sc-1-cfg>`

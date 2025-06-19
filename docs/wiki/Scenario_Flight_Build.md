@@ -16,9 +16,9 @@ By the end of this scenario, you should be able to:
 ## Prerequisites
 
 Before running the scenario, complete the following steps:
-* [Getting Started](./Getting_Started.md)
-  * [Installation](./Getting_Started.md#installation)
-  * [Running](./Getting_Started.md#running)
+* [Getting Started](./NOS3_Getting_Started.md)
+  * [Installation](./NOS3_Getting_Started.md#installation)
+  * [Running](./NOS3_Getting_Started.md#running)
 * Clone [https://github.com/nasa-itc/deployment](https://github.com/nasa-itc/deployment) 
   * `main` branch commit [55f6b01] at the time of writing
 

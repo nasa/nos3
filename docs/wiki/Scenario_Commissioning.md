@@ -18,9 +18,9 @@ By the end of this scenario, you should be able to:
 ## Prerequisites
 
 Before running the scenario, complete the following steps:
-* [Getting Started](./Getting_Started.md)
-  * [Installation](./Getting_Started.md#installation)
-  * [Running](./Getting_Started.md#running)
+* [Getting Started](./NOS3_Getting_Started.md)
+  * [Installation](./NOS3_Getting_Started.md#installation)
+  * [Running](./NOS3_Getting_Started.md#running)
 * No additional file changes or special setup is needed for this scenario
 
 ## Walkthrough
