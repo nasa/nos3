@@ -3,6 +3,10 @@ name: nos3-m01-sc01
 services:
   nos3-fortytwo:
     image: docker.io/haisamido/42:master
+#    image: ghcr.io/ericstoneking/42:latest
+#    image: ghcr.io/ericstoneking/42:latest@sha256:4570edd2ef615acfaceec61c3ce7498255fca9b7dd23632c62b0592519c2c7e0
+#    image: ghcr.io/haisamido/nasa-itc-42:latest
+#    image: ghcr.io/nasa-itc/42:master
     attach: true
     # deploy:
     #   resources:
@@ -18,6 +22,8 @@ services:
     command: '/entrypoint.sh'
     volumes:
       - ${PWD}/../nos3/cfg/sims/InOut:/opt/nasa-itc/42/InOut
+      # - ${HOME}/development/github.com/haisamido/nos3/deployments/docker/42/entrypoint.sh:/entrypoint.sh
+      # - ${HOME}/development/github.com/haisamido/nos3/deployments/docker/42/startapp.sh:/startapp.sh
     ports:
       - "30090:80"
     environment:
@@ -95,7 +101,9 @@ services:
     container_name: sc_1_gps_sim
     hostname: sc_1_gps_sim
     working_dir: /builds/nos3/sims/build/bin
-    command: "./nos3-single-simulator -f nos3-simulator.xml gps"
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml gps"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
@@ -130,7 +138,9 @@ services:
 
 # TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
   nos3-gsw:
-    image: docker.io/haisamido/nos3-base:20250217
+    image: docker.io/haisamido/yamcs-base:5.10.4
+#    image: docker.io/haisamido/nos3-base:20250217
+#    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/yamcs-base/yamcs:5.10.4
     attach: true
     # deploy:
     #   resources:
@@ -143,9 +153,11 @@ services:
     container_name: cosmos_openc3-operator_1
     hostname: cosmos
     working_dir: "${HOME}/.nos3/yamcs"
-    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+#    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+    command: "mvn -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
     volumes:
       - ${HOME}/.nos3/yamcs:${HOME}/.nos3/yamcs
+      - ${HOME}/development/github.com/nasa/nos3/components/:/builds/nos3/components/
     ports:
       - "8090:8090"
       - "5012:5012"
