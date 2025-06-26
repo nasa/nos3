@@ -16,4 +16,17 @@
 pkill -f fsw_respawn.sh || true
 pkill -f core-cpu1 || true
 
-$SCRIPT_DIR/fsw/fsw_respawn.sh
+#$SCRIPT_DIR/fsw/fsw_respawn.sh
+
+# cd /builds/nos3 2>&1 | tee -a /builds/nos3/compile.log
+
+# # make -j8 clean     2>&1 | tee -a /builds/nos3/compile.log
+# # make -j8 config    2>&1 | tee -a /builds/nos3/compile.log
+# # make -j8 build-fsw 2>&1 | tee -a /builds/nos3/compile.log
+
+cd /builds/nos3/fsw/build/exe/cpu1/ && \
+    ./core-cpu1 -R PO 2>&1 | tee -a /builds/nos3/core-cpu1.log &
+    
+#    2>&1 | tee -a /builds/nos3/core-cpu1.log &
+
+tail -f /dev/null

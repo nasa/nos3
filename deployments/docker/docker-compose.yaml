@@ -8,22 +8,14 @@ services:
 #    image: ghcr.io/haisamido/nasa-itc-42:latest
 #    image: ghcr.io/nasa-itc/42:master
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '3'
-    #       memory: "2048MB"
-    #     reservations:
-    #       cpus: '1'
-    #       memory: "2048MB"
     container_name: sc_1_fortytwo
     hostname: fortytwo
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
     volumes:
       - ${PWD}/../nos3/cfg/sims/InOut:/opt/nasa-itc/42/InOut
-      # - ${HOME}/development/github.com/haisamido/nos3/deployments/docker/42/entrypoint.sh:/entrypoint.sh
-      # - ${HOME}/development/github.com/haisamido/nos3/deployments/docker/42/startapp.sh:/startapp.sh
+      - ${PWD}/42/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/42/startapp.sh:/startapp.sh  
     ports:
       - "30090:80"
     environment:
@@ -34,20 +26,18 @@ services:
       - nos3_core
 
   nos3-fsw:
-    image: docker.io/haisamido/nos3-base:20250217
+    image: docker.io/haisamido/nos3-base-fsw-uart:20250217
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
+    depends_on:
+      nos3-fortytwo:
+        condition: service_started
     container_name: sc_1_nos_fsw
     hostname: nos_fsw
-    working_dir: /builds/nos3/fsw/build/exe/cpu1
-    command: "./core-cpu1 -R PO"
+    working_dir: /builds/nos3/
+    volumes:
+      - ${PWD}/entrypoint_fsw.sh:/entrypoint.sh
+#      - ${PWD}/../nos3/libuart.c:/builds/nos3/fsw/apps/hwlib/fsw/linux/libuart.c 
+    command: "/entrypoint.sh"
     sysctls:
       fs.mqueue.msg_max: 10000
     ulimits:
@@ -63,14 +53,9 @@ services:
   nos3-nos_engine_server:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
+    depends_on:
+      nos3-fortytwo:
+        condition: service_started
     container_name: sc_1_nos_engine_server
     hostname: nos_engine_server
     working_dir: /builds/nos3/sims/build/bin
@@ -90,14 +75,11 @@ services:
   nos3-gps:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
+    depends_on:
+      nos3-fortytwo:
+        condition: service_started
+      nos3-fsw:
+        condition: service_started
     container_name: sc_1_gps_sim
     hostname: sc_1_gps_sim
     working_dir: /builds/nos3/sims/build/bin
@@ -113,14 +95,9 @@ services:
   nos3-time:
     image: docker.io/haisamido/nos3-base:20250217 
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
+    depends_on:
+      nos3-nos_engine_server:
+        condition: service_started
     container_name: nos_time_driver
     hostname: nos_time_driver
     working_dir: /builds/nos3/sims/build/bin
@@ -138,29 +115,31 @@ services:
 
 # TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
   nos3-gsw:
-    image: docker.io/haisamido/yamcs-base:5.10.4
-#    image: docker.io/haisamido/nos3-base:20250217
+#    image: docker.io/haisamido/yamcs-base:5.10.4
+    image: docker.io/haisamido/nos3-base:20250217
 #    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/yamcs-base/yamcs:5.10.4
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '3'
-    #       memory: "2048MB"
-    #     reservations:
-    #       cpus: '1'
-    #       memory: "2048MB"
+    depends_on:
+      nos3-gps:
+        condition: service_started
+      nos3-fsw:
+        condition: service_started
+      nos3-truth42sim:
+        condition: service_started
     container_name: cosmos_openc3-operator_1
     hostname: cosmos
     working_dir: "${HOME}/.nos3/yamcs"
-#    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
-    command: "mvn -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+#    command: "mvn -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
     volumes:
       - ${HOME}/.nos3/yamcs:${HOME}/.nos3/yamcs
+      - ${HOME}/.nos3/.m2:${HOME}/.nos3/.m2
       - ${HOME}/development/github.com/nasa/nos3/components/:/builds/nos3/components/
     ports:
-      - "8090:8090"
-      - "5012:5012"
+      - "8090:8090" # http
+      - "5012:5012" # 
+      - "5013:5013" # debug-in
+      - "6011:6011" # tlm port
     tty: true
     stdin_open: true
     privileged: true
@@ -176,14 +155,17 @@ services:
   nos3-truth42sim:
     image: docker.io/haisamido/nos3-base:20250217
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
+    depends_on:
+      nos3-fortytwo:
+        condition: service_started
+      nos3-nos_engine_server:
+        condition: service_started
+      nos3-gps:
+        condition: service_started
+      nos3-time:
+        condition: service_started
+      nos3-fsw:
+        condition: service_started
     container_name: sc_1_truth42sim
     hostname: truth42sim
     working_dir: "/builds/nos3/sims/build/bin"
@@ -202,14 +184,6 @@ services:
   nos3-nos_terminal:
     image: docker.io/haisamido/nos3-base:20250217
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
     container_name: nos_terminal
     hostname: nos_terminal
     working_dir: "/builds/nos3/sims/build/bin"
@@ -228,14 +202,6 @@ services:
   nos3-nos_udp_terminal:
     image: docker.io/haisamido/nos3-base:20250217
     attach: true
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: "128M"
-    #       cpus: ".100"
-    #     reservations:
-    #       memory: "128M"
-    #       cpus: ".100"
     container_name: nos_udp_terminal
     hostname: nos_udp_terminal
     working_dir: "/builds/nos3/sims/build/bin"
