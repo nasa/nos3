@@ -52,7 +52,7 @@ Finally, now that we've determined what is necessary to achieve that behavior du
 * The ADCS mode should be restored to Sunsafe once we have left active Science Mode:
   * This will optimize our charging angle when not conducting science.
   * It will also mean we are always in a state known to be safe if we exit active science for any reason (such as a fault, ground command, or simply geographic reasons).
-This all means we will also need to modify any RTS tables associated with transitions out of active Science Mode or back to Safe Mode.
+This all means we will also need to modify any RTS tables associated with transitions out of active Science Mode or back to Science Passive Mode.
 
 Now, after careful planning, we should be prepared to move on to implementing our changes.
 
@@ -112,7 +112,7 @@ With this, you should be able to test that it works by bringing up NOS3, launchi
 
 Once the vehicle enters Science Active, verify that:
 * All 4 variables have flipped from their low, disabled states to their high, enabled states. 
-* When the spacecraft leaves CONUS, goes to Safe Mode (manually or otherwise), or has its state of charge go below 60% (which you can cause with the Sim Bridge commands) you observe that the switches return to their disabled states once the associated RTS has finished running.
+* When the spacecraft leaves CONUS, goes to Science Passive Mode (manually or otherwise), or has its state of charge go below 60% (which you can cause with the Sim Bridge commands) you observe that the switches return to their disabled states once the associated RTS has finished running.
 ![adcsDuringScience_SciencePass](_static/scenario_adcs_during_science/science_pass.png)
 ![adcsDuringScience_SciencePass_SimBridgePowerExit](_static/scenario_adcs_during_science/science_pass_simbridge_power_exit.png)
 ![adcsDuringScience_SciencePass_SimBridgePowerReentry_CONUSExit](_static/scenario_adcs_during_science/science_pass_simbridge_power_reentry.png)

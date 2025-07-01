@@ -23,7 +23,7 @@ Before running the scenario, complete the following steps:
 
 ## Walkthrough
 
-We have a satellite on orbit that is behaving oddly. Everything worked during integration and testing on the ground. On orbit however, our Science Instrument is locking up intermittently on orbit - and that instrument is the entire reason the spacecraft exists.
+We have a satellite that is behaving oddly. Everything worked during integration and testing on the ground. On orbit however, our Science Instrument is locking up intermittently - and that instrument is the entire reason the spacecraft exists.
 
 We reviewed the telemetry, and our scientists have found that we can detect this error if two criteria are met:
 * The spacecraft is in science mode - that is to say that the Manager Spacecraft_Mode is set to 'Science'.
