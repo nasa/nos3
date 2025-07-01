@@ -24,6 +24,7 @@
 #include "mgr_msgids.h"
 #include "mgr_app.h"
 
+
 /* Custom table structure, modify as needed to add desired commands */
 typedef struct
 {
@@ -63,6 +64,9 @@ typedef struct
     /* 12 - Update Science Status in MGR */
     SC_RtsEntryHeader_t hdr12;
     MGR_U8_cmd_t cmd12;
+    /* 12 - Update Science Status in MGR */
+    SC_RtsEntryHeader_t hdr13;
+    SC_RtsCmd_t cmd13;
 } SC_RtsStruct001_t;
 
 /* Define the union to size the table correctly */
@@ -146,6 +150,12 @@ SC_RtsTable001_t SC_Rts001 = {
         .hdr12.TimeTag = 1,
         .cmd12.CmdHeader = CFE_MSG_CMD_HDR_INIT(MGR_CMD_MID, SC_MEMBER_SIZE(cmd12), MGR_UPDATE_SCI_STATUS_CC, 0x00),
         .cmd12.U8 = SS_SCIENCE_OFF,
+    #ifdef ENABLE_GROUND_OPERATIONS_EXERCISE
+        /* 13 - Start RTS 37 */
+        .hdr13.TimeTag = 1,
+        .cmd13.CmdHeader = CFE_MSG_CMD_HDR_INIT(SC_CMD_MID, SC_MEMBER_SIZE(cmd13), SC_START_RTS_CC, 0x00),
+        .cmd13.RtsId = 37,
+    #endif
     }
 };
 

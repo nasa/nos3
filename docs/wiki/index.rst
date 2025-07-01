@@ -36,3 +36,4 @@ This documentation is designed to provide information for users and developers t
    Scenario_Run_Checkout_GDB.md
    Scenario_Creating_Unit_Tests.md
    Scenario_Flight_Build.md
+   Scenario_Random_Errors.md
