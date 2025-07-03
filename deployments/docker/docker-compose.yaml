@@ -2,11 +2,7 @@ name: nos3-m01-sc01
 
 services:
   nos3-fortytwo:
-    image: docker.io/haisamido/42:master
-#    image: ghcr.io/ericstoneking/42:latest
-#    image: ghcr.io/ericstoneking/42:latest@sha256:4570edd2ef615acfaceec61c3ce7498255fca9b7dd23632c62b0592519c2c7e0
-#    image: ghcr.io/haisamido/nasa-itc-42:latest
-#    image: ghcr.io/nasa-itc/42:master
+    image: ghcr.io/haisamido/nos3-base-42:dev
     attach: true
     container_name: sc_1_fortytwo
     hostname: fortytwo
@@ -14,8 +10,8 @@ services:
     command: '/entrypoint.sh'
     volumes:
       - ${PWD}/../nos3/cfg/sims/InOut:/opt/nasa-itc/42/InOut
-      - ${PWD}/42/entrypoint_42.sh:/entrypoint.sh
-      - ${PWD}/42/startapp_42.sh:/startapp.sh  
+      - ${PWD}/42/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/42/startapp.sh:/startapp.sh  
     ports:
       - "30090:80"
     environment:
@@ -37,7 +33,7 @@ services:
     hostname: nos_fsw
     working_dir: /home/nos3/builds/nos3/
     volumes:
-      - ${PWD}/fsw/entrypoint_fsw.sh:/entrypoint.sh
+      - ${PWD}/fsw/entrypoint.sh:/entrypoint.sh
     command: "/entrypoint.sh"
     sysctls:
       fs.mqueue.msg_max: 10000
@@ -120,7 +116,6 @@ services:
           - nos-time-driver
       nos3_core:
 
-# TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
   nos3-gsw:
     image: ghcr.io/haisamido/nos3-base:dev
     attach: true
@@ -136,7 +131,7 @@ services:
     working_dir: "/home/nos3/.nos3/yamcs"
     command: "/entrypoint.sh"
     volumes:
-      - ${PWD}/yamcs/entrypoint_yamcs.sh:/entrypoint.sh
+      - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
     ports:
       - "8090:8090" # http
     tty: true
