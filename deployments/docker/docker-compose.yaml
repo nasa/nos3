@@ -22,8 +22,10 @@ services:
       HEALTHCHECK_PORT: 60000
       DISPLAY: ":1"
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - fortytwo
+      nos3_core:
 
   nos3-fsw:
     image: ghcr.io/haisamido/nos3-base-fsw-uart:dev
@@ -90,8 +92,10 @@ services:
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - gps
+      nos3_core:
 
   nos3-time:
     image: ghcr.io/haisamido/nos3-base:dev
@@ -111,8 +115,10 @@ services:
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - nos-time-driver
+      nos3_core:
 
 # TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
   nos3-gsw:
@@ -133,9 +139,6 @@ services:
       - ${PWD}/yamcs/entrypoint_yamcs.sh:/entrypoint.sh
     ports:
       - "8090:8090" # http
-      - "5012:5012" # 
-      - "5013:5013" # debug-in
-      - "6011:6011" # tlm port
     tty: true
     stdin_open: true
     privileged: true
@@ -197,8 +200,10 @@ services:
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - nos-terminal
+      nos3_core:
 
   nos3-nos_udp_terminal:
     image: ghcr.io/haisamido/nos3-base:dev
@@ -215,8 +220,10 @@ services:
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - nos-udp-terminal
+      nos3_core:
   
 networks:
   nos3_core:
