@@ -36,8 +36,9 @@ jobs:
       - name: Build & Push Docker Image(s)
         uses: docker/build-push-action@v5
         with:
-          context: containers
+          context: deployments
           push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}, ${{ env.REGISTRY }}/${{ github.repository }}:latest
+          platforms: linux/amd64
+          #,linux/arm64
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
