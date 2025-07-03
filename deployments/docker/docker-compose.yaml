@@ -133,7 +133,7 @@ services:
     volumes:
       - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
     ports:
-      - "8090:8090" # http
+      - "8090:8090"
     tty: true
     stdin_open: true
     privileged: true
@@ -141,6 +141,7 @@ services:
       COMPONENT_DIR: "/home/nos3/builds/nos3/components"
       YAMCS_DATA_DIR: "/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data"
       MVN_REPO_LOCAL: "/home/nos3/.nos3/.m2/repository"
+      MAVEN_HTTPS_PROXY: ""
       # YAMCS_ETC_DIR:
       # YAMCS_CACHE_DIR:
       HEALTHCHECK_PORT: 60000
