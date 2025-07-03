@@ -42,6 +42,7 @@ int32_t uart_init_port(uart_info_t* device)
     if(tcgetattr(device->handle, &device->options)<0)
     {
         status = OS_ERR_FILE;
+        fprintf(stderr, "***************** ERROR: Something went wrong: 1\n");
         return status;
     }
 
@@ -104,16 +105,19 @@ int32_t uart_init_port(uart_info_t* device)
         break;
       default:
         status = OS_ERR_FILE;
+        fprintf(stderr, "***************** ERROR: Something went wrong: 2\n");
         return status;
     }
     if(cfsetispeed(&device->options,speed)<0)
     {
         status = OS_ERR_FILE;
+        fprintf(stderr, "***************** ERROR: Something went wrong: 3\n");
         return status;
     }
     if(cfsetospeed(&device->options,speed)<0)
     {
         status = OS_ERR_FILE;
+        fprintf(stderr, "***************** ERROR: Something went wrong: 4\n");
         return status;
     }
 
@@ -139,6 +143,7 @@ int32_t uart_init_port(uart_info_t* device)
     if(tcsetattr(device->handle, TCSANOW, &device->options)<0)
     {
         status = OS_ERR_FILE;
+        fprintf(stderr, "***************** ERROR: Something went wrong: 5\n");
         return status;
     }
   }
@@ -147,6 +152,8 @@ int32_t uart_init_port(uart_info_t* device)
       printf("Oh no!  Open \"%s\" failed and reported: %s \n", device->deviceString, strerror(device->handle));
       device->isOpen = PORT_CLOSED;
       status = OS_ERR_FILE;
+      fprintf(stderr, "***************** ERROR: Something went wrong: 6\n");
+
   }
 
   return status;
@@ -181,6 +188,8 @@ int32_t uart_read_port(uart_info_t* device, uint8_t data[], const uint32_t numBy
   else
   {
     status = OS_ERR_FILE;
+    fprintf(stderr, "***************** ERROR: Something went wrong: 7\n");
+
   }
 
   return status;
@@ -209,11 +218,13 @@ int32_t uart_close_port(uart_info_t* device)
     else
     {
       status = OS_ERR_FILE;
+      fprintf(stderr, "***************** ERROR: Something went wrong: 8\n");
     }
   }
   else
   {
     status = OS_ERR_FILE;
+    fprintf(stderr, "***************** ERROR: Something went wrong: 9\n");
   }
   return status;
 }

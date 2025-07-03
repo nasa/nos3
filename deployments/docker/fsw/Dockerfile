@@ -10,14 +10,15 @@ ARG IMAGE_TAG=20250217
 
 #ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 
-ARG IMAGE_URI=docker.io/haisamido/nos3-base:20250217
+ARG IMAGE_URI=ghcr.io/haisamido/nos3-base:dev
 
-ARG BUILD_DIR=/builds
-ARG BASE_DIR=${BUILD_DIR}/nos3
+ARG BASE_DIR=/home/nos3/builds/nos3
+ARG FLIGHT_SOFTWARE=cfs 
 
 #------------------------------------------------------------------------------
 FROM ${IMAGE_URI}
 #------------------------------------------------------------------------------
+ARG DEBIAN_FRONTEND=noninteractive
 
 #--- PROXY CONFIG (if needed)
 ARG MAVEN_HTTPS_PROXY
@@ -40,24 +41,27 @@ ENV GIT_BRANCH=${GIT_BRANCH}
 #---
 
 #--- NOS3 CONFIGs
-ARG BUILD_DIR
 ARG BASE_DIR
+ARG FLIGHT_SOFTWARE 
 
-ENV BUILD_DIR=${BUILD_DIR}
 ENV BASE_DIR=${BASE_DIR}
+ENV FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE}
+
 #---
 
-COPY ./libuart.c  ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c
+# COPY ./libuart.c  ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c
+
+RUN mv ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c.orig
 
 WORKDIR ${BASE_DIR}
 
 RUN make -j8 clean
+RUN make -j8 prep
 RUN make -j8 config
 RUN make -j8 build-cryptolib
-RUN make -j8 build-fsw
+RUN make -j8 -e FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE} build-fsw
 RUN make -j8 build-sim
-
-#RUN make -j8 build-test
+RUN make -j8 build-test
 
 COPY entrypoint.sh /entrypoint.sh
 

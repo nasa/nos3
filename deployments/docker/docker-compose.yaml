@@ -26,17 +26,16 @@ services:
       - nos3_core
 
   nos3-fsw:
-    image: docker.io/haisamido/nos3-base-fsw-uart:20250217
+    image: ghcr.io/haisamido/nos3-base-fsw-uart:dev
     attach: true
     depends_on:
       nos3-fortytwo:
         condition: service_started
     container_name: sc_1_nos_fsw
     hostname: nos_fsw
-    working_dir: /builds/nos3/
+    working_dir: /home/nos3/builds/nos3/
     volumes:
-      - ${PWD}/entrypoint_fsw.sh:/entrypoint.sh
-#      - ${PWD}/../nos3/libuart.c:/builds/nos3/fsw/apps/hwlib/fsw/linux/libuart.c 
+      - ${PWD}/fsw/entrypoint_fsw.sh:/entrypoint.sh
     command: "/entrypoint.sh"
     sysctls:
       fs.mqueue.msg_max: 10000
@@ -47,21 +46,23 @@ services:
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
-      - nos3_sc_1
-      - nos3_core
+      nos3_sc_1:
+        aliases: 
+          - nos-fsw
+      nos3_core:
 
   nos3-nos_engine_server:
-    image: docker.io/haisamido/nos3-base:20250217 
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     depends_on:
       nos3-fortytwo:
         condition: service_started
     container_name: sc_1_nos_engine_server
     hostname: nos_engine_server
-    working_dir: /builds/nos3/sims/build/bin
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/builds/nos3/sims/build/bin/nos_engine_server_config.json
+      - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
     tty: true
     environment:
       HEALTHCHECK_PORT: 60000
@@ -73,7 +74,7 @@ services:
       nos3_core:
 
   nos3-gps:
-    image: docker.io/haisamido/nos3-base:20250217 
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -82,10 +83,10 @@ services:
         condition: service_started
     container_name: sc_1_gps_sim
     hostname: sc_1_gps_sim
-    working_dir: /builds/nos3/sims/build/bin
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml gps"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: 60000
     networks:
@@ -93,17 +94,17 @@ services:
       - nos3_core
 
   nos3-time:
-    image: docker.io/haisamido/nos3-base:20250217 
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     depends_on:
       nos3-nos_engine_server:
         condition: service_started
     container_name: nos_time_driver
     hostname: nos_time_driver
-    working_dir: /builds/nos3/sims/build/bin
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml time"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -115,9 +116,7 @@ services:
 
 # TODO: issue is that ${HOME}/.nos3/yamcs is being mounted, and is always rebuilding, not functioning well
   nos3-gsw:
-#    image: docker.io/haisamido/yamcs-base:5.10.4
-    image: docker.io/haisamido/nos3-base:20250217
-#    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/yamcs-base/yamcs:5.10.4
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     depends_on:
       nos3-gps:
@@ -128,13 +127,10 @@ services:
         condition: service_started
     container_name: cosmos_openc3-operator_1
     hostname: cosmos
-    working_dir: "${HOME}/.nos3/yamcs"
-    command: "mvn -Dmaven.repo.local=${HOME}/.nos3/.m2/repository -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
-#    command: "mvn -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run"
+    working_dir: "/home/nos3/.nos3/yamcs"
+    command: "/entrypoint.sh"
     volumes:
-      - ${HOME}/.nos3/yamcs:${HOME}/.nos3/yamcs
-      - ${HOME}/.nos3/.m2:${HOME}/.nos3/.m2
-      - ${HOME}/development/github.com/nasa/nos3/components/:/builds/nos3/components/
+      - ${PWD}/yamcs/entrypoint_yamcs.sh:/entrypoint.sh
     ports:
       - "8090:8090" # http
       - "5012:5012" # 
@@ -144,16 +140,21 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      COMPONENT_DIR: "/builds/nos3/components"
+      COMPONENT_DIR: "/home/nos3/builds/nos3/components"
+      YAMCS_DATA_DIR: "/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data"
+      MVN_REPO_LOCAL: "/home/nos3/.nos3/.m2/repository"
+      # YAMCS_ETC_DIR:
+      # YAMCS_CACHE_DIR:
       HEALTHCHECK_PORT: 60000
     networks:
       nos3_sc_1:
         aliases: 
           - cosmos
+          - yamcs
       nos3_core:
 
   nos3-truth42sim:
-    image: docker.io/haisamido/nos3-base:20250217
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -168,10 +169,10 @@ services:
         condition: service_started
     container_name: sc_1_truth42sim
     hostname: truth42sim
-    working_dir: "/builds/nos3/sims/build/bin"
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml truth42sim"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -182,14 +183,14 @@ services:
       - nos3_core
 
   nos3-nos_terminal:
-    image: docker.io/haisamido/nos3-base:20250217
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     container_name: nos_terminal
     hostname: nos_terminal
-    working_dir: "/builds/nos3/sims/build/bin"
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -200,14 +201,14 @@ services:
       - nos3_core
 
   nos3-nos_udp_terminal:
-    image: docker.io/haisamido/nos3-base:20250217
+    image: ghcr.io/haisamido/nos3-base:dev
     attach: true
     container_name: nos_udp_terminal
     hostname: nos_udp_terminal
-    working_dir: "/builds/nos3/sims/build/bin"
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml  truth42sim"
     volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true

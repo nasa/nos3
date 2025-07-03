@@ -42,11 +42,17 @@ K8S_DIR=./kubernetes
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
-build-fsw-uart:
-	docker rmi docker.io/haisamido/nos3-base-fsw-uart:20250217 || true
-	cd ${DOCKER_DIR}/fsw && ${CONTAINER_BIN} build -t docker.io/haisamido/nos3-base-fsw-uart:20250217 .
+build-fsw-uart: ## build fsw-uart
+	docker rmi ghcr.io/haisamido/nos3-base-fsw-uart:dev || true
+	docker pull ghcr.io/haisamido/nos3-base:dev || true
+	cd ${DOCKER_DIR}/fsw && ${CONTAINER_BIN} build -t ghcr.io/haisamido/nos3-base-fsw-uart:dev  .
 
-up: down ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+#push-fsw-uart:
+#	docker push docker.io/haisamido/nos3-base-fsw-uart:20250217
+
+up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+	$(MAKE) down || true
+	$(MAKE) build-fsw-uart || true
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose up -d --remove-orphans
 
 up-attached: down
