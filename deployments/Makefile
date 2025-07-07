@@ -17,6 +17,7 @@ GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 DOCKER_DIR=./docker
 K8S_DIR=./kubernetes
 
+# Generally this is empty unless in specific environments
 ENVIRO_FILE=./.env
 
 #---
@@ -39,12 +40,24 @@ down: ## Bring down nos3
 build-fsw-uart: ## build fsw-uart
 	docker rmi -f ghcr.io/haisamido/nos3-base-fsw-uart:dev || true
 	docker pull ghcr.io/haisamido/nos3-base:dev || true
-	cd ${DOCKER_DIR}/fsw && ${CONTAINER_BIN} build -t ghcr.io/haisamido/nos3-base-fsw-uart:dev  .
+	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
+	cd ${DOCKER_DIR}/fsw && ${CONTAINER_BIN} build \
+		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+		--build-arg HTTP_PROXY=${HTTP_PROXY} \
+		--build-arg NO_PROXY=${NO_PROXY} \
+		-t ghcr.io/haisamido/nos3-base-fsw-uart:dev  .
 
 build-fortytwo: ## build-fortytwo
 	docker rmi -f ghcr.io/haisamido/nos3-base-42:dev || true
 	docker pull ghcr.io/haisamido/nos3-base:dev || true
-	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build -t ghcr.io/haisamido/nos3-base-42:dev  .
+	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
+	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build \
+		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+		--build-arg HTTP_PROXY=${HTTP_PROXY} \
+		--build-arg NO_PROXY=${NO_PROXY} \
+		-t ghcr.io/haisamido/nos3-base-42:dev  .
 
 up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	$(MAKE) down || true
