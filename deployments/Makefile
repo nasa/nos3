@@ -60,6 +60,18 @@ build-fortytwo: ## build-fortytwo
 		--build-arg NO_PROXY=${NO_PROXY} \
 		-t ghcr.io/haisamido/nos3-base-42:dev  .
 
+build-yamcs: ## build-yamcs
+	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
+	docker pull ghcr.io/haisamido/nos3-base:dev || true
+	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
+	cd ${DOCKER_DIR}/yamcs && ${CONTAINER_BIN} build \
+		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+		--build-arg HTTP_PROXY=${HTTP_PROXY} \
+		--build-arg NO_PROXY=${NO_PROXY} \
+		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
+		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
+
 up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	$(MAKE) down || true
 	$(MAKE) build-fsw-uart
