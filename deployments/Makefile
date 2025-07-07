@@ -19,6 +19,7 @@ K8S_DIR=./kubernetes
 
 # Generally this is empty unless in specific environments
 ENVIRO_FILE=./.env
+VOLUME_MAVEN_SETTINGS_PATH=""
 
 #---
 ifndef DEPLOYMENT_ENVIRO
@@ -29,6 +30,8 @@ ifeq (${DEPLOYMENT_ENVIRO},vmmoc)
 $(info DEPLOYMENT_ENVIRO is set to vmmoc. Proceeding with vmmoc specific configurations)
 export ENVIRO_FILE=/opt/neo/etc/environment
 include ${ENVIRO_FILE}
+export VOLUME_MAVEN_SETTINGS_PATH=-v ${MAVEN_SETTINGS_FILE}:${MAVEN_SETTINGS_FILE}
+cp -f ${MAVEN_SETTINGS_FILE} ${DOCKER_DIR}/yamcs/settings.xml
 else
 $(error DEPLOYMENT_ENVIRO is set to ${DEPLOYMENT_ENVIRO}, which is not expected. Exiting!)
 endif
@@ -69,6 +72,7 @@ build-yamcs: ## build-yamcs
 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
 		--build-arg NO_PROXY=${NO_PROXY} \
+		--build-arg MAVEN_SETTINGS_FILE=${MAVEN_SETTINGS_FILE} \
 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
 		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
 
