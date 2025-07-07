@@ -28,6 +28,7 @@ else
 ifeq (${DEPLOYMENT_ENVIRO},vmmoc)
 $(info DEPLOYMENT_ENVIRO is set to vmmoc. Proceeding with vmmoc specific configurations)
 export ENVIRO_FILE=/opt/neo/etc/environment
+include ${ENVIRO_FILE}
 else
 $(error DEPLOYMENT_ENVIRO is set to ${DEPLOYMENT_ENVIRO}, which is not expected. Exiting!)
 endif
