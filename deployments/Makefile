@@ -83,6 +83,7 @@ up: ## Bring up nos3 in detached state (attached state doesn't work for some rea
 	$(MAKE) down || true
 	$(MAKE) build-fsw-uart
 	$(MAKE) build-fortytwo
+	$(MAKE) build-yamcs
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} up -d --remove-orphans 
 
 up-attached: down
