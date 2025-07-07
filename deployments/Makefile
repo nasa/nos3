@@ -21,6 +21,9 @@ K8S_DIR=./kubernetes
 ENVIRO_FILE=./.env
 VOLUME_MAVEN_SETTINGS_PATH=""
 
+# To set default settings.xml and essentially empty for mvn
+$(shell echo "<settings><proxies></proxies></settings>" > ${DOCKER_DIR}/yamcs/settings.xml)
+
 #---
 ifndef DEPLOYMENT_ENVIRO
 $(warning DEPLOYMENT_ENVIRO is not set. Therefore, assuming not in vmmoc, and proceeding without vmmoc specific definitions)
