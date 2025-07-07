@@ -31,7 +31,7 @@ $(info DEPLOYMENT_ENVIRO is set to vmmoc. Proceeding with vmmoc specific configu
 export ENVIRO_FILE=/opt/neo/etc/environment
 include ${ENVIRO_FILE}
 export VOLUME_MAVEN_SETTINGS_PATH=-v ${MAVEN_SETTINGS_FILE}:${MAVEN_SETTINGS_FILE}
-cp -f ${MAVEN_SETTINGS_FILE} ${DOCKER_DIR}/yamcs/settings.xml
+$(shell cp -f ${MAVEN_SETTINGS_FILE} ${DOCKER_DIR}/yamcs/settings.xml)
 else
 $(error DEPLOYMENT_ENVIRO is set to ${DEPLOYMENT_ENVIRO}, which is not expected. Exiting!)
 endif
