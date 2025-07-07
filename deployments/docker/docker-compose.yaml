@@ -15,7 +15,6 @@ services:
     ports:
       - "30090:80"
     environment:
-      HEALTHCHECK_PORT: 60000
       DISPLAY: ":1"
     networks:
       nos3_sc_1:
@@ -140,10 +139,13 @@ services:
     environment:
       COMPONENT_DIR: "/home/nos3/builds/nos3/components"
       YAMCS_DATA_DIR: "/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data"
-      MVN_REPO_LOCAL: "/home/nos3/.nos3/.m2/repository"
-      MAVEN_HTTPS_PROXY: ""
       # YAMCS_ETC_DIR:
       # YAMCS_CACHE_DIR:
+      MAVEN_REPO_LOCAL: "/home/nos3/.nos3/.m2/repository"
+      MAVEN_HTTPS_PROXY: ""
+      HTTPS_PROXY: ""
+      HTTP_PROXY: ""
+      DEPLOYMENT_ENVIRO: ""
       HEALTHCHECK_PORT: 60000
     networks:
       nos3_sc_1:

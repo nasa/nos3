@@ -12,32 +12,26 @@ export DEFAULT_IMAGE_REGISTRY=docker.io/library/
 
 export DOCKERFILE=./Dockerfile
 
-# git repo to clone inside of Dockerfile
-GIT_URL=https://github.com/ericstoneking/42.git
-GIT_REPO=$(shell basename $(GIT_URL) .git)
 GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
-
-# vnc configurations
-EXTERNAL_VNC_PORT=5801
-INTERNAL_PORT=80
-
-# Docker/podman config
-IMAGE_SUFFIX=
-REGISTRY_HOST=localhost
-IMAGE_USERNAME=library
-IMAGE_NAME=${GIT_REPO}${IMAGE_SUFFIX}
-IMAGE_TAG=${GIT_BRANCH}
-IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
-
-CONTAINER_NAME=$(GIT_REPO)${IMAGE_SUFFIX}-${EXTERNAL_VNC_PORT}
-
-# Publicly warehoused pre-built image
-IMAGE_URI_PREBUILT=ghcr.io/ericstoneking/42:latest
-EXTERNAL_VNC_PORT_PB=15801
-CONTAINER_NAME_PB=$(GIT_REPO)${IMAGE_SUFFIX}-${EXTERNAL_VNC_PORT_PB}
 
 DOCKER_DIR=./docker
 K8S_DIR=./kubernetes
+
+ENVIRO_FILE=./.env
+
+#---
+ifndef DEPLOYMENT_ENVIRO
+$(warning DEPLOYMENT_ENVIRO is not set. Therefore, assuming not in vmmoc, and proceeding without vmmoc specific definitions)
+else
+
+ifeq (${DEPLOYMENT_ENVIRO},vmmoc)
+$(info DEPLOYMENT_ENVIRO is set to vmmoc. Proceeding with vmmoc specific configurations)
+export ENVIRO_FILE=/opt/neo/etc/environment
+else
+$(error DEPLOYMENT_ENVIRO is set to ${DEPLOYMENT_ENVIRO}, which is not expected. Exiting!)
+endif
+endif
+#---
 
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
@@ -52,19 +46,14 @@ build-fortytwo: ## build-fortytwo
 	docker pull ghcr.io/haisamido/nos3-base:dev || true
 	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build -t ghcr.io/haisamido/nos3-base-42:dev  .
 
-#push-fsw-uart:
-#	docker push docker.io/haisamido/nos3-base-fsw-uart:20250217
-
 up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	$(MAKE) down || true
-	$(MAKE) build-fsw-uart || true
-	$(MAKE) build-fortytwo || true
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose up -d --remove-orphans
-
-# 	$(MAKE) build-fortytwo || true
+	$(MAKE) build-fsw-uart
+	$(MAKE) build-fortytwo
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} up -d --remove-orphans 
 
 up-attached: down
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose up --remove-orphans
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} --remove-orphans
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh
