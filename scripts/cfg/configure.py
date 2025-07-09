@@ -7,15 +7,24 @@
 import datetime
 import os
 import xml.etree.ElementTree as ET
+import sys
+
+# Use passed-in mission file if provided, otherwise default to ./cfg/nos3-mission.xml
+mission_file = sys.argv[1] if len(sys.argv) > 1 else 'nos3-mission.xml'
+
+# Ensure it exists
+if not os.path.isfile(mission_file):
+    print(f"ERROR: Mission configuration file '{mission_file}' not found!")
+    sys.exit(1)
 
 # Parse mission configuration
-mission_tree = ET.parse('./cfg/nos3-mission.xml')
+mission_tree = ET.parse("./cfg/build/temp_mission/" + os.path.basename(mission_file))
 mission_root = mission_tree.getroot()
 mission_start_time = mission_root.find('start-time').text
 print('  start-time:', mission_start_time)
 mission_start_time_utc = datetime.datetime(2000, 1, 1, 12, 0) + datetime.timedelta(seconds=float(mission_start_time))
 print('  start-time-utc:', mission_start_time_utc)
-
+print('  mission-file: ', mission_file)
 # FSW
 fsw_str = 'fsw'
 fsw_cfg = mission_root.find(fsw_str).text
@@ -106,6 +115,7 @@ else:
         sc_gps_en = sc_root.find('components/gps/enable').text
         sc_imu_en = sc_root.find('components/imu/enable').text
         sc_mag_en = sc_root.find('components/mag/enable').text
+        sc_mgr_en = sc_root.find('components/mgr/enable').text
         sc_radio_en = sc_root.find('components/radio/enable').text
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
@@ -144,6 +154,7 @@ else:
             gps_line = ""
             imu_line = ""
             mag_line = ""
+            mgr_line = ""
             radio_line = ""
             rw_line = ""
             sample_line = ""
@@ -196,6 +207,9 @@ else:
                 if line.find('MAG,') != -1:
                     if (sc_mag_en == 'true'):
                         mag_line = line
+                if line.find('MGR,') != -1:
+                    if (sc_mgr_en == 'true'):
+                        mgr_line = line
                 if line.find('RADIO,') != -1:
                     if (sc_radio_en == 'true'):
                         radio_line = line
@@ -231,6 +245,7 @@ else:
         lines.insert(sc_startup_eof, rw_line)
         lines.insert(sc_startup_eof, radio_line)
         lines.insert(sc_startup_eof, mag_line)
+        lines.insert(sc_startup_eof, mgr_line)
         lines.insert(sc_startup_eof, imu_line)
         lines.insert(sc_startup_eof, gps_line)
         lines.insert(sc_startup_eof, fss_line)
@@ -298,6 +313,7 @@ else:
 
         # Inp_IPC.txt
         css_index = 999
+        eps_index = 999
         fss_index = 999
         gps_index = 999
         imu_index = 999
@@ -320,6 +336,9 @@ else:
                 if line.find('CSS IPC') != -1:
                     if (lines.index(line)) < css_index:
                         css_index = lines.index(line) + 1
+                if line.find('EPS IPC') != -1:
+                    if (lines.index(line)) < eps_index:
+                        eps_index = lines.index(line) + 1
                 if line.find('FSS IPC') != -1:
                     if (lines.index(line)) < fss_index:
                         fss_index = lines.index(line) + 1
@@ -369,6 +388,8 @@ else:
         ipc_off = 'OFF                                     ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n'
         if (sc_css_en != 'true'):
             lines[css_index] = ipc_off
+        if (sc_eps_en != 'true'):
+            lines[eps_index] = ipc_off
         if (sc_fss_en != 'true'):
             lines[fss_index] = ipc_off
         if (sc_gps_en != 'true'):
@@ -421,28 +442,30 @@ else:
         with open('./cfg/build/sims/nos3-simulator.xml', 'r') as fp:
             lines = fp.readlines()
             for line in lines:
+                if line.find('<absolute-start-time>') != -1:
+                    lines[lines.index(line)] = "        <absolute-start-time>{}</absolute-start-time>\n".format(mission_start_time)
                 if line.find('camsim</name>') != -1:
                     if (lines.index(line)) < cam_index:
                         cam_index = lines.index(line) + 1
-                if line.find('css_sim</name>') != -1:
+                if line.find('css-sim</name>') != -1:
                     if (lines.index(line)) < css_index:
                         css_index = lines.index(line) + 1
-                if line.find('eps_sim</name>') != -1:
+                if line.find('eps-sim</name>') != -1:
                     if (lines.index(line)) < eps_index:
                         eps_index = lines.index(line) + 1
-                if line.find('fss_sim</name>') != -1:
+                if line.find('fss-sim</name>') != -1:
                     if (lines.index(line)) < fss_index:
                         fss_index = lines.index(line) + 1
                 if line.find('gps</name>') != -1:
                     if (lines.index(line)) < gps_index:
                         gps_index = lines.index(line) + 1
-                if line.find('imu_sim</name>') != -1:
+                if line.find('imu-sim</name>') != -1:
                     if (lines.index(line)) < imu_index:
                         imu_index = lines.index(line) + 1
-                if line.find('mag_sim</name>') != -1:
+                if line.find('mag-sim</name>') != -1:
                     if (lines.index(line)) < mag_index:
                         mag_index = lines.index(line) + 1
-                if line.find('radio_sim</name>') != -1:
+                if line.find('radio-sim</name>') != -1:
                     if (lines.index(line)) < radio_index:
                         radio_index = lines.index(line) + 1
                 if line.find('reactionwheel-sim0</name>') != -1:
@@ -454,16 +477,16 @@ else:
                 if line.find('reactionwheel-sim2</name>') != -1:
                     if (lines.index(line)) < rw2_index:
                         rw2_index = lines.index(line) + 1
-                if line.find('sample_sim</name>') != -1:
+                if line.find('sample-sim</name>') != -1:
                     if (lines.index(line)) < sample_index:
                         sample_index = lines.index(line) + 1
-                if line.find('star_tracker_sim</name>') != -1:
+                if line.find('star-tracker-sim</name>') != -1:
                     if (lines.index(line)) < st_index:
                         st_index = lines.index(line) + 1
-                if line.find('generic_torquer_sim</name>') != -1:
+                if line.find('generic-torquer-sim</name>') != -1:
                     if (lines.index(line)) < torquer_index:
                         torquer_index = lines.index(line) + 1
-                if line.find('generic_thruster_sim</name>') != -1:
+                if line.find('generic-thruster-sim</name>') != -1:
                     if (lines.index(line)) < thruster_index:
                         thruster_index = lines.index(line) + 1
 

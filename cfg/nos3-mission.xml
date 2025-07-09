@@ -1,10 +1,11 @@
 <nos3-mission-cfg>
-    <start-time>814048200.0</start-time>
-    <!-- Note fprime only operational in sc-minimal-config.xml -->
+    <!-- Mission Start Time (J2000 UTC) -->
+    <!-- Default time: 814254200.0, 20 Oct 2025 -->
+    <start-time>814254200.0</start-time>
 
     <!-- Ground Software -->
-    <!-- cosmos, openc3, fprime, or yamcs (default) -->
-    <gsw>yamcs</gsw>
+    <!-- cosmos (default), openc3, fprime, or yamcs -->
+    <gsw>cosmos</gsw>
 
     <!-- Flight Software -->
     <!-- cfs (default) or fprime -->
@@ -14,9 +15,12 @@
     <!-- Note this is experimental and not ready for use beyond proof of concept -->
     <number-spacecraft>1</number-spacecraft>
 
-    <!-- Spacecraft 1 Configuration -->
-    <!-- sc-full-config.xml (default), sc-minimal-config.xml, or sc-fprime-config.xml -->
-    <sc-1-cfg>sc-full-config.xml</sc-1-cfg>
+    <!-- Spacecraft 1 Configuration - options are as follows -->
+    <!-- sc-minimal-config.xml (only cFS heritage applications and the sample app) -->
+    <!-- sc-mission-config.xml (default, minimal + generic components and ADCS) -->
+    <!-- sc-research-config.xml (mission + research integrations, arducam, and generic-thruster) -->
+    <!-- sc-fprime-config.xml (only configuration supporting F') -->
+    <sc-1-cfg>spacecraft/sc-mission-config.xml</sc-1-cfg>
 
     <!-- Spacecraft N Configuration -->
     <!-- <sc-N-cfg>sc-minimal-config.xml</sc-N-cfg> -->

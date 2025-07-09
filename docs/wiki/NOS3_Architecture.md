@@ -1,39 +1,69 @@
 # Architecture
-NOS3 runs typically runs using Docker on a Linux Virtual Machine (VM), although any computer running Linux and capable of using Docker will work.  The figure below shows the current architecture and Docker networking and structure.
 
-## Basic Architecture
+When NOS3 launches, it spawns docker containers to reduce the need to install and manage packages directly in Linux.
 
 ![NOS Basic Architecture](./_static/NOS_Basic.drawio.png)
 
-Above is a very basic architecture description of NOS. The image depicts several docker containers running within a virtualized system on a host machine.  Within the virtualized environment exists a ground station, connections to flight software, and many componenets and simulators, as well as a dynamics engine, all kept in-sync through NOS Engine busses, and time control within NOS Server. 
-
----
-## GSW (YAMCS) Connectivity to FSW
-
-![NOS Basic Architecture](./_static/NOS_YAMCS_Connections.drawio.png)
-
-The image above shows basic connectivity between Ground Station and Flight software.  Full connectivity is not shown, but basic docker network connections, and specific ports are shown in order to aid users in knowing what communication happens on which ports and which networks, and how to connect different applications as neccary.
-
----
-## **Current Docker Architecture**
+The above image depicts installation Option A with a Linux Virtual Machine (VM) encasing everything.
+When running in the VM, docker containers are networked to provide the modules expected in an operational simulator.
 
 ![image](./_static/NOS3-Container-Deployment.png)
 
-Every process in NOS3 runs in its own container (as is best practice) and Docker networks are used to separate different groups of containers from one another.  On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, the latter being the default.  This is the ground software with which the satellite(s) can be commanded.  Each satellite consists of a group of containers placed in its own network, illustrated in the grey cloud and labeled 'nos3_sc_1'.  Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3_core'.
+Every process in NOS3 runs in its own container (as is best practice) and Docker networks are used to separate different groups of containers from one another.
+On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, the latter being the default.
+This is the ground software with which the satellite(s) can be commanded.
+Each satellite consists of a group of containers placed in its own network, illustrated in the grey cloud and labeled 'nos3_sc_1'.
+Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3-core'.
 
-The satellite containers can be replicated and kept each within their own network, although at present there is only capability to command one of them.  The containers kept within 'nos3_core', however, will be added to the various satellite networks but never duplicated, as that would either cause unnecessary trouble (in the case of nos_terminal and nos_udp_terminal) or defeat the purpose entirely (as would be the case with the time driver). 
+## Satellite(s)
 
----
-## **Satellite Architecture**
+Within each satellite, there are a variety of different "component" simulators to represent different parts of the vehicle.
+These component simulators communicate via the NOS Engine middleware which provides interfaces via the hardware library (HWLIB) that model the behaviors at the bits and bytes level.
+Flight software has no knowledge that it is not executing in space.
+The dynamics engine (42) maintains the state of the spacecraft attitude, orientation, and environment and interfaces with the simulation.
+These component simulators can have back doors for testing various fault scenarios that are accessible via the NOS Terminal or NOS UDP interfaces to enable scripting.
 
-Within each satellite, there are a variety of different simulators to represent different parts of the vehicle.  Most of these containers are kept entirely within the spacecraft network, and are therefore unable to communicate to ground software; the radio, however, is on both the satellite network and the ground software network so as to allow it to communicate between the spacecraft and the simulated ground station.  Other than the component simulators, there is an environment simulator (fortytwo), a container running the flight software (typically cFS, although efforts to add F' as an option are underway), and a NOS Engine Server container are also present on each spacecraft network. 
+Note that multiple spacecraft have been tested as a proof of concept.
+The configuration files can be edited to recreate this, but various limitations are present.
 
-Source code for the various simulators is accessible from Github, either cloned directly in to the Linux VM or cloned into the host machine and shared in via shared folders.  Build tools can be used on the virtual machine to build and install simulators such as a GPS simulator, a generic reaction wheel simulator, a camera simulator, and more.  In addition, two special software tools are built and installed as part of the simulators.  The first is a NOS time driver that provides time ticks to drive time for the various simulators, 42, and the flight software.  The second is a simple terminal program which can be used by the operator to command and control other simulators using the NOS engine command bus on which all of the simulators can be nodes.
+## Middleware - NOS Engine
 
-The cFS source code is also present on the virtual machine through the shared folders.  Build tools can also be used to build and install the generic flight software.  This flight software includes hardware libraries that can interface as nodes on NOS Engine busses in place of the real hardware node and bus connections.
+NOS Engine is a message passing middleware designed specifically for use in simulation.
+With a modular design, the library provides a powerful core layer that can be extended to simulate specific communication protocols, including I2C, SPI, and CAN Bus.
+With advanced features like time synchronization, data manipulation, and fault injection, NOS Engine provides a fast, flexible, and reusable system for connecting and testing the pieces of a simulation.
 
-As shown in the figure, TCP/IP or files can be used to provide environmental data from 42 to the various simulators. In addition, TCP/IP can be used to interface COSMOS with laboratory versions of command and telemetry applications in cFS. Finally, the NOS Engine libraries are used to provide the software busses and nodes for communication between the flight software and the simulated hardware and for distribution of simulation time.
+NOS Engine is built on a conceptual model based on two fundamental types of objects: nodes and buses.
+A node is any type of endpoint in the system capable of sending and/or receiving messages.
+Any node in the system has to belong to a group, referred to as a bus.
+A bus can have an arbitrary number of nodes, and each node on the bus must have a name that is unique from other member nodes.
+The nodes of a bus operate in a sandbox; a node can communicate with another node on the same bus, but cannot talk to nodes that are members of a different bus.
 
-### **Multiple Satellite Architecture**
+Within NOS3, NOS Engine is used to provide software simulations of hardware buses.
+NOS Engine provides the infrastructure for each hardware simulator to be a node on the appropriate bus and for the flight software to interact with hardware simulator nodes on their bus.
+NOS Engine also provides plug-ins for various protocols such as I2C, SPI, CAN, and UART.
+These plug-ins allow each bus and the nodes on that bus to communicate using calls and concepts specific to that protocol.
 
-NOS3 is designed to allow for the simulation of multiple spacecraft simultaneously.  At present, however, it is not possible to connect to or command any satellites but the first.
+## Dynamics
+
+42 is a general-purpose, multi-body, multi-spacecraft simulation.
+For NOS3, it simulates the motion of the simulated spacecraft.
+The progression of time for 42 is driven through NOS Engine and 42 provides output ephemeris, attitude, sun vector, magnetic field vector, and other environmental data to simulators that are part of NOS3.
+42 is open source C code. For NOS3 it is installed on the virtual machine in the directory /home/jstar/.nos3/42.
+
+## Directory Layout
+
+The top level of NOS3 contains the following:
+* `cfg` the configuration files for the mission and spacecraft
+* `components` the repositories for the hardware component apps
+* `docs` various documentation related to the project
+* `fsw` the repositories for flight software
+* `gsw` the repositories for ground station files and other ground tools
+* `scripts` various convenience scripts
+* `sims` the common simulators
+
+Once you have forked or mirrored the top level NOS3 repository for your own use, it it recommended that only specific files be edited.
+The directory structure has been setup to enable this and quick review of merge requests as they are ready:
+* `cfg`, define your mission parameters
+* `components`, develop custom components
+* `gsw`, develop custom procedures and command/telemetry databases
+* `scripts`, modify Dockerfile and various scripts to ensure the required toolchains for flight are included

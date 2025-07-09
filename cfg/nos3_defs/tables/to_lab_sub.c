@@ -63,7 +63,7 @@
 #include "sample_msgids.h"
 #include "generic_adcs_msgids.h"
 #include "generic_star_tracker_msgids.h"
-
+#include "mgr_msgids.h"
 #include "syn_msgids.h"
 
 /*
@@ -129,8 +129,10 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_STAR_TRACKER_HK_TLM_MID),{0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_STAR_TRACKER_DEVICE_TLM_MID),{0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_THRUSTER_HK_TLM_MID),  {0,0},  32},
-
-        {CFE_SB_MSGID_WRAP_VALUE(SYN_HK_TLM_MID),           {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(MGR_HK_TLM_MID),               {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SYN_HK_TLM_MID),               {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SCH_HK_TLM_MID),               {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SCH_DIAG_TLM_MID),             {0,0},  32},
 
     }
 };

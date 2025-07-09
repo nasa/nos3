@@ -1,23 +1,22 @@
-name: "💡 Feature Request"
-description: Create a new ticket for a new feature request
-title: "💡 [REQUEST] - <title>"
+name: "Feature Request"
+description: Create a new ticket for a new request
 labels: [
-  "question"
+  "NewIssue"
 ]
 body:
-  - type: textarea
-    id: summary
+  - type: markdown
     attributes:
-      label: "Summary"
-      description: Provide a brief explanation of the feature
-      placeholder: Describe in a few lines your feature request
+      value: "Please add a short descriptive title to feature request."
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      value: |
+        Provide details related to the new feature.
+                
+      render: bash  
     validations:
       required: true
-  - type: textarea
-    id: basic_example
+  - type: markdown
     attributes:
-      label: "Use Case"
-      description: Indicate here some basic examples of your feature.
-      placeholder: A few specific words about your feature request.
-    validations:
-      required: true
+      value: "Optional: Please apply any labels or types as necessary - leave blank for unknown."

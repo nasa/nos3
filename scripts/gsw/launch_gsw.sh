@@ -48,7 +48,7 @@ $DNETWORK create \
     --subnet=192.168.41.0/24 \
     --gateway=192.168.41.1 \
     --attachable \
-    nos3_core
+    nos3-core
 
 
 echo "Launch GSW..."
@@ -63,8 +63,8 @@ export SATNUM=1
 #
 for (( i=1; i<=$SATNUM; i++ ))
 do
-    export SC_NUM="sc_"$i
-    export SC_NETNAME="nos3_"$SC_NUM
+    export SC_NUM="sc0"$i
+    export SC_NETNAME="nos3-"$SC_NUM
     export SC_CFG_FILE="-f nos3-simulator.xml" #"-f sc_"$i"_nos3_simulator.xml"
 
     $DNETWORK create \
@@ -78,7 +78,7 @@ do
     #echo "Spacecraft configuration = " $SC_CFG_FILE
     
     echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    $DNETWORK connect $SC_NETNAME cosmos_openc3-operator_1 --alias cosmos
+    $DNETWORK connect $SC_NETNAME cosmos-openc3-operator-1 --alias cosmos
     echo ""
 
     echo ""

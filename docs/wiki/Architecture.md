@@ -13,7 +13,7 @@ Every process in NOS3 runs in its own container (as is best practice) and Docker
 On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, the latter being the default.
 This is the ground software with which the satellite(s) can be commanded.
 Each satellite consists of a group of containers placed in its own network, illustrated in the grey cloud and labeled 'nos3_sc_1'.
-Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3_core'.
+Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3-core'.
 
 ## Satellite(s)
 
