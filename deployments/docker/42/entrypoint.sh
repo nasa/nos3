@@ -18,10 +18,13 @@ DIR=/opt/nasa-itc
 
 xterm&
 
+export GIT_COMMIT=858ea2ef6df1cb25537df3594463f55e92359cc0
+
 cd ${DIR} && git clone https://github.com/nasa-itc/42.git || true && \
 cd ${DIR}/42 && \
   git fetch && \
-  git checkout nos3-main && \
+  git checkout ${GIT_COMMIT} && \
+  git submodule update && \
   make clean && \
   make -j7
 
