@@ -79,11 +79,14 @@ build-yamcs: ## build-yamcs
 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
 		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
 
-up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	$(MAKE) down || true
+build: ## build essentials
 	$(MAKE) build-fsw-uart
 	$(MAKE) build-fortytwo
 	$(MAKE) build-yamcs
+
+up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+	$(MAKE) down || true
+	$(MAKE) build
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} up -d --remove-orphans 
 
 up-attached: down
