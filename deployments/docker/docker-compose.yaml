@@ -9,7 +9,8 @@ services:
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
     volumes:
-      - ${PWD}/../nos3/cfg/sims/InOut:/opt/nasa-itc/42/InOut
+      - ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/InOut/
+      - ${PWD}/../nos3/cfg/InOut/Inp_IPC.txt:/opt/nasa-itc/42/InOut/Inp_IPC.txt      
       - ${PWD}/42/entrypoint.sh:/entrypoint.sh
       - ${PWD}/42/startapp.sh:/startapp.sh  
     ports:
@@ -29,7 +30,7 @@ services:
       nos3-fortytwo:
         condition: service_started
     container_name: sc_1_nos_fsw
-    hostname: nos_fsw
+    hostname: nos-fsw
     working_dir: /home/nos3/builds/nos3/
     volumes:
       - ${PWD}/fsw/entrypoint.sh:/entrypoint.sh
@@ -45,7 +46,7 @@ services:
     networks:
       nos3_sc_1:
         aliases: 
-          - nos-fsw
+          - nos_fsw
       nos3_core:
 
   nos3-nos_engine_server:
@@ -54,8 +55,8 @@ services:
     depends_on:
       nos3-fortytwo:
         condition: service_started
-    container_name: sc_1_nos_engine_server
-    hostname: nos_engine_server
+    container_name: sc01-nos-engine-server
+    hostname: nos-engine-server
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
@@ -66,8 +67,8 @@ services:
     networks:
       nos3_sc_1:
         aliases: 
-          - nos-engine-server
-          - sc_1_nos_engine_server
+          - nos_engine_server
+          - sc01-nos-engine-server
       nos3_core:
 
   nos3-gps:
@@ -99,7 +100,7 @@ services:
       nos3-nos_engine_server:
         condition: service_started
     container_name: nos_time_driver
-    hostname: nos_time_driver
+    hostname: sc1-time-driver
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml time"
     volumes:
@@ -112,7 +113,7 @@ services:
     networks:
       nos3_sc_1:
         aliases: 
-          - nos-time-driver
+          - nos_time_driver
       nos3_core:
 
   nos3-gsw:

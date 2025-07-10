@@ -18,7 +18,8 @@ DIR=/opt/nasa-itc
 
 xterm&
 
-export GIT_COMMIT=858ea2ef6df1cb25537df3594463f55e92359cc0
+#export GIT_COMMIT=858ea2ef6df1cb25537df3594463f55e92359cc0
+export GIT_COMMIT=nos3-main
 
 cd ${DIR} && git clone https://github.com/nasa-itc/42.git || true && \
 cd ${DIR}/42 && \
