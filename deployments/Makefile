@@ -63,7 +63,11 @@ down: ## Bring down nos3
 # 		--build-arg FSW_SOFTWARE=cfs \
 # 		-t ghcr.io/haisamido/nos3-base-fsw:dev  .
 
-build-fortytwo: ## build-fortytwo
+env_create:
+	cd ${DOCKER_DIR} && \
+		./env.sh > .env
+
+build-fortytwo: env_create ## build-fortytwo
 	docker rmi -f ghcr.io/haisamido/nos3-base-fortytwo:dev || true
 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
 	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build \
@@ -74,7 +78,7 @@ build-fortytwo: ## build-fortytwo
 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
 		-t ghcr.io/haisamido/nos3-base-fortytwo:dev  .
 
-build-gsw-yamcs: ## build-yamcs
+build-gsw-yamcs: env_create ## build-yamcs
 	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
 	cd ${DOCKER_DIR}/yamcs && ${CONTAINER_BIN} build \

@@ -3,6 +3,9 @@
 services:
   nos3-fortytwo:
     image: ghcr.io/haisamido/nos3-base-fortytwo:dev
+    build:
+      context: ./42
+      dockerfile: Dockerfile
     attach: true
     container_name: sc01-fortytwo
     hostname: fortytwo
@@ -15,15 +18,59 @@ services:
     ports:
       - "30090:80"
     environment:
-      DISPLAY: ":1"
-      GIT_URL: "https://github.com/nasa-itc/42.git"
-      GIT_COMMIT: "nos3-main"
-      GIT_FOLDER: "42"
-      STARTUP_FOLDER: "NOS3InOut"
-      RECOMPILE: false
-      HEALTHCHECK_PORT: 60000
+      DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+      HTTP_PROXY: ${HTTP_PROXY}
+      NO_PROXY: ${NO_PROXY}
+      DISPLAY: ${FORTYTWO_DISPLAY:-:1}
+      GIT_URL: ${FORTYTWO_GIT_URL}
+      GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
+      GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
+      STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER:-NOS3InOut}
+      RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
+      BASE_DIR: ${BASE_DIR:-/opt/nasa-itc}
     networks:
       nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-gsw:
+    image: ghcr.io/haisamido/nos3-base-yamcs:dev
+    build:
+      context: ./yamcs
+      dockerfile: Dockerfile
+    attach: true
+    container_name: cosmos-openc3-operator-1
+    hostname: cosmos
+    working_dir: "/home/nos3/.nos3/yamcs"
+    command: "/entrypoint.sh"
+    volumes:
+      - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
+    ports:
+      - "8090:8090"
+      - "5012:5012"
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+      HTTP_PROXY: ${HTTP_PROXY}
+      NO_PROXY: ${NO_PROXY}
+      MAVEN_REPO_LOCAL: ${MAVEN_REPO_LOCAL}
+      MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+      COMPONENT_DIR: ${COMPONENT_DIR}
+      YAMCS_DATA_DIR: ${YAMCS_DATA_DIR}
+      GSW_SOFTWARE: ${GSW_SOFTWARE}
+      GIT_URL: ${YAMCS_GIT_URL}
+      GIT_COMMIT: ${YAMCS_GIT_COMMIT}
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - active-gs
+          - yamcs
       nos3-core-00:
 
   nos3-onair:
@@ -515,49 +562,6 @@ services:
       nos3-sc01-00:
         aliases:
           - sc01-nos-time-driver
-      nos3-core-00:
-
-  nos3-gsw:
-    image: ghcr.io/haisamido/nos3-base-yamcs:dev
-    attach: true
-    # depends_on:
-    #   nos3-gps-sim:
-    #     condition: service_started
-    #   nos3-fsw:
-    #     condition: service_started
-    #   nos3-truth42sim:
-    #     condition: service_started
-    #   nos3-cryptolib:
-    #     condition: service_started
-    container_name: cosmos-openc3-operator-1
-    hostname: cosmos
-    working_dir: "/home/nos3/.nos3/yamcs"
-    command: "/entrypoint.sh"
-    volumes:
-      - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
-      - ${PWD}/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
-    ports:
-      - "8090:8090"
-      - "5012:5012"
-    tty: true
-    stdin_open: true
-    privileged: true
-    environment:
-      COMPONENT_DIR: "/home/nos3/builds/nos3/components"
-      YAMCS_DATA_DIR: "/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data"
-      # YAMCS_ETC_DIR:
-      # YAMCS_CACHE_DIR:
-      MAVEN_REPO_LOCAL: "/home/nos3/.nos3/.m2/repository"
-      MAVEN_HTTPS_PROXY: "--settings ./settings.xml"
-      HTTPS_PROXY: ""
-      HTTP_PROXY: ""
-      DEPLOYMENT_ENVIRO: ""
-      HEALTHCHECK_PORT: 60000
-    networks:
-      nos3-sc01-00:
-        aliases:
-          - active-gs
-          - yamcs
       nos3-core-00:
 
 networks:
