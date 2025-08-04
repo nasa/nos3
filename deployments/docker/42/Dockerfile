@@ -6,7 +6,7 @@ ARG IMAGE_TAG=dev
 ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 
 ARG GIT_URL=https://github.com/nasa-itc/42.git
-ARG GIT_BRANCH=nos3-main
+ARG GIT_COMMIT=nos3-main
 
 ARG VNC_PASSWORD=0123456789
 
@@ -97,10 +97,10 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout ~/novnc.pem -out ~/novnc.p
 FROM x-vnc AS fortytwo
 ################################################################################
 ARG GIT_URL
-ARG GIT_BRANCH
+ARG GIT_COMMIT
 
 ENV GIT_URL=${GIT_URL}
-ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_COMMIT=${GIT_COMMIT}
 
 # VNC Config
 RUN mkdir -p ~/.vnc/
@@ -127,7 +127,7 @@ RUN  curl -fsSL https://install.julialang.org | sh -s -- --yes
 
 RUN mkdir -p /opt/nasa-itc && \
   cd /opt/nasa-itc && \
-  git clone --recurse-submodules -b ${GIT_BRANCH} -j4 ${GIT_URL} && \
+  git clone --recurse-submodules -b ${GIT_COMMIT} -j4 ${GIT_URL} && \
   cd ./42 &&\
   make clean && \
   make -j7

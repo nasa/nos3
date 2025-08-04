@@ -6,6 +6,12 @@ services:
     build:
       context: ./42
       dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
     attach: true
     container_name: sc01-fortytwo
     hostname: fortytwo
@@ -29,7 +35,7 @@ services:
       GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
       STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER:-NOS3InOut}
       RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
-      BASE_DIR: ${BASE_DIR:-/opt/nasa-itc}
+      BASE_DIR: ${FORTYTWO_BASE_DIR}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -39,6 +45,15 @@ services:
     build:
       context: ./yamcs
       dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        GSW_SOFTWARE: ${GSW_SOFTWARE}
+        GIT_URL: ${YAMCS_GIT_URL}
+        GIT_COMMIT: ${YAMCS_GIT_COMMIT}
     attach: true
     container_name: cosmos-openc3-operator-1
     hostname: cosmos
@@ -48,7 +63,7 @@ services:
       - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
       - ${PWD}/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
     ports:
-      - "8090:8090"
+      - "127.0.0.1:8090:8090"
       - "5012:5012"
     tty: true
     stdin_open: true
@@ -87,7 +102,7 @@ services:
     environment:
       BASE_DIR: /home/nos3/builds/nos3
       FSW_DIR: /home/nos3/builds/nos3/fsw/build/exe/cpu1
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       SCRIPT_DIR:
     networks:
       nos3-sc01-00:
@@ -114,7 +129,7 @@ services:
     environment:
       BASE_DIR: /home/nos3/builds/nos3
       FSW_DIR: /home/nos3/builds/nos3/fsw/build/exe/cpu1
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -133,7 +148,7 @@ services:
       - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
     tty: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -158,7 +173,7 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -176,7 +191,7 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -194,7 +209,7 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -211,7 +226,7 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -230,7 +245,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -252,7 +267,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -273,7 +288,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -294,7 +309,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -315,7 +330,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -336,7 +351,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -357,7 +372,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -378,7 +393,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -399,7 +414,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -420,7 +435,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -437,7 +452,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:
@@ -458,7 +473,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -477,7 +492,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -496,7 +511,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -516,7 +531,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -536,7 +551,7 @@ services:
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -557,7 +572,7 @@ services:
     stdin_open: true
     privileged: true
     environment:
-      HEALTHCHECK_PORT: 60000
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
         aliases:

@@ -33,7 +33,7 @@ VOLUME_MAVEN_SETTINGS_PATH=""
 
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
 $(shell echo "<settings><proxies></proxies></settings>" > ${DOCKER_DIR}/yamcs/settings.xml)
-export MAVEN_HTTPS_PROXY="--settings ./settings.xml"
+export MAVEN_HTTPS_PROXY=-s./settings.xml
 
 #---
 ifndef DEPLOYMENT_ENVIRO
@@ -49,56 +49,29 @@ endif
 endif
 #---
 
+env_create: ## create ./docker/.env file
+	cd ${DOCKER_DIR} && ./env.sh > ${ENVIRO_FILE}
+
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
-# build-fsw-cfs: ## build fsw
-# 	docker rmi -f ghcr.io/haisamido/nos3-base-fsw:dev || true
-# 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
-# 	cd ${DOCKER_DIR}/fsw && ${CONTAINER_BIN} build \
-# 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
-# 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-# 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
-# 		--build-arg NO_PROXY=${NO_PROXY} \
-# 		--build-arg FSW_SOFTWARE=cfs \
-# 		-t ghcr.io/haisamido/nos3-base-fsw:dev  .
-
-env_create:
-	cd ${DOCKER_DIR} && \
-		./env.sh > .env
-
-build-fortytwo: env_create ## build-fortytwo
+build-fortytwo: ## build-fortytwo
 	docker rmi -f ghcr.io/haisamido/nos3-base-fortytwo:dev || true
-	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
-	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build \
-		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
-		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-		--build-arg HTTP_PROXY=${HTTP_PROXY} \
-		--build-arg NO_PROXY=${NO_PROXY} \
-		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
-		-t ghcr.io/haisamido/nos3-base-fortytwo:dev  .
+	cd ${DOCKER_DIR}/ ; \
+		./env.sh > ${ENVIRO_FILE}; source ${ENVIRO_FILE}; \
+	${CONTAINER_BIN} compose build --pull nos3-fortytwo
 
-build-gsw-yamcs: env_create ## build-yamcs
+build-yamcs: ## build-yamcs
 	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
-	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
-	cd ${DOCKER_DIR}/yamcs && ${CONTAINER_BIN} build \
-		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
-		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-		--build-arg HTTP_PROXY=${HTTP_PROXY} \
-		--build-arg NO_PROXY=${NO_PROXY} \
-		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
-		--build-arg GSW_SOFTWARE=yamcs \
-		--build-arg GIT_URL=https://github.com/nasa-itc/yamcs-nos3.git\
-		--build-arg GIT_BRANCH=dev \
-		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
+	cd ${DOCKER_DIR}/ ; \
+		./env.sh > ${ENVIRO_FILE}; source ${ENVIRO_FILE}; \
+	${CONTAINER_BIN} compose build --pull nos3-gsw
 
 build: ## build essentials
 	$(MAKE) build-fortytwo
-	$(MAKE) build-gsw-yamcs
+	$(MAKE) build-yamcs
 
-up: ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	$(MAKE) down || true
-	$(MAKE) build
+up: build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} up -d --remove-orphans 
 
 up-attached: down
@@ -106,6 +79,31 @@ up-attached: down
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh
+
+# build-fortytwo-orig-delete-me: env_create ## build-fortytwo
+# 	docker rmi -f ghcr.io/haisamido/nos3-base-fortytwo:dev || true
+# 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
+# 	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build \
+# 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+# 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+# 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
+# 		--build-arg NO_PROXY=${NO_PROXY} \
+# 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
+# 		-t ghcr.io/haisamido/nos3-base-fortytwo:dev  .
+
+# build-yamcs-orig-delete-me: env_create ## build-yamcs
+# 	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
+# 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
+# 	cd ${DOCKER_DIR}/yamcs && ${CONTAINER_BIN} build \
+# 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
+# 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
+# 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
+# 		--build-arg NO_PROXY=${NO_PROXY} \
+# 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
+# 		--build-arg GSW_SOFTWARE=yamcs \
+# 		--build-arg GIT_URL=https://github.com/nasa-itc/yamcs-nos3.git\
+# 		--build-arg GIT_BRANCH=dev \
+# 		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
 
 #---
 RESET  = \033[0m
