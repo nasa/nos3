@@ -9,12 +9,9 @@ services:
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
     volumes:
-#      - ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/InOut/
-      #- ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
-      - ${HOME}/development/github.com/haisamido/nos3/cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
-#      - ${PWD}/../nos3/cfg/InOut/Inp_IPC.txt:/opt/nasa-itc/42/InOut/Inp_IPC.txt      
+      - ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
       - ${PWD}/42/entrypoint.sh:/entrypoint.sh
-#      - ${PWD}/42/startapp.sh:/startapp.sh  
+      - ${PWD}/42/startapp.sh:/startapp.sh  
     ports:
       - "30090:80"
     environment:
