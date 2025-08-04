@@ -54,7 +54,15 @@ services:
         GSW_SOFTWARE: ${GSW_SOFTWARE}
         GIT_URL: ${YAMCS_GIT_URL}
         GIT_COMMIT: ${YAMCS_GIT_COMMIT}
+    
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8090/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
     attach: true
+
     container_name: cosmos-openc3-operator-1
     hostname: cosmos
     working_dir: "/home/nos3/.nos3/yamcs"
