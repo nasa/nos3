@@ -26,6 +26,7 @@ FORTYTWO_GIT_FOLDER=42
 FORTYTWO_STARTUP_FOLDER=NOS3InOut
 FORTYTWO_RECOMPILE=false
 FORTYTWO_BASE_DIR=/opt/nasa-itc
+FORTYTWO_VNC_PASSWORD=$(echo -n "foobar" | shasum -a 256 | cut -d" " -f1)
 
 # gsw specific configurations
 GSW_SOFTWARE=yamcs

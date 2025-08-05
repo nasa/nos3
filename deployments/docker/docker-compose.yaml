@@ -3,6 +3,8 @@
 services:
   nos3-fortytwo:
     image: ghcr.io/haisamido/nos3-base-fortytwo:dev
+    env_file:
+      - .env
     build:
       context: ./42
       dockerfile: Dockerfile
@@ -12,6 +14,9 @@ services:
         HTTP_PROXY: ${HTTP_PROXY}
         NO_PROXY: ${NO_PROXY}
         MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        GIT_URL: ${FORTYTWO_GIT_URL}
+        GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
+        VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
     attach: true
     container_name: sc01-fortytwo
     hostname: fortytwo
@@ -33,7 +38,7 @@ services:
       GIT_URL: ${FORTYTWO_GIT_URL}
       GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
       GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
-      STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER:-NOS3InOut}
+      STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER}
       RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
       BASE_DIR: ${FORTYTWO_BASE_DIR}
     networks:
@@ -42,27 +47,17 @@ services:
 
   nos3-gsw:
     image: ghcr.io/haisamido/nos3-base-yamcs:dev
+    env_file:
+      - .env
     build:
       context: ./yamcs
       dockerfile: Dockerfile
-      args:
-        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
-        HTTPS_PROXY: ${HTTPS_PROXY}
-        HTTP_PROXY: ${HTTP_PROXY}
-        NO_PROXY: ${NO_PROXY}
-        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
-        GSW_SOFTWARE: ${GSW_SOFTWARE}
-        GIT_URL: ${YAMCS_GIT_URL}
-        GIT_COMMIT: ${YAMCS_GIT_COMMIT}
-    
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8090/api"]
       interval: 10s
       timeout: 5s
       retries: 5
-      
     attach: true
-
     container_name: cosmos-openc3-operator-1
     hostname: cosmos
     working_dir: "/home/nos3/.nos3/yamcs"
@@ -98,6 +93,8 @@ services:
 
   nos3-onair:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     container_name: sc01-onair
     working_dir: /home/nos3/builds/nos3/fsw/build/exe/cpu1
@@ -118,6 +115,8 @@ services:
 
   nos3-fsw:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -144,6 +143,8 @@ services:
 
   nos3-nos-engine-server:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     # depends_on:
     #   nos3-fortytwo:
@@ -165,6 +166,8 @@ services:
 
   nos3-truth42sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -188,6 +191,8 @@ services:
 
   nos3-nos-terminal:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     container_name: nos-terminal
     hostname: nos-terminal
@@ -206,6 +211,8 @@ services:
 
   nos3-nos-udp-terminal:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     container_name: nos-udp-terminal
     hostname: nos-udp-terminal
@@ -224,6 +231,8 @@ services:
 
   nos3-nos-sim-bridge:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     container_name: nos-sim-bridge
     working_dir: /home/nos3/builds/nos3/sims/build/bin
@@ -241,6 +250,8 @@ services:
 
   nos3-camsim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -263,6 +274,8 @@ services:
 
   nos3-css-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -284,6 +297,8 @@ services:
 
   nos3-eps-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -305,6 +320,8 @@ services:
 
   nos3-fss-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -326,6 +343,8 @@ services:
 
   nos3-gps-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -347,6 +366,8 @@ services:
 
   nos3-imu-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -368,6 +389,8 @@ services:
 
   nos3-mag-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -389,6 +412,8 @@ services:
 
   nos3-rw-sim0:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -410,6 +435,8 @@ services:
 
   nos3-rw-sim1:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -431,6 +458,8 @@ services:
 
   nos3-rw-sim2:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -452,6 +481,8 @@ services:
 
   nos3-radio-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     container_name: sc01-radio-sim
     hostname: radio-sim
@@ -469,6 +500,8 @@ services:
 
   nos3-sample-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -488,6 +521,8 @@ services:
 
   nos3-startrk-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -507,6 +542,8 @@ services:
 
   nos3-thruster-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -526,6 +563,8 @@ services:
 
   nos3-torquer-sim:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-fortytwo:
@@ -546,6 +585,8 @@ services:
 
   nos3-cryptolib:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     depends_on:
       nos3-radio-sim:
@@ -566,6 +607,8 @@ services:
 
   nos3-time:
     image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
     attach: true
     # depends_on:
     #   nos3-nos_engine_server:

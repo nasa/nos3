@@ -50,22 +50,18 @@ endif
 #---
 
 env_create: ## create ./docker/.env file
-	cd ${DOCKER_DIR} && ./env.sh > ${ENVIRO_FILE}
+	${DOCKER_DIR}/env.sh > ${DOCKER_DIR}/.env
 
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
-build-fortytwo: ## build-fortytwo
-	docker rmi -f ghcr.io/haisamido/nos3-base-fortytwo:dev || true
+build-fortytwo: env_create ## build-fortytwo
 	cd ${DOCKER_DIR}/ ; \
-		./env.sh > ${ENVIRO_FILE}; source ${ENVIRO_FILE}; \
-	${CONTAINER_BIN} compose build --pull nos3-fortytwo
+		${CONTAINER_BIN} compose build --pull nos3-fortytwo
 
-build-yamcs: ## build-yamcs
-	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
+build-yamcs: env_create ## build-yamcs
 	cd ${DOCKER_DIR}/ ; \
-		./env.sh > ${ENVIRO_FILE}; source ${ENVIRO_FILE}; \
-	${CONTAINER_BIN} compose build --pull nos3-gsw
+		${CONTAINER_BIN} compose build --pull nos3-gsw
 
 build: ## build essentials
 	$(MAKE) build-fortytwo
