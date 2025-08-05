@@ -68,10 +68,10 @@ build: ## build essentials
 	$(MAKE) build-yamcs
 
 up: build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} up -d --remove-orphans 
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env up -d --remove-orphans 
 
 up-attached: down
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ${ENVIRO_FILE} --remove-orphans
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env --remove-orphans
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh

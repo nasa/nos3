@@ -16,6 +16,10 @@ services:
         MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
         GIT_URL: ${FORTYTWO_GIT_URL}
         GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
+        GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
+        STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER}
+        RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
+        BASE_DIR: ${FORTYTWO_BASE_DIR}
         VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
     attach: true
     container_name: sc01-fortytwo
@@ -30,17 +34,17 @@ services:
       - "30090:80"
     environment:
       DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
-      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       HTTPS_PROXY: ${HTTPS_PROXY}
       HTTP_PROXY: ${HTTP_PROXY}
       NO_PROXY: ${NO_PROXY}
-      DISPLAY: ${FORTYTWO_DISPLAY:-:1}
+      MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
       GIT_URL: ${FORTYTWO_GIT_URL}
       GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
       GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
       STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER}
       RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
       BASE_DIR: ${FORTYTWO_BASE_DIR}
+      VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -52,6 +56,19 @@ services:
     build:
       context: ./yamcs
       dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_REPO_LOCAL: ${MAVEN_REPO_LOCAL}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        COMPONENT_DIR: ${COMPONENT_DIR}
+        YAMCS_DATA_DIR: ${YAMCS_DATA_DIR}
+        GSW_SOFTWARE: ${GSW_SOFTWARE}
+        GIT_URL: ${YAMCS_GIT_URL}
+        GIT_COMMIT: ${YAMCS_GIT_COMMIT}
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8090/api"]
       interval: 10s
