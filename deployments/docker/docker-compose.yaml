@@ -21,6 +21,11 @@ services:
         RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
         BASE_DIR: ${FORTYTWO_BASE_DIR}
         VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pgrep 42"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     attach: true
     container_name: sc01-fortytwo
     hostname: fortytwo
@@ -31,7 +36,7 @@ services:
       - ${PWD}/42/entrypoint.sh:/entrypoint.sh
       - ${PWD}/42/startapp.sh:/startapp.sh  
     ports:
-      - "30090:80"
+      - "127.0.0.1:30090:80"
     environment:
       DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
       HTTPS_PROXY: ${HTTPS_PROXY}
@@ -134,10 +139,15 @@ services:
     image: ghcr.io/haisamido/nos3-base:dev
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pgrep core-cpu1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-nos-fsw
     hostname: nos-fsw
     working_dir: /home/nos3/builds/nos3/
@@ -163,15 +173,23 @@ services:
     env_file:
       - .env
     attach: true
-    # depends_on:
-    #   nos3-fortytwo:
-    #     condition: service_started
+    depends_on:
+      nos3-fortytwo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/nc -vz nos-engine-server 12000 && /usr/bin/nc -vz nos-engine-server 12001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     container_name: sc01-nos-engine-server
     hostname: nos-engine-server
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
+    ports:
+      - "127.0.0.1:12000:12000"
+      - "127.0.0.1:12001:12001"
     tty: true
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
@@ -318,6 +336,8 @@ services:
       - .env
     attach: true
     depends_on:
+      nos3-nos-engine-server:
+        condition: service_healthy
       nos3-fortytwo:
         condition: service_started
       nos3-fsw:
@@ -501,6 +521,11 @@ services:
     env_file:
       - .env
     attach: true
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     container_name: sc01-radio-sim
     hostname: radio-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
@@ -511,8 +536,8 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
       nos3-sc01-00:
-        aliases:
-          - radio-sim
+        # aliases:
+        #   - radio-sim
       nos3-core-00:
 
   nos3-sample-sim:
@@ -607,9 +632,9 @@ services:
     attach: true
     depends_on:
       nos3-radio-sim:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-cryptolib-gsw
     hostname: cryptolib
     working_dir: /home/nos3/builds/nos3/gsw/build
@@ -627,9 +652,9 @@ services:
     env_file:
       - .env
     attach: true
-    # depends_on:
-    #   nos3-nos_engine_server:
-    #     condition: service_started
+    depends_on:
+      nos3-nos-engine-server:
+        condition: service_healthy
     container_name: nos-time-driver
     hostname: nos-time-driver
     working_dir: /home/nos3/builds/nos3/sims/build/bin
