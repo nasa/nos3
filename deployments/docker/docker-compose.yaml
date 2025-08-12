@@ -113,6 +113,35 @@ services:
           - yamcs
       nos3-core-00:
 
+  nos3-sidecar:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: sc01-nos-sidecar
+    hostname: sc01-sidecar
+    working_dir: "/home/nos3/"
+    command: "/entrypoint.sh"
+    volumes:
+      - ${PWD}/sidecar/entrypoint.sh:/entrypoint.sh
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://active-gs:8090/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      nos3-gsw:
+        condition: service_healthy
+      nos3-truth42sim:
+        condition: service_started
+      nos3-radio-sim:
+        condition: service_started
+      # nos3-cryptolib:
+      #   condition: service_started
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
   nos3-onair:
     image: ghcr.io/haisamido/nos3-base:dev
     env_file:
@@ -148,6 +177,8 @@ services:
     depends_on:
       nos3-fortytwo:
         condition: service_healthy
+      nos3-nos-engine-server:
+        condition: service_healthy
     container_name: sc01-nos-fsw
     hostname: nos-fsw
     working_dir: /home/nos3/builds/nos3/
@@ -173,9 +204,9 @@ services:
     env_file:
       - .env
     attach: true
-    depends_on:
-      nos3-fortytwo:
-        condition: service_healthy
+    # depends_on:
+    #   nos3-fortytwo:
+    #     condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "/usr/bin/nc -vz nos-engine-server 12000 && /usr/bin/nc -vz nos-engine-server 12001"]
       interval: 10s
@@ -205,10 +236,12 @@ services:
       - .env
     attach: true
     depends_on:
-      nos3-fortytwo:
-        condition: service_started
-      nos3-gsw:
-        condition: service_started
+      # nos3-fortytwo:
+      #   condition: service_healthy
+      # nos3-gsw:
+      #   condition: service_healthy
+      nos3-nos-engine-server:
+        condition: service_healthy        
     container_name: sc01-truth42sim
     hostname: truth42sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
@@ -290,9 +323,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-cam-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml camsim"
@@ -314,9 +347,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-css-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-css-sim"
@@ -341,7 +374,7 @@ services:
       nos3-fortytwo:
         condition: service_started
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-eps-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-eps-sim"
@@ -362,9 +395,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-fss-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-fss-sim"
@@ -385,9 +418,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-gps-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml gps"
@@ -408,9 +441,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-imu-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-imu-sim"
@@ -431,9 +464,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-mag-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-mag-sim"
@@ -454,9 +487,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
-      # nos3-fsw:
-      #   condition: service_started
+        condition: service_healthy
+      nos3-fsw:
+        condition: service_healthy
     container_name: sc01-rw-sim0
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim0"
@@ -477,9 +510,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-rw-sim1
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim1"
@@ -500,9 +533,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-rw-sim2
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim2"
@@ -547,9 +580,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-sample-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml sample-sim"
@@ -568,9 +601,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-startrk-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-star-tracker-sim"
@@ -589,9 +622,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-thruster-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-thruster-sim"
@@ -610,9 +643,9 @@ services:
     attach: true
     depends_on:
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
-        condition: service_started
+        condition: service_healthy
     container_name: sc01-torquer-sim
     hostname: trq-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
@@ -630,6 +663,11 @@ services:
     env_file:
       - .env
     attach: true
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/nc -vz radio-sim 8010"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       nos3-radio-sim:
         condition: service_healthy
