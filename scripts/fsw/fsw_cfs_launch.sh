@@ -138,7 +138,8 @@ do
     echo ""
 
     echo $SC_NUM " - CryptoLib..."
-    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_gsw"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS --ipc=host -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_gsw"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib CMD" -- $DFLAGS --ipc=host -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_cmd"  --network=$SC_NETNAME --network-alias=cryptolib-cmd -w $BASE_DIR/gsw/build $DBOX ./support/standalone_cmd
     echo ""
 done
 
