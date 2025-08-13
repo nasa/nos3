@@ -124,6 +124,7 @@ services:
     command: "/entrypoint.sh"
     volumes:
       - ${PWD}/sidecar/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/sidecar/commanding.py:/commanding.py
     healthcheck:
       test: ["CMD-SHELL", "curl http://active-gs:8090/api"]
       interval: 10s
