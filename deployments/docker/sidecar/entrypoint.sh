@@ -8,4 +8,6 @@ curl -X POST http://active-gs:8090/api/links/nos3/truth42-in:disable
 sleep 1
 curl -X POST http://active-gs:8090/api/links/nos3/truth42-in:enable
 
+pip install --upgrade yamcs-client && python3 /commanding.py
+
 tail -f /dev/null

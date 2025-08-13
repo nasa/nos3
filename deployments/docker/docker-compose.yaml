@@ -136,7 +136,7 @@ services:
       nos3-truth42sim:
         condition: service_started
       nos3-radio-sim:
-        condition: service_started
+        condition: service_healthy
       # nos3-cryptolib:
       #   condition: service_started
     networks:
@@ -556,16 +556,17 @@ services:
       - .env
     attach: true
     healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator"]
+      test: ["CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/nc -vz radio-sim 8010"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 7
     container_name: sc01-radio-sim
     hostname: radio-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
-    command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-radio-sim"
+    command: "/entrypoint.sh"
     volumes:
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/radio-sim/entrypoint.sh:/entrypoint.sh
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -665,7 +666,7 @@ services:
       - .env
     attach: true
     healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/nc -vz radio-sim 8010"]
+      test: ["CMD-SHELL", "/usr/bin/pgrep -f ./support/standalone"]
       interval: 10s
       timeout: 5s
       retries: 5
