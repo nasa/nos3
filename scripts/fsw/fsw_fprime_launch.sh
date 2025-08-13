@@ -32,6 +32,9 @@ mkdir $FSW_DIR/data/cam 2> /dev/null
 mkdir $FSW_DIR/data/evs 2> /dev/null
 mkdir $FSW_DIR/data/hk 2> /dev/null
 mkdir $FSW_DIR/data/inst 2> /dev/null
+# touch $FSW_DIR/data/dummy.txt
+# echo "1234567890" > $FSW_DIR/data/dummy.txt
+# truncate -s 1M $FSW_DIR/data/dummy.txt
 # GSW Side
 mkdir /tmp/nos3 2> /dev/null
 mkdir /tmp/nos3/data 2> /dev/null
@@ -51,9 +54,10 @@ $DNETWORK create \
     nos3-core
 echo ""
 
-#echo "Launch GSW..."
-$BASE_DIR/cfg/build/gsw_launch.sh
+echo "Launch GSW..."
 echo ""
+source $BASE_DIR/cfg/build/gsw_launch.sh
+
 
 echo "Create NOS interfaces..."
 export GND_CFG_FILE="-f nos3-simulator.xml"
@@ -83,9 +87,9 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    # echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    # $DNETWORK connect $SC_NETNAME cosmos-openc3-operator-1 --alias cosmos
-    # echo ""
+    echo $SC_NUM " - Connect COSMOS to spacecraft network..."
+    $DNETWORK connect $SC_NETNAME cosmos-openc3-operator-1 --alias cosmos
+    echo ""
 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
@@ -94,16 +98,11 @@ do
     gnome-terminal --tab --title=$SC_NUM" - 42" -- $DFLAGS -e DISPLAY=$DISPLAY -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /tmp/.X11-unix:/tmp/.X11-unix:ro --name $SC_NUM"-fortytwo" -h fortytwo --network=$SC_NETNAME -w $USER_NOS3_DIR/42 -t $DBOX $USER_NOS3_DIR/42/42 NOS3InOut
     echo ""
 
+    # Debugging
+    # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
     echo $SC_NUM " - Flight Software..."
     cd $FSW_DIR
     gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-fprime" --network=$SC_NETNAME -h nos-fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
-    echo ""
-
-    # Debugging
-    # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
-
-    echo $SC_NUM " - CryptoLib..."
-    gnome-terminal --tab --title=$SC_NUM" - CryptoLib" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
 
     echo $SC_NUM " - Simulators..."
@@ -113,6 +112,7 @@ do
     
     $DNETWORK connect $SC_NETNAME nos-terminal
     $DNETWORK connect $SC_NETNAME nos-udp-terminal
+    $DNETWORK connect $SC_NETNAME nos-sim-bridge
 
     # Component simulators
     gnome-terminal --tab --title=$SC_NUM" - CAM Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-cam-sim"      --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE camsim
@@ -130,6 +130,10 @@ do
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-startrk-sim"  --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-star-tracker-sim
     gnome-terminal --tab --title=$SC_NUM" - Thruster Sim" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-thruster-sim" --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-thruster-sim
     gnome-terminal --tab --title=$SC_NUM" - Torquer Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-torquer-sim"  -h trq-sim --network=$SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-torquer-sim
+    echo ""
+
+    echo $SC_NUM " - CryptoLib..."
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_gsw"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
 done
 

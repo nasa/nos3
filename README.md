@@ -11,7 +11,7 @@ NOS3 provides a software development environment, a multi-target build system, a
 
 Please report issues and request features on the GitHub tracking system - [NOS3 Issues](https://www.github.com/nasa/nos3/issues).
 
-If you would like to contribute to the repository, please complete this [NASA Form][def] and submit it to gsfc-softwarerequest@mail.nasa.gov with John.P.Lucas@nasa.gov CC'ed.
+If you would like to contribute to the repository, please complete this [NASA Form][def] and submit it to gsfc-softwarerequest@mail.nasa.gov with Justin.R.Morris@nasa.gov CC'ed.
 Next, please create an issue describing the work to be performed noting that you intend to work it, create a related branch, and submit a pull request when ready. When complete, we will review and work to get it integrated.
 
 If this project interests you or if you have any questions, please feel free to open an issue or discussion on the GitHub, contact any developer directly, or email `support@nos3.org`.

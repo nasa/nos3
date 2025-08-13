@@ -30,5 +30,5 @@ Vagrant.configure("2") do |config|
     end
 
     ### Extend the partition to use all available space
-    config.vm.provision "shell", inline: "growpart /dev/sda 3 && lvextend -l +100%FREE -r /dev/mapper/ubuntu--vg-ubuntu--lv && exit 0"
+    config.vm.provision "shell", inline: "growpart /dev/sda 3; lvextend -l +100%FREE -r /dev/mapper/ubuntu--vg-ubuntu--lv && exit 0"
 end

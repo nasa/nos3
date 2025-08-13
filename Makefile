@@ -127,6 +127,7 @@ clean-fsw: ## Clean only flight software build artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
+	rm -rf fsw/fprime/fprime-nos3/logs
 
 clean-sim: ## Clean only simulator build artifacts
 	rm -rf sims/build
