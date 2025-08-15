@@ -1,15 +1,21 @@
 #!/bin/bash -x
 
-curl -X POST http://active-gs:8090/api/links/nos3/radio-in:disable
-curl -X POST http://active-gs:8090/api/links/nos3/radio-out:disable
-curl -X POST http://active-gs:8090/api/links/nos3/truth42-in:disable
+SERVER=$1
+SERVER=${SERVER:-active-gs}
+PORT=$2
+PORT=${PORT:-8090}
 
-sleep 11
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-in:disable
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-out:disable
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/truth42-in:disable
 
-curl -X POST http://active-gs:8090/api/links/nos3/radio-in:enable
-curl -X POST http://active-gs:8090/api/links/nos3/radio-out:enable
-curl -X POST http://active-gs:8090/api/links/nos3/truth42-in:enable
+sleep 5
 
-pip install --upgrade yamcs-client && python3 /commanding.py
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-in:enable
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-out:enable
+curl -X POST http://${SERVER}:${PORT}/api/links/nos3/truth42-in:enable
+
+pip install --upgrade yamcs-client && \
+    python3 /commanding.py ${SERVER} ${PORT}
 
 tail -f /dev/null

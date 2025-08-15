@@ -1,6 +1,11 @@
+import sys
+
 from yamcs.client import YamcsClient
 
-client = YamcsClient('active-gs:8090')
+SERVER=sys.argv[1]
+PORT=sys.argv[2]
+
+client = YamcsClient(f"{SERVER}:{PORT}")
 processor = client.get_processor(instance='nos3', processor='realtime')
 
 command_name = "/CFS/CMD/TO_ENABLE_OUTPUT"
