@@ -557,7 +557,7 @@ services:
     attach: true
     healthcheck:
       test: ["CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/nc -vz radio-sim 8010"]
-      interval: 13s
+      interval: 10s
       timeout: 5s
       retries: 7
     container_name: sc01-radio-sim
@@ -672,7 +672,7 @@ services:
       retries: 5
     depends_on:
       nos3-radio-sim:
-        condition: service_healthy
+        condition: service_started
       nos3-fsw:
         condition: service_healthy
     container_name: sc01-cryptolib-gsw
