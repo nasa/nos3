@@ -25,12 +25,19 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Proxy configs
 #------------------------------------------------------------------------------
 ARG MAVEN_HTTPS_PROXY
+ARG MAVEN_LOCAL_REPO
+ARG COMPONENT_DIR
+
 ARG HTTPS_PROXY
 ARG HTTP_PROXY
 ARG NO_PROXY
 ARG DEPLOYMENT_ENVIRO
 
+# =/home/${NOS3_USER}/.m2/repository
 ENV MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY}
+ENV MAVEN_LOCAL_REPO=${MAVEN_LOCAL_REPO}
+ENV COMPONENT_DIR=${COMPONENT_DIR}
+
 ENV HTTPS_PROXY=${HTTPS_PROXY}
 ENV HTTP_PROXY=${HTTP_PROXY}
 ENV NO_PROXY=${NO_PROXY}
@@ -73,5 +80,6 @@ RUN git clone --recurse-submodules -b ${GIT_COMMIT} -j4 ${GIT_URL} ${GSW_SOFTWAR
 WORKDIR /home/${NOS3_USER}/.nos3/${GSW_SOFTWARE}
 COPY settings.xml ./settings.xml
 
-RUN mvn ${MAVEN_HTTPS_PROXY} package yamcs:bundle
+#RUN mvn ${MAVEN_HTTPS_PROXY} package yamcs:bundle
+RUN mvn ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} package yamcs:bundle
 #------------------------------------------------------------------------------

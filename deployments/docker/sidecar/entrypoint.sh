@@ -15,7 +15,7 @@ curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-in:enable
 curl -X POST http://${SERVER}:${PORT}/api/links/nos3/radio-out:enable
 curl -X POST http://${SERVER}:${PORT}/api/links/nos3/truth42-in:enable
 
-pip install --upgrade yamcs-client && \
+pip3 install --upgrade yamcs-client && \
     python3 /commanding.py ${SERVER} ${PORT}
 
 tail -f /dev/null
