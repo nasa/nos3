@@ -68,8 +68,9 @@ build: ## build essentials
 	$(MAKE) build-yamcs
 
 up: build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	find . -name '*.sh' -exec chmod 775 {} \; # Make sure all scripts are world executable
-	find . -name '*.py' -exec chmod 775 {} \; # Make sure all scripts are world executable
+	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+	find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+	find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env up -d --remove-orphans 
 
 up-attached: down
