@@ -82,6 +82,16 @@ extern "C" {
 */
 #define CF_CONFIG_TLM_MID 0x08B2
 #define CF_PDU_TLM_MID    0x0FFD
+#define CRYPTO_EP_TLM_MID 0x0980
+#define CRYPTO_KEY_INV_TLM_MID 0x0981
+#define CRYPTO_KEY_VRFY_TLM_MID 0x0982
+#define CRYPTO_MC_PING_TLM_MID 0x0983
+#define CRYPTO_MC_STATUS_TLM_MID 0x0984
+#define CRYPTO_MC_DUMP_TLM_MID 0x0985
+#define CRYPTO_MC_ERASE_TLM_MID 0x0986
+#define CRYPTO_MC_SELFTEST_TLM_MID 0x0987
+#define CRYPTO_SA_READARSN_TLM_MID 0x0988
+#define CRYPTO_SA_STATUS_TLM_MID 0x0989
 
 static CFE_TBL_FileDef_t CFE_TBL_FileDef =
 {
@@ -163,16 +173,16 @@ TO_ConfigTable_t to_ConfigTable =
        //{CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_DO_MID),          {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        
        /* 50 - 59 */
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
-       {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_EP_TLM_MID),           {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_KEY_INV_TLM_MID),      {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_KEY_VRFY_TLM_MID),     {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_MC_PING_TLM_MID),      {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_MC_STATUS_TLM_MID),    {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_MC_DUMP_TLM_MID),      {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_MC_ERASE_TLM_MID),     {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_MC_SELFTEST_TLM_MID),  {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_SA_READARSN_TLM_MID),  {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CRYPTO_SA_STATUS_TLM_MID),    {0,0},  32,   0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        
        /* 60 - 69 */
        {CFE_SB_MSGID_WRAP_VALUE(TO_UNUSED_ENTRY),              {0,0},  0,   0x0000,     TO_GROUP_NONE,            0,0},
