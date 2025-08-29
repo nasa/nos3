@@ -30,8 +30,8 @@ SET(ENV{CFS_APP_PATH} "baseline_apps:apps/sbn/modules/protocol:../components:")
 
 # Set the CryptoLib FSW build flags for cFS use
 set(CRYPTO_LIBGCRYPT ON CACHE BOOL "Cryptography Module - Libgcrypt" FORCE)
-#set(DEBUG ON CACHE BOOL "CryptoLib Debug" FORCE)
+# set(DEBUG ON CACHE BOOL "CryptoLib Debug" FORCE)
 set(KEY_INTERNAL ON CACHE BOOL "Key Module - Internal" FORCE)
 set(MC_INTERNAL ON CACHE BOOL "Monitoring and Control - Internal" FORCE)
-set(SA_FILE OFF CACHE BOOL "Save Security Association to File" FORCE)
+# set(SA_FILE OFF CACHE BOOL "Save Security Association to File" FORCE)
 set(SA_INTERNAL ON CACHE BOOL "Security Association - Internal" FORCE)

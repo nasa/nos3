@@ -22,7 +22,7 @@ NUM_CPUS="$( nproc )"
 USERDIR=$(cd ~/ && pwd)
 USER_NOS3_DIR=$(cd ~/ && pwd)/.nos3
 USER_FPRIME_PATH=$USERDIR/.cookiecutter_replay
-
+USER_YAMCS_PATH=$USER_NOS3_DIR/.m2
 OPENC3_DIR=$USER_NOS3_DIR/cosmos
 OPENC3_PATH=$OPENC3_DIR/openc3.sh
 
@@ -49,6 +49,16 @@ INFLUXDB_ADMIN_PASSWORD=admin_password
 #fi
 
 DBOX="ivvitc/nos3-64:20250514"
+
+# Radio Config
+RADIO_TX_FSW_PORT=5010
+RADIO_RX_FSW_PORT=5011
+
+# CryptoLib Ground Config
+CRYPTO_RX_GROUND_PORT=6010
+CRYPTO_TX_GROUND_PORT=6011
+CRYPTO_TX_RADIO_PORT=8010
+CRYPTO_RX_RADIO_PORT=8011
 
 # Debugging
 #echo "Script directory = " $SCRIPT_DIR

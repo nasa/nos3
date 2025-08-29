@@ -100,10 +100,7 @@ do
 
     # Debugging
     # Replace `--tab` with `--window-with-profile=KeepOpen` once you've created this gnome-terminal profile manually
-    echo $SC_NUM " - Flight Software..."
-    cd $FSW_DIR
-    gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-fprime" --network=$SC_NETNAME -h nos-fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
-    echo ""
+    
 
     echo $SC_NUM " - Simulators..."
     cd $SIM_BIN
@@ -134,6 +131,11 @@ do
 
     echo $SC_NUM " - CryptoLib..."
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_gsw"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    echo ""
+
+    echo $SC_NUM " - Flight Software..."
+    cd $FSW_DIR
+    gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-fprime" --network=$SC_NETNAME -h nos-fsw -w $BASE_DIR $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
     echo ""
 done
 
