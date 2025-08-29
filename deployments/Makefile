@@ -72,7 +72,7 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
 	find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
 	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
-	find ${HOME} -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+	find ${HOME}/.nos3/ -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env up -d --remove-orphans 
