@@ -81,5 +81,5 @@ WORKDIR /home/${NOS3_USER}/.nos3/${GSW_SOFTWARE}
 COPY settings.xml ./settings.xml
 
 #RUN mvn ${MAVEN_HTTPS_PROXY} package yamcs:bundle
-RUN mvn ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} package yamcs:bundle
+RUN mvn ${MAVEN_HTTPS_PROXY} -DskipTests -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} package yamcs:bundle
 #------------------------------------------------------------------------------

@@ -36,8 +36,8 @@ COMPONENT_DIR=/home/nos3/builds/nos3/components
 YAMCS_DATA_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data
 # YAMCS_ETC_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yamcs-etc
 # YAMCS_CACHE_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yam
-YAMCS_GIT_URL=https://github.com/nasa-itc/yamcs-nos3.git
-YAMCS_GIT_COMMIT=dev
+YAMCS_GIT_URL=https://github.com/nasa-itc/nos3_yamcs_master.git
+YAMCS_GIT_COMMIT=nos3-dev
 
 # nos3 specific configurations
 NOS3_DIR=/home/nos3/.nos3

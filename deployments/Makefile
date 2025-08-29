@@ -55,23 +55,36 @@ env_create: ## create ./docker/.env file
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
-build-fortytwo: env_create ## build-fortytwo
+build-fortytwo: | env_create set-permissions ## build-fortytwo
 	cd ${DOCKER_DIR}/ ; \
 		${CONTAINER_BIN} compose build --pull nos3-fortytwo
 
-build-yamcs: env_create ## build-yamcs
+build-yamcs: | env_create set-permissions ## build-yamcs
 	cd ${DOCKER_DIR}/ ; \
 		${CONTAINER_BIN} compose build --pull nos3-gsw
 
-build: ## build essentials
+build: | set-permissions## build essentials
 	$(MAKE) build-fortytwo
 	$(MAKE) build-yamcs
 
-up: build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
 	find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
 	find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
+	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+	find ${HOME} -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+
+up: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env up -d --remove-orphans 
+
+sidecar: ## sidecar
+	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh
+
+doitall: ## do it all
+	$(MAKE) down; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+		$(MAKE) --silent sidecar
+
+#	$(MAKE) down; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS
 
 up-attached: down
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env --remove-orphans
