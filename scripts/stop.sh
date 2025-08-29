@@ -25,6 +25,8 @@ $DCALL ps --filter=name="ttc-command*" -aq | xargs $DCALL stop > /dev/null 2>&1 
 $DCALL ps --filter ancestor="ballaerospace/cosmos:4.5.0" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 $DCALL ps --filter=name="cosmos-openc3-operator-1" -aq | xargs $DCALL stop > /dev/null 2>&1 &
 
+cd ${BASE_DIR}/deployments/docker/ && docker compose down || true && cd -
+
 # Intentionally wait to complete
 wait 
 

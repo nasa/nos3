@@ -1,0 +1,201 @@
+metadata:
+  OU: myorg
+  ENVIRO: dev
+  TENANT: tenant
+  CONTEXT: missions # -exp must exist to match remote AWS EKS cluster
+  PURPOSE: -exp
+
+defaults:
+  spec:    
+    HEALTHCHECK_PORT: &HEALTHCHECK_PORT
+      60000
+    PATHS: &PATHS
+      BASE_DIR: &BASE_DIR
+        /builds/nos3
+      SIM_BIN: &SIM_BIN
+        /builds/nos3/sims/build/bin
+      SIMULATOR_BIN: &SIMULATOR_BIN
+        /builds/nos3/sims/build/bin/nos3-single-simulator
+      LOG_CONFIG: &LOG_CONFIG
+        /builds/nos3/sims/build/bin/sim_log_config.xml
+      # CFG_FILE: &CFG_FILE
+      #   /builds/nos3/sims/build/bin/nos3-simulator.xml
+      SC_CFG_FILE: &SC_CFG_FILE
+        /builds/nos3/sims/build/bin/nos3-simulator.xml
+      GND_CFG_FILE: &GND_CFG_FILE
+        /builds/nos3/sims/build/bin/nos3-simulator.xml
+      IMAGE_REGISTRY: &IMAGE_REGISTRY
+        registry.appdat.jsc.nasa.gov
+      IMAGE_URI: &IMAGE_URI
+        registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    container: &container
+      PATHS: 
+        << : *PATHS
+      resources: &resources
+        limits: &limits
+          memory: "128Mi"
+          cpu: "100m"
+        requests: &requests
+          memory: "128Mi"
+          cpu: "100m"
+    nodes: &nodes
+      min_size: 1
+      max_size: 1
+      desired_size: 1
+      instance_types: m6i.xlarge
+      nodeSelector: ""
+      imagePullPolicy: IfNotPresent
+      components: &hw_components
+        camsim:
+          name: camsim
+          replicas: 1
+          container: 
+            << : *container
+        generic-css-sim:
+          name: css
+          replicas: 1
+          container: 
+            << : *container
+        generic-eps-sim:
+          name: eps
+          replicas: 1
+          container: 
+            << : *container
+        generic-fss-sim:
+          name: fss
+          replicas: 1
+          container: 
+            << : *container
+        gps:
+          name: gps
+          replicas: 1
+          container: 
+            << : *container
+        generic-imu-sim:
+          name: imu
+          replicas: 1
+          container: 
+            << : *container 
+        generic-mag-sim:
+          name: mag
+          replicas: 1
+          container: 
+            << : *container
+        generic-reactionwheel-sim0: 
+          name: rw0
+          replicas: 1
+          container: 
+            << : *container 
+        generic-reactionwheel-sim1: 
+          name: rw1
+          replicas: 1
+          container: 
+            << : *container
+        generic-reactionwheel-sim2: 
+          name: rw2
+          replicas: 1
+          container: 
+            << : *container
+        generic-radio-sim:
+          name: radio_sim
+          replicas: 1
+          container:
+            PATHS: 
+              << : *PATHS
+            resources:
+              limits:
+                memory: "128Mi"
+                cpu: "125m"
+              requests:
+                memory: "128Mi"
+                cpu: "125m"
+            host: radio_sim
+            network-alias: radio_sim
+        generic-star-tracker-sim:
+          name: start-tracker
+          replicas: 1
+          container: 
+            << : *container
+        generic-torquer-sim:
+          name: torquer
+          replicas: 1
+          container: 
+            << : *container
+        generic-thruster-sim:
+          name: thruster
+          replicas: 1
+          container: 
+            << : *container
+        time:
+          name: time
+          replicas: 1
+          container: 
+            << : *container
+        stdio-terminal:
+          name: stdio-terminal
+          replicas: 1
+          container: 
+            << : *container
+        udp-terminal:
+          replicas: 2
+          name: udp-terminal
+          container: 
+            << : *container
+      # nos_engine: & nos_engine
+      #   container: 
+      #     << : *container
+      # truth42: &truth42
+      #   container: 
+      #     << : *container
+      # flight_dynamics: &flight_dynamics
+      #   fortytwo: &fortytwo
+      #     container: 
+      #       << : *container
+      # encryption: &encryption
+      #   cryptolib: 
+      #     container: 
+      #       << : *container
+
+missions:
+  - m01:
+      enabled: true
+      spacecraft:
+        - sc1:
+            enabled: true
+            components: 
+              fortytwo:
+                name: fsw
+                replicas: 1
+                container: 
+                  << : *container
+              fsw:
+                name: fsw
+                replicas: 1
+                container: 
+                  << : *container
+              nos-engine-server:
+                name: nos-engine-server
+                replicas: 1
+                container: 
+                  << : *container
+              time:
+                name: time
+                replicas: 1
+                container: 
+                  << : *container
+              gps:
+                name: gps
+                replicas: 1
+                container: 
+                  << : *container
+  - m02:
+      enabled: false
+      spacecraft:
+        - sc1:
+            enabled: true
+            components: 
+              << : *hw_components
+        - sc2:
+            enabled: false
+            components: 
+              << : *hw_components

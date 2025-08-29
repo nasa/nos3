@@ -1,0 +1,220 @@
+name: nos3-m01-sc01
+
+services:
+  nos3-fortytwo:
+#    image: docker.io/haisamido/42:20250217
+    image: localhost/library/42:master
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: "2048MB"
+        reservations:
+          cpus: '1'
+          memory: "2048MB"
+    container_name: 00_m01-sc01_fortytwo
+    hostname: fortytwo
+    command: /entrypoint.sh
+    # healthcheck:
+    #   test: ["CMD-SHELL", "nc -vz localhost 10000"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    volumes:
+      - /Users/hido/development/github.com/haisamido/nos3/deployments/docker/42/entrypoint.sh:/entrypoint.sh
+      - /Users/hido/development/github.com/haisamido/nos3/deployments/docker/42/startapp.sh:/startapp.sh
+      - ${HOME}/development/github.com/nasa-itc/42:/opt/nasa-itc/42
+    tty: true
+    stdin_open: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+      BASE_DIR: /builds/nos3
+      SIM_BIN: /builds/nos3/sims/build/bin
+      SIMULATOR_BIN: /builds/nos3/sims/build/bin/nos3-single-simulator
+      LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+      CFG_FILE: /builds/nos3/sims/build/bin/nos3-simulator.xml
+      COMPONENT_NAME: fortytwo
+      DISPLAY: ":1"
+    ports:
+      - 30060:80
+    privileged: true
+    networks:
+      - nos3_m01-sc01
+      - nos3_core
+
+  nos3-fsw:
+#    image: nos3-64-base:dev
+    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    deploy:
+      resources:
+        limits:
+          memory: "128M"
+          cpus: ".100"
+        reservations:
+          memory: "128M"
+          cpus: ".100"
+    container_name: 01_m01-sc01_nos_fsw
+    hostname: nos_fsw
+    command: "/entrypoint.sh"
+    working_dir: /builds/nos3/fsw/build/exe/cpu1
+    sysctls:
+      fs.mqueue.msg_max: 10000
+    ulimits:
+      rtprio: 99
+    cap_add:
+      - sys_nice
+    volumes:
+      - ${PWD}/entrypoint_fsw.sh:/entrypoint.sh
+    depends_on:
+      nos3-fortytwo:
+        condition: service_started
+    tty: true
+    stdin_open: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+      BASE_DIR: /builds/nos3
+      SIM_BIN: /builds/nos3/sims/build/bin
+      SCRIPT_DIR: /builds/nos3/scripts
+      SIMULATOR_BIN: /usr/bin/nos_engine_server_standalone
+      LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+      CFG_FILE: /builds/nos3/sims/build/bin/nos_engine_server_config.json
+      COMPONENT_NAME: fsw
+    privileged: true
+    networks:
+      - nos3_m01-sc01
+      - nos3_core
+
+  nos3-nos_engine_server:
+#    image: nos3-64-base:dev
+    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    container_name: 02_m01-sc01_nos_engine_server
+#    hostname: nos-engine-server
+    hostname: nos-engine-server
+    command: "/entrypoint.sh"
+    working_dir: /builds/nos3/sims/build/bin
+    tty: true
+    stdin_open: true
+    volumes:
+      - ${PWD}/entrypoint_nos_engine_server.sh:/entrypoint.sh
+    # TODO: activating the below seems to make port 12000 unavailable!!!
+    # healthcheck:
+    #   test: ["CMD-SHELL", "nc -vz localhost 12000"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    depends_on:
+      nos3-fsw:
+        condition: service_started
+    environment:
+      HEALTHCHECK_PORT: 60000
+      BASE_DIR: /builds/nos3
+      SIM_BIN: /builds/nos3/sims/build/bin
+      SIMULATOR_BIN: /usr/bin/nos_engine_server_standalone
+      LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+      CFG_FILE: /builds/nos3/sims/build/bin/nos_engine_server_config.json
+      COMPONENT_NAME: 
+    privileged: true
+    networks:
+      nos3_m01-sc01:
+        aliases: 
+          - nos_engine_server
+      nos3_core:
+
+  nos3-gps:
+    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    container_name: 03_m01-sc01_gps_sim
+    hostname: gps
+    depends_on:
+      nos3-nos_engine_server:
+        condition: service_started
+    tty: true
+    stdin_open: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+      BASE_DIR: /builds/nos3
+      SIM_BIN: /builds/nos3/sims/build/bin
+      SIMULATOR_BIN: /builds/nos3/sims/build/bin/nos3-single-simulator
+      LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+      CFG_FILE: /builds/nos3/sims/build/bin/nos3-simulator.xml
+      COMPONENT_NAME: gps
+    privileged: true
+    networks:
+      - nos3_m01-sc01
+      - nos3_core
+
+  nos3-time:
+    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    container_name: 04_nos_time_driver
+    hostname: time
+    depends_on:
+      nos3-nos_engine_server:
+        condition: service_started
+      nos3-gps:
+        condition: service_started
+    tty: true
+    stdin_open: true
+    environment:
+      HEALTHCHECK_PORT: 60000
+      BASE_DIR: /builds/nos3
+      SIM_BIN: /builds/nos3/sims/build/bin
+      SIMULATOR_BIN: /builds/nos3/sims/build/bin/nos3-single-simulator
+      LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+      CFG_FILE: /builds/nos3/sims/build/bin/nos3-simulator.xml
+      COMPONENT_NAME: time
+    privileged: true
+    networks:
+      nos3_m01-sc01:
+        aliases: 
+          - nos_time_driver
+          - nos-time-driver
+      nos3_core:
+
+#   nos3-truth42sim:
+#     image: nos3-64-base:dev
+# #    image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+#     container_name: m01-sc01_truth42sim
+#     hostname: truth42sim
+#     depends_on:
+#       nos3-nos_engine_server:
+#         condition: service_started
+#       nos3-fortytwo:
+#         condition: service_healthy
+#     environment:
+#       HEALTHCHECK_PORT: 60000
+#       BASE_DIR: /builds/nos3
+#       SIM_BIN: /builds/nos3/sims/build/bin
+#       SIMULATOR_BIN: /builds/nos3/sims/build/bin/nos3-single-simulator
+#       LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+#       CFG_FILE: /builds/nos3/sims/build/bin/nos3-simulator.xml
+#       COMPONENT_NAME: truth42sim
+#     privileged: true
+#     networks:
+#       - nos3_m01-sc01
+#       - nos3_core
+
+networks:
+  nos3_core:
+    driver: bridge
+  nos3_m01-sc01:
+
+  # nos3-fortytwo-2:
+  #   image: ghcr.io/ericstoneking/42:latest
+  #   container_name: m01-sc01_fortytwo2
+  #   hostname: fortytwo2
+  #   volumes:
+  #     - ${HOME}/development/github.com/haisamido/nos3/deployments/scripts/42/startapp.sh:/startapp.sh
+  #     - ${HOME}/development/github.com/nasa-itc/42:/opt/nasa-itc/42
+  #   environment:
+  #     HEALTHCHECK_PORT: 60000
+  #     BASE_DIR: /builds/nos3
+  #     SIM_BIN: /builds/nos3/sims/build/bin
+  #     SIMULATOR_BIN: /builds/nos3/sims/build/bin/nos3-single-simulator
+  #     LOG_CONFIG: /builds/nos3/sims/build/bin/sim_log_config.xml
+  #     CFG_FILE: /builds/nos3/sims/build/bin/nos3-simulator.xml
+  #     COMPONENT_NAME: fortytwo
+  #   ports:
+  #     - 30040:80
+  #   privileged: true
+  #   networks:
+  #     - nos3_m01-sc01
+  #     - nos3_core

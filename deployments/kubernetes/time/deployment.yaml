@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --file ../../docker/docker-compose.yaml
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: nos3-time
+  name: nos3-time
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nos3-m01-sc01-time
+  template:
+    metadata:
+      labels:
+        app: nos3-m01-sc01-time
+    spec:
+      containers:
+        - env:
+            - name: BASE_DIR
+              value: /builds/nos3
+            - name: CFG_FILE
+              value: /builds/nos3/sims/build/bin/nos3-simulator.xml
+            - name: COMPONENT_NAME
+              value: time
+            - name: HEALTHCHECK_PORT
+              value: "60000"
+            - name: LOG_CONFIG
+              value: /builds/nos3/sims/build/bin/sim_log_config.xml
+            - name: SIMULATOR_BIN
+              value: /builds/nos3/sims/build/bin/nos3-single-simulator
+            - name: SIM_BIN
+              value: /builds/nos3/sims/build/bin
+          image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+          name: 04-nos-time-driver
+          resources:
+            limits:
+              cpu: 100m
+              memory: "128Mi"
+            requests:
+              cpu: 100m
+              memory: "128Mi"
+          securityContext:
+            privileged: true
+          stdin: true
+          tty: true
+      hostname: time
+      restartPolicy: Always
