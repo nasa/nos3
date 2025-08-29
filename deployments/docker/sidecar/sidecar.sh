@@ -100,7 +100,7 @@ curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-in:enable
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-out:enable
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/truth42-in:enable
 
-pip3 install --upgrade yamcs-client && \
+pip3 install --break-system-packages --user --upgrade yamcs-client && \
 
 python3 <<EOF
 import sys
