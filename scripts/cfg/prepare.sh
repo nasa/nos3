@@ -36,6 +36,11 @@ echo "Proceeding to optional additions."
 echo ""
 echo ""
 
+echo "Preparing Shared Folders for YAMCS..."
+mkdir $USER_YAMCS_PATH 2> /dev/null
+echo ""
+echo ""
+
 echo "Preparing Shared Folders for Fprime..."
 mkdir $USER_FPRIME_PATH 2> /dev/null
 echo ""
