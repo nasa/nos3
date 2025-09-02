@@ -1,65 +1,82 @@
 #!/bin/bash
 
-DIR=/home/nos3/
+DIR=/home/nos3
 
+pkill -f ./nos3-single-simulator
+pkill -f ./support/standalone
+
+# Radio Sim and Cryptolib
+cd /home/nos3/builds/nos3/sims/build/bin && \
+  ./nos3-single-simulator -f ./nos3-simulator.xml generic-radio-sim 2>&1 \
+    | tee -a ${DIR}/radio-sim.log | tee -a ${DIR}/hw-components.log &
+
+cd /home/nos3/builds/nos3/gsw/build && \
+  ./support/standalone 2>&1 \
+    | tee -a ${DIR}/cryptolib.log | tee -a ${DIR}/hw-components.log &
+
+# HW Components
 cd /home/nos3/builds/nos3/fsw/build/exe/cpu1 && \
   /home/nos3/builds/nos3/scripts/fsw/onair_launch.sh 2>&1 \
-    | tee -a /home/nos3/onair_launch.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/onair_launch.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml camsim 2>&1 \
-    | tee -a /home/nos3/camsim.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/camsim.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-css-sim 2>&1 \
-    | tee -a /home/nos3/css.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/css.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-eps-sim 2>&1 \
-    | tee -a /home/nos3/eps.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/eps.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-fss-sim 2>&1 \
-    | tee -a /home/nos3/fss.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/fss.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml gps 2>&1 \
-    | tee -a /home/nos3/gps.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/gps.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-imu-sim 2>&1 \
-    | tee -a /home/nos3/imu.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/imu.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-mag-sim 2>&1 \
-    | tee -a /home/nos3/mag.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/mag.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim0 2>&1 \
-    | tee -a /home/nos3/rw0.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/rw0.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim1 2>&1 \
-    | tee -a /home/nos3/rw1.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/rw1.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim2 2>&1 \
-    | tee -a /home/nos3/rw2.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/rw2.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml sample-sim 2>&1 \
-    | tee -a /home/nos3/sample-sim.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/sample-sim.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-star-tracker-sim 2>&1 \
-    | tee -a /home/nos3/star-tracker.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/star-tracker.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-thruster-sim 2>&1 \
-    | tee -a /home/nos3/thruster.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/thruster.log | tee -a ${DIR}/hw-components.log &
 
 cd /home/nos3/builds/nos3/sims/build/bin && \
   ./nos3-single-simulator -f ./nos3-simulator.xml generic-torquer-sim 2>&1 \
-    | tee -a /home/nos3/torquer.log | tee -a /home/nos3/hw-components.log &
+    | tee -a ${DIR}/torquer.log | tee -a ${DIR}/hw-components.log &
+
+# cd /home/nos3/builds/nos3/sims/build/bin && \
+#   ./nos3-single-simulator -f ./nos3-simulator.xml truth42sim 2>&1 \
+#     | tee -a ${DIR}/truth42.log | tee -a ${DIR}/hw-components.log &
 
 tail -f /dev/null

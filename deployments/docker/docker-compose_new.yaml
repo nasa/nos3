@@ -133,10 +133,10 @@ services:
     depends_on:
       nos3-gsw:
         condition: service_healthy
-      nos3-truth42sim:
-        condition: service_started
-      nos3-radio-sim-cryptolib:
-        condition: service_started
+      # nos3-truth42sim:
+      #   condition: service_started
+      nos3-hw-components:
+        condition: service_healthy
       # nos3-cryptolib:
       #   condition: service_started
     networks:
@@ -154,12 +154,19 @@ services:
     volumes:
       - ${PWD}/hw-components/entrypoint.sh:/entrypoint.sh
       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    healthcheck:
+        test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/pgrep -f ./support/standalone" ]
+        interval: 10s
+        timeout: 5s
+        retries: 7
     depends_on:
       nos3-fortytwo:
         condition: service_healthy
       nos3-nos-engine-server:
         condition: service_healthy
       nos3-fsw:
+        condition: service_healthy
+      nos3-gsw:
         condition: service_healthy
     networks:
       nos3-sc01-00:
@@ -179,6 +186,9 @@ services:
           - star-tracker
           - thruster
           - torquer
+          - radio-sim
+          - cryptolib
+#          - truth42sim
       nos3-core-00:
 
   # nos3-onair:
@@ -645,36 +655,36 @@ services:
 #           - cryptolib
 #       nos3-core-00:
 
-  nos3-radio-sim-cryptolib:
-    image: ghcr.io/haisamido/nos3-base:dev
-    env_file:
-      - .env
-    attach: true
-    healthcheck:
-      test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/pgrep -f ./support/standalone" ]
-      interval: 10s
-      timeout: 5s
-      retries: 7
-    depends_on:
-      nos3-fsw:
-        condition: service_healthy
-      nos3-gsw:
-        condition: service_healthy
-    container_name: sc01-radio-sim-cryptolib
-    hostname: radio-sim-cryptolib
-    working_dir: /home/nos3/builds/nos3/sims/build/bin
-    command: "/entrypoint.sh"
-    volumes:
-      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
-      - ${PWD}/radio-sim/entrypoint2.sh:/entrypoint.sh
-    environment:
-      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
-    networks:
-      nos3-sc01-00:
-        aliases:
-          - radio-sim
-          - cryptolib
-      nos3-core-00:
+  # nos3-radio-sim-cryptolib:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/pgrep -f ./support/standalone" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 7
+  #   depends_on:
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #     nos3-gsw:
+  #       condition: service_healthy
+  #   container_name: sc01-radio-sim-cryptolib
+  #   hostname: radio-sim-cryptolib
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "/entrypoint.sh"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #     - ${PWD}/radio-sim/entrypoint2.sh:/entrypoint.sh
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - radio-sim
+  #         - cryptolib
+  #     nos3-core-00:
 
   # nos3-sample-sim:
   #   image: ghcr.io/haisamido/nos3-base:dev

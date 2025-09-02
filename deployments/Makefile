@@ -88,8 +88,13 @@ up-new: | build ## Bring up nos3 in detached state (attached state doesn't work 
 		-f ./docker-compose_new.yaml up -d --remove-orphans 
 
 doitall-new: ## do it all
-	$(MAKE) down-new down; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
-		$(MAKE) --silent sidecar
+	$(MAKE) down-new down; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true 
+
+logs-%: ## logs-gps, logs-imu as examples
+	${CONTAINER_BIN} exec -it sc01-hw-components bash -c "tail -f /home/nos3/$*.log"
+
+logs-all:
+	${CONTAINER_BIN} exec -it sc01-hw-components bash -c "tail -f /home/nos3/hw-components.log"
 
 sidecar: ## sidecar
 	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh
@@ -98,38 +103,11 @@ doitall: ## do it all
 	$(MAKE) down down-new; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
 		$(MAKE) --silent sidecar
 
-#	$(MAKE) down; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS
-
 up-attached: down
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env --remove-orphans
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh
-
-# build-fortytwo-orig-delete-me: env_create ## build-fortytwo
-# 	docker rmi -f ghcr.io/haisamido/nos3-base-fortytwo:dev || true
-# 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
-# 	cd ${DOCKER_DIR}/42 && ${CONTAINER_BIN} build \
-# 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
-# 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-# 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
-# 		--build-arg NO_PROXY=${NO_PROXY} \
-# 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
-# 		-t ghcr.io/haisamido/nos3-base-fortytwo:dev  .
-
-# build-yamcs-orig-delete-me: env_create ## build-yamcs
-# 	docker rmi -f ghcr.io/haisamido/nos3-base-yamcs:dev || true
-# 	touch ${ENVIRO_FILE} && source ${ENVIRO_FILE} ; \
-# 	cd ${DOCKER_DIR}/yamcs && ${CONTAINER_BIN} build \
-# 		--build-arg DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO} \
-# 		--build-arg HTTPS_PROXY=${HTTPS_PROXY} \
-# 		--build-arg HTTP_PROXY=${HTTP_PROXY} \
-# 		--build-arg NO_PROXY=${NO_PROXY} \
-# 		--build-arg MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY} \
-# 		--build-arg GSW_SOFTWARE=yamcs \
-# 		--build-arg GIT_URL=https://github.com/nasa-itc/yamcs-nos3.git\
-# 		--build-arg GIT_BRANCH=dev \
-# 		-t ghcr.io/haisamido/nos3-base-yamcs:dev  .
 
 #---
 RESET  = \033[0m
