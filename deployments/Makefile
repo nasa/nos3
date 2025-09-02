@@ -55,6 +55,9 @@ env_create: ## create ./docker/.env file
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
 
+down-new: ## Bring down nos3
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose -f docker-compose_new.yaml down --remove-orphans || true
+
 build-fortytwo: | env_create set-permissions ## build-fortytwo
 	cd ${DOCKER_DIR}/ ; \
 		${CONTAINER_BIN} compose build --pull nos3-fortytwo
@@ -75,7 +78,18 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find ${HOME}/.nos3/ -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env up -d --remove-orphans 
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose \
+		--env-file ./.env \
+		-f ./docker-compose.yaml up -d --remove-orphans 
+
+up-new: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose \
+		--env-file ./.env \
+		-f ./docker-compose_new.yaml up -d --remove-orphans 
+
+doitall-new: ## do it all
+	$(MAKE) down-new; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+		$(MAKE) --silent sidecar
 
 sidecar: ## sidecar
 	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh
