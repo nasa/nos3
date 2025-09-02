@@ -82,13 +82,7 @@ while true; do
 
 done
 
-echo $PROTOCOL
-echo $SERVER
-echo $PORT
-echo $INSTANCE
-echo $COMMAND
-echo $TLS_VERIFY
-echo $PROCESSOR
+echo "contacting ${PROTOCOL}://${SERVER}:${PORT} on instance: $INSTANCE, with command: $COMMAND, processor: $PROCESSOR"
 
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-in:disable
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-out:disable
