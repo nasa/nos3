@@ -88,14 +88,14 @@ up-new: | build ## Bring up nos3 in detached state (attached state doesn't work 
 		-f ./docker-compose_new.yaml up -d --remove-orphans 
 
 doitall-new: ## do it all
-	$(MAKE) down-new; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+	$(MAKE) down-new down; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
 		$(MAKE) --silent sidecar
 
 sidecar: ## sidecar
 	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh
 
 doitall: ## do it all
-	$(MAKE) down; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+	$(MAKE) down down-new; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
 		$(MAKE) --silent sidecar
 
 #	$(MAKE) down; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS
