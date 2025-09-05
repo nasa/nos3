@@ -1,38 +1,57 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
-
   cat <<-EOF
   
-  Usage: $0 [-h] [-P] [-s] [-p] [-i] [-c] [-t] [-R]
+  Usage: $0 [-h] [-d] [-P] [-s] [-p] [-i] [-c] [-t] [-R] [-w]
   
+  Purpose: a script to disable, enable links, and issue a command to a Yamcs server's instance on a specific processor.
+
   Eg.:
     $0 -h
-    $0 -P http -s localhost -p 8090 -i nos3 
+    $0 -d
+    $0 -P http -s localhost -p 8090 -i nos3
+    $0 -w
     etc.
   
   Required Arguments:
 
   Options:
-   -h | --help       help
-   -P | --protocol   <http|https>,       Default: http
-   -s | --server     server's address,   Default: localhost
-   -p | --port       service's port,     Default: 8090
-   -i | --instance   instance on server, Default: nos3
-   -c | --command    command to issue,   Default: /CFS/CMD/TO_ENABLE_OUTPUT
-   -t | --tls_verify                     Default: False
-   -R | --processor                      Default: realtime
+    -h | --help       help
+    -d | --defaults   use default configurations. other arguments will be ignored.
+    -P | --protocol   <http|https>,       Default: http
+    -s | --server     server's address,   Default: localhost
+    -p | --port       service's port,     Default: 8090
+    -i | --instance   instance on server, Default: nos3
+    -c | --command    command to issue,   Default: /CFS/CMD/TO_ENABLE_OUTPUT
+    -t | --tls_verify                     Default: False
+    -R | --processor                      Default: realtime
+    -w | --write                          Echo default values to stdout
 
 EOF
-
-
 }
 
-OPTS=$(getopt --options h,P:s:p:i:c:t:R --longoptions 'help,protocol:,server:,port:,instance:,command:,tls_verify:,processor' -n "$(basename $0)" -- $@)
+params="$(getopt -o :h,d,P:s:p:i:c:t:R,w -l 'help,defaults,protocol:,server:,port:,instance:,command:,tls_verify:,processor,write' --name "$(basename $0)" -- "$@")"
 
-eval set -- "$OPTS"
+# Check if getopt encountered an error
+if [ $? -ne 0 ]; then
+  echo
+  echo "ERROR: Invalid option or missing argument: $@" >&2
+  usage
+  exit 1
+fi
 
-# Defaults
+if [ $# -eq 0 ]; then
+  echo
+  echo "ERROR: no arguments provided: $@" >&2
+  usage
+  exit 1
+fi
+
+eval set -- "$params"
+unset params
+
+# Default values
 PROTOCOL=http
 SERVER=localhost
 PORT=8090
@@ -47,6 +66,11 @@ while true; do
       usage
       exit 0
       ;;
+    -d|--defaults)
+      echo; echo "[INFO] Will use default values. Other arguments will be ignored."
+      shift
+      break
+      ;;     
     -P|--protocol)
       PROTOCOL="$2"
       shift 2
@@ -71,18 +95,29 @@ while true; do
       TLS_VERIFY="$2"
       shift 2
       ;;
+    -w|--write)
+      echo
+      echo "[INFO] defaults are ${PROTOCOL}://${SERVER}:${PORT} on instance: $INSTANCE, with command: $COMMAND, using processor: $PROCESSOR"
+      echo
+      exit
+      ;;
     --)
+      shift
       break
       ;;
     *)
       echo "Unrecognized option '$1'"
       usage
+      exit
       ;;
   esac
 
 done
 
-echo "contacting ${PROTOCOL}://${SERVER}:${PORT} on instance: $INSTANCE, with command: $COMMAND, processor: $PROCESSOR"
+echo
+echo "Attempting to connect to yamcs on:"
+echo "  ${PROTOCOL}://${SERVER}:${PORT} on instance: $INSTANCE, with command: $COMMAND, using processor: $PROCESSOR"
+echo
 
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-in:disable
 curl -k -X POST ${PROTOCOL}://${SERVER}:${PORT}/api/links/nos3/radio-out:disable
