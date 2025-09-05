@@ -97,7 +97,7 @@ logs-all:
 	${CONTAINER_BIN} exec -it sc01-hw-components bash -c "tail -f /home/nos3/hw-components.log"
 
 sidecar: ## sidecar
-	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh
+	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh -d
 
 doitall: ## do it all
 	$(MAKE) down down-new; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
