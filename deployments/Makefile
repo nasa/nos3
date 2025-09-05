@@ -88,7 +88,8 @@ up-new: | build ## Bring up nos3 in detached state (attached state doesn't work 
 		-f ./docker-compose_new.yaml up -d --remove-orphans 
 
 doitall-new: ## do it all
-	$(MAKE) down-new down; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true 
+	$(MAKE) down-new down; sleep 5; $(MAKE) up-new; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+		$(MAKE) --silent sidecar
 
 logs-%: ## logs-gps, logs-imu as examples
 	${CONTAINER_BIN} exec -it sc01-hw-components bash -c "tail -f /home/nos3/$*.log"
