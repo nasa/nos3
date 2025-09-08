@@ -18,7 +18,7 @@ usage() {
 
   Options:
     -h | --help       help
-    -d | --defaults   use default configurations. other arguments will be ignored.
+    -d | --defaults   use default configurations. Other arguments will be ignored.
     -P | --protocol   <http|https>,       Default: http
     -s | --server     server's address,   Default: localhost
     -p | --port       service's port,     Default: 8090
