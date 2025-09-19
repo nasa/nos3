@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := help
+.ONESHELL:
 
 .PHONY: clean delete
 
@@ -8,6 +9,11 @@ export DIFF_PROGRAM:=vimdiff
 # Containerization Parameters
 export CONTAINER_BIN=docker
 export CONTAINER_COMPOSE=${CONTAINER_BIN} compose
+
+ifeq (${CONTAINER_BIN},podman)
+export CONTAINER_COMPOSE=${CONTAINER_BIN}-compose
+endif
+
 export DEFAULT_IMAGE_REGISTRY=docker.io/library/
 
 export DOCKERFILE=./Dockerfile
@@ -50,21 +56,23 @@ endif
 #---
 
 env_create: ## create ./docker/.env file
-	${DOCKER_DIR}/env.sh > ${DOCKER_DIR}/.env
+	${DOCKER_DIR}/env.sh > ${DOCKER_DIR}/.env && \
+	source ${DOCKER_DIR}/.env && \
+		export $(sed '/^#/d' ${DOCKER_DIR}/.env | cut -d= -f1)
 
 down: ## Bring down nos3
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose down --remove-orphans || true
+	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} down --remove-orphans || true
 
 down-new: ## Bring down nos3
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose -f docker-compose_new.yaml down --remove-orphans || true
+	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} -f docker-compose_new.yaml down --remove-orphans || true
 
 build-fortytwo: | env_create set-permissions ## build-fortytwo
 	cd ${DOCKER_DIR}/ ; \
-		${CONTAINER_BIN} compose build --pull nos3-fortytwo
+		${CONTAINER_COMPOSE} build --pull nos3-fortytwo
 
 build-yamcs: | env_create set-permissions ## build-yamcs
 	cd ${DOCKER_DIR}/ ; \
-		${CONTAINER_BIN} compose build --pull nos3-gsw
+		${CONTAINER_COMPOSE} build --pull nos3-gsw
 
 build: | set-permissions## build essentials
 	$(MAKE) build-fortytwo
@@ -78,12 +86,12 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find ${HOME}/.nos3/ -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose \
+	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} \
 		--env-file ./.env \
 		-f ./docker-compose.yaml up -d --remove-orphans 
 
 up-new: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose \
+	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} \
 		--env-file ./.env \
 		-f ./docker-compose_new.yaml up -d --remove-orphans 
 
@@ -98,14 +106,14 @@ logs-all:
 	${CONTAINER_BIN} exec -it sc01-hw-components bash -c "tail -f /home/nos3/hw-components.log"
 
 sidecar: ## sidecar
-	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh -d
+	cd ${DOCKER_DIR}/ && ./sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT" -w
 
 doitall: ## do it all
 	$(MAKE) down down-new; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
 		$(MAKE) --silent sidecar
 
 up-attached: down
-	cd ${DOCKER_DIR} && ${CONTAINER_BIN} compose --env-file ./.env --remove-orphans
+	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} --env-file ./.env --remove-orphans
 
 up-kubernetes:
 	cd ${K8S_DIR} && ./kubernetes.sh

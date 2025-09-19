@@ -23,7 +23,7 @@ usage() {
     -s | --server     server's address,   Default: localhost
     -p | --port       service's port,     Default: 8090
     -i | --instance   instance on server, Default: nos3
-    -c | --command    command to issue,   Default: /CFS/CMD/TO_ENABLE_OUTPUT
+    -c | --command    command to issue,   Default: /CFS/CMD/CFE_ES_NOOP, invoke /CFS/CMD/TO_ENABLE_OUTPUT to enable telemetry outputs
     -t | --tls_verify                     Default: False
     -R | --processor                      Default: realtime
     -w | --write                          Echo default values to stdout
@@ -57,7 +57,8 @@ SERVER=localhost
 PORT=8090
 INSTANCE=nos3
 PROCESSOR=realtime
-COMMAND="/CFS/CMD/TO_ENABLE_OUTPUT"
+#COMMAND="/CFS/CMD/TO_ENABLE_OUTPUT"
+COMMAND="/CFS/CMD/CFE_ES_NOOP"
 TLS_VERIFY=False
 
 while true; do
