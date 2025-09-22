@@ -56,9 +56,13 @@ endif
 #---
 
 env_create: ## create ./docker/.env file
-	${DOCKER_DIR}/env.sh > ${DOCKER_DIR}/.env && \
-	source ${DOCKER_DIR}/.env && \
-		export $(sed '/^#/d' ${DOCKER_DIR}/.env | cut -d= -f1)
+	${DOCKER_DIR}/env.sh > ${DOCKER_DIR}/.env
+
+env_export: env_create ## export ./docker/.env file variables to shell
+	set -o allexport && source ${DOCKER_DIR}/.env && set +o allexport
+
+env_unset: ## create ./docker/.env file
+	unset $(sed '/^#/d' ${DOCKER_DIR}/.env | cut -d= -f1)
 
 down: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} down --remove-orphans || true
@@ -66,11 +70,11 @@ down: ## Bring down nos3
 down-new: ## Bring down nos3
 	cd ${DOCKER_DIR} && ${CONTAINER_COMPOSE} -f docker-compose_new.yaml down --remove-orphans || true
 
-build-fortytwo: | env_create set-permissions ## build-fortytwo
+build-fortytwo: | env_export set-permissions ## build-fortytwo
 	cd ${DOCKER_DIR}/ ; \
 		${CONTAINER_COMPOSE} build --pull nos3-fortytwo
 
-build-yamcs: | env_create set-permissions ## build-yamcs
+build-yamcs: | env_export set-permissions ## build-yamcs
 	cd ${DOCKER_DIR}/ ; \
 		${CONTAINER_COMPOSE} build --pull nos3-gsw
 
