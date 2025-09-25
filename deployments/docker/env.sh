@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # A script to generate .env file for Docker deployments
 
 cat << EOF
