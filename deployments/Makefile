@@ -94,6 +94,29 @@ up: | build ## Bring up nos3 in detached state (attached state doesn't work for 
 		--env-file ./.env \
 		-f ./docker-compose.yaml up -d --remove-orphans 
 
+export MINIMAL_PATH=..
+
+up-minimum: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
+	export MINIMAL_PATH=nos3; \
+	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE} \
+		--env-file ./.env \
+		-f ./docker-compose.yaml up -d \
+			nos3-fortytwo \
+			nos3-nos-engine-server \
+			nos3-fsw \
+			nos3-gps-sim \
+			nos3-time \
+			nos3-radio-sim-cryptolib \
+			nos3-truth42sim \
+			nos3-gsw \
+				--remove-orphans 
+
+doitminimally: ## do it minimally
+	$(MAKE) down down-new; sleep 5; \
+		$(MAKE) up-minimum; sleep 15; \
+			${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+				$(MAKE) --silent sidecar
+
 up-new: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE} \
 		--env-file ./.env \
