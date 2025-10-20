@@ -1,0 +1,37 @@
+FROM maven:3.9.9-eclipse-temurin-17
+
+#--- PROXY CONFIG (if needed)
+ARG MAVEN_HTTPS_PROXY
+ARG HTTPS_PROXY
+ARG HTTP_PROXY
+ARG NO_PROXY
+ARG DEPLOYMENT_ENVIRO
+
+ENV MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY}
+ENV HTTPS_PROXY=${HTTPS_PROXY}
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV NO_PROXY=${NO_PROXY}
+ENV DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO}
+
+# Install tools and utils
+RUN apt-get update && \
+    apt-get -y install \
+        sudo git curl vim make cmake tmux tree python3 pip iputils-ping dnsutils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone yamcs/quickstart repo
+ARG GIT_URL
+ARG GIT_COMMIT
+
+ENV GIT_URL=${GIT_URL}
+ENV GIT_COMMIT=${GIT_COMMIT}
+
+WORKDIR /opt/yamcs
+RUN git clone --recurse-submodules -b ${GIT_COMMIT} -j2 ${GIT_URL}
+
+WORKDIR /opt/yamcs/quickstart
+
+COPY settings.xml .
+
+RUN mvn ${MAVEN_HTTPS_PROXY} -DskipTests package yamcs:bundle
