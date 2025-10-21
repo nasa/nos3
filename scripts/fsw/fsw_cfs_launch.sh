@@ -67,7 +67,7 @@ gnome-terminal --tab --title="NOS CmdBus Bridge"  -- $DFLAGS -v $SIM_DIR:$SIM_DI
 echo ""
 
 # Note only currently working with a single spacecraft
-export SATNUM=1
+export SATNUM=2
 
 #
 # Spacecraft Loop
