@@ -4,7 +4,7 @@ This scenario was developed to provide an overview of the NASA Operational Simul
 It demonstrates the flight software (FSW), ground software (GSW), and simulation interactions within NOS3.
 It also serves as a template for additional scenarios to be developed and added to the environment to cover various use cases.
 
-This scenario was last updated on 05/26/2025 and leveraged the `dev` branch at the time [a3e7c100].
+This scenario was last updated on 08/29/2025 and leveraged the `dev` branch at the time [422f66ec].
 
 ## Learning Goals
 
@@ -49,13 +49,17 @@ By default, we go to sun-safe mode.  We should be able to confirm that in multip
 * In the FSW console:
   * Lots of logs get captured here as events occur during startup, so you may need to scroll back in that terminal to view the message.
   * Console prints should calm down after initialization as the spacecraft reaches a steady state.
+  * Mode 2 is sun-safe mode:
+  ![Scenario Demo - FSW SunSafe](./_static/scenario_demo/scenario_demo_fsw_sunsafe.png)
 * In GSW telemetry:
   * The COSMOS Packet Viewer lets you select the desired Target and Packet and see what has been reported.
   * If the text is displayed as pink, that means that either no data has been received or that the data has gone stale.
+  * Telemetry packet `GENERIC_ADCS`, telemetry point `MODE` indicates the mode the spacecraft is in:
+  ![Scenario Demo - FSW SunSafe](./_static/scenario_demo/scenario_demo_telemetry_sunsafe.png)
 * Visually in 42:
   * Note you can click and drag within the 42 Cam window to rotate around the spacecraft.
-
-![Scenario Demo - SunSafe](./_static/scenario_demo/scenario_demo_sunsafe.png)
+  * Sunsafe aligns the spacecraft +x (b1) axis with the sun vector (s) as can be seen in the screenshot.
+  ![Scenario Demo - SunSafe](./_static/scenario_demo/scenario_demo_sunsafe.png)
 
 ---
 ### Commanding the Spacecraft
@@ -63,7 +67,7 @@ By default, we go to sun-safe mode.  We should be able to confirm that in multip
 Let's confirm we can command the spacecraft:
 * The CFS CFE_ES_NOOP command has a nice print to the FSW console which will allow us to easily confirm this.
   * You may need to return the FSW console back to the bottom of the window to see it.
-* Additionally, we can confirm (via inspection) that the command counter belonging to that specific application increments in telemetry:
+* Additionally, we can confirm (via inspection) that the command counter belonging to that specific application increments in telemetry (telemetry packet `CFS`, telemetry point `CMDCOUNTER`):
 
 ![Scenario Demo - COSMOS Command](./_static/scenario_demo/scenario_demo_cosmos_command.png)
 
@@ -73,22 +77,20 @@ Let's confirm we can command the spacecraft:
 
 Let's command the radio to transmit:
 * It is common that the spacecraft radio is always listening for commands, but doesn't transmit unless enabled.
-* In the Command Sender, let's change to use the CFS TO_ENABLE_OUTPUT command:
-  * The default arguments of DEST_IP 'radio_sim' and DEST_PORT '5011' work for this.
-
+* In the Command Sender, let's change to use the `CFS` `TO_ENABLE_OUTPUT` command:
+  * The default arguments of `DEST_IP` 'radio_sim' and `DEST_PORT` '5011' work for this.
 ![Scenario Demo - TO Enable Output](./_static/scenario_demo/scenario_demo_to_enable.png)
 
 * Note that while we are getting `Bytes Rx` in the COSMOS Command and Telemetry Server, we don't have `Bytes Tx`.
 * This is because that standard CFS target utilizes the debug interface.
 
 Let's send another NOOP, but use the CFS_RADIO target:
-
-[Scenario Demo - Radio Command](./_static/scenario_demo/scenario_demo_radio_command.png)
+![Scenario Demo - Radio Command](./_static/scenario_demo/scenario_demo_radio_command.png)
 
 * Things look as expected now in the COSMOS Command and Telemetry Server.
 
 Let's confirm that we're actually getting radio telemetry which matches the debug interface:
-* Open another Packet Viewer window via the COSMOS NOS3 Launcher (third row, first column).
+* Open another Packet Viewer window via the COSMOS NOS3 Launcher (third row, first column) to packet `CFS_RADIO` and compare its values with the values for the `CFS` (debug) packet.
 
 ![Scenario Demo - Radio Telemetry](./_static/scenario_demo/scenario_demo_radio_telemetry.png)
 
@@ -98,11 +100,11 @@ Let's confirm that we're actually getting radio telemetry which matches the debu
 Let's see if we can command the sample instrument payload:
 * This is a standard NOS3 component, meaning it has FSW, GSW, and a simulator running and talking to the 42 dynamics provider.
 * Using the drop-down carrot on the right of the terminal window, change the terminal tab to `sc_1 - Sample Sim` and resize.
-* Also, prepare the packet viewer by changing to the SAMPLE SAMPLE_HK_TLM packet, and send the SAMPLE SAMPLE_NOOP_CC via the Command Sender.
+* Also, prepare the packet viewer by changing to the `SAMPLE` `SAMPLE_HK_TLM` packet, and send the `SAMPLE` `SAMPLE_NOOP_CC` via the Command Sender.
 
 ![Scenario Demo - Sample NOOP](./_static/scenario_demo/scenario_demo_sample_noop.png)
 
-* We can confirm that the command was sent successfully in both the FSW console and by observing an increase in the CMD_COUNT, but nothing appears in the simulator:
+* We can confirm that the command was sent successfully in both the FSW console and by observing an increase in the `CMD_COUNT`, but nothing appears in the simulator:
   * This is because of the NOOP or No Operation command itself.
   * NOOPs are standard across cFS applications and simply prove that that application is alive and listening.
   * These NOOP commands do not interface with anything but the FSW application, however.
@@ -136,10 +138,10 @@ Let's send the SAMPLE_SIM_SET_STATUS command with a status value of 5.
 ### ADCS
 
 We can leave sample like that - let's play with the Attitude Determination and Control System (ADCS).
-* In short, ADCS uses various components (typically referred to as sensors and actuators) to make the vehicle change orientation.
+* In short, ADCS uses various components (typically referred to as sensors and actuators) to make the vehicle change orientation or orbit.
 Let's first disable the ADCS from doing anything so we can play:
 * Note that if you are in eclipse your spacecraft can't point at the sun because it doesn't know where it is (not smart enough to guess). 
-* In the Command Sender send the GENERIC_ADCS GENERIC_ADCS_SET_MODE_CC with GNC_MODE PASSIVE (0).
+* In the Command Sender send the command `GENERIC_ADCS` `GENERIC_ADCS_SET_MODE_CC` with `GNC_MODE` `PASSIVE` (0).
 
 ![Scenario Demo - ADCS Passive](./_static/scenario_demo/scenario_demo_adcs_passive.png)
 
@@ -147,7 +149,7 @@ Let's first disable the ADCS from doing anything so we can play:
   * Note that it is important to command ADCS to passive so that we can poke at the various components it leverages.
   * ADCS requests telemetry and sends new commands to these components at 1Hz so it would fight us otherwise.
 
-Let's command a reaction wheel to spin and see if it does stuff:
+Let's command a reaction wheel to spin using the `GENERIC_REACTION_WHEEL` `GENERIC_RW_SET_TORQUE_CC` command and see if it does stuff:
 
 ![Scenario Demo - RW Up](./_static/scenario_demo/scenario_demo_rw_up.png)
 

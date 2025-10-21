@@ -23,8 +23,8 @@ Before running the scenario, complete the following steps:
 ## Outline
 
 First, we would run a script (or launch NOS3) with some conditions to create/cause a rapid tumbling problem.  This could be done in NOS3 by one of two ways:
- * To launch NOS3 with the spacecraft rapidly tumbling, we would adjust some parameters in the spacecraft config file to give the spacecraft a tip-off angular velocity.
- * To launch NOS3 and spin up the spacecraft excessively, we would launch normally and then use the simulator backdoor commands (`SIM_CMD_BUS`) to command one or more of the reaction wheels to spin uncontrolled.
+ * To launch NOS3 with the spacecraft rapidly tumbling, we would adjust the Initial Attitude Angular Velocity parameters in the spacecraft config file (lines 80-82 of `cfg/spacecraft/sc-mission-config.xml`) to give the spacecraft a tip-off angular velocity.
+ * To launch NOS3 and spin up the spacecraft excessively, we would launch normally and then set the mode to passive (`GENERIC_ADCS` `GENERIC_ADCS_SET_MODE_CC`) and then use the reaction wheel commands (`GENERIC_REACTION_WHEEL` `GENERIC_RW_SET_TORQUE_CC`) to command one or more of the reaction wheels to spin up.
 
 ### Determining the Problem
 
@@ -32,7 +32,7 @@ Before attempting any remediations, it is necessary to determine the cause of th
 
 ![Scenario Rapid Tumbling - IMU](./_static/scenario_rapid_tumbling/IMU_Rapid_Tumbling.png)
 
-In general, anything above 10deg/sec is considered rapid tumbling.  If the problem is due to something in the spacecraft itself, that root problem must first be remedied before trying to solve the rapid tumbling.  As NOS3 presently exists, however, there is no way for the reaction wheels to be "stuck on", or the like, and therefore we can go to the next section.
+In general, anything above 10deg/sec (0.17 rad/sec, 1.7 RPM) is considered rapid tumbling.  If the problem is due to something in the spacecraft itself, that root problem must first be remedied before trying to solve the rapid tumbling.  As NOS3 presently exists, however, there is no way for the reaction wheels to be "stuck on", or the like, and therefore we can go to the next section.
 
 ### Solving the Problem
 

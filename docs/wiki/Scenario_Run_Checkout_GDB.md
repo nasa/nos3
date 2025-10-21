@@ -32,7 +32,7 @@ Before running the scenario, complete the following steps:
 
 ## Walkthrough
 
-gdb, or the Gnu Debugger, is useful for debugging processes at the command line.  In order to run it with a component in, the following steps are necessary:
+gdb, or the Gnu Debugger, is useful for debugging processes at the command line.  In order to run it with a component in standalone mode, the following steps are necessary:
 
 ### Step 1: Build NOS3
 
@@ -63,8 +63,8 @@ Now that both NOS3 and the sample checkout app have been built, we have to edit 
 We want the checkout script to launch the sample simulator.
 We also want it to launch the sample checkout app under GDB.
 Edit `./scripts/checkout.sh` as follows:
-* Uncomment lines 164 (sample sim) and 165 (sample checkout)
-* Insert `gdb` on line 165 between "$DBOX" and "./components/sample/fsw/standalone/build/sample_checkout"
+* Uncomment lines 165 (sample sim) and 166 (sample checkout)
+* Insert `gdb` on line 166 between "$DBOX" and "./components/sample/fsw/standalone/build/sample_checkout"
 
 ### Step 4: Launch the Sample Sim and launch the Sample Checkout App in GDB
 
@@ -110,7 +110,7 @@ make stop
 ---
 ### Optional: Enable TUI Mode
 
-If your container supports `ncurses`, you can add `-tui` to enable the GDB text-based UI:
+If your container supports `ncurses`, you can add `-tui` in `./scripts/checkout.sh` to enable the GDB text-based UI.  The end of line 166 will then look like:
 
 ```bash
 gdb -tui ./components/sample/fsw/standalone/build/sample_checkout
