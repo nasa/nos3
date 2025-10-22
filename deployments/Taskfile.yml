@@ -83,9 +83,9 @@ tasks:
   build:
     desc: Build all containers
     cmds:
-      - task build-yamcs
-      - task build-fortytwo
-      - task build-openmct
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
   set-permissions: ## 
     desc: set filesystem permissions, needed for restricted accounts

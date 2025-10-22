@@ -84,9 +84,8 @@ build-openmct: | env_export set-permissions ## build-openmct
 		${CONTAINER_COMPOSE} build --pull nos3-openmct
 
 build: | set-permissions## build essentials
-	$(MAKE) build-fortytwo
-	$(MAKE) build-yamcs
-	$(MAKE) build-openmct
+	cd ${CONTAINER_DIR}/ ; \
+		${CONTAINER_COMPOSE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
