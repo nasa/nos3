@@ -10,7 +10,7 @@
         <!-- 814254200.0 UTC = 10/20/2025 17:42:20.00 UTC (DEFAULT) -->
         <absolute-start-time>814254200.0</absolute-start-time>
         <sim-microseconds-per-tick>10000</sim-microseconds-per-tick>
-		<real-microseconds-per-tick>10000</real-microseconds-per-tick>
+        <real-microseconds-per-tick>10000</real-microseconds-per-tick>
         <nos-connection-string>tcp://nos-engine-server:12001</nos-connection-string>
     </common>
 
@@ -27,7 +27,7 @@
                         <nos-connection-string-override>tcp://sc01-nos-engine-server:12001</nos-connection-string-override>
                         <bus-name>command</bus-name>
                         <node-name>sc1-time-driver</node-name>
-                    </connection>                    
+                    </connection>
                     <connection>
                         <type>command</type>
                         <bus-name>command</bus-name>
@@ -44,9 +44,9 @@
             <hardware-model>
                 <type>SimTerminal</type>
                 <terminal>
-                    <type>STDIO</type> <!-- type = STDIO, UDP -->
+                    <type>STDIO</type>                    <!-- type = STDIO, UDP -->
                     <udp-port>5555</udp-port>
-                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                    <suppress-output>false</suppress-output>                    <!-- should output from bus be sent back to STDOUT/UDP client? -->
                 </terminal>
                 <other-nos-connections>
                     <!-- <nos-connection>
@@ -60,14 +60,14 @@
                 </other-nos-connections>
                 <bus>
                     <name>command</name>
-                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                    <type>command</type>                    <!-- type = COMMAND, I2C, SPI, UART, CAN -->
                 </bus>
                 <terminal-node-name>stdio-terminal</terminal-node-name>
                 <other-node-name>sample-command</other-node-name>
-                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
-                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <input-mode>ASCII</input-mode>                <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode>                <!-- HEX or ASCII -->
                 <startup-commands>
-                <!--    <command>SET SIMBUS can_0</command>
+                    <!--    <command>SET SIMBUS can_0</command>
                     <command>SET SIMBUSTYPE CAN</command>
                     <command>SET SIMNODE 20</command> -->
                 </startup-commands>
@@ -81,9 +81,9 @@
             <hardware-model>
                 <type>SimTerminal</type>
                 <terminal>
-                    <type>UDP</type> <!-- type = STDIO, UDP -->
+                    <type>UDP</type>                    <!-- type = STDIO, UDP -->
                     <udp-port>5556</udp-port>
-                    <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
+                    <suppress-output>false</suppress-output>                    <!-- should output from bus be sent back to STDOUT/UDP client? -->
                 </terminal>
                 <other-nos-connections>
                     <!-- <nos-connection>
@@ -97,14 +97,14 @@
                 </other-nos-connections>
                 <bus>
                     <name>command</name>
-                    <type>command</type> <!-- type = COMMAND, I2C, SPI, UART, CAN -->
+                    <type>command</type>                    <!-- type = COMMAND, I2C, SPI, UART, CAN -->
                 </bus>
                 <terminal-node-name>udp-terminal</terminal-node-name>
                 <other-node-name>sample-command</other-node-name>
-                <input-mode>ASCII</input-mode> <!-- HEX or ASCII -->
-                <output-mode>ASCII</output-mode> <!-- HEX or ASCII -->
+                <input-mode>ASCII</input-mode>                <!-- HEX or ASCII -->
+                <output-mode>ASCII</output-mode>                <!-- HEX or ASCII -->
                 <startup-commands>
-                <!--    <command>SET SIMBUS can_0</command>
+                    <!--    <command>SET SIMBUS can_0</command>
                     <command>SET SIMBUSTYPE CAN</command>
                     <command>SET SIMNODE 20</command> -->
                 </startup-commands>
@@ -137,11 +137,13 @@
             <hardware-model>
                 <type>SAMPLE</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
                         <node-name>sample-command</node-name>
                     </connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_16</bus-name>
                         <node-port>16</node-port>
                     </connection>
@@ -160,7 +162,7 @@
                 <!--<data-provider>
                     <type>SAMPLE_SHMEM_PROVIDER</type>
                     <shared-memory-name>Blackboard</shared-memory-name>
-                </data-provider>-->             
+                </data-provider>-->
             </hardware-model>
         </simulator>
 
@@ -171,17 +173,22 @@
             <hardware-model>
                 <type>OEM615</type>
                 <connections>
-                    <!-- <connection><type>command</type><bus-name>command</bus-name><node-name>gps-command</node-name></connection> -->
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>gps-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_1</bus-name>
                         <node-port>1</node-port>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GPS42SOCKET</type>
                     <hostname>fortytwo</hostname>
                     <port>4245</port>
-                   <max-connection-attempts>30</max-connection-attempts>
+                    <max-connection-attempts>30</max-connection-attempts>
                     <retry-wait-seconds>1</retry-wait-seconds>
                     <spacecraft>0</spacecraft>
                     <GPS>0</GPS>
@@ -207,7 +214,11 @@
             <hardware-model>
                 <type>ARDUCAM_OV5640</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>cam-command-node</node-name></connection>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>cam-command-node</node-name>
+                    </connection>
                 </connections>
                 <!-- <stream_data>true</stream_data> -->
                 <i2c>
@@ -323,13 +334,18 @@
             <hardware-model>
                 <type>GENERICREACTIONWHEELHARDWARE</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw0-command</node-name></connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>rw0-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_2</bus-name>
                         <node-port>2</node-port>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>4277</port>
@@ -356,13 +372,18 @@
             <hardware-model>
                 <type>GENERICREACTIONWHEELHARDWARE</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw1-command</node-name></connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>rw1-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_3</bus-name>
                         <node-port>3</node-port>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>4377</port>
@@ -389,13 +410,18 @@
             <hardware-model>
                 <type>GENERICREACTIONWHEELHARDWARE</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>rw2-command</node-name></connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>rw2-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_4</bus-name>
                         <node-port>4</node-port>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>4477</port>
@@ -428,7 +454,7 @@
                         <node-name>css-command</node-name>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GENERIC_CSS_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>4227</port>
@@ -471,7 +497,7 @@
                 </data-provider>
                 <params>
                     <num-mtbs>3</num-mtbs>
-                <!-- Parameters from 42 file -->
+                    <!-- Parameters from 42 file -->
                     <!-- MTB Saturation (A-m^2) -->
                     <max-trq-mtb-0>1.42</max-trq-mtb-0>
                     <max-trq-mtb-1>1.42</max-trq-mtb-1>
@@ -492,7 +518,8 @@
                         <bus-name>command</bus-name>
                         <node-name>thruster-command</node-name>
                     </connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_29</bus-name>
                         <node-port>29</node-port>
                     </connection>
@@ -517,9 +544,13 @@
                 <cosmos-port>5111</cosmos-port>
                 <initial-stream-time>1.0</initial-stream-time>
                 <stream-period-ms>100</stream-period-ms>
-                <!-- <nos-or-wall-time>WALL</nos-or-wall-time> --> <!-- "NOS" to use NOS engine time ticks to drive streamed messages; "WALL" to use wall time to drive streamed messages -->
+                <!-- <nos-or-wall-time>WALL</nos-or-wall-time> -->                <!-- "NOS" to use NOS engine time ticks to drive streamed messages; "WALL" to use wall time to drive streamed messages -->
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>truth42-sim-command-node</node-name></connection>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>truth42-sim-command-node</node-name>
+                    </connection>
                 </connections>
                 <data-provider>
                     <type>TRUTH42PROVIDER</type>
@@ -540,13 +571,18 @@
             <hardware-model>
                 <type>GENERIC_FSS</type>
                 <connections>
-                    <connection><type>command</type><bus-name>command</bus-name><node-name>fss-command</node-name></connection>
-                    <connection><type>spi</type>
+                    <connection>
+                        <type>command</type>
+                        <bus-name>command</bus-name>
+                        <node-name>fss-command</node-name>
+                    </connection>
+                    <connection>
+                        <type>spi</type>
                         <bus-name>spi_1</bus-name>
                         <chip-select>1</chip-select>
                     </connection>
                 </connections>
-                <data-provider>               
+                <data-provider>
                     <type>GENERIC_FSS_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>4284</port>
@@ -557,7 +593,7 @@
                 <!--<data-provider>
                     <type>GENERIC_FSS_SHMEM_PROVIDER</type>
                     <shared-memory-name>Blackboard</shared-memory-name>
-                </data-provider>-->             
+                </data-provider>-->
             </hardware-model>
         </simulator>
 
@@ -613,7 +649,7 @@
                 </connections>
                 <data-provider>
                     <type>GENERIC_RADIO_PROVIDER</type>
-                </data-provider>               
+                </data-provider>
             </hardware-model>
         </simulator>
 
@@ -624,11 +660,13 @@
             <hardware-model>
                 <type>GENERIC_IMU</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
                         <node-name>imu-command</node-name>
                     </connection>
-                    <connection><type>can</type>
+                    <connection>
+                        <type>can</type>
                         <bus-name>can_0</bus-name>
                         <node-port>15</node-port>
                     </connection>
@@ -655,11 +693,13 @@
             <hardware-model>
                 <type>GENERIC_MAG</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
                         <node-name>mag-command</node-name>
                     </connection>
-                    <connection><type>spi</type>
+                    <connection>
+                        <type>spi</type>
                         <bus-name>spi_2</bus-name>
                         <chip-select>2</chip-select>
                     </connection>
@@ -685,11 +725,13 @@
             <hardware-model>
                 <type>GENERIC_STAR_TRACKER</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
                         <node-name>star-tracker-command</node-name>
                     </connection>
-                    <connection><type>usart</type>
+                    <connection>
+                        <type>usart</type>
                         <bus-name>usart_10</bus-name>
                         <node-port>10</node-port>
                     </connection>
@@ -718,7 +760,8 @@
             <hardware-model>
                 <type>BLACKBOARD</type>
                 <connections>
-                    <connection><type>command</type>
+                    <connection>
+                        <type>command</type>
                         <bus-name>command</bus-name>
                         <node-name>blackboard-command</node-name>
                     </connection>
