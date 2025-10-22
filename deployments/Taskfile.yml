@@ -1,0 +1,145 @@
+version: "3"
+
+vars:
+  IMAGE_TAG: foobar
+
+dotenv:
+  - ./.env
+
+env:
+  CONTAINERFILE: ./Dockerfile
+  CONTAINER_BIN: docker
+  CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
+  CONTAINER_DIR: ./docker
+
+  ENVIRO_FILE: ./.env
+
+  DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
+  HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
+  HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+
+  MAVEN_HTTPS_PROXY: '-s./settings.xml'
+
+tasks:
+  default:
+    desc: Shows this help message
+    cmds:
+      - task --list-all
+    silent: true
+
+  env_create:
+    desc: Create .env file for docker compose
+    cmds:
+      - |
+        ${CONTAINER_DIR}/env.sh > ${CONTAINER_DIR}/.env
+
+  down:
+    desc: Bring down nos3
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            -f ./docker-compose.yaml down --remove-orphans   
+
+  down-new:
+    desc: Bring down nos3
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            -f ./docker-compose_new.yaml down --remove-orphans   
+
+  build-fortytwo:
+    desc: Build yamcs
+    deps:
+      - env_create
+      - set-permissions
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo
+
+  build-yamcs:
+    desc: Build yamcs
+    deps:
+      - env_create
+      - set-permissions
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-gsw
+
+  build:
+    desc: Build all containers
+    cmds:
+      - task build-yamcs
+      - task build-fortytwo
+
+  set-permissions: ## 
+    desc: set filesystem permissions, needed for restricted accounts
+    cmds:
+      - find . -name '*.sh' -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
+      - find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+      - find ${HOME}/.nos3/ -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+
+  up:
+    desc: Bring up nos3 in detached state
+    deps:
+      - build
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            --env-file ${ENVIRO_FILE} \
+            -f ./docker-compose.yaml up -d --remove-orphans   
+
+  up-new:
+    desc: Bring up nos3 in detached state
+    deps:
+      - build
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            --env-file ${ENVIRO_FILE} \
+            -f ./docker-compose_new.yaml up -d --remove-orphans   
+
+  sidecar:
+    desc: Run sidecar to enable output
+    cmds:
+      - |
+        ${CONTAINER_DIR}/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+
+  doitall:
+    desc: Do it all for nos3
+    cmds:
+      - task down ; sleep 5
+      - task up ; sleep 15
+      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+      - task sidecar
+
+  doitall-new:
+    desc: Do it all for nos3
+    cmds:
+      - task down-new ; sleep 5
+      - task up-new ; sleep 15
+      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+      - task sidecar
+
+  clean:
+    desc: clean images, cache, volumes, and networks
+    deps:
+      - down
+      - down-new
+    cmds:
+      - yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
+      - yes | ${CONTAINER_BIN} system prune -a
+      - yes | ${CONTAINER_BIN} volume prune
+      - yes | ${CONTAINER_BIN} network prune
+
+  setup-maven:
+    desc: Setup maven repository
+    cmds:
+      - echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml

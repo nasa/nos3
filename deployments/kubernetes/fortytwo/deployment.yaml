@@ -1,0 +1,93 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nos3-m01-sc01
+  name: nos3-fortytwo
+  labels:
+    app: nos3-m01-sc01-fortytwo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nos3-m01-sc01-fortytwo
+  template:
+    metadata:
+      labels:
+        app: nos3-m01-sc01-fortytwo
+    spec:
+      containers:
+        - args:
+            - /entrypoint.sh
+          env:
+            - name: BASE_DIR
+              value: /builds/nos3
+            - name: CFG_FILE
+              value: /builds/nos3/sims/build/bin/nos3-simulator.xml
+            - name: COMPONENT_NAME
+              value: fortytwo
+            - name: DISPLAY
+              value: :1
+            - name: HEALTHCHECK_PORT
+              value: "60000"
+            - name: LOG_CONFIG
+              value: /builds/nos3/sims/build/bin/sim_log_config.xml
+            - name: SIMULATOR_BIN
+              value: /builds/nos3/sims/build/bin/nos3-single-simulator
+            - name: SIM_BIN
+              value: /builds/nos3/sims/build/bin
+          image: docker.io/haisamido/42:master
+          workingDir: /opt/nasa-itc/
+          imagePullPolicy: IfNotPresent
+          # livenessProbe:
+          #   exec:
+          #     command:
+          #       - /usr/bin/nc -vz localhost 10000
+          #   failureThreshold: 5
+          #   periodSeconds: 5
+          #   timeoutSeconds: 5
+          name: 00-sc01-fortytwo
+          ports:
+            - containerPort: 80
+              protocol: TCP
+            - containerPort: 4245
+              protocol: TCP
+            - containerPort: 4245
+              protocol: UDP
+            - containerPort: 9999
+              protocol: TCP
+            - containerPort: 9999
+              protocol: UDP
+          resources:
+            limits:
+              cpu: "3"
+              memory: "2048Mi"
+            requests:
+              cpu: "1"
+              memory: "2048Mi"
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /entrypoint.sh
+              name: nos3-fortytwo-cm0
+              subPath: entrypoint.sh
+            - mountPath: /startapp.sh
+              name: nos3-fortytwo-cm1
+              subPath: startapp.sh
+      hostname: fortytwo
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: entrypoint.sh
+                path: entrypoint.sh
+            name: nos3-fortytwo-cm0
+            defaultMode: 0555
+          name: nos3-fortytwo-cm0
+        - configMap:
+            items:
+              - key: startapp.sh
+                path: startapp.sh
+            name: nos3-fortytwo-cm1
+            defaultMode: 0555
+          name: nos3-fortytwo-cm1

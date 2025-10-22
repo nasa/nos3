@@ -1,0 +1,39 @@
+# cat /Users/hido/development//yaml_anchors_aliases.yml  | yq '. | explode(.)' 
+
+metadata:
+  OU: myorg
+  ENVIRO: dev
+  TENANT: tenant
+  CONTEXT: missions # -exp must exist to match remote AWS EKS cluster
+  PURPOSE: '-exp'
+
+defaults:
+  spec:
+    HEALTHCHECK_PORT: 60000
+    env: &env
+      IMAGE_REGISTRY: registry.appdat.jsc.nasa.gov
+      IMAGE_URI: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+    resources: &resources
+      replicas: 1
+      limits:
+        memory: 128Mi
+        cpu: 100m
+      requests:
+        memory: 128Mi
+        cpu: 100m
+    components:
+      camsim1:
+        name: camsim1
+        resources:
+          <<: *resources
+      camsim2:
+        name: camsim2
+
+# missions:
+#   - m01:
+#       enabled: true
+#       spacecraft:
+#         - sc1:
+#             enabled: true
+#             components: 
+#               << : *components

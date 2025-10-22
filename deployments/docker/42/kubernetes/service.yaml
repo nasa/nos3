@@ -1,0 +1,22 @@
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: fortytwo
+      namespace: myorg-dev-missions-exp-m01-sc1
+    spec:
+      selector:
+        app: myorg-dev-missions-exp-m01-sc1-fortytwo
+      ports:
+        - name: fortytwo
+          protocol: TCP
+          port: 80
+          targetPort: 30001
+        - name: healthcheck-tcp
+          protocol: TCP
+          port: 60000
+          targetPort: 60000
+        - name: healthcheck-udp
+          protocol: UDP
+          port: 60000
+          targetPort: 60000
+      type: ClusterIP

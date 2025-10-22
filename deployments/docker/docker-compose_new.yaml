@@ -1,0 +1,805 @@
+#name: nos3-m01-sc01
+
+services:
+  nos3-fortytwo:
+    image: ghcr.io/haisamido/nos3-base-fortytwo:dev
+    env_file:
+      - .env
+    build:
+      context: ./42
+      dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        GIT_URL: ${FORTYTWO_GIT_URL}
+        GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
+        GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
+        STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER}
+        RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
+        BASE_DIR: ${FORTYTWO_BASE_DIR}
+        VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pgrep 42"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    attach: true
+    container_name: sc01-fortytwo
+    hostname: fortytwo
+    working_dir: "/opt/nasa-itc/"
+    command: '/entrypoint.sh'
+    volumes:
+      - ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
+      - ${PWD}/42/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/42/startapp.sh:/startapp.sh  
+    ports:
+      - "127.0.0.1:30090:80"
+    environment:
+      DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+      HTTP_PROXY: ${HTTP_PROXY}
+      NO_PROXY: ${NO_PROXY}
+      MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+      GIT_URL: ${FORTYTWO_GIT_URL}
+      GIT_COMMIT: ${FORTYTWO_GIT_COMMIT}
+      GIT_FOLDER: ${FORTYTWO_GIT_FOLDER:-42}
+      STARTUP_FOLDER: ${FORTYTWO_STARTUP_FOLDER}
+      RECOMPILE: ${FORTYTWO_RECOMPILE:-false}
+      BASE_DIR: ${FORTYTWO_BASE_DIR}
+      VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-gsw:
+    image: ghcr.io/haisamido/nos3-base-yamcs:dev
+    env_file:
+      - .env
+    build:
+      context: ./yamcs
+      dockerfile: Dockerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_REPO_LOCAL: ${MAVEN_REPO_LOCAL}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        COMPONENT_DIR: ${COMPONENT_DIR}
+        YAMCS_DATA_DIR: ${YAMCS_DATA_DIR}
+        GSW_SOFTWARE: ${GSW_SOFTWARE}
+        GIT_URL: ${YAMCS_GIT_URL}
+        GIT_COMMIT: ${YAMCS_GIT_COMMIT}
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8090/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    attach: true
+    container_name: cosmos-openc3-operator-1
+    hostname: cosmos
+    working_dir: "/home/nos3/.nos3/yamcs"
+    command: "/entrypoint.sh"
+    volumes:
+      - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
+    ports:
+      - "127.0.0.1:8090:8090"
+      - "5012:5012"
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+      HTTP_PROXY: ${HTTP_PROXY}
+      NO_PROXY: ${NO_PROXY}
+      MAVEN_REPO_LOCAL: ${MAVEN_REPO_LOCAL}
+      MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+      COMPONENT_DIR: ${COMPONENT_DIR}
+      YAMCS_DATA_DIR: ${YAMCS_DATA_DIR}
+      GSW_SOFTWARE: ${GSW_SOFTWARE}
+      GIT_URL: ${YAMCS_GIT_URL}
+      GIT_COMMIT: ${YAMCS_GIT_COMMIT}
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - active-gs
+          - yamcs
+      nos3-core-00:
+
+  nos3-sidecar:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: sc01-nos-sidecar
+    hostname: sc01-sidecar
+    working_dir: "/home/nos3/"
+    command: "/entrypoint.sh active-gs 8090"
+    volumes:
+      - ${PWD}/sidecar/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/sidecar/commanding.py:/commanding.py
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://active-gs:8090/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      nos3-gsw:
+        condition: service_healthy
+      # nos3-truth42sim:
+      #   condition: service_started
+      nos3-hw-components:
+        condition: service_healthy
+      # nos3-cryptolib:
+      #   condition: service_started
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-hw-components:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: sc01-hw-components
+    hostname: sc01-hw-components
+    command: "/entrypoint.sh"
+    volumes:
+      - ${PWD}/hw-components/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    healthcheck:
+        test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/pgrep -f ./support/standalone" ]
+        interval: 10s
+        timeout: 5s
+        retries: 7
+    depends_on:
+      nos3-fortytwo:
+        condition: service_healthy
+      nos3-nos-engine-server:
+        condition: service_healthy
+      nos3-fsw:
+        condition: service_healthy
+      nos3-gsw:
+        condition: service_healthy
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - camsim
+          - sc01-camsim
+          - css
+          - eps
+          - fss
+          - gps
+          - imu
+          - mag
+          - rw0
+          - rw1
+          - rw2
+          - sample
+          - star-tracker
+          - thruster
+          - torquer
+          - radio-sim
+          - cryptolib
+#          - truth42sim
+      nos3-core-00:
+
+  # nos3-onair:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   container_name: sc01-onair
+  #   working_dir: /home/nos3/builds/nos3/fsw/build/exe/cpu1
+  #   command: "/home/nos3/builds/nos3/scripts/fsw/onair_launch.sh"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   tty: true
+  #   stdin_open: true
+  #   privileged: true
+  #   environment:
+  #     BASE_DIR: /home/nos3/builds/nos3
+  #     FSW_DIR: /home/nos3/builds/nos3/fsw/build/exe/cpu1
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #     SCRIPT_DIR:
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:
+
+  nos3-fsw:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/pgrep core-cpu1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    attach: true
+    depends_on:
+      nos3-fortytwo:
+        condition: service_healthy
+      nos3-nos-engine-server:
+        condition: service_healthy
+    container_name: sc01-nos-fsw
+    hostname: nos-fsw
+    working_dir: /home/nos3/builds/nos3/
+    volumes:
+      - ${PWD}/fsw/entrypoint.sh:/entrypoint.sh
+    command: "/entrypoint.sh"
+    sysctls:
+      fs.mqueue.msg_max: 10000
+    ulimits:
+      rtprio: 99
+    cap_add:
+      - sys_nice
+    environment:
+      BASE_DIR: /home/nos3/builds/nos3
+      FSW_DIR: /home/nos3/builds/nos3/fsw/build/exe/cpu1
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-nos-engine-server:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    # depends_on:
+    #   nos3-fortytwo:
+    #     condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/bin/nc -vz nos-engine-server 12000 && /usr/bin/nc -vz nos-engine-server 12001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: sc01-nos-engine-server
+    hostname: nos-engine-server
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
+    ports:
+      - "127.0.0.1:12000:12000"
+      - "127.0.0.1:12001:12001"
+    tty: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - sc01-nos-engine-server
+      nos3-core-00:
+
+  nos3-truth42sim:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    depends_on:
+      # nos3-fortytwo:
+      #   condition: service_healthy
+      # nos3-gsw:
+      #   condition: service_healthy
+      nos3-nos-engine-server:
+        condition: service_healthy        
+    container_name: sc01-truth42sim
+    hostname: truth42sim
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml truth42sim"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-nos-terminal:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: nos-terminal
+    hostname: nos-terminal
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml stdio-terminal"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-nos-udp-terminal:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: nos-udp-terminal
+    hostname: nos-udp-terminal
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml udp-terminal"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  nos3-nos-sim-bridge:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    container_name: nos-sim-bridge
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "./nos3-sim-cmdbus-bridge -f ./nos3-simulator.xml"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+      nos3-core-00:
+
+  # nos3-camsim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-cam-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml camsim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - camsim
+  #         - sc01-camsim
+  #     nos3-core-00:
+
+  # nos3-css-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-css-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-css-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - css
+  #     nos3-core-00:
+
+  # nos3-eps-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-nos-engine-server:
+  #       condition: service_healthy
+  #     nos3-fortytwo:
+  #       condition: service_started
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-eps-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-eps-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - eps
+  #     nos3-core-00:
+
+  # nos3-fss-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-fss-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-fss-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - fss
+  #     nos3-core-00:
+
+  # nos3-gps-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-gps-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml gps"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - gps
+  #     nos3-core-00:
+
+  # nos3-imu-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-imu-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-imu-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - imu
+  #     nos3-core-00:
+
+  # nos3-mag-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-mag-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-mag-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - mag
+  #     nos3-core-00:
+
+  # nos3-rw-sim0:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-rw-sim0
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim0"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - rw0
+  #     nos3-core-00:
+
+  # nos3-rw-sim1:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-rw-sim1
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim1"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - rw1
+  #     nos3-core-00:
+
+  # nos3-rw-sim2:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-rw-sim2
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim2"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - rw2
+  #     nos3-core-00:
+
+  # nos3-radio-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 7
+  #   depends_on:
+  #     nos3-cryptolib:
+  #       condition: service_started
+  #   container_name: sc01-radio-sim
+  #   hostname: radio-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "/entrypoint.sh"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #     - ${PWD}/radio-sim/entrypoint.sh:/entrypoint.sh
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       # aliases:
+  #       #   - radio-sim
+  #     nos3-core-00:
+
+#   nos3-cryptolib:
+#     image: ghcr.io/haisamido/nos3-base:dev
+#     env_file:
+#       - .env
+#     attach: true
+#     healthcheck:
+#       test: ["CMD-SHELL", "/usr/bin/pgrep -f ./support/standalone"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     depends_on:
+#       # nos3-radio-sim:
+#       #   condition: service_started
+#       nos3-fsw:
+#         condition: service_healthy
+#     container_name: sc01_cryptolib-gsw
+# #    hostname: cryptolib
+#     working_dir: /home/nos3/builds/nos3/gsw/build
+#     command: "./support/standalone"
+#     volumes:
+#       - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+#     environment:
+#       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+#     networks:
+#       nos3-sc01-00:
+#         aliases:
+#           - cryptolib
+#       nos3-core-00:
+
+  # nos3-radio-sim-cryptolib:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "/usr/bin/pgrep -f nos3-single-simulator && /usr/bin/pgrep -f ./support/standalone" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 7
+  #   depends_on:
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #     nos3-gsw:
+  #       condition: service_healthy
+  #   container_name: sc01-radio-sim-cryptolib
+  #   hostname: radio-sim-cryptolib
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "/entrypoint.sh"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #     - ${PWD}/radio-sim/entrypoint2.sh:/entrypoint.sh
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #       aliases:
+  #         - radio-sim
+  #         - cryptolib
+  #     nos3-core-00:
+
+  # nos3-sample-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-sample-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml sample-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:
+
+  # nos3-startrk-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-startrk-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-star-tracker-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:
+
+  # nos3-thruster-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-thruster-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-thruster-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:
+
+  # nos3-torquer-sim:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   depends_on:
+  #     nos3-fortytwo:
+  #       condition: service_healthy
+  #     nos3-fsw:
+  #       condition: service_healthy
+  #   container_name: sc01-torquer-sim
+  #   hostname: trq-sim
+  #   working_dir: /home/nos3/builds/nos3/sims/build/bin
+  #   command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-torquer-sim"
+  #   volumes:
+  #     - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #   environment:
+  #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:
+
+  nos3-time:
+    image: ghcr.io/haisamido/nos3-base:dev
+    env_file:
+      - .env
+    attach: true
+    depends_on:
+      nos3-nos-engine-server:
+        condition: service_healthy
+    container_name: nos-time-driver
+    hostname: nos-time-driver
+    working_dir: /home/nos3/builds/nos3/sims/build/bin
+    command: "./nos3-single-simulator -f ./nos3-simulator.xml time"
+    volumes:
+      - ${PWD}/../nos3/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+    tty: true
+    stdin_open: true
+    privileged: true
+    environment:
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - sc01-nos-time-driver
+      nos3-core-00:
+
+networks:
+  nos3-core-00:
+    external: ${EXTERNAL_NETWORK_CORE:-false}
+    name: nos3-core
+  nos3-sc01-00:
+    external: ${EXTERNAL_NETWORK_SC01:-false}
+    name: nos3-sc01
