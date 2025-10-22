@@ -7,9 +7,9 @@ dotenv:
   - ./.env
 
 env:
-  CONTAINERFILE: ./Dockerfile
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
+  COMPOSE_FILE: ./docker-compose.yaml
   CONTAINER_DIR: ./docker
 
   ENVIRO_FILE: ./.env
@@ -40,18 +40,10 @@ tasks:
       - |
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
-            -f ./docker-compose.yaml down --remove-orphans   
-
-  down-new:
-    desc: Bring down nos3
-    cmds:
-      - |
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            -f ./docker-compose_new.yaml down --remove-orphans   
+            -f ./{{.COMPOSE_FILE}} down --remove-orphans || true
 
   build-fortytwo:
-    desc: Build yamcs
+    desc: Build fortytwo (42)
     deps:
       - env_create
       - set-permissions
@@ -82,6 +74,9 @@ tasks:
 
   build:
     desc: Build all containers
+    deps:
+      - env_create
+      - set-permissions
     cmds:
       - |
         cd {{.CONTAINER_DIR}}/ && \
@@ -90,11 +85,11 @@ tasks:
   set-permissions: ## 
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
-      - find . -name '*.sh' -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
       - find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
       - find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
       - find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
-      - find ${HOME}/.nos3/ -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+      - find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
   up:
     desc: Bring up nos3 in detached state
@@ -105,7 +100,32 @@ tasks:
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
             --env-file ${ENVIRO_FILE} \
-            -f ./docker-compose.yaml up -d --remove-orphans   
+            -f ./{{.COMPOSE_FILE}} up -d --remove-orphans   
+      - task info-services
+      
+  up-minimum:
+    desc: Bring up nos3 (minimum) in detached state
+    deps:
+      - down
+      - build
+    cmds:
+      - |
+        export MINIMAL_PATH="nos3" ; \
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            --env-file ${ENVIRO_FILE} \
+            -f ./{{.COMPOSE_FILE}} up -d \
+              nos3-fortytwo \
+              nos3-nos-engine-server \
+              nos3-fsw \
+              nos3-gps-sim \
+              nos3-time \
+              nos3-radio-sim-cryptolib \
+              nos3-truth42sim \
+              nos3-gsw \
+              nos3-openmct \
+            --remove-orphans
+      - task info-services
 
   up-new:
     desc: Bring up nos3 in detached state
@@ -116,7 +136,16 @@ tasks:
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
             --env-file ${ENVIRO_FILE} \
-            -f ./docker-compose_new.yaml up -d --remove-orphans   
+            -f ./docker-compose_new.yaml up -d --remove-orphans
+      - task info-services
+
+  down-new:
+    desc: Bring down nos3
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            -f ./docker-compose_new.yaml down --remove-orphans   
 
   sidecar:
     desc: Run sidecar to enable output
@@ -127,18 +156,12 @@ tasks:
   doitall:
     desc: Do it all for nos3
     cmds:
-      - task down ; sleep 5
+      - task down down-new ; sleep 5
       - task up ; sleep 15
       - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
       - task sidecar
-
-  doitall-new:
-    desc: Do it all for nos3
-    cmds:
-      - task down-new ; sleep 5
-      - task up-new ; sleep 15
-      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
-      - task sidecar
+      - task info-services
+    silent: true
 
   clean:
     desc: clean images, cache, volumes, and networks
@@ -152,6 +175,16 @@ tasks:
       - yes | ${CONTAINER_BIN} network prune
 
   setup-maven:
-    desc: Setup maven repository
+    desc: Setup maven settings.xml with proxy info-services
     cmds:
       - echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
+
+  info-services:
+    desc: info-servicesrmation on accessing various services
+    cmds: 
+      - echo; echo "accessing various services:"; echo
+      - echo "open http://localhost:8090 to access yamcs/gsw"
+      - echo "open http://localhost:30090 to access fortytwo (42)"
+      - echo "open http://localhost:9000 to access openmct"
+      - echo
+    silent: true
