@@ -6,7 +6,7 @@ SHELL=bash
 # Containerization Parameters
 export CONTAINER_BIN=docker
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
-export COMPOSE_FILE=./docker-compose.yaml
+export COMPOSE_FILE=./compose.yaml
 export CONTAINER_DIR=./docker
 
 export ENVIRO_FILE=./.env
@@ -69,13 +69,13 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 up: | build ## Bring up nos3 in detached state
 	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
 		--env-file ./.env \
-		-f ./docker-compose.yaml up -d --remove-orphans
+		-f ${COMPOSE_FILE} up -d --remove-orphans
 
 up-minimum: | down build ## Bring up nos3 in detached state
 	export MINIMAL_PATH=nos3; \
 	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
 		--env-file ./.env \
-		-f ./docker-compose.yaml up -d \
+		-f ${COMPOSE_FILE} up -d \
 			nos3-fortytwo \
 			nos3-nos-engine-server \
 			nos3-fsw \
