@@ -40,6 +40,7 @@ VOLUME_MAVEN_SETTINGS_PATH=""
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
 $(shell echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml)
 export MAVEN_HTTPS_PROXY=-s./settings.xml
+export MINIMAL_PATH=..
 
 #---
 ifndef DEPLOYMENT_ENVIRO
@@ -78,9 +79,14 @@ build-yamcs: | env_export set-permissions ## build-yamcs
 	cd ${CONTAINER_DIR}/ ; \
 		${CONTAINER_COMPOSE} build --pull nos3-gsw
 
+build-openmct: | env_export set-permissions ## build-openmct
+	cd ${CONTAINER_DIR}/ ; \
+		${CONTAINER_COMPOSE} build --pull nos3-openmct
+
 build: | set-permissions## build essentials
 	$(MAKE) build-fortytwo
 	$(MAKE) build-yamcs
+	$(MAKE) build-openmct
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
@@ -93,8 +99,6 @@ up: | build ## Bring up nos3 in detached state (attached state doesn't work for 
 	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE} \
 		--env-file ./.env \
 		-f ./docker-compose.yaml up -d --remove-orphans 
-
-export MINIMAL_PATH=..
 
 up-minimum: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
 	export MINIMAL_PATH=nos3; \

@@ -749,6 +749,47 @@ services:
           - sc01-nos-time-driver
       nos3-core-00:
 
+  nos3-openmct:
+    build:
+      context: ./openmct
+      dockerfile: Containerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        GIT_URL: https://github.com/akhenry/openmct-yamcs.git
+        GIT_COMMIT: master
+    attach: true
+    container_name: sc01-openmct
+    hostname: sc01-openmct
+    working_dir: "/opt/openmct"
+    volumes:
+      - "${PWD}/openmct/entrypoint.sh:/opt/openmct/entrypoint.sh"
+      - "${PWD}/openmct/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
+      - "${PWD}/openmct/example/index.js:/opt/openmct/example/index.js"
+      - "${PWD}/openmct/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
+    command: '/opt/openmct/entrypoint.sh'
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:9000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    depends_on:
+      nos3-gsw:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:8080:8080"
+    networks:
+      nos3-sc01-00:
+        aliases:
+          - openmct
+          - sc01-openmct
+      nos3-core-00:
+
 networks:
   nos3-core-00:
     external: ${EXTERNAL_NETWORK_CORE:-false}

@@ -19,6 +19,7 @@ env:
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
+  MINIMAL_PATH: ".."
 
 tasks:
   default:
@@ -69,11 +70,22 @@ tasks:
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-gsw
 
+  build-openmct:
+    desc: Build openmct
+    deps:
+      - env_create
+      - set-permissions
+    cmds:
+      - |
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-openmct
+
   build:
     desc: Build all containers
     cmds:
       - task build-yamcs
       - task build-fortytwo
+      - task build-openmct
 
   set-permissions: ## 
     desc: set filesystem permissions, needed for restricted accounts
