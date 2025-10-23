@@ -21,10 +21,10 @@ services:
     hostname: sc01-openmct
     working_dir: "/opt/openmct"
     volumes:
-      - "${PWD}/openmct/entrypoint.sh:/opt/openmct/entrypoint.sh"
-      - "${PWD}/openmct/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
-      - "${PWD}/openmct/example/index.js:/opt/openmct/example/index.js"
-      - "${PWD}/openmct/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
+      - "${PWD}/entrypoint.sh:/opt/openmct/entrypoint.sh"
+      - "${PWD}/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
+      - "${PWD}/example/index.js:/opt/openmct/example/index.js"
+      - "${PWD}/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
     command: '/opt/openmct/entrypoint.sh'
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:9000/"]

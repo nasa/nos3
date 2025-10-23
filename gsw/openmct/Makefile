@@ -7,43 +7,43 @@ CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
 CONTAINER_FILE=./compose.yaml
 TM_SIMULATOR_RATE=1
 
-ifeq (${CONTAINER_BIN},podman)
+ifeq (CONTAINER_BIN,podman)
 export CONTAINER_COMPOSE=${CONTAINER_BIN}-compose
 endif
 
-ifdef (${DEPLOYMENT_ENVIRO})
+ifdef (DEPLOYMENT_ENVIRO)
 export DEPLOYMENT_ENVIRO := ${DEPLOYMENT_ENVIRO}
 endif
 
-ifdef (${HTTP_PROXY})
+ifdef (HTTP_PROXY)
 export HTTP_PROXY := ${HTTP_PROXY}
 endif
 
-ifdef (${HTTPS_PROXY})
+ifdef (HTTPS_PROXY)
 export HTTPS_PROXY := ${HTTPS_PROXY}
 endif
 
-ifdef (${NO_PROXY})
+ifdef (NO_PROXY)
 export NO_PROXY := ${NO_PROXY}
 endif
 
-ifdef (${MAVEN_HTTPS_PROXY})
+ifdef (MAVEN_HTTPS_PROXY)
 export MAVEN_HTTPS_PROXY := ${MAVEN_HTTPS_PROXY}
 else
 export MAVEN_HTTPS_PROXY=-s./settings.xml
 endif
 
-ifdef (${MAVEN_SETTINGS_FILE})
+ifdef (MAVEN_SETTINGS_FILE)
 export MAVEN_SETTINGS_FILE := ${MAVEN_SETTINGS_FILE}
 endif
 
-ifdef (${MAVEN_IMAGE})
+ifdef (MAVEN_IMAGE)
 export MAVEN_IMAGE := ${MAVEN_IMAGE}
 else
 export MAVEN_IMAGE := maven:3.9.9-eclipse-temurin-17
 endif
 
-ifdef (${IMAGE_URI})
+ifdef (IMAGE_URI)
 export IMAGE_URI := ${IMAGE_URI}
 else
 export IMAGE_URI := docker.io/library/ubuntu:25.04
