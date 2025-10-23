@@ -750,7 +750,8 @@ services:
       nos3-core-00:
 
   nos3-openmct:
-    image: ghcr.io/haisamido/nos3-openmct:dev
+    env_file:
+      - .env
     build:
       context: ./openmct
       dockerfile: Containerfile
@@ -759,9 +760,14 @@ services:
         HTTPS_PROXY: ${HTTPS_PROXY}
         HTTP_PROXY: ${HTTP_PROXY}
         NO_PROXY: ${NO_PROXY}
-        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
-        GIT_URL: https://github.com/akhenry/openmct-yamcs.git
-        GIT_COMMIT: master
+
+        IMAGE_URI: ${OPENMCT_IMAGE_URI}
+        NVM_VERSION: ${OPENMCT_NVM_VERSION}
+        NODE_VERSION: ${OPENMCT_NODE_VERSION}
+
+        GIT_URL: ${OPENMCT_GIT_URL}
+        GIT_COMMIT: ${OPENMCT_GIT_COMMIT}
+
     attach: true
     container_name: sc01-openmct
     hostname: sc01-openmct

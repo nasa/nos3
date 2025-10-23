@@ -9,7 +9,8 @@ export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
 export COMPOSE_FILE=./compose.yaml
 export CONTAINER_DIR=./docker
 
-export ENVIRO_FILE=./.env
+export ENVIRO_SCRIPT="./env.sh"
+export ENVIRO_FILE="${CONTAINER_DIR}/.env"
 
 ifeq (${CONTAINER_BIN},podman)
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN}-compose
@@ -110,6 +111,14 @@ clean: | down down-new ## clean images, cache, volumes, and networks
 
 setup-maven: ## setup maven settings.xml with proxy info
 	echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
+
+purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
+	@$(MAKE) all-down || true
+	@yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
+	@yes | ${CONTAINER_BIN} system prune -a || true
+	@yes | ${CONTAINER_BIN} volume prune || true
+	@yes | ${CONTAINER_BIN} network prune || true
+	@echo
 
 info-services: ## Information on accessing various services
 	@echo; echo "accessing various services:"; echo

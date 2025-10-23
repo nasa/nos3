@@ -1,8 +1,5 @@
 version: "3"
 
-vars:
-  IMAGE_TAG: foobar
-
 dotenv:
   - ./.env
 
@@ -12,11 +9,12 @@ env:
   COMPOSE_FILE: ./compose.yaml
   CONTAINER_DIR: ./docker
 
-  ENVIRO_FILE: ./.env
-
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+
+  ENVIRO_SCRIPT: "{{.CONTAINER_DIR}}/env.sh"
+  ENVIRO_FILE: "./.env"
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MINIMAL_PATH: ".."
@@ -28,57 +26,47 @@ tasks:
       - task --list-all
     silent: true
 
-  env_create:
-    desc: Create .env file for docker compose
-    cmds:
-      - |
-        ${CONTAINER_DIR}/env.sh > ${CONTAINER_DIR}/.env
-
-  down:
-    desc: Bring down nos3
-    cmds:
-      - |
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            -f ./{{.COMPOSE_FILE}} down --remove-orphans || true
-
   build-fortytwo:
     desc: Build fortytwo (42)
     deps:
-      - env_create
+      - env-create
       - set-permissions
     cmds:
-      - |
+      - |        
+        source {{.ENVIRO_FILE}} && \
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo
 
   build-yamcs:
     desc: Build yamcs
     deps:
-      - env_create
+      - env-create
       - set-permissions
     cmds:
       - |
-        cd {{.CONTAINER_DIR}}/ && \
+        source {{.ENVIRO_FILE}} && \
+          cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-gsw
 
   build-openmct:
     desc: Build openmct
     deps:
-      - env_create
+      - env-create
       - set-permissions
     cmds:
       - |
+        source {{.ENVIRO_FILE}} && \
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-openmct
 
   build:
     desc: Build all containers
     deps:
-      - env_create
+      - env-create
       - set-permissions
     cmds:
       - |
+        source {{.ENVIRO_FILE}} && \
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
@@ -94,27 +82,39 @@ tasks:
   up:
     desc: Bring up nos3 in detached state
     deps:
+      - env-create
       - build
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cd {{.CONTAINER_DIR}}/ && \
+          {{.CONTAINER_COMPOSE_BIN}} \
+            --env-file ${ENVIRO_FILE} \
+            -f {{.COMPOSE_FILE}} up -d --remove-orphans   
+      - task info-services
+
+  down:
+    desc: Bring down nos3
     cmds:
       - |
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
-            --env-file ${ENVIRO_FILE} \
-            -f ./{{.COMPOSE_FILE}} up -d --remove-orphans   
-      - task info-services
+            -f {{.COMPOSE_FILE}} down --remove-orphans || true
 
   up-minimum:
     desc: Bring up nos3 (minimum) in detached state
     deps:
       - down
+      - env-create
       - build
     cmds:
       - |
+        source {{.ENVIRO_FILE}} && \
         export MINIMAL_PATH="nos3" ; \
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
             --env-file ${ENVIRO_FILE} \
-            -f ./{{.COMPOSE_FILE}} up -d \
+            -f {{.COMPOSE_FILE}} up -d \
               nos3-fortytwo \
               nos3-nos-engine-server \
               nos3-fsw \
@@ -133,6 +133,7 @@ tasks:
       - build
     cmds:
       - |
+        source ./.env && \
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} \
             --env-file ${ENVIRO_FILE} \
@@ -157,7 +158,8 @@ tasks:
     desc: Do it all for nos3
     cmds:
       - task down down-new ; sleep 5
-      - task up ; sleep 15
+      - task up
+      - sleep 15
       - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
       - task sidecar
       - task info-services
@@ -179,12 +181,28 @@ tasks:
     cmds:
       - echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
 
+  purge-containers:
+    desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
+    cmds:
+      - task all-down || true
+      - yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
+      - yes | ${CONTAINER_BIN} system prune -a || true
+      - yes | ${CONTAINER_BIN} volume prune || true
+      - yes | ${CONTAINER_BIN} network prune || true
+      - echo
+
   info-services:
-    desc: info-servicesrmation on accessing various services
+    desc: info on accessing various services
     cmds: 
       - echo; echo "accessing various services:"; echo
       - echo "open http://localhost:8090 to access yamcs/gsw"
-      - echo "open http://localhost:30090 to access fortytwo (42)"
+      - echo "open http://localhost:30090/vnc.html to access fortytwo (42)"
       - echo "open http://localhost:9000 to access openmct"
       - echo
     silent: true
+
+  env-create:
+    desc: Create .env
+    cmds:
+      - |
+        ${ENVIRO_SCRIPT} > ${ENVIRO_FILE}

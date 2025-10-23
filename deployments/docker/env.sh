@@ -41,6 +41,13 @@ YAMCS_DATA_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data
 YAMCS_GIT_URL=https://github.com/nasa-itc/nos3_yamcs_master.git
 YAMCS_GIT_COMMIT=nos3-dev
 
+# openmct specific configurations
+OPENMCT_IMAGE_URI=docker.io/library/ubuntu:25.04
+OPENMCT_GIT_URL=https://github.com/akhenry/openmct-yamcs.git
+OPENMCT_GIT_COMMIT=master
+OPENMCT_NVM_VERSION=v0.40.1
+OPENMCT_NODE_VERSION=v21.7.3
+
 # nos3 specific configurations
 NOS3_DIR=/home/nos3/.nos3
 NOS3_USER=nos3
