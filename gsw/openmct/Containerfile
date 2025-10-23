@@ -3,13 +3,11 @@ ARG IMAGE_URI=docker.io/library/ubuntu:25.04
 FROM ${IMAGE_URI}
 
 #--- PROXY CONFIG (if needed)
-ARG MAVEN_HTTPS_PROXY
 ARG HTTPS_PROXY
 ARG HTTP_PROXY
 ARG NO_PROXY
 ARG DEPLOYMENT_ENVIRO
 
-ENV MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY}
 ENV HTTPS_PROXY=${HTTPS_PROXY}
 ENV HTTP_PROXY=${HTTP_PROXY}
 ENV NO_PROXY=${NO_PROXY}
@@ -26,12 +24,15 @@ RUN apt-get update && \
 WORKDIR /opt
 
 # Install nvm and node
-ENV NVM_VERSION=v0.40.1
+ARG NVM_VERSION
+ARG NODE_VERSION
+
+ENV NVM_VERSION=${NVM_VERSION}
 ENV NVM_URL=https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh
 ENV NVM_DIR=/opt/nvm
 RUN mkdir -p $NVM_DIR
 
-ENV NODE_VERSION=v21.7.3
+ENV NODE_VERSION=${NODE_VERSION}
 ENV NODE_PATH=$NVM_DIR/versions/node/${NODE_VERSION}/bin
 ENV PATH=${NVM_DIR}:${NODE_PATH}:${PATH}
 
@@ -62,4 +63,3 @@ RUN apt-get update && \
         sudo iputils-ping vim netcat-traditional tmux tree && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-

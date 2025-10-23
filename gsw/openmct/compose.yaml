@@ -10,12 +10,16 @@ services:
         HTTPS_PROXY: ${HTTPS_PROXY}
         HTTP_PROXY: ${HTTP_PROXY}
         NO_PROXY: ${NO_PROXY}
+        
         MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
-        GIT_URL: https://github.com/akhenry/openmct-yamcs.git
-        GIT_COMMIT: master
         IMAGE_URI: ${IMAGE_URI}
-        NVM_VERSION: v0.40.1
-        NODE_VERSION: v21.7.3
+
+        NVM_VERSION: ${NVM_VERSION}
+        NODE_VERSION: ${NODE_VERSION}
+
+        GIT_URL: ${GIT_URL}
+        GIT_COMMIT: ${GIT_COMMIT}
+
     attach: true
     container_name: sc01-openmct
     hostname: sc01-openmct

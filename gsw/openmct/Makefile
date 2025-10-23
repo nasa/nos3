@@ -27,26 +27,22 @@ ifdef (NO_PROXY)
 export NO_PROXY := ${NO_PROXY}
 endif
 
-ifdef (MAVEN_HTTPS_PROXY)
-export MAVEN_HTTPS_PROXY := ${MAVEN_HTTPS_PROXY}
-else
-export MAVEN_HTTPS_PROXY=-s./settings.xml
-endif
-
-ifdef (MAVEN_SETTINGS_FILE)
-export MAVEN_SETTINGS_FILE := ${MAVEN_SETTINGS_FILE}
-endif
-
-ifdef (MAVEN_IMAGE)
-export MAVEN_IMAGE := ${MAVEN_IMAGE}
-else
-export MAVEN_IMAGE := maven:3.9.9-eclipse-temurin-17
-endif
-
 ifdef (IMAGE_URI)
 export IMAGE_URI := ${IMAGE_URI}
 else
 export IMAGE_URI := docker.io/library/ubuntu:25.04
+endif
+
+ifdef (NVM_VERSION)
+export NVM_VERSION := ${NVM_VERSION}
+else
+export NVM_VERSION := v0.40.1
+endif
+
+ifdef (NODE_VERSION)
+export NODE_VERSION := ${NODE_VERSION}
+else
+export NODE_VERSION := v21.7.3
 endif
 
 openmct-pull: | env-create ## Pull ubuntu image for openmct, because in proxied enviro dockerfile cannot find docker.io!
