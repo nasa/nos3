@@ -16,4 +16,7 @@ HTTP_PROXY=${HTTP_PROXY}
 NO_PROXY=${NO_PROXY}
 MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY}
 
+MAVEN_IMAGE=maven:3.9.9-eclipse-temurin-17
+IMAGE_URI=docker.io/library/ubuntu:25.04
+
 EOF

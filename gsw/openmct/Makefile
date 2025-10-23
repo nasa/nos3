@@ -5,7 +5,6 @@ SHELL=bash
 CONTAINER_BIN=docker
 CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
 CONTAINER_FILE=./compose.yaml
-
 TM_SIMULATOR_RATE=1
 
 ifeq (${CONTAINER_BIN},podman)
@@ -28,55 +27,39 @@ ifdef (${NO_PROXY})
 export NO_PROXY := ${NO_PROXY}
 endif
 
+ifdef (${MAVEN_HTTPS_PROXY})
+export MAVEN_HTTPS_PROXY := ${MAVEN_HTTPS_PROXY}
+else
 export MAVEN_HTTPS_PROXY=-s./settings.xml
+endif
 
 ifdef (${MAVEN_SETTINGS_FILE})
 export MAVEN_SETTINGS_FILE := ${MAVEN_SETTINGS_FILE}
 endif
 
-MAVEN_IMAGE=maven:3.9.9-eclipse-temurin-17
+ifdef (${MAVEN_IMAGE})
+export MAVEN_IMAGE := ${MAVEN_IMAGE}
+else
+export MAVEN_IMAGE := maven:3.9.9-eclipse-temurin-17
+endif
 
-all-pull: ## Pre-pull images for openmct and yamcs, because in proxied enviro dockerfile cannot connect to docker.io!
-	@$(MAKE) yamcs-pull
-	@$(MAKE) openmct-pull
+ifdef (${IMAGE_URI})
+export IMAGE_URI := ${IMAGE_URI}
+else
+export IMAGE_URI := docker.io/library/ubuntu:25.04
+endif
 
-all-build: | setup-maven all-pull ## Build all images
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} build
+openmct-pull: | env-create ## Pull ubuntu image for openmct, because in proxied enviro dockerfile cannot find docker.io!
+	@source ./.env &&  ${CONTAINER_BIN} pull ${IMAGE_URI}
 
-all-up: | all-build ## Bring up all containers + yamcs simulator
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} up -d --remove-orphans
-	$(MAKE) yamcs-simulator
-
-all-down: ## Bring down all containers
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} down --remove-orphans
-
-yamcs-pull: ## Pull maven image for yamcs, because in proxied enviro dockerfile cannot find docker.io!
-	${CONTAINER_BIN} pull ${MAVEN_IMAGE}
-
-yamcs-build: | setup-maven yamcs-pull ## Build yamcs
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} build yamcs 
-
-yamcs-up: | yamcs-build ## Bring up yamcs
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} up -d yamcs --remove-orphans
-
-yamcs-simulator: | yamcs-up ## Run yamcs simulator
-	@echo "Starting yamcs-simulator in 15 seconds...";sleep 15
-	${CONTAINER_BIN} exec -it deployments-yamcs bash -c "cd /opt/yamcs/quickstart && ./simulator.py --rate=${TM_SIMULATOR_RATE}"
-
-yamcs-down: ## Bring down yamcs
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} down yamcs --remove-orphans
-
-openmct-pull: ## Pull ubuntu image for openmct, because in proxied enviro dockerfile cannot find docker.io!
-	${CONTAINER_BIN} pull ubuntu:25.04
-
-openmct-build: ## Build openmct
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} build openmct
+openmct-build: | env-create ## Build openmct
+	@source ./.env && ${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} build openmct
 
 openmct-up: | openmct-build ## Bring up openmct
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} up -d --build openmct --remove-orphans
+	@source ./.env && ${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} up -d --build openmct --remove-orphans
 
 openmct-down: ## Bring down openmct
-	${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} down openmct --remove-orphans
+	@source ./.env && ${CONTAINER_COMPOSE_BIN} -f ${CONTAINER_FILE} down openmct --remove-orphans
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
 	@$(MAKE) all-down || true
@@ -89,9 +72,10 @@ purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and ne
 env-create: ## Create .env file 
 	@./env.sh > ./.env
 
-setup-maven: ## Setup maven
-	@echo "<settings><proxies></proxies></settings>" > ./yamcs/settings.xml
-	@if [ "${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then cp ${MAVEN_SETTINGS_FILE} ./yamcs/ || true; fi
+install-taskfile: ## Install Taskfile CLI tool
+	@sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && \
+	  chmod +x ~/.local/bin/task && export PATH="${HOME}/.local/bin:${PATH}"
+	@echo; echo "add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
 
 #---
 RESET  = \033[0m

@@ -1,0 +1,72 @@
+# https://taskfile.dev/docs/installation
+
+version: '3'
+
+dotenv:
+  - ./.env
+
+vars:
+  CONTAINER_BIN: docker
+  CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
+  CONTAINER_FILE: "./compose.yaml"
+  TM_SIMULATOR_RATE: 1
+
+env:
+  DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
+  HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
+  HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+  NO_PROXY: '{{.NO_PROXY | default ""}}'
+  MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE| default ""}}'
+  MAVEN_HTTPS_PROXY: '{{.MAVEN_HTTPS_PROXY | default "-s./settings.xml"}}'
+
+  MAVEN_IMAGE: '{{.MAVEN_IMAGE| default "maven:3.9.9-eclipse-temurin-17"}}'
+  IMAGE_URI: '{{.IMAGE_URI| default "docker.io/library/ubuntu:25.04"}}'
+
+tasks:
+  default:
+    desc: Shows this help message
+    cmds:
+      - task --list-all
+    silent: true
+
+  openmct-pull:
+    desc: Pull ubuntu image for openmct, because in proxied enviro dockerfile cannot find docker.io!
+    cmds:
+      - "{{.CONTAINER_BIN}} pull ubuntu:25.04"
+
+  openmct-build:
+    desc: Build openmct
+    deps:
+      - openmct-pull
+      - env-create
+    cmds:
+      - "source ./.env && {{.CONTAINER_COMPOSE_BIN}} -f {{.CONTAINER_FILE}} build openmct"
+
+  openmct-up:
+    desc: Bring up openmct
+    deps:
+      - openmct-build
+    cmds:
+      - "source ./.env && {{.CONTAINER_COMPOSE_BIN}} -f {{.CONTAINER_FILE}} up -d --build openmct --remove-orphans"
+
+  openmct-down:
+    desc: Bring down openmct
+    cmds:
+      - "source ./.env && {{.CONTAINER_COMPOSE_BIN}} -f {{.CONTAINER_FILE}} down openmct --remove-orphans"
+
+  purge-containers:
+    desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
+    cmds:
+      - task all-down || true
+      - yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
+      - yes | ${CONTAINER_BIN} system prune -a || true
+      - yes | ${CONTAINER_BIN} volume prune || true
+      - yes | ${CONTAINER_BIN} network prune || true
+      - echo
+
+  env-create:
+    desc: Create .env file 
+    cmds:
+      - ./env.sh > ./.env
+    silent: true
+
