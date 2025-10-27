@@ -48,6 +48,11 @@ tasks:
           cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-gsw
 
+  # pull-openmct:
+  #   desc: Pull image to build openmct
+  #   cmds:
+  #     - {{.CONTAINER_BIN}} pull openmct/openmct:latest
+
   build-openmct:
     desc: Build openmct
     deps:
@@ -70,7 +75,7 @@ tasks:
         cd {{.CONTAINER_DIR}}/ && \
           {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
-  set-permissions: ## 
+  set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
       - find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable

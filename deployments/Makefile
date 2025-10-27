@@ -35,30 +35,25 @@ endif
 endif
 #---
 
-env_create: ## create ./docker/.env file
-	${CONTAINER_DIR}/env.sh > ${CONTAINER_DIR}/.env
-
-env_export: env_create ## export ./docker/.env file variables to shell
-	set -o allexport && source ${CONTAINER_DIR}/.env && set +o allexport
-
-down: ## Bring down nos3
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} down --remove-orphans || true
-
 build-fortytwo: | env_export set-permissions ## Build fortytwo (42)
-	cd ${CONTAINER_DIR}/ ; \
-		${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo
+	source ${ENVIRO_FILE} && \
+	  cd ${CONTAINER_DIR}/ ; \
+	  ${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo
 
-build-yamcs: | env_export set-permissions ## Build yamcs
+build-yamcs: | env-export set-permissions ## Build yamcs
+	source ${ENVIRO_FILE} && \
 	cd ${CONTAINER_DIR}/ ; \
-		${CONTAINER_COMPOSE_BIN} build --pull nos3-gsw
+	${CONTAINER_COMPOSE_BIN} build --pull nos3-gsw
 
-build-openmct: | env_export set-permissions ## Build openmct
-	cd ${CONTAINER_DIR}/ ; \
-		${CONTAINER_COMPOSE_BIN} build --pull nos3-openmct
+build-openmct: | env-export set-permissions ## Build openmct
+	source ${ENVIRO_FILE} && \
+	  cd ${CONTAINER_DIR}/ ; \
+	  ${CONTAINER_COMPOSE_BIN} build --pull nos3-openmct
 
-build: | set-permissions## Build all containers
-	cd ${CONTAINER_DIR}/ ; \
-		${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo nos3-gsw nos3-openmct
+build: | env-export set-permissions ## Build all containers
+	source ${ENVIRO_FILE} && \
+	  cd ${CONTAINER_DIR}/ ; \
+	    ${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
@@ -67,10 +62,13 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
-up: | build ## Bring up nos3 in detached state
+up: | env-create build ## Bring up nos3 in detached state
 	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
 		--env-file ./.env \
 		-f ${COMPOSE_FILE} up -d --remove-orphans
+
+down: ## Bring down nos3
+	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} down --remove-orphans || true
 
 up-minimum: | down build ## Bring up nos3 in detached state
 	export MINIMAL_PATH=nos3; \
@@ -126,6 +124,9 @@ info-services: ## Information on accessing various services
 	@echo "open http://localhost:30090 to access fortytwo (42)"
 	@echo "open http://localhost:9000 to access openmct"
 	@echo
+
+env-create: ## create ./docker/.env file
+	${CONTAINER_DIR}/env.sh > ${CONTAINER_DIR}/.env
 
 #---
 RESET  = \033[0m
