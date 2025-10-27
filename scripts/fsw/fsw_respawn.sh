@@ -19,7 +19,7 @@ do
         pidof core-cpu1 > /dev/null
         if [ $? -eq 1 ]
         then
-            $FSW_DIR/core-cpu1 -R PO & 
+            $FSW_DIR/core-cpu1 -R PO -C $SC_CPU & 
         fi
     fi
     sleep 1
