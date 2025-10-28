@@ -93,8 +93,12 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --remove-orphans
+          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
+      - sleep 15
+      - task sidecar
       - task info-services
+      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+    silent: true
 
   down:
     desc: Bring down nos3
@@ -125,23 +129,16 @@ tasks:
               nos3-gsw \
               nos3-openmct \
             --remove-orphans
+      - sleep 15
+      - task sidecar
       - task info-services
+      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+    silent: true
 
   sidecar:
     desc: Run sidecar to enable output
     cmds:
       - ./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
-
-  doitall:
-    desc: Do it all for nos3
-    cmds:
-      - task down
-      - sleep 5
-      - task up
-      - sleep 15
-      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
-      - task sidecar
-      - task info-services
     silent: true
 
   clean:
@@ -161,8 +158,8 @@ tasks:
       - echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
       - |
         if [ "${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then
-          cp ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
-          cp ${MAVEN_SETTINGS_FILE} ${SERVICES_DIR}/yamcs/ || true
+          cp -f ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
+          cp -f ${MAVEN_SETTINGS_FILE} ${SERVICES_DIR}/yamcs/ || true
         fi
 
   purge-containers:

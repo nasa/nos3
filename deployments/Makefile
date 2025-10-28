@@ -49,14 +49,19 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | env-create build ## Bring up nos3 in detached state
-	${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --remove-orphans
-	$(MAKE) info-services
+	@source ${ENVIRO_FILE} && \
+	  ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
+	sleep 15
+	@$(MAKE) --silent sidecar
+	@$(MAKE) --silent info-services
+	@${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
 
 down: ## Bring down nos3
 	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
 
-up-minimum: | down build ## Bring up nos3 in detached state
-	export NOS3_CFG_PATH=nos3; \
+up-minimum: | down env-create build ## Bring up nos3 in detached state
+	@source ${ENVIRO_FILE} && \
+	  export NOS3_CFG_PATH=nos3; \
 	${CONTAINER_COMPOSE_BIN} \
 		--env-file ${ENVIRO_FILE} \
 		-f ${COMPOSE_FILE} up -d \
@@ -70,19 +75,13 @@ up-minimum: | down build ## Bring up nos3 in detached state
 			nos3-gsw \
 			nos3-openmct \
 		--remove-orphans 
-	$(MAKE) info-services
+	sleep 15
+	@$(MAKE) --silent sidecar
+	@$(MAKE) --silent info-services
+	@${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
 
 sidecar: ## Run sidecar to enable output
-	./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
-
-doitall: ## Do it all for nos3
-	@$(MAKE) down; \
-	sleep 5; \
-	$(MAKE) up; \
-	sleep 15; \
-	${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
-	$(MAKE) --silent sidecar
-	$(MAKE) info-services
+	@./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
 clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
