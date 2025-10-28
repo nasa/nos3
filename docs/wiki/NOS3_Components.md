@@ -66,7 +66,7 @@ Note that it is assumed telemetry messages are also within range, but just follo
   * Perf_IDs: 500
   * Fprime Base ID: 0x0F00
 * Star Tracker
-  * Protocol(s): SpaceWire
+  * Protocol(s): UART
   * MSGID range: 0x1935 - 0x1936
   * Perf_IDs: 550
   * Fprime Base ID: 0xE000
@@ -94,16 +94,13 @@ Note that it is assumed telemetry messages are also within range, but just follo
 * Hardware and Flight Software Integration 
   * In cases where hardware availability is delayed, the development of the flight software application can procced using the same functions and hardware library calls used in the standalone checkout application. This approach ensures that the flight software application primarily serves as an integration test with the rest of the software components, including the ground software and associated integration tests documented in the test plan. Note that the simulation is not a replacement for traditional hardware testing, but an additional tool to be used to reduce schedule and risk.  
 * Component Updates and Refinements 
-  * Once hardware testing becomes possible, additional time should be allocated to update the component based on insights and findings from the testing from the hardware testing phase. This includes making necessary adjustments within the NOS3 framework to ensure proper functionality and performance.  
+  * Once hardware testing becomes possible, additional time should be allocated to update the component based on insights and findings from the hardware testing phase. This includes making necessary adjustments within the NOS3 framework to ensure proper functionality and performance.  
 * Generic Components
   * These components provide a standardized starting point for building simulations and training materials. By including generic components, NOS3 can showcase standard commands, telemetry, and interfaces to potential users who are not familiar with the underlying software modules. 
-  * The generic components in NOS3 ensures that the framework remains adaptable, flexible, and relevant to a wide range of small satellite missions. It empowers developers and mission teams to leverage existing components as building blocks and focus their efforts on specific mission requirements and optimizations, rather than starting from scratch.   
+  * The generic components in NOS3 ensure that the framework remains adaptable, flexible, and relevant to a wide range of small satellite missions. It empowers developers and mission teams to leverage existing components as building blocks and focus their efforts on specific mission requirements and optimizations, rather than starting from scratch.   
 
 
 ## Integrated Algorithms
-
-TODO
-...
 
 ### Attitude Determination and Control System (ADCS)
 * Protocol(s): N/A
@@ -114,7 +111,7 @@ TODO
 * Protocol(s): N/A
 * MSGID range: 0x1915 - 0x1916
 
-CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Extended Procedures (SDLS-EP) to secure communications between a spacecraft flight software and ground station.
+CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Extended Procedures (SDLS-EP) to secure communications between a spacecraft's flight software and a ground station.
 CryptoLib was originally designed as a Core Flight System (cFS) spacecraft library but has recently expanded in scope to become more generic and support telecommand encryption using gcrypt. 
 
 To get started with CryptoLib, you can visit the [GitHub repository](https://github.com/nasa/CryptoLib/wiki#what-is-cryptolib) maintained by NASA.

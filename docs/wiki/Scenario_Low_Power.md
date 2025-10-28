@@ -103,8 +103,9 @@ Finally, now that we've determined what is necessary to achieve the desired beha
 
 ### Step 4: Implementation
 Implementation is left open for you to determine based on previous lessons, but there will be some consistent basic steps. You will want to:
-* Add the watchpoint.
-* Add any new RTS tables.
+* Add the watchpoint to `cfg/nos3_defs/tables/lc_def_wdt.c`.  You can use watchpoint 27 as a guide and use any unused slot such as 15.
+* Add the actionpoint to `cfg/nos3_defs/tables/lc_def_adt.c`.  You can use actionpoint 27 as a guide and use any unused slot such as 15.
+* Add any new RTS tables such as `cfg/nos3_defs/tables/sc_rts015.c`.  You can use RTS 27 (`sc_rts027.c`) as a guide.
 * Modify existing RTS tables to use this watchpoint as necessary.
 Then, it will be necessary to either reboot the system and compile the new tables that way, or compile the tables in a testing environment such as NOS3, copy the compiled .tbl files during execution, and utilize CFDP and cFS's existing table commands to hot swap in the new tables (as shown in the In Flight Patching Scenario).
 

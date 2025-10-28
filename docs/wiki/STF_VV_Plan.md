@@ -77,7 +77,7 @@ This is the actual software to be used in flight but recompiled for a Linux envi
 In addition, the ground software command and telemetry databases that are used for command and control of the flight software can also be treated as test articles.
 
 ### 5.3 Support Equipment
-The ground software system (Advanced Multi-Mission Operations System (AMMOS) Instrument Toolkit (AIT), COSMOS, OpenC3, or Yet Another Mission Control System (YAMCS)) and the 42 dynamic software are required by the NOS system.  
+The ground software system Advanced Multi-Mission Operations System (AMMOS) Instrument Toolkit (AIT), COSMOS, OpenC3, or Yet Another Mission Control System (YAMCS) and the 42 dynamic software are required by the NOS system.  
 In addition, simulations for the components being tested are required for testing.
 
 ### 5.4 Facilities

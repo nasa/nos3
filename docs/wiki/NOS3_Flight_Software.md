@@ -1,26 +1,28 @@
 # Flight Software
 
-Flight Software (FSW) is responsible for operating and navigating your spacecraft throughout its mission. NOS3 creates an environment that allows a user to simulate and end-to-end mission with a spacecraft using cFS. NOS3 Flight software is defaulted to use cFS, however F' FSW is integrated into NOS3 as well to provide another FSW system for users to explore.
+Flight Software (FSW) is responsible for operating and navigating your spacecraft throughout its mission. NOS3 creates an environment that allows a user to simulate an end-to-end mission with a spacecraft using cFS. NOS3 Flight software is defaulted to use cFS, however F' FSW is integrated into NOS3 as well to provide another FSW framework for users to explore.
 
 ## Standalone Checkout
-In NOS3, Standalone Checkouts are used to verify component functionality with your Components Simulation. Following the steps below will create a simple terminal interface to interact with the Simulation. Checkouts are to be used to test your component without connecting your component to NOS3 in its entirety, therefore providing a proof of concept of operations.
+In NOS3, Standalone Checkouts are used to verify component functionality with your component's simulation. Following the steps below will create a simple terminal interface to interact with the simulation. Checkouts are to be used to test your component without connecting your component to NOS3 in its entirety, therefore providing a proof of concept of operations.
 
 The below example is a reference for the sample component.
 
 To build the standalone version, assuming starting from top level NOS3 repository:
 * make debug
-* cd ./components/sample/support
+* cd ./components/sample/fsw/standalone
 * mkdir build
 * cd build
 * cmake .. 
-  * Can override target selection by adding `-DTGTNAME=cpu1`
+  * Can override target selection by adding `-DTGTNAME=cpu1` to the `cmake` command line
 * make
+* exit
 
-To run the standalone version, assuming starting rom the top level NOS3 repository:
-* Follow the build steps above
+To run the standalone version, assuming starting from the **top level** NOS3 repository:
+
+Follow the build steps above, then:
 * make
 * make checkout
-  * Launches NOS Engine, NOS Time Driver, NOS Terminal, Sample Sim, and Sample Checkout
+  * Launches NOS Engine, NOS Time Driver, NOS Terminal, Sample Sim, and Sample Checkout under gdb
 * make stop
 
 ## core Flight System (cFS)
@@ -30,7 +32,7 @@ This section will describe the method utilized to interface NOS3 with cFS.
 
 ### Operating System Abstraction Layer
 
-Core Flight System is the FSW selected for the STF-1 mission partially due to the implementation of the Operating System Abstraction Layer (OSAL). The OSAL provides an API that allows flight software applications to be written without operating system (OS) specific calls. When cFS is compiled, the target OS is specified and the build system includes the proper libraries. This allows the FSW written for the FreeRTOS target to be built to execute on Linux and the opposite remains true. This makes NOS3 an ideal development environment when using the OSAL Linux target.
+Core Flight System is the FSW selected for the STF-1 mission partially due to the implementation of the Operating System Abstraction Layer (OSAL). The OSAL provides an API that allows flight software applications to be written without operating system (OS) specific calls. When cFS is compiled, the target OS is specified and the build system includes the proper libraries. This allows the FSW written for the FreeRTOS target to be built to execute on Linux and vice versa. This makes NOS3 an ideal development environment when using the OSAL Linux target.
 
 ### Platform Support Package
 
@@ -57,11 +59,11 @@ Note that it is assumed telemetry messages are also within range without the 0x1
   * Perf_IDs: 32, 33  
 * ds - Data Storage
   * Protocol(s): CCSDS
-  * MSGID range: 0x18BB-0x18BC
+  * MSGID range: 0x18B8-0x18BC
   * Perf_IDs: 38
 * fm - File Manager
   * Protocol(s): CCSDS
-  * MSGID range: 0x188C - 0x188D
+  * MSGID range: 0x188A - 0x188E
   * Perf_IDs: 39, 44
 * hwlib - Hardware Library
   * Protocol(s): CCSDS
@@ -69,7 +71,7 @@ Note that it is assumed telemetry messages are also within range without the 0x1
   * Perf_IDs: 50
 * lc - Limit Checker
   * Protocol(s): CCSDS
-  * MSGID range: 0x18A4-0x18A6
+  * MSGID range: 0x18A4-0x18A7
   * Perf_IDs: 28, 43
 * sc - Stored Commands
   * Protocol(s): CCSDS
@@ -77,7 +79,7 @@ Note that it is assumed telemetry messages are also within range without the 0x1
   * Perf_IDs: 37
 * sch - Scheduler
   * Protocol(s): CCSDS
-  * MSGID range: 0x1895-0x1897
+  * MSGID range: 0x1895-0x1898
   * Perf_IDs: 36
 * to - Telemetry Output
   * Protocol(s): CCSDS
@@ -90,12 +92,12 @@ Note that it is assumed telemetry messages are also within range without the 0x1
 
 ## cFS Tables
 
-Several cFS Apps rely on tables to configure them. The main ones that are preconfigured by NOS3 are the ones for cf, ds, fm, hk, sc, sch, and to. The main ones the user would likely want to configure for their mission and the ds, sc, and sch tables.
+Several cFS Apps rely on tables to configure them. The main ones that are preconfigured by NOS3 are the ones for cf, ds, fm, hk, lc, sc, sch, to, and to_lab. The main ones the user would likely want to configure for their mission are the ds, sc, and sch tables.
 
 ### DS Tables
 DS, or Data Storage, utilizes three main tables - the File Table, the Filter Table, and the Indices table. The Indices table can likely be left as default in most cases, leaving the File and Filter tables as the main ones you would likely want to reconfigure.
 
-The DS File Table is defined at {nos3_base}/cfg/nos3_defs/tables/ds_file_table.c. It handles the definition of files for the data storage app, which allow the logging of user-defined sets of packets from the cFS Bus to a file which can be saved off by the user for analysis. By default, 4 files are fully created and two more are semi-defined, and it allows for a maximum of 16 files (indexed 0-15).
+The DS File Table is defined at `{nos3_base}/cfg/nos3_defs/tables/ds_file_table.c`. It handles the definition of files for the data storage app, which allow the logging of user-defined sets of packets from the cFS Bus to a file which can be saved off by the user for analysis. By default, 4 files are fully created and two more are semi-defined, and it allows for a maximum of 16 files (indexed 0-15).
 
 The user should start by picking an unused index, and creating a #define in the list at the top aliasing the index number of their file with its name.
 
@@ -103,7 +105,7 @@ The user should start by picking an unused index, and creating a #define in the 
 
 The image above is the default event packet log file for NOS3, and shows the following file attributes which the user can define. 
 * Movename allows you to define a path where you want the file to be moved and stored on simulator shutdown. 
-* Pathname is the relative path within the spacecraft's base storage at which you want the file to be created (the spacecraft's files are found at '{nos3_base}/fsw/build/exe/cpu1').
+* Pathname is the relative path within the spacecraft's base storage at which you want the file to be created (the spacecraft's files are found at `{nos3_base}/fsw/build/exe/cpu1`).
 * Basename sets the base filename of the file
 * Extension sets the file extension for the file (".ds" by default)
 * FileNameType defines whether you are rolling the file (and thus extending the filename) by time or count.
@@ -112,7 +114,7 @@ The image above is the default event packet log file for NOS3, and shows the fol
 * MaxFileAge defines the max age of a file before it is rolled (in seconds)
 * SequenceCount is only used if rolling by count. Otherwise can be left as DS_UNUSED. If used, will define the starting count for the file
 
-Once the user defines all attributes as desired, the user should go to {nos3_base}/scripts/docker_launch.sh, and after line 32 should add a `mkdir` command like the ones above it with any new data directory in which they plan to spawn their file. If they are spawning it in an already extant directory, this can be skipped. Then, once this is done the file should be created on startup, though it will not accrue data unless the Filter Table has already been configured to send packets to it.
+Once the user defines all attributes as desired, the user should go to `{nos3_base}/scripts/docker_launch.sh`, and after line 32 should add a `mkdir` command like the ones above it with any new data directory in which they plan to spawn their file. If they are spawning it in an already extant directory, this can be skipped. Then, once this is done the file should be created on startup, though it will not accrue data unless the Filter Table has already been configured to send packets to it.
 
 The DS Filter Table is used to define what packets DS should send to what files to be stored. Initially, only the small subset of packets stored in the default files are defined, but the user can both add more packets, and define what tables new and existing packets should be sent to.
 
@@ -137,12 +139,9 @@ The entries are structured as follows:
 
 Once you have defined all your new packets and storage parameters, then as long as your file table and directories are properly created, your file should start populating with all the right packets upon startup. 
 
-### SC RTS Tables
-RTS Tables are utilized by the SC - or Stored Command - app to allow users to set up sequences of commands that can be triggered via a single set of commands from the ground. 
+### SC Relative Time Sequence (RTS) Tables
+RTS Tables are utilized by the SC - or Stored Command - app to allow users to set up sequences of commands that can be triggered via a single set of commands from the ground or by a limit checker action point. 
 
-TODO
-...
-Details on RTS Tables
 
 ## F' 
 
@@ -163,35 +162,35 @@ F´ has the following features:
 
 When Building NOS3 with F-Prime, it may be necessary to clone NOS3 in a
 Linux environment, rather than attempt to build with shared folders. You
-can use the NOS3 VM and clone NOS3 in **/home/jstar/,** rather than use
+can use the NOS3 VM and clone NOS3 in `/home/jstar/`, rather than use
 the github-nos3 shared folder in the NOS3 VMs Desktop. Building F-Prime
 with shared folders can sometimes result in build errors due to the
 shared folder, however building locally inside the Linux environment
 will ensure NOS3 builds successfully.
 
-When Configuring NOS3 to use F-Prime. Be sure to edit the
+When Configuring NOS3 to use F-Prime, be sure to edit the
 nos3-mission.xml file to select F-Prime as your GSW and FSW as seen
-above. After changing you mission configuration, save the file and run
-**make clean** from your nos3/ directory. Run **make** to rebuild NOS3
+below. After changing you mission configuration, save the file and run
+`make clean` from your nos3/ directory. Run `make` to rebuild NOS3
 for the F-Prime FSW and GSW configuration. Once NOS3 is built, run
-**make launch** and wait for the F-Prime gds window to launch. Below is
+`make launch` and wait for the F-Prime ground data system window to launch. Below is
 a picture of the NOS3 Configuration needed to build F-Prime.
 
 ![nos3 mission xml](./_static/nos3_mission_xml.png)
 
-Note, if a NOS3 user wishes to add fidelity to F-Prime. The user must
-**make clean** to remove autogenerated files so that F-Prime can be
-built again. Once NOS3 is cleaned, simply run make to rebuild F-Prime
-FSW with new additions.
+Note, if a NOS3 user wishes to add fidelity to F-Prime, the user must
+`make clean` to remove autogenerated files so that F-Prime can be
+built again. Once NOS3 is cleaned, simply run `make` to rebuild F-Prime
+FSW with any new additions.
 
 ### Sending a Sample NOOP Command:
 
-After the F-Prime GDS window launches, F-Prime FSW should be running and
-the Sample component can be commanded. To send a SampleSim noop command,
-select the SampleSim.NOOP command from the drop down menu in the F-Prime
-GDS. You will then seen the noop command Completed event message under
-the events tab in the F-Prime GDS window. You will also see the command
-process in the SampleSim terminal window in NOS3. The below figures
+After the F-Prime GDS window launches, F-Prime flight software should be running and
+the Sample component can be commanded. To send a SampleSim NOOP command,
+select the `SampleSim.NOOP` command from the drop down menu in the F-Prime
+ground data system and click `Send Command`. You will then see the `NOOP command completed` 
+event message under the events tab in the F-Prime 
+ground data system window. The below figures
 represent an example of what commanding looks like in the F-Prime GDS.
 
 ![Fprime Commanding](./_static/fprime_cmding.png)
@@ -200,14 +199,14 @@ represent an example of what commanding looks like in the F-Prime GDS.
 
 ### Creating an F-Prime Component in NOS3:
 
-To create a NOS3 component in NOS3, first enter the nos3 debug by
-running **make debug** in the nos3/ directory.
+To create a NOS3 component in NOS3, first enter a nos3 debug session by
+running `make debug` in the nos3/ directory.
 
 After running make debug, navigate to the
-**fsw/fprime/fprime-nos3/Components** directory.
+`fsw/fprime/fprime-nos3/Components` directory.
 
 Here you can create a new F-Prime component by running the following
-command: **fprime-util new –component**
+command: `fprime-util new –-component`
 
 Note, you do not need to run the F-Prime virtual python environment in
 order to use the F-Prime framework tools to create an F-Prime project.
@@ -222,19 +221,19 @@ The Helloworld tutorial helps a user understand how to use F-Prime and
 how to get started with developing using the F-Prime FSW framework. This
 tutorial explains how to setup an F-Prime project, however a user can
 use the existing F-Prime project found in NOS3. That is fprime-nos3/
-which is found under **fsw/fprime/**. The Helloworld tutorial also
+which is found under `fsw/fprime/`. The Helloworld tutorial also
 describes how to create basic F-Prime connections to launch a new
 component in the F-Prime gds.
 
 The Nos3 Developers were able to utilize NOS3 Component fidelity to
 communicate to simulations in NOS3 without having to start from scratch
 in F-Prime. For example, with the sample component in Nos3, the
-developers were ablet to include the necessary NOS3 libraries and files
+developers were able to include the necessary NOS3 libraries and files
 in the F-Prime cmake files in the Component/ and Deployment/
 directories. This allows F-Prime to pull in the necessary function calls
 from NOS3 to F-Prime fsw. For an example refer to the Sample component
 in F-Prime, you will see how commanding is setup in the F-Prime
-component by utilizing the existing NOS3 fideltiy.
+component by utilizing the existing NOS3 fidelity.
 
 It is important to understand that each component has its own cmake
 file, so when creating new components based of NOS3 Components, you need
@@ -247,7 +246,7 @@ cmake files in the Deployment directory
 
 Here we explain how we synchronize time from NOS3 to with F-Prime by
 creating our own passive F-Prime component. This component can be found
-under fsw/fprime/fprime-nos3/Components. There you will find the cpp
+under `fsw/fprime/fprime-nos3/Components`. There you will find the cpp
 and fpp files that make up the Nos3Time component in F-Prime. These
 files are explained in more detail below.
 
@@ -270,7 +269,7 @@ made, and on which port. This string is used when creating our Fprime Bus in the
 
 
 
-Following this, users need to set up a Buse Name, a TICKS\_PER\_SECOND
+Following this, users need to set up a Bus Name and a TICKS\_PER\_SECOND
 variable. These will allow for the connection of a component to this bus
 via a call-back function which will provide NOS Engine time on each tick
 being populated in the above created bus. This is accomplished using a
@@ -298,7 +297,7 @@ void Fprime_NosTickCallback(NE_SimTime time)
 
 The local function, relative to the F-Prime component,
 FPrime\_NosTickCallback() is used to retrieve the ticks (each tick is 100
-seconds). Then simple math is performed to place the seconds (upper U32
+microseconds). Then simple math is performed to place the seconds (upper U32
 ) and microseconds (lower U32) into the F-Prime time.set call described
 later in this documentation.
 
@@ -308,7 +307,7 @@ been supplied on the created bus. This variable is a tick counter
 variable. To convert to actual time, users will need to manipulate the
 ticks into seconds and micro seconds for F-Prime. This is done utilizing
 the TICKS\_PER\_SECOND variable in order to create the conversions. An
-offset can be added to specify any specific start 0 date.
+offset can be added to specify any specific start epoch.
 
 All of this functionality can be placed in its own component, and
 through the deployment topology, pointed to utilize the new time
