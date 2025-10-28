@@ -50,6 +50,7 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 
 up: | env-create build ## Bring up nos3 in detached state
 	${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --remove-orphans
+	$(MAKE) info-services
 
 down: ## Bring down nos3
 	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
@@ -69,7 +70,8 @@ up-minimum: | down build ## Bring up nos3 in detached state
 			nos3-gsw \
 			nos3-openmct \
 		--remove-orphans 
-
+	$(MAKE) info-services
+	
 sidecar: ## Run sidecar to enable output
 	./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
@@ -91,8 +93,8 @@ clean: | down down-new ## clean images, cache, volumes, and networks
 setup-maven: ## Setup maven settings.xml with proxy info-services
 	echo "<settings><proxies></proxies></settings>" > $${SERVICES_DIR}/yamcs/settings.xml
 	if [ "$${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then \
-	  cp -f $${MAVEN_SETTINGS_FILE} $${HOME}/.nos3/yamcs/ || true \
-	  cp -f $${MAVEN_SETTINGS_FILE} $${SERVICES_DIR}/yamcs/ || true \
+	  cp -f $${MAVEN_SETTINGS_FILE} $${HOME}/.nos3/yamcs/ || true; \
+	  cp -f $${MAVEN_SETTINGS_FILE} $${SERVICES_DIR}/yamcs/ || true; \
     fi
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
