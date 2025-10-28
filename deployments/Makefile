@@ -49,7 +49,7 @@ build-openmct: | env-create set-permissions ## Build openmct
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
 
-build: | env-create set-permissions ## Build all containers
+build: | env-create setup-maven set-permissions ## Build all containers
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
