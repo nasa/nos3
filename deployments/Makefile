@@ -9,8 +9,10 @@ export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
 export CONTAINER_DIR=./docker
 export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
+export SERVICES_DIR=./services
+
 export ENVIRO_SCRIPT="./env.sh"
-export ENVIRO_FILE="${CONTAINER_DIR}/.env"
+export ENVIRO_FILE="./.env"
 
 ifeq (${CONTAINER_BIN},podman)
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN}-compose
@@ -19,7 +21,7 @@ endif
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
 $(shell echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml)
 export MAVEN_HTTPS_PROXY=-s./settings.xml
-export MINIMAL_PATH=..
+export NOS3_CFG_PATH=..
 
 #---
 ifndef DEPLOYMENT_ENVIRO
@@ -39,7 +41,7 @@ build-fortytwo: | env-create set-permissions ## Build fortytwo (42)
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
 
-build-yamcs: | env-create set-permissions ## Build yamcs
+build-yamcs: | env-create setup-maven set-permissions ## Build yamcs
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-gsw
 
@@ -65,7 +67,7 @@ down: ## Bring down nos3
 	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
 
 up-minimum: | down build ## Bring up nos3 in detached state
-	export MINIMAL_PATH=nos3; \
+	export NOS3_CFG_PATH=nos3; \
 	${CONTAINER_COMPOSE_BIN} \
 		--env-file ${ENVIRO_FILE} \
 		-f ${COMPOSE_FILE} up -d \
@@ -99,7 +101,7 @@ clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} network prune
 
 setup-maven: ## Setup maven settings.xml with proxy info-services
-	echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
+	echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
 	@$(MAKE) all-down || true
@@ -116,7 +118,7 @@ info-services: ## info on accessing various services
 	@echo "open http://localhost:9000 to access openmct"
 	@echo
 
-env-create: ## create ./docker/.env file
+env-create: ## Create .env file from env.sh script
 	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
 
 #---

@@ -21,7 +21,7 @@ MAVEN_REPO_LOCAL=/home/nos3/.nos3/.m2/repository
 MAVEN_HTTPS_PROXY="--settings ./settings.xml"
 
 # 
-MINIMAL_PATH=..
+NOS3_CFG_PATH=..
 
 # 42 specific configurations
 FORTYTWO_DISPLAY=:1

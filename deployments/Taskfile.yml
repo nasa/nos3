@@ -9,6 +9,8 @@ env:
   CONTAINER_DIR: ./docker
   COMPOSE_FILE: "{{.CONTAINER_DIR}}/compose.yaml"
 
+  SERVICES_DIR: ./services
+
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
@@ -17,7 +19,7 @@ env:
   ENVIRO_FILE: "./.env"
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
-  MINIMAL_PATH: ".."
+  NOS3_CFG_PATH: ".."
 
 tasks:
   default:
@@ -40,6 +42,7 @@ tasks:
     desc: Build yamcs
     deps:
       - env-create
+      - setup-maven
       - set-permissions
     cmds:
       - |
@@ -101,7 +104,7 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-        export MINIMAL_PATH="nos3" ; \
+        export NOS3_CFG_PATH="nos3" ; \
           ${CONTAINER_COMPOSE_BIN} \
             --env-file ${ENVIRO_FILE} \
             -f ${COMPOSE_FILE} up -d \
@@ -148,7 +151,7 @@ tasks:
   setup-maven:
     desc: Setup maven settings.xml with proxy info-services
     cmds:
-      - echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
+      - echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
 
   purge-containers:
     desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
@@ -171,7 +174,7 @@ tasks:
     silent: true
 
   env-create:
-    desc: Create .env
+    desc: Create .env file from env.sh script
     cmds:
       - |
         ${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
