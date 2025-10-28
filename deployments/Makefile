@@ -104,7 +104,7 @@ setup-maven: ## Setup maven settings.xml with proxy info-services
 	echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
-	@$(MAKE) all-down || true
+	@$(MAKE) down || true
 	@yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
 	@yes | ${CONTAINER_BIN} system prune -a || true
 	@yes | ${CONTAINER_BIN} volume prune || true

@@ -156,7 +156,7 @@ tasks:
   purge-containers:
     desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
     cmds:
-      - task all-down || true
+      - task down || true
       - yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
       - yes | ${CONTAINER_BIN} system prune -a || true
       - yes | ${CONTAINER_BIN} volume prune || true
