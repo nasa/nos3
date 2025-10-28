@@ -114,36 +114,6 @@ services:
           - yamcs
       nos3-core-00:
 
-  nos3-sidecar:
-    image: ghcr.io/haisamido/nos3-base:dev
-    env_file:
-      - .env
-    attach: true
-    container_name: sc01-nos-sidecar
-    hostname: sc01-sidecar
-    working_dir: "/home/nos3/"
-    command: "/entrypoint.sh active-gs 8090"
-    volumes:
-      - ${PWD}/sidecar/entrypoint.sh:/entrypoint.sh
-      - ${PWD}/sidecar/commanding.py:/commanding.py
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://active-gs:8090/api"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    depends_on:
-      nos3-gsw:
-        condition: service_healthy
-      nos3-truth42sim:
-        condition: service_started
-      nos3-radio-sim-cryptolib:
-        condition: service_started
-      # nos3-cryptolib:
-      #   condition: service_started
-    networks:
-      nos3-sc01-00:
-      nos3-core-00:
-
   nos3-onair:
     image: ghcr.io/haisamido/nos3-base:dev
     env_file:
@@ -804,3 +774,33 @@ networks:
   nos3-sc01-00:
     external: ${EXTERNAL_NETWORK_SC01:-false}
     name: nos3-sc01
+
+  # nos3-sidecar:
+  #   image: ghcr.io/haisamido/nos3-base:dev
+  #   env_file:
+  #     - .env
+  #   attach: true
+  #   container_name: sc01-nos-sidecar
+  #   hostname: sc01-sidecar
+  #   working_dir: "/home/nos3/"
+  #   command: "/entrypoint.sh active-gs 8090"
+  #   volumes:
+  #     - ${PWD}/sidecar/entrypoint.sh:/entrypoint.sh
+  #     - ${PWD}/sidecar/commanding.py:/commanding.py
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl http://active-gs:8090/api"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   depends_on:
+  #     nos3-gsw:
+  #       condition: service_healthy
+  #     nos3-truth42sim:
+  #       condition: service_started
+  #     nos3-radio-sim-cryptolib:
+  #       condition: service_started
+  #     # nos3-cryptolib:
+  #     #   condition: service_started
+  #   networks:
+  #     nos3-sc01-00:
+  #     nos3-core-00:

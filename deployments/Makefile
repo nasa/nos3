@@ -109,8 +109,8 @@ purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and ne
 	@yes | ${CONTAINER_BIN} network prune || true
 	@echo
 
-info-services: ## Information on accessing various services
-	@echo; echo "accessing various services:"; echo
+info-services: ## info on accessing various services
+	@echo; echo "How to access various services:"; echo
 	@echo "open http://localhost:8090 to access yamcs/gsw"
 	@echo "open http://localhost:30090 to access fortytwo (42)"
 	@echo "open http://localhost:9000 to access openmct"
