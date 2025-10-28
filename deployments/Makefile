@@ -4,12 +4,14 @@
 SHELL=bash
 
 # Containerization Parameters
+export TARGETS_DIR=./targets
+export SERVICES_DIR=./services
+
 export CONTAINER_BIN=docker
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
-export CONTAINER_DIR=./docker
-export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
-export SERVICES_DIR=./services
+export CONTAINER_DIR=${TARGETS_DIR}/docker
+export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
 export ENVIRO_SCRIPT="./env.sh"
 export ENVIRO_FILE="./.env"
