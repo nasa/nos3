@@ -6,14 +6,14 @@ dotenv:
 env:
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
-  COMPOSE_FILE: ./compose.yaml
   CONTAINER_DIR: ./docker
+  COMPOSE_FILE: "{{.CONTAINER_DIR}}/compose.yaml"
 
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
 
-  ENVIRO_SCRIPT: "{{.CONTAINER_DIR}}/env.sh"
+  ENVIRO_SCRIPT: "./env.sh"
   ENVIRO_FILE: "./.env"
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
@@ -33,9 +33,8 @@ tasks:
       - set-permissions
     cmds:
       - |        
-        source {{.ENVIRO_FILE}} && \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
 
   build-yamcs:
     desc: Build yamcs
@@ -44,9 +43,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source {{.ENVIRO_FILE}} && \
-          cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-gsw
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-gsw
 
   # pull-openmct:
   #   desc: Pull image to build openmct
@@ -60,9 +58,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source {{.ENVIRO_FILE}} && \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-openmct
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
 
   build:
     desc: Build all containers
@@ -71,9 +68,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source {{.ENVIRO_FILE}} && \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} build --pull nos3-fortytwo nos3-gsw nos3-openmct
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
@@ -91,20 +87,15 @@ tasks:
       - build
     cmds:
       - |
-        source {{.ENVIRO_FILE}} && \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            --env-file ${ENVIRO_FILE} \
-            -f {{.COMPOSE_FILE}} up -d --remove-orphans   
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --remove-orphans
       - task info-services
 
   down:
     desc: Bring down nos3
     cmds:
       - |
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            -f {{.COMPOSE_FILE}} down --remove-orphans || true
+        ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
 
   up-minimum:
     desc: Bring up nos3 (minimum) in detached state
@@ -114,12 +105,11 @@ tasks:
       - build
     cmds:
       - |
-        source {{.ENVIRO_FILE}} && \
+        source ${ENVIRO_FILE} && \
         export MINIMAL_PATH="nos3" ; \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
+          ${CONTAINER_COMPOSE_BIN} \
             --env-file ${ENVIRO_FILE} \
-            -f {{.COMPOSE_FILE}} up -d \
+            -f ${COMPOSE_FILE} up -d \
               nos3-fortytwo \
               nos3-nos-engine-server \
               nos3-fsw \
@@ -132,37 +122,16 @@ tasks:
             --remove-orphans
       - task info-services
 
-  up-new:
-    desc: Bring up nos3 in detached state
-    deps:
-      - build
-    cmds:
-      - |
-        source ./.env && \
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            --env-file ${ENVIRO_FILE} \
-            -f ./docker-compose_new.yaml up -d --remove-orphans
-      - task info-services
-
-  down-new:
-    desc: Bring down nos3
-    cmds:
-      - |
-        cd {{.CONTAINER_DIR}}/ && \
-          {{.CONTAINER_COMPOSE_BIN}} \
-            -f ./docker-compose_new.yaml down --remove-orphans   
-
   sidecar:
     desc: Run sidecar to enable output
     cmds:
-      - |
-        ${CONTAINER_DIR}/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+      - ./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
   doitall:
     desc: Do it all for nos3
     cmds:
-      - task down down-new ; sleep 5
+      - task down
+      - sleep 5
       - task up
       - sleep 15
       - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true

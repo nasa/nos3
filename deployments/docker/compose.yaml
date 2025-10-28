@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     build:
-      context: ./42
+      context: ../services/42
       dockerfile: Dockerfile
       args:
         DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
@@ -32,10 +32,10 @@ services:
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
     volumes:
-      - ${PWD}/../../cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
-      - ${PWD}/../${MINIMAL_PATH}/cfg/InOut/Inp_IPC.txt:/opt/nasa-itc/42/NOS3InOut/Inp_IPC.txt
-      - ${PWD}/42/entrypoint.sh:/entrypoint.sh
-      - ${PWD}/42/startapp.sh:/startapp.sh  
+      - ${PWD}/../cfg/InOut/:/opt/nasa-itc/42/NOS3InOut/
+      - ${PWD}/${MINIMAL_PATH}/cfg/InOut/Inp_IPC.txt:/opt/nasa-itc/42/NOS3InOut/Inp_IPC.txt
+      - ${PWD}/services/42/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/services/42/startapp.sh:/startapp.sh  
     ports:
       - "127.0.0.1:30090:80"
     environment:
@@ -60,7 +60,7 @@ services:
     env_file:
       - .env
     build:
-      context: ./yamcs
+      context: ../services/yamcs
       dockerfile: Dockerfile
       args:
         DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
@@ -86,8 +86,8 @@ services:
     working_dir: "/home/nos3/.nos3/yamcs"
     command: "/entrypoint.sh"
     volumes:
-      - ${PWD}/yamcs/entrypoint.sh:/entrypoint.sh
-      - ${PWD}/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
+      - ${PWD}/services/yamcs/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/services/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
     ports:
       - "127.0.0.1:8090:8090"
       - "5012:5012"
@@ -153,7 +153,7 @@ services:
     working_dir: /home/nos3/builds/nos3/fsw/build/exe/cpu1
     command: "/home/nos3/builds/nos3/scripts/fsw/onair_launch.sh"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -185,7 +185,7 @@ services:
     hostname: nos-fsw
     working_dir: /home/nos3/builds/nos3/
     volumes:
-      - ${PWD}/fsw/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/services/fsw/entrypoint.sh:/entrypoint.sh
     command: "/entrypoint.sh"
     sysctls:
       fs.mqueue.msg_max: 10000
@@ -219,7 +219,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
     ports:
       - "127.0.0.1:12000:12000"
       - "127.0.0.1:12001:12001"
@@ -249,7 +249,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml truth42sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -269,7 +269,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml stdio-terminal"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -289,7 +289,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml udp-terminal"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -308,7 +308,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-sim-cmdbus-bridge -f ./nos3-simulator.xml"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -332,7 +332,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml camsim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -356,7 +356,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-css-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -381,7 +381,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-eps-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -404,7 +404,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-fss-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -427,7 +427,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml gps"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -450,7 +450,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-imu-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -473,7 +473,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-mag-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -496,7 +496,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim0"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -519,7 +519,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim1"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -542,7 +542,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-reactionwheel-sim2"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -569,7 +569,7 @@ services:
   #   working_dir: /home/nos3/builds/nos3/sims/build/bin
   #   command: "/entrypoint.sh"
   #   volumes:
-  #     - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+  #     - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
   #     - ${PWD}/radio-sim/entrypoint.sh:/entrypoint.sh
   #   environment:
   #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
@@ -599,7 +599,7 @@ services:
 #     working_dir: /home/nos3/builds/nos3/gsw/build
 #     command: "./support/standalone"
 #     volumes:
-#       - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+#       - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
 #     environment:
 #       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
 #     networks:
@@ -628,8 +628,8 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/entrypoint.sh"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
-      - ${PWD}/radio-sim/entrypoint2.sh:/entrypoint.sh
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/services/radio-sim/entrypoint2.sh:/entrypoint.sh
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -653,7 +653,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml sample-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -674,7 +674,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-star-tracker-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -695,7 +695,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-thruster-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -717,7 +717,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-torquer-sim"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
     networks:
@@ -737,7 +737,7 @@ services:
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml time"
     volumes:
-      - ${PWD}/../${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
+      - ${PWD}/${MINIMAL_PATH}/cfg/sims/nos3-simulator.xml:/home/nos3/builds/nos3/sims/build/bin/nos3-simulator.xml
     tty: true
     stdin_open: true
     privileged: true
@@ -753,7 +753,7 @@ services:
     env_file:
       - .env
     build:
-      context: ./openmct
+      context: ../services/openmct
       dockerfile: Containerfile
       args:
         DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
@@ -773,10 +773,10 @@ services:
     hostname: sc01-openmct
     working_dir: "/opt/openmct"
     volumes:
-      - "${PWD}/openmct/entrypoint.sh:/opt/openmct/entrypoint.sh"
-      - "${PWD}/openmct/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
-      - "${PWD}/openmct/example/index.js:/opt/openmct/example/index.js"
-      - "${PWD}/openmct/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
+      - "${PWD}/services/openmct/entrypoint.sh:/opt/openmct/entrypoint.sh"
+      - "${PWD}/services/openmct/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
+      - "${PWD}/services/openmct/example/index.js:/opt/openmct/example/index.js"
+      - "${PWD}/services/openmct/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
     command: '/opt/openmct/entrypoint.sh'
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:9000/"]

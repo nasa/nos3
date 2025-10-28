@@ -6,8 +6,8 @@ SHELL=bash
 # Containerization Parameters
 export CONTAINER_BIN=docker
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
-export COMPOSE_FILE=./compose.yaml
 export CONTAINER_DIR=./docker
+export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
 export ENVIRO_SCRIPT="./env.sh"
 export ENVIRO_FILE="${CONTAINER_DIR}/.env"
@@ -35,25 +35,21 @@ endif
 endif
 #---
 
-build-fortytwo: | env_export set-permissions ## Build fortytwo (42)
+build-fortytwo: | env-create set-permissions ## Build fortytwo (42)
 	source ${ENVIRO_FILE} && \
-	  cd ${CONTAINER_DIR}/ ; \
-	  ${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
 
-build-yamcs: | env-export set-permissions ## Build yamcs
+build-yamcs: | env-create set-permissions ## Build yamcs
 	source ${ENVIRO_FILE} && \
-	cd ${CONTAINER_DIR}/ ; \
-	${CONTAINER_COMPOSE_BIN} build --pull nos3-gsw
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-gsw
 
-build-openmct: | env-export set-permissions ## Build openmct
+build-openmct: | env-create set-permissions ## Build openmct
 	source ${ENVIRO_FILE} && \
-	  cd ${CONTAINER_DIR}/ ; \
-	  ${CONTAINER_COMPOSE_BIN} build --pull nos3-openmct
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
 
-build: | env-export set-permissions ## Build all containers
+build: | env-create set-permissions ## Build all containers
 	source ${ENVIRO_FILE} && \
-	  cd ${CONTAINER_DIR}/ ; \
-	    ${CONTAINER_COMPOSE_BIN} build --pull nos3-fortytwo nos3-gsw nos3-openmct
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
@@ -63,17 +59,15 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | env-create build ## Bring up nos3 in detached state
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
-		--env-file ./.env \
-		-f ${COMPOSE_FILE} up -d --remove-orphans
+	${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --remove-orphans
 
 down: ## Bring down nos3
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} down --remove-orphans || true
+	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
 
 up-minimum: | down build ## Bring up nos3 in detached state
 	export MINIMAL_PATH=nos3; \
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
-		--env-file ./.env \
+	${CONTAINER_COMPOSE_BIN} \
+		--env-file ${ENVIRO_FILE} \
 		-f ${COMPOSE_FILE} up -d \
 			nos3-fortytwo \
 			nos3-nos-engine-server \
@@ -86,20 +80,17 @@ up-minimum: | down build ## Bring up nos3 in detached state
 			nos3-openmct \
 		--remove-orphans 
 
-up-new: | build ## Bring up nos3 in detached state (attached state doesn't work for some reason)
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} \
-		--env-file ./.env \
-		-f ./docker-compose_new.yaml up -d --remove-orphans 
-
-down-new: ## Bring down nos3
-	cd ${CONTAINER_DIR} && ${CONTAINER_COMPOSE_BIN} -f docker-compose_new.yaml down --remove-orphans || true
-
-sidecar: ## sidecar
-	cd ${CONTAINER_DIR}/ && ./sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+sidecar: ## Run sidecar to enable output
+	./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
 doitall: ## Do it all for nos3
-	@$(MAKE) down down-new; sleep 5; $(MAKE) up; sleep 15; ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
-	  $(MAKE) --silent sidecar
+	@$(MAKE) down; \
+	sleep 5; \
+	$(MAKE) up; \
+	sleep 15; \
+	${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true && \
+	$(MAKE) --silent sidecar
+	$(MAKE) info-services
 
 clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
@@ -107,7 +98,7 @@ clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} volume prune
 	yes | ${CONTAINER_BIN} network prune
 
-setup-maven: ## setup maven settings.xml with proxy info
+setup-maven: ## Setup maven settings.xml with proxy info-services
 	echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
@@ -126,7 +117,7 @@ info-services: ## Information on accessing various services
 	@echo
 
 env-create: ## create ./docker/.env file
-	${CONTAINER_DIR}/env.sh > ${CONTAINER_DIR}/.env
+	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
 
 #---
 RESET  = \033[0m

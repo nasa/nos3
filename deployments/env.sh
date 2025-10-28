@@ -20,6 +20,9 @@ NO_PROXY=${NO_PROXY}
 MAVEN_REPO_LOCAL=/home/nos3/.nos3/.m2/repository
 MAVEN_HTTPS_PROXY="--settings ./settings.xml"
 
+# 
+MINIMAL_PATH=..
+
 # 42 specific configurations
 FORTYTWO_DISPLAY=:1
 FORTYTWO_GIT_URL=https://github.com/nasa-itc/42.git
