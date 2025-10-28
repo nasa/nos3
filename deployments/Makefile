@@ -71,7 +71,7 @@ up-minimum: | down build ## Bring up nos3 in detached state
 			nos3-openmct \
 		--remove-orphans 
 	$(MAKE) info-services
-	
+
 sidecar: ## Run sidecar to enable output
 	./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
@@ -108,7 +108,7 @@ purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and ne
 info-services: ## info on accessing various services
 	@echo; echo "How to access various services:"; echo
 	@echo "open http://localhost:8090 to access yamcs/gsw"
-	@echo "open http://localhost:30090 to access fortytwo (42)"
+	@echo "open http://localhost:30090/vnc.html to access fortytwo (42)"
 	@echo "open http://localhost:9000 to access openmct"
 	@echo
 

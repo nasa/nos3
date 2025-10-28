@@ -19,6 +19,7 @@ NO_PROXY=${NO_PROXY}
 # Maven/Java specific configurations
 MAVEN_REPO_LOCAL=/home/nos3/.nos3/.m2/repository
 MAVEN_HTTPS_PROXY="--settings ./settings.xml"
+MAVEN_SETTINGS_FILE=${MAVEN_SETTINGS_FILE}
 
 # 
 NOS3_CFG_PATH=..
