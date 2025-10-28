@@ -19,23 +19,9 @@ export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN}-compose
 endif
 
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
-$(shell echo "<settings><proxies></proxies></settings>" > ${CONTAINER_DIR}/yamcs/settings.xml)
 export MAVEN_HTTPS_PROXY=-s./settings.xml
-export NOS3_CFG_PATH=..
 
-#---
-ifndef DEPLOYMENT_ENVIRO
-$(warning DEPLOYMENT_ENVIRO is not set. Therefore, assuming not in vmmoc, and proceeding without vmmoc specific definitions)
-else
-ifeq (${DEPLOYMENT_ENVIRO},vmmoc)
-$(info DEPLOYMENT_ENVIRO is set to vmmoc. Proceeding with vmmoc specific configurations)
-export ENVIRO_FILE=/opt/neo/etc/environment
-$(shell cp -f ${MAVEN_SETTINGS_FILE} ${CONTAINER_DIR}/yamcs/settings.xml)
-else
-$(error DEPLOYMENT_ENVIRO is set to ${DEPLOYMENT_ENVIRO}, which is not expected. Exiting!)
-endif
-endif
-#---
+export NOS3_CFG_PATH=..
 
 build-fortytwo: | env-create set-permissions ## Build fortytwo (42)
 	source ${ENVIRO_FILE} && \
@@ -101,7 +87,11 @@ clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} network prune
 
 setup-maven: ## Setup maven settings.xml with proxy info-services
-	echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
+	echo "<settings><proxies></proxies></settings>" > $${SERVICES_DIR}/yamcs/settings.xml
+	if [ "$${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then \
+	  cp -f $${MAVEN_SETTINGS_FILE} $${HOME}/.nos3/yamcs/ || true \
+	  cp -f $${MAVEN_SETTINGS_FILE} $${SERVICES_DIR}/yamcs/ || true \
+    fi
 
 purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and networks
 	@$(MAKE) down || true

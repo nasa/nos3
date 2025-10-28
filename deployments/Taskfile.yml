@@ -19,6 +19,8 @@ env:
   ENVIRO_FILE: "./.env"
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
+  MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
+
   NOS3_CFG_PATH: ".."
 
 tasks:
@@ -55,6 +57,7 @@ tasks:
       - env-create
       - set-permissions
     cmds:
+      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
       - |
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
@@ -66,6 +69,7 @@ tasks:
       - setup-maven
       - set-permissions
     cmds:
+      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
       - |
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
@@ -153,6 +157,11 @@ tasks:
     desc: Setup maven settings.xml with proxy info-services
     cmds:
       - echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
+      - |
+        if [ "${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then
+          cp ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
+          cp ${MAVEN_SETTINGS_FILE} ${SERVICES_DIR}/yamcs/ || true
+        fi
 
   purge-containers:
     desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
