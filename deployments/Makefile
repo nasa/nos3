@@ -15,7 +15,7 @@ export CONTAINER_DIR=${TARGETS_DIR}/docker
 export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
 export ENVIRO_SCRIPT="${SCRIPTS_DIR}/env.sh"
-export ENVIRO_FILE="./.env"
+export ENVIRO_FILE="${CONTAINER_DIR}/.env"
 
 ifeq (${CONTAINER_BIN},podman)
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN}-compose
