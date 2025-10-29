@@ -22,7 +22,7 @@ MAVEN_HTTPS_PROXY="--settings ./settings.xml"
 MAVEN_SETTINGS_FILE=${MAVEN_SETTINGS_FILE}
 
 # 
-NOS3_CFG_PATH=..
+NOS3_CFG_PATH=nos3
 
 # 42 specific configurations
 FORTYTWO_DISPLAY=:1

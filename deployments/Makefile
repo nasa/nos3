@@ -6,6 +6,7 @@ SHELL=bash
 # Containerization Parameters
 export TARGETS_DIR=./targets
 export SERVICES_DIR=./services
+export SCRIPTS_DIR=./scripts
 
 export CONTAINER_BIN=docker
 export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
@@ -13,7 +14,7 @@ export CONTAINER_COMPOSE_BIN=${CONTAINER_BIN} compose
 export CONTAINER_DIR=${TARGETS_DIR}/docker
 export COMPOSE_FILE=${CONTAINER_DIR}/compose.yaml
 
-export ENVIRO_SCRIPT="./scripts/env.sh"
+export ENVIRO_SCRIPT="${SCRIPTS_DIR}/env.sh"
 export ENVIRO_FILE="./.env"
 
 ifeq (${CONTAINER_BIN},podman)
@@ -23,7 +24,11 @@ endif
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
 export MAVEN_HTTPS_PROXY=-s./settings.xml
 
+ifdef (NOS3_CFG_PATH)
+export NOS3_CFG_PATH=${NOS3_CFG_PATH}
+else
 export NOS3_CFG_PATH=..
+endif
 
 build-fortytwo: | env-create set-permissions ## Build fortytwo (42)
 	source ${ENVIRO_FILE} && \
@@ -50,6 +55,7 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 
 up: | env-create build ## Bring up nos3 in detached state
 	@source ${ENVIRO_FILE} && \
+	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
 	  ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
 	sleep 15
 	@$(MAKE) --silent sidecar
@@ -61,7 +67,7 @@ down: ## Bring down nos3
 
 up-minimum: | down env-create build ## Bring up nos3 in detached state
 	@source ${ENVIRO_FILE} && \
-	  export NOS3_CFG_PATH=nos3; \
+	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
 	${CONTAINER_COMPOSE_BIN} \
 		--env-file ${ENVIRO_FILE} \
 		-f ${COMPOSE_FILE} up -d \
@@ -81,7 +87,7 @@ up-minimum: | down env-create build ## Bring up nos3 in detached state
 	@${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
 
 sidecar: ## Run sidecar to enable output
-	@./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+	@${SCRIPTS_DIR}/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
 clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} image prune --filter "dangling=true"

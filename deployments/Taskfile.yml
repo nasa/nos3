@@ -6,6 +6,7 @@ dotenv:
 env:
   TARGETS_DIR: ./targets
   SERVICES_DIR: ./services
+  SCRIPTS_DIR: ./scripts
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
@@ -17,13 +18,13 @@ env:
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
 
-  ENVIRO_SCRIPT: "./scripts/env.sh"
+  ENVIRO_SCRIPT: "{{.SCRIPTS_DIR}}/env.sh"
   ENVIRO_FILE: "./.env"
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
 
-  NOS3_CFG_PATH: ".."
+  NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
 
 tasks:
   default:
@@ -93,6 +94,7 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
+          export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
           ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
       - sleep 15
       - task sidecar
@@ -100,6 +102,15 @@ tasks:
       - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
     silent: true
 
+  test:
+    desc: Bring up nos3 in detached state
+    deps:
+      - env-create
+      - build
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          export NOS3_CFG_PATH=${NOS3_CFG_PATH}; echo "NOS3_CFG_PATH is set to ${NOS3_CFG_PATH}";
   down:
     desc: Bring down nos3
     cmds:
@@ -115,7 +126,7 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-        export NOS3_CFG_PATH="nos3" ; \
+        export NOS3_CFG_PATH=${NOS3_CFG_PATH} ; \
           ${CONTAINER_COMPOSE_BIN} \
             --env-file ${ENVIRO_FILE} \
             -f ${COMPOSE_FILE} up -d \
@@ -138,7 +149,7 @@ tasks:
   sidecar:
     desc: Run sidecar to enable output
     cmds:
-      - ./scripts/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+      - ${SCRIPTS_DIR}/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
     silent: true
 
   clean:
