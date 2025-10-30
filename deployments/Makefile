@@ -122,6 +122,9 @@ info-services: ## info on accessing various services
 env-create: ## Create .env file from env.sh script
 	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
 
+config: ## configure nos3 by running config.sh
+	@cd ../ && ./scripts/cfg/config.sh
+
 install-taskfile: ## Install Taskfile CLI tool
 	@sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && \
 	  chmod +x ~/.local/bin/task && export PATH="${HOME}/.local/bin:${PATH}"
