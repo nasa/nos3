@@ -53,7 +53,7 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
-up: | down env-create build ## Bring up nos3 in detached state
+up: | down env-create build config-nos3-mission config ## Bring up nos3 in detached state
 	sleep 5
 	@source ${ENVIRO_FILE} && \
 	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
@@ -112,12 +112,13 @@ purge-containers: ## WARNING: purge docker/podman images, cache, volumes, and ne
 	@yes | ${CONTAINER_BIN} network prune || true
 	@echo
 
-info-services: ## info on accessing various services
-	@echo; echo "How to access various services:"; echo
-	@echo "open http://localhost:8090 to access yamcs/gsw"
-	@echo "open http://localhost:30090/vnc.html to access fortytwo (42)"
-	@echo "open http://localhost:9000 to access openmct"
-	@echo
+info-services: | env-create ## info on accessing various services
+	@source ${ENVIRO_FILE} && \
+	  echo; echo "How to access various services:"; echo; \
+	  echo "open http://localhost:8090 to access yamcs/gsw"; \
+      echo "open http://localhost:30090/vnc.html to access fortytwo (42) and then click Connect"; \
+	  echo "open http://localhost:9000/#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=$${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=$${SIM_TF_EPOCH_MILLISECONDS} to access openmct"; \
+	  echo
 
 env-create: ## Create .env file from env.sh script
 	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}

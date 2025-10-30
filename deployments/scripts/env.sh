@@ -5,17 +5,26 @@
 # Simulation specific inputs
 NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 SIM_T0_DATETIME="2026-01-01 00:00:00 UTC"
+TIME_INTERVAL=3600  # 1 hour in seconds
+
 #SIM_T0_DATETIME="${NOW}"
-J2000_REFERENCE_DATETIME="2000-01-01 12:00:00 UTC"
 LEAP_SECONDS=37
 
 GSW_SOFTWARE=yamcs
 FSW_SOFTWARE=cfs
 
+# This is to define either the standard path, i.e. ${PWD}/nos3, or a local definition
+NOS3_CFG_PATH=..
+
+########################################################################
 # Avoid updating the below variables unless you know what you are doing
+########################################################################
 
 # Time specific derivations
+J2000_REFERENCE_DATETIME="2000-01-01 12:00:00 UTC"
 SIM_T0_EPOCH_SECONDS=$(date -ud "${SIM_T0_DATETIME}" +"%s")
+SIM_T0_EPOCH_MILLISECONDS=$( expr ${SIM_T0_EPOCH_SECONDS} \* 1000 )
+SIM_TF_EPOCH_MILLISECONDS=$( expr ${SIM_T0_EPOCH_MILLISECONDS} + ${TIME_INTERVAL} \* 1000 )
 J2000_EPOCH_SECONDS=$(date -ud "${J2000_REFERENCE_DATETIME}" +"%s")
 
 cat << EOF
@@ -29,6 +38,8 @@ J2000_REFERENCE_DATETIME="${J2000_REFERENCE_DATETIME}"
 
 # In epoch seconds
 SIM_T0_EPOCH_SECONDS=${SIM_T0_EPOCH_SECONDS}
+SIM_T0_EPOCH_MILLISECONDS=${SIM_T0_EPOCH_MILLISECONDS}
+SIM_TF_EPOCH_MILLISECONDS=${SIM_TF_EPOCH_MILLISECONDS}
 J2000_EPOCH_SECONDS=${J2000_EPOCH_SECONDS}
 
 # In J2000 seconds
@@ -50,7 +61,7 @@ MAVEN_HTTPS_PROXY="--settings ./settings.xml"
 MAVEN_SETTINGS_FILE=${MAVEN_SETTINGS_FILE}
 
 # 
-NOS3_CFG_PATH=nos3
+NOS3_CFG_PATH=${NOS3_CFG_PATH}
 
 # 42 specific configurations
 FORTYTWO_DISPLAY=:1
