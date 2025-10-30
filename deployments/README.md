@@ -1,6 +1,19 @@
 # How to use
 
-## prep:
+## Dependencies
+
+- `gnu make`
+- `bash`
+
+### Optional but very useful
+
+- `task` a contemporary version of `make`
+- `lazydocker`
+
+Which can be installed via `make install-lazydocker install-taskfile`
+
+## prep
+
 ```bash
 make install-lazydocker install-taskfile
 make env-create
@@ -79,8 +92,21 @@ task up
 
 ```
 
+### Taskfile
+
 more info on `task` can be found here https://taskfile.dev
 
+### Lazydocker
+
+more info on `lazydocker` can be found here https://github.com/jesseduffield/lazydocker  
+![lazydocker](https://raw.githubusercontent.com/jesseduffield/lazydocker/refs/heads/master/docs/resources/demo3.gif)
+
+
+## Test
+
+open http://localhost:8090/instance?c=nos3__realtime to access yamcs/gsw
+open http://localhost:30090/vnc.html to access fortytwo (42)
+open http://localhost:9000 to access openmct
 
 ## Diagram
 ```mermaid
