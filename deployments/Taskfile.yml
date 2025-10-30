@@ -89,9 +89,11 @@ tasks:
   up:
     desc: Bring up nos3 in detached state
     deps:
+      - down
       - env-create
       - build
     cmds:
+      - sleep 5
       - |
         source ${ENVIRO_FILE} && \
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
@@ -102,15 +104,6 @@ tasks:
       - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
     silent: true
 
-  test:
-    desc: Bring up nos3 in detached state
-    deps:
-      - env-create
-      - build
-    cmds:
-      - |
-        source ${ENVIRO_FILE} && \
-          export NOS3_CFG_PATH=${NOS3_CFG_PATH}; echo "NOS3_CFG_PATH is set to ${NOS3_CFG_PATH}";
   down:
     desc: Bring down nos3
     cmds:
@@ -124,6 +117,7 @@ tasks:
       - env-create
       - build
     cmds:
+      - sleep 5
       - |
         source ${ENVIRO_FILE} && \
         export NOS3_CFG_PATH=${NOS3_CFG_PATH} ; \
@@ -198,3 +192,21 @@ tasks:
     cmds:
       - |
         ${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
+
+  install-lazydocker:
+    desc: Install lazydocker CLI tool (to view logs, etc)
+    cmds:
+      - |
+        curl --silent https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+      - |
+        echo; echo "don't forget to add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
+      - |
+        echo "watch a Lazydocker demo here: https://www.youtube.com/watch?v=
+    silent: true
+
+  lazydocker:
+    desc: Run lazydocker CLI tool
+    deps:
+      - install-lazydocker
+    cmds:
+      - lazydocker

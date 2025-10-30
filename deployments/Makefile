@@ -53,7 +53,8 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
-up: | env-create build ## Bring up nos3 in detached state
+up: | down env-create build ## Bring up nos3 in detached state
+	sleep 5
 	@source ${ENVIRO_FILE} && \
 	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
 	  ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
@@ -66,6 +67,7 @@ down: ## Bring down nos3
 	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
 
 up-minimum: | down env-create build ## Bring up nos3 in detached state
+	@sleep 5
 	@source ${ENVIRO_FILE} && \
 	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
 	${CONTAINER_COMPOSE_BIN} \
@@ -119,6 +121,19 @@ info-services: ## info on accessing various services
 
 env-create: ## Create .env file from env.sh script
 	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
+
+install-taskfile: ## Install Taskfile CLI tool
+	@sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && \
+	  chmod +x ~/.local/bin/task && export PATH="${HOME}/.local/bin:${PATH}"
+	@echo; echo "add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
+
+install-lazydocker: ## Install lazydocker CLI tool (to view logs, etc)
+	@curl --silent https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+	@echo; echo "don't forget to add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
+	@echo "watch a Lazydocker demo here: https://www.youtube.com/watch?v=NICqQPxwJWw"; echo
+
+lazydocker: | install-lazydocker ## Run lazydocker CLI tool
+	@lazydocker
 
 #---
 RESET  = \033[0m
