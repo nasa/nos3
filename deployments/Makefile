@@ -89,7 +89,7 @@ up-minimum: | down env-create build ## Bring up nos3 in detached state
 	@${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
 
 sidecar: ## Run sidecar to enable output
-	@${SCRIPTS_DIR}/sidecar/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+	@${SCRIPTS_DIR}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
 clean: | down down-new ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
