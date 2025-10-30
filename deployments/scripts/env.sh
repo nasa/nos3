@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
-# A script to generate .env file for Docker deployments
+# A script to generate .env file for container deployments
 
-# Simulation specific configurations
-SIM_T0_DATETIME="2025-10-20 17:43:20 UTC"
+# Simulation specific inputs
+NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+SIM_T0_DATETIME="2026-01-01 00:00:00 UTC"
+#SIM_T0_DATETIME="${NOW}"
 J2000_REFERENCE_DATETIME="2000-01-01 12:00:00 UTC"
 LEAP_SECONDS=37
+
+GSW_SOFTWARE=yamcs
+FSW_SOFTWARE=cfs
+
+# Avoid updating the below variables unless you know what you are doing
 
 # Time specific derivations
 SIM_T0_EPOCH_SECONDS=$(date -ud "${SIM_T0_DATETIME}" +"%s")
@@ -60,8 +67,8 @@ FORTYTWO_SIM_TIME="$(date -ud "@${SIM_T0_EPOCH_SECONDS}" +"%H %M %S.%2N")"
 FORTYTWO_LEAP_SECONDS=${LEAP_SECONDS}
 
 # gsw+fsw specific configurations
-GSW_SOFTWARE=yamcs
-FSW_SOFTWARE=cfs
+GSW_SOFTWARE=${GSW_SOFTWARE}
+FSW_SOFTWARE=${FSW_SOFTWARE}
 
 COMPONENT_DIR=/home/nos3/builds/nos3/components
 

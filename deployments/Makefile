@@ -122,9 +122,6 @@ info-services: ## info on accessing various services
 env-create: ## Create .env file from env.sh script
 	${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
 
-config: ## configure nos3 by running config.sh
-	@cd ../ && ./scripts/cfg/config.sh
-
 install-taskfile: ## Install Taskfile CLI tool
 	@sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin && \
 	  chmod +x ~/.local/bin/task && export PATH="${HOME}/.local/bin:${PATH}"
@@ -137,6 +134,15 @@ install-lazydocker: ## Install lazydocker CLI tool (to view logs, etc)
 
 lazydocker: | install-lazydocker ## Run lazydocker CLI tool
 	@lazydocker
+
+config-nos3-mission: | env-create ## configure nos3-mission.xml to set start-time
+	@source ${ENVIRO_FILE} && \
+	  sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'$${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
+	  sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'$${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
+	  sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'$${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
+
+config: ## configure nos3 by running config.sh
+	@cd ../ && ./scripts/cfg/config.sh
 
 #---
 RESET  = \033[0m

@@ -193,11 +193,6 @@ tasks:
       - |
         ${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
 
-  config:
-    desc: configure nos3 by running config.sh
-    cmds:
-      - cd ../ && ./scripts/cfg/config.sh
-      
   install-lazydocker:
     desc: Install lazydocker CLI tool (to view logs, etc)
     cmds:
@@ -215,3 +210,19 @@ tasks:
       - install-lazydocker
     cmds:
       - lazydocker
+
+  config-nos3-mission:
+    desc: configure nos3-mission.xml to set start-time
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
+
+  config:
+    desc: configure nos3 by running config.sh
+    cmds:
+      - cd ../ && ./scripts/cfg/config.sh
