@@ -1,5 +1,88 @@
-#
+# How to use
 
+## prep:
+```bash
+make install-lazydocker install-taskfile
+make env-create
+
+```
+
+## run
+
+```bash
+make
+
+```
+
+returns
+
+```bash
+#-target-----------------------description-----------------------------------------------
+build-fortytwo                 Build fortytwo (42)
+build-openmct                  Build openmct
+build-yamcs                    Build yamcs
+build                          Build all containers
+clean                          clean images, cache, volumes, and networks
+down                           Bring down nos3
+env-create                     Create .env file from env.sh script
+info-services                  info on accessing various services
+install-lazydocker             Install lazydocker CLI tool (to view logs, etc)
+install-taskfile               Install Taskfile CLI tool
+lazydocker                     Run lazydocker CLI tool
+purge-containers               WARNING: purge docker/podman images, cache, volumes, and networks
+set-permissions                set filesystem permissions, needed for restricted accounts
+setup-maven                    Setup maven settings.xml with proxy info-services
+sidecar                        Run sidecar to enable output
+up-minimum                     Bring up nos3 in detached state
+up                             Bring up nos3 in detached state
+
+```
+
+```bash
+make up
+
+```
+
+or using `task` after you've done `make install-taskfile`:
+
+```bash
+task
+
+```
+
+returns:
+
+```bash
+task: Available tasks for this project:
+* build:                    Build all containers
+* build-fortytwo:           Build fortytwo (42)
+* build-openmct:            Build openmct
+* build-yamcs:              Build yamcs
+* clean:                    clean images, cache, volumes, and networks
+* default:                  Shows this help message
+* down:                     Bring down nos3
+* env-create:               Create .env file from env.sh script
+* info-services:            info on accessing various services
+* install-lazydocker:       Install lazydocker CLI tool (to view logs, etc)
+* lazydocker:               Run lazydocker CLI tool
+* purge-containers:         WARNING: purge docker/podman images, cache, volumes, and networks
+* set-permissions:          set filesystem permissions, needed for restricted accounts
+* setup-maven:              Setup maven settings.xml with proxy info-services
+* sidecar:                  Run sidecar to enable output
+* up:                       Bring up nos3 in detached state
+* up-minimum:               Bring up nos3 (minimum) in detached state
+
+```
+
+```bash
+task up
+
+```
+
+more info on `task` can be found here https://taskfile.dev
+
+
+## Diagram
 ```mermaid
 graph TD;
   %% client([client])-. Ingress-managed <br> load balancer .->ingress[Ingress];
