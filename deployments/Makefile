@@ -91,7 +91,10 @@ up-minimum: | down env-create build ## Bring up nos3 in detached state
 sidecar: ## Run sidecar to enable output
 	@${SCRIPTS_DIR}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
 
-clean: | down down-new ## clean images, cache, volumes, and networks
+clean: | down ## clean nos3 configuration
+	@cd ../ && make clean
+
+clean-containers: | down ## clean images, cache, volumes, and networks
 	yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
 	yes | ${CONTAINER_BIN} system prune -a
 	yes | ${CONTAINER_BIN} volume prune

@@ -1,7 +1,7 @@
 version: "3"
 
 dotenv:
-  - ./.env
+  - ./targets/docker/.env
 
 env:
   TARGETS_DIR: ./targets
@@ -149,10 +149,16 @@ tasks:
     silent: true
 
   clean:
+    desc: clean nos3 configuration
+    deps:
+      - down
+    cmds:
+      - cd ../ && make clean
+
+  clean-containers:
     desc: clean images, cache, volumes, and networks
     deps:
       - down
-      - down-new
     cmds:
       - yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
       - yes | ${CONTAINER_BIN} system prune -a
