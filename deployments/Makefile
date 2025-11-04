@@ -30,6 +30,14 @@ else
 export NOS3_CFG_PATH=..
 endif
 
+# Check if .env file exists and include it
+ifneq (,$(wildcard ${ENVIRO_FILE}))
+include ${ENVIRO_FILE}
+export $(shell sed 's/=.*//' ${ENVIRO_FILE}) # Export all variables defined in .env
+else
+$(warning WARNING: ${ENVIRO_FILE} file not found. Please run 'make env-create' to create it.)
+endif
+
 build-fortytwo: | env-create set-permissions ## Build fortytwo (42)
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
