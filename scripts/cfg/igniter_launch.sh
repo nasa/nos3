@@ -8,6 +8,6 @@ echo ""
 echo ""
 
 cd $BASE_DIR
-python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
+python3 $BASE_DIR/cfg/gui/igniter_entrypoint.py &
 echo ""
 echo ""
