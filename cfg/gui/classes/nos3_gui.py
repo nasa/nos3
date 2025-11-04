@@ -7,8 +7,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from PIL import Image
 
-from add_dialog import SimpleNameDialog
-from datetime_dialog import DateTimeDialog
+from classes.add_dialog import SimpleNameDialog
+from classes.datetime_dialog import DateTimeDialog
 
 J2000_EPOCH = datetime(2000, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
 J2000_TIMESTAMP = J2000_EPOCH.timestamp()
