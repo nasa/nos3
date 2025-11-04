@@ -978,7 +978,7 @@ class NOS3ConfigGUI:
 
         try:
             # Save mission configuration
-            self.save_mission_file(f"/cfg/{self.current_mission_file}")
+            self.save_mission_file(self.current_mission_file)
             
             # Determine spacecraft config file path from mission config
             spacecraft_config = self.get_spacecraft_config_filename()
@@ -1220,9 +1220,9 @@ class NOS3ConfigGUI:
         sc1_cfg = ET.SubElement(root, 'sc-1-cfg')
         selected_option = self.sc1_config_var.get() # type: ignore
         if selected_option in self.config_filenames:
-            for filename in self.config_filenames:
-                    if filename == selected_option:
-                        sc1_cfg.text = f"spacecraft/{filename}"
+            for filename2 in self.config_filenames:
+                    if filename2 == selected_option:
+                        sc1_cfg.text = f"spacecraft/{filename2}"
         
         # Format and save XML
         xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
@@ -1231,7 +1231,7 @@ class NOS3ConfigGUI:
         pretty_xml = reparsed.toprettyxml(indent="    ")
         pretty_xml = '\n'.join(pretty_xml.split('\n')[1:])
         
-        with open("./cfg/nos3-mission.xml", 'w', encoding='utf-8') as f:
+        with open(filename, 'w', encoding='utf-8') as f:
             f.write(xml_str + pretty_xml)
             
     def save_spacecraft_file(self, filename):
@@ -1373,61 +1373,41 @@ class NOS3ConfigGUI:
         
     def create_default_spacecraft_config(self, config_filename):
         """Create default spacecraft configuration based on the selected type"""
-        
-        # Default configurations for different types
-        default_configs = {
-            "sc-minimal-config.xml": {
-                "apps": ["cf", "ds", "fm", "lc", "sc"],
-                "components": ["sample"]
-            },
-            "sc-mission-config.xml": {
-                "apps": ["cf", "ds", "fm", "lc", "sc"],
-                "components": ["adcs", "css", "eps", "fss", "gps", "imu", "mag", "mgr", "radio", "rw", "sample", "st", "tourqer"]
-            },
-            "sc-research-config.xml": {
-                "apps": ["cf", "ds", "fm", "lc", "sbn", "sc"],
-                "components": ["adcs", "cam", "css", "eps", "fss", "gps", "imu", "mag", "mgr", "onair", "radio", "rw", "sample", "st", "syn", "tourqer", "thruster"]
-            },
-            "sc-fprime-config.xml": {
-                "apps": [],
-                "components": ["cam", "css", "eps", "fss", "imu", "mag", "radio", "rw", "sample", "st", "tourqer", "thruster"]
-            }
+        # Generic default
+        self.apps_data = {
+            "cf"  : True,
+            "ds"  : True,
+            "fm"  : True,
+            "lc"  : True,
+            "sbn" : False,
+            "sc"  : True
         }
-        
-        if config_filename in default_configs:
-            config = default_configs[config_filename]
-            
-            # Set default apps (all enabled)
-            for app in config["apps"]:
-                self.apps_data[app] = True
-                
-            # Set default components (all enabled)
-            for component in config["components"]:
-                self.components_data[component] = True
-        else:
-            # Generic default
-            self.apps_data = {
-                "cf": True,
-                "ds": True,
-                "fm": True,
-                "lc": True,
-                "sc": True
-            }
-            self.components_data = {
-                "adcs"    : True,
-                "css"     : True,
-                "eps"     : True,
-                "fss"     : True,
-                "gps"     : True,
-                "imu"     : True,
-                "mag"     : True,
-                "mgr"     : True,
-                "radio"   : True,
-                "rw"      : True,
-                "sample"  : True,
-                "st"      : True,
-                "tourqer" : True
-            }
+        self.components_data = {
+            "adcs"     : True,
+            "cam"      : False,
+            "css"      : True,
+            "eps"      : True,
+            "fss"      : True,
+            "gps"      : True,
+            "imu"      : True,
+            "mag"      : True,
+            "mgr"      : True,
+            "onair"    : False,
+            "radio"    : True,
+            "rw"       : True,
+            "sample"   : True,
+            "st"       : True,
+            "syn"      : False,
+            "tourqer"  : True,
+            "thruster" : False
+        }
+        self.additional_data = {
+            "gui_enabled" : True,
+            "tipoff_x"    : 0.2,
+            "tipoff_y"    : 2.0,
+            "tipoff_z"    : -2.0,
+            "sim_truth"   : True
+        }
             
     # Update the load_mission_config method to properly set the spacecraft config
     def load_mission_config(self, tree):
