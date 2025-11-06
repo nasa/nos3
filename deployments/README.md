@@ -101,14 +101,23 @@ more info on `task` can be found here https://taskfile.dev
 more info on `lazydocker` can be found here https://github.com/jesseduffield/lazydocker  
 ![lazydocker](https://raw.githubusercontent.com/jesseduffield/lazydocker/refs/heads/master/docs/resources/demo3.gif)
 
-
 ## Test
 
 open http://localhost:8090/instance?c=nos3__realtime to access yamcs/gsw
 open http://localhost:30090/vnc.html to access fortytwo (42)
 open http://localhost:9000 to access openmct
 
-## Diagram
+## Diagrams
+
+```mermaid
+graph TD
+    A[ubuntu:jammy-20250126]-->|FROM| B
+    B[nasa-itc/deployments/] -->|build-->push| C(docker.io/ivvitc/nos3-64:dev)
+    C-->|FROM| D[haisamido/nos3-64/]
+    D-->|build-->push| E(ghcr.io/haisamido/nos3-64:dev)
+  
+```
+
 ```mermaid
 graph TD;
   %% client([client])-. Ingress-managed <br> load balancer .->ingress[Ingress];

@@ -1,62 +1,108 @@
-ARG REGISTRY_HOST=docker.io
-ARG IMAGE_USERNAME=ivvitc
+ARG REGISTRY_HOST=ghcr.io
+ARG IMAGE_USERNAME=haisamido
 ARG IMAGE_NAME=nos3-64
-ARG IMAGE_TAG=20250217
-
-#ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
-
-ARG IMAGE_URI=ghcr.io/haisamido/nos3-base:dev
-
-ARG BASE_DIR=/home/nos3/builds/nos3
-ARG FLIGHT_SOFTWARE=cfs 
+ARG IMAGE_TAG=dev
+ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
+#------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
-FROM ${IMAGE_URI}
+ARG GIT_URL=https://github.com/nasa/nos3
+ARG GIT_BRANCH=dev
+
+ARG NOS3_USER=nos3
+ARG FSW_SOFTWARE=cfs 
+ARG GSW_SOFTWARE=yamcs
+
 #------------------------------------------------------------------------------
+FROM ${IMAGE_URI} AS nos3-base
+
 ARG DEBIAN_FRONTEND=noninteractive
 
-#--- PROXY CONFIG (if needed)
+#------------------------------------------------------------------------------
+# Proxy configs
+#------------------------------------------------------------------------------
 ARG MAVEN_HTTPS_PROXY
 ARG HTTPS_PROXY
 ARG HTTP_PROXY
+ARG NO_PROXY
 ARG DEPLOYMENT_ENVIRO
 
-ENV MAVEN_HTTPS_PROXY=$MAVEN_HTTPS_PROXY
-ENV HTTPS_PROXY=$HTTPS_PROXY
-ENV HTTP_PROXY=$HTTP_PROXY
+ENV MAVEN_HTTPS_PROXY=${MAVEN_HTTPS_PROXY}
+ENV HTTPS_PROXY=${HTTPS_PROXY}
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV NO_PROXY=${NO_PROXY}
 ENV DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO}
-#--- 
 
-#--- GIT CONFIGs
+#------------------------------------------------------------------------------
+# Git Configs
+#------------------------------------------------------------------------------
 ARG GIT_URL
 ARG GIT_BRANCH
 
 ENV GIT_URL=${GIT_URL}
 ENV GIT_BRANCH=${GIT_BRANCH}
-#---
 
-#--- NOS3 CONFIGs
-ARG BASE_DIR
-ARG FLIGHT_SOFTWARE 
+#------------------------------------------------------------------------------
+# NOS3 Configs
+#------------------------------------------------------------------------------
+ARG FSW_SOFTWARE
+ARG GSW_SOFTWARE
+ARG NOS3_USER
 
-ENV BASE_DIR=${BASE_DIR}
-ENV FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE}
+ENV NOS3_USER=${NOS3_USER}
+ENV FSW_SOFTWARE=${FSW_SOFTWARE}
+ENV GSW_SOFTWARE=${GSW_SOFTWARE}
+#------------------------------------------------------------------------------
 
-#---
+#------------------------------------------------------------------------------
+# Tools
+#------------------------------------------------------------------------------
+RUN apt-get update && \
+  apt-get install -y sudo git curl vim make cmake tmux tree python3 pip && \
+  apt-get install -y iputils-ping dnsutils lsof net-tools tshark jq && \
+  apt-get install -y libgcrypt20-dev && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
-# COPY ./libuart.c  ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c
+RUN git config --global http.sslVerify false
 
-#RUN mv ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c ${BASE_DIR}/fsw/apps/hwlib/fsw/linux/libuart.c.orig
+#------------------------------------------------------------------------------
+# Create a new user named ${NOS3_USER} with a home directory
+#------------------------------------------------------------------------------
+RUN useradd -m ${NOS3_USER}
+RUN adduser ${NOS3_USER} sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-WORKDIR ${BASE_DIR}
+# Switch to the newly created user
+USER ${NOS3_USER}
 
-RUN make -j8 clean
-RUN make -j8 prep
-RUN make -j8 config
-RUN make -j8 build-cryptolib
-RUN make -j8 -e FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE} build-fsw
-RUN make -j8 build-sim
-RUN make -j8 build-test
+# Create builds directory
+RUN mkdir -p /home/${NOS3_USER}/builds/
+
+WORKDIR /home/${NOS3_USER}/builds/
+
+#------------------------------------------------------------------------------
+# Clone ${GIT_URL}
+#------------------------------------------------------------------------------
+RUN git clone --recurse-submodules -b ${GIT_BRANCH} -j4 ${GIT_URL}
+
+WORKDIR /home/${NOS3_USER}/builds/nos3
+
+RUN chown -R ${NOS3_USER}:${NOS3_USER} /home/${NOS3_USER}
+
+RUN make -j6 clean
+RUN make -j6 prep
+RUN make -j6 config
+RUN make -j6 build-cryptolib
+
+RUN make -j6 -e FSW_SOFTWARE=${FSW_SOFTWARE} build-fsw
+RUN make -j6 build-sim
+#RUN make -j6 build-test
+
+# #------------------------------------------------------------------------------
+# # Install the GSW Software
+# #------------------------------------------------------------------------------
+RUN ./scripts/gsw/gsw_${GSW_SOFTWARE}_build.sh
 
 COPY entrypoint.sh /entrypoint.sh
 

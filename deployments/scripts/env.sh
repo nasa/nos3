@@ -17,6 +17,9 @@ FSW_SOFTWARE=cfs
 NOS3_CFG_PATH=..
 NOS3_MISSION_CFG_FILE=../cfg/nos3-mission.xml
 
+NOS3_IMAGE_URI=docker.io/ivvitc/nos3-64:dev
+NOS3_BASE_DIR=/home/nos3/.nos3
+
 ########################################################################
 # Avoid updating the below variables unless you know what you are doing
 ########################################################################
@@ -36,6 +39,8 @@ cat << EOF
 # nos3 specific configurations
 NOS3_DIR=/home/nos3/.nos3
 NOS3_USER=nos3
+NOS3_IMAGE_URI=${NOS3_IMAGE_URI}
+NOS3_BASE_DIR=${NOS3_BASE_DIR}
 
 # This is to define either the standard path, i.e. ${PWD}/nos3, or a local definition
 NOS3_CFG_PATH=${NOS3_CFG_PATH}
