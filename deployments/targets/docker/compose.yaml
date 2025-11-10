@@ -22,7 +22,7 @@ services:
         BASE_DIR: ${FORTYTWO_BASE_DIR}
         VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/pgrep 42"]
+      test: ["CMD-SHELL", "/usr/bin/pgrep 42; sleep 2"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -152,6 +152,9 @@ services:
         NO_PROXY: ${NO_PROXY}
         MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
 
+        GIT_URL: ${NOS3_GIT_URL}
+        GIT_COMMIT: ${NOS3_GIT_COMMIT}
+        
         NOS3_USER: ${NOS3_USER}
         BASE_DIR: ${NOS3_BASE_DIR}
         IMAGE_URI: ${NOS3_IMAGE_URI}
@@ -362,7 +365,7 @@ services:
       nos3-nos-engine-server:
         condition: service_healthy
       nos3-fortytwo:
-        condition: service_started
+        condition: service_healthy
       nos3-fsw:
         condition: service_healthy
     container_name: sc01-eps-sim

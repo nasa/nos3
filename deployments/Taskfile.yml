@@ -65,6 +65,16 @@ tasks:
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
 
+  build-fsw:
+    desc: Build nos3-base-local (fsw)
+    deps:
+      - env-create
+      - set-permissions
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fsw
+
   build:
     desc: Build all containers
     deps:
@@ -75,7 +85,7 @@ tasks:
       - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
       - |
         source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
+          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
@@ -194,7 +204,7 @@ tasks:
         echo; echo "How to access various services:"; echo; \
         echo "open http://localhost:8090 to access yamcs/gsw"; \
           echo "open http://localhost:30090/vnc.html to access fortytwo (42) and then click Connect"; \
-        echo "open http://localhost:9000/#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS} to access openmct"; \
+        echo "open http://localhost:9000/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
         echo
 
     silent: true

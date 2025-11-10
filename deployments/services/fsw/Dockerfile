@@ -7,7 +7,7 @@ ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 
 #------------------------------------------------------------------------------
 ARG GIT_URL=https://github.com/nasa/nos3
-ARG GIT_BRANCH=dev
+ARG GIT_COMMIT=dev
 
 ARG NOS3_USER=nos3
 ARG FSW_SOFTWARE=cfs 
@@ -37,17 +37,17 @@ ENV DEPLOYMENT_ENVIRO=${DEPLOYMENT_ENVIRO}
 # Git Configs
 #------------------------------------------------------------------------------
 ARG GIT_URL
-ARG GIT_BRANCH
+ARG GIT_COMMIT
 
 ENV GIT_URL=${GIT_URL}
-ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_COMMIT=${GIT_COMMIT}
 
 #------------------------------------------------------------------------------
 # NOS3 Configs
 #------------------------------------------------------------------------------
+ARG NOS3_USER
 ARG FSW_SOFTWARE
 ARG GSW_SOFTWARE
-ARG NOS3_USER
 
 ENV NOS3_USER=${NOS3_USER}
 ENV FSW_SOFTWARE=${FSW_SOFTWARE}
@@ -84,7 +84,7 @@ WORKDIR /home/${NOS3_USER}/builds/
 #------------------------------------------------------------------------------
 # Clone ${GIT_URL}
 #------------------------------------------------------------------------------
-RUN git clone --recurse-submodules -b ${GIT_BRANCH} -j4 ${GIT_URL}
+RUN git clone --recurse-submodules -b ${GIT_COMMIT} -j4 ${GIT_URL}
 
 WORKDIR /home/${NOS3_USER}/builds/nos3
 
@@ -99,9 +99,9 @@ RUN make -j6 -e FSW_SOFTWARE=${FSW_SOFTWARE} build-fsw
 RUN make -j6 build-sim
 #RUN make -j6 build-test
 
-# #------------------------------------------------------------------------------
-# # Install the GSW Software
-# #------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# Install the relevant GSW Software
+#------------------------------------------------------------------------------
 RUN ./scripts/gsw/gsw_${GSW_SOFTWARE}_build.sh
 
 COPY entrypoint.sh /entrypoint.sh
