@@ -50,9 +50,13 @@ build-openmct: | env-create set-permissions ## Build openmct
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
 
+build-fsw: | env-create set-permissions ## Build nos3-base-local (fsw)
+	source ${ENVIRO_FILE} && \
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fsw
+
 build: | env-create setup-maven set-permissions ## Build all containers
 	source ${ENVIRO_FILE} && \
-	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct
+	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
@@ -128,7 +132,7 @@ info-services: | env-create ## info on accessing various services
 	  echo; echo "How to access various services:"; echo; \
 	  echo "open http://localhost:8090 to access yamcs/gsw"; \
       echo "open http://localhost:30090/vnc.html to access fortytwo (42) and then click Connect"; \
-	  echo "open http://localhost:9000/#/browse/mine?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=$${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=$${SIM_TF_EPOCH_MILLISECONDS} to access openmct"; \
+	  echo "open http://localhost:9000/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=$${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=$${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"; \
 	  echo
 
 env-create: ## Create .env file from env.sh script

@@ -88,6 +88,7 @@ FORTYTWO_STARTUP_FOLDER=NOS3InOut
 FORTYTWO_RECOMPILE=false
 FORTYTWO_BASE_DIR=/opt/nasa-itc
 FORTYTWO_VNC_PASSWORD=$(echo -n "foobar" | shasum -a 256 | cut -d" " -f1)
+FORTYTWO_PORT=30090
 
 FORTYTWO_SIM_DATE="$(date -ud "@${SIM_T0_EPOCH_SECONDS}" +"%m %d %Y")"
 FORTYTWO_SIM_TIME="$(date -ud "@${SIM_T0_EPOCH_SECONDS}" +"%H %M %S.%2N")"
@@ -102,16 +103,24 @@ COMPONENT_DIR=/home/nos3/builds/nos3/components
 # yamcs specific configurations
 YAMCS_DATA_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data
 # YAMCS_ETC_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yamcs-etc
+
 # YAMCS_CACHE_DIR=/home/nos3/.nos3/yamcs/target/yamcs/yam
+
 YAMCS_GIT_URL=https://github.com/nasa-itc/nos3_yamcs_master.git
 YAMCS_GIT_COMMIT=nos3-dev
 
+YAMCS_INSTANCES=nos3
+YAMCS_PORT=8090
+
 # openmct specific configurations
 OPENMCT_IMAGE_URI=docker.io/library/ubuntu:25.04
+
 OPENMCT_GIT_URL=https://github.com/akhenry/openmct-yamcs.git
 OPENMCT_GIT_COMMIT=master
+
 OPENMCT_NVM_VERSION=v0.40.1
 OPENMCT_NODE_VERSION=v21.7.3
+OPENMCT_PORT=9000
 
 # nasa-itc specific configurations
 BASE_DIR=/opt/nasa-itc
