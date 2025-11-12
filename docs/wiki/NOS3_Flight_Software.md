@@ -346,6 +346,28 @@ TB\_Dont\_Care enum to overwrite time in F-Prime, but this adds a slight
 delay at the beginning of time synchronization between nos engine and
 F-Prime.
 
+### F-Prime Sequencing
+Creating sequences in Fprime can be done using the following steps:
+
+1. Use the `Sequences` Tab in the Fprime GDS to construct your preferred sequence. Name it accordingly with a .seq file extension and download it using `Save As`.
+
+2. Put the sequence file in the `fsw/fprime/fprime-nos3/Sequences/` folder
+
+3. Enter debug mode (`make debug`) and navigate to `fsw/fprime/fprime-nos3`. Compile the sequence into a .bin file using the below command.
+
+```
+fprime-seqgen Sequences/[filename].seq -d build-artifacts/Linux/deployment/dict/deploymentTopologyDictionary.json
+```
+
+Running sequences can be done through a variety of ways:
+
+* In Fprime GDS, use the CS_RUN command with the file parameter being `Sequences/___.bin` and the preferred blocking option. 
+
+* For startup scripts, modify the docker exec command at the end of `scripts/fsw/fsw_fprime_launch.sh` to run your specific `sequence.bin` file. Alterations can be made in the Makefile's `build-fsw` for sequence compilation.
+
+* The `fprime-cli` command has the ability to manually run sequences through the `CS_RUN` command similar to how the startup sequence works.
+
+
 ### F-Prime Documentation links:
 
 * F-Prime github Docs: [https://nasa.github.io/fprime/](https://nasa.github.io/fprime/)
