@@ -167,8 +167,8 @@ fi
 
 sleep 5
 
-pwd
+# pwd
 
-docker exec sc01-fprime sh -c "cd fsw/fprime/fprime-nos3 && fprime-cli command-send deployment.cmdSeq.CS_RUN --arguments adcsstart.bin NO_BLOCK"
+docker exec sc01-fprime sh -c "cd fsw/fprime/fprime-nos3 && fprime-cli command-send deployment.cmdSeq.CS_RUN --arguments Sequences/nos3test.bin NO_BLOCK"
 
 echo "Docker launch script completed!"

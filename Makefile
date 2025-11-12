@@ -67,7 +67,7 @@ build-cryptolib: ## Build CryptoLib Component, ## -DSTANDALONE_TCP=0 if using ud
 
 build-fsw: ## Build the flight software (cFS or F')
 ifeq ($(FLIGHT_SOFTWARE), fprime)
-	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build
+	cd fsw/fprime/fprime-nos3 && fprime-util generate && fprime-util build && fprime-seqgen Sequences/nos3test.seq -d build-artifacts/Linux/deployment/dict/deploymentTopologyDictionary.json
 else
 	mkdir -p $(FSWBUILDDIR)
 	cd $(FSWBUILDDIR) && cmake $(PREP_OPTS) ../cfe
@@ -128,6 +128,7 @@ clean-fsw: ## Clean only flight software build artifacts
 	rm -rf fsw/fprime/fprime-nos3/build-fprime-automatic-native
 	rm -rf fsw/fprime/fprime-nos3/fprime-venv
 	rm -rf fsw/fprime/fprime-nos3/logs
+	rm -f fsw/fprime/fprime-nos3/Sequences/*.bin
 
 clean-sim: ## Clean only simulator build artifacts
 	rm -rf sims/build
