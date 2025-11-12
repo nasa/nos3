@@ -8,6 +8,8 @@ env:
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
 
+  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "nos3-m01-sc01"}}'
+
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
 
@@ -90,11 +92,15 @@ tasks:
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
-      - find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
-      - find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
-      - find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
+      - find . -type f -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+      - find ../cfg/build -type f -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
+      - find ../cfg/build -type f -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+      - find ${HOME}/.nos3/ -type f -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
   up:
     desc: Bring up nos3 in detached state
@@ -109,7 +115,7 @@ tasks:
       - |
         source ${ENVIRO_FILE} && \
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
-          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
+          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
       - sleep 15
       - task sidecar
       - task info-services
@@ -120,7 +126,7 @@ tasks:
     desc: Bring down nos3
     cmds:
       - |
-        ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
+        ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} down --remove-orphans || true
 
   up-minimum:
     desc: Bring up nos3 (minimum) in detached state
