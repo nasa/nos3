@@ -24,7 +24,7 @@ NOS3_IMAGE_URI=docker.io/ivvitc/nos3-64:dev
 NOS3_BASE_DIR=/home/nos3/.nos3
 MISSION=m01
 SPACECRAFT=sc01
-COMPOSE_PROJECT_NAME=nos3-${MISSION}-${SPACECRAFT}
+PROJECT_NAME=nos3-${MISSION}-${SPACECRAFT}
 
 ########################################################################
 # Avoid updating the below variables unless you know what you are doing
@@ -44,7 +44,8 @@ cat << EOF
 
 MISSION=${MISSION}
 SPACECRAFT=${SPACECRAFT}
-COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
+PROJECT_NAME=${PROJECT_NAME}
+COMPOSE_PROJECT_NAME=${PROJECT_NAME}
 
 # nos3 specific configurations
 NOS3_GIT_URL=${NOS3_GIT_URL}

@@ -1,4 +1,4 @@
-name: ${COMPOSE_PROJECT_NAME}
+#name: ${COMPOSE_PROJECT_NAME}
 
 services:
   nos3-fortytwo:
@@ -22,7 +22,7 @@ services:
         BASE_DIR: ${FORTYTWO_BASE_DIR}
         VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "/usr/bin/pgrep 42; sleep 2"]
+      test: ["CMD-SHELL", "/usr/bin/pgrep -f 42 | grep -v xterm ; sleep 2"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +54,7 @@ services:
       VNC_PASSWORD: ${FORTYTWO_VNC_PASSWORD}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -113,7 +113,7 @@ services:
       GIT_COMMIT: ${YAMCS_GIT_COMMIT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -141,7 +141,7 @@ services:
       SCRIPT_DIR:
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -199,7 +199,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -231,7 +231,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -263,7 +263,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -286,7 +286,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -309,7 +309,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -331,7 +331,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -355,7 +355,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -382,7 +382,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -410,7 +410,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -436,7 +436,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -462,7 +462,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -488,7 +488,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -514,7 +514,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -540,7 +540,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -566,7 +566,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -592,7 +592,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -682,7 +682,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -709,7 +709,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -733,7 +733,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -757,7 +757,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -782,7 +782,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
       nos3-core-00:
@@ -808,7 +808,7 @@ services:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:
@@ -859,7 +859,7 @@ services:
     environment:
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
-      PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-sc01-00:
         aliases:

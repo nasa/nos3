@@ -24,6 +24,18 @@ endif
 # To set default settings.xml and essentially empty for mvn, unless in vmmoc
 export MAVEN_HTTPS_PROXY=-s./settings.xml
 
+ifdef (PROJECT_NAME)
+export PROJECT_NAME=${PROJECT_NAME}
+else
+export PROJECT_NAME=nos3-m01-sc01
+endif
+
+ifdef (COMPOSE_PROJECT_NAME)
+export COMPOSE_PROJECT_NAME=${PROJECT_NAME}
+else
+export COMPOSE_PROJECT_NAME=nos3-m01-sc01
+endif
+
 ifdef (NOS3_CFG_PATH)
 export NOS3_CFG_PATH=${NOS3_CFG_PATH}
 else
@@ -54,7 +66,7 @@ build-fsw: | env-create set-permissions ## Build nos3-base-local (fsw)
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fsw
 
-build: | env-create setup-maven set-permissions ## Build all containers
+build: | env-create setup-maven ## Build all containers
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
@@ -63,28 +75,32 @@ set-permissions: ## set filesystem permissions, needed for restricted accounts
 	find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
 	find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
 	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+	find ../cfg/build -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+	find ../cfg/build -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
+	find ../cfg/build -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
+	find ../cfg/build -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
-up: | down env-create build config-nos3-mission config ## Bring up nos3 in detached state
+up: | down env-create build config-nos3-mission config set-permissions ## Bring up nos3 in detached state
 	sleep 5
 	@source ${ENVIRO_FILE} && \
 	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
-	  ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} up -d --force-recreate --remove-orphans
+	  ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --remove-orphans
 	sleep 15
 	@$(MAKE) --silent sidecar
 	@$(MAKE) --silent info-services
 	@${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
 
 down: ## Bring down nos3
-	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} down --remove-orphans || true
+	${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} down --remove-orphans || true
 
-up-minimum: | down env-create build ## Bring up nos3 in detached state
+up-minimum: | down env-create build config-nos3-mission config set-permissions ## Bring up nos3 in detached state
 	@sleep 5
 	@source ${ENVIRO_FILE} && \
 	  export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
 	${CONTAINER_COMPOSE_BIN} \
 		--env-file ${ENVIRO_FILE} \
-		-f ${COMPOSE_FILE} up -d \
+		-f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d \
 			nos3-fortytwo \
 			nos3-nos-engine-server \
 			nos3-fsw \
@@ -147,9 +163,6 @@ install-lazydocker: ## Install lazydocker CLI tool (to view logs, etc)
 	@curl --silent https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
 	@echo; echo "don't forget to add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
 	@echo "watch a Lazydocker demo here: https://www.youtube.com/watch?v=NICqQPxwJWw"; echo
-
-lazydocker: | install-lazydocker ## Run lazydocker CLI tool
-	@lazydocker
 
 config-nos3-mission: | env-create ## configure nos3-mission.xml to set start-time
 	@source ${ENVIRO_FILE} && \

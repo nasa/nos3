@@ -8,7 +8,8 @@ env:
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
 
-  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "nos3-m01-sc01"}}'
+  PROJECT_NAME: '{{.PROJECT_NAME | default "nos3-m01-sc01"}}'
+#  COMPOSE_PROJECT_NAME: '{{.PROJECT_NAME | default "nos3-m01-sc01"}}'
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
@@ -82,7 +83,6 @@ tasks:
     deps:
       - env-create
       - setup-maven
-      - set-permissions
     cmds:
       - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
       - |
@@ -110,16 +110,16 @@ tasks:
       - build
       - config-nos3-mission
       - config
+      - set-permissions
     cmds:
-      - sleep 5
       - |
         source ${ENVIRO_FILE} && \
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
           ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
-      - sleep 15
+      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
       - task sidecar
       - task info-services
-      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+      - task check-docker-ps
     silent: true
 
   down:
@@ -134,28 +134,32 @@ tasks:
       - down
       - env-create
       - build
+      - config-nos3-mission
+      - config
+      - set-permissions
     cmds:
       - sleep 5
       - |
         source ${ENVIRO_FILE} && \
-        export NOS3_CFG_PATH=${NOS3_CFG_PATH} ; \
-          ${CONTAINER_COMPOSE_BIN} \
-            --env-file ${ENVIRO_FILE} \
-            -f ${COMPOSE_FILE} up -d \
-              nos3-fortytwo \
-              nos3-nos-engine-server \
-              nos3-fsw \
-              nos3-gps-sim \
-              nos3-time \
-              nos3-radio-sim-cryptolib \
-              nos3-truth42sim \
-              nos3-gsw \
-              nos3-openmct \
-            --remove-orphans
-      - sleep 15
+          export NOS3_CFG_PATH=${NOS3_CFG_PATH} ; \
+            ${CONTAINER_COMPOSE_BIN} \
+              --env-file ${ENVIRO_FILE} \
+              -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d \
+                nos3-fortytwo \
+                nos3-nos-engine-server \
+                nos3-fsw \
+                nos3-gps-sim \
+                nos3-time \
+                nos3-radio-sim-cryptolib \
+                nos3-truth42sim \
+                nos3-gsw \
+                nos3-openmct \
+              --force-recreate \
+              --remove-orphans
+      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
       - task sidecar
       - task info-services
-      - ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+      - task check-docker-ps
     silent: true
 
   sidecar:
@@ -190,6 +194,27 @@ tasks:
           cp -f ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
           cp -f ${MAVEN_SETTINGS_FILE} ${SERVICES_DIR}/yamcs/ || true
         fi
+
+  check-docker-ps:
+    desc: check docker ps for any exited|unhealthy|created|error containers
+    cmds:
+      - |
+        ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+    silent: true
+    
+  check-service-ready:
+    env:
+      SERVICE_HOST: '{{.SERVICE_HOST | default "localhost"}}'
+      SERVICE_PORT: '{{.SERVICE_PORT | default "8090"}}'
+    desc: wait for a service to be ready on a given port
+    cmds:
+      - |
+        echo "Waiting for service ${SERVICE_HOST}:${SERVICE_PORT} to be ready on port ${SERVICE_PORT}..."
+        until nc -z ${SERVICE_HOST} ${SERVICE_PORT}; do
+          sleep 1
+        done
+        echo "Service ${SERVICE_HOST}:${SERVICE_PORT} is ready on port ${SERVICE_PORT}!"
+    silent: true
 
   purge-containers:
     desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
@@ -231,13 +256,6 @@ tasks:
       - |
         echo "watch a Lazydocker demo here: https://www.youtube.com/watch?v=NICqQPxwJWw"; echo
     silent: true
-
-  lazydocker:
-    desc: Run lazydocker CLI tool
-    deps:
-      - install-lazydocker
-    cmds:
-      - lazydocker
 
   config-nos3-mission:
     desc: configure nos3-mission.xml to set start-time
