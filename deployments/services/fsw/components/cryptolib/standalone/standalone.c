@@ -257,7 +257,7 @@ int32_t crypto_standalone_process_command(int32_t cc, int32_t num_tokens, char *
 
         default:
             // printf("Invalid command format, type 'help' for more info\n");
-            status = CRYPTO_LIB_ERROR;
+            // status = CRYPTO_LIB_ERROR;
             break;
     }
 
@@ -1033,7 +1033,7 @@ int main(int argc, char *argv[])
         /* Read user input */
 /* commented this out because it fills up volume while the cryptolib container is running */
 /*       printf(CRYPTO_PROMPT); */
-        fgets(input_buf, CRYPTO_MAX_INPUT_BUF, stdin);
+        // fgets(input_buf, CRYPTO_MAX_INPUT_BUF, stdin);
 
         /* Tokenize line buffer */
         token_ptr = strtok(input_buf, " \t\n");
