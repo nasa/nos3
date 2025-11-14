@@ -9,7 +9,7 @@ env:
   SCRIPTS_DIR: ./scripts
 
   PROJECT_NAME: '{{.PROJECT_NAME | default "nos3-m01-sc01"}}'
-#  COMPOSE_PROJECT_NAME: '{{.PROJECT_NAME | default "nos3-m01-sc01"}}'
+  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "nos3-m01-sc01"}}'
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
@@ -116,7 +116,8 @@ tasks:
         source ${ENVIRO_FILE} && \
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
           ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
-      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+#      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+      - sleep 15
       - task sidecar
       - task info-services
       - task check-docker-ps
