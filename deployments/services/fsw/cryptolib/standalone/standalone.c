@@ -256,7 +256,7 @@ int32_t crypto_standalone_process_command(int32_t cc, int32_t num_tokens, char *
             break;
 
         default:
-            printf("Invalid command format, type 'help' for more info\n");
+            // printf("Invalid command format, type 'help' for more info\n");
             status = CRYPTO_LIB_ERROR;
             break;
     }
