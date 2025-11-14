@@ -1037,26 +1037,26 @@ int main(int argc, char *argv[])
 
         /* Tokenize line buffer */
         token_ptr = strtok(input_buf, " \t\n");
-        while ((num_input_tokens < CRYPTO_MAX_INPUT_TOKENS) && (token_ptr != NULL))
-        {
-            if (num_input_tokens == -1)
-            {
-                /* First token is command */
-                cmd = crypto_standalone_get_command(token_ptr);
-            }
-            else
-            {
-                strncpy(input_tokens[num_input_tokens], token_ptr, CRYPTO_MAX_INPUT_TOKEN_SIZE);
-            }
-            token_ptr = strtok(NULL, " \t\n");
-            num_input_tokens++;
-        }
+        // while ((num_input_tokens < CRYPTO_MAX_INPUT_TOKENS) && (token_ptr != NULL))
+        // {
+        //     if (num_input_tokens == -1)
+        //     {
+        //         /* First token is command */
+        //         cmd = crypto_standalone_get_command(token_ptr);
+        //     }
+        //     else
+        //     {
+        //         strncpy(input_tokens[num_input_tokens], token_ptr, CRYPTO_MAX_INPUT_TOKEN_SIZE);
+        //     }
+        //     token_ptr = strtok(NULL, " \t\n");
+        //     num_input_tokens++;
+        // }
 
         /* Process command if valid */
-        if (num_input_tokens >= 0)
-        {
-            crypto_standalone_process_command(cmd, num_input_tokens, &input_tokens[0][0]);
-        }
+        // if (num_input_tokens >= 0)
+        // {
+        //     crypto_standalone_process_command(cmd, num_input_tokens, &input_tokens[0][0]);
+        // }
     }
 
     /* Cleanup */

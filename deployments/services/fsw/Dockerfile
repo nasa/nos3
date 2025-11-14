@@ -91,6 +91,7 @@ WORKDIR /home/${NOS3_USER}/builds/nos3
 RUN chown -R ${NOS3_USER}:${NOS3_USER} /home/${NOS3_USER}
 
 # commented printf(CRYPTO_PROMPT) because it fills up volume while the cryptolib is running 
+COPY components/cryptolib/standalone/standalone.h ./components/cryptolib/standalone/standalone.h
 COPY components/cryptolib/standalone/standalone.c ./components/cryptolib/standalone/standalone.c
 COPY scripts/cfg/prepare.sh                       ./scripts/cfg/prepare.sh
 
