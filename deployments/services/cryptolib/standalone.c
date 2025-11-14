@@ -1031,7 +1031,8 @@ int main(int argc, char *argv[])
         cmd              = CRYPTO_CMD_UNKNOWN;
 
         /* Read user input */
-        printf(CRYPTO_PROMPT);
+/* commented this out because it fills up volume while the cryptolib container is running */
+/*       printf(CRYPTO_PROMPT); */
         fgets(input_buf, CRYPTO_MAX_INPUT_BUF, stdin);
 
         /* Tokenize line buffer */
