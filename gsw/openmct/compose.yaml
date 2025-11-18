@@ -1,0 +1,56 @@
+
+services:
+
+  openmct:
+    build:
+      context: ./
+      dockerfile: Containerfile
+      args:
+        DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        HTTP_PROXY: ${HTTP_PROXY}
+        NO_PROXY: ${NO_PROXY}
+        
+        MAVEN_HTTPS_PROXY: ${MAVEN_HTTPS_PROXY}
+        IMAGE_URI: ${IMAGE_URI}
+
+        NVM_VERSION: ${NVM_VERSION}
+        NODE_VERSION: ${NODE_VERSION}
+
+        GIT_URL: ${GIT_URL}
+        GIT_COMMIT: ${GIT_COMMIT}
+
+    attach: true
+    container_name: sc01-openmct
+    hostname: sc01-openmct
+    working_dir: "/opt/openmct"
+    volumes:
+      - "${PWD}/entrypoint.sh:/opt/openmct/entrypoint.sh"
+      - "${PWD}/webpack.dev.mjs:/opt/openmct/.webpack/webpack.dev.mjs"
+      - "${PWD}/example/index.js:/opt/openmct/example/index.js"
+      - "${PWD}/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
+    command: '/opt/openmct/entrypoint.sh'
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:9000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:8080:8080"
+    networks:
+      nos3-core:
+        aliases:
+          - openmct
+          - sc01-openmct
+      nos3-sc01:
+        aliases:
+          - openmct
+          - sc01-openmct
+
+networks:
+  nos3-core:
+    external: true
+  nos3-sc01:
+    external: true
