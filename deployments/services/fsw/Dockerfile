@@ -48,10 +48,15 @@ ENV GIT_COMMIT=${GIT_COMMIT}
 ARG NOS3_USER
 ARG FSW_SOFTWARE
 ARG GSW_SOFTWARE
+ARG GROUND_SOFTWARE
+ARG LD_LIBRARY_PATH
 
 ENV NOS3_USER=${NOS3_USER}
 ENV FSW_SOFTWARE=${FSW_SOFTWARE}
 ENV GSW_SOFTWARE=${GSW_SOFTWARE}
+ENV GROUND_SOFTWARE=${GSW_SOFTWARE}
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
+
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -93,6 +98,7 @@ RUN chown -R ${NOS3_USER}:${NOS3_USER} /home/${NOS3_USER}
 # commented printf(CRYPTO_PROMPT) because it fills up volume while the cryptolib is running 
 COPY components/cryptolib/standalone/standalone.h ./components/cryptolib/standalone/standalone.h
 COPY components/cryptolib/standalone/standalone.c ./components/cryptolib/standalone/standalone.c
+#COPY components/cryptolib/standalone/standalone.c ./components/cryptolib/support/standalone/standalone.c
 COPY scripts/cfg/prepare.sh                       ./scripts/cfg/prepare.sh
 
 RUN make -j6 clean
