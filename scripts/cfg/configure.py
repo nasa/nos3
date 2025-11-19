@@ -76,6 +76,16 @@ if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
 
+# Scenario
+scenario = mission_root.find('scenario').text
+print('  scenario:', scenario)
+if (scenario == 'Gateway'):
+    os.system('cp ./cfg/InOut/Inp_Sim_Gateway.txt ./cfg/InOut/Inp_Sim.txt')
+    os.system('cp ./cfg/InOut/Inp_Graphics_Gateway.txt ./cfg/InOut/Inp_Graphics.txt')
+else:
+    os.system('cp ./cfg/InOut/Inp_Sim_STF1.txt ./cfg/InOut/Inp_Sim.txt')
+    os.system('cp ./cfg/InOut/Inp_Graphics_STF1.txt ./cfg/InOut/Inp_Graphics.txt')
+
 # Read number of spacecraft
 mission_number_spacecraft = mission_root.find('number-spacecraft').text
 print('  number-spacecraft:', mission_number_spacecraft)
@@ -419,6 +429,10 @@ else:
         with open('./cfg/build/InOut/Inp_IPC.txt', 'w') as fp:
             lines = "".join(lines)
             fp.write(lines)
+
+        # Inp_Graphics.txt
+        os.system('cp ./cfg/InOut/Inp_Graphics.txt ./cfg/build/InOut/Inp_Graphics.txt')
+
 
         ###
         ### Simulators - nos3-simulator.xml
