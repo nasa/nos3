@@ -1398,7 +1398,7 @@ class NOS3ConfigGUI:
             "sample"   : True,
             "st"       : True,
             "syn"      : False,
-            "tourqer"  : True,
+            "torquer"  : True,
             "thruster" : False
         }
         self.additional_data = {
