@@ -910,11 +910,11 @@ int main(int argc, char *argv[])
 {
     int32_t status = CRYPTO_LIB_SUCCESS;
 
-    char  input_buf[CRYPTO_MAX_INPUT_BUF];
-    char  input_tokens[CRYPTO_MAX_INPUT_TOKENS][CRYPTO_MAX_INPUT_TOKEN_SIZE];
-    int   num_input_tokens;
-    int   cmd;
-    char *token_ptr;
+    // char  input_buf[CRYPTO_MAX_INPUT_BUF];
+    // char  input_tokens[CRYPTO_MAX_INPUT_TOKENS][CRYPTO_MAX_INPUT_TOKEN_SIZE];
+    // int   num_input_tokens;
+    // int   cmd;
+    // char *token_ptr;
 
     udp_interface_t tc_apply;
     udp_interface_t tm_process;
@@ -1027,8 +1027,8 @@ int main(int argc, char *argv[])
     /* Main loop */
     while (keepRunning == CRYPTO_LIB_SUCCESS)
     {
-        num_input_tokens = -1;
-        cmd              = CRYPTO_CMD_UNKNOWN;
+        // num_input_tokens = -1;
+        // cmd              = CRYPTO_CMD_UNKNOWN;
 
         /* Read user input */
 /* commented this out because it fills up volume while the cryptolib container is running */
@@ -1036,7 +1036,7 @@ int main(int argc, char *argv[])
         // fgets(input_buf, CRYPTO_MAX_INPUT_BUF, stdin);
 
         /* Tokenize line buffer */
-        token_ptr = strtok(input_buf, " \t\n");
+        // token_ptr = strtok(input_buf, " \t\n");
         // while ((num_input_tokens < CRYPTO_MAX_INPUT_TOKENS) && (token_ptr != NULL))
         // {
         //     if (num_input_tokens == -1)
