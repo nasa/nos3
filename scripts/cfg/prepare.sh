@@ -48,7 +48,7 @@ echo ""
 
 echo "Prepare Igniter (optional)..."
 cd $BASE_DIR
-sh ./scripts/cfg/igniter_launch
+./scripts/cfg/igniter_launch.sh
 echo ""
 echo ""
 
