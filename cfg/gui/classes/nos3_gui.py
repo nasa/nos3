@@ -18,7 +18,7 @@ class NOS3ConfigGUI:
     def __init__(self):
         # Set appearance mode and color theme
         ctk.set_appearance_mode("dark")  # or "light"
-        ctk.set_default_color_theme("./cfg/gui/resources/orange.json")  # or "green", "dark-blue"
+        ctk.set_default_color_theme("./cfg/gui/resources/orange.json")
         
         # Create main window
         self.root = ctk.CTk()
@@ -29,7 +29,6 @@ class NOS3ConfigGUI:
         # Set window icon
         self.set_window_icon()
         
-        # Data structures
         # Data structures
         self.current_mission_file = None
         self.current_spacecraft_file = None
@@ -44,6 +43,7 @@ class NOS3ConfigGUI:
         self.default_mission_config = "./cfg/nos3-mission.xml"
         self.fsw_options = ["cfs", "fprime"]
         self.gsw_options = ["cosmos", "openc3", "fprime", "yamcs"]
+        self.scenario_options = ["STF1", "Gateway"]
         config_dir = "./cfg/spacecraft/"
         self.config_filenames = {
             filename for filename in os.listdir(config_dir) if os.path.isfile(os.path.join(config_dir, filename))
@@ -164,7 +164,7 @@ class NOS3ConfigGUI:
         gui_frame = ctk.CTkFrame(self.additional_scrollable)
         gui_frame.pack(fill="x", pady=10, padx=5)
         
-        gui_label = ctk.CTkLabel(gui_frame, text="GUI Configuration:", 
+        gui_label = ctk.CTkLabel(gui_frame, text="42 GUI Configuration:", 
                                 font=ctk.CTkFont(size=14, weight="bold"))
         gui_label.pack(anchor="w", padx=10, pady=(10, 5))
         
@@ -338,6 +338,22 @@ class NOS3ConfigGUI:
         for option in self.fsw_options:
             rb = ctk.CTkRadioButton(fsw_frame, text=option, variable=self.fsw_var, value=option)
             rb.pack(anchor="w", padx=20, pady=2)
+            
+        # Scenario Section
+        scenario_frame = ctk.CTkFrame(self.mission_scrollable)
+        scenario_frame.pack(fill="x", pady=10, padx=5)
+        
+        scenario_label = ctk.CTkLabel(scenario_frame, text="Scenario:", 
+                                font=ctk.CTkFont(size=14, weight="bold"))
+        scenario_label.pack(anchor="w", padx=10, pady=5)
+        
+        # Scenario options
+        self.scenario_var = tk.StringVar()
+        
+        # Radio buttons for scenario
+        for option in self.scenario_options:
+            rb = ctk.CTkRadioButton(scenario_frame, text=option, variable=self.scenario_var, value=option)
+            rb.pack(anchor="w", padx=20, pady=2)
         
         # Number of Spacecraft Section
         sc_frame = ctk.CTkFrame(self.mission_scrollable)
@@ -390,6 +406,7 @@ class NOS3ConfigGUI:
             "start_time": "",
             "gsw": "",
             "fsw": "",
+            "scenario": "",
             "num_spacecraft": "1",
             "sc1_config": "",
             "scN_config": ""  # For spacecraft N config if more than 1
@@ -574,6 +591,16 @@ class NOS3ConfigGUI:
             fsw = ET.SubElement(root, 'fsw')
             fsw.text = self.fsw_var.get() # type: ignore
             
+            # Add flight software section
+            scenario_comment = ET.Comment(" Scenario ")
+            root.append(scenario_comment)
+            
+            scenario_options_comment = ET.Comment(" STF1 (default) or Gateway ")
+            root.append(scenario_options_comment)
+            
+            scenario = ET.SubElement(root, 'scenario')
+            scenario.text = self.scenario_var.get() # type: ignore
+            
             # Add number of spacecraft
             num_sc_comment = ET.Comment(" Number of spacecraft ")
             root.append(num_sc_comment)
@@ -653,141 +680,63 @@ class NOS3ConfigGUI:
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(xml_str + pretty_xml)
 
-    # Add a refresh_preview method that handles the active tab
+    # Add a refresh_preview method
     def refresh_preview(self):
-        try:
-            active_tab = self.notebook.get()
-            
-            if active_tab == "Mission Config":
-                # Generate mission XML preview
-                root = ET.Element('nos3-mission-cfg')
-                
-                # Add comments as in the example
-                comment1 = ET.Comment(" Mission Start Time (12000 UTC) ")
-                root.append(comment1)
-                
-                time_str = self.mission_time_entry.get().strip()
-                if time_str:
-                    try:
-                        timestamp = float(time_str)
-                        dt = datetime.fromtimestamp(timestamp)
-                        date_str = dt.strftime("%d %b %Y")
-                        comment2 = ET.Comment(f" Default time: {time_str}, {date_str} ")
-                        root.append(comment2)
-                    except ValueError:
-                        pass
-                
-                # Add start time
-                start_time = ET.SubElement(root, 'start-time')
-                start_time.text = self.mission_time_entry.get().strip()
-                
-                # Add ground software section
-                gsw_comment = ET.Comment(" Ground Software ")
-                root.append(gsw_comment)
-                
-                options_comment = ET.Comment(" cosmos (default), openc3, fprime, or yamcs ")
-                root.append(options_comment)
-                
-                gsw = ET.SubElement(root, 'gsw')
-                gsw.text = self.gsw_var.get() # type: ignore
-                
-                # Add flight software section
-                fsw_comment = ET.Comment(" Flight Software ")
-                root.append(fsw_comment)
-                
-                fsw_options_comment = ET.Comment(" cfs (default) or fprime ")
-                root.append(fsw_options_comment)
-                
-                fsw = ET.SubElement(root, 'fsw')
-                fsw.text = self.fsw_var.get() # type: ignore
-                
-                # Add number of spacecraft
-                num_sc_comment = ET.Comment(" Number of spacecraft ")
-                root.append(num_sc_comment)
-                
-                experimental_comment = ET.Comment(" Note this is experimental and not ready for use beyond proof of concept ")
-                root.append(experimental_comment)
-                
-                num_sc = ET.SubElement(root, 'number-spacecraft')
-                num_sc.text = self.sc_count_var.get() # type: ignore
-                
-                # Add spacecraft configurations
-                sc_num = int(self.sc_count_var.get()) # type: ignore
-                
-                # Add SC1 configuration
-                sc1_comment = ET.Comment(" Spacecraft 1 Configuration - options are as follows ")
-                root.append(sc1_comment)
-                
-                for filename in self.config_filenames:
-                    root.append(ET.Comment(f" {filename} "))
-                
-                sc1_cfg = ET.SubElement(root, 'sc-1-cfg')
-                selected_option = self.sc1_config_var.get() # type: ignore
-                if selected_option in self.config_filenames:
-                    sc1_cfg.text = selected_option
-                
-                # Add SCN configuration if more than one spacecraft
-                if sc_num > 1:
-                    scn_comment = ET.Comment(" Spacecraft N Configuration ")
-                    root.append(scn_comment)
-                    
-                    scn_cfg_comment = ET.Comment(" <sc-N-cfg>sc-minimal-config.xml</sc-N-cfg> ")
-                    root.append(scn_cfg_comment)
-            else:
-                # Generate spacecraft XML preview
-                root = ET.Element('sc-1-config')
+        try: 
+            # Generate spacecraft XML preview
+            root = ET.Element('sc-1-config')
                 
                 # Add applications
-                apps_element = ET.SubElement(root, 'applications')
-                for app_name, enabled in self.apps_data.items():
-                    app_element = ET.SubElement(apps_element, app_name)
-                    enable_element = ET.SubElement(app_element, 'enable')
-                    enable_element.text = 'true' if enabled else 'false'
+            apps_element = ET.SubElement(root, 'applications')
+            for app_name, enabled in self.apps_data.items():
+                app_element = ET.SubElement(apps_element, app_name)
+                enable_element = ET.SubElement(app_element, 'enable')
+                enable_element.text = 'true' if enabled else 'false'
                         
-                # Add components
-                components_element = ET.SubElement(root, 'components')
-                for comp_name, enabled in self.components_data.items():
-                    comp_element = ET.SubElement(components_element, comp_name)
-                    enable_element = ET.SubElement(comp_element, 'enable')
-                    enable_element.text = 'true' if enabled else 'false'
-                    
-                # Add GUI section
-                gui_element = ET.SubElement(root, 'gui')
-                gui_enable = ET.SubElement(gui_element, 'enable')
-                if hasattr(self, 'gui_enabled_var'):
-                    gui_enable.text = 'true' if self.gui_enabled_var.get() else 'false'
-                else:
-                    gui_enable.text = 'true'
+            # Add components
+            components_element = ET.SubElement(root, 'components')
+            for comp_name, enabled in self.components_data.items():
+                comp_element = ET.SubElement(components_element, comp_name)
+                enable_element = ET.SubElement(comp_element, 'enable')
+                enable_element.text = 'true' if enabled else 'false'
                 
-                # Add Orbit section
-                orbit_element = ET.SubElement(root, 'orbit')
-                
-                tipoff_x = ET.SubElement(orbit_element, 'tipoff_x')
-                if hasattr(self, 'tipoff_x_entry'):
-                    tipoff_x.text = self.tipoff_x_entry.get() if self.tipoff_x_entry.get() else "0.2"
-                else:
-                    tipoff_x.text = "0.2"
-                
-                tipoff_y = ET.SubElement(orbit_element, 'tipoff_y')
-                if hasattr(self, 'tipoff_y_entry'):
-                    tipoff_y.text = self.tipoff_y_entry.get() if self.tipoff_y_entry.get() else "2.0"
-                else:
-                    tipoff_y.text = "2.0"
-                
-                tipoff_z = ET.SubElement(orbit_element, 'tipoff_z')
-                if hasattr(self, 'tipoff_z_entry'):
-                    tipoff_z.text = self.tipoff_z_entry.get() if self.tipoff_z_entry.get() else "-2.0"
-                else:
-                    tipoff_z.text = "-2.0"
-                
-                # Add Sim section
-                sim_element = ET.SubElement(root, 'sim')
-                sim_truth = ET.SubElement(sim_element, 'sim_truth_interface')
-                if hasattr(self, 'sim_truth_var'):
-                    sim_truth.text = 'true' if self.sim_truth_var.get() else 'false'
-                else:
-                    sim_truth.text = 'true'
+            # Add GUI section
+            gui_element = ET.SubElement(root, 'gui')
+            gui_enable = ET.SubElement(gui_element, 'enable')
+            if hasattr(self, 'gui_enabled_var'):
+                gui_enable.text = 'true' if self.gui_enabled_var.get() else 'false'
+            else:
+                gui_enable.text = 'true'
             
+            # Add Orbit section
+            orbit_element = ET.SubElement(root, 'orbit')
+            
+            tipoff_x = ET.SubElement(orbit_element, 'tipoff_x')
+            if hasattr(self, 'tipoff_x_entry'):
+                tipoff_x.text = self.tipoff_x_entry.get() if self.tipoff_x_entry.get() else "0.2"
+            else:
+                tipoff_x.text = "0.2"
+            
+            tipoff_y = ET.SubElement(orbit_element, 'tipoff_y')
+            if hasattr(self, 'tipoff_y_entry'):
+                tipoff_y.text = self.tipoff_y_entry.get() if self.tipoff_y_entry.get() else "2.0"
+            else:
+                tipoff_y.text = "2.0"
+            
+            tipoff_z = ET.SubElement(orbit_element, 'tipoff_z')
+            if hasattr(self, 'tipoff_z_entry'):
+                tipoff_z.text = self.tipoff_z_entry.get() if self.tipoff_z_entry.get() else "-2.0"
+            else:
+                tipoff_z.text = "-2.0"
+            
+            # Add Sim section
+            sim_element = ET.SubElement(root, 'sim')
+            sim_truth = ET.SubElement(sim_element, 'sim_truth_interface')
+            if hasattr(self, 'sim_truth_var'):
+                sim_truth.text = 'true' if self.sim_truth_var.get() else 'false'
+            else:
+                sim_truth.text = 'true'
+        
             # Format XML
             xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
             rough_string = ET.tostring(root, 'utf-8')
@@ -935,6 +884,8 @@ class NOS3ConfigGUI:
         if hasattr(self, 'gsw_var'):
             self.gsw_var.trace_add("write", lambda *args: self.set_modified()) # type: ignore
         if hasattr(self, 'fsw_var'):
+            self.fsw_var.trace_add("write", lambda *args: self.set_modified()) # type: ignore
+        if hasattr(self, 'scenario_var'):
             self.fsw_var.trace_add("write", lambda *args: self.set_modified()) # type: ignore
         if hasattr(self, 'sc_count_var'):
             self.sc_count_var.trace_add("write", lambda *args: self.set_modified()) # type: ignore
@@ -1200,6 +1151,16 @@ class NOS3ConfigGUI:
         fsw = ET.SubElement(root, 'fsw')
         fsw.text = self.fsw_var.get() # type: ignore
         
+        # Add flight software section
+        scenario_comment = ET.Comment(" Scenario ")
+        root.append(scenario_comment)
+                
+        scenario_options_comment = ET.Comment(" STF1 (default) or Gateway ")
+        root.append(scenario_options_comment)
+                
+        scenario = ET.SubElement(root, 'scenario')
+        scenario.text = self.scenario_var.get() # type: ignore
+        
         # Add number of spacecraft
         num_sc_comment = ET.Comment(" Number of spacecraft ")
         root.append(num_sc_comment)
@@ -1419,6 +1380,7 @@ class NOS3ConfigGUI:
             "start_time": "",
             "gsw": "",
             "fsw": "",
+            "scenario": "",
             "num_spacecraft": "1",
             "sc1_config": "",
             "scN_config": ""
@@ -1443,6 +1405,12 @@ class NOS3ConfigGUI:
         if fsw_elem is not None and fsw_elem.text:
             self.mission_data["fsw"] = fsw_elem.text
             self.fsw_var.set(fsw_elem.text) # type: ignore
+            
+        # Extract scenario
+        scenario_elem = root.find('scenario')
+        if scenario_elem is not None and scenario_elem.text:
+            self.mission_data["scenario"] = scenario_elem.text
+            self.scenario_var.set(scenario_elem.text) # type: ignore
         
         # Extract number of spacecraft
         num_sc_elem = root.find('number-spacecraft')
@@ -1504,6 +1472,8 @@ class NOS3ConfigGUI:
             self.gsw_var.set("cosmos")  # Default value # type: ignore
         if hasattr(self, 'fsw_var'):
             self.fsw_var.set("cfs")     # Default value # type: ignore
+        if hasattr(self, 'scenario_var'):
+            self.fsw_var.set("STF1")     # Default value # type: ignore
         if hasattr(self, 'sc_count_var'):
             self.sc_count_var.set("1") # type: ignore
         if hasattr(self, 'sc1_config_var'):
@@ -1541,7 +1511,7 @@ class NOS3ConfigGUI:
             if app_name in self.apps_data:
                 messagebox.showerror("Error", f"Application '{app_name}' already exists.")
                 return
-            self.apps_data[app_name] = True  # Default to enabled
+            self.apps_data[app_name] = False  # Default to disabled
             self.refresh_apps_display()
             self.set_modified()
             
@@ -1552,7 +1522,7 @@ class NOS3ConfigGUI:
             if comp_name in self.components_data:
                 messagebox.showerror("Error", f"Component '{comp_name}' already exists.")
                 return
-            self.components_data[comp_name] = True  # Default to enabled
+            self.components_data[comp_name] = False  # Default to disabled
             self.refresh_components_display()
             self.set_modified()
             
