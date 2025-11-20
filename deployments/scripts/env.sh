@@ -20,7 +20,7 @@ NOS3_MISSION_CFG_FILE=../cfg/nos3-mission.xml
 NOS3_GIT_URL=https://github.com/nasa/nos3
 NOS3_GIT_COMMIT=dev
 
-NOS3_IMAGE_URI=docker.io/ivvitc/nos3-64:dev
+NOS3_IMAGE_URI=docker.io/ivvitc/nos3-64:20251107
 NOS3_BASE_DIR=/home/nos3/.nos3
 MISSION=m01
 SPACECRAFT=sc01
