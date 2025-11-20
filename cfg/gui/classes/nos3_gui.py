@@ -950,6 +950,9 @@ class NOS3ConfigGUI:
                 self.modified = False
                 self.update_status(f"Saved mission and spacecraft configurations")
                 self.update_file_labels()
+                
+                # Update config in NOS3 on save
+                os.system("make config")
             else:
                 messagebox.showerror("Error", "No spacecraft configuration selected in mission config")
                 
