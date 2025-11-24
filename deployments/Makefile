@@ -66,7 +66,7 @@ build-fsw: | env-create set-permissions ## Build nos3-base-local (fsw)
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fsw
 
-build: | env-create setup-maven ## Build all containers
+build: | env-create set-permissions setup-maven ## Build all containers
 	source ${ENVIRO_FILE} && \
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
