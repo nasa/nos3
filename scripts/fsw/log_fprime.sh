@@ -8,7 +8,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/../env.sh
 
-
+sleep 5
 cd $BASE_DIR/fsw/fprime/fprime-nos3/logs
 echo "$PWD"
 

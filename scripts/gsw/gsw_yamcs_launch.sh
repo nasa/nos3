@@ -31,7 +31,10 @@ echo "YAMCS Launch... "
 
 
 # --network=$SC_NETNAME -h nos_fsw (works below)
-gnome-terminal --tab --title="YAMCS" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -p 8090:8090 -p 5012:5012 --name yamcs-operator_1 --network=$SC_NETNAME -w $USER_NOS3_DIR/yamcs $DBOX mvn -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository yamcs:run
+# gnome-terminal --tab --title="YAMCS" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -p 8090:8090 -p 5012:5012 --name yamcs-operator_1 --network=$SC_NETNAME -w $USER_NOS3_DIR/yamcs $DBOX mvn -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository yamcs:run
+# gnome-terminal --tab --title="YAMCS" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker:ro -p 8090:8090 -p 5012:5012 --name yamcs-operator_1 --network=$SC_NETNAME -w $USER_NOS3_DIR/yamcs $DBOX mvn -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository yamcs:run
+#below works, added docker.sock to container also running as root user to execute docker exec command
+gnome-terminal --tab --title="YAMCS" -- $DFLAGS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker:ro --user root -p 8090:8090 -p 5012:5012 --name yamcs-operator_1 --network=$SC_NETNAME -w $USER_NOS3_DIR/yamcs $DBOX mvn -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository yamcs:run
 
 pidof firefox > /dev/null
 if [ $? -eq 1 ]
