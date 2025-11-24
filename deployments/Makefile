@@ -71,14 +71,16 @@ build: | env-create setup-maven ## Build all containers
 	  ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
 set-permissions: ## set filesystem permissions, needed for restricted accounts
-	find . -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-	find . -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-	find . -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
-	find . -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
-	find ../cfg/build -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-	find ../cfg/build -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-	find ../cfg/build -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
-	find ../cfg/build -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+	find . -name '*.sh'                 -exec chmod 777 {} \; # Make sure all scripts are world executable
+	find . -name '*.py'                 -exec chmod 777 {} \; # Make sure all scripts are world executable
+	find . -name '*.json'               -exec chmod 666 {} \; # Make sure all .json files are world readable
+	find . -name '*.xml'                -exec chmod 666 {} \; # Make sure all .xml files are world readable
+	find . -type f -name '*.c'          -exec chmod 555 {} \; # Make sure all .xml files are world readable
+	find . -type f -name '*.h'          -exec chmod 555 {} \; # Make sure all .xml files are world readable
+	find ../cfg/build -name '*.sh'      -exec chmod 777 {} \; # Make sure all scripts are world executable
+	find ../cfg/build -name '*.py'      -exec chmod 777 {} \; # Make sure all scripts are world executable
+	find ../cfg/build -name '*.json'    -exec chmod 666 {} \; # Make sure all .json files are world readable
+	find ../cfg/build -name '*.xml'     -exec chmod 666 {} \; # Make sure all .xml files are world readable
 	find ${HOME}/.nos3/   -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
 up: | down env-create build config-nos3-mission config set-permissions ## Bring up nos3 in detached state

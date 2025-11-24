@@ -92,14 +92,16 @@ tasks:
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
-      - find . -type f -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find . -type f -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find . -type f -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
-      - find . -type f -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
-      - find ../cfg/build -type f -name '*.sh'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find ../cfg/build -type f -name '*.py'   -exec chmod 775 {} \; # Make sure all scripts are world executable
-      - find ../cfg/build -type f -name '*.json' -exec chmod 664 {} \; # Make sure all .json files are world readable
-      - find ../cfg/build -type f -name '*.xml'  -exec chmod 664 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.sh'               -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.py'               -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.json'             -exec chmod 666 {} \; # Make sure all .json files are world readable
+      - find . -type f -name '*.xml'              -exec chmod 666 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.c'                -exec chmod 555 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.h'                -exec chmod 555 {} \; # Make sure all .xml files are world readable
+      - find ../cfg/build -type f -name '*.sh'    -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.py'    -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.json'  -exec chmod 666 {} \; # Make sure all .json files are world readable
+      - find ../cfg/build -type f -name '*.xml'   -exec chmod 666 {} \; # Make sure all .xml files are world readable
       - find ${HOME}/.nos3/ -type f -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
 
   up:
