@@ -34,7 +34,7 @@ Fidelity to the component is ultimately left up to the user, and "TODO" statemen
 
     ![platform_cfg](./_static/adding_nos3_component/platform_cfg.png)
 
-5. We will know modify the opcodes for our cosmos Command and TLM definitions to match the opcodes defined in **xxxx.msgids.h**. These command and tlm definitions for cosmos are found in **nos3/components/name_of_your_component/gsw/name_of_your_component/cmd_tlm/**. Edit the two files as seen below with the opcodes you defined.
+5. We will now modify the opcodes for our cosmos Command and TLM definitions to match the opcodes defined in **xxxx.msgids.h**. These command and tlm definitions for cosmos are found in **nos3/components/name_of_your_component/gsw/name_of_your_component/cmd_tlm/**. Edit the two files as seen below with the opcodes you defined.
 
     ![Sample_cmd](./_static/adding_nos3_component/Sample_cmd_opcodes.png)
 
@@ -45,7 +45,7 @@ Fidelity to the component is ultimately left up to the user, and "TODO" statemen
 
     ![nos3-simulator](./_static/adding_nos3_component/nos3_simulator_sample_xml.png)
 
-7. Next we will add your newly defined component to the TO tables found in **nos3/cfg/tables**. In to_config.c, include your new component and add your component to the MID config table with the same syntax pictured below. Note, be sure to add the TLM_MIDs in the code blocks defined sequentially for organization. You'll notice sample has a Sample_HK_TLM_MID and a Sample_Device_TLM_MID, so copy those lines and add to the end of the table/codeblock and modify the name for your component.
+7. Next we will add your newly defined component to the TO tables found in **nos3/cfg/nos3_defs/tables**. In to_config.c, include your new component and add your component to the MID config table with the same syntax pictured below. Note, be sure to add the TLM_MIDs in the code blocks defined sequentially for organization. You'll notice sample has a Sample_HK_TLM_MID and a Sample_Device_TLM_MID, so copy those lines and add to the end of the table/codeblock and modify the name for your component.
 
     ![to_config_include_msgids](./_static/adding_nos3_component/to_config_include_msgIds.png)
 
