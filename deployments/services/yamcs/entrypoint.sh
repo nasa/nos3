@@ -13,16 +13,6 @@ mkdir -p /tmp/nos3/data/inst
 mkdir -p /tmp/nos3/uplink
 
 # Start YAMCS server
-mvn ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run
-
-sleep 3
-
-curl -X POST http://localhost:8090/api/links/nos3/radio-out:disable
-sleep 1
-curl -X POST http://localhost:8090/api/links/nos3/radio-out:enable
-
-curl -X POST http://localhost:8090/api/links/nos3/truth42-in:disable
-sleep 1
-curl -X POST http://localhost:8090/api/links/nos3/truth42-in:enable
+mvn -X ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run
 
 tail -f /dev/null

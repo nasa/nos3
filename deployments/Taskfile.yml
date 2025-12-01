@@ -109,6 +109,7 @@ tasks:
     desc: Bring up nos3 in detached state
     deps:
       - down
+      - submodule-update
       - env-create
       - build
       - config-nos3-mission
@@ -276,3 +277,9 @@ tasks:
     desc: configure nos3 by running config.sh
     cmds:
       - cd ../ && ./scripts/cfg/config.sh
+
+  submodule-update:
+    desc: sync and update git submodules
+    cmds:
+      - git submodule sync; git submodule update --init --recursive; git submodule sync
+    silent: false
