@@ -121,7 +121,7 @@ tasks:
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
           ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
 #      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
-      - sleep 15
+      - sleep 17
       - task sidecar
       - task info-services
       - task check-docker-ps
@@ -238,9 +238,10 @@ tasks:
       - |
         source ${ENVIRO_FILE}
         echo; echo "How to access various services:"; echo; \
-        echo "open http://localhost:8090 to access yamcs/gsw"; \
-          echo "open http://localhost:30090/vnc.html to access fortytwo (42) and then click Connect"; \
-        echo "open http://localhost:9000/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
+        echo "open http://localhost:${YAMCS_PORT} to access yamcs/gsw"; \
+        echo "open http://localhost:${FORTYTWO_PORT}/vnc.html to access fortytwo (42) and then click Connect"; \
+        echo "FT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
+        echo "RT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
         echo
 
     silent: true
