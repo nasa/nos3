@@ -67,11 +67,11 @@ gnome-terminal --tab --title="NOS CmdBus Bridge"  -- $DFLAGS -v $SIM_DIR:$SIM_DI
 echo ""
 
 echo "sc01 - Create spacecraft network..."
-$DNETWORK create "nos3-sc01" 2> /dev/null
+$DNETWORK create "nos3-sc01" --subnet=192.168.1.0/24
 echo "sc02 - Create spacecraft network..."
-$DNETWORK create "nos3-sc02" 2> /dev/null
+$DNETWORK create "nos3-sc02" --subnet=192.168.2.0/24
 echo "sc03 - Create spacecraft network..."
-$DNETWORK create "nos3-sc03" 2> /dev/null
+$DNETWORK create "nos3-sc03" --subnet=192.168.3.0/24
 echo ""
 echo " - 42..."
 rm -rf $USER_NOS3_DIR/42/NOS3InOut
@@ -105,7 +105,7 @@ do
 #    echo ""
 
     echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
-    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs
+    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs --ip 192.168.$i.100
     echo ""
 
     echo $SC_NUM " - OnAIR..."
