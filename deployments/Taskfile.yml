@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 dotenv:
   - ./targets/docker/.env
@@ -12,22 +12,27 @@ env:
   COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "nos3-m01-sc01"}}'
 
   CONTAINER_BIN: docker
-  CONTAINER_COMPOSE_BIN: " {{.CONTAINER_BIN}} compose "
+  CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
 
-  CONTAINER_DIR: "{{.TARGETS_DIR}}/docker"
-  COMPOSE_FILE: "{{.CONTAINER_DIR}}/compose.yaml"
+  CONTAINER_DIR: '{{.TARGETS_DIR}}/docker'
+  COMPOSE_FILE: '{{.CONTAINER_DIR}}/compose.yaml'
 
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
 
-  ENVIRO_SCRIPT: "{{.SCRIPTS_DIR}}/env.sh"
-  ENVIRO_FILE: "{{.CONTAINER_DIR}}/.env"
+  ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
+  ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
 
   NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
+
+  # Kubernetes variables
+  K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
+  K8S_NAMESPACE: '{{.K8S_NAMESPACE | default "nos3"}}'
+  K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
 
 tasks:
   default:
@@ -42,7 +47,7 @@ tasks:
       - env-create
       - set-permissions
     cmds:
-      - |        
+      - |
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
 
@@ -63,7 +68,7 @@ tasks:
       - env-create
       - set-permissions
     cmds:
-      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
+      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04
       - |
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
@@ -85,7 +90,7 @@ tasks:
       - set-permissions
       - setup-maven
     cmds:
-      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04 
+      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04
       - |
         source ${ENVIRO_FILE} && \
           ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
@@ -120,7 +125,7 @@ tasks:
         source ${ENVIRO_FILE} && \
           export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
           ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
-#      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+      #      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
       - sleep 17
       - task sidecar
       - task info-services
@@ -193,7 +198,8 @@ tasks:
   setup-maven:
     desc: Setup maven settings.xml with proxy info-services
     cmds:
-      - echo "<settings><proxies></proxies></settings>" > ${SERVICES_DIR}/yamcs/settings.xml
+      - echo "<settings><proxies></proxies></settings>" >
+        ${SERVICES_DIR}/yamcs/settings.xml
       - |
         if [ "${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then
           cp -f ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
@@ -206,7 +212,7 @@ tasks:
       - |
         ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
     silent: true
-    
+
   check-service-ready:
     env:
       SERVICE_HOST: '{{.SERVICE_HOST | default "localhost"}}'
@@ -222,9 +228,8 @@ tasks:
     silent: true
 
   purge-containers:
-    desc: "WARNING: purge docker/podman images, cache, volumes, and networks"
+    desc: 'WARNING: purge docker/podman images, cache, volumes, and networks'
     cmds:
-      - task down || true
       - yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
       - yes | ${CONTAINER_BIN} system prune -a || true
       - yes | ${CONTAINER_BIN} volume prune || true
@@ -233,7 +238,7 @@ tasks:
 
   info-services:
     desc: info on accessing various services
-    cmds: 
+    cmds:
       - task env-create
       - |
         source ${ENVIRO_FILE}
@@ -284,3 +289,79 @@ tasks:
     cmds:
       - git submodule sync; git submodule update --init --recursive; git submodule sync
     silent: false
+
+  k8s:convert:kompose:
+    desc: convert docker-compose to kubernetes manifests using kompose
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
+            kompose convert -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
+
+  k8s:convert:kompose:helm:
+    desc: convert docker-compose to kubernetes manifests using kompose
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
+            kompose convert -c -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
+          
+  k8s:create:namespace:
+    desc: create nos3 kubernetes namespace
+    deps:
+      - env-create
+    cmds:
+      - |
+        kubectl create namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
+
+  k8s:delete:namespace:
+    desc: delete nos3 kubernetes namespace
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+        kubectl delete namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
+
+  k8s:apply:deployment:
+    desc: apply nos3 kubernetes deployment(s)
+    deps:
+      - env-create
+      - k8s:create:namespace
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+        kubectl apply -f ./targets/kubernetes/kompose/ --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE}
+
+  k8s:delete:deployment:
+    desc: delete nos3 kubernetes deployment(s)
+    deps:
+      - env-create
+    cmds:
+      - kubectl delete --all deployments --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
+
+  k8s:get:configmaps:
+    desc: get nos3 kubernetes configmaps
+    deps:
+      - env-create
+    cmds:
+      - |
+        kubectl get configmaps --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
+
+  k8s:get:configmap:
+    kubectl get configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} env-deleteme -o yaml
+
+  k8s:create:configmaps:
+    desc: create nos3 kubernetes configmaps
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+        kubectl create configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE}  env-deleteme  --from-env-file=./targets/docker/.env 
+
+#        kubectl apply -f ./targets/kubernetes/kompose/env-configmap.yaml --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
