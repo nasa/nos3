@@ -33,6 +33,7 @@ env:
   K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
   K8S_NAMESPACE: '{{.K8S_NAMESPACE | default "nos3"}}'
   K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
+  K8S_CONFIGMAP_NAME: '{{.K8S_CONFIGMAP_NAME | default "nos3-env"}}'
 
 tasks:
   default:
@@ -353,15 +354,21 @@ tasks:
         kubectl get configmaps --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
 
   k8s:get:configmap:
-    kubectl get configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} env-deleteme -o yaml
+    kubectl get configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} ${K8S_CONFIGMAP_NAME} -o yaml
 
   k8s:create:configmaps:
     desc: create nos3 kubernetes configmaps
     deps:
       - env-create
+      - k8s:create:namespace
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-        kubectl create configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE}  env-deleteme  --from-env-file=./targets/docker/.env 
+          kubectl create configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} ${K8S_CONFIGMAP_NAME} --from-env-file=${ENVIRO_FILE} || true
 
-#        kubectl apply -f ./targets/kubernetes/kompose/env-configmap.yaml --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
+  k8s:apply:ingress-nginx:
+    desc: apply ingress-nginx for nos3 kubernetes
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml || true

@@ -2,34 +2,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fortytwo
-  namespace: nos3-m01-sc01
+  name: nos3-m01-sc01-fortytwo
 spec:
   selector:
     app: nos3-m01-sc01-fortytwo
   ports:
-    - name: gps-tcp
+    - name: x-vnc
       protocol: TCP
-      port: 4245
-      targetPort: 4245
-    - name: gps-udp
-      protocol: UDP
-      port: 4245
-      targetPort: 4245
-    - name: truth42sim-tcp
-      protocol: TCP
-      port: 9999
-      targetPort: 9999
-    - name: truth42sim-udp
-      protocol: UDP
-      port: 9999
-      targetPort: 9999
-    - name: healthcheck-tcp
-      protocol: TCP
-      port: 60000
-      targetPort: 60000
-    - name: healthcheck-udp
-      protocol: UDP
-      port: 60000
-      targetPort: 60000
+      port: 80
+      targetPort: 80
   type: ClusterIP

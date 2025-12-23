@@ -1,0 +1,567 @@
+---
+version: '3'
+
+vars:
+  PROJECT: 'nos3'
+  MISSION: 'm01'
+  SPACECRAFT: 'sc01'
+  SC_ENVIRO: 'sim'
+  COMPONENT: 'fortytwo'
+
+  DEFAULT_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+
+  APP_LABEL: '{{.DEFAULT_NAMESPACE}}-{{.COMPONENT}}'
+
+  K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
+  K8S_CLUSTER: '{{.K8S_CLUSTER | default "docker-desktop"}}'
+  K8S_USER: '{{.K8S_USER | default "docker-desktop"}}'
+
+  K8S_APP_LABEL: '{{.APP_LABEL}}'
+  K8S_NAMESPACE: '{{.K8S_NAMESPACE | default .DEFAULT_NAMESPACE}}'
+
+  K8S_KUSTOMIZE_DIR: '{{.K8S_KUSTOMIZE_DIR | default "."}}'
+  K8S_PORT_FORWARD_VNC: '8080'
+  K8S_DEPLOYMENT_NAME: 'nos3-{{.COMPONENT}}'
+
+tasks:
+  default:
+    desc: Shows available tasks
+    cmds:
+      - task --list-all
+    silent: true
+
+  get-contexts:
+    desc: List all available Kubernetes contexts
+    cmds:
+      - |
+        kubectl config get-contexts
+    silent: false
+
+  get-current-context:
+    desc: Show the current Kubernetes context
+    cmds:
+      - |
+        echo "Current context:"
+        kubectl config current-context
+    silent: false
+
+  set-context:
+    desc: Set the current Kubernetes context (use K8S_CONTEXT variable)
+    cmds:
+      - |
+        kubectl config use-context {{.K8S_CONTEXT}}
+        echo "Switched to context: {{.K8S_CONTEXT}}"
+    silent: false
+
+  create-context:
+    desc: Create a new Kubernetes context
+    cmds:
+      - |
+        kubectl config set-context {{.K8S_CONTEXT}} \
+          --cluster={{.K8S_CLUSTER}} \
+          --user={{.K8S_USER}} \
+          --namespace={{.K8S_NAMESPACE}}
+        echo "Context {{.K8S_CONTEXT}} created/updated with:"
+        echo "  Cluster: {{.K8S_CLUSTER}}"
+        echo "  User: {{.K8S_USER}}"
+        echo "  Namespace: {{.K8S_NAMESPACE}}"
+      - |
+        echo "To use this context, run: task set-context K8S_CONTEXT={{.K8S_CONTEXT}}"
+    silent: false
+
+  create-user-certs:
+    desc: Generate client certificates for a new user
+    vars:
+      NEW_USER: '{{.NEW_USER | default "myuser"}}'
+      CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
+      ORG: '{{.ORG | default "system:masters"}}'
+    cmds:
+      - |
+        mkdir -p {{.CERT_DIR}}
+        echo "Generating private key for user: {{.NEW_USER}}"
+        openssl genrsa -out {{.CERT_DIR}}/{{.NEW_USER}}.key 2048
+      - |
+        echo "Generating certificate signing request (CSR)"
+        openssl req -new \
+          -key {{.CERT_DIR}}/{{.NEW_USER}}.key \
+          -out {{.CERT_DIR}}/{{.NEW_USER}}.csr \
+          -subj "/CN={{.NEW_USER}}/O={{.ORG}}"
+      - |
+        echo "Certificates generated in {{.CERT_DIR}}"
+        echo "  Private key: {{.CERT_DIR}}/{{.NEW_USER}}.key"
+        echo "  CSR: {{.CERT_DIR}}/{{.NEW_USER}}.csr"
+        echo ""
+        echo "Next steps:"
+        echo "  1. Get the CSR signed by the cluster CA"
+        echo "  2. Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
+    silent: false
+
+  create-user-k8s-csr:
+    desc: Create and approve Kubernetes CertificateSigningRequest for user (may not work on Docker Desktop)
+    vars:
+      NEW_USER: '{{.NEW_USER | default "myuser"}}'
+      CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
+      ORG: '{{.ORG | default "developers"}}'
+    cmds:
+      - |
+        echo "Creating Kubernetes CertificateSigningRequest for {{.NEW_USER}}"
+        cat <<EOF | kubectl apply -f -
+        apiVersion: certificates.k8s.io/v1
+        kind: CertificateSigningRequest
+        metadata:
+          name: {{.NEW_USER}}-csr
+        spec:
+          request: $(cat {{.CERT_DIR}}/{{.NEW_USER}}.csr | base64 | tr -d '\n')
+          signerName: kubernetes.io/kube-apiserver-client
+          usages:
+          - client auth
+        EOF
+      - |
+        echo "Approving CSR for {{.NEW_USER}}"
+        kubectl certificate approve {{.NEW_USER}}-csr
+      - |
+        echo "Retrieving signed certificate"
+        kubectl get csr {{.NEW_USER}}-csr -o jsonpath='{.status.certificate}' | \
+          base64 -d > {{.CERT_DIR}}/{{.NEW_USER}}.crt
+      - |
+        echo "Certificate signed and saved to {{.CERT_DIR}}/{{.NEW_USER}}.crt"
+        echo ""
+        echo "Next step:"
+        echo "  Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
+    silent: false
+
+  create-user-manual-sign:
+    desc: Sign user certificate using cluster CA directly (for Docker Desktop)
+    vars:
+      NEW_USER: '{{.NEW_USER | default "myuser"}}'
+      CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
+      CA_CERT: '{{.CA_CERT | default "$HOME/.minikube/ca.crt"}}'
+      CA_KEY: '{{.CA_KEY | default "$HOME/.minikube/ca.key"}}'
+    cmds:
+      - |
+        echo "Signing certificate for {{.NEW_USER}} using cluster CA"
+        echo "Note: This requires access to the cluster CA certificate and key"
+        echo ""
+
+        # For Docker Desktop, try to find CA files
+        if [ -f "$HOME/.docker/run/config/ca.pem" ]; then
+          CA_CERT="$HOME/.docker/run/config/ca.pem"
+          CA_KEY="$HOME/.docker/run/config/ca-key.pem"
+        fi
+
+        if [ ! -f "{{.CA_CERT}}" ]; then
+          echo "ERROR: CA certificate not found at {{.CA_CERT}}"
+          echo ""
+          echo "For Docker Desktop, CA files are typically not accessible."
+          echo "Recommended: Use the docker-desktop user instead, or:"
+          echo "  1. Use a cluster that supports CSR API (minikube, EKS, GKE, etc.)"
+          echo "  2. Manually copy CA files from the Docker Desktop VM"
+          exit 1
+        fi
+
+        openssl x509 -req \
+          -in {{.CERT_DIR}}/{{.NEW_USER}}.csr \
+          -CA {{.CA_CERT}} \
+          -CAkey {{.CA_KEY}} \
+          -CAcreateserial \
+          -out {{.CERT_DIR}}/{{.NEW_USER}}.crt \
+          -days 365
+      - |
+        echo "Certificate signed and saved to {{.CERT_DIR}}/{{.NEW_USER}}.crt"
+        echo ""
+        echo "Next step:"
+        echo "  Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
+    silent: false
+
+  create-user-kubeconfig:
+    desc: Add user credentials to kubeconfig
+    vars:
+      NEW_USER: '{{.NEW_USER | default "myuser"}}'
+      CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
+    cmds:
+      - |
+        echo "Adding user {{.NEW_USER}} to kubeconfig"
+        kubectl config set-credentials {{.NEW_USER}} \
+          --client-certificate={{.CERT_DIR}}/{{.NEW_USER}}.crt \
+          --client-key={{.CERT_DIR}}/{{.NEW_USER}}.key \
+          --embed-certs=true
+      - |
+        echo "User {{.NEW_USER}} added to kubeconfig"
+        echo ""
+        echo "Create a context for this user:"
+        echo "  task create-context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
+        echo ""
+        echo "Or use with existing context:"
+        echo "  kubectl config set-context docker-desktop --user={{.NEW_USER}}"
+    silent: false
+
+  create-user:
+    desc: Complete workflow to create a new user (generates certs, signs via K8s CSR, adds to kubeconfig)
+    vars:
+      NEW_USER: '{{.NEW_USER | default "myuser"}}'
+      CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
+      ORG: '{{.ORG | default "developers"}}'
+    cmds:
+      - task: create-user-certs
+        vars:
+          NEW_USER: '{{.NEW_USER}}'
+          CERT_DIR: '{{.CERT_DIR}}'
+          ORG: '{{.ORG}}'
+      - task: create-user-k8s-csr
+        vars:
+          NEW_USER: '{{.NEW_USER}}'
+          CERT_DIR: '{{.CERT_DIR}}'
+          ORG: '{{.ORG}}'
+      - task: create-user-kubeconfig
+        vars:
+          NEW_USER: '{{.NEW_USER}}'
+          CERT_DIR: '{{.CERT_DIR}}'
+      - |
+        echo ""
+        echo "User {{.NEW_USER}} created successfully with organization: {{.ORG}}"
+        echo ""
+        echo "IMPORTANT: The user has been created but has NO permissions yet."
+        echo "You need to create a RoleBinding or ClusterRoleBinding to grant permissions."
+        echo ""
+        echo "Example - Grant admin in a namespace:"
+        echo "  kubectl create rolebinding {{.NEW_USER}}-admin --clusterrole=admin --user={{.NEW_USER}} -n {{.K8S_NAMESPACE}}"
+        echo ""
+        echo "Example - Grant cluster-wide view:"
+        echo "  kubectl create clusterrolebinding {{.NEW_USER}}-view --clusterrole=view --user={{.NEW_USER}}"
+        echo ""
+        echo "To create a context for this user:"
+        echo "  task create-context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
+    silent: false
+
+  list-users:
+    desc: List all users in kubeconfig
+    cmds:
+      - |
+        echo "Users in kubeconfig:"
+        kubectl config view -o jsonpath='{.users[*].name}' | tr ' ' '\n'
+    silent: false
+
+  delete-user:
+    desc: Remove user from kubeconfig
+    vars:
+      USER_TO_DELETE: '{{.USER_TO_DELETE | default "myuser"}}'
+    cmds:
+      - |
+        kubectl config unset users.{{.USER_TO_DELETE}}
+        echo "User {{.USER_TO_DELETE}} removed from kubeconfig"
+      - rm -rf /tmp/k8s-certs/{{.USER_TO_DELETE}}*
+    silent: false
+
+  create-namespace:
+    desc: Create the Kubernetes namespace
+    cmds:
+      - |
+        kubectl create namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} || \
+          echo "Namespace {{.K8S_NAMESPACE}} already exists"
+    silent: false
+
+  apply-configmaps:
+    desc: Apply configmaps to the namespace
+    deps:
+      - create-namespace
+    cmds:
+      - |
+        kubectl apply -f configmap.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+      - echo "ConfigMaps applied successfully"
+    silent: false
+
+  apply-service:
+    desc: Apply service to the namespace
+    deps:
+      - create-namespace
+    cmds:
+      - |
+        kubectl apply -f service.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+      - echo "Service applied successfully"
+    silent: false
+
+  apply-deployment:
+    desc: Apply deployment to the namespace
+    deps:
+      - create-namespace
+      - apply-configmaps
+    cmds:
+      - |
+        kubectl apply -f deployment.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+      - echo "Deployment applied successfully"
+    silent: false
+
+  apply-all:
+    desc: Apply all Kubernetes resources (recommended)
+    deps:
+      - create-namespace
+    cmds:
+      - |
+        kubectl apply -k {{.K8S_KUSTOMIZE_DIR}} \
+          --context {{.K8S_CONTEXT}}
+      - task: port-forward
+      - echo "All resources applied successfully via kustomize"
+    silent: false
+
+  delete-deployment:
+    desc: Delete the deployment
+    cmds:
+      - |
+        kubectl delete -f deployment.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+      - echo "Deployment deleted"
+    silent: false
+
+  delete-namespace:
+    desc: Delete Namespace
+    cmds:
+      - |
+        kubectl delete namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} || true
+      - echo "Namespace deleted"
+    silent: false
+
+  delete-service:
+    desc: Delete the service
+    cmds:
+      - |
+        kubectl delete -f service.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+      - echo "Service deleted"
+    silent: false
+
+  delete-configmaps:
+    desc: Delete the configmaps
+    cmds:
+      - |
+        kubectl delete -f configmap.yaml \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+      - echo "ConfigMaps deleted"
+    silent: false
+
+  delete-all:
+    desc: Delete all resources
+    deps:
+      - delete-deployment
+      - delete-service
+      - delete-configmaps
+      - delete-namespace
+    cmds:
+      - |
+        kubectl delete -k {{.K8S_KUSTOMIZE_DIR}} \
+          --context {{.K8S_CONTEXT}} || true
+      - echo "All resources deleted via kustomize"
+    silent: false
+
+  restart-deployment:
+    desc: Restart the deployment (rollout restart)
+    cmds:
+      - |
+        kubectl rollout restart deployment/nos3-fortytwo \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+      - echo "Deployment restarted"
+    silent: false
+
+  get-pods:
+    desc: Get pods in the namespace
+    cmds:
+      - |
+        kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}}
+    silent: false
+
+  get-all:
+    desc: Get all resources in the namespace
+    cmds:
+      - |
+        kubectl get all \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}}
+    silent: false
+
+  describe-pod:
+    desc: Describe the fortytwo pod (useful for debugging)
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}')
+        kubectl describe pod $POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+    silent: false
+
+  logs:
+    desc: Get logs from the fortytwo pod
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}')
+        kubectl logs $POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --tail=100 \
+          --follow
+    silent: false
+
+  logs-previous:
+    desc: Get logs from the previous container instance (useful after crash)
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}')
+        kubectl logs $POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --previous
+    silent: false
+
+  exec:
+    desc: Execute a shell in the fortytwo pod
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}')
+        kubectl exec -it $POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -- /bin/bash
+    silent: false
+
+  port-forward:
+    desc: Port forward to access services locally
+    cmds:
+      - |
+        echo "Checking for pod availability..."
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+
+        if [ -z "$POD_NAME" ]; then
+          echo "Error: No pod found with label app={{.K8S_APP_LABEL}}"
+          exit 1
+        fi
+
+        echo "Found pod: $POD_NAME"
+        echo "Waiting for pod to be ready..."
+
+        kubectl wait --for=condition=ready pod/$POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --timeout=300s
+
+        if [ $? -ne 0 ]; then
+          echo "Error: Pod did not become ready within timeout"
+          exit 1
+        fi
+
+        echo "Pod is ready!"
+        echo "Forwarding ports:"
+        echo "  - VNC: http://localhost:{{.K8S_PORT_FORWARD_VNC}}"
+        kubectl port-forward ${POD_NAME} \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          {{.K8S_PORT_FORWARD_VNC}}:80
+    silent: false
+
+  status:
+    desc: Show status of all resources
+    cmds:
+      - echo "Namespace {{.K8S_NAMESPACE}} status:"
+      - echo ""
+      - echo "=== ConfigMaps ==="
+      - |
+        kubectl get configmaps \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} || echo "No configmaps found"
+      - echo ""
+      - echo "=== Services ==="
+      - |
+        kubectl get services \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          fortytwo || echo "No services found"
+      - echo ""
+      - echo "=== Deployments ==="
+      - |
+        kubectl get deployments \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} || echo "No deployments found"
+      - echo ""
+      - echo "=== Pods ==="
+      - |
+        kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} || echo "No pods found"
+    silent: false
+
+  redeploy:
+    desc: Delete and recreate all resources (full redeploy)
+    cmds:
+      - task: delete-all
+      - sleep 3
+      - task: apply-all
+      - task: get-pods
+    silent: false
+
+  troubleshoot:
+    desc: Run troubleshooting diagnostics
+    cmds:
+      - echo "=== Checking namespace ==="
+      - |
+        kubectl get namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} || echo "Namespace does not exist!"
+      - echo ""
+      - echo "=== Checking configmaps ==="
+      - |
+        kubectl get configmaps nos3-fortytwo-cm0 \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || echo "ConfigMaps not found!"
+      - echo ""
+      - echo "=== Checking pod events ==="
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+        if [ -n "$POD_NAME" ]; then
+          kubectl get events \
+            --context {{.K8S_CONTEXT}} \
+            --namespace={{.K8S_NAMESPACE}} \
+            --field-selector involvedObject.name=$POD_NAME \
+            --sort-by='.lastTimestamp'
+        else
+          echo "No pods found"
+        fi
+    silent: false

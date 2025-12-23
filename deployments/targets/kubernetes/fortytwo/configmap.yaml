@@ -7,41 +7,50 @@ data:
     rm -f /tmp/.X1-lock || true
     rm -f /tmp/.X11-unix/X1 || true
 
-    pkill -f vncserver || true
-    pkill -f Xvnc || true
-    pkill -f websockify || true
+    pkill -9 -f vncserver || true
+    pkill -9 -f Xvnc || true
+    pkill -9 -f websockify || true
 
     /opt/TurboVNC/bin/vncserver -securitytypes tlsnone,x509none,none && \
+      sleep 5 && \
       websockify -D \
         --web=/usr/share/novnc/ \
-        --cert=~/novnc.pem 80 localhost:5901 && /startapp.sh
+        --cert=~/novnc.pem 80 localhost:5901 
 
-    tail -f /dev/null
+    export DISPLAY=${DISPLAY:-:1}
+    export DIR=/opt/nasa-itc
+    export GIT_FOLDER=${GIT_FOLDER}
 
-kind: ConfigMap
-metadata:
-  annotations:
-    use-subpath: "true"
-  labels:
-    app: nos3-m01-sc01-fortytwo
-  name: nos3-fortytwo-cm0
----
-apiVersion: v1
-data:
-  startapp.sh: |+
-    #!/bin/bash
-    export DISPLAY=:1
-    DIR=/opt/nasa-itc
-    cd ${DIR}/42 
     xterm &
-    xterm -e ./42 X &
-    echo "Started 42 in xterm with PID $!"
+
+    rm -rf /opt/nasa-itc/42/NO3InOut/{*.42,*.csv} 
+
+    RECOMPILE=${RECOMPILE:-true}
+
+    if [ "$RECOMPILE" == "true" ]; then
+      cd /42 && \
+        git fetch && \
+        git checkout ${GIT_COMMIT} && \
+        git pull origin && \
+        git submodule update && \
+        make clean && \
+        make -j2
+    fi
+
+    STARTUP_FOLDER=${STARTUP_FOLDER:-NO3InOut}
+    STARTUP_FOLDER=./
+
+    cd /42 && \
+      xterm -e "./42 ${STARTUP_FOLDER}" &
+
+    echo "Started 42 with PID $!"
 
     tail -f /dev/null
+
 kind: ConfigMap
 metadata:
   annotations:
     use-subpath: "true"
   labels:
     app: nos3-m01-sc01-fortytwo
-  name: nos3-fortytwo-cm1
+  name: nos3-m01-sc01-fortytwo-cm
