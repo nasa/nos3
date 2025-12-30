@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     build:
-      context: ../../services/42
+      context: ../../services/fortytwo
       dockerfile: Dockerfile
       args:
         DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
@@ -35,7 +35,7 @@ services:
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/InOut/:/opt/nasa-itc/42/NOS3InOut/
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/InOut/Inp_IPC.txt:/opt/nasa-itc/42/NOS3InOut/Inp_IPC.txt
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/InOut/Inp_Sim.txt:/opt/nasa-itc/42/NOS3InOut/Inp_Sim.txt
-      - ${PWD}/services/42/entrypoint.sh:/entrypoint.sh
+      - ${PWD}/services/fortytwo/entrypoint.sh:/entrypoint.sh
     ports:
       - "127.0.0.1:30090:80"
     environment:
