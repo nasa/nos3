@@ -1,6 +1,9 @@
 ---
 version: '3'
 
+dotenv:
+  - ../../../targets/docker/.env
+
 #  kind delete cluster --name ${K8S_CLUSTER} || true
 #  kind create cluster --name ${K8S_CLUSTER} || true
 
@@ -8,11 +11,20 @@ env:
   KIND_EXPERIMENTAL_PROVIDER: '{{.KIND_EXPERIMENTAL_PROVIDER | default "docker"}}'
 
 vars:
+  TARGETS_DIR: ../../targets
+  SERVICES_DIR: ../../services
+  SCRIPTS_DIR: ../../scripts
+
+  CONTAINER_DIR: '{{.TARGETS_DIR}}/docker/'
+
   PROJECT: 'nos3'
   MISSION: 'm01'
   SPACECRAFT: 'sc01'
   SC_ENVIRO: 'sim'
   COMPONENT: 'fortytwo'
+
+  ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
+  ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
 
   DEFAULT_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
 
@@ -329,6 +341,23 @@ tasks:
           echo "Namespace {{.K8S_NAMESPACE}} already exists"
     silent: false
 
+  create-configmap-from-env:
+    desc: Create a ConfigMap from the .env file
+    deps:
+      - create-namespace
+    vars:
+      CONFIGMAP_NAME: '{{.CONFIGMAP_NAME | default "env-configmap"}}'
+    cmds:
+      - |
+        echo "Creating ConfigMap {{.CONFIGMAP_NAME}} from {{.ENVIRO_FILE}}"
+        kubectl create configmap {{.CONFIGMAP_NAME}} \
+          --from-env-file={{.ENVIRO_FILE}} \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --dry-run=client -o yaml > {{.CONFIGMAP_NAME}}.yaml
+      - echo "ConfigMap {{.CONFIGMAP_NAME}} created/updated successfully"
+    silent: false
+
   apply-configmaps:
     desc: Apply configmaps to the namespace
     deps:
@@ -351,6 +380,19 @@ tasks:
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}}
       - echo "Service applied successfully"
+    silent: false
+
+  apply-kustomize:
+    desc: Apply kustomize to the namespace
+    deps:
+      - create-namespace
+      # - apply-configmaps
+    cmds:
+      - |
+        kubectl apply -k . \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}}
+      - echo "Kustomization applied successfully"
     silent: false
 
   apply-deployment:
