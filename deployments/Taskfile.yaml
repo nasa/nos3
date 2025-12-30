@@ -14,7 +14,7 @@ env:
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
 
-  CONTAINER_DIR: '{{.TARGETS_DIR}}/docker'
+  CONTAINER_DIR: '.'
   COMPOSE_FILE: '{{.CONTAINER_DIR}}/compose.yaml'
 
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
@@ -114,7 +114,7 @@ tasks:
   up:
     desc: Bring up nos3 in detached state
     deps:
-      - down
+#      - down
       - submodule-update
       - env-create
       - build
