@@ -134,6 +134,4 @@ RUN mkdir -p /opt/nasa-itc && \
 
 COPY entrypoint.sh /entrypoint.sh
 
-COPY startapp.sh /startapp.sh
-
 CMD ["/entrypoint.sh"]
