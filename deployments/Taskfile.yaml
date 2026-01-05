@@ -14,8 +14,7 @@ vars:
   SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
 
   PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
-  
-  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}"}}'
+  COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
@@ -65,8 +64,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo
 
   build-yamcs:
     desc: Build yamcs
@@ -76,8 +75,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-gsw
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-gsw
 
   build-openmct:
     desc: Build openmct
@@ -85,10 +84,10 @@ tasks:
       - env-create
       - set-permissions
     cmds:
-      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04
+      - '{{.CONTAINER_BIN}} pull docker.io/library/ubuntu:25.04'
       - |
-        source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-openmct
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-openmct
 
   build-fsw:
     desc: Build nos3-base-local (fsw)
@@ -97,8 +96,8 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fsw
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fsw
 
   build:
     desc: Build all containers
@@ -107,10 +106,10 @@ tasks:
       - set-permissions
       - setup-maven
     cmds:
-      - ${CONTAINER_BIN} pull docker.io/library/ubuntu:25.04
+      - '{{.CONTAINER_BIN}} pull docker.io/library/ubuntu:25.04'
       - |
-        source ${ENVIRO_FILE} && \
-          ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
 
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
@@ -139,9 +138,9 @@ tasks:
       - set-permissions
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          export NOS3_CFG_PATH=${NOS3_CFG_PATH}; \
-          ${CONTAINER_COMPOSE_BIN} --env-file ${ENVIRO_FILE} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d --force-recreate --remove-orphans
+        source {{.ENVIRO_FILE}} && \
+          export NOS3_CFG_PATH={{.NOS3_CFG_PATH}}; \
+          {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --force-recreate --remove-orphans
       #      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
       - sleep 17
       - task sidecar
@@ -153,7 +152,7 @@ tasks:
     desc: Bring down nos3
     cmds:
       - |
-        ${CONTAINER_COMPOSE_BIN} -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} down --remove-orphans || true
+        {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} down --remove-orphans || true
 
   up-minimum:
     desc: Bring up nos3 (minimum) in detached state
@@ -167,11 +166,11 @@ tasks:
     cmds:
       - sleep 5
       - |
-        source ${ENVIRO_FILE} && \
-          export NOS3_CFG_PATH=${NOS3_CFG_PATH} ; \
-            ${CONTAINER_COMPOSE_BIN} \
-              --env-file ${ENVIRO_FILE} \
-              -f ${COMPOSE_FILE} --project-name ${COMPOSE_PROJECT_NAME} up -d \
+        source {{.ENVIRO_FILE}} && \
+          export NOS3_CFG_PATH={{.NOS3_CFG_PATH}} ; \
+            {{.CONTAINER_COMPOSE_BIN}} \
+              --env-file {{.ENVIRO_FILE}} \
+              -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d \
                 nos3-fortytwo \
                 nos3-nos-engine-server \
                 nos3-fsw \
@@ -192,7 +191,7 @@ tasks:
   sidecar:
     desc: Run sidecar to enable output
     cmds:
-      - ${SCRIPTS_DIR}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"
+      - '{{.SCRIPTS_DIR}}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"'
     silent: true
 
   clean:
@@ -207,27 +206,26 @@ tasks:
     deps:
       - down
     cmds:
-      - yes | ${CONTAINER_BIN} image prune --filter "dangling=true"
-      - yes | ${CONTAINER_BIN} system prune -a
-      - yes | ${CONTAINER_BIN} volume prune
-      - yes | ${CONTAINER_BIN} network prune
+      - yes | {{.CONTAINER_BIN}} image prune --filter "dangling=true"
+      - yes | {{.CONTAINER_BIN}} system prune -a
+      - yes | {{.CONTAINER_BIN}} volume prune
+      - yes | {{.CONTAINER_BIN}} network prune
 
   setup-maven:
     desc: Setup maven settings.xml with proxy info-services
     cmds:
-      - echo "<settings><proxies></proxies></settings>" >
-        ${SERVICES_DIR}/yamcs/settings.xml
+      - echo "<settings><proxies></proxies></settings>" > {{.SERVICES_DIR}}/yamcs/settings.xml
       - |
-        if [ "${DEPLOYMENT_ENVIRO}" == "vmmoc" ]; then
-          cp -f ${MAVEN_SETTINGS_FILE} ${HOME}/.nos3/yamcs/ || true
-          cp -f ${MAVEN_SETTINGS_FILE} ${SERVICES_DIR}/yamcs/ || true
+        if [ "{{.DEPLOYMENT_ENVIRO}}" == "vmmoc" ]; then
+          cp -f {{.MAVEN_SETTINGS_FILE}} ${HOME}/.nos3/yamcs/ || true
+          cp -f {{.MAVEN_SETTINGS_FILE}} {{.SERVICES_DIR}}/yamcs/ || true
         fi
 
   check-docker-ps:
     desc: check docker ps for any exited|unhealthy|created|error containers
     cmds:
       - |
-        ${CONTAINER_BIN} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+        {{.CONTAINER_BIN}} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
     silent: true
 
   check-service-ready:
@@ -237,20 +235,20 @@ tasks:
     desc: wait for a service to be ready on a given port
     cmds:
       - |
-        echo "Waiting for service ${SERVICE_HOST}:${SERVICE_PORT} to be ready on port ${SERVICE_PORT}..."
-        until nc -z ${SERVICE_HOST} ${SERVICE_PORT}; do
+        echo "Waiting for service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready on port {{.SERVICE_PORT}}..."
+        until nc -z {{.SERVICE_HOST}} {{.SERVICE_PORT}}; do
           sleep 1
         done
-        echo "Service ${SERVICE_HOST}:${SERVICE_PORT} is ready on port ${SERVICE_PORT}!"
+        echo "Service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} is ready on port {{.SERVICE_PORT}}!"
     silent: true
 
   purge-containers:
     desc: 'WARNING: purge docker/podman images, cache, volumes, and networks'
     cmds:
-      - yes | ${CONTAINER_BIN} image prune --filter "dangling=true" || true
-      - yes | ${CONTAINER_BIN} system prune -a || true
-      - yes | ${CONTAINER_BIN} volume prune || true
-      - yes | ${CONTAINER_BIN} network prune || true
+      - yes | {{.CONTAINER_BIN}} image prune --filter "dangling=true" || true
+      - yes | {{.CONTAINER_BIN}} system prune -a || true
+      - yes | {{.CONTAINER_BIN}} volume prune || true
+      - yes | {{.CONTAINER_BIN}} network prune || true
       - echo
 
   info-services:
@@ -258,7 +256,7 @@ tasks:
     cmds:
       - task env-create
       - |
-        source ${ENVIRO_FILE}
+        source {{.ENVIRO_FILE}}
         echo; echo "How to access various services:"; echo; \
         echo "open http://localhost:${YAMCS_PORT} to access yamcs/gsw"; \
         echo "open http://localhost:${FORTYTWO_PORT}/vnc.html to access fortytwo (42) and then click Connect"; \
@@ -291,7 +289,7 @@ tasks:
       - env-create
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
+        source {{.ENVIRO_FILE}} && \
           sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
           sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
           sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
@@ -351,9 +349,9 @@ tasks:
       - env-create
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
-            kompose convert -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
+        source {{.ENVIRO_FILE}} && \
+          mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
+            kompose convert -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
 
   k8s:convert:kompose:helm:
     desc: convert docker-compose to kubernetes manifests using kompose
@@ -361,9 +359,9 @@ tasks:
       - env-create
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
-            kompose convert -c -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
+        source {{.ENVIRO_FILE}} && \
+          mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
+            kompose convert -c -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
 
   k8s:delete:namespace:
     desc: delete nos3 kubernetes namespace
@@ -381,7 +379,7 @@ tasks:
       - k8s:create:namespace
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
+        source {{.ENVIRO_FILE}} && \
         kubectl apply -f ./targets/kubernetes/kompose/ --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}}
 
   k8s:delete:deployment:
@@ -402,11 +400,11 @@ tasks:
   k8s:get:configmap:
     kubectl get configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} -o yaml
 
-  k8s:apply:ingress-nginx:
+  k8s:apply:ingress:nginx:
     desc: apply ingress-nginx for nos3 kubernetes
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
+        source {{.ENVIRO_FILE}} && \
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml || true
 
   k8s:get:pod-name:
