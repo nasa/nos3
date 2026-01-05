@@ -8,8 +8,14 @@ env:
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
 
-  PROJECT_NAME: '{{.PROJECT_NAME | default "nos3-m01-sc01"}}'
-  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "nos3-m01-sc01"}}'
+  PROJECT: 'nos3'
+  MISSION: 'm01'
+  SPACECRAFT: 'sc01'
+  SC_ENVIRO: 'sim'
+
+  PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  
+  COMPOSE_PROJECT_NAME: '{{.COMPOSE_PROJECT_NAME | default "{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}"}}'
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
@@ -17,21 +23,26 @@ env:
   CONTAINER_DIR: '.'
   COMPOSE_FILE: '{{.CONTAINER_DIR}}/compose.yaml'
 
+# Environment variables for configuring builds and deployments
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
-
   ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
   ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
-
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
 
+  # NOS3 configuration path
   NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
 
   # Kubernetes variables
   K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
-  K8S_NAMESPACE: '{{.K8S_NAMESPACE | default "nos3"}}'
+  K8S_NAMESPACE: '{{.PROJECT_NAME}}'
+  K8S_CLUSTER: '{{.K8S_CLUSTER | default "docker-desktop"}}'
+  K8S_USER: '{{.K8S_USER | default "docker-desktop"}}'
+  # TODO: COMPONENT doesn't make sense here
+  K8S_APP_LABEL: "{{.PROJECT_NAME}}-fortytwo"
+  K8S_PORT_FORWARD_VNC: '8080'
   K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
   K8S_CONFIGMAP_NAME: '{{.K8S_CONFIGMAP_NAME | default "nos3-env"}}'
 
@@ -291,6 +302,42 @@ tasks:
       - git submodule sync; git submodule update --init --recursive; git submodule sync
     silent: false
 
+  k8s:create:namespace:
+    desc: Create the Kubernetes namespace
+    deps:
+      - env-create
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          kubectl create namespace {{.K8S_NAMESPACE}} \
+            --context {{.K8S_CONTEXT}} || \
+          echo "Namespace {{.K8S_NAMESPACE}} already exists"
+    silent: false
+
+  k8s:apply:kustomize:
+    desc: Apply kustomize to the namespace
+    deps:
+      - k8s:create:namespace
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          kubectl apply -k . \
+            --context {{.K8S_CONTEXT}} \
+            --namespace={{.K8S_NAMESPACE}}
+      - echo "Kustomization applied successfully"
+    silent: false
+
+  k8s:delete:kustomize:
+    desc: Delete kustomize from the namespace
+    cmds:
+      - |
+        source ${ENVIRO_FILE} && \
+          kubectl delete -k . \
+            --context {{.K8S_CONTEXT}} \
+            --namespace={{.K8S_NAMESPACE}}|| true
+      - echo "Kustomization deleted successfully"
+    silent: false
+
   k8s:convert:kompose:
     desc: convert docker-compose to kubernetes manifests using kompose
     deps:
@@ -311,13 +358,13 @@ tasks:
           mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
             kompose convert -c -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
           
-  k8s:create:namespace:
-    desc: create nos3 kubernetes namespace
-    deps:
-      - env-create
-    cmds:
-      - |
-        kubectl create namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
+  # k8s:create:namespace:
+  #   desc: create nos3 kubernetes namespace
+  #   deps:
+  #     - env-create
+  #   cmds:
+  #     - |
+  #       kubectl create namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
 
   k8s:delete:namespace:
     desc: delete nos3 kubernetes namespace
@@ -326,7 +373,7 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-        kubectl delete namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
+        kubectl delete namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} || true
 
   k8s:apply:deployment:
     desc: apply nos3 kubernetes deployment(s)
@@ -336,14 +383,14 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-        kubectl apply -f ./targets/kubernetes/kompose/ --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE}
+        kubectl apply -f ./targets/kubernetes/kompose/ --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}}
 
   k8s:delete:deployment:
     desc: delete nos3 kubernetes deployment(s)
     deps:
       - env-create
     cmds:
-      - kubectl delete --all deployments --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
+      - kubectl delete --all deployments --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} || true
 
   k8s:get:configmaps:
     desc: get nos3 kubernetes configmaps
@@ -351,10 +398,10 @@ tasks:
       - env-create
     cmds:
       - |
-        kubectl get configmaps --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} || true
+        kubectl get configmaps --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} || true
 
   k8s:get:configmap:
-    kubectl get configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} ${K8S_CONFIGMAP_NAME} -o yaml
+    kubectl get configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} -o yaml
 
   k8s:create:configmaps:
     desc: create nos3 kubernetes configmaps
@@ -364,7 +411,7 @@ tasks:
     cmds:
       - |
         source ${ENVIRO_FILE} && \
-          kubectl create configmap --context ${K8S_CONTEXT} --namespace=${K8S_NAMESPACE} ${K8S_CONFIGMAP_NAME} --from-env-file=${ENVIRO_FILE} || true
+          kubectl create configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} --from-env-file=${ENVIRO_FILE} || true
 
   k8s:apply:ingress-nginx:
     desc: apply ingress-nginx for nos3 kubernetes
@@ -372,3 +419,55 @@ tasks:
       - |
         source ${ENVIRO_FILE} && \
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml || true
+
+  k8s:get:pod-name:
+    desc: get the pod name for nos3 kubernetes deployment
+    deps:
+      - env-create
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null); \
+        echo $POD_NAME
+    silent: false
+
+  k8s:port-forward:
+    desc: Port forward to access services locally
+    cmds:
+      - |
+        echo "Checking for pod availability..."
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+
+        if [ -z "$POD_NAME" ]; then
+          echo "Error: No pod found with label app={{.K8S_APP_LABEL}}"
+          exit 1
+        fi
+
+        echo "Found pod: $POD_NAME"
+        echo "Waiting for pod to be ready..."
+
+        kubectl wait --for=condition=ready pod/$POD_NAME \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --timeout=300s
+
+        if [ $? -ne 0 ]; then
+          echo "Error: Pod did not become ready within timeout"
+          exit 1
+        fi
+
+        echo "Pod is ready!"
+        echo "Forwarding ports:"
+        echo "  - VNC: http://localhost:{{.K8S_PORT_FORWARD_VNC}}"
+        kubectl port-forward ${POD_NAME} \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          {{.K8S_PORT_FORWARD_VNC}}:80
+    silent: false
