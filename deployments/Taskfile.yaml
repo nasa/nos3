@@ -3,15 +3,15 @@ version: '3'
 dotenv:
   - ./targets/docker/.env
 
-env:
+vars:
   TARGETS_DIR: ./targets
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
 
-  PROJECT: 'nos3'
-  MISSION: 'm01'
-  SPACECRAFT: 'sc01'
-  SC_ENVIRO: 'sim'
+  PROJECT: '{{.PROJECT | default "nos3"}}'
+  MISSION: '{{.MISSION | default "m01"}}'
+  SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
+  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
 
   PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
   
@@ -23,7 +23,7 @@ env:
   CONTAINER_DIR: '.'
   COMPOSE_FILE: '{{.CONTAINER_DIR}}/compose.yaml'
 
-# Environment variables for configuring builds and deployments
+# Variables for configuring builds and deployments
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
@@ -36,15 +36,20 @@ env:
   NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
 
   # Kubernetes variables
+  K8S_ENV_FILE: '{{.K8S_ENV_FILE | default "./targets/kubernetes/env/k8s.env"}}'
   K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
-  K8S_NAMESPACE: '{{.PROJECT_NAME}}'
   K8S_CLUSTER: '{{.K8S_CLUSTER | default "docker-desktop"}}'
+  K8S_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}'
   K8S_USER: '{{.K8S_USER | default "docker-desktop"}}'
+
   # TODO: COMPONENT doesn't make sense here
   K8S_APP_LABEL: "{{.PROJECT_NAME}}-fortytwo"
   K8S_PORT_FORWARD_VNC: '8080'
   K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
-  K8S_CONFIGMAP_NAME: '{{.K8S_CONFIGMAP_NAME | default "nos3-env"}}'
+  K8S_CONFIGMAP_NAME: '{{.K8S_APP_LABEL}}'
+  K8S_REPLICAS: 1
+
+  K8S_BUILD_PATH: './build/k8s/contexts/{{.K8S_CONTEXT}}/clusters/{{.K8S_CLUSTER}}/namespaces/{{.K8S_NAMESPACE}}/applications/{{.K8S_APP_LABEL}}'
 
 tasks:
   default:
@@ -267,7 +272,7 @@ tasks:
     desc: Create .env file from env.sh script
     cmds:
       - |
-        ${ENVIRO_SCRIPT} > ${ENVIRO_FILE}
+        {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
 
   install-lazydocker:
     desc: Install lazydocker CLI tool (to view logs, etc)
@@ -308,35 +313,37 @@ tasks:
       - env-create
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
+        source {{.ENVIRO_FILE}} && \
           kubectl create namespace {{.K8S_NAMESPACE}} \
             --context {{.K8S_CONTEXT}} || \
-          echo "Namespace {{.K8S_NAMESPACE}} already exists"
-    silent: false
+          echo "Namespace {{.K8S_NAMESPACE}} in context {{.K8S_CONTEXT}} already exists"
+    silent: true
 
-  k8s:apply:kustomize:
-    desc: Apply kustomize to the namespace
+  k8s:apply:kustomization:
+    desc: Apply kustomization to the namespace
     deps:
       - k8s:create:namespace
+      - k8s:generate:all
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          kubectl apply -k . \
+        source {{.ENVIRO_FILE}} && \
+          kubectl apply -k {{.K8S_BUILD_PATH}} \
             --context {{.K8S_CONTEXT}} \
-            --namespace={{.K8S_NAMESPACE}}
-      - echo "Initiated apply of Kustomization"
+            --namespace {{.K8S_NAMESPACE}}
+      - echo "Initiated apply of Kustomization in path {{.K8S_BUILD_PATH}} for context [{{.K8S_CONTEXT}}] and namespace [{{.K8S_NAMESPACE}}]"
     silent: false
 
-  k8s:delete:kustomize:
+  k8s:delete:kustomization:
     desc: Delete kustomize from the namespace
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-          kubectl delete -k . \
+        source {{.ENVIRO_FILE}} && \
+          kubectl delete -k {{.K8S_BUILD_PATH}} \
             --context {{.K8S_CONTEXT}} \
             --namespace={{.K8S_NAMESPACE}}|| true
-      - echo "Initiated deletion of Kustomization"
-    silent: false
+      - echo "Initiated deletion of Kustomization for context [{{.K8S_CONTEXT}}] and namespace [{{.K8S_NAMESPACE}}]"
+      - task: k8s:delete:namespace
+    silent: true
 
   k8s:convert:kompose:
     desc: convert docker-compose to kubernetes manifests using kompose
@@ -357,14 +364,6 @@ tasks:
         source ${ENVIRO_FILE} && \
           mkdir -p ${K8S_KOMPOSE_OUTPUT} && \
             kompose convert -c -f ${COMPOSE_FILE} -o ${K8S_KOMPOSE_OUTPUT}
-          
-  # k8s:create:namespace:
-  #   desc: create nos3 kubernetes namespace
-  #   deps:
-  #     - env-create
-  #   cmds:
-  #     - |
-  #       kubectl create namespace ${K8S_NAMESPACE} --context ${K8S_CONTEXT} || true
 
   k8s:delete:namespace:
     desc: delete nos3 kubernetes namespace
@@ -372,8 +371,8 @@ tasks:
       - env-create
     cmds:
       - |
-        source ${ENVIRO_FILE} && \
-        kubectl delete namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} || true
+        source {{.ENVIRO_FILE}} && \
+          kubectl delete namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} || true
 
   k8s:apply:deployment:
     desc: apply nos3 kubernetes deployment(s)
@@ -402,16 +401,6 @@ tasks:
 
   k8s:get:configmap:
     kubectl get configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} -o yaml
-
-  k8s:create:configmaps:
-    desc: create nos3 kubernetes configmaps
-    deps:
-      - env-create
-      - k8s:create:namespace
-    cmds:
-      - |
-        source ${ENVIRO_FILE} && \
-          kubectl create configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} --from-env-file=${ENVIRO_FILE} || true
 
   k8s:apply:ingress-nginx:
     desc: apply ingress-nginx for nos3 kubernetes
@@ -471,3 +460,195 @@ tasks:
           --namespace={{.K8S_NAMESPACE}} \
           {{.K8S_PORT_FORWARD_VNC}}:80
     silent: false
+
+  k8s:write:env:
+    desc: write k8s env file
+    cmds:
+      - |
+        echo "HTTP_PROXY={{.HTTP_PROXY}}" > {{.K8S_ENV_FILE}}
+        echo "HTTPS_PROXY={{.HTTPS_PROXY}}" >> {{.K8S_ENV_FILE}}
+        echo "NO_PROXY={{.NO_PROXY}}" >> {{.K8S_ENV_FILE}}
+    silent: true
+
+  k8s:generate:all:
+    desc: Generate all kubernetes yamls for COMPONENT_NAME
+    deps:
+      - k8s:path:yamls
+      - k8s:generate:configmaps:all
+      - k8s:generate:deployment
+      - k8s:generate:service
+      - k8s:generate:ingress
+      - k8s:generate:kustomization
+
+  k8s:path:yamls:
+    desc: generate kubernetes yamls for the deployment
+    cmds:
+      - mkdir -p {{.K8S_BUILD_PATH}}
+    silent: true
+
+  k8s:generate:configmaps:all:
+    desc: Generate all kubernetes yamls for COMPONENT_NAME
+    deps:
+      - k8s:generate:configmap:env
+      - k8s:generate:configmap:volumes
+      - k8s:generate:configmap:args
+
+  k8s:generate:configmap:env:
+    desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          kubectl create configmap \
+            {{.K8S_CONFIGMAP_NAME}} \
+            --from-env-file={{.ENVIRO_FILE}} --dry-run=client -o yaml > {{.K8S_BUILD_PATH}}/configmap-env.yaml
+
+  k8s:generate:configmap:volumes:
+    desc: Generate kubernetes volumes configmaps yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          kubectl create configmap {{.K8S_CONFIGMAP_NAME}}-volumes \
+            --from-file=./services/fortytwo/entrypoint.sh \
+            --dry-run=client \
+            --output yaml > {{.K8S_BUILD_PATH}}/configmap-volumes.yaml
+
+  k8s:generate:configmap:args:
+    desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          echo "" > {{.K8S_BUILD_PATH}}/configmap-args.yaml
+
+  k8s:generate:service:
+    desc: Generate kubernetes service yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cat <<EOF > {{.K8S_BUILD_PATH}}/service.yaml
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: {{.K8S_APP_LABEL}}
+          
+        spec:
+          selector:
+            app: {{.K8S_APP_LABEL}}
+          ports:
+            - name: x-vnc
+              protocol: TCP
+              port: 80
+              targetPort: 80
+          type: ClusterIP
+        EOF
+
+  k8s:generate:ingress:
+    desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          echo "" > {{.K8S_BUILD_PATH}}/ingress.yaml
+
+  k8s:generate:deployment:
+    desc: Generate kubernetes deployment yaml for COMPONENT_NAME
+    deps:
+      - env-create
+      - k8s:path:yamls
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cat <<EOF > {{.K8S_BUILD_PATH}}/deployment.yaml
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: {{.K8S_APP_LABEL}}
+          namespace: {{.K8S_NAMESPACE}}
+          labels:
+            app: {{.K8S_APP_LABEL}}
+        spec:
+          replicas: {{.K8S_REPLICAS}}
+          selector:
+            matchLabels:
+              app: {{.K8S_APP_LABEL}}
+          template:
+            metadata:
+              labels:
+                app: {{.K8S_APP_LABEL}}
+            spec:
+              containers:
+                - args:
+                    - /entrypoint.sh
+                  env:
+                    - name: COMPONENT_NAME
+                      value: fortytwo
+                    - name: DISPLAY
+                      value: :1
+                  image: ghcr.io/haisamido/nos3-base-fortytwo:dev
+                  workingDir: /42
+                  imagePullPolicy: Always
+                  name: {{.K8S_APP_LABEL}}
+                  ports:
+                    - containerPort: 80
+                      protocol: TCP
+                  resources:
+                    limits:
+                      cpu: "3"
+                      memory: "2048Mi"
+                    requests:
+                      cpu: "1"
+                      memory: "2048Mi"
+                  securityContext:
+                    privileged: true
+                  volumeMounts:
+                    - mountPath: /entrypoint.sh
+                      name: {{.K8S_APP_LABEL}}-volumes
+                      subPath: entrypoint.sh
+              hostname: {{.K8S_APP_LABEL}}
+              restartPolicy: Always
+              volumes:
+                - configMap:
+                    items:
+                      - key: entrypoint.sh
+                        path: entrypoint.sh
+                    name: {{.K8S_APP_LABEL}}-volumes
+                    defaultMode: 0555
+                  name: "{{.K8S_APP_LABEL}}-volumes"
+        EOF
+
+  k8s:generate:kustomization:
+      desc: Generate Kustomization yaml for COMPONENT_NAME
+      deps:
+        - env-create
+        - k8s:path:yamls
+      cmds:
+        - |
+          source {{.ENVIRO_FILE}} && \
+          cat <<EOF > {{.K8S_BUILD_PATH}}/kustomization.yaml
+          ---
+          apiVersion: kustomize.config.k8s.io/v1beta1
+          kind: Kustomization
+          resources:
+            - ./configmap-args.yaml
+            - ./configmap-env.yaml
+            - ./configmap-volumes.yaml
+            - ./deployment.yaml
+            - ./service.yaml
+            - ./ingress.yaml
+
+          EOF
