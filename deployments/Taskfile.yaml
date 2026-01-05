@@ -324,7 +324,7 @@ tasks:
           kubectl apply -k . \
             --context {{.K8S_CONTEXT}} \
             --namespace={{.K8S_NAMESPACE}}
-      - echo "Kustomization applied successfully"
+      - echo "Initiated apply of Kustomization"
     silent: false
 
   k8s:delete:kustomize:
@@ -335,7 +335,7 @@ tasks:
           kubectl delete -k . \
             --context {{.K8S_CONTEXT}} \
             --namespace={{.K8S_NAMESPACE}}|| true
-      - echo "Kustomization deleted successfully"
+      - echo "Initiated deletion of Kustomization"
     silent: false
 
   k8s:convert:kompose:
