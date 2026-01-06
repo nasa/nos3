@@ -4,7 +4,6 @@ dotenv:
   - ./targets/docker/.env
 
 vars:
-  TARGETS_DIR: ./targets
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
 
@@ -43,7 +42,7 @@ vars:
 
   # TODO: COMPONENT doesn't make sense here
   K8S_APP_LABEL: "{{.PROJECT_NAME}}-fortytwo"
-  K8S_PORT_FORWARD_VNC: '8080'
+  K8S_PORT_FORWARD_VNC: 8080
   K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
   K8S_CONFIGMAP_NAME: '{{.K8S_APP_LABEL}}'
   K8S_REPLICAS: 1
@@ -66,6 +65,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo
+    silent: true
 
   build-yamcs:
     desc: Build yamcs
@@ -77,6 +77,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-gsw
+    silent: true
 
   build-openmct:
     desc: Build openmct
@@ -88,6 +89,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-openmct
+    silent: true
 
   build-fsw:
     desc: Build nos3-base-local (fsw)
@@ -98,6 +100,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fsw
+    silent: true
 
   build:
     desc: Build all containers
@@ -110,6 +113,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
+    silent: true
 
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
@@ -125,6 +129,7 @@ tasks:
       - find ../cfg/build -type f -name '*.json'  -exec chmod 666 {} \; # Make sure all .json files are world readable
       - find ../cfg/build -type f -name '*.xml'   -exec chmod 666 {} \; # Make sure all .xml files are world readable
       - find ${HOME}/.nos3/ -type f -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+    silent: true
 
   up:
     desc: Bring up nos3 in detached state
@@ -153,6 +158,7 @@ tasks:
     cmds:
       - |
         {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} down --remove-orphans || true
+    silent: true
 
   up-minimum:
     desc: Bring up nos3 (minimum) in detached state
@@ -200,6 +206,7 @@ tasks:
       - down
     cmds:
       - cd ../ && make clean
+    silent: true
 
   clean-containers:
     desc: clean images, cache, volumes, and networks
@@ -210,6 +217,7 @@ tasks:
       - yes | {{.CONTAINER_BIN}} system prune -a
       - yes | {{.CONTAINER_BIN}} volume prune
       - yes | {{.CONTAINER_BIN}} network prune
+    silent: true
 
   setup-maven:
     desc: Setup maven settings.xml with proxy info-services
@@ -220,6 +228,7 @@ tasks:
           cp -f {{.MAVEN_SETTINGS_FILE}} ${HOME}/.nos3/yamcs/ || true
           cp -f {{.MAVEN_SETTINGS_FILE}} {{.SERVICES_DIR}}/yamcs/ || true
         fi
+    silent: true
 
   check-docker-ps:
     desc: check docker ps for any exited|unhealthy|created|error containers
@@ -250,6 +259,7 @@ tasks:
       - yes | {{.CONTAINER_BIN}} volume prune || true
       - yes | {{.CONTAINER_BIN}} network prune || true
       - echo
+    silent: true
 
   info-services:
     desc: info on accessing various services
@@ -263,7 +273,6 @@ tasks:
         echo "FT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
         echo "RT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
         echo
-
     silent: true
 
   env-create:
@@ -271,6 +280,7 @@ tasks:
     cmds:
       - |
         {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
+    silent: true
 
   install-lazydocker:
     desc: Install lazydocker CLI tool (to view logs, etc)
@@ -293,18 +303,21 @@ tasks:
           sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
           sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
           sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
+    silent: true
 
   config:
     desc: configure nos3 by running config.sh
     cmds:
       - cd ../ && ./scripts/cfg/config.sh
+    silent: true
 
   submodule-update:
     desc: sync and update git submodules
     cmds:
       - git submodule sync; git submodule update --init --recursive; git submodule sync
-    silent: false
+    silent: true
 
+# K8S Kubernetes Tasks
   k8s:create:namespace:
     desc: Create the Kubernetes namespace
     deps:
@@ -315,6 +328,7 @@ tasks:
           kubectl create namespace {{.K8S_NAMESPACE}} \
             --context {{.K8S_CONTEXT}} || \
           echo "Namespace {{.K8S_NAMESPACE}} in context {{.K8S_CONTEXT}} already exists"
+      - echo "Initiated creation of Namespace [{{.K8S_NAMESPACE}}] in context [{{.K8S_CONTEXT}}]"
     silent: true
 
   k8s:apply:kustomization:
@@ -328,11 +342,11 @@ tasks:
           kubectl apply -k {{.K8S_BUILD_PATH}} \
             --context {{.K8S_CONTEXT}} \
             --namespace {{.K8S_NAMESPACE}}
-      - echo "Initiated apply of Kustomization in path {{.K8S_BUILD_PATH}} for context [{{.K8S_CONTEXT}}] and namespace [{{.K8S_NAMESPACE}}]"
-    silent: false
+      - echo "Initiated apply of Kustomization in path [{{.K8S_BUILD_PATH}}] for context [{{.K8S_CONTEXT}}] and namespace [{{.K8S_NAMESPACE}}]"
+    silent: true
 
   k8s:delete:kustomization:
-    desc: Delete kustomize from the namespace
+    desc: Delete kustomize and namespace
     cmds:
       - |
         source {{.ENVIRO_FILE}} && \
@@ -352,6 +366,7 @@ tasks:
         source {{.ENVIRO_FILE}} && \
           mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
             kompose convert -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
+    silent: true
 
   k8s:convert:kompose:helm:
     desc: convert docker-compose to kubernetes manifests using kompose
@@ -362,6 +377,7 @@ tasks:
         source {{.ENVIRO_FILE}} && \
           mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
             kompose convert -c -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
+    silent: true
 
   k8s:delete:namespace:
     desc: delete nos3 kubernetes namespace
@@ -371,6 +387,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           kubectl delete namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} || true
+    silent: true
 
   k8s:apply:deployment:
     desc: apply nos3 kubernetes deployment(s)
@@ -381,13 +398,16 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
         kubectl apply -f ./targets/kubernetes/kompose/ --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}}
+    silent: true
 
   k8s:delete:deployment:
     desc: delete nos3 kubernetes deployment(s)
     deps:
       - env-create
     cmds:
-      - kubectl delete --all deployments --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} || true
+      - |
+        source {{.ENVIRO_FILE}} && \
+        kubectl delete --all deployments --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} || true
 
   k8s:get:configmaps:
     desc: get nos3 kubernetes configmaps
@@ -395,10 +415,19 @@ tasks:
       - env-create
     cmds:
       - |
+        source {{.ENVIRO_FILE}} && \
         kubectl get configmaps --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} || true
+    silent: true
 
   k8s:get:configmap:
-    kubectl get configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} -o yaml
+    desc: get a specific kubernetes configmaps defined in K8S_CONFIGMAP_NAME
+    deps:
+      - env-create
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        kubectl get configmap --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} {{.K8S_CONFIGMAP_NAME}} -o yaml
+    silent: true
 
   k8s:apply:ingress:nginx:
     desc: apply ingress-nginx for nos3 kubernetes
@@ -406,6 +435,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml || true
+    silent: true
 
   k8s:get:pod-name:
     desc: get the pod name for nos3 kubernetes deployment
@@ -413,18 +443,22 @@ tasks:
       - env-create
     cmds:
       - |
-        POD_NAME=$(kubectl get pods \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}} \
-          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null); \
+        source {{.ENVIRO_FILE}} && \
+          POD_NAME=$(kubectl get pods \
+            --context {{.K8S_CONTEXT}} \
+            --namespace={{.K8S_NAMESPACE}} \
+            -l app={{.K8S_APP_LABEL}} \
+            -o jsonpath='{.items[0].metadata.name}' 2>/dev/null); \
         echo $POD_NAME
-    silent: false
+    silent: true
 
   k8s:port-forward:
     desc: Port forward to access services locally
+    deps:
+      - env-create
     cmds:
       - |
+        source {{.ENVIRO_FILE}} && \
         echo "Checking for pod availability..."
         POD_NAME=$(kubectl get pods \
           --context {{.K8S_CONTEXT}} \
@@ -457,7 +491,17 @@ tasks:
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}} \
           {{.K8S_PORT_FORWARD_VNC}}:80
-    silent: false
+    silent: true
+
+  k8s:kill:port-forward:
+    desc: Kill port-forward
+    deps:
+      - env-create
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          pkill -f 'kubectl port-forward' || true
+    silent: true
 
   k8s:write:env:
     desc: write k8s env file
@@ -477,6 +521,7 @@ tasks:
       - k8s:generate:service
       - k8s:generate:ingress
       - k8s:generate:kustomization
+    silent: true
 
   k8s:path:yamls:
     desc: generate kubernetes yamls for the deployment
@@ -490,6 +535,7 @@ tasks:
       - k8s:generate:configmap:env
       - k8s:generate:configmap:volumes
       - k8s:generate:configmap:args
+    silent: true
 
   k8s:generate:configmap:env:
     desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
@@ -502,6 +548,7 @@ tasks:
           kubectl create configmap \
             {{.K8S_CONFIGMAP_NAME}} \
             --from-env-file={{.ENVIRO_FILE}} --dry-run=client -o yaml > {{.K8S_BUILD_PATH}}/configmap-env.yaml
+    silent: true
 
   k8s:generate:configmap:volumes:
     desc: Generate kubernetes volumes configmaps yaml for COMPONENT_NAME
@@ -515,6 +562,7 @@ tasks:
             --from-file=./services/fortytwo/entrypoint.sh \
             --dry-run=client \
             --output yaml > {{.K8S_BUILD_PATH}}/configmap-volumes.yaml
+    silent: true
 
   k8s:generate:configmap:args:
     desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
@@ -525,6 +573,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           echo "" > {{.K8S_BUILD_PATH}}/configmap-args.yaml
+    silent: true
 
   k8s:generate:service:
     desc: Generate kubernetes service yaml for COMPONENT_NAME
@@ -551,6 +600,7 @@ tasks:
               targetPort: 80
           type: ClusterIP
         EOF
+    silent: true
 
   k8s:generate:ingress:
     desc: Generate kubernetes configmaps yaml for COMPONENT_NAME
@@ -561,6 +611,7 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           echo "" > {{.K8S_BUILD_PATH}}/ingress.yaml
+    silent: true
 
   k8s:generate:deployment:
     desc: Generate kubernetes deployment yaml for COMPONENT_NAME
@@ -628,6 +679,7 @@ tasks:
                     defaultMode: 0555
                   name: "{{.K8S_APP_LABEL}}-volumes"
         EOF
+    silent: true
 
   k8s:generate:kustomization:
       desc: Generate Kustomization yaml for COMPONENT_NAME
@@ -650,3 +702,4 @@ tasks:
             - ./ingress.yaml
 
           EOF
+      silent: true
