@@ -79,6 +79,8 @@ task: Available tasks for this project:
 
 ```
 
+## Run - which actually also runs `task submodule-update`
+
 ```bash
 task up
 
