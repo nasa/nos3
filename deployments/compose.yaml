@@ -55,8 +55,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-gsw:
     image: ghcr.io/haisamido/nos3-base-yamcs:dev
@@ -114,11 +114,11 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - active-gs
           - yamcs
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-onair:
     image: nos3-base-local:dev
@@ -142,8 +142,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-fsw:
     image: nos3-base-local:dev
@@ -202,8 +202,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-nos-engine-server:
     image: nos3-base-local:dev
@@ -234,10 +234,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - sc01-nos-engine-server
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-truth42sim:
     image: nos3-base-local:dev
@@ -266,8 +266,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-nos-terminal:
     image: nos3-base-local:dev
@@ -289,8 +289,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-nos-udp-terminal:
     image: nos3-base-local:dev
@@ -312,8 +312,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-nos-sim-bridge:
     image: nos3-base-local:dev
@@ -334,8 +334,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-camsim:
     image: nos3-base-local:dev
@@ -358,11 +358,11 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - camsim
           - sc01-camsim
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-css-sim:
     image: nos3-base-local:dev
@@ -385,10 +385,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - css
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-eps-sim:
     image: nos3-base-local:dev
@@ -413,10 +413,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - eps
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-fss-sim:
     image: nos3-base-local:dev
@@ -439,10 +439,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - fss
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-gps-sim:
     image: nos3-base-local:dev
@@ -465,10 +465,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - gps
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-imu-sim:
     image: nos3-base-local:dev
@@ -491,10 +491,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - imu
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-mag-sim:
     image: nos3-base-local:dev
@@ -517,10 +517,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - mag
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-rw-sim0:
     image: nos3-base-local:dev
@@ -543,10 +543,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - rw0
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-rw-sim1:
     image: nos3-base-local:dev
@@ -569,10 +569,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - rw1
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-rw-sim2:
     image: nos3-base-local:dev
@@ -595,10 +595,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - rw2
-      nos3-core-00:
+      nos3-m01-core-00:
 
   # nos3-radio-sim:
   #   image: ghcr.io/haisamido/nos3-base:dev
@@ -623,10 +623,10 @@ services:
   #   environment:
   #     HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
   #   networks:
-  #     nos3-sc01-00:
+  #     nos3-m01-sc01-00:
   #       # aliases:
   #       #   - radio-sim
-  #     nos3-core-00:
+  #     nos3-m01-core-00:
 
 #   nos3-cryptolib:
 #     image: nos3-base-local:dev
@@ -652,10 +652,10 @@ services:
 #     environment:
 #       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
 #     networks:
-#       nos3-sc01-00:
+#       nos3-m01-sc01-00:
 #         aliases:
 #           - cryptolib
-#       nos3-core-00:
+#       nos3-m01-core-00:
 
   nos3-radio-sim-cryptolib:
     image: nos3-base-local:dev
@@ -685,11 +685,11 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - radio-sim
           - cryptolib
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-sample-sim:
     image: nos3-base-local:dev
@@ -712,8 +712,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-startrk-sim:
     image: nos3-base-local:dev
@@ -736,8 +736,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-thruster-sim:
     image: nos3-base-local:dev
@@ -760,8 +760,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-torquer-sim:
     image: nos3-base-local:dev
@@ -785,8 +785,8 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
-      nos3-core-00:
+      nos3-m01-sc01-00:
+      nos3-m01-core-00:
 
   nos3-time:
     image: nos3-base-local:dev
@@ -811,10 +811,10 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - sc01-nos-time-driver
-      nos3-core-00:
+      nos3-m01-core-00:
 
   nos3-openmct:
     env_file:
@@ -862,16 +862,16 @@ services:
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
-      nos3-sc01-00:
+      nos3-m01-sc01-00:
         aliases:
           - openmct
           - sc01-openmct
-      nos3-core-00:
+      nos3-m01-core-00:
 
 networks:
-  nos3-core-00:
+  nos3-m01-core-00:
     external: ${EXTERNAL_NETWORK_CORE:-false}
     name: nos3-core
-  nos3-sc01-00:
+  nos3-m01-sc01-00:
     external: ${EXTERNAL_NETWORK_SC01:-false}
-    name: nos3-sc01
+    name: nos3-m01-sc01
