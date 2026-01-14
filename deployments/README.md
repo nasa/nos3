@@ -12,51 +12,14 @@
 
 Which can be installed via `make install-lazydocker install-taskfile`
 
-## prep
+## prep - onetime run
 
 ```bash
-make install-lazydocker install-taskfile
-make env-create
+make install-lazydocker install-taskfile env-create
 
 ```
 
-## run
-
-```bash
-make
-
-```
-
-returns
-
-```bash
-#-target-----------------------description-----------------------------------------------
-build-fortytwo                 Build fortytwo (42)
-build-openmct                  Build openmct
-build-yamcs                    Build yamcs
-build                          Build all containers
-clean                          clean images, cache, volumes, and networks
-down                           Bring down nos3
-env-create                     Create .env file from env.sh script
-info-services                  info on accessing various services
-install-lazydocker             Install lazydocker CLI tool (to view logs, etc)
-install-taskfile               Install Taskfile CLI tool
-lazydocker                     Run lazydocker CLI tool
-purge-containers               WARNING: purge docker/podman images, cache, volumes, and networks
-set-permissions                set filesystem permissions, needed for restricted accounts
-setup-maven                    Setup maven settings.xml with proxy info-services
-sidecar                        Run sidecar to enable output
-up-minimum                     Bring up nos3 in detached state
-up                             Bring up nos3 in detached state
-
-```
-
-```bash
-make up
-
-```
-
-or using `task` after you've done `make install-taskfile`:
+## Run `task` after you've done `make install-taskfile`:
 
 ```bash
 task
@@ -67,23 +30,55 @@ returns:
 
 ```bash
 task: Available tasks for this project:
-* build:                    Build all containers
-* build-fortytwo:           Build fortytwo (42)
-* build-openmct:            Build openmct
-* build-yamcs:              Build yamcs
-* clean:                    clean images, cache, volumes, and networks
-* default:                  Shows this help message
-* down:                     Bring down nos3
-* env-create:               Create .env file from env.sh script
-* info-services:            info on accessing various services
-* install-lazydocker:       Install lazydocker CLI tool (to view logs, etc)
-* lazydocker:               Run lazydocker CLI tool
-* purge-containers:         WARNING: purge docker/podman images, cache, volumes, and networks
-* set-permissions:          set filesystem permissions, needed for restricted accounts
-* setup-maven:              Setup maven settings.xml with proxy info-services
-* sidecar:                  Run sidecar to enable output
-* up:                       Bring up nos3 in detached state
-* up-minimum:               Bring up nos3 (minimum) in detached state
+* build:                                Build all containers
+* build-fortytwo:                       Build fortytwo (42)
+* build-fsw:                            Build nos3-base-local (fsw)
+* build-openmct:                        Build openmct
+* build-yamcs:                          Build yamcs
+* check-docker-ps:                      check docker ps for any exited|unhealthy|created|error containers
+* check-service-ready:                  wait for a service to be ready on a given port
+* clean:                                clean nos3 configuration
+* clean-containers:                     clean images, cache, volumes, and networks
+* config:                               configure nos3 by running config.sh
+* config-nos3-mission:                  configure nos3-mission.xml to set start-time
+* default:                              Shows this help message
+* down:                                 Bring down nos3
+* env-create:                           Create .env file from env.sh script
+* info-services:                        info on accessing various services
+* install-lazydocker:                   Install lazydocker CLI tool (to view logs, etc)
+* purge-containers:                     WARNING: purge docker/podman images, cache, volumes, and networks
+* set-permissions:                      set filesystem permissions, needed for restricted accounts
+* setup-maven:                          Setup maven settings.xml with proxy info-services
+* sidecar:                              Run sidecar to enable output
+* submodule-update:                     sync and update git submodules
+* up:                                   Bring up nos3 in detached state
+* up-minimum:                           Bring up nos3 (minimum) in detached state
+* k8s:apply:deployment:                 apply nos3 kubernetes deployment(s)
+* k8s:apply:ingress:nginx:              apply ingress-nginx for nos3 kubernetes
+* k8s:apply:kustomization:              Apply kustomization to the namespace
+* k8s:convert:kompose:                  convert docker-compose to kubernetes manifests using kompose
+* k8s:convert:kompose:helm:             convert docker-compose to kubernetes manifests using kompose
+* k8s:create:namespace:                 Create the Kubernetes namespace
+* k8s:delete:deployment:                delete nos3 kubernetes deployment(s)
+* k8s:delete:kustomization:             Delete kustomize and namespace
+* k8s:delete:namespace:                 delete nos3 kubernetes namespace
+* k8s:generate:all:                     Generate all kubernetes yamls for COMPONENT_NAME
+* k8s:generate:configmap:args:          Generate kubernetes configmaps yaml for COMPONENT_NAME
+* k8s:generate:configmap:env:           Generate kubernetes configmaps yaml for COMPONENT_NAME
+* k8s:generate:configmap:volumes:       Generate kubernetes volumes configmaps yaml for COMPONENT_NAME
+* k8s:generate:configmaps:all:          Generate all kubernetes yamls for COMPONENT_NAME
+* k8s:generate:deployment:              Generate kubernetes deployment yaml for COMPONENT_NAME
+* k8s:generate:ingress:                 Generate kubernetes configmaps yaml for COMPONENT_NAME
+* k8s:generate:kustomization:           Generate Kustomization yaml for COMPONENT_NAME
+* k8s:generate:service:                 Generate kubernetes service yaml for COMPONENT_NAME
+* k8s:get:configmap:                    get a specific kubernetes configmaps defined in K8S_CONFIGMAP_NAME
+* k8s:get:configmaps:                   get nos3 kubernetes configmaps
+* k8s:get:pod-name:                     get the pod name for nos3 kubernetes deployment
+* k8s:kill:port-forward:                Kill port-forward
+* k8s:path:yamls:                       generate kubernetes yamls for the deployment
+* k8s:port-forward:                     Port forward to access services locally
+* k8s:write:env:                        write k8s env file
+
 
 ```
 
@@ -108,6 +103,8 @@ open http://localhost:30090/vnc.html to access fortytwo (42)
 open http://localhost:9000 to access openmct
 
 ## Diagrams
+
+Ignore the below for now
 
 ```mermaid
 graph TD
