@@ -1,13 +1,11 @@
 ---
 apiVersion: apps/v1
-
 kind: Deployment
-
 metadata:
   name: nos3-m01-sc01-fortytwo
+  namespace: nos3-m01
   labels:
     app: nos3-m01-sc01-fortytwo
-
 spec:
   replicas: 1
   selector:
@@ -46,7 +44,7 @@ spec:
             - mountPath: /entrypoint.sh
               name: nos3-m01-sc01-fortytwo-volumes
               subPath: entrypoint.sh
-      hostname: fortytwo
+      hostname: nos3-m01-sc01-fortytwo
       restartPolicy: Always
       volumes:
         - configMap:
@@ -55,4 +53,4 @@ spec:
                 path: entrypoint.sh
             name: nos3-m01-sc01-fortytwo-volumes
             defaultMode: 0555
-          name: nos3-m01-sc01-fortytwo-volumes
+          name: "nos3-m01-sc01-fortytwo-volumes"
