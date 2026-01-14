@@ -4,9 +4,6 @@
 
 - `gnu make`
 - `bash`
-
-### Optional but very useful
-
 - `task` a contemporary version of `make`
 - `lazydocker`
 
