@@ -135,7 +135,6 @@ tasks:
   up:
     desc: Bring up nos3 in detached state
     deps:
-#      - down
       - submodule-update
       - env-create
       - build
@@ -147,8 +146,8 @@ tasks:
         source {{.ENVIRO_FILE}} && \
           export NOS3_CFG_PATH={{.NOS3_CFG_PATH}}; \
           {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --force-recreate --remove-orphans
-      #      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
-      - sleep 17
+      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+      - sleep 5
       - task sidecar
       - task info-services
       - task check-docker-ps
@@ -245,11 +244,29 @@ tasks:
     desc: wait for a service to be ready on a given port
     cmds:
       - |
-        echo "Waiting for service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready on port {{.SERVICE_PORT}}..."
+        echo "Waiting for service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready..."
+        COUNT=0
         until nc -z {{.SERVICE_HOST}} {{.SERVICE_PORT}}; do
+          COUNT=$((COUNT + 1))
+          if [ $COUNT -ge 60 ]; then
+            echo "Timeout waiting for port {{.SERVICE_PORT}} to open"
+            exit 1
+          fi
           sleep 1
+          echo "Waiting for {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready... ($COUNT/60)"
         done
-        echo "Service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} is ready on port {{.SERVICE_PORT}}!"
+        echo "Port {{.SERVICE_HOST}}:{{.SERVICE_PORT}} is open, checking API..."
+        COUNT=0
+        until curl -s "http://{{.SERVICE_HOST}}:{{.SERVICE_PORT}}/api" | grep -q '"yamcsVersion"'; do
+          COUNT=$((COUNT + 1))
+          if [ $COUNT -ge 60 ]; then
+            echo "Timeout waiting for API to be ready"
+            exit 1
+          fi
+          sleep 1
+          echo "Waiting for API to be ready... ($COUNT/60)"
+        done
+        echo "Service http://{{.SERVICE_HOST}}:{{.SERVICE_PORT}}/api is ready!"
     silent: true
 
   purge-containers:
