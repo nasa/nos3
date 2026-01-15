@@ -87,7 +87,7 @@ services:
       timeout: 5s
       retries: 10
     attach: true
-    container_name: cosmos-openc3-operator-1
+    container_name: ${COMPOSE_PROJECT_NAME}-gsw
     hostname: ${COMPOSE_PROJECT_NAME}-gsw
     working_dir: "/home/nos3/.nos3/yamcs"
     command: "/entrypoint.sh"
@@ -95,8 +95,7 @@ services:
       - ${PWD}/services/yamcs/entrypoint.sh:/entrypoint.sh
       - ${PWD}/services/yamcs/settings.xml:/home/nos3/.nos3/yamcs/settings.xml
     ports:
-      - "127.0.0.1:8090:8090"
-      - "5012:5012"
+      - "127.0.0.1:${YAMCS_HOST_PORT}:${YAMCS_PORT}"
     tty: true
     stdin_open: true
     privileged: true

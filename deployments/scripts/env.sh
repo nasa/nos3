@@ -126,6 +126,7 @@ YAMCS_GIT_URL=https://github.com/nasa-itc/nos3_yamcs_master.git
 YAMCS_GIT_COMMIT=nos3-dev
 
 YAMCS_INSTANCES=nos3
+YAMCS_HOST_PORT=8090
 YAMCS_PORT=8090
 
 # openmct specific configurations

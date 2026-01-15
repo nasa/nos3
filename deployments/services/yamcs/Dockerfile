@@ -58,10 +58,12 @@ ENV GIT_COMMIT=${GIT_COMMIT}
 ARG FLIGHT_SOFTWARE
 ARG GSW_SOFTWARE
 ARG NOS3_USER
+ARG YAMCS_PORT
 
 ENV NOS3_USER=${NOS3_USER}
 ENV FLIGHT_SOFTWARE=${FLIGHT_SOFTWARE}
 ENV GSW_SOFTWARE=${GSW_SOFTWARE}
+ENV YAMCS_PORT=${YAMCS_PORT}  
 #------------------------------------------------------------------------------
 
   # Switch to the newly created user
