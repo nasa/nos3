@@ -25,10 +25,10 @@ services:
       test: ["CMD-SHELL", "/usr/bin/pgrep -f 42 | grep -v xterm ; sleep 2"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 7
     attach: true
-    container_name: sc01-fortytwo
-    hostname: fortytwo
+    container_name: ${COMPOSE_PROJECT_NAME}-fortytwo
+    hostname: ${COMPOSE_PROJECT_NAME}-fortytwo
     working_dir: "/opt/nasa-itc/"
     command: '/entrypoint.sh'
     volumes:
@@ -37,7 +37,7 @@ services:
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/InOut/Inp_Sim.txt:/opt/nasa-itc/42/NOS3InOut/Inp_Sim.txt
       - ${PWD}/services/fortytwo/entrypoint.sh:/entrypoint.sh
     ports:
-      - "127.0.0.1:30090:80"
+      - "127.0.0.1:${FORTYTWO_PORT}:80"
     environment:
       DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
       HTTPS_PROXY: ${HTTPS_PROXY}
@@ -54,6 +54,7 @@ services:
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
       PROJECT_NAME: ${PROJECT_NAME}
+      HOST_PORT: ${FORTYTWO_PORT}
     networks:
       nos3-m01-sc01-00:
         aliases:
@@ -145,6 +146,9 @@ services:
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-m01-sc01-00:
+        aliases:
+          - onair
+          - ${COMPOSE_PROJECT_NAME}-onair
       nos3-m01-core-00:
 
   nos3-fsw:
