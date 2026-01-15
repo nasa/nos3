@@ -189,8 +189,8 @@ services:
         condition: service_healthy
       nos3-nos-engine-server:
         condition: service_healthy
-    container_name: sc01-nos-fsw
-    hostname: nos-fsw
+    container_name: ${COMPOSE_PROJECT_NAME}-fsw
+    hostname: ${COMPOSE_PROJECT_NAME}-fsw
     working_dir: /home/nos3/builds/nos3/
     volumes:
       - ${PWD}/services/fsw/entrypoint.sh:/entrypoint.sh
@@ -210,6 +210,9 @@ services:
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-m01-sc01-00:
+        aliases:
+          - fsw
+          - sc01-fsw
       nos3-m01-core-00:
 
   nos3-nos-engine-server:
