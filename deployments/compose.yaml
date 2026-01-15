@@ -338,7 +338,8 @@ services:
     env_file:
       - ./.env
     attach: true
-    container_name: nos-sim-bridge
+    container_name: ${COMPOSE_PROJECT_NAME}-nos-sim-bridge
+    hostname: ${COMPOSE_PROJECT_NAME}-nos-sim-bridge
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-sim-cmdbus-bridge -f ./nos3-simulator.xml"
     volumes:
@@ -353,6 +354,8 @@ services:
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-m01-sc01-00:
+        aliases:
+          - nos-sim-bridge
       nos3-m01-core-00:
 
   nos3-camsim:
