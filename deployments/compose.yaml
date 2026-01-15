@@ -56,6 +56,8 @@ services:
       PROJECT_NAME: ${PROJECT_NAME}
     networks:
       nos3-m01-sc01-00:
+        aliases:
+          - fortytwo
       nos3-m01-core-00:
 
   nos3-gsw:
@@ -871,7 +873,7 @@ services:
 networks:
   nos3-m01-core-00:
     external: ${EXTERNAL_NETWORK_CORE:-false}
-    name: nos3-core
+    name: nos3-m01-core
   nos3-m01-sc01-00:
     external: ${EXTERNAL_NETWORK_SC01:-false}
     name: nos3-m01-sc01
