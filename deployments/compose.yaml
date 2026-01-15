@@ -514,7 +514,8 @@ services:
         condition: service_healthy
       nos3-fsw:
         condition: service_healthy
-    container_name: sc01-imu-sim
+    container_name: ${COMPOSE_PROJECT_NAME}-imu-sim
+    hostname: ${COMPOSE_PROJECT_NAME}-imu-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml generic-imu-sim"
     volumes:
@@ -528,6 +529,8 @@ services:
       nos3-m01-sc01-00:
         aliases:
           - imu
+# TODO: needed?
+          - sc01-imu-sim
       nos3-m01-core-00:
 
   nos3-mag-sim:
