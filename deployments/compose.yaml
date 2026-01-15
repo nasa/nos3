@@ -368,7 +368,8 @@ services:
         condition: service_healthy
       nos3-fsw:
         condition: service_healthy
-    container_name: sc01-cam-sim
+    container_name: ${COMPOSE_PROJECT_NAME}-cam-sim
+    hostname: ${COMPOSE_PROJECT_NAME}-cam-sim
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "./nos3-single-simulator -f ./nos3-simulator.xml camsim"
     volumes:
@@ -382,6 +383,7 @@ services:
       nos3-m01-sc01-00:
         aliases:
           - camsim
+# TODO: needed?
           - sc01-camsim
       nos3-m01-core-00:
 
