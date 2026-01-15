@@ -88,7 +88,7 @@ services:
       retries: 10
     attach: true
     container_name: cosmos-openc3-operator-1
-    hostname: cosmos
+    hostname: ${COMPOSE_PROJECT_NAME}-gsw
     working_dir: "/home/nos3/.nos3/yamcs"
     command: "/entrypoint.sh"
     volumes:
@@ -121,6 +121,7 @@ services:
         aliases:
           - active-gs
           - yamcs
+          - cosmos
       nos3-m01-core-00:
 
   nos3-onair:
