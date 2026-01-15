@@ -220,16 +220,16 @@ services:
     env_file:
       - ./.env
     attach: true
-    # depends_on:
-    #   nos3-fortytwo:
-    #     condition: service_healthy
+    depends_on:
+      nos3-fortytwo:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "/usr/bin/nc -vz nos-engine-server 12000 && /usr/bin/nc -vz nos-engine-server 12001"]
       interval: 10s
       timeout: 5s
       retries: 5
-    container_name: sc01-nos-engine-server
-    hostname: nos-engine-server
+    container_name: ${COMPOSE_PROJECT_NAME}-nos-engine-server
+    hostname: ${COMPOSE_PROJECT_NAME}-nos-engine-server
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
@@ -246,7 +246,9 @@ services:
     networks:
       nos3-m01-sc01-00:
         aliases:
+# TODO: below is needed for some reason!
           - sc01-nos-engine-server
+          - nos-engine-server
       nos3-m01-core-00:
 
   nos3-truth42sim:
