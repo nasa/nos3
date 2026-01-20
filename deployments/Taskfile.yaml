@@ -119,6 +119,7 @@ tasks:
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
+      - mkdir -p ../cfg/build
       - find . -type f -name '*.sh'               -exec chmod 777 {} \; # Make sure all scripts are world executable
       - find . -type f -name '*.py'               -exec chmod 777 {} \; # Make sure all scripts are world executable
       - find . -type f -name '*.json'             -exec chmod 666 {} \; # Make sure all .json files are world readable
@@ -139,7 +140,7 @@ tasks:
       - env-create
       - build
       - config-nos3-mission
-      - config
+      - nos3:config
       - set-permissions
     cmds:
       - |
@@ -198,14 +199,6 @@ tasks:
     desc: Run sidecar to enable output
     cmds:
       - '{{.SCRIPTS_DIR}}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"'
-    silent: true
-
-  clean:
-    desc: clean nos3 configuration
-    deps:
-      - down
-    cmds:
-      - cd ../ && make clean
     silent: true
 
   clean-containers:
@@ -271,6 +264,8 @@ tasks:
 
   purge-containers:
     desc: 'WARNING: purge docker/podman images, cache, volumes, and networks'
+    deps:
+      - down
     cmds:
       - yes | {{.CONTAINER_BIN}} image prune --filter "dangling=true" || true
       - yes | {{.CONTAINER_BIN}} system prune -a || true
@@ -323,16 +318,33 @@ tasks:
           sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
     silent: true
 
-  config:
+  submodule-update:
+    desc: sync and update git submodules
+    cmds:
+      - git submodule sync; git submodule update --init --recursive; git submodule sync
+    silent: true
+
+  nos3:config:
     desc: configure nos3 by running config.sh
     cmds:
       - cd ../ && ./scripts/cfg/config.sh
     silent: true
 
-  submodule-update:
-    desc: sync and update git submodules
+  nos3:clean:
+    desc: clean nos3 configuration
+    deps:
+      - down
     cmds:
-      - git submodule sync; git submodule update --init --recursive; git submodule sync
+      - cd ../ && make clean
+    silent: true
+
+  nos3:uninstall:
+    desc: uninstall nos3 items
+    deps:
+      - down
+      - nos3:clean
+    cmds:
+      - cd ../ && make uninstall
     silent: true
 
 # K8S Kubernetes Tasks
