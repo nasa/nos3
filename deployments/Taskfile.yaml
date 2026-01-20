@@ -1,19 +1,26 @@
 version: '3'
 
 dotenv:
-  - ./targets/docker/.env
+  - ./.env
 
 vars:
-  SERVICES_DIR: ./services
-  SCRIPTS_DIR: ./scripts
-
   PROJECT: '{{.PROJECT | default "nos3"}}'
+  FLEET: '{{.PROJECT | default "nos3"}}'
   MISSION: '{{.MISSION | default "m01"}}'
   SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
-  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
 
   PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+
   COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
+
+  YAMCS_PORT: '{{.YAMCS_PORT | default "8090"}}'
+  OPENMCT_PORT: '{{.OPENMCT_PORT | default "9000"}}'
+  FORTYTWO_PORT: '{{.FORTYTWO_PORT | default "30090"}}'
+
+  SERVICES_DIR: ./services
+  SCRIPTS_DIR: ./scripts
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
@@ -168,7 +175,7 @@ tasks:
       - env-create
       - build
       - config-nos3-mission
-      - config
+      - nos3:config
       - set-permissions
     cmds:
       - sleep 5
