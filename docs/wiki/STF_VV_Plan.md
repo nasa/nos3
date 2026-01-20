@@ -1,7 +1,7 @@
 # STF - Verification and Validation (V&V) Plan
 
 ## 1 Introduction
-This verification and validation plan applies to the NASA Operational Simulator for Small Satellites (NOS3) and its Simulation to Flight (STF) design reference mission.  
+This verification and validation plan applies to the NASA Operational Simulator for Space Systems (NOS3) and its Simulation to Flight (STF) design reference mission.  
 NOS3 is described in more detail in the Read the Docs Wiki and section 3.
 
 ### 1.1 Purpose and Scope
@@ -133,7 +133,7 @@ The output products of the verification and validation activities include test p
 - I&T:  Integration and Test
 - IV&V:  Independent Verification and Validation
 - JSTAR:  Jon McBride Software Testing and Research
-- NOS3:  NASA Operational Simulator for Small Satellites
+- NOS3:  NASA Operational Simulator for Space Systems
 - RTM:  Requirements Traceability Matrix
 - V&V:  Verification and Validation
 - YAMCS:  Yet Another Mission Control System

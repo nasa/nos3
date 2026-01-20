@@ -39,7 +39,7 @@ Note that it is assumed telemetry messages are also within range, but just follo
   * Protocol(s): streaming UART
   * MSGID range: 0x1870 - 0x1871
   * Perf_IDs: 48
-  * Fprime Base ID: WIP
+  * Fprime Base ID: 0xE800
 * Inertial Measurement Unit (IMU)
   * Protocol(s): CAN
   * MSGID range: 0x1925 - 0x1926
@@ -97,7 +97,7 @@ Note that it is assumed telemetry messages are also within range, but just follo
   * Once hardware testing becomes possible, additional time should be allocated to update the component based on insights and findings from the hardware testing phase. This includes making necessary adjustments within the NOS3 framework to ensure proper functionality and performance.  
 * Generic Components
   * These components provide a standardized starting point for building simulations and training materials. By including generic components, NOS3 can showcase standard commands, telemetry, and interfaces to potential users who are not familiar with the underlying software modules. 
-  * The generic components in NOS3 ensure that the framework remains adaptable, flexible, and relevant to a wide range of small satellite missions. It empowers developers and mission teams to leverage existing components as building blocks and focus their efforts on specific mission requirements and optimizations, rather than starting from scratch.   
+  * The generic components in NOS3 ensure that the framework remains adaptable, flexible, and relevant to a wide range of space missions. It empowers developers and mission teams to leverage existing components as building blocks and focus their efforts on specific mission requirements and optimizations, rather than starting from scratch.   
 
 
 ## Integrated Algorithms

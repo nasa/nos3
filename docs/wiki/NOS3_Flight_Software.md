@@ -49,11 +49,11 @@ Note that it is assumed telemetry messages are also within range without the 0x1
   * Protocol(s): CFDP and UDP
   * MSGID range: 0x18B3 - 0x18B5 
   * Perf_ID ranges: 11-20, 30+x, 40+x
-* ci - Command Injest
+* ci - Command Ingest
   * Protocol(s): CCSDS and UDP
   * MSGID range: 0x1884-0x1887
   * Perf_IDs: 0x0070, 0x0071
-* ci_lab - Command Injest Lab
+* ci_lab - Command Ingest Lab
   * Protocol(s): CCSDS and UDP
   * MSGID range: 0x18E0-0x18E1
   * Perf_IDs: 32, 33  
@@ -114,15 +114,15 @@ The image above is the default event packet log file for NOS3, and shows the fol
 * MaxFileAge defines the max age of a file before it is rolled (in seconds)
 * SequenceCount is only used if rolling by count. Otherwise can be left as DS_UNUSED. If used, will define the starting count for the file
 
-Once the user defines all attributes as desired, the user should go to `{nos3_base}/scripts/docker_launch.sh`, and after line 32 should add a `mkdir` command like the ones above it with any new data directory in which they plan to spawn their file. If they are spawning it in an already extant directory, this can be skipped. Then, once this is done the file should be created on startup, though it will not accrue data unless the Filter Table has already been configured to send packets to it.
+Once the user defines all attributes as desired, the user should go to `{nos3_base}/scripts/fsw/fsw_cfs_launch.sh`, and after line 34 should add a `mkdir` command like the ones above it with any new data directory in which they plan to spawn their file. If they are spawning it in an already extant directory, this can be skipped. Then, once this is done the file should be created on startup, though it will not accrue data unless the Filter Table has already been configured to send packets to it.
 
 The DS Filter Table is used to define what packets DS should send to what files to be stored. Initially, only the small subset of packets stored in the default files are defined, but the user can both add more packets, and define what tables new and existing packets should be sent to.
 
-First, you should add a #define matching the one you added to the file table to alias the index of your table to its name, so that you can use your name later on, as shown here:
+First, you should add a #define in `{nos3_base}/cfg/nos3_defs/tables/ds_indices.h` matching the one you added to the file table to alias the index of your table to its name, so that you can use your name later on, as shown here:
 
 ![NOS3_Defines](./_static/NOS3_Defines.png)
 
-Then, the user will want to edit the entry for a packet. There are 256 slots for packets (indexed 0-255), of which 15 are defined by default. Below is an example of what one of these entries looks like:
+Then, the user will want to edit the entry for a packet in `{nos3_base}/cfg/nos3_defs/tables/ds_filter_tbl.c`. There are 256 slots for packets (indexed 0-255), of which 15 are defined by default. Below is an example of what one of these entries looks like:
 
 ![NOS3_DS_Packets](./_static/NOS3_DS_Packets.png)
 
@@ -135,7 +135,7 @@ The entries are structured as follows:
   * N, which is the numerator of the ratio of packets to store by sequence number
   * X, which is the denominator of the ratio of packets to store by sequence number
   * O, which is the offset, defining the sequence number of the first packet to store
-  So, for example, N = 1, X = 1, O = 0 would store every packet starting at the 0th index, while N = 1, X = 2, O = 2 would store every other packet starting at the 6th packet
+  So, for example, N = 1, X = 1, O = 0 would store every packet starting at the 0th index, while N = 1, X = 2, O = 6 would store every other packet starting at the 6th packet
 
 Once you have defined all your new packets and storage parameters, then as long as your file table and directories are properly created, your file should start populating with all the right packets upon startup. 
 
@@ -170,7 +170,7 @@ will ensure NOS3 builds successfully.
 
 When Configuring NOS3 to use F-Prime, be sure to edit the
 nos3-mission.xml file to select F-Prime as your GSW and FSW as seen
-below. After changing you mission configuration, save the file and run
+below. After changing your mission configuration, save the file and run
 `make clean` from your nos3/ directory. Run `make` to rebuild NOS3
 for the F-Prime FSW and GSW configuration. Once NOS3 is built, run
 `make launch` and wait for the F-Prime ground data system window to launch. Below is
@@ -188,7 +188,7 @@ FSW with any new additions.
 After the F-Prime GDS window launches, F-Prime flight software should be running and
 the Sample component can be commanded. To send a SampleSim NOOP command,
 select the `SampleSim.NOOP` command from the drop down menu in the F-Prime
-ground data system and click `Send Command`. You will then see the `NOOP command completed` 
+ground data system and click `Send Command`. You will then see the `sampleSim.NOOP completed` 
 event message under the events tab in the F-Prime 
 ground data system window. The below figures
 represent an example of what commanding looks like in the F-Prime GDS.
@@ -244,7 +244,7 @@ cmake files in the Deployment directory
 
 ### F-Prime NOS3 Time Component (Nos3Time):
 
-Here we explain how we synchronize time from NOS3 to with F-Prime by
+Here we explain how we synchronize time from NOS3 to F-Prime by
 creating our own passive F-Prime component. This component can be found
 under `fsw/fprime/fprime-nos3/Components`. There you will find the cpp
 and fpp files that make up the Nos3Time component in F-Prime. These
@@ -260,14 +260,10 @@ NOS Engine supplies time on a created bus interface.
 The interface is created with the following nos engine connection string:
 ```
 “tcp://nos-engine-server:12000”
-```
-
- 
+``` 
 
 This describes the type of connection, where the connection is being
 made, and on which port. This string is used when creating our Fprime Bus in the Nos3Time.cpp.
-
-
 
 Following this, users need to set up a Bus Name and a TICKS\_PER\_SECOND
 variable. These will allow for the connection of a component to this bus
@@ -339,9 +335,9 @@ Nos3Time.cpp under components) as such:
 time.set(TB_WORKSTATION_TIME,0, Nos3Time_upper, Nos3Time_lower);
 ```
 
-Note, we are overwriting the F-Prime time base workstation enum, but one
+Note, we are overriding the F-Prime time base workstation enum, but one
 could easily create another enum to use if they choose to do so. This
-would be done FpConfig.h in the F-Prime FSW. Also, we could also use the
+would be done in FpConfig.h in the F-Prime FSW. Also, we could also use the
 TB\_Dont\_Care enum to overwrite time in F-Prime, but this adds a slight
 delay at the beginning of time synchronization between nos engine and
 F-Prime.

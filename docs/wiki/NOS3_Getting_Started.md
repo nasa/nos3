@@ -79,7 +79,7 @@ In order to load a configuration, the user simply needs to click browse next to 
 
 ![IgniterSCConfig2](./_static/NOS3_Igniter_SCC2.png)
 
-The default master configuation file is found at the path *'cfg/nos3-mission.xml'* within the base NOS3 directory and the default Spacecraft config file, which has all the default components and cFS applications enabled, is found at the path *'cfg/sc-mission-config.xml'* in the base NOS3 Directory.
+The default master configuation file is found at the path *'cfg/nos3-mission.xml'* within the base NOS3 directory and the default Spacecraft config file, which has all the default components and cFS applications enabled, is found at the path *'cfg/spacecraft/sc-mission-config.xml'* in the base NOS3 Directory.
 
 Configurations may also be edited on the fly within the Igniter GUI before the mission is built and launched. There are buttons to Save or Save As so a user may use these edited configurations for future runs. The Spacecraft Config XML files will be saved under the same directory as the Master Config XML.
 

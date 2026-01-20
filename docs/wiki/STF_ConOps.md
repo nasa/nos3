@@ -1,6 +1,6 @@
 # STF - Concept of Operations (ConOps)
 
-The design reference mission provided with the NASA Operational Simulator for Small Satellites (NOS3) is called Simulation To Flight (STF).
+The design reference mission provided with the NASA Operational Simulator for Space Systems (NOS3) is called Simulation To Flight (STF).
 STF is a generic mission implementation with documentation to exercise the NOS3 use cases.
 
 ## Mission Overview

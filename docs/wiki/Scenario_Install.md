@@ -1,6 +1,6 @@
 # Scenario - Installation
 
-This scenario was developed to capture the NASA Operational Simulator for Small Satellites (NOS3) installation process.
+This scenario was developed to capture the NASA Operational Simulator for Space Systems (NOS3) installation process.
 
 This scenario was last updated on 05/28/2025 and leveraged the `dev` branch [a3e7c100].
 

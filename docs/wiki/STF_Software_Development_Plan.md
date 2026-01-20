@@ -72,7 +72,7 @@ STF will utilize the core Flight System (cFS) and several of the standard applic
 ### Software Workflow:
 ![Software_Workflow](./_static/Software_Workflow.png)
 
-The above workflow enables rapid development and prototyping due to the NASA Operational Simulator for Small Satellites (NOS3) environment. This essentially is a virtual spacecraft which enables development and has been baselined as a kickoff point for the STF effort. 
+The above workflow enables rapid development and prototyping due to the NASA Operational Simulator for Space Systems (NOS3) environment. This essentially is a virtual spacecraft which enables development and has been baselined as a kickoff point for the STF effort. 
 
 ### Software Implementation:
 The project will implement the requirements and design into software code using the environments and tool described Later in this document [SWE-060]. The development team will use the following software coding standard(s), for ensuring code quality, maintainability, safety, coding styles, and including secure coding practices [SWE-061] [SWE-207]:
@@ -99,7 +99,7 @@ Additional minor releases as expected to be completed as needed for specific tes
 This section describes the facilities, equipment, libraries, and tools that the PDT will use to develop and test the system.
 
 ### Development and Test Facilities and Equipment:
-As mentioned in previous sections, the NASA Operational Simulator for Small Satellites (NOS3) has been leveraged on STF to provide a starting point for development. This environment was tailored to include the necessary toolchains and other development tools to provide a single environment for all development and testing of software. 
+As mentioned in previous sections, the NASA Operational Simulator for Space Systems (NOS3) has been leveraged on STF to provide a starting point for development. This environment was tailored to include the necessary toolchains and other development tools to provide a single environment for all development and testing of software. 
 
 ## Verification and Validation:
 

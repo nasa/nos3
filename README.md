@@ -1,4 +1,4 @@
-# NASA Operational Simulator for Small Satellites (NOS3)
+# NASA Operational Simulator for Space Systems (NOS3)
 
 NOS3 is a suite of tools developed by NASA's Katherine Johnson Independent Verification and Validation (IV&V) Facility to aid in areas such as software development, integration & test (I&T), mission operations/training, verification and validation (V&V), and software systems check-out. 
 NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.

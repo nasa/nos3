@@ -1,6 +1,6 @@
 # Scenario - cFS
 
-This scenario was developed to provide an overview of the core Flight System (cFS) as implemented in the NASA Operational Simulator for Small Satellites (NOS3).
+This scenario was developed to provide an overview of the core Flight System (cFS) as implemented in the NASA Operational Simulator for Space Systems (NOS3).
 
 The "little c" in cFS signifies its design as a lean, modular core, built as an extension of the core Flight Executive (cFE).  While cFE provides the fundamental services for application loading, event logging, and resource management, cFS expands this functionality through:
 * An Operating System Abstraction Layer (OSAL) and Platform Support Layer (PSP) enabling portability across various flight hardware.

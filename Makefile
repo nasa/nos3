@@ -136,6 +136,7 @@ clean-gsw: ## Clean only GSW build artifacts
 	rm -rf gsw/build
 	rm -rf gsw/cosmos/build
 	rm -rf /tmp/nos3
+	./scripts/gsw/gsw_openc3_clean.sh
 
 config: ## Run configuration setup
 	@if [ -n "$(SC1_CFG)" ]; then \

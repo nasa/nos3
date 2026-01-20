@@ -1,6 +1,6 @@
 # Scenario - Demonstration
 
-This scenario was developed to provide an overview of the NASA Operational Simulator for Small Satellites (NOS3).
+This scenario was developed to provide an overview of the NASA Operational Simulator for Space Systems (NOS3).
 It demonstrates the flight software (FSW), ground software (GSW), and simulation interactions within NOS3.
 It also serves as a template for additional scenarios to be developed and added to the environment to cover various use cases.
 

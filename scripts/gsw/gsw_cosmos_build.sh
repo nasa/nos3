@@ -6,6 +6,7 @@
 CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
+export GSW="cosmos-openc3-operator-1"
 
 echo "COSMOS build..."
 $DCALL image pull ballaerospace/cosmos:4.5.0

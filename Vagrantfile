@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     config.vm.box = "nos3/ubuntu"
     
     ### Specify version
-    config.vm.box_version = "20250217"
+    config.vm.box_version = "20251222"
     
     ### Share host NOS3 repository into VM
     config.vm.synced_folder ".", "/home/jstar/Desktop/github-nos3", 
@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
     ### General configuration
     config.vm.disk :disk, size: "64GB", primary: true
     config.vm.provider "virtualbox" do |vbox|
-        vbox.name = "nos3_20250217"
+        vbox.name = "nos3_20251222"
         vbox.gui = true
         ### Enable additional configuration as needed
         vbox.cpus = 4
