@@ -4,23 +4,25 @@ dotenv:
   - ./.env
 
 vars:
-  PROJECT: '{{.PROJECT | default "nos3"}}'
-  FLEET: '{{.PROJECT | default "nos3"}}'
-  MISSION: '{{.MISSION | default "m01"}}'
-  SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
+#  # PROJECT: '{{.PROJECT | default "nos3"}}'
+#   FLEET: '{{.PROJECT | default "nos3"}}'
+#   MISSION: '{{.MISSION | default "m01"}}'
+#   SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
 
-  PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
-  PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+#  # PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+#   PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
 
-  COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
-  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
+#   COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+#   SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
 
-  YAMCS_PORT: '{{.YAMCS_PORT | default "8090"}}'
-  OPENMCT_PORT: '{{.OPENMCT_PORT | default "9000"}}'
-  FORTYTWO_PORT: '{{.FORTYTWO_PORT | default "30090"}}'
+#   YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT | default "8090"}}'
+#   OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT | default "9000"}}'
+#   FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT | default "30090"}}'
 
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
+  TEMPLATES_DIR: ./templates
+  ENVIROS_DIR: ./environments
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
@@ -32,8 +34,11 @@ vars:
   DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
   HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
   HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+
   ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
   ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
+  ENVIRO_PATH: '{{.TEMPLATES_DIR}}/env.template'
+
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
 
@@ -154,7 +159,7 @@ tasks:
         source {{.ENVIRO_FILE}} && \
           export NOS3_CFG_PATH={{.NOS3_CFG_PATH}}; \
           {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --force-recreate --remove-orphans
-      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=${YAMCS_HOST_PORT}
       - sleep 5
       - task sidecar
       - task info-services
@@ -196,7 +201,7 @@ tasks:
                 nos3-openmct \
               --force-recreate \
               --remove-orphans
-      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=8090
+      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=${YAMCS_HOST_PORT}
       - task sidecar
       - task info-services
       - task check-docker-ps
@@ -239,8 +244,8 @@ tasks:
 
   check-service-ready:
     env:
-      SERVICE_HOST: '{{.SERVICE_HOST | default "localhost"}}'
-      SERVICE_PORT: '{{.SERVICE_PORT | default "8090"}}'
+      SERVICE_HOST: '{{.SERVICE_HOST | default "{{.YAMCS_HOST}}"}}'
+      SERVICE_PORT: '{{.SERVICE_PORT | default "{{.YAMCS_HOST_PORT}}"}}'
     desc: wait for a service to be ready on a given port
     cmds:
       - |
@@ -288,10 +293,10 @@ tasks:
       - |
         source {{.ENVIRO_FILE}}
         echo; echo "How to access various services:"; echo; \
-        echo "open http://localhost:${YAMCS_PORT} to access yamcs/gsw"; \
-        echo "open http://localhost:${FORTYTWO_PORT}/vnc.html to access fortytwo (42) and then click Connect"; \
-        echo "FT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
-        echo "RT: open http://localhost:${OPENMCT_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
+        echo "open http://localhost:${YAMCS_HOST_PORT} to access yamcs/gsw"; \
+        echo "open http://localhost:${FORTYTWO_HOST_PORT}/vnc.html to access fortytwo (42) and then click Connect"; \
+        echo "FT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
+        echo "RT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
         echo
     silent: true
 
@@ -331,6 +336,61 @@ tasks:
       - git submodule sync; git submodule update --init --recursive; git submodule sync
     silent: true
 
+  generate:env:
+    desc: generate env.sh file
+    cmds:
+      - |
+        export PROJECT={{.PROJECT}}
+        export FLEET={{.FLEET}}
+        export MISSION={{.MISSION}}
+        export SPACECRAFT={{.SPACECRAFT}}
+
+        export PROJECT_MISSION={{.PROJECT}}-{{.MISSION}}
+        export PROJECT_NAME={{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}
+        export COMPOSE_PROJECT_NAME={{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}
+
+        export SC_ENVIRO={{.SC_ENVIRO}}
+
+        export FORTYTWO_HOST={{.FORTYTWO_HOST}}
+        export FORTYTWO_PORT={{.FORTYTWO_PORT}}
+        export FORTYTWO_HOST_PORT={{.FORTYTWO_HOST_PORT}}
+
+        export YAMCS_HOST={{.YAMCS_HOST}}
+        export YAMCS_PORT={{.YAMCS_PORT}}
+        export YAMCS_HOST_PORT={{.YAMCS_HOST_PORT}}
+
+        export OPENMCT_HOST={{.OPENMCT_HOST}}
+        export OPENMCT_PORT={{.OPENMCT_PORT}}
+        export OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}
+
+        export ENV_PATH={{.ENVIROS_DIR}}/${PROJECT}/${MISSION}/${SPACECRAFT}/
+        export ENV_SHELL=${PROJECT}-${MISSION}-${SPACECRAFT}.sh
+
+        mkdir -p ${ENV_PATH}
+
+        envsubst '\
+          $PROJECT \
+          $FLEET \
+          $MISSION \
+          $SPACECRAFT \
+          $PROJECT_NAME \
+          $PROJECT_MISSION \
+          $COMPOSE_PROJECT_NAME \
+          $SC_ENVIRO \
+          $FORTYTWO_HOST \
+          $FORTYTWO_PORT \
+          $FORTYTWO_HOST_PORT \
+          $YAMCS_HOST \
+          $YAMCS_PORT \
+          $YAMCS_HOST_PORT \
+          $OPENMCT_HOST \
+          $OPENMCT_PORT \
+          $OPENMCT_HOST_PORT' \
+          < {{.TEMPLATES_DIR}}/env.template \
+          > ${ENV_PATH}/${ENV_SHELL}
+    silent: true
+
+# nos3 native tasks
   nos3:config:
     desc: configure nos3 by running config.sh
     cmds:

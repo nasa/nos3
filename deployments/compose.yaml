@@ -37,7 +37,7 @@ services:
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/InOut/Inp_Sim.txt:/opt/nasa-itc/42/NOS3InOut/Inp_Sim.txt
       - ${PWD}/services/fortytwo/entrypoint.sh:/entrypoint.sh
     ports:
-      - "127.0.0.1:${FORTYTWO_PORT}:80"
+      - "127.0.0.1:${FORTYTWO_HOST_PORT}:${FORTYTWO_PORT}"
     environment:
       DEPLOYMENT_ENVIRO: ${DEPLOYMENT_ENVIRO}
       HTTPS_PROXY: ${HTTPS_PROXY}
@@ -82,7 +82,7 @@ services:
         GIT_URL: ${YAMCS_GIT_URL}
         GIT_COMMIT: ${YAMCS_GIT_COMMIT}
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8090/api"]
+      test: ["CMD-SHELL", "curl http://${YAMCS_HOST}:${YAMCS_PORT}/api"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -907,7 +907,7 @@ services:
       - "${PWD}/services/openmct/example/make-example-events.mjs:/opt/openmct/example/make-example-events.mjs"      
     command: '/opt/openmct/entrypoint.sh'
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:9000/"]
+      test: ["CMD-SHELL", "curl http://localhost:${OPENMCT_PORT}/"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -916,8 +916,8 @@ services:
       nos3-gsw:
         condition: service_healthy
     ports:
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:${OPENMCT_HOST_PORT}:${OPENMCT_PORT}"
+      # - "127.0.0.1:8080:8080"
     environment:
       MISSION: ${MISSION}
       SPACECRAFT: ${SPACECRAFT}
