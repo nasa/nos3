@@ -1,39 +1,40 @@
 #! /usr/bin/env bash
 
-PROJECT=nos3
-MISSIONS=(m01 m02)
-SC=(sc01 sc02)
-FORTYTWO_HOST_PORTS=(30090 30091)
-YAMCS_HOST_PORTS=(8090 8091)
-OPENMCT_HOST_PORTS=(9000 9001)
+set -e
 
-for MISSION in "${MISSIONS[@]}"
+config=$(cat ./scripts/nos3.yaml)
+
+PROJECTS=$(echo "$config" | yq ' .projects | select(.) | keys []')
+
+for PROJECT in "${PROJECTS[@]}"
 do
+  MISSIONS=$(echo "$config" | yq " .projects.${PROJECT}.missions | keys []")
 
-  for SPACECRAFT in "${SC[@]}"
+  for MISSION in ${MISSIONS[@]}
   do
+    SPACECRAFT=$(echo "$config" | yq ".projects.${PROJECT}.missions.${MISSION}.spacecraft | keys []")
 
-    for FORTYTWO_HOST_PORT in "${FORTYTWO_HOST_PORTS[@]}"
+    for SC in ${SPACECRAFT[@]}
     do
 
-      for YAMCS_HOST_PORT in "${YAMCS_HOST_PORTS[@]}"
-      do
+      FORTYTWO_HOST_PORT=$(echo "$config" | yq " .projects.${PROJECT}.missions.${MISSION}.spacecraft.${SC}.components.fortytwo.port // \"default\"")
+      YAMCS_HOST_PORT=$(echo "$config" | yq " .projects.${PROJECT}.missions.${MISSION}.spacecraft.${SC}.components.yamcs.port // \"default\"")
+      OPENMCT_HOST_PORT=$(echo "$config" | yq " .projects.${PROJECT}.missions.${MISSION}.spacecraft.${SC}.components.openmct.port // \"default\"")
 
-        for OPENMCT_HOST_PORT in "${OPENMCT_HOST_PORTS[@]}"
-        do
+      echo "Generating .env for Project: ${PROJECT}, Mission: ${MISSION}, Spacecraft: ${SC}"
+      task generate:env \
+        PROJECT=${PROJECT} \
+        FLEET=${PROJECT} \
+        MISSION=${MISSION} \
+        SPACECRAFT=${SC} \
+        FORTYTWO_HOST_PORT=${FORTYTWO_HOST_PORT} \
+        YAMCS_HOST_PORT=${YAMCS_HOST_PORT} \
+        OPENMCT_HOST_PORT=${OPENMCT_HOST_PORT}
 
-          task generate:env \
-            PROJECT=${PROJECT} \
-            FLEET=${PROJECT} \
-            MISSION=${MISSION} \
-            SPACECRAFT=${SPACECRAFT} \
-            FORTYTWO_HOST_PORT=${FORTYTWO_HOST_PORT} \
-            YAMCS_HOST_PORT=${YAMCS_HOST_PORT} \
-            OPENMCT_HOST_PORT=${OPENMCT_HOST_PORT}
-
-        done
-      done
     done
+
   done
+
 done
 
+echo "Environment files generated successfully."

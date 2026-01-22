@@ -156,46 +156,103 @@ defaults:
       #     container: 
       #       << : *container
 
-missions:
-  - m01:
-      enabled: true
-      spacecraft:
-        - sc1:
-            enabled: true
-            components: 
-              fortytwo:
-                name: fsw
-                replicas: 1
-                container: 
-                  << : *container
-              fsw:
-                name: fsw
-                replicas: 1
-                container: 
-                  << : *container
-              nos-engine-server:
-                name: nos-engine-server
-                replicas: 1
-                container: 
-                  << : *container
-              time:
-                name: time
-                replicas: 1
-                container: 
-                  << : *container
-              gps:
-                name: gps
-                replicas: 1
-                container: 
-                  << : *container
-  - m02:
-      enabled: false
-      spacecraft:
-        - sc1:
-            enabled: true
-            components: 
-              << : *hw_components
-        - sc2:
-            enabled: false
-            components: 
-              << : *hw_components
+projects:
+  nos3:
+    missions:
+      m01:
+        enabled: true
+        spacecraft:
+          sc01:
+              enabled: true
+              components:
+                fortytwo:
+                  port: 30090
+                yamcs:
+                  port: 8090
+                openmct:
+                  port: 9000
+          sc02:
+              enabled: false
+              components:
+                fortytwo:
+                  port: 30091
+                yamcs:
+                  port: 8091
+                openmct:
+                  port: 9001
+          sc03:
+              enabled: false
+              components:
+                fortytwo:
+                  port: 30092
+                yamcs:
+                  port: 8092
+                openmct:
+                  port: 9002
+      m02:
+        enabled: false
+        spacecraft:
+          sc01:
+              enabled: true
+              components:
+                fortytwo:
+                  port: 30092
+                yamcs:
+                  port: 8092
+                openmct:
+                  port: 9002
+          sc02:
+              enabled: false
+              components:
+                fortytwo:
+                  port: 30093
+                yamcs:
+                  port: 8093
+                openmct:
+                  port: 9003
+
+# projects:
+#   nos3:
+#     missions:
+#       - m01:
+#           enabled: true
+#           spacecraft:
+#             - sc01:
+#                 enabled: true
+#                 components: 
+#                   fortytwo:
+#                     name: fsw
+#                     replicas: 1
+#                     container: 
+#                       << : *container
+#                   fsw:
+#                     name: fsw
+#                     replicas: 1
+#                     container: 
+#                       << : *container
+#                   nos-engine-server:
+#                     name: nos-engine-server
+#                     replicas: 1
+#                     container: 
+#                       << : *container
+#                   time:
+#                     name: time
+#                     replicas: 1
+#                     container: 
+#                       << : *container
+#                   gps:
+#                     name: gps
+#                     replicas: 1
+#                     container: 
+#                       << : *container
+#       - m02:
+#           enabled: false
+#           spacecraft:
+#             - sc01:
+#                 enabled: true
+#                 components: 
+#                   << : *hw_components
+#             - sc02:
+#                 enabled: false
+#                 components: 
+#                   << : *hw_components

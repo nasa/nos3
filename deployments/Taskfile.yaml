@@ -4,20 +4,20 @@ dotenv:
   - ./.env
 
 vars:
-#  # PROJECT: '{{.PROJECT | default "nos3"}}'
-#   FLEET: '{{.PROJECT | default "nos3"}}'
-#   MISSION: '{{.MISSION | default "m01"}}'
-#   SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
+  PROJECT: '{{.PROJECT | default "nos3"}}'
+  FLEET: '{{.PROJECT | default "nos3"}}'
+  MISSION: '{{.MISSION | default "m01"}}'
+  SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
 
-#  # PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
-#   PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+  PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
 
-#   COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
-#   SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
+  COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
 
-#   YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT | default "8090"}}'
-#   OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT | default "9000"}}'
-#   FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT | default "30090"}}'
+  YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT | default "8090"}}'
+  OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT | default "9000"}}'
+  FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT | default "30090"}}'
 
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
@@ -306,6 +306,8 @@ tasks:
     cmds:
       - |
         {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
+    # cmds:
+    #   - task generate:env
     silent: true
 
   install-lazydocker:
@@ -369,26 +371,29 @@ tasks:
 
         mkdir -p ${ENV_PATH}
 
-        envsubst '\
-          $PROJECT \
-          $FLEET \
-          $MISSION \
-          $SPACECRAFT \
-          $PROJECT_NAME \
-          $PROJECT_MISSION \
-          $COMPOSE_PROJECT_NAME \
-          $SC_ENVIRO \
-          $FORTYTWO_HOST \
-          $FORTYTWO_PORT \
-          $FORTYTWO_HOST_PORT \
-          $YAMCS_HOST \
-          $YAMCS_PORT \
-          $YAMCS_HOST_PORT \
-          $OPENMCT_HOST \
-          $OPENMCT_PORT \
-          $OPENMCT_HOST_PORT' \
-            < {{.ENVIRO_TEMPLATE}} > ${ENV_PATH}/${ENV_SHELL} && \
-        chmod +x ${ENV_PATH}/${ENV_SHELL}
+        ./scripts/env.sh > ${ENV_PATH}/${ENV_SHELL}.env
+        cp ${ENV_PATH}/${ENV_SHELL}.env .env
+
+        # envsubst '\
+        #   $PROJECT \
+        #   $FLEET \
+        #   $MISSION \
+        #   $SPACECRAFT \
+        #   $PROJECT_NAME \
+        #   $PROJECT_MISSION \
+        #   $COMPOSE_PROJECT_NAME \
+        #   $SC_ENVIRO \
+        #   $FORTYTWO_HOST \
+        #   $FORTYTWO_PORT \
+        #   $FORTYTWO_HOST_PORT \
+        #   $YAMCS_HOST \
+        #   $YAMCS_PORT \
+        #   $YAMCS_HOST_PORT \
+        #   $OPENMCT_HOST \
+        #   $OPENMCT_PORT \
+        #   $OPENMCT_HOST_PORT' \
+        #     < {{.ENVIRO_TEMPLATE}} > ${ENV_PATH}/${ENV_SHELL} && \
+        # chmod +x ${ENV_PATH}/${ENV_SHELL}
     silent: true
 
 # nos3 native tasks
