@@ -22,7 +22,8 @@ vars:
   SERVICES_DIR: ./services
   SCRIPTS_DIR: ./scripts
   TEMPLATES_DIR: ./templates
-  ENVIROS_DIR: ./environments
+  BUILD_DIR: ./build
+  ENVIROS_DIR: '{{.BUILD_DIR}}/'
 
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
@@ -37,7 +38,7 @@ vars:
 
   ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
   ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
-  ENVIRO_PATH: '{{.TEMPLATES_DIR}}/env.template'
+  ENVIRO_TEMPLATE: '{{.TEMPLATES_DIR}}/env.template'
 
   MAVEN_HTTPS_PROXY: '-s./settings.xml'
   MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
@@ -363,7 +364,7 @@ tasks:
         export OPENMCT_PORT={{.OPENMCT_PORT}}
         export OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}
 
-        export ENV_PATH={{.ENVIROS_DIR}}/${PROJECT}/${MISSION}/${SPACECRAFT}/
+        export ENV_PATH={{.BUILD_DIR}}/docker/${PROJECT}/${MISSION}/${SPACECRAFT}/
         export ENV_SHELL=${PROJECT}-${MISSION}-${SPACECRAFT}.sh
 
         mkdir -p ${ENV_PATH}
@@ -386,8 +387,8 @@ tasks:
           $OPENMCT_HOST \
           $OPENMCT_PORT \
           $OPENMCT_HOST_PORT' \
-          < {{.TEMPLATES_DIR}}/env.template \
-          > ${ENV_PATH}/${ENV_SHELL}
+            < {{.ENVIRO_TEMPLATE}} > ${ENV_PATH}/${ENV_SHELL} && \
+        chmod +x ${ENV_PATH}/${ENV_SHELL}
     silent: true
 
 # nos3 native tasks
