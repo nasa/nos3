@@ -234,9 +234,6 @@ services:
     command: "/usr/bin/nos_engine_server_standalone -f ./nos_engine_server_config.json"
     volumes:
       - ${PWD}/${NOS3_CFG_PATH}/cfg/build/sims/nos_engine_server_config.json:/home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
-    ports:
-      - "127.0.0.1:12000:12000"
-      - "127.0.0.1:12001:12001"
     tty: true
     environment:
       HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
