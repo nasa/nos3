@@ -159,8 +159,8 @@ tasks:
       - |
         source {{.ENVIRO_FILE}} && \
           export NOS3_CFG_PATH={{.NOS3_CFG_PATH}}; \
-          {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --force-recreate --remove-orphans
-      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=${YAMCS_HOST_PORT}
+          {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --remove-orphans
+      - task check-service-ready SERVICE_HOST={{.YAMCS_HOST}} SERVICE_PORT={{.YAMCS_HOST_PORT}}
       - sleep 5
       - task sidecar
       - task info-services
@@ -202,7 +202,7 @@ tasks:
                 nos3-openmct \
               --force-recreate \
               --remove-orphans
-      - task check-service-ready SERVICE_HOST=localhost SERVICE_PORT=${YAMCS_HOST_PORT}
+      - task check-service-ready SERVICE_HOST=${YAMCS_HOST} SERVICE_PORT=${YAMCS_HOST_PORT}
       - task sidecar
       - task info-services
       - task check-docker-ps
@@ -211,7 +211,7 @@ tasks:
   sidecar:
     desc: Run sidecar to enable output
     cmds:
-      - '{{.SCRIPTS_DIR}}/sidecar.sh -c "/CFS/CMD/TO_ENABLE_OUTPUT"'
+      - '{{.SCRIPTS_DIR}}/sidecar.sh -s {{.YAMCS_HOST}} -p {{.YAMCS_HOST_PORT}} -c "/CFS/CMD/TO_ENABLE_OUTPUT"'
     silent: true
 
   clean-containers:
