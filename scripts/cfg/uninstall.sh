@@ -28,6 +28,15 @@ yes 2> /dev/null | $DCALL images --format "{{.Repository}}:{{.Tag}}" | grep '^iv
 echo "Removing NOS Based container networks..."
 yes | $DNETWORK ls --format "{{.Name}}" | grep '^nos3_' | xargs -r docker network rm 2> /dev/null
 
+echo "Removing BallAerospace Based containers..."
+yes 2> /dev/null | $DCALL images --format "{{.Repository}}:{{.Tag}}" | grep '^ballaerospace' | xargs -r docker rmi  
+
+echo "Removing OpenC3 Based containers..."
+yes 2> /dev/null | $DCALL images --format "{{.Repository}}:{{.Tag}}" | grep '^openc3' | xargs -r docker rmi  
+
+echo "Removing OpenC3 Based container networks..."
+yes | $DNETWORK ls --format "{{.Name}}" | grep '^openc3' | xargs -r docker network rm 2> /dev/null
+
 yes | $DCALL swarm leave --force 2> /dev/null
 
 exit 0

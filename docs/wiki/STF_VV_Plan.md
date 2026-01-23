@@ -1,7 +1,7 @@
 # STF - Verification and Validation (V&V) Plan
 
 ## 1 Introduction
-This verification and validation plan applies to the NASA Operational Simulator for Small Satellites (NOS3) and its Simulation to Flight (STF) design reference mission.  
+This verification and validation plan applies to the NASA Operational Simulator for Space Systems (NOS3) and its Simulation to Flight (STF) design reference mission.  
 NOS3 is described in more detail in the Read the Docs Wiki and section 3.
 
 ### 1.1 Purpose and Scope
@@ -77,7 +77,7 @@ This is the actual software to be used in flight but recompiled for a Linux envi
 In addition, the ground software command and telemetry databases that are used for command and control of the flight software can also be treated as test articles.
 
 ### 5.3 Support Equipment
-The ground software system (Advanced Multi-Mission Operations System (AMMOS) Instrument Toolkit (AIT), COSMOS, OpenC3, or Yet Another Mission Control System (YAMCS)) and the 42 dynamic software are required by the NOS system.  
+The ground software system Advanced Multi-Mission Operations System (AMMOS) Instrument Toolkit (AIT), COSMOS, OpenC3, or Yet Another Mission Control System (YAMCS) and the 42 dynamic software are required by the NOS system.  
 In addition, simulations for the components being tested are required for testing.
 
 ### 5.4 Facilities
@@ -133,7 +133,7 @@ The output products of the verification and validation activities include test p
 - I&T:  Integration and Test
 - IV&V:  Independent Verification and Validation
 - JSTAR:  Jon McBride Software Testing and Research
-- NOS3:  NASA Operational Simulator for Small Satellites
+- NOS3:  NASA Operational Simulator for Space Systems
 - RTM:  Requirements Traceability Matrix
 - V&V:  Verification and Validation
 - YAMCS:  Yet Another Mission Control System

@@ -6,7 +6,7 @@ In the real world, post-launch and pre-operations represent an important time to
 Before science can begin, subsystems need to be checked for nominal states and health.
 Once these are confirmed, science can be performed and basic 'control' of the spacecraft can be driven by the science team.
 
-This scenario was last updated on 06/09/2025 and leveraged the `dev` branch at the time [a3e7c100].
+This scenario was last updated on 09/15/2025 and leveraged the `dev` branch at the time [422f66ec].
 
 ## Learning Goals
 
@@ -66,21 +66,31 @@ Using the above questions, take a few minutes to look through the COSMOS Packet 
 ### Writing a Commissioning Skeleton
 
 * In a text editor, such as VSCode, navigate to gsw/cosmos/config/targets/MISSION/procedures and create a new file 'my_commissioning.rb'
+* (Note that if you need help for the following steps, you can consult the script 'commissioning.rb')
 * In the first line, write 'require 'mission_lib'
 
 Let's add Ruby comments to help us navigate what we'll be doing for our commissioning, add the following lines with a blank line or two in between
-* `_# Turn on the radio_`
-* `_# Check our power_`
-* `_# Verify our state_`
-* `_# Check for odd reboots_`
-* `_# Turn on the instrument_`
-* `_# Configure Science Regions for future use_`
-* `_# Turn off the radio_`
+* `# Turn on the radio`
+* `# Check our power`
+* `# Verify our state`
+* `# Check for odd reboots`
+* `# Turn on the instrument`
+* `# Configure Science Regions for future use`
+* `# Turn off the radio`
 
 ---
+### Enabling the Radio
+To enable the radio, add the following lines to the script:
+```
+cmd("CFS_RADIO TO_ENABLE_OUTPUT with DEST_IP 'radio-sim', DEST_PORT 5011")
+cmd("CFS_RADIO TO_RESUME_OUTPUT")
+wait_check_packet("CFS_RADIO", "CF_HKPACKET", 1, 5) 
+```
+
+
 ### Checking our Power State
 
-We're going to skip the radio parts for a moment, but let's generate a template we can use to check out our other items. 
+Let's generate a template we can use to check out our other items. 
 We'll do this with the EPS voltage check.
 
 ```
@@ -96,42 +106,57 @@ What we've accomplished above is a block that:
 * Waits for a fresh value for that telemetry packet.
 * And finally, clearly prints the value to a screen.
 
-Now, with the EPS Voltage Check as a template, fill in the items needed for our state, and anomalous reboots.
+Try out the partially completed script by 
+* Launching "Script Runner"
+* Selecting "File->Open->MISSION/procedures", selecting "my_commissioning.rb", and clicking "Open"
+* Clicking "Start"
+
+Now, with the EPS Voltage Check as a template, fill in the items needed for checking state and anomalous reboots.  Use the following telemetry points:
+* MGR_RADIO MGR_HK_TLM SPACECRAFT_MODE
+* MGR_RADIO MGR_HK_TLM ANOM_REBOOT_COUNTER
 
 ### Commands as part of templates
 
 There are a few ways to accomplish commanding, but we'll keep it simple. 
-We still need to finish our blocks for turning on the instrument, and configuring science!
+We still need to finish our blocks for turning on the instrument and configuring science!
 * COSMOS scripting makes sending a command as easy as using the following syntax: _cmd("SAMPLE_RADIO SAMPLE_ENABLE_CC")_
 * Using that information, write command blocks for the instrument that:
   1) Generate a prompt for permission to continue
   2) Enables the Sample Instrument
+    
+      Use command "SAMPLE_RADIO SAMPLE_ENABLE_CC"
+  
   3) Generate a prompt for when to proceed to turn it back off
   4) Generates a prompt to disable the sample device
   5) Disables the Sample Instrument
 
+      Use command "SAMPLE_RADIO SAMPLE_DISABLE_CC"
+
 Now, we will configure science mode. The difference between this and the above commands is that the science mode commands take arguments, whereas we didn't need arguments in the above commands.
 
-* A sample Enable Science Region command looks like: `_cmd("MGR_RADIO MGR_SET_AK_CC with AK_STATUS ENABLE")_`
+* A sample Enable Science Region command looks like: `cmd("MGR_RADIO MGR_SET_AK_CC with AK_STATUS ENABLE")`
 * Using the above as a template, write a new section to our script that will:
   1) Prompt if it's OK to configure science regions
   2) Enable AK
   3) Enable CONUS
   4) Enable HI
 
+      View the "MGR MGR_HK_TLM" packet to verify these science regions have been enabled.
+
+Try out the partially completed script again.
+
 ### Turn the Radio On and Off
 
 We're almost done! 
 * Turning our radio on and off for transmit is a critical part of some missions.
 * If a radio is left on, it could kill the spacecraft.
-* We've written a little help script to abstract this, and we will add it to the top of our script, after the line to _require 'mission_lib'_
-```
-# First, make sure we can contact the SC and we can receive data from it
-enable_TO_and_verify()
-sleep(20)
-```
+    
+    We have already added commands to the script to turn on the radio
+
 * The last thing we must do is to turn the radio off. At the end of your file, add a block that does the following:
   1) Prompt for permission to turn off the radio
   2) Sends the CFS_Radio Command to disable telemetry output
 
-**Let's run it and see how it works!**
+      Use command "CFS_RADIO TO_DISABLE_OUTPUT"
+
+**Let's run the final script and see how it works!**

@@ -1,6 +1,6 @@
 # Scenario - Nominal Operations
 
-This scenario was developed to explain and demonstrate the standard (nominal) operation of a satellite pass for a satellite in orbit, using NASA Operational Simulator for Small Satellites (NOS3).
+This scenario was developed to explain and demonstrate the standard (nominal) operation of a satellite pass for a satellite in orbit, using NASA Operational Simulator for Space Systems (NOS3).
 It demonstrates the use of the ground software (GSW) for commanding and for the expected return telemetry, as well as making use of flight software (FSW) and simulators.
 
 This scenario was last updated on 06/03/2025 and leveraged the `dev` branch at the time [a3e7c100].

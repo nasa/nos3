@@ -1,6 +1,6 @@
 # Scenario - cFS
 
-This scenario was developed to provide an overview of the core Flight System (cFS) as implemented in the NASA Operational Simulator for Small Satellites (NOS3).
+This scenario was developed to provide an overview of the core Flight System (cFS) as implemented in the NASA Operational Simulator for Space Systems (NOS3).
 
 The "little c" in cFS signifies its design as a lean, modular core, built as an extension of the core Flight Executive (cFE).  While cFE provides the fundamental services for application loading, event logging, and resource management, cFS expands this functionality through:
 * An Operating System Abstraction Layer (OSAL) and Platform Support Layer (PSP) enabling portability across various flight hardware.
@@ -11,7 +11,7 @@ NOS3 serves as a specialized distribution of cFS, incorporating customized compo
 This approach allows teams to benefit from community updates while contributing improvements back to the open-source ecosystem.
 This demonstration will walk through key cFS capabilities using NOS3's minimal mode, providing hands-on experience with its core applications and services.
 
-This scenario was last updated on 5/23/25 and leveraged the `dev` branch at the time [a3e7c100].
+This scenario was last updated on 9/15/2025 and leveraged the `dev` branch at the time [422f66ec].
 
 ## Learning Goals
 
@@ -94,17 +94,19 @@ Let's dive into the sc_1 - NOS3 Flight Software window and break down what all i
 ![Scenario cFS - Boot 0](./_static/scenario_cfs/scenario_cfs_boot0.png)
 
 In the above we see a standard splash screen honoring the Simulation To Flight - 1 mission which started NOS3.  Then:
-* PSP initializes tasks and memory.
-* The various pieces of cFE start executing.
+* The PSP initializes tasks and memory.
+* The various cFE modules start executing.
 * ES determines its boot-up state (power on reset in this case).
-* Versions are printed and logged for records on the spacecraft.
+* Module versions are printed and logged to provide a record of the software on the spacecraft.
 
 ![Scenario cFS - Boot 1](./_static/scenario_cfs/scenario_cfs_boot1.png)
 
-Additional version info is printed for each "Module" loaded, and then:
-* The various shared objects from the cFS startup script are loaded:
-  * Each is loaded down the list and the specified initialization function provided in the startup script is executed.
-  * They each typically print a success message upon completion.
+Additional version info is printed for each module loaded, and then:
+* The various shared objects from the cFS startup script (`cfe_es_startup.scr`) are loaded:
+  * Each is loaded down the list.
+  * The initialization function specified in the startup script for each library is executed.
+  * The main function specified in the startup script for each application is executed.
+  * Each module typically print a success message upon completion of initialization.
 
 ![Scenario cFS - Boot 2](./_static/scenario_cfs/scenario_cfs_boot2.png)
 

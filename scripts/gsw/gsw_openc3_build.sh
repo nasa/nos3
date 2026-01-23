@@ -6,6 +6,7 @@
 CFG_BUILD_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
+export GSW="openc3-openc3-operator-1"
 
 # Check that local NOS3 directory exists
 if [ ! -d $USER_NOS3_DIR ]; then
@@ -15,17 +16,26 @@ if [ ! -d $USER_NOS3_DIR ]; then
     exit 1
 fi
 
-echo "Clone openc3-cosmos into local user directory..."
+echo "Prepare OpenC3 docker containers..."
 cd $USER_NOS3_DIR
-git clone https://github.com/nasa-itc/openc3-nos3.git --depth 1 -b main $USER_NOS3_DIR/cosmos
+git clone https://github.com/nasa-itc/openc3-nos3.git -b dev $USER_NOS3_DIR/openc3
+$DOCKER_COMPOSE_COMMAND -f $OPENC3_DIR/compose.yaml pull 
 echo ""
 
-echo "Prepare openc3-cosmos containers..."
+# Check that openc3 directory exists
+if [ ! -d $OPENC3_DIR ]; then
+    echo ""
+    echo "    OpenC3 Cloning Failed!"
+    echo ""
+    exit 1
+fi
+
+echo "Launch openc3 containers..."
 cd $OPENC3_DIR
 $OPENC3_PATH run
 echo ""
 
-#echo "Set a password in openc3-cosmos via firefox..."
+#echo "Set a password in openc3 via firefox..."
 #echo "  Refresh webpage if error page shown."
 #echo ""
 #sleep 5
@@ -46,8 +56,8 @@ fi
 
 # Start generating the plugin
 mkdir build
-cd build
-$OPENC3_PATH cli generate plugin nos3
+# cd build
+$OPENC3_CLI generate plugin nos3 --ruby
 if [ ! -d "openc3-cosmos-nos3" ]
 then
     echo ""
@@ -80,7 +90,7 @@ done
 cd ..
 
 # Copy lib
-cp -r ../../lib .
+cp -r $GSW_DIR/lib .
 
 # Create plugin.txt
 echo "Create plugin..."
@@ -118,7 +128,7 @@ done
 echo "   MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
-echo "INTERFACE RADIO udp_interface.rb radio-sim 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE RADIO udp_interface.rb cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
@@ -129,7 +139,7 @@ do
 done
 echo "" >> plugin.txt
 
-echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb host.docker.internal 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb truth42sim 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
 echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
 # Capture date created
@@ -139,7 +149,7 @@ echo ""
 
 # Build plugin
 echo "Build plugin..."
-$OPENC3_PATH cli rake build VERSION=1.0.$DATE
+$OPENC3_CLI rake build VERSION=1.0.$DATE
 if [ ! -f "openc3-cosmos-nos3-1.0.$DATE.gem" ]
 then
     echo ""
@@ -150,18 +160,19 @@ fi
 echo ""
 
 ## Install plugin
-#echo "Install plugin..."
-#cd $GSW_BIN
-#$OPENC3_PATH cli geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
-#echo ""
+echo "Install plugin..."
+cd $OPENC3_DIR/openc3-cosmos-nos3
+$OPENC3_CLI geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
+INSTALL_STATUS=$?
 
-# Load plugin
-echo "Load plugin..."
-$OPENC3_PATH cliroot load openc3-cosmos-nos3-1.0.$DATE.gem
+if [ $INSTALL_STATUS -eq 0 ]; then
+    echo "Gem installation successful"
+else
+    echo "Gem installation failed with exit code: $INSTALL_STATUS"
+    exit 1
+fi
 echo ""
 
-## Set permissions on build files
-#chmod -R 777 $BASE_DIR/gsw/cosmos/build
 
 echo "OpenC3 build script complete."
 echo "Note that while this script is complete, OpenC3 is likely still be processing behind the scenes!"

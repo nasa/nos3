@@ -10,7 +10,7 @@ When running in the VM, docker containers are networked to provide the modules e
 ![image](./_static/NOS3-Container-Deployment.png)
 
 Every process in NOS3 runs in its own container (as is best practice) and Docker networks are used to separate different groups of containers from one another.
-On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, the latter being the default.
+On the top of the graphic is a cloud labeled 'COSMOS', but in current versions that can be either OpenC3, COSMOS, or YAMCS, COSMOS being the default.
 This is the ground software with which the satellite(s) can be commanded.
 Each satellite consists of a group of containers placed in its own network, illustrated in the grey cloud and labeled 'nos3_sc_1'.
 Then there exists a group of universally necessary containers which can be shared between the different satellites, which are assigned to 'nos3-core'.
@@ -53,13 +53,13 @@ The progression of time for 42 is driven through NOS Engine and 42 provides outp
 ## Directory Layout
 
 The top level of NOS3 contains the following:
-* `cfg` the configuration files for the mission and spacecraft
-* `components` the repositories for the hardware component apps
+* `cfg` the configuration files for the mission, spacecraft, and simulators
+* `components` the submodule repositories for the hardware component apps
 * `docs` various documentation related to the project
-* `fsw` the repositories for flight software
-* `gsw` the repositories for ground station files and other ground tools
+* `fsw` the submodule repositories for flight software
+* `gsw` the submodule repositories for ground station files and other ground tools
 * `scripts` various convenience scripts
-* `sims` the common simulators
+* `sims` the common simulators and the simulator plugin framework
 
 Once you have forked or mirrored the top level NOS3 repository for your own use, it it recommended that only specific files be edited.
 The directory structure has been setup to enable this and quick review of merge requests as they are ready:

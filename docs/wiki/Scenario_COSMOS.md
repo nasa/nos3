@@ -1,6 +1,6 @@
 # Scenario - COSMOS
 
-This scenario was developed to provide an overview of the Ball Aerospace COSMOS ground software (GSW) as implemented in the NASA Operational Simulator for Small Satellites (NOS3).
+This scenario was developed to provide an overview of the Ball Aerospace COSMOS ground software (GSW) as implemented in the NASA Operational Simulator for Space Systems (NOS3).
 COSMOS is a comprehensive ground software suite developed by Ball Aerospace that provides command and control capabilities for embedded systems, particularly spacecraft.
 In the NOS3 environment, COSMOS serves as the primary ground software interface.
 

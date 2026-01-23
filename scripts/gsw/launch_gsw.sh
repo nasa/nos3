@@ -78,7 +78,7 @@ do
     #echo "Spacecraft configuration = " $SC_CFG_FILE
     
     echo $SC_NUM " - Connect COSMOS to spacecraft network..."
-    $DNETWORK connect $SC_NETNAME cosmos-openc3-operator-1 --alias cosmos
+    $DNETWORK connect $SC_NETNAME openc3-openc3-operator-1 --alias cosmos
     echo ""
 
     echo ""

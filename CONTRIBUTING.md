@@ -1,4 +1,4 @@
-# NASA Operational Simulator for Small Satellites (NOS3) Contributing Guide
+# NASA Operational Simulator for Space Systems (NOS3) Contributing Guide
 
 So you'd like to contribute to NOS3? 
 Below are some guidelines for contributors to follow in addition to a standard [code of conduct](https://www.contributor-covenant.org/version/1/4/code-of-conduct/). 
