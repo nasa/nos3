@@ -50,6 +50,9 @@ ENDFOREACH()
 set(sim_cfg
     ../cfg/build/sims/nos_engine_server_config.json
     ../cfg/build/sims/nos3-simulator.xml
+    ../cfg/build/sims/sc-1-nos3-simulator.xml
+    ../cfg/build/sims/sc-2-nos3-simulator.xml
+    ../cfg/build/sims/sc-3-nos3-simulator.xml
     ../cfg/build/sims/sim_log_config.xml
 )
 install(FILES ${sim_cfg} DESTINATION bin COMPONENT config)
