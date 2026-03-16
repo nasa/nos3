@@ -154,6 +154,7 @@ do
     echo ""
 done
 
+sleep 8
 docker network connect --alias "next-radio" "nos3-sc0"$SATNUM sc01-radio-sim
 #docker network connect --alias "radio-sim" "nos3-sc01" sc01-radio-sim
 for (( i=2; i<=$SATNUM; i++))
@@ -169,7 +170,7 @@ done
 
 
 echo "NOS Time Driver..."
-sleep 8
+sleep 6
 echo EDITED11: gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network nos3-core --network nos3-sc01 --network nos3-sc02 --network nos3-sc03 -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network nos3-core --network nos3-sc01 --network nos3-sc02 --network nos3-sc03 -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 sleep 1
