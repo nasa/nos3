@@ -151,7 +151,7 @@ do
         j=$(($i+1))
         NEXT_RADNAME="sc0"$j"-radio-sim"
         echo "Connecting $NEXT_RADNAME to network $SC_NETNAME as 'next-radio'"
-        sleep 5
+        sleep 1
         docker network connect --alias "next-radio" $SC_NETNAME $NEXT_RADNAME
     fi
 
