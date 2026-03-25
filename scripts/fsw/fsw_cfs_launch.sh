@@ -151,7 +151,6 @@ do
         j=$(($i+1))
         NEXT_RADNAME="sc0"$j"-radio-sim"
         echo "Connecting $NEXT_RADNAME to network $SC_NETNAME as 'next-radio'"
-        sleep 1
         docker network connect --alias "next-radio" $SC_NETNAME $NEXT_RADNAME
     fi
 
@@ -170,6 +169,8 @@ do
     echo $SC_NUM " - CryptoLib..."
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network $SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
+
+    sleep 3
 done
 # docker network connect --alias "next-radio" "nos3-sc01" sc03-radio-sim
 echo "Closing the ring: connecting sc01-radio-sim to nos3-sc03 as 'next-radio'"
