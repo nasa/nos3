@@ -85,8 +85,8 @@ export SATNUM=3
 #
 # Spacecraft Loop
 #
-# for (( i=1; i<=$SATNUM; i++ ))
-for (( i=$SATNUM; i>0; i-- ))
+for (( i=1; i<=$SATNUM; i++ ))
+#for (( i=$SATNUM; i>0; i-- ))
 do
     export SC_NUM="sc0"$i
     export SC_NETNAME="nos3-"$SC_NUM
@@ -97,10 +97,6 @@ do
     echo "Spacecraft network       = " $SC_NETNAME
     echo "Spacecraft configuration = " $SC_CFG_FILE
     
-    # echo $SC_NUM " - Create spacecraft network..."
-    # $DNETWORK create $SC_NETNAME 2> /dev/null
-    # echo ""
-
     echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
     $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs --ip 192.168.$i.100
     echo ""
@@ -140,20 +136,6 @@ do
     # docker create --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u 1001:999 -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network $SC_NETNAME --network-alias radio-sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
     gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network $SC_NETNAME --network-alias radio-sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
     
-    if [[ $i -lt $SATNUM ]]; then
-        # SC_NUM="sc0"$i
-        # j=$(($i+1))
-        # SC_PREVNET="nos3-sc0"$j
-        # SC_NETNAME="nos3-"$SC_NUM
-        # RADNAME=$SC_NUM"-radio-sim"
-        # sleep 1
-        # docker network connect --alias "next-radio" $SC_PREVNET $RADNAME
-        j=$(($i+1))
-        NEXT_RADNAME="sc0"$j"-radio-sim"
-        echo "Connecting $NEXT_RADNAME to network $SC_NETNAME as 'next-radio'"
-        docker network connect --alias "next-radio" $SC_NETNAME $NEXT_RADNAME
-    fi
-
 #    gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network nos3-core -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-sample-sim"   -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample-sim
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-startrk-sim"  -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-star-tracker-sim
@@ -170,43 +152,28 @@ do
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network $SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
 
-    sleep 3
 done
-# docker network connect --alias "next-radio" "nos3-sc01" sc03-radio-sim
-echo "Closing the ring: connecting sc01-radio-sim to nos3-sc03 as 'next-radio'"
-docker network connect --alias "next-radio" "nos3-sc03" sc01-radio-sim
-# sleep 8
-# docker network connect --alias "next-radio" "nos3-sc0"$SATNUM sc01-radio-sim
-# #docker network connect --alias "radio-sim" "nos3-sc01" sc01-radio-sim
-# for (( i=2; i<=$SATNUM; i++))
-# do
-#     export SC_NUM="sc0"$i
-#     export j=$((i-1))
-#     export SC_PREVNET="nos3-sc0"$j
-#     export SC_NETNAME="nos3-"$SC_NUM
-#     export RADNAME=$SC_NUM"-radio-sim"
-# #    docker network connect --alias "radio-sim" $SC_NETNAME $RADNAME
-#     docker network connect --alias "next-radio" $SC_PREVNET $RADNAME
-# done
 
-# for (( i=1; i<=$SATNUM; i++ ))
-# do
-#     export SC_NUM="sc0"$i
-#     gnome-terminal --tab --title=$SC_NUM" - Radio Sim" -- docker start -i $SC_NUM"-radio-sim"
-# done
+sleep 3
+for (( i=2; i<=$SATNUM; i++))
+do
+    export SC_NUM="sc0"$i
+    export j=$((i-1))
+    export SC_PREVNET="nos3-sc0"$j
+    export SC_NETNAME="nos3-"$SC_NUM
+    export RADNAME=$SC_NUM"-radio-sim"
+    sleep 1
+    docker network connect --alias "next-radio" $SC_PREVNET $RADNAME
+done
+
+echo "Closing the ring: connecting sc01-radio-sim to nos3-sc03 as 'next-radio'"
+sleep 1
+docker network connect --alias "next-radio" "nos3-sc03" sc01-radio-sim
 
 echo "NOS Time Driver..."
 sleep 6
-echo EDITED11: gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network nos3-core --network nos3-sc01 --network nos3-sc02 --network nos3-sc03 -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network nos3-core --network nos3-sc01 --network nos3-sc02 --network nos3-sc03 -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 sleep 1
-# for (( i=1; i<=$SATNUM; i++ ))
-# do
-#     export SC_NUM="sc0"$i
-#     export SC_NETNAME="nos3-"$SC_NUM
-#     export TIMENAME=$SC_NUM"-nos-time-driver"
-#     $DNETWORK connect --alias nos-time-driver $SC_NETNAME nos-time-driver
-# done
 
 
 echo ""
