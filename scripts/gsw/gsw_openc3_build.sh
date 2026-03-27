@@ -8,6 +8,10 @@ SCRIPT_DIR=$CFG_BUILD_DIR/../../scripts
 source $SCRIPT_DIR/env.sh
 export GSW="openc3-openc3-operator-1"
 
+# Create a unique version string using the current date and time (YYYYMMDDHHMMSS)
+# This prevents OpenC3 from caching an older version of the plugin built on the same day
+BUILD_VERSION="1.0.$(date +%Y%m%d%H%M%S)"
+
 # Check that local NOS3 directory exists
 if [ ! -d $USER_NOS3_DIR ]; then
     echo ""
@@ -18,7 +22,16 @@ fi
 
 echo "Prepare OpenC3 docker containers..."
 cd $USER_NOS3_DIR
-git clone https://github.com/nasa-itc/openc3-nos3.git -b dev $USER_NOS3_DIR/openc3
+
+# --- Safe OpenC3 clone/pull ---
+if [ -d "$USER_NOS3_DIR/openc3" ]; then
+    echo "openc3 repository already exists, pulling latest..."
+    git -C "$USER_NOS3_DIR/openc3" pull || echo "Warning: git pull failed, using existing local files."
+else
+    echo "Cloning openc3 repository..."
+    git clone https://github.com/nasa-itc/openc3-nos3.git -b dev "$USER_NOS3_DIR/openc3"
+fi
+
 $DOCKER_COMPOSE_COMMAND -f $OPENC3_DIR/compose.yaml pull 
 echo ""
 
@@ -35,19 +48,12 @@ cd $OPENC3_DIR
 $OPENC3_PATH run
 echo ""
 
-#echo "Set a password in openc3 via firefox..."
-#echo "  Refresh webpage if error page shown."
-#echo ""
-#sleep 5
-#firefox localhost:2900 &
-
 # Start by changing to a known location
 cd $OPENC3_DIR
 
-# Delete any previous run info
-rm -rf build
-if [ -d "build" ]
-then
+# --- Delete any previous run info including the plugin folder ---
+rm -rf build openc3-cosmos-nos3
+if [ -d "build" ]; then
     echo ""
     echo "ERROR: Failed to delete build directory!"
     echo ""
@@ -56,7 +62,6 @@ fi
 
 # Start generating the plugin
 mkdir build
-# cd build
 $OPENC3_CLI generate plugin nos3 --ruby
 if [ ! -d "openc3-cosmos-nos3" ]
 then
@@ -67,7 +72,7 @@ then
 fi
 
 # Copy targets
-mkdir openc3-cosmos-nos3/targets
+mkdir -p openc3-cosmos-nos3/targets
 cd openc3-cosmos-nos3/targets
 targets=""
 for i in $(find $BASE_DIR/components -name target.txt) 
@@ -90,10 +95,18 @@ done
 cd ..
 
 # Copy lib
+echo "Copying library files..."
 cp -r $GSW_DIR/lib .
 
+# --- Copy scripts into the plugin ---
+echo "Copying Python test scripts..."
+mkdir -p openc3-cosmos-nos3/scripts
+# Note: Adjust the source path '$SCRIPT_DIR' below if your test python 
+# files are stored in a different directory in your repository.
+cp -r $SCRIPT_DIR/*.py openc3-cosmos-nos3/scripts/
+
 # Create plugin.txt
-echo "Create plugin..."
+echo "Create plugin.txt..."
 rm plugin.txt
 if [ -f "plugin.txt" ]
 then
@@ -122,10 +135,10 @@ do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
     then
         debug=$i"_DEBUG"
-        echo "   MAP_TARGET $debug" >> plugin.txt
+        echo "  MAP_TARGET $debug" >> plugin.txt
     fi
 done
-echo "   MAP_TARGET TO_DEBUG" >> plugin.txt
+echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
 echo "INTERFACE RADIO udp_interface.rb cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
@@ -134,23 +147,27 @@ do
     if [ "$i" != "SIM_42_TRUTH" -a "$i" != "SYSTEM" -a "$i" != "TO_DEBUG" ]
     then
         radio=$i"_RADIO"
-        echo "   MAP_TARGET $radio" >> plugin.txt
+        echo "  MAP_TARGET $radio" >> plugin.txt
     fi
 done
 echo "" >> plugin.txt
 
 echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb truth42sim 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
-echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
+echo "  MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
 # Capture date created
 echo "" >> plugin.txt
-echo "# Created on " $DATE >> plugin.txt
+echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
 echo ""
+
+# Ensure the generated plugin tree is world-readable/traversable for gem build
+echo "Fixing permissions on generated plugin tree before building..."
+chmod -R a+rX .
 
 # Build plugin
 echo "Build plugin..."
-$OPENC3_CLI rake build VERSION=1.0.$DATE
-if [ ! -f "openc3-cosmos-nos3-1.0.$DATE.gem" ]
+$OPENC3_CLI rake build VERSION=$BUILD_VERSION
+if [ ! -f "openc3-cosmos-nos3-${BUILD_VERSION}.gem" ]
 then
     echo ""
     echo "ERROR: cli rake build failed!"
@@ -159,23 +176,27 @@ then
 fi
 echo ""
 
-## Install plugin
-echo "Install plugin..."
-cd $OPENC3_DIR/openc3-cosmos-nos3
-$OPENC3_CLI geminstall ./openc3-cosmos-nos3-1.0.$DATE.gem
-INSTALL_STATUS=$?
+# --- Auto-upload to OpenC3 using the REST API ---
+echo "================================================================="
+echo " SUCCESS! Plugin gem built: openc3-cosmos-nos3-${BUILD_VERSION}.gem"
+echo "================================================================="
+echo "Auto-uploading plugin to OpenC3..."
 
-if [ $INSTALL_STATUS -eq 0 ]; then
-    echo "Gem installation successful"
+# Wait a few seconds to ensure the API is fully responsive
+sleep 5 
+
+# Upload via OpenC3 REST API using curl
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST -F "file=@openc3-cosmos-nos3-${BUILD_VERSION}.gem" http://localhost:2900/openc3-api/plugins)
+
+if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 201 ] || [ "$HTTP_STATUS" -eq 302 ]; then
+    echo "-> Auto-upload successful! (HTTP $HTTP_STATUS) The plugin is now active."
+    echo "-> View your scripts at: http://localhost:2900/tools/script-runner"
 else
-    echo "Gem installation failed with exit code: $INSTALL_STATUS"
-    exit 1
+    echo "-> Auto-upload failed or API not ready (HTTP $HTTP_STATUS)."
+    echo "-> You can manually upload via the Web Interface:"
+    echo "   1. Go to http://localhost:2900/tools/admin"
+    echo "   2. Click the 'Plugins' tab and upload:"
+    echo "      $(pwd)/openc3-cosmos-nos3-${BUILD_VERSION}.gem"
 fi
-echo ""
-
-
-echo "OpenC3 build script complete."
-echo "Note that while this script is complete, OpenC3 is likely still be processing behind the scenes!"
-sleep 15
-echo "Done sleeping, but check cpu use prior to proceeding!"
+echo "================================================================="
 echo ""
