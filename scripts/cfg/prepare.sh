@@ -25,7 +25,8 @@ echo ""
 
 echo "Prepare 42..."
 cd $USER_NOS3_DIR
-git clone https://github.com/nasa-itc/42.git --depth 1 -b V20260401
+# git clone https://github.com/nasa-itc/42.git --depth 1 -b V20260401 #change to tag once ready for release
+git clone https://github.com/nasa-itc/42.git --depth 1 -b nos3-dev
 cd $USER_NOS3_DIR/42
 $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -w $USER_NOS3_DIR/42 --name "nos3_42_build" $DBOX make
 echo ""
