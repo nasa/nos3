@@ -78,7 +78,7 @@ cd openc3-cosmos-nos3
 echo "Populating plugin with Targets, Scripts, and Libraries..."
 
 mkdir -p targets
-mkdir -p scripts
+mkdir -p scripts      # <-- Changed back to scripts
 mkdir -p lib
 
 # 1. Grab base GSW libraries and scripts if they exist
@@ -96,33 +96,29 @@ do
     
     echo "Processing target: $target_name"
     
-    # Copy the whole target folder into the targets/ directory
     cp -r "$target_dir" targets/
     targets="$targets $target_name"
 
-    # Move procedures (Python/Ruby tests) into the OpenC3 scripts/ folder 
+    # Move procedures into the OpenC3 scripts/ folder 
     if [ -d "$target_dir/procedures" ]; then
         mkdir -p "scripts/$target_name"
         cp -r "$target_dir/procedures/"* "scripts/$target_name/" 2>/dev/null
         
-        # Prevent OpenC3 from caching the legacy directory structure
+        # Prevent caching legacy structure
         rm -rf "targets/$target_name/procedures"
     fi
 
-    # Move component-specific libraries into the OpenC3 lib/ folder
     if [ -d "$target_dir/lib" ]; then
         cp -r "$target_dir/lib/"* "lib/" 2>/dev/null
-        
-        # Prevent OpenC3 from caching the legacy directory structure
         rm -rf "targets/$target_name/lib"
     fi
 done
 
-# 3. Patch the text dictionaries (Quotes added to prevent bash expansion issues)
+# 3. Patch the text dictionaries
 echo "Patching target dictionaries..."
 for i in $(find targets/ -name '*.txt')
 do 
-    sed -i -e 's/<%= CosmosCfsConfig::PROCESSOR_ENDIAN %>/LITTLE_ENDIAN/; s/<%=CF_INCOMING_PDU_MID%>/0x1800/; s/<%=CF_SPACE_TO_GND_PDU_MID%>/0x0800/;' "$i"
+    sed -i -e 's/<%= *CosmosCfsConfig::PROCESSOR_ENDIAN *%>/LITTLE_ENDIAN/g; s/<%= *CF_INCOMING_PDU_MID *%>/0x1800/g; s/<%= *CF_SPACE_TO_GND_PDU_MID *%>/0x0800/g;' "$i"
 done
 
 # ==============================================================================
@@ -144,7 +140,7 @@ do
 done
 
 echo "" >> plugin.txt
-echo "INTERFACE DEBUG udp_interface.rb nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE DEBUG UdpInterface nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
@@ -155,7 +151,7 @@ done
 echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
-echo "INTERFACE RADIO udp_interface.rb cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE RADIO UdpInterface cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets
 do
     if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
@@ -165,7 +161,7 @@ do
 done
 echo "" >> plugin.txt
 
-echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb truth42sim 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE SIM_42_TRUTH_INT UdpInterface truth42sim 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
 echo "  MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
 echo "" >> plugin.txt
@@ -177,6 +173,10 @@ chmod -R a+rX .
 # ==============================================================================
 # BUILD AND DEPLOY
 # ==============================================================================
+# Ensure the scripts folder is actually packaged into the Ruby gem
+echo "Patching gemspec to include scripts folder..."
+sed -i 's/targets/targets,scripts/g' *.gemspec
+
 echo "Build plugin..."
 $OPENC3_CLI rake build VERSION=$BUILD_VERSION
 if [ ! -f "openc3-cosmos-nos3-${BUILD_VERSION}.gem" ]; then
@@ -185,9 +185,4 @@ if [ ! -f "openc3-cosmos-nos3-${BUILD_VERSION}.gem" ]; then
     echo ""
     exit 1
 fi
-echo ""
-
-echo "================================================================="
-echo " SUCCESS! Plugin gem built: openc3-cosmos-nos3-${BUILD_VERSION}.gem"
-echo "================================================================="
 echo ""

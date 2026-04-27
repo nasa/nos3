@@ -1,45 +1,41 @@
 #!/bin/bash -i
 #
 # Convenience script for NOS3 development
-# Cleans up local gem files and removes the plugin from OpenC3
+# Cleans up local gem files, removes the plugin from OpenC3, and wipes database volumes
 #
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/../env.sh
+export GSW="openc3-openc3-operator-1"
 
 echo "================================================================="
 echo " Cleaning OpenC3 NOS3 Plugin Environment..."
 echo "================================================================="
 
-# 1. API Cleanup: Query OpenC3 for installed nos3 plugins and delete them
-echo "-> Querying running OpenC3 instance for installed NOS3 plugins..."
-
-# Fetch the list of plugins, extract the names matching our plugin, and get unique entries
-PLUGINS=$(curl -s http://localhost:2900/openc3-api/plugins | grep -o '"name":"openc3-cosmos-nos3[^"]*"' | cut -d'"' -f4 | sort -u)
-
-if [ -z "$PLUGINS" ]; then
-    echo "-> No NOS3 plugins currently found in the OpenC3 API (or OpenC3 is not running)."
-else
-    for PLUGIN in $PLUGINS; do
-        echo "-> Deleting plugin $PLUGIN from OpenC3 API..."
-        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE "http://localhost:2900/openc3-api/plugins/$PLUGIN")
-        echo "   (HTTP Status: $HTTP_STATUS)"
-    done
+echo "-> Stopping OpenC3 containers and wiping persistent volumes..."
+# 1. Graceful compose teardown (removes containers, networks, and volumes)
+if [ -f "$OPENC3_DIR/compose.yaml" ]; then
+    docker compose -f "$OPENC3_DIR/compose.yaml" down -v 2>/dev/null
 fi
 
-# 2. Local File Cleanup
+# 2. Aggressive fallback wipe (just in case 'compose down' missed anything)
+# This stops remaining openc3 containers, removes them, and forcibly deletes the volumes
+docker stop $(docker ps -q -f name=openc3) 2>/dev/null
+docker rm $(docker ps -aq -f name=openc3) 2>/dev/null
+docker volume ls -q | grep "openc3" | xargs -r docker volume rm 2>/dev/null
+
+echo "-> Removing local gem files..."
 if [ -d "$OPENC3_DIR/openc3-cosmos-nos3" ]; then
-    echo "-> Removing local gem files..."
     cd "$OPENC3_DIR/openc3-cosmos-nos3"
-    rm -f openc3-cosmos-nos3-1.0.*.gem 2>/dev/null
+    rm -f openc3-cosmos-nos3-*.gem 2>/dev/null
     cd ..
 fi
 
 echo "-> Wiping generated build directories..."
-cd "$OPENC3_DIR"
-rm -rf build openc3-cosmos-nos3
+cd "$OPENC3_DIR" 2>/dev/null
+rm -rf build openc3-cosmos-nos3 2>/dev/null
 
 echo "================================================================="
-echo " Cleanup complete! You are ready for a fresh build."
+echo " Cleanup complete! All OpenC3 databases are wiped for a fresh build."
 echo "================================================================="
 echo ""
