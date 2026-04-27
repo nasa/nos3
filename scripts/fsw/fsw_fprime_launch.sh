@@ -133,6 +133,8 @@ do
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"_cryptolib_gsw"  --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
 
+    sleep 5 #sleeping to give time for containers to intialize for fprime to connect successfully
+
     echo $SC_NUM " - Flight Software..."
     # cd $FSW_DIR
     gnome-terminal --window-with-profile=KeepOpen --title="FPrime" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-fprime" --network=$SC_NETNAME -h nos-fsw -w $BASE_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=105 --cap-add=sys_nice $DBOX $SCRIPT_DIR/fsw/start_fprime.sh
@@ -153,7 +155,7 @@ done
 echo ""
 
     
-sleep 1
+sleep 3
 
 urlIP=$(docker container inspect sc01-fprime | grep -i IPAddress | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
 
@@ -164,5 +166,7 @@ if [ $? -eq 1 ]
 then
     firefox ${urlIP}:5000 & 
 fi
+
+docker exec sc01-fprime sh -c "sleep 15 && cd fsw/fprime/fprime-nos3 && fprime-cli command-send deployment.cmdSeq.CS_RUN --arguments Sequences/nos3test.bin NO_BLOCK"
 
 echo "Docker launch script completed!"
