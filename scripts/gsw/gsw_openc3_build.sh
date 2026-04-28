@@ -99,17 +99,23 @@ do
     cp -r "$target_dir" targets/
     targets="$targets $target_name"
 
-    # Move procedures into the OpenC3 scripts/ folder 
+    # Inside your gsw_build.sh PLUGIN POPULATION loop:
     if [ -d "$target_dir/procedures" ]; then
-        mkdir -p "scripts/$target_name"
-        cp -r "$target_dir/procedures/"* "scripts/$target_name/" 2>/dev/null
-        
-        # Prevent caching legacy structure
+        mkdir -p "targets/$target_name/scripts"
+        cp -r "$target_dir/procedures/"* "targets/$target_name/scripts/" 2>/dev/null
         rm -rf "targets/$target_name/procedures"
     fi
 
+    # Move component-specific libraries into the OpenC3 lib/ folder
     if [ -d "$target_dir/lib" ]; then
+        # 1. Copy to the global lib/ folder so target.txt REQUIRE statements pass validation
         cp -r "$target_dir/lib/"* "lib/" 2>/dev/null
+        
+        # 2. ALSO copy to the scripts/ folder so you can see them in the Script Runner GUI
+        mkdir -p "targets/$target_name/scripts"
+        cp -r "$target_dir/lib/"* "targets/$target_name/scripts/" 2>/dev/null
+        
+        # Prevent OpenC3 from packaging the legacy directory structure
         rm -rf "targets/$target_name/lib"
     fi
 done
@@ -119,6 +125,23 @@ echo "Patching target dictionaries..."
 for i in $(find targets/ -name '*.txt')
 do 
     sed -i -e 's/<%= *CosmosCfsConfig::PROCESSOR_ENDIAN *%>/LITTLE_ENDIAN/g; s/<%= *CF_INCOMING_PDU_MID *%>/0x1800/g; s/<%= *CF_SPACE_TO_GND_PDU_MID *%>/0x0800/g;' "$i"
+done
+
+# 4. Patch Python imports and create packages
+echo "Patching Python script imports..."
+# Create __init__.py files so Python recognizes the directories as importable packages
+touch lib/__init__.py 2>/dev/null
+for target_dir in targets/*; do
+    if [ -d "$target_dir/scripts" ]; then
+        touch "$target_dir/scripts/__init__.py" 2>/dev/null
+        
+        # Inject sys.path.append into every python file so it can find 'sample_lib' automatically
+        for pyfile in "$target_dir/scripts/"*.py; do
+            if [ -f "$pyfile" ]; then
+                sed -i '1i import sys, os\nsys.path.append(os.path.dirname(__file__))\nsys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "lib")))' "$pyfile"
+            fi
+        done
+    fi
 done
 
 # ==============================================================================
@@ -173,9 +196,11 @@ chmod -R a+rX .
 # ==============================================================================
 # BUILD AND DEPLOY
 # ==============================================================================
-# Ensure the scripts folder is actually packaged into the Ruby gem
-echo "Patching gemspec to include scripts folder..."
-sed -i 's/targets/targets,scripts/g' *.gemspec
+echo "Patching gemspec to forcefully include all files..."
+
+# This entirely replaces the spec.files definition to recursively grab all files, 
+# ensuring your 'procedures' and 'scripts' folders are packed into the gem.
+sed -i 's/spec.files.*=.*/spec.files = Dir.glob("**\/*").reject { |f| File.directory?(f) }/g' *.gemspec
 
 echo "Build plugin..."
 $OPENC3_CLI rake build VERSION=$BUILD_VERSION
