@@ -88,12 +88,20 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
-    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs
+    # echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
+    # $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs
+    # echo ""
+
+    # echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-2}" " to spacecraft network..."
+    # $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-2}" --alias yamcs --alias active-gs2
+    # echo ""
+
+    echo $SC_NUM " - Connect GSW cosmos-openc3-operator-1 to spacecraft network..."
+    $DNETWORK connect  $SC_NETNAME cosmos-openc3-operator-1 --alias cosmos --alias active-gs
     echo ""
 
-    echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-2}" " to spacecraft network..."
-    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-2}" --alias yamcs --alias active-gs2
+    echo $SC_NUM " - Connect GSW cosmos-openc3-operator-2 to spacecraft network..."
+    $DNETWORK connect  $SC_NETNAME cosmos-openc3-operator-2 --alias yamcs --alias active-gs2
     echo ""
 
     echo $SC_NUM " - 42..."
@@ -148,8 +156,12 @@ do
     echo ""
 
     echo $SC_NUM " - CryptoLib..."
-    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    # gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
     echo ""
+
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -e "GSWAlias=cosmos" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW2" -- $DFLAGS -e "GSWAlias=yamcs" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw2"  -h cryptolib2 --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+
 done
 
 echo "NOS Time Driver..."
