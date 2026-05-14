@@ -1,66 +1,131 @@
 ---
 version: '3'
 
-dotenv:
-  - ../../../targets/docker/.env
-
-#  kind delete cluster --name ${K8S_CLUSTER} || true
-#  kind create cluster --name ${K8S_CLUSTER} || true
+# This Taskfile is included from the main deployments/Taskfile.yaml with prefix 'k8s:'
+# All tasks here become k8s:<taskname> (e.g., k8s:up, k8s:down, k8s:status)
+# Paths are relative to deployments/ (the include sets dir: .)
 
 env:
   KIND_EXPERIMENTAL_PROVIDER: '{{.KIND_EXPERIMENTAL_PROVIDER | default "docker"}}'
 
 vars:
-  TARGETS_DIR: ../../targets
-  SERVICES_DIR: ../../services
-  SCRIPTS_DIR: ../../scripts
+  # Inherited from parent Taskfile via includes, with defaults for standalone use
+  PROJECT: '{{.PROJECT | default "nos3"}}'
+  FLEET: '{{.FLEET | default "nos3"}}'
+  MISSION: '{{.MISSION | default "m01"}}'
+  SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
 
-  CONTAINER_DIR: '{{.TARGETS_DIR}}/docker/'
+  PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+  COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
 
-  PROJECT: 'nos3'
-  MISSION: 'm01'
-  SPACECRAFT: 'sc01'
-  SC_ENVIRO: 'sim'
-  COMPONENT: 'fortytwo'
+  COMPOSE_FILE: '{{.COMPOSE_FILE | default "./compose.yaml"}}'
+  ENVIRO_FILE: '{{.ENVIRO_FILE | default "./.env"}}'
+  ENVIRO_SCRIPT: '{{.ENVIRO_SCRIPT | default "./scripts/env.sh"}}'
+  SERVICES_DIR: '{{.SERVICES_DIR | default "./services"}}'
+  SCRIPTS_DIR: '{{.SCRIPTS_DIR | default "./scripts"}}'
+  BUILD_DIR: '{{.BUILD_DIR | default "./build"}}'
 
-  ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
-  ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
+  CONTAINER_BIN: '{{.CONTAINER_BIN | default "docker"}}'
+  HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
+  HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+  NO_PROXY: '{{.NO_PROXY | default ""}}'
 
-  DEFAULT_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT | default "8090"}}'
+  OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT | default "9000"}}'
+  FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT | default "30090"}}'
 
-  APP_LABEL: '{{.DEFAULT_NAMESPACE}}-{{.COMPONENT}}'
+  NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
 
-  # Context defaults - support both Docker Desktop and Podman
+  # ANSI color codes
+  GREEN: '\033[0;32m'
+  YELLOW: '\033[0;33m'
+  BLUE: '\033[0;34m'
+  RESET: '\033[0m'
+
+  # Kubernetes configuration
   K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
   K8S_CLUSTER: '{{.K8S_CLUSTER | default "docker-desktop"}}'
   K8S_USER: '{{.K8S_USER | default "docker-desktop"}}'
+  K8S_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}'
 
-  # KIND provider - set to 'podman' to use Podman runtime with KIND
+  K8S_COMPONENT: '{{.K8S_COMPONENT | default "fortytwo"}}'
+  K8S_APP_LABEL: '{{.PROJECT_NAME}}-{{.K8S_COMPONENT}}'
+  K8S_CONFIGMAP_NAME: '{{.K8S_APP_LABEL}}'
+  K8S_REPLICAS: '{{.K8S_REPLICAS | default "1"}}'
+
+  K8S_PORT_FORWARD_VNC: '{{.K8S_PORT_FORWARD_VNC | default "8080"}}'
+  K8S_KOMPOSE_OUTPUT: '{{.K8S_KOMPOSE_OUTPUT | default "./targets/kubernetes/kompose/"}}'
+  K8S_KUSTOMIZE_DIR: '{{.K8S_KUSTOMIZE_DIR | default "./targets/kubernetes"}}'
+  K8S_ENV_FILE: '{{.K8S_ENV_FILE | default "./targets/kubernetes/env/k8s.env"}}'
+
+  K8S_BUILD_PATH: '{{.BUILD_DIR}}/k8s/contexts/{{.K8S_CONTEXT}}/clusters/{{.K8S_CLUSTER}}/namespaces/{{.K8S_NAMESPACE}}/applications/{{.K8S_APP_LABEL}}'
+
+  # KIND provider - set to 'podman' for Podman runtime with KIND
   KIND_EXPERIMENTAL_PROVIDER: '{{.KIND_EXPERIMENTAL_PROVIDER | default "docker"}}'
-
-  K8S_APP_LABEL: '{{.APP_LABEL}}'
-  K8S_NAMESPACE: '{{.K8S_NAMESPACE | default .DEFAULT_NAMESPACE}}'
-
-  K8S_KUSTOMIZE_DIR: '{{.K8S_KUSTOMIZE_DIR | default "."}}'
-  K8S_PORT_FORWARD_VNC: '8080'
-  K8S_DEPLOYMENT_NAME: 'nos3-{{.COMPONENT}}'
 
 tasks:
   default:
-    desc: Shows available tasks
+    desc: Shows available k8s tasks
     cmds:
       - task --list-all
     silent: true
 
-  detect-runtime:
-    desc: Detect which container runtime is being used (docker or podman)
+# ─────────────────────────────────────────────────
+# Orchestration (mirrors compose up/down workflow)
+# ─────────────────────────────────────────────────
+
+  up:
+    desc: Bring up nos3 on Kubernetes (k8s equivalent of 'task up')
+    preconditions:
+      - sh: test -f {{.ENVIRO_FILE}}
+        msg: ".env not found at {{.ENVIRO_FILE}}. Run 'task env:generate' first."
+    cmds:
+      - task: create:namespace
+      - task: generate:all
+      - task: apply:kustomization
+      - task: status
+      - task: message
+    silent: true
+
+  down:
+    desc: Bring down nos3 from Kubernetes (k8s equivalent of 'task down')
+    cmds:
+      - task: delete:kustomization
+    silent: true
+
+  message:
+    desc: Display Kubernetes service access info
+    cmds:
+      - 'printf "\n{{.GREEN}}Kubernetes{{.RESET}} context: {{.YELLOW}}{{.K8S_CONTEXT}}{{.RESET}} | namespace: {{.YELLOW}}{{.K8S_NAMESPACE}}{{.RESET}}\n"'
+      - 'printf "\n{{.GREEN}}FortyTwo VNC{{.RESET}}:  {{.YELLOW}}http://localhost:{{.K8S_PORT_FORWARD_VNC}}{{.RESET}} (via port-forward)\n"'
+      - 'printf "{{.GREEN}}Yamcs{{.RESET}}:         {{.YELLOW}}http://localhost:{{.YAMCS_HOST_PORT}}{{.RESET}} (via port-forward)\n"'
+      - 'printf "{{.GREEN}}OpenMCT{{.RESET}}:       {{.YELLOW}}http://localhost:{{.OPENMCT_HOST_PORT}}{{.RESET}} (via port-forward)\n"'
+      - 'printf "\nTo port-forward:  {{.GREEN}}task k8s:port-forward{{.RESET}}\n"'
+      - 'printf "To view status:   {{.GREEN}}task k8s:status{{.RESET}}\n"'
+      - 'printf "To tear down:     {{.GREEN}}task k8s:down{{.RESET}}\n\n"'
+    silent: true
+
+  redeploy:
+    desc: Delete and recreate all resources (full redeploy)
+    cmds:
+      - task: down
+      - sleep 3
+      - task: up
+      - task: get:pods
+
+# ─────────────────────────────────────────────────
+# Context & Runtime Management
+# ─────────────────────────────────────────────────
+
+  detect:runtime:
+    desc: Detect container runtime (docker or podman)
     cmds:
       - |
         CURRENT_CONTEXT=$(kubectl config current-context 2>/dev/null || echo "none")
         echo "Current kubectl context: $CURRENT_CONTEXT"
         echo "KIND provider: {{.KIND_EXPERIMENTAL_PROVIDER}}"
         echo ""
-
         if echo "$CURRENT_CONTEXT" | grep -qi "podman"; then
           echo "Detected runtime: Podman"
           echo "To use Podman with all tasks, set: KIND_EXPERIMENTAL_PROVIDER=podman"
@@ -75,50 +140,39 @@ tasks:
         fi
         echo ""
         echo "Current KIND_EXPERIMENTAL_PROVIDER: {{.KIND_EXPERIMENTAL_PROVIDER}}"
-    silent: false
 
-  check-podman:
+  check:podman:
     desc: Check if Podman Kubernetes is available and running
     cmds:
       - |
         echo "Checking Podman Kubernetes setup..."
-
-        # Check if podman machine exists
         if ! podman machine list 2>/dev/null | grep -q "Currently running"; then
           echo "Warning: Podman machine is not running"
           echo "Start it with: podman machine start"
           exit 1
         fi
-
         echo "Podman machine is running"
-
-        # Check if podman-desktop context exists
         if ! kubectl config get-contexts podman-desktop &>/dev/null; then
           echo "Warning: podman-desktop context not found"
           echo "Please ensure Kubernetes is enabled in Podman Desktop"
           echo "Or manually create a context pointing to your Podman cluster"
           exit 1
         fi
-
         echo "Podman Kubernetes context is available"
-    silent: false
 
-  get-contexts:
+  get:contexts:
     desc: List all available Kubernetes contexts
     cmds:
-      - |
-        kubectl config get-contexts
-    silent: false
+      - kubectl config get-contexts
 
-  get-current-context:
+  get:current-context:
     desc: Show the current Kubernetes context
     cmds:
       - |
         echo "Current context:"
         kubectl config current-context
-    silent: false
 
-  set-context:
+  set:context:
     desc: Set the current Kubernetes context (use K8S_CONTEXT variable)
     cmds:
       - |
@@ -131,9 +185,8 @@ tasks:
         echo "  - minikube (Minikube)"
         echo ""
         echo "Verify cluster: kubectl cluster-info"
-    silent: false
 
-  create-context:
+  create:context:
     desc: Create a new Kubernetes context
     cmds:
       - |
@@ -145,11 +198,13 @@ tasks:
         echo "  Cluster: {{.K8S_CLUSTER}}"
         echo "  User: {{.K8S_USER}}"
         echo "  Namespace: {{.K8S_NAMESPACE}}"
-      - |
-        echo "To use this context, run: task set-context K8S_CONTEXT={{.K8S_CONTEXT}}"
-    silent: false
+      - 'echo "To use this context, run: task k8s:set:context K8S_CONTEXT={{.K8S_CONTEXT}}"'
 
-  create-user-certs:
+# ─────────────────────────────────────────────────
+# User Management
+# ─────────────────────────────────────────────────
+
+  create:user:certs:
     desc: Generate client certificates for a new user
     vars:
       NEW_USER: '{{.NEW_USER | default "myuser"}}'
@@ -173,11 +228,10 @@ tasks:
         echo ""
         echo "Next steps:"
         echo "  1. Get the CSR signed by the cluster CA"
-        echo "  2. Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
-    silent: false
+        echo "  2. Run: task k8s:create:user:kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
 
-  create-user-k8s-csr:
-    desc: Create and approve Kubernetes CertificateSigningRequest for user (may not work on Docker Desktop)
+  create:user:k8s-csr:
+    desc: Create and approve Kubernetes CertificateSigningRequest (may not work on Docker Desktop)
     vars:
       NEW_USER: '{{.NEW_USER | default "myuser"}}'
       CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
@@ -207,10 +261,9 @@ tasks:
         echo "Certificate signed and saved to {{.CERT_DIR}}/{{.NEW_USER}}.crt"
         echo ""
         echo "Next step:"
-        echo "  Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
-    silent: false
+        echo "  Run: task k8s:create:user:kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
 
-  create-user-manual-sign:
+  create:user:manual-sign:
     desc: Sign user certificate using cluster CA directly (for Docker Desktop)
     vars:
       NEW_USER: '{{.NEW_USER | default "myuser"}}'
@@ -250,10 +303,9 @@ tasks:
         echo "Certificate signed and saved to {{.CERT_DIR}}/{{.NEW_USER}}.crt"
         echo ""
         echo "Next step:"
-        echo "  Run: task create-user-kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
-    silent: false
+        echo "  Run: task k8s:create:user:kubeconfig NEW_USER={{.NEW_USER}} CERT_DIR={{.CERT_DIR}}"
 
-  create-user-kubeconfig:
+  create:user:kubeconfig:
     desc: Add user credentials to kubeconfig
     vars:
       NEW_USER: '{{.NEW_USER | default "myuser"}}'
@@ -269,30 +321,29 @@ tasks:
         echo "User {{.NEW_USER}} added to kubeconfig"
         echo ""
         echo "Create a context for this user:"
-        echo "  task create-context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
+        echo "  task k8s:create:context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
         echo ""
         echo "Or use with existing context:"
         echo "  kubectl config set-context docker-desktop --user={{.NEW_USER}}"
-    silent: false
 
-  create-user:
-    desc: Complete workflow to create a new user (generates certs, signs via K8s CSR, adds to kubeconfig)
+  create:user:
+    desc: Complete user creation workflow (certs, K8s CSR, kubeconfig)
     vars:
       NEW_USER: '{{.NEW_USER | default "myuser"}}'
       CERT_DIR: '{{.CERT_DIR | default "/tmp/k8s-certs"}}'
       ORG: '{{.ORG | default "developers"}}'
     cmds:
-      - task: create-user-certs
+      - task: create:user:certs
         vars:
           NEW_USER: '{{.NEW_USER}}'
           CERT_DIR: '{{.CERT_DIR}}'
           ORG: '{{.ORG}}'
-      - task: create-user-k8s-csr
+      - task: create:user:k8s-csr
         vars:
           NEW_USER: '{{.NEW_USER}}'
           CERT_DIR: '{{.CERT_DIR}}'
           ORG: '{{.ORG}}'
-      - task: create-user-kubeconfig
+      - task: create:user:kubeconfig
         vars:
           NEW_USER: '{{.NEW_USER}}'
           CERT_DIR: '{{.CERT_DIR}}'
@@ -310,18 +361,16 @@ tasks:
         echo "  kubectl create clusterrolebinding {{.NEW_USER}}-view --clusterrole=view --user={{.NEW_USER}}"
         echo ""
         echo "To create a context for this user:"
-        echo "  task create-context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
-    silent: false
+        echo "  task k8s:create:context K8S_USER={{.NEW_USER}} K8S_CONTEXT={{.NEW_USER}}-context"
 
-  list-users:
+  list:users:
     desc: List all users in kubeconfig
     cmds:
       - |
         echo "Users in kubeconfig:"
         kubectl config view -o jsonpath='{.users[*].name}' | tr ' ' '\n'
-    silent: false
 
-  delete-user:
+  delete:user:
     desc: Remove user from kubeconfig
     vars:
       USER_TO_DELETE: '{{.USER_TO_DELETE | default "myuser"}}'
@@ -330,182 +379,360 @@ tasks:
         kubectl config unset users.{{.USER_TO_DELETE}}
         echo "User {{.USER_TO_DELETE}} removed from kubeconfig"
       - rm -rf /tmp/k8s-certs/{{.USER_TO_DELETE}}*
-    silent: false
 
-  create-namespace:
+# ─────────────────────────────────────────────────
+# Namespace Management
+# ─────────────────────────────────────────────────
+
+  create:namespace:
     desc: Create the Kubernetes namespace
     cmds:
       - |
         kubectl create namespace {{.K8S_NAMESPACE}} \
           --context {{.K8S_CONTEXT}} || \
-          echo "Namespace {{.K8S_NAMESPACE}} already exists"
-    silent: false
+        echo "Namespace {{.K8S_NAMESPACE}} in context {{.K8S_CONTEXT}} already exists"
+      - echo "Namespace [{{.K8S_NAMESPACE}}] in context [{{.K8S_CONTEXT}}]"
+    silent: true
 
-  create-configmap-from-env:
-    desc: Create a ConfigMap from the .env file
-    deps:
-      - create-namespace
-    vars:
-      CONFIGMAP_NAME: '{{.CONFIGMAP_NAME | default "env-configmap"}}'
-    cmds:
-      - |
-        echo "Creating ConfigMap {{.CONFIGMAP_NAME}} from {{.ENVIRO_FILE}}"
-        kubectl create configmap {{.CONFIGMAP_NAME}} \
-          --from-env-file={{.ENVIRO_FILE}} \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          --dry-run=client -o yaml > {{.CONFIGMAP_NAME}}.yaml
-      - echo "ConfigMap {{.CONFIGMAP_NAME}} created/updated successfully"
-    silent: false
-
-  apply-configmaps:
-    desc: Apply configmaps to the namespace
-    deps:
-      - create-namespace
-    cmds:
-      - |
-        kubectl apply -f configmap.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}}
-      - echo "ConfigMaps applied successfully"
-    silent: false
-
-  apply-service:
-    desc: Apply service to the namespace
-    deps:
-      - create-namespace
-    cmds:
-      - |
-        kubectl apply -f service.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}}
-      - echo "Service applied successfully"
-    silent: false
-
-  apply-kustomize:
-    desc: Apply kustomize to the namespace
-    deps:
-      - create-namespace
-      # - apply-configmaps
-    cmds:
-      - |
-        kubectl apply -k . \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}}
-      - echo "Kustomization applied successfully"
-    silent: false
-
-  apply-deployment:
-    desc: Apply deployment to the namespace
-    deps:
-      - create-namespace
-      - apply-configmaps
-    cmds:
-      - |
-        kubectl apply -f deployment.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}}
-      - echo "Deployment applied successfully"
-    silent: false
-
-  apply-all:
-    desc: Apply all Kubernetes resources (recommended)
-    deps:
-      - create-namespace
-    cmds:
-      - |
-        kubectl apply -k {{.K8S_KUSTOMIZE_DIR}} \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}}
-      - task: port-forward
-      - echo "All resources applied successfully via kustomize"
-    silent: false
-
-  delete-deployment:
-    desc: Delete the deployment
-    cmds:
-      - |
-        kubectl delete -f deployment.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} || true
-      - echo "Deployment deleted"
-    silent: false
-
-  delete-namespace:
-    desc: Delete Namespace
+  delete:namespace:
+    desc: Delete the Kubernetes namespace
     cmds:
       - |
         kubectl delete namespace {{.K8S_NAMESPACE}} \
           --context {{.K8S_CONTEXT}} || true
-      - echo "Namespace deleted"
-    silent: false
+      - echo "Deleted namespace {{.K8S_NAMESPACE}}"
+    silent: true
 
-  delete-service:
-    desc: Delete the service
+# ─────────────────────────────────────────────────
+# Kompose Conversion (compose.yaml → k8s manifests)
+# ─────────────────────────────────────────────────
+
+  convert:kompose:
+    desc: Convert compose.yaml to Kubernetes manifests using kompose
+    preconditions:
+      - sh: test -f {{.ENVIRO_FILE}}
+        msg: ".env not found at {{.ENVIRO_FILE}}. Run 'task env:generate' first."
     cmds:
       - |
-        kubectl delete -f service.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} || true
-      - echo "Service deleted"
-    silent: false
+        source {{.ENVIRO_FILE}} && \
+          mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
+            kompose convert -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
+    silent: true
 
-  delete-configmaps:
-    desc: Delete the configmaps
+  convert:kompose:helm:
+    desc: Convert compose.yaml to Helm chart using kompose
+    preconditions:
+      - sh: test -f {{.ENVIRO_FILE}}
+        msg: ".env not found at {{.ENVIRO_FILE}}. Run 'task env:generate' first."
     cmds:
       - |
-        kubectl delete -f configmap.yaml \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} || true
-      - echo "ConfigMaps deleted"
-    silent: false
+        source {{.ENVIRO_FILE}} && \
+          mkdir -p {{.K8S_KOMPOSE_OUTPUT}} && \
+            kompose convert -c -f {{.COMPOSE_FILE}} -o {{.K8S_KOMPOSE_OUTPUT}}
+    silent: true
 
-  delete-all:
-    desc: Delete all resources
+# ─────────────────────────────────────────────────
+# Manifest Generation
+# ─────────────────────────────────────────────────
+
+  generate:all:
+    desc: Generate all Kubernetes manifests for K8S_COMPONENT
     deps:
-      - delete-deployment
-      - delete-service
-      - delete-configmaps
-      - delete-namespace
-    cmds:
-      - |
-        kubectl delete -k {{.K8S_KUSTOMIZE_DIR}} \
-          --context {{.K8S_CONTEXT}} || true
-      - echo "All resources deleted via kustomize"
-    silent: false
+      - generate:path
+      - generate:configmaps:all
+      - generate:deployment
+      - generate:service
+      - generate:ingress
+      - generate:kustomization
+    silent: true
 
-  restart-deployment:
-    desc: Restart the deployment (rollout restart)
+  generate:path:
+    desc: Create build output directory
+    cmds:
+      - mkdir -p {{.K8S_BUILD_PATH}}
+    silent: true
+
+  generate:configmaps:all:
+    desc: Generate all ConfigMap manifests
+    deps:
+      - generate:configmap:env
+      - generate:configmap:volumes
+      - generate:configmap:args
+    silent: true
+
+  generate:configmap:env:
+    desc: Generate environment ConfigMap from .env
+    deps:
+      - generate:path
+    preconditions:
+      - sh: test -f {{.ENVIRO_FILE}}
+        msg: ".env not found at {{.ENVIRO_FILE}}. Run 'task env:generate' first."
     cmds:
       - |
-        kubectl rollout restart deployment/nos3-fortytwo \
+        source {{.ENVIRO_FILE}} && \
+          kubectl create configmap \
+            {{.K8S_CONFIGMAP_NAME}} \
+            --from-env-file={{.ENVIRO_FILE}} --dry-run=client -o yaml > {{.K8S_BUILD_PATH}}/configmap-env.yaml
+    silent: true
+
+  generate:configmap:volumes:
+    desc: Generate volumes ConfigMap (entrypoint scripts)
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          kubectl create configmap {{.K8S_CONFIGMAP_NAME}}-volumes \
+            --from-file={{.SERVICES_DIR}}/fortytwo/entrypoint.sh \
+            --dry-run=client \
+            --output yaml > {{.K8S_BUILD_PATH}}/configmap-volumes.yaml
+    silent: true
+
+  generate:configmap:args:
+    desc: Generate args ConfigMap (placeholder)
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          echo "" > {{.K8S_BUILD_PATH}}/configmap-args.yaml
+    silent: true
+
+  generate:service:
+    desc: Generate Service manifest
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cat <<EOF > {{.K8S_BUILD_PATH}}/service.yaml
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: {{.K8S_APP_LABEL}}
+
+        spec:
+          selector:
+            app: {{.K8S_APP_LABEL}}
+          ports:
+            - name: x-vnc
+              protocol: TCP
+              port: 80
+              targetPort: 80
+          type: ClusterIP
+        EOF
+    silent: true
+
+  generate:ingress:
+    desc: Generate Ingress manifest (placeholder)
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          echo "" > {{.K8S_BUILD_PATH}}/ingress.yaml
+    silent: true
+
+  generate:deployment:
+    desc: Generate Deployment manifest
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cat <<EOF > {{.K8S_BUILD_PATH}}/deployment.yaml
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: {{.K8S_APP_LABEL}}
+          namespace: {{.K8S_NAMESPACE}}
+          labels:
+            app: {{.K8S_APP_LABEL}}
+        spec:
+          replicas: {{.K8S_REPLICAS}}
+          selector:
+            matchLabels:
+              app: {{.K8S_APP_LABEL}}
+          template:
+            metadata:
+              labels:
+                app: {{.K8S_APP_LABEL}}
+            spec:
+              containers:
+                - args:
+                    - /entrypoint.sh
+                  env:
+                    - name: COMPONENT_NAME
+                      value: fortytwo
+                    - name: DISPLAY
+                      value: :1
+                  image: ghcr.io/haisamido/nos3-base-fortytwo:dev
+                  workingDir: /42
+                  imagePullPolicy: Always
+                  name: {{.K8S_APP_LABEL}}
+                  ports:
+                    - containerPort: 80
+                      protocol: TCP
+                  resources:
+                    limits:
+                      cpu: "3"
+                      memory: "2048Mi"
+                    requests:
+                      cpu: "1"
+                      memory: "2048Mi"
+                  securityContext:
+                    privileged: true
+                  volumeMounts:
+                    - mountPath: /entrypoint.sh
+                      name: {{.K8S_APP_LABEL}}-volumes
+                      subPath: entrypoint.sh
+              hostname: {{.K8S_APP_LABEL}}
+              restartPolicy: Always
+              volumes:
+                - configMap:
+                    items:
+                      - key: entrypoint.sh
+                        path: entrypoint.sh
+                    name: {{.K8S_APP_LABEL}}-volumes
+                    defaultMode: 0555
+                  name: "{{.K8S_APP_LABEL}}-volumes"
+        EOF
+    silent: true
+
+  generate:kustomization:
+    desc: Generate Kustomization manifest
+    deps:
+      - generate:path
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+        cat <<EOF > {{.K8S_BUILD_PATH}}/kustomization.yaml
+        ---
+        apiVersion: kustomize.config.k8s.io/v1beta1
+        kind: Kustomization
+        resources:
+          - ./configmap-args.yaml
+          - ./configmap-env.yaml
+          - ./configmap-volumes.yaml
+          - ./deployment.yaml
+          - ./service.yaml
+          - ./ingress.yaml
+
+        EOF
+    silent: true
+
+# ─────────────────────────────────────────────────
+# Apply / Deploy
+# ─────────────────────────────────────────────────
+
+  apply:kustomization:
+    desc: Apply kustomization to the namespace
+    deps:
+      - create:namespace
+    cmds:
+      - |
+        kubectl apply -k {{.K8S_BUILD_PATH}} \
+          --context {{.K8S_CONTEXT}} \
+          --namespace {{.K8S_NAMESPACE}}
+      - echo "Applied kustomization from [{{.K8S_BUILD_PATH}}] to namespace [{{.K8S_NAMESPACE}}] in context [{{.K8S_CONTEXT}}]"
+    silent: true
+
+  apply:deployment:
+    desc: Apply kompose-generated manifests to namespace
+    deps:
+      - create:namespace
+    cmds:
+      - |
+        kubectl apply -f {{.K8S_KOMPOSE_OUTPUT}} \
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}}
-      - echo "Deployment restarted"
-    silent: false
+    silent: true
 
-  get-pods:
+  apply:ingress:nginx:
+    desc: Apply ingress-nginx controller
+    cmds:
+      - |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml || true
+    silent: true
+
+# ─────────────────────────────────────────────────
+# Delete / Cleanup
+# ─────────────────────────────────────────────────
+
+  delete:kustomization:
+    desc: Delete kustomization resources and namespace
+    cmds:
+      - |
+        kubectl delete -k {{.K8S_BUILD_PATH}} \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+      - echo "Deleted kustomization for context [{{.K8S_CONTEXT}}] and namespace [{{.K8S_NAMESPACE}}]"
+      - task: delete:namespace
+    silent: true
+
+  delete:deployment:
+    desc: Delete all deployments in namespace
+    cmds:
+      - |
+        kubectl delete --all deployments \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+
+# ─────────────────────────────────────────────────
+# Inspection / Debugging
+# ─────────────────────────────────────────────────
+
+  get:pods:
     desc: Get pods in the namespace
     cmds:
       - |
         kubectl get pods \
           --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}}
-    silent: false
+          --namespace={{.K8S_NAMESPACE}}
 
-  get-all:
+  get:all:
     desc: Get all resources in the namespace
     cmds:
       - |
         kubectl get all \
           --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}}
-    silent: false
+          --namespace={{.K8S_NAMESPACE}}
 
-  describe-pod:
-    desc: Describe the fortytwo pod (useful for debugging)
+  get:configmaps:
+    desc: Get ConfigMaps in the namespace
+    cmds:
+      - |
+        kubectl get configmaps \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} || true
+    silent: true
+
+  get:configmap:
+    desc: Get a specific ConfigMap by K8S_CONFIGMAP_NAME
+    cmds:
+      - |
+        kubectl get configmap \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          {{.K8S_CONFIGMAP_NAME}} -o yaml
+    silent: true
+
+  get:pod-name:
+    desc: Get the pod name for K8S_APP_LABEL
+    cmds:
+      - |
+        POD_NAME=$(kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          -l app={{.K8S_APP_LABEL}} \
+          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+        echo $POD_NAME
+    silent: true
+
+  describe:pod:
+    desc: Describe the pod for K8S_APP_LABEL
     cmds:
       - |
         POD_NAME=$(kubectl get pods \
@@ -516,10 +743,9 @@ tasks:
         kubectl describe pod $POD_NAME \
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}}
-    silent: false
 
   logs:
-    desc: Get logs from the fortytwo pod
+    desc: Get logs from the pod for K8S_APP_LABEL (--follow)
     cmds:
       - |
         POD_NAME=$(kubectl get pods \
@@ -532,9 +758,8 @@ tasks:
           --namespace={{.K8S_NAMESPACE}} \
           --tail=100 \
           --follow
-    silent: false
 
-  logs-previous:
+  logs:previous:
     desc: Get logs from the previous container instance (useful after crash)
     cmds:
       - |
@@ -547,10 +772,9 @@ tasks:
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}} \
           --previous
-    silent: false
 
   exec:
-    desc: Execute a shell in the fortytwo pod
+    desc: Execute a shell in the pod for K8S_APP_LABEL
     cmds:
       - |
         POD_NAME=$(kubectl get pods \
@@ -562,7 +786,48 @@ tasks:
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}} \
           -- /bin/bash
-    silent: false
+
+  status:
+    desc: Show status of all resources in namespace
+    cmds:
+      - 'printf "\n{{.GREEN}}Namespace{{.RESET}} {{.YELLOW}}{{.K8S_NAMESPACE}}{{.RESET}} | Context {{.YELLOW}}{{.K8S_CONTEXT}}{{.RESET}}\n\n"'
+      - echo "=== Pods ==="
+      - kubectl get pods --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} 2>/dev/null || echo "  No pods found"
+      - echo ""
+      - echo "=== Services ==="
+      - kubectl get services --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} 2>/dev/null || echo "  No services found"
+      - echo ""
+      - echo "=== Deployments ==="
+      - kubectl get deployments --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} 2>/dev/null || echo "  No deployments found"
+      - echo ""
+      - echo "=== ConfigMaps ==="
+      - kubectl get configmaps --context {{.K8S_CONTEXT}} --namespace={{.K8S_NAMESPACE}} 2>/dev/null || echo "  No configmaps found"
+    silent: true
+
+  troubleshoot:
+    desc: Run troubleshooting diagnostics
+    cmds:
+      - echo "=== Checking namespace ==="
+      - |
+        kubectl get namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} || echo "Namespace does not exist!"
+      - echo ""
+      - echo "=== Checking pods ==="
+      - |
+        kubectl get pods \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} -o wide || echo "No pods found"
+      - echo ""
+      - echo "=== Checking events (last 20) ==="
+      - |
+        kubectl get events \
+          --context {{.K8S_CONTEXT}} \
+          --namespace={{.K8S_NAMESPACE}} \
+          --sort-by='.lastTimestamp' 2>/dev/null | tail -20 || echo "No events found"
+
+# ─────────────────────────────────────────────────
+# Port Forwarding
+# ─────────────────────────────────────────────────
 
   port-forward:
     desc: Port forward to access services locally
@@ -600,79 +865,36 @@ tasks:
           --context {{.K8S_CONTEXT}} \
           --namespace={{.K8S_NAMESPACE}} \
           {{.K8S_PORT_FORWARD_VNC}}:80
-    silent: false
+    silent: true
 
-  status:
-    desc: Show status of all resources
+  kill:port-forward:
+    desc: Kill all kubectl port-forward processes
     cmds:
-      - echo "Namespace {{.K8S_NAMESPACE}} status:"
-      - echo ""
-      - echo "=== ConfigMaps ==="
-      - |
-        kubectl get configmaps \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}} || echo "No configmaps found"
-      - echo ""
-      - echo "=== Services ==="
-      - |
-        kubectl get services \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          fortytwo || echo "No services found"
-      - echo ""
-      - echo "=== Deployments ==="
-      - |
-        kubectl get deployments \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}} || echo "No deployments found"
-      - echo ""
-      - echo "=== Pods ==="
-      - |
-        kubectl get pods \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}} || echo "No pods found"
-    silent: false
+      - pkill -f 'kubectl port-forward' || true
+    silent: true
 
-  redeploy:
-    desc: Delete and recreate all resources (full redeploy)
-    cmds:
-      - task: delete-all
-      - sleep 3
-      - task: apply-all
-      - task: get-pods
-    silent: false
+# ─────────────────────────────────────────────────
+# Lifecycle
+# ─────────────────────────────────────────────────
 
-  troubleshoot:
-    desc: Run troubleshooting diagnostics
+  restart:deployment:
+    desc: Restart deployment via rollout restart
     cmds:
-      - echo "=== Checking namespace ==="
       - |
-        kubectl get namespace {{.K8S_NAMESPACE}} \
-          --context {{.K8S_CONTEXT}} || echo "Namespace does not exist!"
-      - echo ""
-      - echo "=== Checking configmaps ==="
-      - |
-        kubectl get configmaps nos3-fortytwo-cm0 \
+        kubectl rollout restart deployment/{{.K8S_APP_LABEL}} \
           --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} || echo "ConfigMaps not found!"
-      - echo ""
-      - echo "=== Checking pod events ==="
+          --namespace={{.K8S_NAMESPACE}}
+        echo "Deployment {{.K8S_APP_LABEL}} restarted"
+
+# ─────────────────────────────────────────────────
+# Environment
+# ─────────────────────────────────────────────────
+
+  write:env:
+    desc: Write k8s environment file
+    cmds:
       - |
-        POD_NAME=$(kubectl get pods \
-          --context {{.K8S_CONTEXT}} \
-          --namespace={{.K8S_NAMESPACE}} \
-          -l app={{.K8S_APP_LABEL}} \
-          -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
-        if [ -n "$POD_NAME" ]; then
-          kubectl get events \
-            --context {{.K8S_CONTEXT}} \
-            --namespace={{.K8S_NAMESPACE}} \
-            --field-selector involvedObject.name=$POD_NAME \
-            --sort-by='.lastTimestamp'
-        else
-          echo "No pods found"
-        fi
-    silent: false
+        echo "HTTP_PROXY={{.HTTP_PROXY}}" > {{.K8S_ENV_FILE}}
+        echo "HTTPS_PROXY={{.HTTPS_PROXY}}" >> {{.K8S_ENV_FILE}}
+        echo "NO_PROXY={{.NO_PROXY}}" >> {{.K8S_ENV_FILE}}
+    silent: true
