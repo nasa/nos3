@@ -1,13 +1,5 @@
 #! /usr/bin/env bash
 
-#set -e
-
-config=$(cat ./scripts/nos3.yaml)
-
-PROJECTS=$(echo "$config" | yq ' .projects | select(.) | keys []')
-
-task test PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms3 FORTYTWO_HOST_PORT=30092 YAMCS_HOST_PORT=8092  OPENMCT_HOST_PORT=9002;
-
 task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms1 FORTYTWO_HOST_PORT=30090 YAMCS_HOST_PORT=8090  OPENMCT_HOST_PORT=9000;
   task up
 
@@ -15,20 +7,12 @@ task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms2 FORTYTWO_H
   task up
 
 task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms3 FORTYTWO_HOST_PORT=30092 YAMCS_HOST_PORT=8092  OPENMCT_HOST_PORT=9002;
-
-
-task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms4 FORTYTWO_HOST_PORT=30093 YAMCS_HOST_PORT=8093  OPENMCT_HOST_PORT=9003
   task up
-
-task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms5 FORTYTWO_HOST_PORT=30094 YAMCS_HOST_PORT=8094  OPENMCT_HOST_PORT=9004
-  task up
-
-PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms2 FORTYTWO_HOST_PORT=30091 YAMCS_HOST_PORT=8091  OPENMCT_HOST_PORT=9001 task up
-
-# task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms4 FORTYTWO_HOST_PORT=30093 YAMCS_HOST_PORT=8093  OPENMCT_HOST_PORT=9003
-#   task up
 
 exit 0
+
+config=$(cat ./scripts/nos3.yaml)
+PROJECTS=$(echo "$config" | yq ' .projects | select(.) | keys []')
 
 for PROJECT in "${PROJECTS[@]}"
 do
@@ -64,16 +48,3 @@ do
 done
 
 echo "Environment files generated successfully."
-
-
-# task generate:env PROJECT=nos3 FLEET=nos3 MISSION=m01 SPACECRAFT=sc01 FORTYTWO_HOST_PORT=30090 YAMCS_HOST_PORT=8090  OPENMCT_HOST_PORT=9000 && \
-#  task up
-
-# task generate:env PROJECT=nos3 FLEET=nos3 MISSION=m01 SPACECRAFT=sc02 FORTYTWO_HOST_PORT=30091 YAMCS_HOST_PORT=8091  OPENMCT_HOST_PORT=9001 && \
-#   task up
-
-# task generate:env PROJECT=nos3 FLEET=nos3 MISSION=m01 SPACECRAFT=sc03 FORTYTWO_HOST_PORT=30092 YAMCS_HOST_PORT=8092  OPENMCT_HOST_PORT=9002 && \
-#   task up
-
-# task generate:env PROJECT=ssmo FLEET=ssmo MISSION=m02 SPACECRAFT=sc01 FORTYTWO_HOST_PORT=30093 YAMCS_HOST_PORT=8093  OPENMCT_HOST_PORT=9003 && \
-#   task up

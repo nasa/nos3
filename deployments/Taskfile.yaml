@@ -25,6 +25,12 @@ vars:
   BUILD_DIR: ./build
   ENVIROS_DIR: '{{.BUILD_DIR}}/'
 
+  # ANSI color codes for message formatting
+  GREEN: '\033[0;32m'
+  YELLOW: '\033[0;33m'
+  BLUE: '\033[0;34m'
+  RESET: '\033[0m'
+
   CONTAINER_BIN: docker
   CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
 
@@ -242,9 +248,11 @@ tasks:
           {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --remove-orphans
       - task check-service-ready SERVICE_HOST={{.YAMCS_HOST}} SERVICE_PORT={{.YAMCS_HOST_PORT}}
       - sleep 5
-      - task sidecar
-      - task info-services
-      - task check-docker-ps
+      - task: sidecar
+      - task: info-services
+      - task: check-docker-ps
+      - task: datacount
+      - task: services:message
     silent: true
 
   down:
@@ -367,6 +375,59 @@ tasks:
       - echo
     silent: true
 
+  yamcs:message:
+    desc: Display Yamcs connection info
+    cmds:
+      - 'printf "\n\n{{.GREEN}}Yamcs{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:      {{.YELLOW}}http://localhost:{{.YAMCS_HOST_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}Yamcs{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:      {{.YELLOW}}http://{{.YAMCS_HOST}}:{{.YAMCS_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task yamcs:logs{{.RESET}}\n"'
+    silent: true
+
+  openmct:message:
+    desc: Display OpenMCT connection info
+    cmds:
+      - 'printf "\n{{.GREEN}}OpenMCT{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:    {{.YELLOW}}http://localhost:{{.OPENMCT_HOST_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}OpenMCT{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:    {{.YELLOW}}http://{{.OPENMCT_HOST}}:{{.OPENMCT_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task openmct:logs{{.RESET}}\n"'
+    silent: true
+
+  fortytwo:message:
+    desc: Display FortyTwo (42) connection info
+    cmds:
+      - 'printf "\n{{.GREEN}}FortyTwo{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:   {{.YELLOW}}http://localhost:{{.FORTYTWO_HOST_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}FortyTwo{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:   {{.YELLOW}}http://{{.FORTYTWO_HOST}}:{{.FORTYTWO_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task fortytwo:logs{{.RESET}}\n"'
+    silent: true
+
+  show:invocation:
+    desc: Display reconstructed task invocation
+    cmds:
+      - 'printf "task {{.TASK}} PROJECT={{.PROJECT}} FLEET={{.FLEET}} MISSION={{.MISSION}} SPACECRAFT={{.SPACECRAFT}} FORTYTWO_HOST_PORT={{.FORTYTWO_HOST_PORT}} YAMCS_HOST_PORT={{.YAMCS_HOST_PORT}} OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}\n"'
+    silent: true
+
+  show:vars:
+    desc: Display current variable values
+    cmds:
+      - 'printf "{{.GREEN}}PROJECT{{.RESET}}={{.YELLOW}}{{.PROJECT}}{{.RESET}} | {{.GREEN}}FLEET{{.RESET}}={{.YELLOW}}{{.FLEET}}{{.RESET}} | {{.GREEN}}MISSION{{.RESET}}={{.YELLOW}}{{.MISSION}}{{.RESET}} | {{.GREEN}}SPACECRAFT{{.RESET}}={{.YELLOW}}{{.SPACECRAFT}}{{.RESET}} | {{.GREEN}}FORTYTWO_HOST_PORT{{.RESET}}={{.YELLOW}}{{.FORTYTWO_HOST_PORT}}{{.RESET}} | {{.GREEN}}YAMCS_HOST_PORT{{.RESET}}={{.YELLOW}}{{.YAMCS_HOST_PORT}}{{.RESET}} | {{.GREEN}}OPENMCT_HOST_PORT{{.RESET}}={{.YELLOW}}{{.OPENMCT_HOST_PORT}}{{.RESET}}\n"'
+    silent: true
+
+  datacount:
+    desc: Display Yamcs radio-in dataInCount
+    cmds:
+      - 'curl -s http://{{.YAMCS_HOST}}:{{.YAMCS_HOST_PORT}}/api/links/nos3/radio-in | jq -r ''.dataInCount'' | tr -d ''\n'''
+    silent: true
+
+  services:message:
+    desc: Display connection info for all services
+    cmds:
+      - echo ""
+      - task: show:vars
+      - task: fortytwo:message
+      - task: yamcs:message
+      - task: openmct:message
+      - echo ""
+    silent: true
+
   info-services:
     desc: info on accessing various services
     cmds:
@@ -379,6 +440,19 @@ tasks:
         echo "FT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
         echo "RT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
         echo
+    silent: true
+
+  env:set:defaults:
+    desc: Reset .env to script defaults (ignoring current Taskfile/env values)
+    cmds:
+      - |
+        unset PROJECT FLEET MISSION SPACECRAFT
+        unset PROJECT_NAME PROJECT_MISSION
+        unset SC_ENVIRO
+        unset FORTYTWO_HOST FORTYTWO_PORT FORTYTWO_HOST_PORT
+        unset YAMCS_HOST YAMCS_PORT YAMCS_HOST_PORT
+        unset OPENMCT_HOST OPENMCT_PORT OPENMCT_HOST_PORT
+        {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
     silent: true
 
   env:create:

@@ -212,6 +212,7 @@ services:
       mission-spacecraft-network:
         aliases:
           - fsw
+          - nos-fsw
           - sc01-fsw
       mission-network:
 
@@ -719,7 +720,7 @@ services:
       nos3-gsw:
         condition: service_healthy
     container_name: ${COMPOSE_PROJECT_NAME}-radio-sim-cryptolib
-    hostname: ${COMPOSE_PROJECT_NAME}- radio-sim-cryptolib
+    hostname: ${COMPOSE_PROJECT_NAME}-radio-sim-cryptolib
     working_dir: /home/nos3/builds/nos3/sims/build/bin
     command: "/entrypoint.sh"
     volumes:
