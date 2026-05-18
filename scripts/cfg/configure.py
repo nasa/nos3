@@ -37,8 +37,8 @@ if (fsw_cfg == 'fprime'):
 if (fsw_cfg == 'cfs'):
     fsw_identified = 1
     os.system('cp ./scripts/fsw/fsw_cfs_build.sh ./cfg/build/fsw_build.sh')
-    # os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
-    os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
+    os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
+    # os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
     print('Exiting due to error...')
@@ -76,10 +76,12 @@ if (gsw_cfg == 'yamcs'):
 if (gsw_cfg == 'multiple'):
     # Copy mulitple scripts into ./cfg/build
     gsw_identified = 1
-    os.system('cp ./scripts/gsw/gsw_cosmos_mod_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_multi_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
     os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build2.sh')
-    os.system('cp ./scripts/gsw/gsw_yamcs_mod_launch.sh ./cfg/build/gsw_launch2.sh')  
+    os.system('cp ./scripts/gsw/gsw_yamcs_multi_launch.sh ./cfg/build/gsw_launch2.sh')  
+    os.system('cp ./cfg/build/sims/nos3-simulator-multipleGDS.xml ./cfg/build/sims/nos3-simulator.xml')
+    os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
