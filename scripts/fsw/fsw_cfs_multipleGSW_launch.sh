@@ -160,7 +160,7 @@ do
     echo ""
     sleep 1
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -e "STANDALONE_TCP=0" -e "GSWALIAS=cosmos" -e "CRYPTO_HOST=cryptolib" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
-    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW2" -- $DFLAGS -e "GSWALIAS=yamcs" -e "CRYPTO_HOST=cryptolib2" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw2"  -h cryptolib2 --network=$SC_NETNAME --network-alias=cryptolib2 -w $BASE_DIR/gsw/build $DBOX ./support/standalone
+    gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW2" -- $DFLAGS -e "STANDALONE_TCP=0" -e "GSWALIAS=yamcs" -e "CRYPTO_HOST=cryptolib2" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw2"  -h cryptolib2 --network=$SC_NETNAME --network-alias=cryptolib2 -w $BASE_DIR/gsw/build $DBOX ./support/standalone
 
 done
 
