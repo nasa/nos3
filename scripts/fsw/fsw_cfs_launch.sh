@@ -141,6 +141,7 @@ do
     # cp cfg/sims/nos3-simulator.shmem.xml cfg/sims/nos3-simulator.xml
 
     echo ""
+    sleep 5
 
     echo $SC_NUM " - CryptoLib..."
     gnome-terminal --tab --title=$SC_NUM" - CryptoLib GSW" -- $DFLAGS -e "STANDALONE_TCP=1" -e "GSWALIAS=cosmos" -e "CRYPTO_HOST=cryptolib" -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-cryptolib-gsw"  -h cryptolib --network=$SC_NETNAME --network-alias=cryptolib -w $BASE_DIR/gsw/build $DBOX ./support/standalone
