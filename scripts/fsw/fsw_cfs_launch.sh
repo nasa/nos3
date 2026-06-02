@@ -112,9 +112,50 @@ do
     #gnome-terminal --window-with-profile=KeepOpen --title=$SC_NUM" - NOS3 Flight Software" -- $DFLAGS -v $BASE_DIR:$BASE_DIR --name $SC_NUM"-nos-fsw" -h nos-fsw --network $SC_NETNAME -w $FSW_DIR --sysctl fs.mqueue.msg_max=10000 --ulimit rtprio=99 --cap-add=sys_nice $DBOX $FSW_DIR/core-cpu1 -R PO &
     echo ""
 
+    echo $SC_NUM " - Waiting for nos-fsw container to get IP..."
+    FSW_CONTAINER=$SC_NUM"-nos-fsw"
+    ENG_CONTAINER=$SC_NUM"-nos-engine-server"
+    for attempt in {1..10}; do
+        # FSW_IP=$(docker inspect -f \
+        #     "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" \
+        #     $FSW_CONTAINER 2>/dev/null)
+        FSW_IP=$(docker inspect -f \
+            "{{(index .NetworkSettings.Networks \"$SC_NETNAME\").IPAddress}}" \
+            $FSW_CONTAINER 2>/dev/null)
+        if [ -n "$FSW_IP" ]; then
+            echo $SC_NUM " - nos-fsw IP = $FSW_IP"
+            break
+        fi
+        echo "  Waiting for container IP... attempt $attempt"
+        sleep 1
+    done
+
+    if [ -z "$FSW_IP" ]; then
+        echo "ERROR: Could not resolve IP for $FSW_CONTAINER!"
+        exit 1
+    fi
+
     echo $SC_NUM " - Simulators..."
     cd $SIM_BIN
     gnome-terminal --tab --title=$SC_NUM" - NOS Engine Server" -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-nos-engine-server"  -h nos-engine-server --network $SC_NETNAME -w $SIM_BIN $DBOX /usr/bin/nos_engine_server_standalone -f $SIM_BIN/nos_engine_server_config.json
+    
+    for attempt in {1..10}; do
+    ENG_IP=$(docker inspect -f \
+        "{{(index .NetworkSettings.Networks \"$SC_NETNAME\").IPAddress}}" \
+        $ENG_CONTAINER 2>/dev/null)
+    if [ -n "$ENG_IP" ]; then
+        echo $SC_NUM " - nos-engine-server IP = $ENG_IP"
+        break
+    fi
+    echo "  Waiting for engine server IP... attempt $attempt"
+    sleep 1
+    done
+
+    if [ -z "$ENG_IP" ]; then
+        echo "ERROR: Could not get IP for $ENG_CONTAINER!"
+        exit 1
+    fi
+    
     gnome-terminal --tab --title=$SC_NUM" - 42 Truth Sim"      -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-truth42sim"          -h truth42sim --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE  truth42sim
     
     $DNETWORK connect $SC_NETNAME nos-terminal
@@ -133,7 +174,17 @@ do
     gnome-terminal --tab --title=$SC_NUM" - RW 1 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-rw-sim1"      -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim1
     gnome-terminal --tab --title=$SC_NUM" - RW 2 Sim"     -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-rw-sim2"      -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-reactionwheel-sim2
     # docker create --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u 1001:999 -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network $SC_NETNAME --network-alias radio-sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
-    gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network $SC_NETNAME --network-alias radio-sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
+    gnome-terminal --tab --title=$SC_NUM" - Radio Sim" -- \
+        $DFLAGS -v $SIM_DIR:$SIM_DIR \
+        --name $SC_NUM"-radio-sim" \
+        --network $SC_NETNAME \
+        --network-alias radio-sim \
+        --add-host "nos-fsw:$FSW_IP" \
+        --add-host "nos-engine-server:$ENG_IP" \
+        -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
+    # works with sc01 errors with radio with sc02 and sc03 below
+    # gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network $SC_NETNAME --network-alias radio-sim -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
+    # old below
     # gnome-terminal --tab --title=$SC_NUM" - Radio Sim"    -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-radio-sim"    --network nos3-core -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-radio-sim
     gnome-terminal --tab --title=$SC_NUM" - Sample Sim"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-sample-sim"   -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE sample-sim
     gnome-terminal --tab --title=$SC_NUM" - StarTrk Sim"  -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name $SC_NUM"-startrk-sim"  -v /dev/shm:/dev/shm --network $SC_NETNAME -w $SIM_BIN $DBOX ./nos3-single-simulator $SC_CFG_FILE generic-star-tracker-sim
@@ -152,7 +203,7 @@ do
 
 done
 
-sleep 3
+sleep 10
 for (( i=2; i<=$SATNUM; i++))
 do
     export SC_NUM="sc0"$i
@@ -165,7 +216,7 @@ do
 done
 
 echo "Closing the ring: connecting sc01-radio-sim to nos3-sc03 as 'next-radio'"
-sleep 1
+sleep 3
 docker network connect --alias "next-radio" "nos3-sc03" sc01-radio-sim
 
 echo "NOS Time Driver..."
