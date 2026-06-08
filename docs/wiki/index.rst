@@ -39,4 +39,5 @@ This documentation is designed to provide information for users and developers t
    Scenario_Flight_Build.md
    Scenario_Random_Errors.md
    Scenario_Constellation_with_Lunar_Focus.md
+   Scenario_Multiple_Spacecraft.md
    Scenario_GPS_Spoofing.md
