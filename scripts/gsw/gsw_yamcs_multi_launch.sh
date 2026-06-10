@@ -12,7 +12,7 @@ YAMCS_BINDING_HOST=${YAMCS_BINDING_HOST}
 BINDING_HOST=${YAMCS_BINDING_HOST:-"0.0.0.0"}
 
 # gnome-terminal --tab --title="YAMCS" -- $DFLAGS  -e COMPONENT_DIR=$COMPONENT_DIR -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -p ${BINDING_HOST}:8090:8090 -p 5012:5012 --name cosmos-openc3-operator-1 -h cosmos --network=nos3-core --network-alias=cosmos -w $USER_NOS3_DIR/yamcs $DBOX mvn ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository -DCOMPONENT_DIR=$COMPONENT_DIR yamcs:run
-sleep 3
+
 gnome-terminal --tab --title="YAMCS" -- $DFLAGS  -e COMPONENT_DIR=$COMPONENT_DIR -v $BASE_DIR:$BASE_DIR -v $USER_NOS3_DIR:$USER_NOS3_DIR -p ${BINDING_HOST}:8090:8090 -p 5012:5012 --name cosmos-openc3-operator-2 -h yamcs --network=nos3-core --network-alias=yamcs -w $USER_NOS3_DIR/yamcs $DBOX mvn ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=$USER_NOS3_DIR/.m2/repository -DCOMPONENT_DIR=$COMPONENT_DIR yamcs:run
 
 pidof firefox > /dev/null
