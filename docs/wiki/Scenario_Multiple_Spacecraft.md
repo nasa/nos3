@@ -40,7 +40,7 @@ What is unique about this scenario is that a command can be sent to one spacecra
 
 ![ProximityForwarding](_static/scenario_multiple_spacecraft/ProximityForwarding.png)
 
-In this figure can be seen the command being sent from the `Command Sender`.  In the `sc01-NOS3 Flight Software` window can be seen the `GENERIC_RADIO_ProximityForward` command and that it sent 8 bytes to the next radio.  Then in the window below that one (which is the `sc02-NOS3 Flight Software` window) can be seen that flight software for spacecraft 2 had a `NOOP command received`.
+In this figure can be seen the command being sent from the `Command Sender`.  In the `sc01-NOS3 Flight Software` window can be seen the `GENERIC_RADIO_ProximityForward` command and that it sent 8 bytes to the next radio.  Then in the window below that one (which is the `sc02-NOS3 Flight Software` window) can be seen that flight software for spacecraft 2 had a `NOOP` command received.
 
 ## Background
 For background on configuring a multiple spacecraft scenario, please refer to the Scenario Constellation with Lunar Focus.
