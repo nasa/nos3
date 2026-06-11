@@ -91,7 +91,10 @@ if (gsw_identified == 0):
 # Scenario
 scenario = mission_root.find('scenario').text
 print('  scenario:', scenario)
-if (scenario == 'Gateway'):
+if (scenario == 'DeepSpace'):
+    os.system('cp ./cfg/InOut/Inp_Sim_DeepSpace.txt ./cfg/InOut/Inp_Sim.txt')
+    os.system('cp ./cfg/InOut/Inp_Graphics_DeepSpace.txt ./cfg/InOut/Inp_Graphics.txt')
+elif (scenario == 'Gateway'):
     os.system('cp ./cfg/InOut/Inp_Sim_Gateway.txt ./cfg/InOut/Inp_Sim.txt')
     os.system('cp ./cfg/InOut/Inp_Graphics_Gateway.txt ./cfg/InOut/Inp_Graphics.txt')
 else:
