@@ -6,7 +6,6 @@ This scenario was last updated on 06/08/2026 and leveraged the `NOS3-Multiple-Sp
 
 ## Learning Goals
 By the end of this scenario you should be able to:
-By the end of this scenario you should be able to:
 * Command multiple spacecraft from a single ground station
 * Receive telemetry from multiple spacecraft in a single ground station
 * Send a command to a spacecraft that is forwarded to another spacecraft
@@ -24,6 +23,7 @@ You should also review the following lessons before this one:
 
 ## Walkthrough
 For this scenario, you will need to switch to the `NOS3-Multiple-Spacecraft` branch in the `nos3-multiple-spacecraft` repository (https://github.com/nasa-itc/nos3-multiple-spacecraft).
+For this particulair Scenarion, Please execute `make uninstall`, followed by a `make prep` in a terminal.
 Once you do that, you can do a typical `make` and `make launch`.
 You will notice that three flight software windows are opened with titles `sc0N - NOS3 Flight Software`, where `N` is either 1, 2, or 3.
 Once you start COSMOS, you will similarly see three telemetry debug interfaces in the command and telemetry server (`DEBUG_1`, `DEBUG_2`, and `DEBUG_3`).
