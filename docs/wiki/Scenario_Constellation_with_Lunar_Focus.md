@@ -24,7 +24,7 @@ You will notice that three flight software windows are opened with titles `sc0N 
 Once you start COSMOS, you will similarly see three telemetry debug interfaces in the command and telemetry server (`DEBUG_1`, `DEBUG_2`, and `DEBUG_3`).
 This is shown in the figure below.
 
- ![MultipleSpacecraft](_static/scenario_multiple_spacecraft/MultipleSpacecraft.png)
+ ![MultipleSpacecraft](_static/scenario_lunar_constellation/MultipleSpacecraft.png)
 
 You can verify that telemetry is being received by examining the `Bytes Rx` column in the COSMOS Command and Telemetry Server window.
 
@@ -36,20 +36,20 @@ Click `Send` in the Command Sender window.
 You should now see `SAMPLE: NOOP command received` in the `sc01 - NOS3 Flight Software` window and the `CMD_COUNT` increase to 1 in the Packet Viewer.
 This is shown below:
 
-![SendingCommand](_static/scenario_multiple_spacecraft/SendingCommand.png)
+![SendingCommand](_static/scenario_lunar_constellation/SendingCommand.png)
 
 Now verify the same command and telemetry for spacecraft 2.
 Send the command `SAMPLE_NOOP_CC` to target `SAMPLE_2`, and view the `sc02 - NOS3 Flight Software` window and the Packet Viewer, with target set to `SAMPLE_2` and packet set to `SAMPLE_HK_TLM`.
 Send the command three times; verify that flight software receives it three times and that the `CMD_COUNT` increases to three.
 This is shown below:
 
-![SendingCommand2](_static/scenario_multiple_spacecraft/SendingCommand2.png)
+![SendingCommand2](_static/scenario_lunar_constellation/SendingCommand2.png)
 
 Finally, verify the same thing for spacecraft 3 in the same way.
 Send the command 5 times and verify that it is received five times and that the `CMD_COUNT` increases to five.
 This is shown below:
 
-![SendingCommand3](_static/scenario_multiple_spacecraft/SendingCommand3.png)
+![SendingCommand3](_static/scenario_lunar_constellation/SendingCommand3.png)
 
 Note that this is presently only in the branch mentioned above; however, the NOS3 team expects to incorporate support for multiple spacecraft into a future release.
 
@@ -290,7 +290,7 @@ Add the necessary targets by duplicating the targets already in that file.
 Simply duplicate the **Component** Targets 3 times, renaming each target for each spacecraft.
 For example: 
 
-![cmd_tlm_server_ref](./_static/scenario_multiple_spacecraft/system_ref.png)
+![cmd_tlm_server_ref](./_static/scenario_lunar_constellation/system_ref.png)
 
 Once all the targets are duplicated for the 3 Spacecraft, we will add them to the cmd_tlm_server for cosmos.
 
@@ -299,5 +299,5 @@ You will need to duplicate the existing target definitions 3 times for the debug
 Note you will need to assign the appropriate host name of the appropriate spacecraft flight software container to each interface, and bind it to the correct IP address as defined in the CFS Launch script we modified earlier.
 We do this so Cosmos can command flight software and process telemetry coming from port 5013 from 3 different containers at the same time.
 
-![cmd_tlm_server_ref](./_static/scenario_multiple_spacecraft/tlm_server_ref.png)
+![cmd_tlm_server_ref](./_static/scenario_lunar_constellation/tlm_server_ref.png)
 
