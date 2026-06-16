@@ -78,70 +78,60 @@ cd openc3-cosmos-nos3
 echo "Populating plugin with Targets, Scripts, and Libraries..."
 
 mkdir -p targets
-mkdir -p scripts      # <-- Changed back to scripts
+mkdir -p scripts      
 mkdir -p lib
 
-# 1. Grab base GSW libraries and scripts if they exist
-cp -r $GSW_DIR/lib/* lib/ 2>/dev/null
-cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
+# 1. Grab global base files for the Ruby side
+cp -r $GSW_DIR/lib/*.rb lib/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.rb scripts/ 2>/dev/null
+cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
 
 targets=""
 
-# 2. Iterate over every component that has a target.txt
 for target_txt in $(find $BASE_DIR/components $GSW_DIR/config/targets -name target.txt 2>/dev/null) 
 do 
     target_dir=$(dirname "$target_txt")
     target_name=$(basename "$target_dir")
     
     echo "Processing target: $target_name"
-    
     cp -r "$target_dir" targets/
     targets="$targets $target_name"
 
-    # Inside your gsw_build.sh PLUGIN POPULATION loop:
+    # --- Create the local Python package inside the target! ---
+    mkdir -p "targets/$target_name/scripts/nos3"
+    touch "targets/$target_name/scripts/nos3/__init__.py"
+    
+    # Copy all global Python libraries into this local package
+    cp -r $GSW_DIR/lib/*.py "targets/$target_name/scripts/nos3/" 2>/dev/null
+    # ----------------------------------------------------------
+
     if [ -d "$target_dir/procedures" ]; then
-        mkdir -p "targets/$target_name/scripts"
-        cp -r "$target_dir/procedures/"* "targets/$target_name/scripts/" 2>/dev/null
+        # Copy runnable scripts to the root of the scripts folder
+        cp "$target_dir/procedures/"*.* "targets/$target_name/scripts/" 2>/dev/null
+        
+        # Copy Python helpers to the local nos3 package
+        cp "$target_dir/procedures/"*.py "targets/$target_name/scripts/nos3/" 2>/dev/null
+        
+        if [ -d "$target_dir/procedures/tests" ]; then
+            cp "$target_dir/procedures/tests/"*.* "targets/$target_name/scripts/" 2>/dev/null
+            cp "$target_dir/procedures/tests/"*.py "targets/$target_name/scripts/nos3/" 2>/dev/null
+        fi
         rm -rf "targets/$target_name/procedures"
     fi
 
-    # Move component-specific libraries into the OpenC3 lib/ folder
     if [ -d "$target_dir/lib" ]; then
-        # 1. Copy to the global lib/ folder so target.txt REQUIRE statements pass validation
-        cp -r "$target_dir/lib/"* "lib/" 2>/dev/null
-        
-        # 2. ALSO copy to the scripts/ folder so you can see them in the Script Runner GUI
-        mkdir -p "targets/$target_name/scripts"
-        cp -r "$target_dir/lib/"* "targets/$target_name/scripts/" 2>/dev/null
-        
-        # Prevent OpenC3 from packaging the legacy directory structure
+        # Copy Ruby libs globally
+        cp -r "$target_dir/lib/"*.rb "lib/" 2>/dev/null
+        # Copy Python component libs into the local nos3 package
+        cp -r "$target_dir/lib/"*.py "targets/$target_name/scripts/nos3/" 2>/dev/null
         rm -rf "targets/$target_name/lib"
     fi
 done
 
-# 3. Patch the text dictionaries
 echo "Patching target dictionaries..."
 for i in $(find targets/ -name '*.txt')
 do 
     sed -i -e 's/<%= *CosmosCfsConfig::PROCESSOR_ENDIAN *%>/LITTLE_ENDIAN/g; s/<%= *CF_INCOMING_PDU_MID *%>/0x1800/g; s/<%= *CF_SPACE_TO_GND_PDU_MID *%>/0x0800/g;' "$i"
-done
-
-# 4. Patch Python imports and create packages
-echo "Patching Python script imports..."
-# Create __init__.py files so Python recognizes the directories as importable packages
-touch lib/__init__.py 2>/dev/null
-for target_dir in targets/*; do
-    if [ -d "$target_dir/scripts" ]; then
-        touch "$target_dir/scripts/__init__.py" 2>/dev/null
-        
-        # Inject sys.path.append into every python file so it can find 'sample_lib' automatically
-        for pyfile in "$target_dir/scripts/"*.py; do
-            if [ -f "$pyfile" ]; then
-                sed -i '1i import sys, os\nsys.path.append(os.path.dirname(__file__))\nsys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "lib")))' "$pyfile"
-            fi
-        done
-    fi
 done
 
 # ==============================================================================
@@ -164,43 +154,37 @@ done
 
 echo "" >> plugin.txt
 echo "INTERFACE DEBUG UdpInterface nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
-for i in $targets
-do
+for i in $targets; do
     if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
-        debug="${i}_DEBUG"
-        echo "  MAP_TARGET $debug" >> plugin.txt
+        echo "  MAP_TARGET ${i}_DEBUG" >> plugin.txt
     fi
 done
 echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
 echo "INTERFACE RADIO UdpInterface cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
-for i in $targets
-do
+for i in $targets; do
     if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
-        radio="${i}_RADIO"
-        echo "  MAP_TARGET $radio" >> plugin.txt
+        echo "  MAP_TARGET ${i}_RADIO" >> plugin.txt
     fi
 done
 echo "" >> plugin.txt
 
-echo "INTERFACE SIM_42_TRUTH_INT UdpInterface truth42sim 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
+echo "INTERFACE SIM_42_TRUTH_INT UdpInterface nil nil 5111 nil nil" >> plugin.txt
+echo "  OPTION BIND_ADDRESS 0.0.0.0" >> plugin.txt
 echo "  MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
 echo "" >> plugin.txt
 echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
 
-# Ensure permissions
 chmod -R a+rX .
 
 # ==============================================================================
 # BUILD AND DEPLOY
 # ==============================================================================
 echo "Patching gemspec to forcefully include all files..."
-
-# This entirely replaces the spec.files definition to recursively grab all files, 
-# ensuring your 'procedures' and 'scripts' folders are packed into the gem.
-sed -i 's/spec.files.*=.*/spec.files = Dir.glob("**\/*").reject { |f| File.directory?(f) }/g' *.gemspec
+sed -i 's/s\.files.*=.*/s.files = Dir.glob("**\/*").reject { |f| File.directory?(f) }/g' *.gemspec
+sed -i 's/spec\.files.*=.*/spec.files = Dir.glob("**\/*").reject { |f| File.directory?(f) }/g' *.gemspec
 
 echo "Build plugin..."
 $OPENC3_CLI rake build VERSION=$BUILD_VERSION
@@ -210,4 +194,11 @@ if [ ! -f "openc3-cosmos-nos3-${BUILD_VERSION}.gem" ]; then
     echo ""
     exit 1
 fi
+
+echo "--- GEM VERIFICATION ---"
+tar -xf "openc3-cosmos-nos3-${BUILD_VERSION}.gem" data.tar.gz
+echo "Contents of Target SAMPLE/scripts/nos3/ directory:"
+tar -tvf data.tar.gz | grep "targets/SAMPLE/scripts/nos3/"
+rm -f data.tar.gz 
+echo "------------------------"
 echo ""

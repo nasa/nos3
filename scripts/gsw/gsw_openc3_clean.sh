@@ -34,6 +34,8 @@ fi
 echo "-> Wiping generated build directories..."
 cd "$OPENC3_DIR" 2>/dev/null
 rm -rf build openc3-cosmos-nos3 2>/dev/null
+rm -rf plugins/* 2>/dev/null
+rm -rf openc3-data/* 2>/dev/null
 
 echo "================================================================="
 echo " Cleanup complete! All OpenC3 databases are wiped for a fresh build."
