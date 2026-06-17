@@ -128,6 +128,14 @@ do
     fi
 done
 
+# Copy Sim Bridge commands into new target
+echo "Populating SIM_CMDBUS_BRIDGE with component dictionaries..."
+mkdir -p targets/SIM_CMDBUS_BRIDGE/cmd_tlm
+for i in $(find $BASE_DIR/components/ -name "gsw" -type d 2>/dev/null)
+do
+    cp $i/*.txt targets/SIM_CMDBUS_BRIDGE/cmd_tlm/ 2> /dev/null
+done
+
 echo "Patching target dictionaries..."
 for i in $(find targets/ -name '*.txt')
 do 
@@ -140,41 +148,47 @@ done
 echo "Create plugin.txt..."
 rm -f plugin.txt
 
+# 1. Target Declarations
 for i in $targets
 do
-    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
-        debug="${i}_DEBUG"
-        radio="${i}_RADIO"
-        echo "TARGET $i $debug" >> plugin.txt
-        echo "TARGET $i $radio" >> plugin.txt
+    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ] && [ "$i" != "SIM_CMDBUS_BRIDGE" ]; then
+        echo "TARGET $i ${i}_DEBUG" >> plugin.txt
+        echo "TARGET $i ${i}_RADIO" >> plugin.txt
     else
         echo "TARGET $i $i" >> plugin.txt
     fi
 done
-
 echo "" >> plugin.txt
+
+# 2. DEBUG Interface (For standard spacecraft targets)
 echo "INTERFACE DEBUG UdpInterface nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets; do
-    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
+    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ] && [ "$i" != "SIM_CMDBUS_BRIDGE" ]; then
         echo "  MAP_TARGET ${i}_DEBUG" >> plugin.txt
     fi
 done
 echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
+# 3. RADIO Interface (For standard spacecraft targets)
 echo "INTERFACE RADIO UdpInterface cryptolib 6010 6011 nil nil 128 10.0 nil" >> plugin.txt
 for i in $targets; do
-    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ]; then
+    if [ "$i" != "SIM_42_TRUTH" ] && [ "$i" != "SYSTEM" ] && [ "$i" != "TO_DEBUG" ] && [ "$i" != "SIM_CMDBUS_BRIDGE" ]; then
         echo "  MAP_TARGET ${i}_RADIO" >> plugin.txt
     fi
 done
 echo "" >> plugin.txt
 
+# 4. 42 Truth Interface
 echo "INTERFACE SIM_42_TRUTH_INT UdpInterface nil nil 5111 nil nil" >> plugin.txt
 echo "  OPTION BIND_ADDRESS 0.0.0.0" >> plugin.txt
 echo "  MAP_TARGET SIM_42_TRUTH" >> plugin.txt
-
 echo "" >> plugin.txt
+
+# 5. SIM_CMDBUS_BRIDGE Interface
+echo "INTERFACE SIM_BRIDGE_INT TcpipClientInterface nos-sim-bridge 12020 12020 10.0 nil" >> plugin.txt
+echo "  PROTOCOL READ_WRITE TemplateProtocol 0x0A 0x0A" >> plugin.txt
+echo "  MAP_TARGET SIM_CMDBUS_BRIDGE" >> plugin.txt
 echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
 
 chmod -R a+rX .
