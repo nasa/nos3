@@ -20,8 +20,5 @@ This documentation is designed to provide information for users and developers t
    STF_QuickLook.md
    STF_Software_Development_Plan.md
    STF_VV_Plan.md
-
-.. toctree::
-   :maxdepth: 2
-   :caption: NOS3 Scenarios:
    Index_Scenarios.rst
+   
