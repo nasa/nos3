@@ -1,0 +1,624 @@
+# NOS3 Helm Chart - Service Registry
+#
+# All services are entries in the `services` map. Each entry contains all config
+# needed to render its Deployment + Service. To add a service, add an entry here.
+# To remove a service, set enabled: false or delete the entry. No template changes needed.
+#
+# YAML anchors (&name / *name) share defaults across similar services.
+
+# ── Global Parameters ────────────────────────────────────
+global:
+  project: "nos3"
+  fleet: "nos3"
+  mission: "m01"
+  spacecraft: "sc01"
+  imagePullPolicy: Always
+  imagePullSecrets: []
+  #  - name: ghcr-secret
+  namespaceOverride: ""
+  # Set to true to have the chart create the Namespace resource (with PSS labels).
+  # Default false — Helm's --create-namespace handles namespace creation.
+  createNamespace: false
+  env:
+    HEALTHCHECK_PORT: ""
+    DEPLOYMENT_ENVIRO: ""
+  proxy:
+    httpProxy: ""
+    httpsProxy: ""
+    noProxy: ""
+
+# ── Shared Defaults (YAML anchors) ──────────────────────
+defaults:
+  simulatorImage: &simImage
+    repository: "nos3-base-local"
+    tag: "dev"
+  simulatorResources: &simResources
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+  simulatorWorkingDir: &simWorkDir "/home/nos3/builds/nos3/sims/build/bin"
+  privileged: &privileged
+    privileged: true
+  # Compose: most sims depend_on fortytwo (healthy) + fsw (healthy).
+  # FSW has no exposed port, so we wait for fortytwo:80 + nos-engine-server:12000
+  # (nos-engine-server is a transitive dep of FSW, so it being up means FSW is starting).
+  simWaitFor: &simWaitFor
+    - service: fortytwo
+      port: 80
+    - service: nos-engine-server
+      port: 12000
+
+# ── Service Registry ─────────────────────────────────────
+services:
+
+  # ── Core Services ──────────────────────────────────────
+
+  fortytwo:
+    enabled: true
+    group: core
+    image:
+      repository: "ghcr.io/haisamido/nos3-base-fortytwo"
+      tag: "dev"
+    command: ["/entrypoint.sh"]
+    workingDir: "/opt/nasa-itc/"
+    ports:
+      - name: vnc
+        port: 80
+        protocol: TCP
+      # IPC ports from Inp_IPC.txt — 42 opens SERVER sockets, sims connect as clients
+      - { name: ipc-css,       port: 4227, protocol: TCP }
+      - { name: ipc-mag,       port: 4234, protocol: TCP }
+      - { name: ipc-gps,       port: 4245, protocol: TCP }
+      - { name: ipc-rw0-from,  port: 4277, protocol: TCP }
+      - { name: ipc-rw0-to,    port: 4278, protocol: TCP }
+      - { name: ipc-torquer,   port: 4279, protocol: TCP }
+      - { name: ipc-thruster,  port: 4280, protocol: TCP }
+      - { name: ipc-imu,       port: 4281, protocol: TCP }
+      - { name: ipc-st,        port: 4282, protocol: TCP }
+      - { name: ipc-eps,       port: 4283, protocol: TCP }
+      - { name: ipc-fss,       port: 4284, protocol: TCP }
+      - { name: ipc-rw1-from,  port: 4377, protocol: TCP }
+      - { name: ipc-rw1-to,    port: 4378, protocol: TCP }
+      - { name: ipc-rw2-from,  port: 4477, protocol: TCP }
+      - { name: ipc-rw2-to,    port: 4478, protocol: TCP }
+      - { name: ipc-writefile, port: 6008, protocol: TCP }
+      - { name: ipc-truth,     port: 9999, protocol: TCP }
+    hostPort: 30092
+    env:
+      DISPLAY: ":1"
+      RECOMPILE: "false"
+      BASE_DIR: "/opt/nasa-itc"
+      VNC_PASSWORD: "foobar"
+      GIT_FOLDER: "42"
+      STARTUP_FOLDER: "NOS3InOut"
+      HOST_PORT: "80"
+    healthCheck:
+      exec:
+        command: ["/bin/sh", "-c", "/usr/bin/pgrep -f 42 | grep -v xterm"]
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 7
+    resources:
+      requests:
+        cpu: "1"
+        memory: "2048Mi"
+      limits:
+        cpu: "3"
+        memory: "2048Mi"
+    securityContext: *privileged
+    entrypointKey: entrypoint-fortytwo.sh
+    # InOut directory: 42 config files (Inp_Sim.txt, Inp_IPC.txt, SC_NOS3.txt, etc.)
+    # Created by 'task k8s:helm:create-configs' before helm install.
+    # Uses emptyDir + init container since 42 writes output .42 files at runtime.
+    inOutConfigMap: "fortytwo-inout"
+    inOutMountPath: "/opt/nasa-itc/42/NOS3InOut"
+    dnsAliases:
+      - fortytwo
+    waitFor: []
+
+  nos-engine-server:
+    enabled: true
+    group: core
+    image: *simImage
+    command: ["/usr/bin/nos_engine_server_standalone", "-f", "./nos_engine_server_config.json"]
+    workingDir: *simWorkDir
+    tty: true
+    ports:
+      - name: nos-tcp
+        port: 12000
+        protocol: TCP
+      - name: nos-tcp2
+        port: 12001
+        protocol: TCP
+    env: {}
+    healthCheck:
+      exec:
+        command: ["/bin/sh", "-c", "nc -vz $(hostname) 12000 && nc -vz $(hostname) 12001"]
+      initialDelaySeconds: 20
+      periodSeconds: 10
+      failureThreshold: 5
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+    securityContext: *privileged
+    nosEngineConfig: true
+    dnsAliases:
+      - nos-engine-server
+      - sc01-nos-engine-server
+    waitFor:
+      - service: fortytwo
+        port: 80
+
+  fsw:
+    enabled: true
+    group: core
+    image: *simImage
+    command: ["/entrypoint.sh"]
+    workingDir: "/home/nos3/builds/nos3/"
+    ports: []
+    env:
+      BASE_DIR: "/home/nos3/builds/nos3"
+      FSW_DIR: "/home/nos3/builds/nos3/fsw/build/exe/cpu1"
+    healthCheck:
+      exec:
+        command: ["/usr/bin/pgrep", "core-cpu1"]
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 5
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "2"
+        memory: "1024Mi"
+    securityContext:
+      privileged: true
+      capabilities:
+        add:
+          - SYS_NICE
+    # sysctls moved to values-nkp.yaml — requires kubelet --allowed-unsafe-sysctls=fs.mqueue.*
+    # Uncomment for clusters where the kubelet is configured:
+    # sysctls:
+    #   - name: "fs.mqueue.msg_max"
+    #     value: "10000"
+    entrypointKey: entrypoint-fsw.sh
+    dnsAliases:
+      - fsw
+      - nos-fsw
+      - sc01-fsw
+    waitFor:
+      - service: fortytwo
+        port: 80
+      - service: nos-engine-server
+        port: 12000
+
+  gsw:
+    enabled: true
+    group: core
+    image:
+      repository: "ghcr.io/haisamido/nos3-base-yamcs"
+      tag: "dev"
+    command: ["/entrypoint.sh"]
+    workingDir: "/home/nos3/.nos3/yamcs"
+    tty: true
+    stdin: true
+    ports:
+      - name: yamcs-api
+        port: 8090
+        protocol: TCP
+    hostPort: 8092
+    env:
+      YAMCS_DATA_DIR: "/home/nos3/.nos3/yamcs/target/yamcs/yamcs-data"
+      GSW_SOFTWARE: "yamcs"
+      MAVEN_REPO_LOCAL: "/home/nos3/.nos3/.m2"
+      MAVEN_HTTPS_PROXY: "--settings ./settings.xml"
+      COMPONENT_DIR: ""
+    healthCheck:
+      httpGet:
+        path: /api
+        port: 8090
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      failureThreshold: 10
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1024Mi"
+      limits:
+        cpu: "2"
+        memory: "2048Mi"
+    securityContext: *privileged
+    entrypointKey: entrypoint-gsw.sh
+    configVolumes:
+      - configMap: gsw-config
+        key: settings.xml
+        mountPath: /home/nos3/.nos3/yamcs/settings.xml
+        subPath: settings.xml
+    dnsAliases:
+      - gsw
+      - yamcs
+      - active-gs
+      - cosmos
+    waitFor: []
+
+  openmct:
+    enabled: true
+    group: core
+    image:
+      repository: "ghcr.io/haisamido/nos3-base-openmct"
+      tag: "dev"
+    command: ["/opt/openmct/entrypoint.sh"]
+    workingDir: "/opt/openmct"
+    ports:
+      - name: web
+        port: 9000
+        protocol: TCP
+    hostPort: 9002
+    env: {}
+    healthCheck:
+      httpGet:
+        path: /
+        port: 9000
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      failureThreshold: 30
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "2"
+        memory: "1024Mi"
+    entrypointKey: entrypoint-openmct.sh
+    entrypointMountPath: /opt/openmct/entrypoint.sh
+    configVolumes:
+      - configMap: openmct-config
+        key: webpack.dev.mjs
+        mountPath: /opt/openmct/.webpack/webpack.dev.mjs
+        subPath: webpack.dev.mjs
+      - configMap: openmct-config
+        key: index.js
+        mountPath: /opt/openmct/example/index.js
+        subPath: index.js
+      - configMap: openmct-config
+        key: make-example-events.mjs
+        mountPath: /opt/openmct/example/make-example-events.mjs
+        subPath: make-example-events.mjs
+    dnsAliases:
+      - openmct
+    waitFor:
+      - service: gsw
+        port: 8090
+        type: http
+        path: /api
+
+  onair:
+    enabled: true
+    group: core
+    image: *simImage
+    command: ["/home/nos3/builds/nos3/scripts/fsw/onair_launch.sh"]
+    workingDir: "/home/nos3/builds/nos3/fsw/build/exe/cpu1"
+    tty: true
+    stdin: true
+    ports: []
+    env:
+      BASE_DIR: "/home/nos3/builds/nos3"
+      FSW_DIR: "/home/nos3/builds/nos3/fsw/build/exe/cpu1"
+      SCRIPT_DIR: ""
+    resources:
+      requests: { cpu: "100m", memory: "128Mi" }
+      limits: { cpu: "500m", memory: "256Mi" }
+    securityContext: *privileged
+    needsSimConfig: true
+    dnsAliases:
+      - onair
+      - sc01-onair
+    waitFor: []
+
+  # ── Simulators ─────────────────────────────────────────
+
+  truth42sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: truth42sim
+    workingDir: *simWorkDir
+    tty: true
+    stdin: true
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [truth42sim]
+    waitFor:
+      - service: fortytwo
+        port: 80
+      - service: nos-engine-server
+        port: 12000
+      - service: gsw
+        port: 8090
+        type: http
+        path: /api
+
+  camsim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: camsim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [camsim, sc01-camsim]
+    waitFor: *simWaitFor
+
+  css-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-css-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [css, css-sim]
+    waitFor: *simWaitFor
+
+  eps-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-eps-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [eps, sc01-eps-sim]
+    waitFor: *simWaitFor
+
+  fss-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-fss-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [fss, sc01-fss-sim]
+    waitFor: *simWaitFor
+
+  gps-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: gps
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [gps, sc01-gps-sims]
+    waitFor: *simWaitFor
+
+  imu-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-imu-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [imu, sc01-imu-sim]
+    waitFor: *simWaitFor
+
+  mag-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-mag-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [mag, sc01-mag-sim]
+    waitFor: *simWaitFor
+
+  rw-sim0:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-reactionwheel-sim0
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [rw0, sc01-rw-sim0]
+    waitFor: *simWaitFor
+
+  rw-sim1:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-reactionwheel-sim1
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [rw1, sc01-rw-sim1]
+    waitFor: *simWaitFor
+
+  rw-sim2:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-reactionwheel-sim2
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [rw2, sc01-rw-sim2]
+    waitFor: *simWaitFor
+
+  radio-sim-cryptolib:
+    enabled: true
+    group: simulator
+    image: *simImage
+    command: ["/entrypoint.sh"]
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    needsSimConfig: true
+    healthCheck:
+      exec:
+        command: ["/bin/sh", "-c", "pgrep -f nos3-single-simulator && pgrep -f standalone"]
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 7
+    entrypointKey: entrypoint-radio-sim-cryptolib.sh
+    dnsAliases: [radio-sim, cryptolib]
+    # Compose: depends_on fsw (healthy) + gsw (healthy).
+    # FSW has no exposed port — wait for nos-engine-server (FSW's dependency) + gsw instead.
+    waitFor:
+      - service: nos-engine-server
+        port: 12000
+      - service: gsw
+        port: 8090
+        type: http
+        path: /api
+
+  sample-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: sample-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [sample-sim]
+    waitFor: *simWaitFor
+
+  startrk-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-star-tracker-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [startrk-sim]
+    waitFor: *simWaitFor
+
+  thruster-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-thruster-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [thruster-sim]
+    waitFor: *simWaitFor
+
+  torquer-sim:
+    enabled: true
+    group: simulator
+    image: *simImage
+    simName: generic-torquer-sim
+    workingDir: *simWorkDir
+    resources: *simResources
+    securityContext: *privileged
+    dnsAliases: [torquer-sim, trq-sim]
+    waitFor: *simWaitFor
+
+  # ── Terminals / Utilities ──────────────────────────────
+
+  nos-terminal:
+    enabled: true
+    group: terminal
+    image: *simImage
+    simName: stdio-terminal
+    workingDir: *simWorkDir
+    tty: true
+    stdin: true
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits: { cpu: "200m", memory: "128Mi" }
+    securityContext: *privileged
+    dnsAliases: [nos-terminal]
+    waitFor: []
+
+  nos-udp-terminal:
+    enabled: true
+    group: terminal
+    image: *simImage
+    simName: udp-terminal
+    workingDir: *simWorkDir
+    tty: true
+    stdin: true
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits: { cpu: "200m", memory: "128Mi" }
+    securityContext: *privileged
+    dnsAliases: [nos-udp-terminal]
+    waitFor: []
+
+  nos-sim-bridge:
+    enabled: true
+    group: terminal
+    image: *simImage
+    command: ["./nos3-sim-cmdbus-bridge", "-f", "./nos3-simulator.xml"]
+    workingDir: *simWorkDir
+    tty: true
+    stdin: true
+    needsSimConfig: true
+    resources:
+      requests: { cpu: "50m", memory: "64Mi" }
+      limits: { cpu: "200m", memory: "128Mi" }
+    securityContext: *privileged
+    dnsAliases: [nos-sim-bridge]
+    waitFor: []
+
+  time:
+    enabled: true
+    group: terminal
+    image: *simImage
+    simName: time
+    workingDir: *simWorkDir
+    tty: true
+    stdin: true
+    resources:
+      requests: { cpu: "100m", memory: "128Mi" }
+      limits: { cpu: "500m", memory: "256Mi" }
+    securityContext: *privileged
+    dnsAliases: [nos-time-driver]
+    waitFor:
+      - service: nos-engine-server
+        port: 12000
+
+# ── Network Policies ────────────────────────────────────
+# Maps Docker Compose's three-network model to K8s NetworkPolicies:
+#   mission-spacecraft-network → all intra-namespace traffic (default allow)
+#   mission-network            → cross-namespace within same mission label
+#   fleet-network              → cross-namespace for fleet-level services (openmct)
+networkPolicy:
+  enabled: false
+  # Allow DNS resolution (kube-system or kube-dns namespace)
+  allowDNS: true
+  # Fleet-network: services that accept traffic from other namespaces in the fleet.
+  # Maps to Docker Compose's fleet-network (only openmct by default).
+  fleetServices:
+    - openmct
+
+# ── Ingress ──────────────────────────────────────────────
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  # Base domain for auto-generated hostnames (used when hosts list is empty).
+  # Produces: {project}.{baseDomain}, yamcs.{project}.{baseDomain}, openmct.{project}.{baseDomain}
+  # Set hosts explicitly to override auto-generation.
+  baseDomain: "local"
+  hosts: []
+  tls: []
+
+# ── NKP-Specific ─────────────────────────────────────────
+nkp:
+  storageClass: "nutanix-volumes"
+  podSecurityStandard: "privileged"

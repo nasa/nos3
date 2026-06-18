@@ -9,6 +9,51 @@ task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms2 FORTYTWO_H
 task env:generate PROJECT=ssmo FLEET=ssmo MISSION=mms SPACECRAFT=mms3 FORTYTWO_HOST_PORT=30092 YAMCS_HOST_PORT=8092  OPENMCT_HOST_PORT=9002;
   task up
 
+# Helm Chart stuff
+
+# Enviro variables if needed
+export K8S_CONTEXT=docker-desktop
+
+# Build necessary images once
+task k8s:helm:build
+
+# Install Specific mission-spacecraft in parallel
+task k8s:helm:install K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms1 FORTYTWO_HOST_PORT=40091 YAMCS_HOST_PORT=18091 OPENMCT_HOST_PORT=19001 &
+task k8s:helm:install K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms2 FORTYTWO_HOST_PORT=40092 YAMCS_HOST_PORT=18092 OPENMCT_HOST_PORT=19002 &
+task k8s:helm:install K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms3 FORTYTWO_HOST_PORT=40093 YAMCS_HOST_PORT=18093 OPENMCT_HOST_PORT=19003 &
+wait
+
+# Uninstall Specific mission-spacecraft in parallel
+task k8s:helm:delete K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms1 &
+task k8s:helm:delete K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms2 &
+wait
+
+# Uninstall Helm charts
+task k8s:helm:delete:all K8S_CONTEXT=${K8S_CONTEXT} 
+wait
+
+# Port-forward all services:
+task k8s:helm:port-forward K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms1 FORTYTWO_HOST_PORT=40091 YAMCS_HOST_PORT=18091 OPENMCT_HOST_PORT=19001 &
+wait
+
+task k8s:helm:port-forward K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms2 FORTYTWO_HOST_PORT=40092 YAMCS_HOST_PORT=18092 OPENMCT_HOST_PORT=19002 &
+wait
+
+task k8s:helm:port-forward K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms3 FORTYTWO_HOST_PORT=40093 YAMCS_HOST_PORT=18093 OPENMCT_HOST_PORT=19003 &
+wait
+
+# List all Port-forward services:
+task k8s:helm:port-forward:list K8S_CONTEXT=${K8S_CONTEXT}
+
+# Kill port-forward for specific services:
+task k8s:helm:port-forward:kill K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms1 &
+task k8s:helm:port-forward:kill K8S_CONTEXT=${K8S_CONTEXT} PROJECT=ssmo MISSION=mms SPACECRAFT=mms2 &
+wait
+
+# Kill all port-forwards
+task k8s:helm:port-forward:kill:all K8S_CONTEXT=${K8S_CONTEXT} 
+
+
 exit 0
 
 config=$(cat ./scripts/nos3.yaml)
