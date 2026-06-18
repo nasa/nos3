@@ -28,6 +28,10 @@
 */
 #define DYNAMIC_LENGTHS 1
 
+#ifndef STANDALONE_TCP
+#define STANDALONE_TCP 1
+#endif
+
 static volatile uint8_t keepRunning    = CRYPTO_LIB_SUCCESS;
 static volatile uint8_t tc_seq_num     = 0;
 static volatile uint8_t tc_vcid        = CRYPTO_STANDALONE_FRAMING_VCID;
