@@ -47,7 +47,7 @@ vars:
   K8S_CONTEXT: '{{.K8S_CONTEXT | default "docker-desktop"}}'
   K8S_CLUSTER: '{{.K8S_CLUSTER | default "docker-desktop"}}'
   K8S_USER: '{{.K8S_USER | default "docker-desktop"}}'
-  K8S_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}'
+  K8S_NAMESPACE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
 
   K8S_COMPONENT: '{{.K8S_COMPONENT | default "fortytwo"}}'
   K8S_APP_LABEL: '{{.PROJECT_NAME}}-{{.K8S_COMPONENT}}'
@@ -898,3 +898,328 @@ tasks:
         echo "HTTPS_PROXY={{.HTTPS_PROXY}}" >> {{.K8S_ENV_FILE}}
         echo "NO_PROXY={{.NO_PROXY}}" >> {{.K8S_ENV_FILE}}
     silent: true
+
+# ─────────────────────────────────────────────────
+# Helm Image Build & Tag
+# ─────────────────────────────────────────────────
+
+  helm:build:
+    desc: Build all container images (delegates to main 'task build')
+    cmds:
+      - task -d . build
+    silent: true
+
+# ─────────────────────────────────────────────────
+# Helm Chart Deployment
+# ─────────────────────────────────────────────────
+
+  helm:create-configs:
+    desc: Create ConfigMaps from config files (run before helm:install)
+    vars:
+      INOUT_DIR: '{{.NOS3_CFG_PATH}}/cfg/build/InOut'
+    cmds:
+      - |
+        kubectl create namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} 2>/dev/null || true
+      - |
+        kubectl create configmap fortytwo-inout \
+          --from-file={{.INOUT_DIR}}/Inp_Sim.txt \
+          --from-file={{.INOUT_DIR}}/Inp_IPC.txt \
+          --from-file={{.INOUT_DIR}}/Inp_NOS3.txt \
+          --from-file={{.INOUT_DIR}}/Inp_Cmd.txt \
+          --from-file={{.INOUT_DIR}}/Inp_FOV.txt \
+          --from-file={{.INOUT_DIR}}/Inp_Graphics.txt \
+          --from-file={{.INOUT_DIR}}/Inp_Region.txt \
+          --from-file={{.INOUT_DIR}}/Inp_TDRS.txt \
+          --from-file={{.INOUT_DIR}}/Inp_AcOutput.txt \
+          --from-file={{.INOUT_DIR}}/Inp_ScOutput.txt \
+          --from-file={{.INOUT_DIR}}/SC_NOS3.txt \
+          --from-file={{.INOUT_DIR}}/Orb_LEO.txt \
+          --from-file={{.INOUT_DIR}}/Flex_Simple.txt \
+          --from-file={{.INOUT_DIR}}/Nodes_Simple.txt \
+          --from-file={{.INOUT_DIR}}/Optics_Simple.txt \
+          --from-file={{.INOUT_DIR}}/Shaker_Simple.txt \
+          --from-file={{.INOUT_DIR}}/Whl_Simple.txt \
+          --from-file={{.INOUT_DIR}}/TRV.txt \
+          --namespace {{.K8S_NAMESPACE}} \
+          --context {{.K8S_CONTEXT}} \
+          --dry-run=client -o yaml | kubectl apply -f - \
+          --context {{.K8S_CONTEXT}}
+    silent: true
+
+  helm:install:
+    desc: Deploy a single NOS3 spacecraft (parallel-safe, no build)
+    vars:
+      HELM_CHART_DIR: './targets/kubernetes/helm/nos3'
+      HELM_RELEASE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+      HELM_VALUES_EXTRA: '{{.HELM_VALUES_EXTRA | default ""}}'
+      SIM_CONFIG: '{{.NOS3_CFG_PATH}}/cfg/build/sims/nos3-simulator.xml'
+      NOS_ENGINE_CONFIG: '{{.NOS3_CFG_PATH}}/cfg/build/sims/nos_engine_server_config.json'
+      GSW_SETTINGS: './services/yamcs/settings.xml'
+      OPENMCT_WEBPACK: './services/openmct/webpack.dev.mjs'
+      OPENMCT_INDEX_JS: './services/openmct/example/index.js'
+      OPENMCT_EVENTS_MJS: './services/openmct/example/make-example-events.mjs'
+    preconditions:
+      - sh: helm version --short 2>/dev/null
+        msg: "helm not found. Install helm: https://helm.sh/docs/intro/install/"
+    cmds:
+      - task: helm:create-configs
+      - |
+        helm upgrade --install {{.HELM_RELEASE}} {{.HELM_CHART_DIR}} \
+          --namespace {{.K8S_NAMESPACE}} \
+          --create-namespace \
+          --set global.project={{.PROJECT}} \
+          --set global.fleet={{.FLEET}} \
+          --set global.mission={{.MISSION}} \
+          --set global.spacecraft={{.SPACECRAFT}} \
+          --set global.imagePullPolicy=IfNotPresent \
+          --set services.fortytwo.hostPort={{.FORTYTWO_HOST_PORT}} \
+          --set services.gsw.hostPort={{.YAMCS_HOST_PORT}} \
+          --set services.openmct.hostPort={{.OPENMCT_HOST_PORT}} \
+          --set-file simulatorConfig={{.SIM_CONFIG}} \
+          --set-file nosEngineConfig={{.NOS_ENGINE_CONFIG}} \
+          --set-file gswSettingsXml={{.GSW_SETTINGS}} \
+          --set-file openmctWebpack={{.OPENMCT_WEBPACK}} \
+          --set-file openmctIndexJs={{.OPENMCT_INDEX_JS}} \
+          --set-file openmctMakeExampleEvents={{.OPENMCT_EVENTS_MJS}} \
+          {{- if .HELM_VALUES_EXTRA }}
+          -f {{.HELM_VALUES_EXTRA}} \
+          {{- end }}
+          --kube-context {{.K8S_CONTEXT}}
+      - task: helm:wait
+      - task: status
+      - task: helm:message
+    silent: true
+
+  helm:wait:
+    desc: Wait for all pods in a spacecraft namespace to be ready
+    vars:
+      TIMEOUT: '{{.TIMEOUT | default "600"}}'
+    cmds:
+      - |
+        echo "Waiting for pods in namespace {{.K8S_NAMESPACE}} to be ready (timeout: {{.TIMEOUT}}s)..."
+        SECONDS=0
+        while true; do
+          TOTAL=$(kubectl get pods -n {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} --no-headers 2>/dev/null | wc -l | tr -d ' ')
+          READY=$(kubectl get pods -n {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} --no-headers 2>/dev/null | \
+            awk '{split($2,a,"/"); if (a[1]==a[2] && $3=="Running") print}' | wc -l | tr -d ' ')
+          NOT_READY=$((TOTAL - READY))
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "  No pods found yet... (${SECONDS}s)"
+          elif [ "$NOT_READY" -eq 0 ]; then
+            echo "  All $TOTAL pods ready (${SECONDS}s)"
+            break
+          else
+            echo "  $READY/$TOTAL pods ready (${SECONDS}s)"
+            kubectl get pods -n {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} --no-headers 2>/dev/null | \
+              awk '{split($2,a,"/"); if (a[1]!=a[2] || $3!="Running") printf "    %-45s %s %s\n", $1, $2, $3}'
+          fi
+
+          if [ "$SECONDS" -ge "{{.TIMEOUT}}" ]; then
+            echo "ERROR: Timed out after {{.TIMEOUT}}s. Not all pods are ready."
+            kubectl get pods -n {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}}
+            exit 1
+          fi
+
+          sleep 5
+        done
+    silent: true
+
+  helm:up:
+    desc: Build images and deploy a single spacecraft (convenience wrapper)
+    cmds:
+      - task: helm:build
+      - task: helm:install
+    silent: true
+
+  helm:install:minimum:
+    desc: Deploy NOS3 minimum profile using Helm
+    cmds:
+      - task: helm:install
+        vars:
+          HELM_VALUES_EXTRA: './targets/kubernetes/helm/nos3/values-minimum.yaml'
+
+  helm:install:nkp:
+    desc: Deploy NOS3 to Nutanix Kubernetes Platform
+    cmds:
+      - task: helm:install
+        vars:
+          HELM_VALUES_EXTRA: './targets/kubernetes/helm/nos3/values-nkp.yaml'
+
+  helm:uninstall:
+    desc: Remove NOS3 Helm release and namespace
+    aliases: [helm:down, helm:stop, helm:delete]
+    vars:
+      HELM_RELEASE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+    cmds:
+      - |
+        helm uninstall {{.HELM_RELEASE}} \
+          --namespace {{.K8S_NAMESPACE}} \
+          --kube-context {{.K8S_CONTEXT}} || true
+      - task: delete:namespace
+    silent: true
+
+  helm:delete:all:
+    desc: Delete all NOS3 Helm releases and their namespaces
+    cmds:
+      - |
+        RELEASES=$(helm list --all-namespaces --filter "{{.PROJECT}}-" --short 2>/dev/null)
+        if [ -z "$RELEASES" ]; then
+          echo "No Helm releases found matching '{{.PROJECT}}-'."
+          exit 0
+        fi
+        echo "Found Helm releases:"
+        helm list --all-namespaces --filter "{{.PROJECT}}-"
+        echo ""
+        for RELEASE in $RELEASES; do
+          NS="$RELEASE"
+          echo "Uninstalling $RELEASE from namespace $NS..."
+          helm uninstall "$RELEASE" --namespace "$NS" \
+            --kube-context {{.K8S_CONTEXT}} 2>/dev/null || true
+          echo "Deleting namespace $NS..."
+          kubectl delete namespace "$NS" \
+            --context {{.K8S_CONTEXT}} 2>/dev/null || true
+          echo ""
+        done
+        echo "All NOS3 Helm releases deleted."
+    silent: true
+
+  helm:status:
+    desc: Show Helm release status
+    vars:
+      HELM_RELEASE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+    cmds:
+      - |
+        helm status {{.HELM_RELEASE}} \
+          --namespace {{.K8S_NAMESPACE}} \
+          --kube-context {{.K8S_CONTEXT}}
+
+  helm:template:
+    desc: Render Helm templates locally (dry-run, no cluster needed)
+    vars:
+      HELM_CHART_DIR: './targets/kubernetes/helm/nos3'
+      HELM_RELEASE: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+      HELM_VALUES_EXTRA: '{{.HELM_VALUES_EXTRA | default ""}}'
+    cmds:
+      - |
+        helm template {{.HELM_RELEASE}} {{.HELM_CHART_DIR}} \
+          --set global.project={{.PROJECT}} \
+          --set global.mission={{.MISSION}} \
+          --set global.spacecraft={{.SPACECRAFT}} \
+          {{- if .HELM_VALUES_EXTRA }}
+          -f {{.HELM_VALUES_EXTRA}} \
+          {{- end }}
+          --namespace {{.K8S_NAMESPACE}}
+
+  helm:message:
+    desc: Display Helm deployment access info
+    cmds:
+      - 'printf "\n{{.GREEN}}Helm{{.RESET}} release: {{.YELLOW}}{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}{{.RESET}} | namespace: {{.YELLOW}}{{.K8S_NAMESPACE}}{{.RESET}}\n"'
+      - 'printf "\n{{.GREEN}}FortyTwo VNC{{.RESET}}:  kubectl port-forward svc/fortytwo {{.FORTYTWO_HOST_PORT}}:80 -n {{.K8S_NAMESPACE}}  ->  {{.YELLOW}}http://localhost:{{.FORTYTWO_HOST_PORT}}/vnc.html{{.RESET}}\n"'
+      - 'printf "{{.GREEN}}Yamcs{{.RESET}}:         kubectl port-forward svc/yamcs {{.YAMCS_HOST_PORT}}:8090 -n {{.K8S_NAMESPACE}}  ->  {{.YELLOW}}http://localhost:{{.YAMCS_HOST_PORT}}{{.RESET}}\n"'
+      - 'printf "{{.GREEN}}OpenMCT{{.RESET}}:       kubectl port-forward svc/openmct {{.OPENMCT_HOST_PORT}}:9000 -n {{.K8S_NAMESPACE}}  ->  {{.YELLOW}}http://localhost:{{.OPENMCT_HOST_PORT}}{{.RESET}}\n"'
+      - 'printf "\nTo port-forward:  {{.GREEN}}task k8s:helm:port-forward K8S_CONTEXT={{.K8S_CONTEXT}} PROJECT={{.PROJECT}} MISSION={{.MISSION}} SPACECRAFT={{.SPACECRAFT}} FORTYTWO_HOST_PORT={{.FORTYTWO_HOST_PORT}} YAMCS_HOST_PORT={{.YAMCS_HOST_PORT}} OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}{{.RESET}}\n"'
+      - 'printf "To view status:   {{.GREEN}}task k8s:helm:status{{.RESET}}\n"'
+      - 'printf "To tear down:     {{.GREEN}}task k8s:helm:uninstall{{.RESET}}\n\n"'
+    silent: true
+
+  helm:port-forward:
+    desc: Port-forward FortyTwo, Yamcs, and OpenMCT (runs in foreground)
+    cmds:
+      - |
+        echo "Starting port-forwards in namespace {{.K8S_NAMESPACE}}..."
+        echo ""
+        echo "  FortyTwo VNC:  http://localhost:{{.FORTYTWO_HOST_PORT}}/vnc.html  (password: foobar)"
+        echo "  Yamcs:         http://localhost:{{.YAMCS_HOST_PORT}}"
+        echo "  OpenMCT:       http://localhost:{{.OPENMCT_HOST_PORT}}"
+        echo ""
+        echo "To stop: task k8s:helm:port-forward:kill PROJECT=ssmo MISSION={{.MISSION}} SPACECRAFT={{.SPACECRAFT}}"
+        echo ""
+
+        kubectl port-forward svc/fortytwo {{.FORTYTWO_HOST_PORT}}:80 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} &
+        kubectl port-forward svc/yamcs {{.YAMCS_HOST_PORT}}:8090 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} &
+        kubectl port-forward svc/openmct {{.OPENMCT_HOST_PORT}}:9000 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}} &
+        wait || true
+    silent: true
+
+  helm:port-forward:fortytwo:
+    desc: Port-forward FortyTwo VNC (http://localhost:{{.FORTYTWO_HOST_PORT}}/vnc.html)
+    cmds:
+      - |
+        echo "FortyTwo VNC: http://localhost:{{.FORTYTWO_HOST_PORT}}/vnc.html  (password: foobar)"
+        kubectl port-forward svc/fortytwo {{.FORTYTWO_HOST_PORT}}:80 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}}
+    silent: true
+
+  helm:port-forward:yamcs:
+    desc: Port-forward Yamcs (http://localhost:{{.YAMCS_HOST_PORT}})
+    cmds:
+      - |
+        echo "Yamcs: http://localhost:{{.YAMCS_HOST_PORT}}"
+        kubectl port-forward svc/yamcs {{.YAMCS_HOST_PORT}}:8090 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}}
+    silent: true
+
+  helm:port-forward:openmct:
+    desc: Port-forward OpenMCT (http://localhost:{{.OPENMCT_HOST_PORT}})
+    cmds:
+      - |
+        echo "OpenMCT: http://localhost:{{.OPENMCT_HOST_PORT}}"
+        kubectl port-forward svc/openmct {{.OPENMCT_HOST_PORT}}:9000 \
+          --namespace {{.K8S_NAMESPACE}} --context {{.K8S_CONTEXT}}
+    silent: true
+
+  helm:port-forward:list:
+    desc: List all active kubectl port-forward processes
+    cmds:
+      - |
+        PIDS=$(pgrep -f "kubectl port-forward" 2>/dev/null || true)
+        if [ -n "$PIDS" ]; then
+          echo "Active port-forwards:"
+          echo ""
+          ps -p $PIDS -o pid,args 2>/dev/null | tail -n +2
+        else
+          echo "No active port-forward processes."
+        fi
+    silent: true
+
+  helm:port-forward:kill:
+    desc: Kill port-forwards for a specific spacecraft namespace
+    cmds:
+      - |
+        PIDS=$(pgrep -f "kubectl port-forward.*{{.K8S_NAMESPACE}}" 2>/dev/null || true)
+        if [ -n "$PIDS" ]; then
+          echo "Killing port-forwards for {{.K8S_NAMESPACE}}:"
+          ps -p $PIDS -o pid,args 2>/dev/null | tail -n +2
+          echo "$PIDS" | xargs kill 2>/dev/null
+          echo ""
+          echo "Port-forwards for {{.K8S_NAMESPACE}} stopped."
+        else
+          echo "No port-forward processes found for {{.K8S_NAMESPACE}}."
+        fi
+    silent: true
+
+  helm:port-forward:kill:all:
+    desc: Kill all kubectl port-forward processes
+    cmds:
+      - |
+        PIDS=$(pgrep -f "kubectl port-forward" 2>/dev/null || true)
+        if [ -n "$PIDS" ]; then
+          echo "Killing all port-forward processes:"
+          ps -p $PIDS -o pid,args 2>/dev/null | tail -n +2
+          echo "$PIDS" | xargs kill 2>/dev/null
+          echo ""
+          echo "All port-forwards stopped."
+        else
+          echo "No port-forward processes found."
+        fi
+    silent: true
+
+  helm:list:
+    desc: List all NOS3 Helm releases
+    cmds:
+      - helm list --all-namespaces --filter "{{.PROJECT}}-"

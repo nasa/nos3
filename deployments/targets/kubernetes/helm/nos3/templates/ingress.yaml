@@ -1,0 +1,72 @@
+{{- if .Values.ingress.enabled }}
+{{- $baseDomain := .Values.ingress.baseDomain | default "local" -}}
+{{- $project := .Values.global.project -}}
+{{- $autoHost := printf "%s.%s" $project $baseDomain -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "ingress") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "ingress") | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- if .Values.ingress.hosts }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ .service }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+    {{- end }}
+    {{- else }}
+    # Auto-generated from baseDomain: {{ $autoHost }}
+    - host: {{ $autoHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fortytwo
+                port:
+                  number: 80
+    - host: yamcs.{{ $autoHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: yamcs
+                port:
+                  number: 8090
+    - host: openmct.{{ $autoHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openmct
+                port:
+                  number: 9000
+    {{- end }}
+{{- end }}

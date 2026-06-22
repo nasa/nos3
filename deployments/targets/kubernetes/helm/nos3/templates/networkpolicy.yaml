@@ -1,0 +1,141 @@
+{{/*
+NetworkPolicy templates - Compose-style network segmentation.
+
+Docker Compose defines three networks:
+  1. mission-spacecraft-network: all services within one spacecraft (all pods in namespace)
+  2. mission-network:            all services within a mission (cross-namespace, same mission label)
+  3. fleet-network:              fleet-wide services (only openmct, cross-namespace by fleet label)
+
+In K8s this maps to:
+  - Default deny all ingress/egress from outside the namespace
+  - Allow all intra-namespace traffic (mission-spacecraft-network)
+  - Allow DNS to kube-system (required for service discovery)
+  - Allow fleet-labeled services to receive traffic from other mission namespaces (fleet-network)
+  - Allow ingress controller traffic to exposed services
+*/}}
+{{- if .Values.networkPolicy.enabled }}
+---
+# ── Default Deny ──────────────────────────────────────────
+# Blocks all ingress from outside the namespace by default.
+# All intra-namespace traffic is allowed (mission-spacecraft-network equivalent).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "default-deny") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "default-deny") | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow all traffic from pods within the same namespace
+    # (equivalent to mission-spacecraft-network: all services can talk to each other)
+    - from:
+        - podSelector: {}
+  egress:
+    # Allow all traffic to pods within the same namespace
+    - to:
+        - podSelector: {}
+    {{- if .Values.networkPolicy.allowDNS }}
+    # Allow DNS resolution (kube-dns / CoreDNS)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    {{- end }}
+---
+# ── Mission Network ───────────────────────────────────────
+# Allows all pods in this namespace to communicate with pods in other namespaces
+# that share the same mission label (mission-network equivalent).
+# Other spacecraft namespaces for the same mission can reach these pods.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "mission-network") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "mission-network") | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              nos3.nasa.gov/mission: {{ .Values.global.mission }}
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              nos3.nasa.gov/mission: {{ .Values.global.mission }}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+{{- if has $name $.Values.networkPolicy.fleetServices }}
+---
+# ── Fleet Network: {{ $name }} ────────────────────────────
+# Allows {{ $name }} to receive traffic from any namespace in the fleet
+# (fleet-network equivalent — only for services listed in networkPolicy.fleetServices).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" $ "component" (printf "%s-fleet" $name)) }}
+  labels:
+    {{- include "nos3.labels" (dict "root" $ "component" (printf "%s-fleet" $name)) | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "nos3.selectorLabels" (dict "root" $ "component" $name) | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Accept traffic from any namespace in the fleet
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              nos3.nasa.gov/project: {{ $.Values.global.project }}
+  egress:
+    # Send traffic to any namespace in the fleet
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              nos3.nasa.gov/project: {{ $.Values.global.project }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if .Values.ingress.enabled }}
+---
+# ── Ingress Controller Access ─────────────────────────────
+# Allows the ingress controller to reach exposed services (fortytwo VNC, yamcs, openmct).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "allow-ingress") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "allow-ingress") | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow traffic from the ingress controller namespace
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+{{- end }}
+{{- end }}
