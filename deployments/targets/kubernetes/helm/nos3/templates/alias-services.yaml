@@ -1,0 +1,43 @@
+{{/*
+DNS Alias Services - maps Docker Compose network aliases to K8s Service names.
+
+In compose.yaml, services use network aliases (e.g., "fortytwo", "nos-engine-server",
+"yamcs") for inter-service DNS discovery. In K8s, each alias becomes a headless Service
+that selects the same pod, ensuring hardcoded hostnames in configs (nos3-simulator.xml,
+nos_engine_server_config.json) continue to resolve.
+
+Only creates alias Services for names that differ from the component name
+(the primary Service already provides the full name).
+*/}}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+{{- range $alias := $svc.dnsAliases }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $alias }}
+  labels:
+    {{- include "nos3.labels" (dict "root" $ "component" $name) | nindent 4 }}
+    nos3.nasa.gov/alias-for: {{ $name }}
+spec:
+  selector:
+    {{- include "nos3.selectorLabels" (dict "root" $ "component" $name) | nindent 4 }}
+  {{- if $svc.ports }}
+  ports:
+    {{- range $svc.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .port }}
+      protocol: {{ .protocol | default "TCP" }}
+    {{- end }}
+  {{- else }}
+  clusterIP: None
+  ports:
+    - name: placeholder
+      port: 60000
+      protocol: TCP
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

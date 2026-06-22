@@ -1,0 +1,129 @@
+{{/*
+ConfigMap containing all entrypoint scripts referenced by services via entrypointKey.
+To add a new entrypoint, add a key here and reference it in the service's entrypointKey field.
+
+Scripts are copied from deployments/services/<service>/entrypoint.sh in the NOS3 repo.
+For production deploys, prefer --set-file to inject scripts at install time.
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "entrypoints") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "entrypoints") | nindent 4 }}
+data:
+  {{- /* ── FortyTwo entrypoint (from services/fortytwo/entrypoint.sh) ── */}}
+  entrypoint-fortytwo.sh: |
+    #!/bin/bash
+
+    rm -f /tmp/.X1-lock || true
+    rm -f /tmp/.X11-unix/X1 || true
+
+    pkill -9 -f vncserver || true
+    pkill -9 -f Xvnc || true
+    pkill -9 -f websockify || true
+
+    /opt/TurboVNC/bin/vncserver -securitytypes tlsnone,x509none,none && \
+      sleep 5 && \
+      websockify -D \
+        --web=/usr/share/novnc/ \
+        --cert=~/novnc.pem 80 localhost:5901
+
+    export DISPLAY=${DISPLAY:-:1}
+    export DIR=/opt/nasa-itc
+    export GIT_FOLDER=${GIT_FOLDER}
+
+    xterm &
+
+    rm -rf /opt/nasa-itc/42/NO3InOut/{*.42,*.csv}
+
+    if [ "$RECOMPILE" == "true" ]; then
+      cd /opt/nasa-itc/42 && \
+        git fetch && \
+        git checkout ${GIT_COMMIT} && \
+        git pull origin && \
+        git submodule update && \
+        make clean && \
+        make -j2
+    fi
+
+    STARTUP_FOLDER=${STARTUP_FOLDER:-NO3InOut}
+
+    cd /opt/nasa-itc/42 && \
+      xterm -e "./42 ${STARTUP_FOLDER}" &
+
+    echo "Started 42 with PID $!"
+
+    tail -f /dev/null
+
+  {{- /* ── FSW entrypoint (from services/fsw/entrypoint.sh) ── */}}
+  entrypoint-fsw.sh: |
+    #!/bin/bash
+
+    pkill -f fsw_respawn.sh || true
+    pkill -f core-cpu1 || true
+
+    export LD_LIBRARY_PATH=${FSW_DIR}/cf/:${LD_LIBRARY_PATH}
+
+    mkdir -p $FSW_DIR/data
+    mkdir -p $FSW_DIR/data/cam
+    mkdir -p $FSW_DIR/data/evs
+    mkdir -p $FSW_DIR/data/hk
+    mkdir -p $FSW_DIR/data/inst
+    touch $FSW_DIR/data/dummy.txt
+    echo "1234567890" > $FSW_DIR/data/dummy.txt
+    truncate -s 1M $FSW_DIR/data/dummy.txt
+
+    #
+    cd ${FSW_DIR} && \
+        ./core-cpu1 -R PO 2>&1 | tee -a ${BASE_DIR}/core-cpu1.log &
+
+    tail -f /dev/null
+
+  {{- /* ── GSW / YAMCS entrypoint (from services/yamcs/entrypoint.sh) ── */}}
+  entrypoint-gsw.sh: |
+    #!/bin/bash
+
+    pkill -9 java
+    rm -rf ${YAMCS_DATA_DIR}/_global.rdb/LOCK
+    rm -rf ${YAMCS_DATA_DIR}/nos3.rdb/LOCK
+
+    mkdir -p /tmp/nos3
+    mkdir -p /tmp/nos3/data
+    mkdir -p /tmp/nos3/data/cam
+    mkdir -p /tmp/nos3/data/evs
+    mkdir -p /tmp/nos3/data/hk
+    mkdir -p /tmp/nos3/data/inst
+    mkdir -p /tmp/nos3/uplink
+
+    # Start YAMCS server
+    mvn -X ${MAVEN_HTTPS_PROXY} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DCOMPONENT_DIR=${COMPONENT_DIR} yamcs:run
+
+    tail -f /dev/null
+
+  {{- /* ── OpenMCT entrypoint (from services/openmct/entrypoint.sh) ── */}}
+  entrypoint-openmct.sh: |
+    #!/usr/bin/env bash
+
+    pkill -f node
+    pkill -f npm
+
+    npm start
+
+    tail -f /dev/null
+
+  {{- /* ── Radio-sim + Cryptolib entrypoint (from services/radio-sim/entrypoint2.sh) ── */}}
+  entrypoint-radio-sim-cryptolib.sh: |
+    #!/bin/bash -x
+
+    cd /home/nos3/builds/nos3/sims/build/bin
+    pkill -f ./nos3-single-simulator
+    ./nos3-single-simulator -f ./nos3-simulator.xml generic-radio-sim &
+
+    cd /home/nos3/builds/nos3/gsw/build
+    pkill -f ./support/standalone
+    ./support/standalone &
+
+    cd -
+
+    tail -f /dev/null

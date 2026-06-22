@@ -1,0 +1,556 @@
+version: '3'
+
+dotenv:
+  - ./.env
+
+vars:
+  PROJECT: '{{.PROJECT | default "nos3"}}'
+  FLEET: '{{.PROJECT | default "nos3"}}'
+  MISSION: '{{.MISSION | default "m01"}}'
+  SPACECRAFT: '{{.SPACECRAFT | default "sc01"}}'
+
+  PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+
+  COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+  SC_ENVIRO: '{{.SC_ENVIRO | default "sim"}}'
+
+  YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT | default "8090"}}'
+  OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT | default "9000"}}'
+  FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT | default "30090"}}'
+
+  SERVICES_DIR: ./services
+  SCRIPTS_DIR: ./scripts
+  TEMPLATES_DIR: ./templates
+  BUILD_DIR: ./build
+  ENVIROS_DIR: '{{.BUILD_DIR}}/'
+
+  # ANSI color codes for message formatting
+  GREEN: '\033[0;32m'
+  YELLOW: '\033[0;33m'
+  BLUE: '\033[0;34m'
+  RESET: '\033[0m'
+
+  CONTAINER_BIN: docker
+  CONTAINER_COMPOSE_BIN: ' {{.CONTAINER_BIN}} compose '
+
+  CONTAINER_DIR: '.'
+  COMPOSE_FILE: '{{.CONTAINER_DIR}}/compose.yaml'
+
+# Variables for configuring builds and deployments
+  DEPLOYMENT_ENVIRO: '{{.DEPLOYMENT_ENVIRO | default ""}}'
+  HTTP_PROXY: '{{.HTTP_PROXY | default ""}}'
+  HTTPS_PROXY: '{{.HTTPS_PROXY | default ""}}'
+
+  ENVIRO_SCRIPT: '{{.SCRIPTS_DIR}}/env.sh'
+  ENVIRO_FILE: '{{.CONTAINER_DIR}}/.env'
+  ENVIRO_TEMPLATE: '{{.TEMPLATES_DIR}}/env.template'
+
+  MAVEN_HTTPS_PROXY: '-s./settings.xml'
+  MAVEN_SETTINGS_FILE: '{{.MAVEN_SETTINGS_FILE | default ""}}'
+
+  # NOS3 configuration path
+  NOS3_CFG_PATH: '{{.NOS3_CFG_PATH | default ".."}}'
+
+tasks:
+  default:
+    desc: Shows this help message
+    cmds:
+      - task --list-all
+    silent: true
+
+  test:
+    env:
+      PROJECT: '{{.PROJECT}}'
+      FLEET: '{{.FLEET}}'
+      MISSION: '{{.MISSION}}'
+      SPACECRAFT: '{{.SPACECRAFT}}'
+      PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+      PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+      COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+
+      SC_ENVIRO: '{{.SC_ENVIRO}}'
+
+      FORTYTWO_HOST: '{{.FORTYTWO_HOST}}'
+      FORTYTWO_PORT: '{{.FORTYTWO_PORT}}'
+      FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT}}'
+
+      YAMCS_HOST: '{{.YAMCS_HOST}}'
+      YAMCS_PORT: '{{.YAMCS_PORT}}'
+      YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT}}'
+      
+      OPENMCT_HOST: '{{.OPENMCT_HOST}}'
+      OPENMCT_PORT: '{{.OPENMCT_PORT}}'
+      OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT}}'
+
+      ENV_PATH: '{{.BUILD_DIR}}/docker/{{.PROJECT}}/{{.MISSION}}/{{.SPACECRAFT}}/'
+      ENV_SHELL: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}.sh'
+
+    cmds:
+      - echo "project = ${PROJECT}"
+      - echo "fleet = ${FLEET}"
+      - echo "mission = ${MISSION}"
+      - echo "spacecraft = ${SPACECRAFT}"
+      - echo "compose project name = ${COMPOSE_PROJECT_NAME}"; echo
+      - echo "spacecraft enviro = ${SC_ENVIRO}"; echo
+      - echo "fortytwo host = ${FORTYTWO_HOST}"
+      - echo "fortytwo port = ${FORTYTWO_PORT}"
+      - echo "fortytwo host port = ${FORTYTWO_HOST_PORT}"; echo
+      - echo "yamcs host = ${YAMCS_HOST}"
+      - echo "yamcs port = ${YAMCS_PORT}"
+      - echo "yamcs host port = ${YAMCS_HOST_PORT}";echo
+      - echo "openmct host = ${OPENMCT_HOST}"
+      - echo "openmct port = ${OPENMCT_PORT}"
+      - echo "openmct host port = ${OPENMCT_HOST_PORT}";echo
+      - echo "env path = ${ENV_PATH}"
+      - echo "env shell = ${ENV_SHELL}"; echo
+      - |
+        mkdir -p ${ENV_PATH}
+
+        {{.ENVIRO_SCRIPT}} > ${ENV_PATH}/${ENV_SHELL}.env
+
+        cp ${ENV_PATH}/${ENV_SHELL}.env .env
+      - task: up
+
+    silent: true
+
+  build-fortytwo:
+    desc: Build fortytwo (42)
+    deps:
+      - env:create
+      - set-permissions
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo
+    silent: true
+
+  build-yamcs:
+    desc: Build yamcs
+    deps:
+      - env:create
+      - setup-maven
+      - set-permissions
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-gsw
+    silent: true
+
+  build-openmct:
+    desc: Build openmct
+    deps:
+      - env:create
+      - set-permissions
+    cmds:
+      - '{{.CONTAINER_BIN}} pull docker.io/library/ubuntu:25.04'
+      - |
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-openmct
+    silent: true
+
+  build-fsw:
+    desc: Build nos3-base-local (fsw)
+    deps:
+      - env:create
+      - set-permissions
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fsw
+    silent: true
+
+  build:
+    desc: Build all images
+    deps:
+      - env:create
+      - set-permissions
+      - setup-maven
+    cmds:
+      - '{{.CONTAINER_BIN}} pull docker.io/library/ubuntu:25.04'
+      - |
+        source {{.ENVIRO_FILE}} && \
+          {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} build --pull nos3-fortytwo nos3-gsw nos3-openmct nos3-fsw
+    silent: true
+
+  set-permissions:
+    desc: set filesystem permissions, needed for restricted accounts
+    cmds:
+      - mkdir -p ../cfg/build
+      - find . -type f -name '*.sh'               -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.py'               -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find . -type f -name '*.json'             -exec chmod 666 {} \; # Make sure all .json files are world readable
+      - find . -type f -name '*.xml'              -exec chmod 666 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.c'                -exec chmod 555 {} \; # Make sure all .xml files are world readable
+      - find . -type f -name '*.h'                -exec chmod 555 {} \; # Make sure all .xml files are world readable
+      - find ../cfg/build -type f -name '*.sh'    -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.py'    -exec chmod 777 {} \; # Make sure all scripts are world executable
+      - find ../cfg/build -type f -name '*.json'  -exec chmod 666 {} \; # Make sure all .json files are world readable
+      - find ../cfg/build -type f -name '*.xml'   -exec chmod 666 {} \; # Make sure all .xml files are world readable
+      - find ${HOME}/.nos3/ -type f -name '*.xml' -exec chmod 666 {} \; # Make sure all .xml files are world readable
+    silent: true
+
+  up:
+    desc: Bring up nos3 in detached state
+    # env:
+    #   PROJECT: '{{.PROJECT}}'
+    #   FLEET: '{{.FLEET}}'
+    #   MISSION: '{{.MISSION}}'
+    #   SPACECRAFT: '{{.SPACECRAFT}}'
+    #   PROJECT_MISSION: '{{.PROJECT}}-{{.MISSION}}'
+    #   PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+    #   COMPOSE_PROJECT_NAME: '{{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}'
+
+    #   SC_ENVIRO: '{{.SC_ENVIRO}}'
+
+    #   FORTYTWO_HOST: '{{.FORTYTWO_HOST}}'
+    #   FORTYTWO_PORT: '{{.FORTYTWO_PORT}}'
+    #   FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT}}'
+
+    #   YAMCS_HOST: '{{.YAMCS_HOST}}'
+    #   YAMCS_PORT: '{{.YAMCS_PORT}}'
+    #   YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT}}'
+      
+    #   OPENMCT_HOST: '{{.OPENMCT_HOST}}'
+    #   OPENMCT_PORT: '{{.OPENMCT_PORT}}'
+    #   OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT}}'
+
+    #   ENV_PATH: '{{.BUILD_DIR}}/docker/${PROJECT}/${MISSION}/${SPACECRAFT}/'
+    #   ENV_SHELL: '${PROJECT}-${MISSION}-${SPACECRAFT}.sh'
+
+    cmds:
+      - task: submodule-update
+      - task: env:generate
+      - task: build
+      - task: config-nos3-mission
+      - task: nos3:config
+      - task: set-permissions
+      - |
+        source {{.ENVIRO_FILE}} && \
+          export NOS3_CFG_PATH={{.NOS3_CFG_PATH}}; \
+          {{.CONTAINER_COMPOSE_BIN}} --env-file {{.ENVIRO_FILE}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d --remove-orphans
+      - task check-service-ready SERVICE_HOST={{.YAMCS_HOST}} SERVICE_PORT={{.YAMCS_HOST_PORT}}
+      - sleep 5
+      - task: sidecar
+      - task: info-services
+      - task: check-docker-ps
+      - task: datacount
+      - task: services:message
+    silent: true
+
+  down:
+    desc: Bring down nos3
+    cmds:
+      - |
+        {{.CONTAINER_COMPOSE_BIN}} -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} down --remove-orphans || true
+    silent: true
+
+  up-minimum:
+    desc: Bring up nos3 (minimum) in detached state
+    deps:
+      - down
+      - env:create
+      - build
+      - config-nos3-mission
+      - nos3:config
+      - set-permissions
+    cmds:
+      - sleep 5
+      - |
+        source {{.ENVIRO_FILE}} && \
+          export NOS3_CFG_PATH={{.NOS3_CFG_PATH}} ; \
+            {{.CONTAINER_COMPOSE_BIN}} \
+              --env-file {{.ENVIRO_FILE}} \
+              -f {{.COMPOSE_FILE}} --project-name {{.COMPOSE_PROJECT_NAME}} up -d \
+                nos3-fortytwo \
+                nos3-nos-engine-server \
+                nos3-fsw \
+                nos3-gps-sim \
+                nos3-time \
+                nos3-radio-sim-cryptolib \
+                nos3-truth42sim \
+                nos3-gsw \
+                nos3-openmct \
+              --force-recreate \
+              --remove-orphans
+      - task check-service-ready SERVICE_HOST=${YAMCS_HOST} SERVICE_PORT=${YAMCS_HOST_PORT}
+      - task sidecar
+      - task info-services
+      - task check-docker-ps
+    silent: true
+
+  sidecar:
+    desc: Run sidecar to enable output
+    cmds:
+      - '{{.SCRIPTS_DIR}}/sidecar.sh -s {{.YAMCS_HOST}} -p {{.YAMCS_HOST_PORT}} -c "/CFS/CMD/TO_ENABLE_OUTPUT"'
+    silent: true
+
+  clean-containers:
+    desc: clean images, cache, volumes, and networks
+    deps:
+      - down
+    cmds:
+      - yes | {{.CONTAINER_BIN}} image prune --filter "dangling=true"
+      - yes | {{.CONTAINER_BIN}} system prune -a
+      - yes | {{.CONTAINER_BIN}} volume prune
+      - yes | {{.CONTAINER_BIN}} network prune
+    silent: true
+
+  setup-maven:
+    desc: Setup maven settings.xml with proxy info-services
+    cmds:
+      - echo "<settings><proxies></proxies></settings>" > {{.SERVICES_DIR}}/yamcs/settings.xml
+      - |
+        if [ "{{.DEPLOYMENT_ENVIRO}}" == "vmmoc" ]; then
+          cp -f {{.MAVEN_SETTINGS_FILE}} ${HOME}/.nos3/yamcs/ || true
+          cp -f {{.MAVEN_SETTINGS_FILE}} {{.SERVICES_DIR}}/yamcs/ || true
+        fi
+    silent: true
+
+  check-docker-ps:
+    desc: check docker ps for any exited|unhealthy|created|error containers
+    cmds:
+      - |
+        {{.CONTAINER_BIN}} ps -a | egrep -i 'exited|unhealthy|created|error' | grep -v STATUS || true
+    silent: true
+
+  check-service-ready:
+    env:
+      SERVICE_HOST: '{{.SERVICE_HOST | default "{{.YAMCS_HOST}}"}}'
+      SERVICE_PORT: '{{.SERVICE_PORT | default "{{.YAMCS_HOST_PORT}}"}}'
+    desc: wait for a service to be ready on a given port
+    cmds:
+      - |
+        echo "Waiting for service {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready..."
+        COUNT=0
+        until nc -z {{.SERVICE_HOST}} {{.SERVICE_PORT}}; do
+          COUNT=$((COUNT + 1))
+          if [ $COUNT -ge 60 ]; then
+            echo "Timeout waiting for port {{.SERVICE_PORT}} to open"
+            exit 1
+          fi
+          sleep 1
+          echo "Waiting for {{.SERVICE_HOST}}:{{.SERVICE_PORT}} to be ready... ($COUNT/60)"
+        done
+        echo "Port {{.SERVICE_HOST}}:{{.SERVICE_PORT}} is open, checking API..."
+        COUNT=0
+        until curl -s "http://{{.SERVICE_HOST}}:{{.SERVICE_PORT}}/api" | grep -q '"yamcsVersion"'; do
+          COUNT=$((COUNT + 1))
+          if [ $COUNT -ge 60 ]; then
+            echo "Timeout waiting for API to be ready"
+            exit 1
+          fi
+          sleep 1
+          echo "Waiting for API to be ready... ($COUNT/60)"
+        done
+        echo "Service http://{{.SERVICE_HOST}}:{{.SERVICE_PORT}}/api is ready!"
+    silent: true
+
+  purge-containers:
+    desc: 'WARNING: purge docker/podman images, cache, volumes, and networks'
+    deps:
+      - down
+    cmds:
+      - yes | {{.CONTAINER_BIN}} image prune --filter "dangling=true" || true
+      - yes | {{.CONTAINER_BIN}} system prune -a || true
+      - yes | {{.CONTAINER_BIN}} volume prune || true
+      - yes | {{.CONTAINER_BIN}} network prune || true
+      - echo
+    silent: true
+
+  yamcs:message:
+    desc: Display Yamcs connection info
+    cmds:
+      - 'printf "\n\n{{.GREEN}}Yamcs{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:      {{.YELLOW}}http://localhost:{{.YAMCS_HOST_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}Yamcs{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:      {{.YELLOW}}http://{{.YAMCS_HOST}}:{{.YAMCS_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task yamcs:logs{{.RESET}}\n"'
+    silent: true
+
+  openmct:message:
+    desc: Display OpenMCT connection info
+    cmds:
+      - 'printf "\n{{.GREEN}}OpenMCT{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:    {{.YELLOW}}http://localhost:{{.OPENMCT_HOST_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}OpenMCT{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:    {{.YELLOW}}http://{{.OPENMCT_HOST}}:{{.OPENMCT_PORT}}{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task openmct:logs{{.RESET}}\n"'
+    silent: true
+
+  fortytwo:message:
+    desc: Display FortyTwo (42) connection info
+    cmds:
+      - 'printf "\n{{.GREEN}}FortyTwo{{.RESET}} ({{.YELLOW}}External{{.RESET}}) available via:   {{.YELLOW}}http://localhost:{{.FORTYTWO_HOST_PORT}}/vnc.html{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "{{.GREEN}}FortyTwo{{.RESET}} ({{.YELLOW}}Internal{{.RESET}}) available via:   {{.YELLOW}}http://{{.FORTYTWO_HOST}}:{{.FORTYTWO_PORT}}/vnc.html{{.RESET}} ({{.BLUE}}<-- note the port{{.RESET}})\n"'
+      - 'printf "  View logs via:          {{.GREEN}}task fortytwo:logs{{.RESET}}\n"'
+    silent: true
+
+  show:invocation:
+    desc: Display reconstructed task invocation
+    cmds:
+      - 'printf "task {{.TASK}} PROJECT={{.PROJECT}} FLEET={{.FLEET}} MISSION={{.MISSION}} SPACECRAFT={{.SPACECRAFT}} FORTYTWO_HOST_PORT={{.FORTYTWO_HOST_PORT}} YAMCS_HOST_PORT={{.YAMCS_HOST_PORT}} OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}\n"'
+    silent: true
+
+  show:vars:
+    desc: Display current variable values
+    cmds:
+      - 'printf "{{.GREEN}}PROJECT{{.RESET}}={{.YELLOW}}{{.PROJECT}}{{.RESET}} | {{.GREEN}}FLEET{{.RESET}}={{.YELLOW}}{{.FLEET}}{{.RESET}} | {{.GREEN}}MISSION{{.RESET}}={{.YELLOW}}{{.MISSION}}{{.RESET}} | {{.GREEN}}SPACECRAFT{{.RESET}}={{.YELLOW}}{{.SPACECRAFT}}{{.RESET}} | {{.GREEN}}FORTYTWO_HOST_PORT{{.RESET}}={{.YELLOW}}{{.FORTYTWO_HOST_PORT}}{{.RESET}} | {{.GREEN}}YAMCS_HOST_PORT{{.RESET}}={{.YELLOW}}{{.YAMCS_HOST_PORT}}{{.RESET}} | {{.GREEN}}OPENMCT_HOST_PORT{{.RESET}}={{.YELLOW}}{{.OPENMCT_HOST_PORT}}{{.RESET}}\n"'
+    silent: true
+
+  datacount:
+    desc: Display Yamcs radio-in dataInCount
+    cmds:
+      - 'curl -s http://{{.YAMCS_HOST}}:{{.YAMCS_HOST_PORT}}/api/links/nos3/radio-in | jq -r ''.dataInCount'' | tr -d ''\n'''
+    silent: true
+
+  services:message:
+    desc: Display connection info for all services
+    cmds:
+      - echo ""
+      - task: show:vars
+      - task: fortytwo:message
+      - task: yamcs:message
+      - task: openmct:message
+      - echo ""
+    silent: true
+
+  info-services:
+    desc: info on accessing various services
+    cmds:
+      - task env:create
+      - |
+        source {{.ENVIRO_FILE}}
+        echo; echo "How to access various services:"; echo; \
+        echo "open http://localhost:${YAMCS_HOST_PORT} to access yamcs/gsw"; \
+        echo "open http://localhost:${FORTYTWO_HOST_PORT}/vnc.html to access fortytwo (42) and then click Connect"; \
+        echo "FT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=fixed&tc.timeSystem=utc&tc.startBound=${SIM_T0_EPOCH_MILLISECONDS}&tc.endBound=${SIM_TF_EPOCH_MILLISECONDS}&view=plot-single"
+        echo "RT: open http://localhost:${OPENMCT_HOST_PORT}/#/browse/taxonomy:spacecraft/taxonomy:~SIM_42_TRUTH/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA/taxonomy:~SIM_42_TRUTH~SIM_42_TRUTH_DATA~BVB_2?tc.mode=local&tc.timeSystem=utc&view=plot-single&tc.startDelta=60000&tc.endDelta=300000"
+        echo
+    silent: true
+
+  env:set:defaults:
+    desc: Reset .env to script defaults (ignoring current Taskfile/env values)
+    cmds:
+      - |
+        unset PROJECT FLEET MISSION SPACECRAFT
+        unset PROJECT_NAME PROJECT_MISSION
+        unset SC_ENVIRO
+        unset FORTYTWO_HOST FORTYTWO_PORT FORTYTWO_HOST_PORT
+        unset YAMCS_HOST YAMCS_PORT YAMCS_HOST_PORT
+        unset OPENMCT_HOST OPENMCT_PORT OPENMCT_HOST_PORT
+        {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
+    silent: true
+
+  env:create:
+    desc: Create .env file from env.sh script
+    # cmds:
+    #   - |
+    #     {{.ENVIRO_SCRIPT}} > {{.ENVIRO_FILE}}
+    cmds:
+      - task env:generate
+    silent: true
+
+  install-lazydocker:
+    desc: Install lazydocker CLI tool (to view logs, etc)
+    cmds:
+      - |
+        curl --silent https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+      - |
+        echo; echo "don't forget to add: ${HOME}/.local/bin:${PATH} to your ~/.bashrc or ~/.zshrc"; echo
+      - |
+        echo "watch a Lazydocker demo here: https://www.youtube.com/watch?v=NICqQPxwJWw"; echo
+    silent: true
+
+  config-nos3-mission:
+    desc: configure nos3-mission.xml to set start-time
+    deps:
+      - env:create
+    cmds:
+      - |
+        source {{.ENVIRO_FILE}} && \
+          sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
+    silent: true
+
+  submodule-update:
+    desc: sync and update git submodules
+    cmds:
+      - git submodule sync; git submodule update --init --recursive; git submodule sync
+    silent: true
+
+  env:generate:
+    aliases: [generate:env]
+    desc: generate env.sh file
+    cmds:
+      - |
+        export PROJECT={{.PROJECT}}
+        export FLEET={{.FLEET}}
+        export MISSION={{.MISSION}}
+        export SPACECRAFT={{.SPACECRAFT}}
+
+        export PROJECT_MISSION={{.PROJECT}}-{{.MISSION}}
+        export PROJECT_NAME={{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}
+        export COMPOSE_PROJECT_NAME={{.PROJECT}}-{{.MISSION}}-{{.SPACECRAFT}}
+
+        export SC_ENVIRO={{.SC_ENVIRO}}
+
+        export FORTYTWO_HOST={{.FORTYTWO_HOST}}
+        export FORTYTWO_PORT={{.FORTYTWO_PORT}}
+        export FORTYTWO_HOST_PORT={{.FORTYTWO_HOST_PORT}}
+
+        export YAMCS_HOST={{.YAMCS_HOST}}
+        export YAMCS_PORT={{.YAMCS_PORT}}
+        export YAMCS_HOST_PORT={{.YAMCS_HOST_PORT}}
+
+        export OPENMCT_HOST={{.OPENMCT_HOST}}
+        export OPENMCT_PORT={{.OPENMCT_PORT}}
+        export OPENMCT_HOST_PORT={{.OPENMCT_HOST_PORT}}
+
+        export ENV_PATH={{.BUILD_DIR}}/docker/${PROJECT}/${MISSION}/${SPACECRAFT}/
+        export ENV_SHELL=${PROJECT}-${MISSION}-${SPACECRAFT}.sh
+
+        mkdir -p ${ENV_PATH}
+
+        {{.ENVIRO_SCRIPT}} > ${ENV_PATH}/${ENV_SHELL}.env
+
+        cp ${ENV_PATH}/${ENV_SHELL}.env .env
+
+    silent: true
+
+# nos3 native tasks
+  nos3:config:
+    desc: configure nos3 by running config.sh
+    cmds:
+      - cd ../ && ./scripts/cfg/config.sh
+    silent: true
+
+  nos3:clean:
+    desc: clean nos3 configuration
+    deps:
+      - down
+    cmds:
+      - cd ../ && make clean
+    silent: true
+
+  nos3:uninstall:
+    desc: uninstall nos3 items
+    deps:
+      - down
+      - nos3:clean
+    cmds:
+      - cd ../ && make uninstall
+    silent: true
+
+# K8S Kubernetes Tasks (included from ./targets/kubernetes/Taskfile.yaml)
+# Usage: task k8s:up, task k8s:down, task k8s:status, etc.
+includes:
+  k8s:
+    taskfile: ./targets/kubernetes/Taskfile.yaml
+    dir: .
+    vars:
+      # Only pass vars that users override on CLI; k8s Taskfile has matching defaults for the rest
+      PROJECT: '{{.PROJECT}}'
+      FLEET: '{{.FLEET}}'
+      MISSION: '{{.MISSION}}'
+      SPACECRAFT: '{{.SPACECRAFT}}'
+      YAMCS_HOST_PORT: '{{.YAMCS_HOST_PORT}}'
+      OPENMCT_HOST_PORT: '{{.OPENMCT_HOST_PORT}}'
+      FORTYTWO_HOST_PORT: '{{.FORTYTWO_HOST_PORT}}'

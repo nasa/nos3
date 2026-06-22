@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  myorg-dev-missions-exp-m01-sc1-fortytwo
+  namespace: myorg-dev-missions-exp-m01-sc1
+  labels:
+    app: myorg-dev-missions-exp-m01-sc1-fortytwo
+spec:
+  selector:
+    matchLabels:
+      app: myorg-dev-missions-exp-m01-sc1-fortytwo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: myorg-dev-missions-exp-m01-sc1-fortytwo
+    spec:
+      containers:
+      - name: fortytwo
+      # 3d4e07bc4ab994e4824e95810aa2d70916d7bba4
+        image: ghcr.io/ericstoneking/42:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "3"
+        ports:
+          - name: x-vnc-pod
+            containerPort: 80
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name:  myorg-dev-missions-exp-m01-sc1-fortytwo-x-vnc
+#   namespace: myorg-dev-missions-exp-m01-sc1
+#   labels:
+#     app: myorg-dev-missions-exp-m01-sc1-fortytwo-x-vnc
+# spec:
+#   selector:
+#     matchLabels:
+#       app: myorg-dev-missions-exp-m01-sc1-fortytwo-x-vnc
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: myorg-dev-missions-exp-m01-sc1-fortytwo-x-vnc
+#     spec:
+#       containers:
+#       - name: fortytwo-x-vnc
+#         image: ghcr.io/haisamido/x-vnc:latest
+#         imagePullPolicy: Always
+#         resources:
+#           requests:
+#             memory: "2Gi"
+#             cpu: "1"
+#           limits:
+#             memory: "2Gi"
+#             cpu: "3"
+#         ports:
+#           - name: x-vnc-pod-1
+#             containerPort: 81

@@ -1,0 +1,66 @@
+# NOS3 Minimum Profile
+# Matches the 'up-minimum' task from the Docker Compose Taskfile.
+# Deploys only core services + essential simulators.
+#
+# Usage: helm install nos3 ./nos3 -f values-minimum.yaml
+
+services:
+  # Core services - all enabled
+  fortytwo:
+    enabled: true
+  nos-engine-server:
+    enabled: true
+  fsw:
+    enabled: true
+  gsw:
+    enabled: true
+  openmct:
+    enabled: true
+
+  # Essential simulators
+  truth42sim:
+    enabled: true
+  gps-sim:
+    enabled: true
+  radio-sim-cryptolib:
+    enabled: true
+
+  # Essential utilities
+  time:
+    enabled: true
+
+  # Disabled simulators
+  camsim:
+    enabled: false
+  css-sim:
+    enabled: false
+  eps-sim:
+    enabled: false
+  fss-sim:
+    enabled: false
+  imu-sim:
+    enabled: false
+  mag-sim:
+    enabled: false
+  rw-sim0:
+    enabled: false
+  rw-sim1:
+    enabled: false
+  rw-sim2:
+    enabled: false
+  sample-sim:
+    enabled: false
+  startrk-sim:
+    enabled: false
+  thruster-sim:
+    enabled: false
+  torquer-sim:
+    enabled: false
+
+  # Disabled terminals
+  nos-terminal:
+    enabled: false
+  nos-udp-terminal:
+    enabled: false
+  nos-sim-bridge:
+    enabled: false

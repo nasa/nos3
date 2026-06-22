@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nos-engine-server
+  namespace: nos3-m01-sc01
+spec:
+  selector:
+    app: nos3-m01-sc01-nos-engine-server
+  ports:
+    - name: fsw-tcp
+      protocol: TCP
+      port: 12000
+      targetPort: 12000
+    - name: nos3-tcp
+      protocol: TCP
+      port: 12001
+      targetPort: 12001
+    - name: healthcheck-tcp
+      protocol: TCP
+      port: 60000
+      targetPort: 60000
+    - name: healthcheck-udp
+      protocol: UDP
+      port: 60000
+      targetPort: 60000
+  type: ClusterIP
+

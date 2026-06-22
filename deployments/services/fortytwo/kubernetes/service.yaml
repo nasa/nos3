@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nos3-m01-sc01-fortytwo
+  
+spec:
+  selector:
+    app: nos3-m01-sc01-fortytwo
+  ports:
+    - name: x-vnc
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
