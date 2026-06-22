@@ -220,7 +220,7 @@ services:
       GSW_SOFTWARE: "yamcs"
       MAVEN_REPO_LOCAL: "/home/nos3/.nos3/.m2"
       MAVEN_HTTPS_PROXY: "--settings ./settings.xml"
-      COMPONENT_DIR: ""
+      COMPONENT_DIR: "/home/nos3/builds/nos3/components"
     healthCheck:
       httpGet:
         path: /api
@@ -301,7 +301,7 @@ services:
         path: /api
 
   onair:
-    enabled: true
+    enabled: false
     group: core
     image: *simImage
     command: ["/home/nos3/builds/nos3/scripts/fsw/onair_launch.sh"]
@@ -347,7 +347,7 @@ services:
         path: /api
 
   camsim:
-    enabled: true
+    enabled: false
     group: simulator
     image: *simImage
     simName: camsim
@@ -506,7 +506,7 @@ services:
     waitFor: *simWaitFor
 
   thruster-sim:
-    enabled: true
+    enabled: false
     group: simulator
     image: *simImage
     simName: generic-thruster-sim
