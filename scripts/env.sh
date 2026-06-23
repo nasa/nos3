@@ -51,12 +51,13 @@ fi
 #else
     DCALL="docker"
     DFLAGS="docker run --rm -it -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
+    DFLAGS_NOINT="docker run --rm -t -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -u $(id -u $(stat -c '%U' $SCRIPT_DIR/env.sh)):$(getent group $(stat -c '%G' $SCRIPT_DIR/env.sh) | cut -d: -f3)"
     DFLAGS_CPUS="$DFLAGS --cpus=$NUM_CPUS"
     DCREATE="docker create --rm -it"
     DNETWORK="docker network"
 #fi
 
-DBOX="ivvitc/nos3-64:20251107"
+DBOX="ivvitc/nos3-64:igniter"
 
 # Radio Config
 RADIO_TX_FSW_PORT=5010
