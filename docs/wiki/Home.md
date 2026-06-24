@@ -48,6 +48,9 @@ NOS3 can be distilled down into various configurable modules that make up the en
     - Yes, the satellite and ground software can be split apart and run on their own VMs. The instructions can be found [here](./NOS3_Build_and_Run_on_Multiple_VMs.md).
 7. I am having trouble with windows line endings (\r) while building, what should I do?
     - Inside nos3/ directory run the following command in the terminal: `find . -type f -print0 | xargs -0 dos2unix`
+8. I cannot launch NOS3 with the Cosmos GSW option on arm64, why does the NOS3 System crash particularly 42 dynamics and its GUI?
+    - On Arm64 machines 42 does not launch properly because the ballaerospace Cosmos version 4.5 contianer is only available for amd64 architectures.
+    - However, NOS3 is still operational with 42 on Arm64 machines with yamcs and OpenC3 GSW options.
     
 
 ### Why should NOS3 be used?

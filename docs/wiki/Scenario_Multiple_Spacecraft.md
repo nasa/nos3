@@ -2,7 +2,7 @@
 
 This scenario was developed to demonstrate how to work with multiple spacecraft at once.
 
-This scenario was last updated on 06/08/2026 and leveraged the `NOS3-Multiple-Spacecraft` branch at the time [1a45d504]] in the `nos3-multiple-spacecraft` repository (https://github.com/nasa-itc/nos3-multiple-spacecraft).
+This scenario was last updated on 06/08/2026 and leveraged the `NOS3-Multiple-Spacecraft` branch at the time [dae7e75] in the `nos3-multiple-spacecraft` repository (https://github.com/nasa-itc/nos3-multiple-spacecraft).
 
 ## Learning Goals
 By the end of this scenario you should be able to:
