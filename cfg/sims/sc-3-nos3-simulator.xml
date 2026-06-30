@@ -24,9 +24,9 @@
                 <connections>
                     <connection>
                         <type>time</type>
-                        <nos-connection-string-override>tcp://sc01-nos-engine-server:12001</nos-connection-string-override>
+                        <nos-connection-string-override>tcp://sc03-nos-engine-server:12001</nos-connection-string-override>
                         <bus-name>command</bus-name>
-                        <node-name>sc1-time-driver</node-name>
+                        <node-name>sc3-time-driver</node-name>
                     </connection>                    
                     <connection>
                         <type>command</type>
@@ -45,7 +45,7 @@
                 <type>SimTerminal</type>
                 <terminal>
                     <type>STDIO</type> <!-- type = STDIO, UDP -->
-                    <udp-port>5555</udp-port>
+                    <udp-port>7555</udp-port>
                     <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
                 </terminal>
                 <other-nos-connections>
@@ -82,7 +82,7 @@
                 <type>SimTerminal</type>
                 <terminal>
                     <type>UDP</type> <!-- type = STDIO, UDP -->
-                    <udp-port>5556</udp-port>
+                    <udp-port>7556</udp-port>
                     <suppress-output>false</suppress-output> <!-- should output from bus be sent back to STDOUT/UDP client? -->
                 </terminal>
                 <other-nos-connections>
@@ -154,8 +154,8 @@
                     <hostname>fortytwo</hostname>
                     <port>4242</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>-->
                 <!--<data-provider>
                     <type>SAMPLE_SHMEM_PROVIDER</type>
@@ -180,16 +180,16 @@
                 <data-provider>               
                     <type>GPS42SOCKET</type>
                     <hostname>fortytwo</hostname>
-                    <port>4245</port>
+                    <port>6245</port>
                    <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <GPS>0</GPS>
                     <leap-seconds>37</leap-seconds>
                 </data-provider>
                 <!--<data-provider>
                     <type>GPS_SHMEM</type>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <GPS>0</GPS>
                     <leap-seconds>37</leap-seconds>
                 </data-provider>-->
@@ -246,15 +246,15 @@
                 <data-provider>
                     <type>GENERIC_EPS_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4283</port>
+                    <port>6283</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_EPS_SHMEM_PROVIDER</type>
                     <orbit>0</orbit>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                 </data-provider>-->
                 <physical>
                     <bus>
@@ -332,18 +332,18 @@
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4277</port>
-                    <command-port>4278</command-port>
+                    <port>6277</port>
+                    <command-port>6278</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>0</reactionwheel>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_RW_SHMEM_PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <command-port>4278</command-port>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>0</reactionwheel>
                 </data-provider>-->
             </hardware-model>
@@ -365,18 +365,18 @@
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4377</port>
-                    <command-port>4378</command-port>
+                    <port>6377</port>
+                    <command-port>6378</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>1</reactionwheel>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_RW_SHMEM_PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <command-port>4378</command-port>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>1</reactionwheel>
                 </data-provider>-->
             </hardware-model>
@@ -398,18 +398,18 @@
                 <data-provider>               
                     <type>GENERICRWSIMDATA42SOCKETPROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4477</port>
-                    <command-port>4478</command-port>
+                    <port>6477</port>
+                    <command-port>6478</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>2</reactionwheel>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_RW_SHMEM_PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <command-port>4478</command-port>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <reactionwheel>2</reactionwheel>
                 </data-provider>-->
             </hardware-model>
@@ -431,15 +431,15 @@
                 <data-provider>               
                     <type>GENERIC_CSS_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4227</port>
+                    <port>6227</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <42-css-scale-factor>1.0</42-css-scale-factor>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_CSS_SHMEM_PROVIDER</type>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <42-css-scale-factor>1.0</42-css-scale-factor>
                 </data-provider>-->
                 <i2c>
@@ -465,10 +465,10 @@
                 <data-provider>
                     <type>GENERIC_TORQUER_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <command-port>4279</command-port>
+                    <command-port>6279</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
                 <params>
                     <num-mtbs>3</num-mtbs>
@@ -501,10 +501,10 @@
                 <data-provider>
                     <type>GENERIC_THRUSTER_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <command-port>4280</command-port>
+                    <command-port>6280</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
             </hardware-model>
         </simulator>
@@ -526,11 +526,11 @@
                 <data-provider>
                     <type>TRUTH42PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>9999</port>
+                    <port>11999</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
+                    <retry-wait-seconds>3</retry-wait-seconds>
                     <orbit>0</orbit>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
             </hardware-model>
         </simulator>
@@ -551,10 +551,10 @@
                 <data-provider>               
                     <type>GENERIC_FSS_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4284</port>
+                    <port>6284</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_FSS_SHMEM_PROVIDER</type>
@@ -573,7 +573,7 @@
                     <connection>
                         <type>command</type>
                         <bus-name>command</bus-name>
-                        <node-name>radio-sim-command-node</node-name>
+                        <node-name>radio-sim-command-node3</node-name>
                     </connection>
                     <connection>
                         <name>fsw</name>
@@ -606,31 +606,16 @@
                     </connection>
                     <connection>
                         <name>prox</name>
-                        <ip>radio-sim</ip>
+                        <ip>0.0.0.0</ip>
                         <rcv-port>7012</rcv-port>
                         <fsw-port>7010</fsw-port>
-                        <fwd-port>7011</fdw-port>
+                        <fwd-port>7011</fwd-port>
                         <dest-port>7012</dest-port>
                     </connection>
                 </connections>
                 <data-provider>
-                    <type>GENERIC_RADIO_42_PROVIDER</type>
-                    <hostname>fortytwo</hostname>
-                    <port>4286</port>
-                    <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>5</retry-wait-seconds>
-                    <comm-uplink>0</comm-uplink>
-                    <uplink-close-criteria>none</uplink-close-criteria><!-- "none", "occulted" or "cnr" -->
-                    <uplink-cnr-limit>15</uplink-cnr-limit>
-                    <uplink-delay-on>false</uplink-delay-on>
-                    <comm-downlink>1</comm-downlink>
-                    <downlink-close-criteria>none</downlink-close-criteria><!-- "none", "occulted" or "cnr" -->
-                    <downlink-cnr-limit>15</downlink-cnr-limit>
-                    <downlink-delay-on>false</downlink-delay-on>
-                </data-provider>
-                <!--<data-provider>               
                     <type>GENERIC_RADIO_PROVIDER</type>
-                </data-provider>-->
+                </data-provider>               
             </hardware-model>
         </simulator>
 
@@ -653,10 +638,10 @@
                 <data-provider>
                     <type>GENERIC_IMU_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4281</port>
+                    <port>6281</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_IMU_SHMEM_PROVIDER</type>
@@ -684,10 +669,10 @@
                 <data-provider>
                     <type>GENERIC_MAG_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4234</port>
+                    <port>6234</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_MAG_SHMEM_PROVIDER</type>
@@ -714,15 +699,15 @@
                 <data-provider>
                     <type>GENERIC_STAR_TRACKER_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4282</port>
+                    <port>6282</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>1</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                     <star-tracker>0</star-tracker>
                 </data-provider>
                 <!--<data-provider>
                     <type>GENERIC_STAR_TRACKER_SHMEM_PROVIDER</type>
-                    <spacecraft>0</spacecraft>
+                    <spacecraft>2</spacecraft>
                     <star-tracker>0</star-tracker>
                 </data-provider>-->
             </hardware-model>
@@ -743,10 +728,10 @@
                 <data-provider>
                     <type>BLACKBOARD_42_PROVIDER</type>
                     <hostname>fortytwo</hostname>
-                    <port>4285</port>
+                    <port>6285</port>
                     <max-connection-attempts>30</max-connection-attempts>
-                    <retry-wait-seconds>5</retry-wait-seconds>
-                    <spacecraft>0</spacecraft>
+                    <retry-wait-seconds>3</retry-wait-seconds>
+                    <spacecraft>2</spacecraft>
                 </data-provider>
             </hardware-model>
         </simulator>
