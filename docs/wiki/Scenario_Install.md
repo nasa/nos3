@@ -37,13 +37,13 @@ To run NOS3 in VirtualBox you will need to install Git, Vagrant, and VirtualBox.
 Clone and set up the directory using a Git Bash terminal:
 * `git clone https://github.com/nasa/nos3.git`
 
-![ScenarioInstallationClone](./_static/scenario_installation/scenario_installation_clone.png)
+![ScenarioInstallationClone](./_static/scenario_installation/installation_git_clone_user.png)
 
 * `cd nos3`
 * `git pull`
 * `git submodule update --init --recursive`
 
-![ScenarioInstallationSubmoduleUpdate](./_static/scenario_installation/scenario_installation_submodule_update.png)
+![ScenarioInstallationSubmoduleUpdate](./_static/scenario_installation/installation_submodule_user.png)
 
 You can run submodule update again if anything failed during the first attempt, if all successful it simply reports nothing as shown above.
 Note that the repository we just cloned will be shared into the VM in the default setup.
