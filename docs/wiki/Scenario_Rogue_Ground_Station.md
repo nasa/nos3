@@ -52,6 +52,7 @@ Before executing the attack, we must verify that both ground stations are active
   * Compare the two systems. Verify that the `RADIO` telemetry packet values under `TIM PKTS` (for example: 412) in COSMOS match the `radio-in` value in YAMCS.
     * You can press p to verify the packets are the same in the NOS Time Driver.
     * Ensure to press p again to resume the packet counting. 
+ 
 
 ![Packet Verification Between COSMOS and YAMCS](./_static/scenario_rogue_ground_Station/COSMOS_YAMCS_Packet_Verification.png)
 
@@ -78,6 +79,7 @@ This section will cover how the adversary utilizes their foothold in the comprom
   * Now, transition to the perspective of the legitimate operator. In YAMCS, attempt to send a standard `SAMPLE/CMD/SAMPLE_NOOP_CC` command via the Commanding interface. 
   * View sc01 NOS3 Flight Software and note "Crypto_TC_ProcessSecurity returned error -23".
     * Because the rogue ground station flooded the system with valid commands, it overloaded the cryptographic sequence and processing counters for GSW2. The rogue ground station now has complete control over the spacecraft, and YAMCS cannot command the spacecraft (no commands will go through). 
+
 
   ![Error Message - YAMCS Lockout Successful](./_static/scenario_rogue_ground_Station/Crypto_TC_ProcessSecurityreturnederror-23YAMCS_Lockout.png)
 
@@ -116,6 +118,7 @@ Because YAMCS was cryptographically locked out in, the legitimate operators are 
 
   * The adversary can also verify that their tumble was successful. By opening the COSMOS Packet Viewer and setting the Target to `GENERIC_IMU` and the Packet to `GENERIC_IMU_DATA_TLM`, the attacker can watch the same extreme angular values -  `X_ANGULAR_RATE`, `Y_ANGULAR_RATE`, `Z_ANGULAR_RATE` - confirming the cyberattack was successful.
   
+
 ![Angular Values Confirmed both on COSMOS and YAMCS](./_static/scenario_rogue_ground_Station/COSMOS_YAMCS_Angular_Confirmed.png)
 
 ## Conclusion
@@ -123,3 +126,4 @@ Because YAMCS was cryptographically locked out in, the legitimate operators are 
 This scenario highlights the danger of insider threats and compromised ground stations. By combining command flooding to achieve a Denial of Service (lockout) with Attitude Determination and Control System (ADCS) spoofing, it demonstrates how valid cryptographic keys can be weaponized to render a spacecraft effectively unrecoverable simply by using the spacecraft's own commands against it.
 
 Try your own and let us know in the [GitHub Discussions](https://github.com/nasa/nos3/discussions)!
+
