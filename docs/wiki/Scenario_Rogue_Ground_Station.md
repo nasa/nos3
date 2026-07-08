@@ -62,7 +62,7 @@ This section will cover how the adversary utilizes their foothold in the comprom
 
 #### Part A: Initiating the Attack
 
-  * Type `vcid 2` in both sc01 - CryptoLib GSW an sc01 - CryptoLib GSW2. Open sc01 - NOS3 Flightware. (Note: VCID stands for Virtual Channel Identifier. By typing `vcid 2`, you are forcing both ground software instances to share the exact same virtual channel and cryptographic sequence counter, setting the stage for the lockout.)
+  * Type `vcid 2` in both sc01 - CryptoLib GSW and sc01 - CryptoLib GSW2. Open sc01 - NOS3 Flight Software. (Note: VCID stands for Virtual Channel Identifier. By typing `vcid 2`, you are forcing both ground software instances to share the exact same virtual channel and cryptographic sequence counter, setting the stage for the lockout.)
   * In COSMOS, open the Script Runner to generate a Ruby script. This will act as the adversary's automated flooding tool, locking out GSW2 to then take command of the spacecraft. Type the following code into the Script Runner (you may copy and paste this code into the script):
 
     ```
