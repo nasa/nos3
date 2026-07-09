@@ -209,10 +209,11 @@ if [ ! -f "openc3-cosmos-nos3-${BUILD_VERSION}.gem" ]; then
     exit 1
 fi
 
-echo "--- GEM VERIFICATION ---"
-tar -xf "openc3-cosmos-nos3-${BUILD_VERSION}.gem" data.tar.gz
-echo "Contents of Target SAMPLE/scripts/nos3/ directory:"
-tar -tvf data.tar.gz | grep "targets/SAMPLE/scripts/nos3/"
-rm -f data.tar.gz 
-echo "------------------------"
-echo ""
+# Commented out debug Verification
+# echo "--- GEM VERIFICATION ---"
+# tar -xf "openc3-cosmos-nos3-${BUILD_VERSION}.gem" data.tar.gz
+# echo "Contents of Target SAMPLE/scripts/nos3/ directory:"
+# tar -tvf data.tar.gz | grep "targets/SAMPLE/scripts/nos3/"
+# rm -f data.tar.gz 
+# echo "------------------------"
+# echo ""
