@@ -8,10 +8,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/../env.sh
 export GSW="openc3-openc3-operator-1"
 
-echo "================================================================="
-echo " Cleaning OpenC3 NOS3 Plugin Environment..."
-echo "================================================================="
-
 echo "-> Stopping OpenC3 containers and wiping persistent volumes..."
 # 1. Graceful compose teardown (removes containers, networks, and volumes)
 if [ -f "$OPENC3_DIR/compose.yaml" ]; then
@@ -36,8 +32,3 @@ cd "$OPENC3_DIR" 2>/dev/null
 rm -rf build openc3-cosmos-nos3 2>/dev/null
 rm -rf plugins/* 2>/dev/null
 rm -rf openc3-data/* 2>/dev/null
-
-echo "================================================================="
-echo " Cleanup complete! All OpenC3 databases are wiped for a fresh build."
-echo "================================================================="
-echo ""
