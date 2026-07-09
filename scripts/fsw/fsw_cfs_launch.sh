@@ -87,13 +87,9 @@ do
     $DNETWORK create $SC_NETNAME 2> /dev/null
     echo ""
 
-    echo $SC_NUM " - Connect GSW containers to spacecraft network..."
-    
-    # Connect the operator for general frontend access
-    $DNETWORK connect $SC_NETNAME "${GSW:-openc3-openc3-operator-1}" --alias active-gs --alias cosmos 2>/dev/null
-    
-    # # Connect the API container and give it the 'cosmos' alias so 42 can route UDP to it!
-    # $DNETWORK connect $SC_NETNAME "openc3-openc3-cosmos-cmd-tlm-api-1" --alias cosmos 2>/dev/null
+    echo $SC_NUM " - Connect GSW " "${GSW:-cosmos-openc3-operator-1}" " to spacecraft network..."
+    $DNETWORK connect  $SC_NETNAME "${GSW:-cosmos-openc3-operator-1}" --alias cosmos --alias active-gs
+    echo ""
 
     echo $SC_NUM " - 42..."
     rm -rf $USER_NOS3_DIR/42/NOS3InOut
