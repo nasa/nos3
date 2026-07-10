@@ -38,6 +38,7 @@ if (fsw_cfg == 'cfs'):
     fsw_identified = 1
     os.system('cp ./scripts/fsw/fsw_cfs_build.sh ./cfg/build/fsw_build.sh')
     os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
+    # os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
     print('Exiting due to error...')
@@ -72,6 +73,17 @@ if (gsw_cfg == 'yamcs'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw/gsw_yamcs_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/cfg/yamcs_default.nos3.yaml ./gsw/yamcs/nos3/src/main/yamcs/etc/yamcs.nos3.yaml')
+if (gsw_cfg == 'multiple'):
+    # Copy mulitple scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw/gsw_cosmos_multi_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build2.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_multi_launch.sh ./cfg/build/gsw_launch2.sh')  
+    os.system('cp ./cfg/build/sims/nos3-simulator-multipleGDS.xml ./cfg/build/sims/nos3-simulator.xml')
+    os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
+    os.system('cp ./scripts/cfg/yamcs_multiGDS.nos3.yaml ./gsw/yamcs/nos3/src/main/yamcs/etc/yamcs.nos3.yaml')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
@@ -79,7 +91,10 @@ if (gsw_identified == 0):
 # Scenario
 scenario = mission_root.find('scenario').text
 print('  scenario:', scenario)
-if (scenario == 'Gateway'):
+if (scenario == 'DeepSpace'):
+    os.system('cp ./cfg/InOut/Inp_Sim_DeepSpace.txt ./cfg/InOut/Inp_Sim.txt')
+    os.system('cp ./cfg/InOut/Inp_Graphics_DeepSpace.txt ./cfg/InOut/Inp_Graphics.txt')
+elif (scenario == 'Gateway'):
     os.system('cp ./cfg/InOut/Inp_Sim_Gateway.txt ./cfg/InOut/Inp_Sim.txt')
     os.system('cp ./cfg/InOut/Inp_Graphics_Gateway.txt ./cfg/InOut/Inp_Graphics.txt')
 else:

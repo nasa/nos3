@@ -1,0 +1,196 @@
+timeService:
+   class: org.yamcs.time.SimulationTimeService
+ 
+services:
+  - class: org.yamcs.archive.XtceTmRecorder
+  - class: org.yamcs.archive.ParameterRecorder
+  - class: org.yamcs.archive.AlarmRecorder
+  - class: org.yamcs.archive.EventRecorder
+  - class: org.yamcs.archive.ReplayServer
+  - class: org.yamcs.parameter.SystemParametersService
+    args:
+      producers:
+        - fs
+        - jvm
+  - class: org.yamcs.ProcessorCreatorService
+    args:
+      name: realtime
+      type: realtime
+  - class: org.yamcs.archive.CommandHistoryRecorder
+  - class: org.yamcs.parameterarchive.ParameterArchive
+    args:
+      realtimeFiller:
+        enabled: true
+      backFiller:
+        enabled: false
+        warmupTime: 60
+  - class: org.yamcs.plists.ParameterListService
+  - class: org.yamcs.timeline.TimelineService
+  - class: org.yamcs.cfdp.CfdpService
+    name: cfdp
+    args:
+     inactivityTimeout: 30000
+     sequenceNrLength: 4
+     maxPduSize: 484
+     inStream: cfdp_in
+     outStream: cfdp_out
+     incomingBucket: "ground"
+     allowRemoteProvidedBucket: false
+     allowRemoteProvidedSubdirectory: true
+     allowDownloadOverwrites: false
+     maxExistingFileRenames: 1000
+     eofAckTimeout: 5000
+     eofAckLimit: 5
+     sleepBetweenPdus: 250
+     maxNumPendingUploads: 1
+     pendingAfterCompletion: 10000
+     localEntities:
+       - name: ground
+         id: 21
+         bucket: ground
+     remoteEntities:
+       - name: spacecraft
+         id: 24
+         bucket: spacecraft
+     entityIdLength: 4
+     hasFileListingCapability: false
+     senderFaultHandlers:
+       AckLimitReached: suspend
+     fileListingParserClassName: org.yamcs.filetransfer.CsvListingParser
+     fileListingParserArgs:
+       timestampMultiplier: 1
+
+dataLinks:
+  - name: radio-in
+    class: org.yamcs.tctm.UdpTmDataLink
+    stream: tm_realtime
+    port: 6011
+    packetPreprocessorClassName: org.yamcs.tctm.cfs.CfsPacketPreprocessor
+    packetPreprocessorArgs:
+      useLocalGenerationTime: true
+
+  - name: radio-out
+    class: org.yamcs.tctm.UdpTcDataLink
+    stream: tc_realtime
+    host: cryptolib2
+    port: 6010
+    commandPostprocessorClassName: org.yamcs.tctm.cfs.CfsCommandPostprocessor
+
+  - name: debug-in
+    class: org.yamcs.tctm.UdpTmDataLink
+    stream: tm_realtime
+    port: 5013
+    packetPreprocessorClassName: org.yamcs.tctm.cfs.CfsPacketPreprocessor
+    packetPreprocessorArgs:
+      useLocalGenerationTime: true
+      
+  - name: debug-out
+    class: org.yamcs.tctm.UdpTcDataLink
+    stream: tc_realtime
+    host: nos-fsw
+    port: 5012
+    commandPostprocessorClassName: org.yamcs.tctm.cfs.CfsCommandPostprocessor
+
+  - name: truth42-in
+    class: org.yamcs.tctm.UdpTmDataLink
+    stream: truth42_data
+    port: 5111
+    updateSimulationTime: true
+    packetPreprocessorClassName: org.yamcs.nos3.Truth42PacketPreprocessor    
+
+mdb:
+  - type: xtce
+    args:
+      file: mdb/ccsds.xtce
+  - type: xtce
+    args:
+      file: mdb/cfs.xtce
+  - type: xtce
+    args:
+      file: mdb/ci_debug.xtce
+  - type: xtce
+    args:
+      file: mdb/cmd_util.xtce
+  - type: xtce
+    args:
+      file: mdb/sim_42_truth.xtce
+  - type: xtce
+    args:
+      file: mdb/system.xtce
+  - type: xtce
+    args:
+      file: mdb/to_debug.xtce
+  - type: xtce
+    args:
+      file: mdb/pdu.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/arducam/gsw/arducam.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_adcs/gsw/generic_adcs.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_css/gsw/generic_css.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_eps/gsw/generic_eps.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_fss/gsw/generic_fss.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_imu/gsw/generic_imu.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_mag/gsw/generic_mag.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_radio/gsw/generic_radio.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_reaction_wheel/gsw/generic_reaction_wheel.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_star_tracker/gsw/generic_star_tracker.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_thruster/gsw/generic_thruster.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/generic_torquer/gsw/generic_torquer.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/novatel_oem615/gsw/novatel_oem615.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/sample/gsw/sample.xtce
+  - type: xtce
+    args:
+      file: ${env.COMPONENT_DIR}/mgr/gsw/mgr.xtce
+#  - type: xtce
+#    args:
+#      file: mdb/syn.xtce
+
+# Configuration for streams created at server startup
+streamConfig:
+  tm:
+    - name: "tm_realtime"
+      processor: "realtime"
+      rootContainer: "/CCSDS/CCSDS_TM"
+    - name: "truth42_data"
+      processor: "realtime"
+      rootContainer: "/SIM_42_TRUTH/SIM_42_TRUTH_DATA/SIM_42_TRUTH_DATA"
+    - name: "tm_dump"
+  cmdHist: ["cmdhist_realtime", "cmdhist_dump"]
+  event: ["events_realtime", "events_dump"]
+  param: ["pp_realtime", "pp_dump", "sys_param", "proc_param"]
+  parameterAlarm: ["alarms_realtime"]
+  tc:
+    # - name: "tc_debug"
+    #  processor: "realtime"
+    #  tcPatterns: ["/TO_DEBUG/CMD/.*"]
+    - name: "tc_realtime"
+      processor: "realtime"
+  sqlFile: "etc/extra_streams.sql"
+
