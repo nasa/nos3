@@ -198,7 +198,7 @@ do
 
 done
 
-sleep 1
+sleep 10
 for (( i=2; i<=$SATNUM; i++))
 do
     export SC_NUM="sc0"$i
@@ -211,11 +211,11 @@ do
 done
 
 echo "Closing the ring: connecting sc01-radio-sim to nos3-sc03 as 'next-radio'"
-sleep 1
+sleep 3
 docker network connect --alias "next-radio" "nos3-sc03" sc01-radio-sim
 
 echo "NOS Time Driver..."
-sleep 1
+sleep 6
 gnome-terminal --tab --title="NOS Time Driver"   -- $DFLAGS -v $SIM_DIR:$SIM_DIR --name nos-time-driver --network nos3-core --network nos3-sc01 --network nos3-sc02 --network nos3-sc03 -w $SIM_BIN $DBOX ./nos3-single-simulator $GND_CFG_FILE time
 sleep 1
 
