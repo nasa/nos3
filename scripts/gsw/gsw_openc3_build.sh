@@ -159,6 +159,7 @@ do
     fi
 done
 echo "" >> plugin.txt
+echo "TARGET CFDP CFDP" >> plugin.txt
 
 # 2. DEBUG Interface (For standard spacecraft targets)
 echo "INTERFACE DEBUG UdpInterface nos-fsw 5012 5013 nil nil 128 10.0 nil" >> plugin.txt
@@ -168,6 +169,7 @@ for i in $targets; do
     fi
 done
 echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
+echo "  MAP_TARGET CFDP" >> plugin.txt
 echo "" >> plugin.txt
 
 # 3. RADIO Interface (For standard spacecraft targets)
@@ -190,6 +192,11 @@ echo "INTERFACE SIM_BRIDGE_INT TcpipClientInterface nos-sim-bridge 12020 12020 1
 echo "  PROTOCOL READ_WRITE TemplateProtocol 0x0A 0x0A" >> plugin.txt
 echo "  MAP_TARGET SIM_CMDBUS_BRIDGE" >> plugin.txt
 echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
+
+# 6. CFDP Microservice
+echo "MICROSERVICE CFDP cfdp-microservice" >> plugin.txt
+echo "  CMD python cfdp.py" >> plugin.txt
+echo "" >> plugin.txt
 
 chmod -R a+rX .
 
