@@ -46,7 +46,7 @@ extern "C" {
 #include "to_grpids.h"
 
 #include "cfe_msgids.h"
-
+#include "cfdp_msgids.h"
 #include "ci_msgids.h"
 #include "cf_msgids.h"
 #include "ds_msgids.h"
@@ -146,6 +146,8 @@ TO_ConfigTable_t to_ConfigTable =
        
        /* 40 - 49 */
        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CFDP_HK_TLM_MID),              {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
+       {CFE_SB_MSGID_WRAP_VALUE(CFDP_FILEDOWNLOAD_TLM_MID),    {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_IMU_HK_TLM_MID),       {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_IMU_DEVICE_TLM_MID),   {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
        {CFE_SB_MSGID_WRAP_VALUE(GENERIC_MAG_HK_TLM_MID),       {0,0},  32,  0xffff,     TO_GROUP_APP | TO_MGROUP_ONE, 0,1},
