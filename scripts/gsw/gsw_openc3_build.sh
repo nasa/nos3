@@ -85,6 +85,8 @@ mkdir -p lib
 cp -r $GSW_DIR/lib/*.rb lib/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.rb scripts/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
+mkdir -p microservices
+cp -r /home/jstar/dev/nos3/gsw/openc3/microservices/CFDP microservices/
 
 targets=""
 
@@ -127,6 +129,8 @@ do
         rm -rf "targets/$target_name/lib"
     fi
 done
+rm -rf targets/CFDP
+cp -r /home/jstar/dev/nos3/gsw/openc3/targets/CFDP targets/
 
 # Copy Sim Bridge commands into new target
 echo "Populating SIM_CMDBUS_BRIDGE with component dictionaries..."
@@ -191,12 +195,12 @@ echo "  MAP_TARGET SIM_CMDBUS_BRIDGE" >> plugin.txt
 echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
 
 # 6. CFDP Microservice (debug + radio)
-echo "MICROSERVICE CFDP_DEBUG cfdp-debug-microservice" >> plugin.txt
+echo "MICROSERVICE CFDP cfdp-debug-microservice" >> plugin.txt
 echo "  CMD python cfdp.py" >> plugin.txt
 echo "  ENV CFDP_TARGET_NAME CFDP_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
-echo "MICROSERVICE CFDP_RADIO cfdp-radio-microservice" >> plugin.txt
+echo "MICROSERVICE CFDP cfdp-radio-microservice" >> plugin.txt
 echo "  CMD python cfdp.py" >> plugin.txt
 echo "  ENV CFDP_TARGET_NAME CFDP_RADIO" >> plugin.txt
 echo "" >> plugin.txt
