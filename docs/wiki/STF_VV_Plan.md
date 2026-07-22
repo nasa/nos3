@@ -21,7 +21,7 @@ This group has the authority to approve changes to this plan.
 2. [STF Concept of Operations](STF_ConOps.md)
 
 ### 2.2 Reference Documents
-1. [Software Development / Management Plan](Software_Development_Management_Plan.md)
+1. [Software Development / Management Plan](STF_Software_Development_Plan.md)
 
 ### 2.3 Order of Precedence
 In case of conflicts, the applicable documents take precedence over this document.  
