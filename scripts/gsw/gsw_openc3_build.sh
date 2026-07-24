@@ -51,6 +51,13 @@ echo ""
 # Start by changing to a known location
 cd $OPENC3_DIR
 
+# Ensure send_files/received_files volumes are mounted for CFDP (not part of upstream openc3-nos3)
+if ! grep -q "send_files:/send_files" "$OPENC3_DIR/compose.yaml"; then
+  sed -i '/\.\/cacert\.pem:\/devel\/cacert\.pem:z/a\      - "./send_files:/send_files"\n      - "./received_files:/received_files"' "$OPENC3_DIR/compose.yaml"
+  mkdir -p "$OPENC3_DIR/send_files" "$OPENC3_DIR/received_files"
+  echo "Patched compose.yaml with CFDP send_files/received_files volumes"
+fi
+
 # --- Delete any previous run info including the plugin folder ---
 rm -rf build openc3-cosmos-nos3
 if [ -d "build" ]; then
