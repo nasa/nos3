@@ -29,7 +29,8 @@ if [ -d "$USER_NOS3_DIR/openc3" ]; then
     git -C "$USER_NOS3_DIR/openc3" pull || echo "Warning: git pull failed, using existing local files."
 else
     echo "Cloning openc3 repository..."
-    git clone https://github.com/nasa-itc/openc3-nos3.git -b 839-openc3-cfdp "$USER_NOS3_DIR/openc3"
+    # git clone https://github.com/nasa-itc/openc3-nos3.git -b 839-openc3-cfdp "$USER_NOS3_DIR/openc3"
+    git clone https://github.com/nasa-itc/openc3-nos3.git -b dev "$USER_NOS3_DIR/openc3"
 fi
 
 $DOCKER_COMPOSE_COMMAND -f $OPENC3_DIR/compose.yaml pull 
@@ -93,7 +94,7 @@ cp -r $GSW_DIR/lib/*.rb lib/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.rb scripts/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
 mkdir -p microservices
-cp -r /home/jstar/dev/nos3/gsw/openc3/microservices/CFDP microservices/
+cp -r $SCRIPT_DIR/../gsw/openc3/microservices/CFDP microservices/
 
 targets=""
 
@@ -137,7 +138,7 @@ do
     fi
 done
 rm -rf targets/CFDP
-cp -r /home/jstar/dev/nos3/gsw/openc3/targets/CFDP targets/
+cp -r $SCRIPT_DIR/../gsw/openc3/targets/CFDP targets/
 
 # Copy Sim Bridge commands into new target
 echo "Populating SIM_CMDBUS_BRIDGE with component dictionaries..."
