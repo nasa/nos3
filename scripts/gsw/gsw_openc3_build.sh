@@ -93,7 +93,7 @@ cp -r $GSW_DIR/lib/*.rb lib/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.rb scripts/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
 mkdir -p microservices
-cp -r $SCRIPT_DIR/../gsw/openc3/microservices/CFDP microservices/
+cp -r $USER_NOS3_DIR/openc3/microservices/CFDP microservices/
 
 targets=""
 
@@ -137,7 +137,7 @@ do
     fi
 done
 rm -rf targets/CFDP
-cp -r $SCRIPT_DIR/../gsw/openc3/targets/CFDP targets/
+cp -r $USER_NOS3_DIR/openc3/targets/CFDP targets/
 
 # Copy Sim Bridge commands into new target
 echo "Populating SIM_CMDBUS_BRIDGE with component dictionaries..."
