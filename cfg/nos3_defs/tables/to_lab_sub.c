@@ -46,6 +46,7 @@
 #include "sch_msgids.h"
 #include "to_msgids.h"
 #include "sbn_msgids.h"
+#include "cfdp_msgids.h"
 
 /*
 ** Component Include Files
@@ -139,7 +140,8 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(SYN_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SCH_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SCH_DIAG_TLM_MID),             {0,0},  32},
-
+        {CFE_SB_MSGID_WRAP_VALUE(CFDP_FILEDOWNLOAD_TLM_MID),    {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(CFDP_HK_TLM_MID),              {0,0},  32},
     }
 };
 
