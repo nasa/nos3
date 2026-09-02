@@ -29,7 +29,7 @@ if [ -d "$USER_NOS3_DIR/openc3" ]; then
     git -C "$USER_NOS3_DIR/openc3" pull || echo "Warning: git pull failed, using existing local files."
 else
     echo "Cloning openc3 repository..."
-    git clone https://github.com/nasa-itc/openc3-nos3.git -b dev "$USER_NOS3_DIR/openc3"
+    git clone https://github.com/nasa-itc/openc3-nos3.git -b openC3-839-builds "$USER_NOS3_DIR/openc3"
 fi
 
 $DOCKER_COMPOSE_COMMAND -f $OPENC3_DIR/compose.yaml pull 
@@ -50,6 +50,13 @@ echo ""
 
 # Start by changing to a known location
 cd $OPENC3_DIR
+
+# Ensure send_files/received_files volumes are mounted for CFDP (not part of upstream openc3-nos3)
+if ! grep -q "send_files:/send_files" "$OPENC3_DIR/compose.yaml"; then
+  sed -i '/\.\/cacert\.pem:\/devel\/cacert\.pem:z/a\      - "./send_files:/send_files"\n      - "./received_files:/received_files"' "$OPENC3_DIR/compose.yaml"
+  mkdir -p "$OPENC3_DIR/send_files" "$OPENC3_DIR/received_files"
+  echo "Patched compose.yaml with CFDP send_files/received_files volumes"
+fi
 
 # --- Delete any previous run info including the plugin folder ---
 rm -rf build openc3-cosmos-nos3
@@ -85,6 +92,8 @@ mkdir -p lib
 cp -r $GSW_DIR/lib/*.rb lib/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.rb scripts/ 2>/dev/null
 cp -r $SCRIPT_DIR/*.py scripts/ 2>/dev/null
+mkdir -p microservices
+cp -r $USER_NOS3_DIR/openc3/microservices/CFDP microservices/
 
 targets=""
 
@@ -127,6 +136,8 @@ do
         rm -rf "targets/$target_name/lib"
     fi
 done
+rm -rf targets/CFDP
+cp -r $USER_NOS3_DIR/openc3/targets/CFDP targets/
 
 # Copy Sim Bridge commands into new target
 echo "Populating SIM_CMDBUS_BRIDGE with component dictionaries..."
@@ -167,7 +178,6 @@ for i in $targets; do
         echo "  MAP_TARGET ${i}_DEBUG" >> plugin.txt
     fi
 done
-echo "  MAP_TARGET TO_DEBUG" >> plugin.txt
 echo "" >> plugin.txt
 
 # 3. RADIO Interface (For standard spacecraft targets)
@@ -190,6 +200,17 @@ echo "INTERFACE SIM_BRIDGE_INT TcpipClientInterface nos-sim-bridge 12020 12020 1
 echo "  PROTOCOL READ_WRITE TemplateProtocol 0x0A 0x0A" >> plugin.txt
 echo "  MAP_TARGET SIM_CMDBUS_BRIDGE" >> plugin.txt
 echo "# Created with Build Version: $BUILD_VERSION" >> plugin.txt
+
+# 6. CFDP Microservice (debug + radio)
+echo "MICROSERVICE CFDP cfdp-debug-microservice" >> plugin.txt
+echo "  CMD python cfdp.py" >> plugin.txt
+echo "  ENV CFDP_TARGET_NAME CFDP_DEBUG" >> plugin.txt
+echo "" >> plugin.txt
+
+echo "MICROSERVICE CFDP cfdp-radio-microservice" >> plugin.txt
+echo "  CMD python cfdp.py" >> plugin.txt
+echo "  ENV CFDP_TARGET_NAME CFDP_RADIO" >> plugin.txt
+echo "" >> plugin.txt
 
 chmod -R a+rX .
 
