@@ -29,7 +29,7 @@ if [ -d "$USER_NOS3_DIR/openc3" ]; then
     git -C "$USER_NOS3_DIR/openc3" pull || echo "Warning: git pull failed, using existing local files."
 else
     echo "Cloning openc3 repository..."
-    git clone https://github.com/nasa-itc/openc3-nos3.git -b openC3-839-builds "$USER_NOS3_DIR/openc3"
+    git clone https://github.com/nasa-itc/openc3-nos3.git -b dev "$USER_NOS3_DIR/openc3"
 fi
 
 $DOCKER_COMPOSE_COMMAND -f $OPENC3_DIR/compose.yaml pull 
