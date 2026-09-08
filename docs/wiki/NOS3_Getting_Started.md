@@ -57,7 +57,7 @@ For additional details see [Scenario - Demonstration](./Scenario_Demo.md).
 
 ## Igniter
 
-Igniter is installed and displayed via `make prep` and can be brought back up via `make igniter`.
+Igniter is installed via `make prep` and can be launched by running `make igniter` at the `nos3/` src directory. This configuration option is optional, and users can use any IDE or code editor they wish to modify configuration files.
 
 Igniter is a tool for NOS3 that provides a simple Graphical User Interface to manage NOS3 Configurations, Components, Apps, and the like to allow the user to customize NOS3 to use only the components and apps they want or need. It also allows users to configure different spacecraft in a constellation differently if that is desired. One can load a configuration file, and then edit each spacecraft's configuration separately in the GUI if they desire. Igniter is split into 3 main views: the Configuration Tab, the Build Tab, and the Launch Tab.
 
