@@ -1,0 +1,49 @@
+# NOS3 Nutanix Kubernetes Platform (NKE/NKP) Overrides
+#
+# Usage: helm install nos3 ./nos3 -f values-nkp.yaml
+#
+# Prerequisites on NKP cluster:
+#   1. Kubelet configured with: --allowed-unsafe-sysctls=fs.mqueue.*
+#   2. Nutanix CSI driver installed (for PVC storage)
+#   3. Ingress controller available (nginx or Nutanix-provided)
+#   4. All NOS3 images pushed to a registry reachable from the cluster
+
+global:
+  imagePullPolicy: IfNotPresent
+  # Create Namespace resource with Pod Security Standard labels (required on NKP)
+  createNamespace: true
+  # Uncomment and configure if using a private registry
+  # imagePullSecrets:
+  #   - name: nkp-registry-secret
+
+# FSW requires fs.mqueue.msg_max sysctl (kubelet must allow it)
+services:
+  fsw:
+    sysctls:
+      - name: "fs.mqueue.msg_max"
+        value: "10000"
+
+networkPolicy:
+  enabled: true
+
+nkp:
+  storageClass: "nutanix-volumes"
+  podSecurityStandard: "privileged"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  # Hostnames auto-generated from global.project + baseDomain:
+  #   {project}.{baseDomain}         → FortyTwo VNC
+  #   yamcs.{project}.{baseDomain}   → YAMCS API
+  #   openmct.{project}.{baseDomain} → OpenMCT web UI
+  # Override baseDomain or set explicit hosts to customize.
+  baseDomain: "local"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # WebSocket support for FortyTwo VNC
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";

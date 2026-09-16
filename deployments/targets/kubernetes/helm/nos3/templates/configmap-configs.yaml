@@ -1,0 +1,121 @@
+{{/*
+ConfigMaps for simulation configuration files.
+These are populated via --set-file at install time or from the configs/ directory.
+
+Usage:
+  helm install nos3 ./nos3 \
+    --set-file simulatorConfig=../../cfg/build/sims/nos3-simulator.xml \
+    --set-file nosEngineConfig=../../cfg/build/sims/nos_engine_server_config.json
+*/}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "sim-config") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "sim-config") | nindent 4 }}
+data:
+  nos3-simulator.xml: |
+    {{- if .Values.simulatorConfig }}
+    {{ .Values.simulatorConfig | nindent 4 }}
+    {{- else }}
+    {{- /* Load from configs/ directory if available */ -}}
+    {{- $configFile := .Files.Get "configs/nos3-simulator.xml" }}
+    {{- if $configFile }}
+    {{ $configFile | nindent 4 }}
+    {{- else }}
+    <!-- Placeholder: provide via --set-file simulatorConfig=path/to/nos3-simulator.xml -->
+    <?xml version="1.0" encoding="utf-8" ?>
+    <nos3-configuration />
+    {{- end }}
+    {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "nos-engine-config") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "nos-engine-config") | nindent 4 }}
+data:
+  nos_engine_server_config.json: |
+    {{- if .Values.nosEngineConfig }}
+    {{ .Values.nosEngineConfig | nindent 4 }}
+    {{- else }}
+    {{- $configFile := .Files.Get "configs/nos_engine_server_config.json" }}
+    {{- if $configFile }}
+    {{ $configFile | nindent 4 }}
+    {{- else }}
+    {
+      "comment": "Placeholder: provide via --set-file nosEngineConfig=path/to/nos_engine_server_config.json"
+    }
+    {{- end }}
+    {{- end }}
+---
+{{/*
+GSW (YAMCS) settings.xml - Maven proxy settings.
+Provide via --set-file gswSettingsXml=services/yamcs/settings.xml
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "gsw-config") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "gsw-config") | nindent 4 }}
+data:
+  settings.xml: |
+    {{- if .Values.gswSettingsXml }}
+    {{ .Values.gswSettingsXml | nindent 4 }}
+    {{- else }}
+    {{- $configFile := .Files.Get "configs/settings.xml" }}
+    {{- if $configFile }}
+    {{ $configFile | nindent 4 }}
+    {{- else }}
+    <?xml version="1.0" encoding="UTF-8"?>
+    <settings />
+    {{- end }}
+    {{- end }}
+---
+{{/*
+OpenMCT configuration files.
+Provide via --set-file openmctWebpack=services/openmct/webpack.dev.mjs etc.
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" . "component" "openmct-config") }}
+  labels:
+    {{- include "nos3.labels" (dict "root" . "component" "openmct-config") | nindent 4 }}
+data:
+  webpack.dev.mjs: |
+    {{- if .Values.openmctWebpack }}
+    {{ .Values.openmctWebpack | nindent 4 }}
+    {{- else }}
+    {{- $f := .Files.Get "configs/webpack.dev.mjs" }}
+    {{- if $f }}
+    {{ $f | nindent 4 }}
+    {{- else }}
+    // Placeholder: provide via --set-file openmctWebpack=services/openmct/webpack.dev.mjs
+    {{- end }}
+    {{- end }}
+  index.js: |
+    {{- if .Values.openmctIndexJs }}
+    {{ .Values.openmctIndexJs | nindent 4 }}
+    {{- else }}
+    {{- $f := .Files.Get "configs/index.js" }}
+    {{- if $f }}
+    {{ $f | nindent 4 }}
+    {{- else }}
+    // Placeholder: provide via --set-file openmctIndexJs=services/openmct/example/index.js
+    {{- end }}
+    {{- end }}
+  make-example-events.mjs: |
+    {{- if .Values.openmctMakeExampleEvents }}
+    {{ .Values.openmctMakeExampleEvents | nindent 4 }}
+    {{- else }}
+    {{- $f := .Files.Get "configs/make-example-events.mjs" }}
+    {{- if $f }}
+    {{ $f | nindent 4 }}
+    {{- else }}
+    // Placeholder: provide via --set-file openmctMakeExampleEvents=services/openmct/example/make-example-events.mjs
+    {{- end }}
+    {{- end }}

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+data:
+  entrypoint_fsw.sh: |
+    #!/bin/bash
+    pkill -f fsw_respawn.sh || true
+    pkill -f core-cpu1 || true
+    $SCRIPT_DIR/fsw/fsw_respawn.sh
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: nos3-fsw
+  name: nos3-fsw-cm0

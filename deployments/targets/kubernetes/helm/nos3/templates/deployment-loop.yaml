@@ -1,0 +1,213 @@
+{{/*
+Generic Deployment template - iterates over ALL services in .Values.services.
+Each service entry in values.yaml produces one Deployment. The template handles:
+  - simName-based services (simulator pattern: ./nos3-single-simulator -f config simName)
+  - command-based services (core services with explicit commands)
+  - entrypointKey mounts (scripts from configmap-entrypoints)
+  - nosEngineConfig mounts (nos_engine_server_config.json)
+  - waitFor dependencies (initContainers)
+  - healthCheck probes (exec or httpGet)
+  - sysctls (pod-level security context)
+  - capabilities (container-level security context)
+*/}}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" $ "component" $name) }}
+  labels:
+    {{- include "nos3.labels" (dict "root" $ "component" $name) | nindent 4 }}
+    {{- if $svc.group }}
+    nos3.nasa.gov/group: {{ $svc.group }}
+    {{- end }}
+spec:
+  replicas: {{ $svc.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "nos3.selectorLabels" (dict "root" $ "component" $name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "nos3.selectorLabels" (dict "root" $ "component" $name) | nindent 8 }}
+        {{- if $svc.group }}
+        nos3.nasa.gov/group: {{ $svc.group }}
+        {{- end }}
+    spec:
+      hostname: {{ $name }}
+      {{- if $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml $.Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      {{- /* Pod-level security context for sysctls */ -}}
+      {{- if $svc.sysctls }}
+      securityContext:
+        sysctls:
+          {{- toYaml $svc.sysctls | nindent 10 }}
+      {{- end }}
+      {{- if or $svc.waitFor $svc.inOutConfigMap }}
+      initContainers:
+        {{- /* Copy InOut config files from ConfigMap to writable emptyDir */ -}}
+        {{- if $svc.inOutConfigMap }}
+        - name: copy-inout
+          image: busybox:1.36
+          command: ['sh', '-c', 'cp /inout-config/* /inout/ && ls -la /inout/']
+          volumeMounts:
+            - name: inout-config
+              mountPath: /inout-config
+            - name: inout-data
+              mountPath: /inout
+        {{- end }}
+        {{- /* Wait-for dependency containers */ -}}
+        {{- if $svc.waitFor }}
+        {{- range $dep := $svc.waitFor }}
+        - name: wait-for-{{ $dep.service }}
+          image: busybox:1.36
+          {{- if eq (default "tcp" $dep.type) "http" }}
+          command: ['sh', '-c', 'until wget -q --spider --timeout=2 http://{{ $dep.service }}:{{ $dep.port }}{{ $dep.path | default "/" }}; do echo "waiting for {{ $dep.service }}"; sleep 5; done']
+          {{- else }}
+          command: ['sh', '-c', 'until nc -z {{ $dep.service }} {{ $dep.port }}; do echo "waiting for {{ $dep.service }}:{{ $dep.port }}"; sleep 5; done']
+          {{- end }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: "{{ $svc.image.repository }}:{{ $svc.image.tag }}"
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          workingDir: {{ $svc.workingDir }}
+          {{- if $svc.tty }}
+          tty: true
+          {{- end }}
+          {{- if $svc.stdin }}
+          stdin: true
+          {{- end }}
+          {{- /* Command: explicit command > simName pattern */ -}}
+          {{- if $svc.command }}
+          command:
+            {{- toYaml $svc.command | nindent 12 }}
+          {{- else if $svc.simName }}
+          command:
+            - "./nos3-single-simulator"
+            - "-f"
+            - "./nos3-simulator.xml"
+            - {{ $svc.simName | quote }}
+          {{- end }}
+          env:
+            {{- include "nos3.commonEnv" $ | nindent 12 }}
+            {{- if $svc.env }}
+            {{- range $key, $val := $svc.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+            {{- end }}
+          {{- if $svc.ports }}
+          ports:
+            {{- range $idx, $p := $svc.ports }}
+            - name: {{ $p.name }}
+              containerPort: {{ $p.port }}
+              protocol: {{ $p.protocol | default "TCP" }}
+              {{- if and (eq (int $idx) 0) $svc.hostPort }}
+              hostPort: {{ $svc.hostPort }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- /* Health checks -> readiness + liveness probes */ -}}
+          {{- if $svc.healthCheck }}
+          readinessProbe:
+            {{- if $svc.healthCheck.exec }}
+            exec:
+              command:
+                {{- toYaml $svc.healthCheck.exec.command | nindent 16 }}
+            {{- else if $svc.healthCheck.httpGet }}
+            httpGet:
+              path: {{ $svc.healthCheck.httpGet.path }}
+              port: {{ $svc.healthCheck.httpGet.port }}
+            {{- end }}
+            initialDelaySeconds: {{ $svc.healthCheck.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ $svc.healthCheck.periodSeconds | default 10 }}
+            timeoutSeconds: {{ $svc.healthCheck.timeoutSeconds | default 5 }}
+            failureThreshold: {{ $svc.healthCheck.failureThreshold | default 3 }}
+          livenessProbe:
+            {{- if $svc.healthCheck.exec }}
+            exec:
+              command:
+                {{- toYaml $svc.healthCheck.exec.command | nindent 16 }}
+            {{- else if $svc.healthCheck.httpGet }}
+            httpGet:
+              path: {{ $svc.healthCheck.httpGet.path }}
+              port: {{ $svc.healthCheck.httpGet.port }}
+            {{- end }}
+            initialDelaySeconds: {{ $svc.healthCheck.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ $svc.healthCheck.periodSeconds | default 10 }}
+            timeoutSeconds: {{ $svc.healthCheck.timeoutSeconds | default 5 }}
+            failureThreshold: {{ $svc.healthCheck.failureThreshold | default 3 }}
+          {{- end }}
+          {{- /* Resources */ -}}
+          {{- if $svc.resources }}
+          resources:
+            {{- toYaml $svc.resources | nindent 12 }}
+          {{- end }}
+          {{- /* Container-level security context */ -}}
+          {{- if $svc.securityContext }}
+          securityContext:
+            {{- toYaml $svc.securityContext | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- /* Entrypoint script mount (if entrypointKey is set) */ -}}
+            {{- if $svc.entrypointKey }}
+            - name: entrypoints
+              mountPath: {{ $svc.entrypointMountPath | default "/entrypoint.sh" }}
+              subPath: {{ $svc.entrypointKey }}
+            {{- end }}
+            {{- /* Simulator config mount (if simName or needsSimConfig is set - needs nos3-simulator.xml) */ -}}
+            {{- if or $svc.simName $svc.needsSimConfig }}
+            {{- include "nos3.simConfigVolumeMount" $ | nindent 12 }}
+            {{- end }}
+            {{- /* NOS Engine config mount */ -}}
+            {{- if $svc.nosEngineConfig }}
+            - name: nos-engine-config
+              mountPath: /home/nos3/builds/nos3/sims/build/bin/nos_engine_server_config.json
+              subPath: nos_engine_server_config.json
+            {{- end }}
+            {{- /* InOut directory mount (writable emptyDir, populated by init container) */ -}}
+            {{- if $svc.inOutConfigMap }}
+            - name: inout-data
+              mountPath: {{ $svc.inOutMountPath }}
+            {{- end }}
+            {{- /* Additional config volumes */ -}}
+            {{- range $svc.configVolumes }}
+            - name: {{ .configMap }}
+              mountPath: {{ .mountPath }}
+              subPath: {{ .subPath }}
+            {{- end }}
+      volumes:
+        {{- if $svc.entrypointKey }}
+        {{- include "nos3.entrypointVolume" (dict "root" $) | nindent 8 }}
+        {{- end }}
+        {{- if or $svc.simName $svc.needsSimConfig }}
+        {{- include "nos3.simConfigVolume" (dict "root" $) | nindent 8 }}
+        {{- end }}
+        {{- if $svc.nosEngineConfig }}
+        {{- include "nos3.nosEngineConfigVolume" (dict "root" $) | nindent 8 }}
+        {{- end }}
+        {{- if $svc.inOutConfigMap }}
+        - name: inout-config
+          configMap:
+            name: {{ $svc.inOutConfigMap }}
+        - name: inout-data
+          emptyDir: {}
+        {{- end }}
+        {{- $seenConfigMaps := dict }}
+        {{- range $svc.configVolumes }}
+        {{- if not (hasKey $seenConfigMaps .configMap) }}
+        {{- $_ := set $seenConfigMaps .configMap true }}
+        - name: {{ .configMap }}
+          configMap:
+            name: {{ include "nos3.fullname" (dict "root" $ "component" .configMap) }}
+        {{- end }}
+        {{- end }}
+      restartPolicy: Always
+{{- end }}
+{{- end }}

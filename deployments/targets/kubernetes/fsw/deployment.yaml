@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nos3-m01-sc01
+  name: nos3-fsw
+  labels:
+    app: nos3-m01-sc01-fsw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nos3-m01-sc01-fsw
+  template:
+    metadata:
+      labels:
+        app: nos3-m01-sc01-fsw
+    spec:
+      containers:
+        - args:
+            - /entrypoint.sh
+          env:
+            - name: BASE_DIR
+              value: /builds/nos3
+            - name: CFG_FILE
+              value: /builds/nos3/sims/build/bin/nos_engine_server_config.json
+            - name: COMPONENT_NAME
+              value: fsw
+            - name: HEALTHCHECK_PORT
+              value: "60000"
+            - name: LOG_CONFIG
+              value: /builds/nos3/sims/build/bin/sim_log_config.xml
+            - name: SCRIPT_DIR
+              value: /builds/nos3/scripts
+            - name: SIMULATOR_BIN
+              value: /usr/bin/nos_engine_server_standalone
+            - name: SIM_BIN
+              value: /builds/nos3/sims/build/bin
+          image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+          imagePullPolicy: IfNotPresent
+          name: 01-sc01-nos-fsw
+          resources:
+            limits:
+              cpu: 100m
+              memory: "128Mi"
+            requests:
+              cpu: 100m
+              memory: "128Mi"
+          securityContext:
+            capabilities:
+              add:
+                - sys_nice
+            privileged: true
+          volumeMounts:
+            - mountPath: /entrypoint.sh
+              name: nos3-fsw-cm0
+              subPath: entrypoint.sh
+          workingDir: /builds/nos3/fsw/build/exe/cpu1
+      hostname: fsw
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: entrypoint_fsw.sh
+                path: entrypoint.sh
+            name: nos3-fsw-cm0
+            defaultMode: 0555
+          name: nos3-fsw-cm0

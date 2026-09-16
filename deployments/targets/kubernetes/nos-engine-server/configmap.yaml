@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+data:
+  entrypoint_nos_engine_server.sh: |
+    #!/bin/bash
+    pkill -f nos_engine_server_standalone || true
+    /usr/bin/nos_engine_server_standalone /builds/nos3/sims/build/bin/nos_engine_server_config.json
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: nos3-nos-engine-server
+  name: nos3-nos-engine-server-cm0

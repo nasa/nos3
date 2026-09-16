@@ -1,0 +1,33 @@
+NOS3 has been deployed to namespace: {{ include "nos3.namespace" . }}
+
+Project:    {{ .Values.global.project }}
+Mission:    {{ .Values.global.mission }}
+Spacecraft: {{ .Values.global.spacecraft }}
+
+Services deployed:
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+  - {{ $name }}{{- if $svc.group }} ({{ $svc.group }}){{ end }}
+{{- end }}
+{{- end }}
+
+=== Access Services ===
+
+FortyTwo VNC:
+  kubectl port-forward svc/fortytwo 8080:80 -n {{ include "nos3.namespace" . }}
+  Open: http://localhost:8080/vnc.html
+
+YAMCS Ground Software:
+  kubectl port-forward svc/yamcs 8090:8090 -n {{ include "nos3.namespace" . }}
+  Open: http://localhost:8090
+
+OpenMCT:
+  kubectl port-forward svc/openmct 9000:9000 -n {{ include "nos3.namespace" . }}
+  Open: http://localhost:9000
+
+=== Useful Commands ===
+
+View pods:    kubectl get pods -n {{ include "nos3.namespace" . }}
+View logs:    kubectl logs -f deployment/{{ include "nos3.fullname" (dict "root" . "component" "fortytwo") }} -n {{ include "nos3.namespace" . }}
+Shell access: kubectl exec -it deployment/{{ include "nos3.fullname" (dict "root" . "component" "fsw") }} -n {{ include "nos3.namespace" . }} -- /bin/bash
+Uninstall:    helm uninstall {{ .Release.Name }} -n {{ include "nos3.namespace" . }}

@@ -1,0 +1,35 @@
+{{/*
+Generic Service template - iterates over ALL services in .Values.services.
+Each enabled service with ports gets a ClusterIP Service.
+Services without ports still get a headless Service for DNS discovery.
+*/}}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nos3.fullname" (dict "root" $ "component" $name) }}
+  labels:
+    {{- include "nos3.labels" (dict "root" $ "component" $name) | nindent 4 }}
+spec:
+  selector:
+    {{- include "nos3.selectorLabels" (dict "root" $ "component" $name) | nindent 4 }}
+  {{- if $svc.ports }}
+  ports:
+    {{- range $svc.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .port }}
+      protocol: {{ .protocol | default "TCP" }}
+    {{- end }}
+  type: ClusterIP
+  {{- else }}
+  clusterIP: None
+  ports:
+    - name: placeholder
+      port: 60000
+      protocol: TCP
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nos3-m01-sc01
+  name: nos3-nos-engine-server
+  labels:
+    app: nos3-m01-sc01-nos-engine-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nos3-m01-sc01-nos-engine-server
+  template:
+    metadata:
+      labels:
+        app: nos3-m01-sc01-nos-engine-server
+    spec:
+      containers:
+        - args:
+            - /entrypoint.sh
+          env:
+            - name: BASE_DIR
+              value: /builds/nos3
+            - name: CFG_FILE
+              value: /builds/nos3/sims/build/bin/nos_engine_server_config.json
+            - name: HEALTHCHECK_PORT
+              value: "60000"
+            - name: LOG_CONFIG
+              value: /builds/nos3/sims/build/bin/sim_log_config.xml
+            - name: SIMULATOR_BIN
+              value: /usr/bin/nos_engine_server_standalone
+            - name: SIM_BIN
+              value: /builds/nos3/sims/build/bin
+          image: registry.appdat.jsc.nasa.gov/ssmo/images/ssmo/nos3/nos3-base:20250217
+          imagePullPolicy: IfNotPresent
+          name: 02-sc01-nos-engine-server
+          ports:
+            - containerPort: 12000
+              protocol: TCP
+            - containerPort: 12001
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: "128Mi"
+            requests:
+              cpu: 100m
+              memory: "128Mi"
+          securityContext:
+            privileged: true
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /entrypoint.sh
+              name: nos3-nos-engine-server-cm0
+              subPath: entrypoint.sh
+          workingDir: /builds/nos3/sims/build/bin
+      hostname: nos-engine-server
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: entrypoint_nos_engine_server.sh
+                path: entrypoint.sh
+            defaultMode: 0555
+            name: nos3-nos-engine-server-cm0
+          name: nos3-nos-engine-server-cm0

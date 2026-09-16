@@ -1,0 +1,26 @@
+{{/*
+Namespace resource - only created when global.createNamespace is true.
+By default, Helm's --create-namespace flag handles namespace creation.
+Enable this when you need the namespace to carry specific labels (e.g., Pod Security Standards on NKP).
+
+Each spacecraft gets its own namespace: {project}-{mission}-{spacecraft}
+Namespace labels enable cross-namespace NetworkPolicy:
+  - nos3.nasa.gov/mission  → mission-network (cross-spacecraft within same mission)
+  - nos3.nasa.gov/project  → fleet-network (fleet-wide services like OpenMCT)
+*/}}
+{{- if .Values.global.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "nos3.namespace" . }}
+  labels:
+    app.kubernetes.io/part-of: nos3
+    nos3.nasa.gov/project: {{ .Values.global.project }}
+    nos3.nasa.gov/fleet: {{ .Values.global.fleet }}
+    nos3.nasa.gov/mission: {{ .Values.global.mission }}
+    nos3.nasa.gov/spacecraft: {{ .Values.global.spacecraft }}
+    # Required for privileged pods (FSW sysctls, VNC, simulators)
+    pod-security.kubernetes.io/enforce: {{ .Values.nkp.podSecurityStandard | default "privileged" }}
+    pod-security.kubernetes.io/audit: {{ .Values.nkp.podSecurityStandard | default "privileged" }}
+    pod-security.kubernetes.io/warn: {{ .Values.nkp.podSecurityStandard | default "privileged" }}
+{{- end }}
