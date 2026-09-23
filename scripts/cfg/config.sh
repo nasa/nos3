@@ -27,8 +27,8 @@ if [ -n "${SC1_CFG// }" ]; then
         exit 1
     fi
 
-    # XML-escape metacharacters in the config path before sed substitution
-    ESCAPED_SC1_CFG=$(printf '%s\n' "$REL_SC1_CFG" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g')
+    # XML-escape metacharacters in the config path, then escape sed replacement metacharacters (\, &, | delimiter)
+    ESCAPED_SC1_CFG=$(printf '%s\n' "$REL_SC1_CFG" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/[\\&|]/\\&/g')
     echo "Overriding <sc-1-cfg> with: $REL_SC1_CFG"
     TEMP_CONFIG=$(mktemp "$BASE_DIR/cfg/build/temp_mission/XXXXXX.xml")
     sed "s|<sc-1-cfg>.*</sc-1-cfg>|<sc-1-cfg>$ESCAPED_SC1_CFG</sc-1-cfg>|" "$ORIGINAL_CONFIG" > "$TEMP_CONFIG"
