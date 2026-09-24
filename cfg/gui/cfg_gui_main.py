@@ -302,9 +302,13 @@ class cfg_gui(QWidget):
 
         # Read Children
         config_dir = str(config_path.rsplit('/', 1)[0])
+        confined = Path(config_dir).resolve()
         for i, child in enumerate(childDict):
-            if Path(f'{config_dir}/{childDict[child]}').is_file():
-                filePath = f'{config_dir}/{childDict[child]}'
+            candidate = Path(f'{config_dir}/{childDict[child]}').resolve()
+            if not candidate.is_relative_to(confined):
+                raise ValueError(f'Path traversal blocked: {childDict[child]}')
+            if candidate.is_file():
+                filePath = str(candidate)
             else:
                 raise FileNotFoundError(childDict[child])
 
