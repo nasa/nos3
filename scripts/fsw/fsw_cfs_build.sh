@@ -28,5 +28,21 @@ fi
 # Make flight software build directory
 mkdir -p $BASE_DIR/fsw/build
 
+# SpaceCOP needs the OpenSSL development files, which the stock NOS3 image
+# does not carry. Layer them onto whatever image env.sh selected. Docker
+# caches the layers, so this is a no-op after the first run. Remove this
+# block once libssl-dev is available in the upstream deployment image.
+if [ -z "$NOS3_SKIP_OPENSSL_LAYER" ]; then
+    echo "Ensuring build image carries the OpenSSL development files..."
+    if ! $DCALL build -q -t nos3-openssl:local --build-arg BASE_IMAGE="$DBOX" -f "$BASE_DIR/support/Dockerfile.openssl" "$BASE_DIR/support" > /dev/null; then
+        echo ""
+        echo "    Failed to build the OpenSSL build image."
+        echo "    Set NOS3_SKIP_OPENSSL_LAYER=1 to build without it."
+        echo ""
+        exit 1
+    fi
+    DBOX="nos3-openssl:local"
+fi
+
 # Build
 $DFLAGS_CPUS -v $BASE_DIR:$BASE_DIR --name "nos_build_fsw" -w $BASE_DIR $DBOX make -j$NUM_CPUS -e FLIGHT_SOFTWARE=cfs build-fsw
