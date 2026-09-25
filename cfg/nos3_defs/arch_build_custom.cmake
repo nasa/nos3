@@ -44,6 +44,9 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wstrict-prototypes -pedantic -Werr
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wwrite-strings -Wpointer-arith -Wno-address-of-packed-member")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 
+find_package(OpenSSL REQUIRED)
+link_libraries(OpenSSL::Crypto)
+
 if (CFE_SYSTEM_PSPNAME STREQUAL "nos-linux")
     # find itc cmake module path
     find_path(_ITC_CMAKE_MODULES_

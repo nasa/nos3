@@ -123,6 +123,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
         onair
         sample/fsw/cfs
         syn/fsw/cfs
+        spacecop/fsw/cfs
 )
 
 # Create Application Platform Include List
@@ -160,7 +161,7 @@ SET(MISSION_CPUNAMES cpu1)
 # NASA Operational Simulator for Space Systems (NOS3) - Host Linux
 SET(cpu1_PROCESSORID 1)
 SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
-SET(cpu1_FILELIST cfe_es_startup.scr)
+SET(cpu1_FILELIST cfe_es_startup.scr proc_whitelist.txt)
 if (ENABLE_UNIT_TESTS)
     SET(cpu1_SYSTEM amd64-posix)
 else() 
