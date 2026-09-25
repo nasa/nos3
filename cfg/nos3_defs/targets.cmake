@@ -91,6 +91,7 @@ list(APPEND MISSION_GLOBAL_APPLIST
     # cFS Apps
     #
         cf
+        cfdp
         ci
         ci_lab
         ds
