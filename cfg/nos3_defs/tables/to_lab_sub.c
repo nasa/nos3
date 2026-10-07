@@ -46,6 +46,7 @@
 #include "sch_msgids.h"
 #include "to_msgids.h"
 #include "sbn_msgids.h"
+#include "cfdp_msgids.h"
 
 /*
 ** Component Include Files
@@ -122,7 +123,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_MAG_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
-	    {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
+	      {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_HK_TLM_MID),    {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID),{0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
