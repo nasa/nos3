@@ -1,0 +1,24 @@
+# Packet capture image for NOS3.
+#
+# Layers tshark onto the NOS3 image so a capture container can share the flight
+# software container's network namespace and see exactly what it sees --
+# including loopback, which is where the SpaceCOP <-> SCML traffic on ports
+# 9111 and 9112 lives and which is invisible from the host or any other
+# container.
+#
+# Built by support/capture.sh.
+#
+# DEBIAN_FRONTEND and the debconf preseed matter: the wireshark-common package
+# otherwise stops the build with an interactive prompt about whether
+# non-superusers may capture packets. The capture container runs as root, so
+# the answer is no.
+
+ARG BASE_IMAGE=ivvitc/nos3-64:20260619
+FROM ${BASE_IMAGE}
+
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "wireshark-common wireshark-common/install-setuid boolean false" | debconf-set-selections \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends tshark \
+ && rm -rf /var/lib/apt/lists/*

@@ -145,6 +145,8 @@ else:
         sc_radio_en = sc_root.find('components/radio/enable').text
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
+        sc_spacecop_node = sc_root.find('components/spacecop/enable')
+        sc_spacecop_en = sc_spacecop_node.text if sc_spacecop_node is not None else 'false'
         sc_st_en = sc_root.find('components/st/enable').text
         sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
@@ -185,6 +187,7 @@ else:
             radio_line = ""
             rw_line = ""
             sample_line = ""
+            spacecop_line = ""
             st_line = ""
             syn_line = ""
             torquer_line = ""
@@ -252,6 +255,9 @@ else:
                 if line.find('SAMPLE,') != -1:
                     if (sc_sample_en == 'true'):
                         sample_line = line
+                if line.find('SPACECOP,') != -1:
+                    if (sc_spacecop_en == 'true'):
+                        spacecop_line = line
                 if line.find('ST,') != -1:
                     if (sc_st_en == 'true'):
                         st_line = line
@@ -267,6 +273,7 @@ else:
 
         # Modify startup script per spacecraft configuration
         lines.insert(sc_startup_eof, "\n")
+        lines.insert(sc_startup_eof, spacecop_line)
         lines.insert(sc_startup_eof, torquer_line)
         lines.insert(sc_startup_eof, thruster_line)
         lines.insert(sc_startup_eof, syn_line)

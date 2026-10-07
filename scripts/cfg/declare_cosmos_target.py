@@ -21,6 +21,7 @@ components = {
     "novatel_oem615": "gps",
     "onair": "onair",
     "sample": "sample",
+    "spacecop": "spacecop",
     "syn": "syn"
 }
 

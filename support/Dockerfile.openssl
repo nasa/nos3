@@ -1,0 +1,25 @@
+# Layers the OpenSSL development files onto the NOS3 build image.
+#
+# SpaceCOP (components/spacecop) hashes files with the OpenSSL EVP API for its
+# DISE-1 file-integrity rule: functions_disk_linux.h includes <openssl/evp.h>
+# and functions_file_integrity_linux.c calls EVP_Digest*. The stock
+# ivvitc/nos3-64 image does not carry them -- NOS3's own cryptolib is built
+# with -DCRYPTO_LIBGCRYPT=1, so nothing in the mission needed OpenSSL until
+# SpaceCOP was integrated. Installing libssl-dev on the VM does not help: the
+# flight software is compiled inside this container, which only bind-mounts the
+# repo, not the host's /usr.
+#
+# scripts/fsw/fsw_cfs_build.sh builds this automatically and passes the image
+# env.sh selected as BASE_IMAGE, so bumping the NOS3 image version needs no
+# change here. Docker caches the layers, making it a no-op after the first run.
+#
+# This file can be deleted once libssl-dev is added upstream in
+# https://github.com/nasa-itc/deployment.
+
+ARG BASE_IMAGE=ivvitc/nos3-64:20260619
+FROM ${BASE_IMAGE}
+
+USER root
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libssl-dev \
+ && rm -rf /var/lib/apt/lists/*
