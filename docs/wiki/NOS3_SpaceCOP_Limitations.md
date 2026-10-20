@@ -1,14 +1,12 @@
 # SpaceCOP Limitations in the NOS3 Environment
 
 SpaceCOP is an onboard intrusion detection system that runs as a cFS application.
-Most of its detection rules work unchanged under NOS3, but one group cannot, for
-reasons that are a property of the NOS3 simulation environment rather than of
-SpaceCOP itself.
+Most of its detection rules work unchanged under NOS3, however one group is unable to run effectively. This is due to running in a simulated envrionment for FSW with Docker Containers vs executing FSW natively on hardware and is detailed in this document.
 
 ## Disabled: syscall monitoring (6 SPARTA IOBs)
 
 The following rules in `components/spacecop/fsw/cfs/table/spacecop_call_table.c`
-are shipped with `.enabled = 0`:
+are defined with `.enabled = 0`:
 
 | Rule | IOB | Description |
 | --- | --- | --- |
@@ -27,7 +25,7 @@ that depends on the `aerospace.ko` kernel module.
 Kernel modules cannot be loaded specifically in a single docker container.
 Containers share the host kernel — there is no per-container kernel to load into.
 Therefore, to run the module, it would have to be loaded on the host machine and would
-send a detection for every SYSCALL ran on there, not specifically in the docker container.
+send a detection for every SYSCALL exectued on the host, not specifically in the docker container.
 
 ## Why they are disabled rather than left enabled
 
@@ -45,10 +43,12 @@ Left enabled, these rules would report as active and never fire. An IDS that
 reports all-clear on detections that cannot physically occur is worse than one
 that declares the gap, so they are disabled explicitly.
 
-## This is environmental, not a SpaceCOP defect
+## Future or SpaceCOP with NOS3
 
 On flight hardware there is no container and no namespace boundary between the
 module and the flight software, and these rules operate as designed. Re-enable
 them for any target where the flight software shares a network namespace with
-the kernel module.
+the kernel module. Currntly, a nos3 user would need to Split FSW to run separately on its own host and network to the rest of the NOS3 environment accordingly in order to utlize the disabled IOBs.
+
+The NOS3 team plans to create NOS3 configuration that exectues FSW natively on the host if the user would like to execute the specific disable IOBs by default. 
 
