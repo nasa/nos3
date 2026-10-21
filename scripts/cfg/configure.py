@@ -145,8 +145,9 @@ else:
         sc_radio_en = sc_root.find('components/radio/enable').text
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
-        sc_spacecop_node = sc_root.find('components/spacecop/enable')
-        sc_spacecop_en = sc_spacecop_node.text if sc_spacecop_node is not None else 'false'
+        # sc_spacecop_node = sc_root.find('components/spacecop/enable')
+        # sc_spacecop_en = sc_spacecop_node.text if sc_spacecop_node is not None else 'false'
+        sc_spacecop_en = sc_root.find('components/spacecop/enable').text
         sc_st_en = sc_root.find('components/st/enable').text
         sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
