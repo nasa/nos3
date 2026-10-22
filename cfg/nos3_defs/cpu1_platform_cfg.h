@@ -488,7 +488,7 @@
 **       AppIDs that are checked against this configuration are defined by a 32 bit
 **       data word.
 */
-#define CFE_PLATFORM_ES_MAX_APPLICATIONS 32
+#define CFE_PLATFORM_ES_MAX_APPLICATIONS 42
 
 /**
 **  \cfeescfg Define Max Number of Shared libraries

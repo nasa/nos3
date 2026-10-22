@@ -67,6 +67,7 @@
 #include "generic_star_tracker_msgids.h"
 #include "mgr_msgids.h"
 #include "syn_msgids.h"
+#include "spacecop_msgids.h"
 
 /*
 ** Local Structure Declarations
@@ -122,7 +123,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_MAG_DEVICE_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RADIO_HK_TLM_MID),     {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_RW_APP_HK_TLM_MID),    {0,0},  32},
-	    {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
+	      {CFE_SB_MSGID_WRAP_VALUE(GENERIC_TORQUER_HK_TLM_MID),   {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_HK_TLM_MID),    {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(NOVATEL_OEM615_DEVICE_TLM_MID),{0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SAMPLE_HK_TLM_MID),            {0,0},  32},
@@ -140,6 +141,9 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(SYN_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SCH_HK_TLM_MID),               {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(SCH_DIAG_TLM_MID),             {0,0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SPACECOP_REPORT_TLM_MID),      {0x0},  32},
+        {CFE_SB_MSGID_WRAP_VALUE(SPACECOP_HK_TLM_MID),          {0x0},  32},
+
     }
 };
 
