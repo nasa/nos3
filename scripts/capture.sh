@@ -20,7 +20,7 @@
 # about the flight software container or its launch needs to change.
 #
 # Usage:
-#   ./support/capture.sh [container] [output.pcapng]
+#   ./scripts/capture.sh [container] [output.pcapng]
 #
 #   container     defaults to sc01-nos-fsw (SC_NUM is "sc0"$i in
 #                 scripts/fsw/fsw_cfs_launch.sh, so spacecraft 1 is sc01)
