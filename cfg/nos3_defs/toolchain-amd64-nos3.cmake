@@ -30,5 +30,5 @@ add_definitions(-DBYTE_ORDER_LE)
 add_definitions(-D_LINUX_OS_)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CI_TRANSPORT udp_tf)
-set(TO_TRANSPORT udp_tf) # Note udp_tf used for Transfer Frames required for CryptoLib
+set(CI_TRANSPORT aos_tf)
+set(TO_TRANSPORT aos_tf) # Note udp_tf used for Transfer Frames required for CryptoLib
