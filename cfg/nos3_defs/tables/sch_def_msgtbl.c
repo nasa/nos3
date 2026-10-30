@@ -62,6 +62,7 @@
 #include "novatel_oem615_msgids.h"
 #include "sample_msgids.h"
 #include "syn_msgids.h"
+#include "spacecop_msgids.h"
 
 /*
 ** Message Table entry map...
@@ -311,7 +312,7 @@ SCH_MessageEntry_t SCH_DefaultMessageTable[SCH_MAX_MESSAGES] =
     /* command ID #96 - ADCS HK */
   { { CFE_MAKE_BIG16(GENERIC_ADCS_REQ_HK_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #97 */
-  { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
+  { { CFE_MAKE_BIG16(SPACECOP_HB_MID),  CFE_MAKE_BIG16(0xC000), CFE_MAKE_BIG16(0x0001), CFE_MAKE_BIG16(0x0000) } },
     /* command ID #98 */
   { { CFE_MAKE_BIG16(SCH_UNUSED_MID) } },
     /* command ID #99 */

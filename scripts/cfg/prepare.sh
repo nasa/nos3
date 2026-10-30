@@ -5,9 +5,6 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/../env.sh
 
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source $SCRIPT_DIR/env.sh
 echo ""
 echo ""
 
@@ -49,7 +46,7 @@ echo ""
 echo "Prepare Igniter (optional)..."
 pip3 install pyside6 xmltodict
 cd $BASE_DIR
-python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
+# python3 $BASE_DIR/cfg/gui/cfg_gui_main.py &
 echo ""
 echo ""
 
