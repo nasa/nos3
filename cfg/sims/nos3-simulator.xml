@@ -468,6 +468,7 @@
                     <command-port>4279</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
                     <retry-wait-seconds>1</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
                 </data-provider>
                 <params>
                     <num-mtbs>3</num-mtbs>
@@ -503,6 +504,7 @@
                     <command-port>4280</command-port>
                     <max-connection-attempts>30</max-connection-attempts>
                     <retry-wait-seconds>1</retry-wait-seconds>
+                    <spacecraft>0</spacecraft>
                 </data-provider>
             </hardware-model>
         </simulator>
@@ -514,6 +516,7 @@
             <hardware-model>
                 <type>TRUTH42</type>
                 <cosmos-hostname>cosmos</cosmos-hostname>
+                <!-- <cosmos-hostname>active-gs</cosmos-hostname> -->
                 <cosmos-port>5111</cosmos-port>
                 <initial-stream-time>1.0</initial-stream-time>
                 <stream-period-ms>100</stream-period-ms>
@@ -525,7 +528,7 @@
                     <type>TRUTH42PROVIDER</type>
                     <hostname>fortytwo</hostname>
                     <port>9999</port>
-                    <max-connection-attempts>30</max-connection-attempts>
+                    <max-connection-attempts>60</max-connection-attempts>
                     <retry-wait-seconds>1</retry-wait-seconds>
                     <orbit>0</orbit>
                     <spacecraft>0</spacecraft>
@@ -612,8 +615,23 @@
                     </connection>
                 </connections>
                 <data-provider>
+                    <type>GENERIC_RADIO_42_PROVIDER</type>
+                    <hostname>fortytwo</hostname>
+                    <port>4286</port>
+                    <max-connection-attempts>30</max-connection-attempts>
+                    <retry-wait-seconds>5</retry-wait-seconds>
+                    <comm-uplink>0</comm-uplink>
+                    <uplink-close-criteria>none</uplink-close-criteria><!-- "none", "occulted" or "cnr" -->
+                    <uplink-cnr-limit>15</uplink-cnr-limit>
+                    <uplink-delay-on>false</uplink-delay-on>
+                    <comm-downlink>1</comm-downlink>
+                    <downlink-close-criteria>none</downlink-close-criteria><!-- "none", "occulted" or "cnr" -->
+                    <downlink-cnr-limit>15</downlink-cnr-limit>
+                    <downlink-delay-on>false</downlink-delay-on>
+                </data-provider>
+                <!--<data-provider>               
                     <type>GENERIC_RADIO_PROVIDER</type>
-                </data-provider>               
+                </data-provider>-->
             </hardware-model>
         </simulator>
 

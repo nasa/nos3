@@ -38,6 +38,7 @@ if (fsw_cfg == 'cfs'):
     fsw_identified = 1
     os.system('cp ./scripts/fsw/fsw_cfs_build.sh ./cfg/build/fsw_build.sh')
     os.system('cp ./scripts/fsw/fsw_cfs_launch.sh ./cfg/build/launch.sh')
+    # os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
 if (fsw_identified == 0):
     print('Invalid FSW in configuration file!')
     print('Exiting due to error...')
@@ -72,6 +73,17 @@ if (gsw_cfg == 'yamcs'):
     gsw_identified = 1
     os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build.sh')
     os.system('cp ./scripts/gsw/gsw_yamcs_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/cfg/yamcs_default.nos3.yaml ./gsw/yamcs/nos3/src/main/yamcs/etc/yamcs.nos3.yaml')
+if (gsw_cfg == 'multiple'):
+    # Copy mulitple scripts into ./cfg/build
+    gsw_identified = 1
+    os.system('cp ./scripts/gsw/gsw_cosmos_multi_build.sh ./cfg/build/gsw_build.sh')
+    os.system('cp ./scripts/gsw/gsw_cosmos_launch.sh ./cfg/build/gsw_launch.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_build.sh ./cfg/build/gsw_build2.sh')
+    os.system('cp ./scripts/gsw/gsw_yamcs_multi_launch.sh ./cfg/build/gsw_launch2.sh')  
+    os.system('cp ./cfg/build/sims/nos3-simulator-multipleGDS.xml ./cfg/build/sims/nos3-simulator.xml')
+    os.system('cp ./scripts/fsw/fsw_cfs_multipleGSW_launch.sh ./cfg/build/launch.sh')
+    os.system('cp ./scripts/cfg/yamcs_multiGDS.nos3.yaml ./gsw/yamcs/nos3/src/main/yamcs/etc/yamcs.nos3.yaml')
 if (gsw_identified == 0):
     print('Invalid GSW in configuration file!')
     print('Exiting due to error...')
@@ -79,7 +91,10 @@ if (gsw_identified == 0):
 # Scenario
 scenario = mission_root.find('scenario').text
 print('  scenario:', scenario)
-if (scenario == 'Gateway'):
+if (scenario == 'DeepSpace'):
+    os.system('cp ./cfg/InOut/Inp_Sim_DeepSpace.txt ./cfg/InOut/Inp_Sim.txt')
+    os.system('cp ./cfg/InOut/Inp_Graphics_DeepSpace.txt ./cfg/InOut/Inp_Graphics.txt')
+elif (scenario == 'Gateway'):
     os.system('cp ./cfg/InOut/Inp_Sim_Gateway.txt ./cfg/InOut/Inp_Sim.txt')
     os.system('cp ./cfg/InOut/Inp_Graphics_Gateway.txt ./cfg/InOut/Inp_Graphics.txt')
 else:
@@ -111,6 +126,7 @@ else:
 
         # Parse spacecraft configuration
         sc_cf_en = sc_root.find('applications/cf/enable').text
+        sc_cfdp_en = sc_root.find('applications/cfdp/enable').text
         sc_ds_en = sc_root.find('applications/ds/enable').text
         sc_fm_en = sc_root.find('applications/fm/enable').text
         sc_lc_en = sc_root.find('applications/lc/enable').text
@@ -129,6 +145,9 @@ else:
         sc_radio_en = sc_root.find('components/radio/enable').text
         sc_rw_en = sc_root.find('components/rw/enable').text
         sc_sample_en = sc_root.find('components/sample/enable').text
+        # sc_spacecop_node = sc_root.find('components/spacecop/enable')
+        # sc_spacecop_en = sc_spacecop_node.text if sc_spacecop_node is not None else 'false'
+        sc_spacecop_en = sc_root.find('components/spacecop/enable').text
         sc_st_en = sc_root.find('components/st/enable').text
         sc_syn_en = sc_root.find('components/syn/enable').text
         sc_torquer_en = sc_root.find('components/torquer/enable').text
@@ -151,6 +170,7 @@ else:
             # Initialize variables
             sc_startup_eof = 999
             cf_line = ""
+            cfdp_line = ""
             ds_line = ""
             fm_line = ""
             lc_line = ""
@@ -168,6 +188,7 @@ else:
             radio_line = ""
             rw_line = ""
             sample_line = ""
+            spacecop_line = ""
             st_line = ""
             syn_line = ""
             torquer_line = ""
@@ -181,6 +202,9 @@ else:
                 if line.find('CF,') != -1:
                     if (sc_cf_en == 'true'):
                         cf_line = line
+                if line.find('CFDP,') != -1:
+                    if (sc_cfdp_en == 'true'):
+                        cfdp_line = line
                 if line.find('DS,') != -1:
                     if (sc_ds_en == 'true'):
                         ds_line = line
@@ -232,6 +256,9 @@ else:
                 if line.find('SAMPLE,') != -1:
                     if (sc_sample_en == 'true'):
                         sample_line = line
+                if line.find('SPACECOP,') != -1:
+                    if (sc_spacecop_en == 'true'):
+                        spacecop_line = line
                 if line.find('ST,') != -1:
                     if (sc_st_en == 'true'):
                         st_line = line
@@ -247,6 +274,7 @@ else:
 
         # Modify startup script per spacecraft configuration
         lines.insert(sc_startup_eof, "\n")
+        lines.insert(sc_startup_eof, spacecop_line)
         lines.insert(sc_startup_eof, torquer_line)
         lines.insert(sc_startup_eof, thruster_line)
         lines.insert(sc_startup_eof, syn_line)
@@ -269,6 +297,7 @@ else:
         lines.insert(sc_startup_eof, fm_line)
         lines.insert(sc_startup_eof, ds_line)
         lines.insert(sc_startup_eof, cf_line)
+        lines.insert(sc_startup_eof, cfdp_line)
                         
         # Write startup script file
         with open('./cfg/build/nos3_defs/cpu1_cfe_es_startup.scr', 'w') as fp:
