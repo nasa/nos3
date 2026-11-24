@@ -6,6 +6,7 @@
 - `bash`
 - `task` a contemporary version of `make`
 - `lazydocker`
+- GNU `date` and `sed` (on macOS: `brew install coreutils gnu-sed`, which provides `gdate` and `gsed`; the scripts use them automatically)
 
 Which can be installed via `make install-lazydocker install-taskfile`
 
@@ -98,21 +99,76 @@ more info on `lazydocker` can be found here https://github.com/jesseduffield/laz
 ## Test
 
 open http://localhost:8090/instance?c=nos3__realtime to access yamcs/gsw
-open http://localhost:30090/vnc.html to access fortytwo (42)
+open http://localhost:30090/vnc.html to access fortytwo (42); scaling mode defaults to Remote Resizing
 open http://localhost:9000 to access openmct
 
 ## Diagrams
 
-Ignore the below for now
+### Image provenance
+
+What `task build` produces, what each image is built `FROM`, and which git ref it clones at build time.
+Values come from `scripts/env.sh` (overriding the Dockerfile `ARG` defaults via `compose.yaml`).
+Legend:
+- **Dashed border**: moving ref (a branch, `:dev`, or a reused tag such as `ubuntu:25.04`); its content can change upstream with no change here, so a rebuild can differ.
+- **Solid border**: pinned ref (release tag such as `v1_07_06`, dated tag such as `:20251107`) or an image built by this repo.
+- **Solid arrow**: `FROM` (image layering) or push. **Dashed arrow**: source cloned into the image at build time.
+
+`ghcr.io/haisamido/nos3-base:dev` is built in [haisamido/nos3-base](https://github.com/haisamido/nos3-base); its CI now tags `:20260619` rather than `:dev`, so `:dev` is frozen at the 2025-08-20 build.
 
 ```mermaid
-graph TD
-    A[ubuntu:jammy-20250126]-->|FROM| B
-    B[nasa-itc/deployments/] -->|build-->push| C(docker.io/ivvitc/nos3-64:dev)
-    C-->|FROM| D[haisamido/nos3-64/]
-    D-->|build-->push| E(ghcr.io/haisamido/nos3-64:dev)
-  
+graph LR
+  subgraph upstream[Built elsewhere by GitHub Actions]
+    UJ[ubuntu:22.04]
+    R64[repo: haisamido/nos3-64]
+    N64G[ghcr.io/haisamido/nos3-64:dev]
+    RNB[repo: haisamido/nos3-base @ dev<br/>build-push-images.yml<br/>clones nasa/nos3 @ dev, builds FSW+sims+YAMCS]
+  end
+
+  UJ -->|FROM| R64 -->|push| N64G -->|FROM| RNB
+  RNB -->|push 2025-08-20, rev 1371a97<br/>now pushes :20260619 instead| NB
+
+  subgraph base[Base images, pulled at build]
+    NB[ghcr.io/haisamido/nos3-base:dev]
+    N64[docker.io/ivvitc/nos3-64:20251107]
+    U[docker.io/library/ubuntu:25.04]
+  end
+
+  subgraph src[Git sources, cloned at build]
+    G42[nasa-itc/42 @ nos3-main]
+    GY[nasa-itc/nos3_yamcs_master @ nos3-dev]
+    GN[nasa/nos3 @ v1_07_06]
+    GO[akhenry/openmct-yamcs @ master]
+    GOC[nasa/openmct @ master]
+  end
+
+  subgraph built[Built images]
+    F42(ghcr.io/haisamido/nos3-base-fortytwo:dev)
+    Y(ghcr.io/haisamido/nos3-base-yamcs:dev)
+    L(nos3-base-local:dev)
+    O(ghcr.io/haisamido/nos3-base-openmct:dev)
+  end
+
+  NB -->|FROM, x-vnc stage| F42
+  NB -->|FROM| Y
+  N64 -->|FROM| L
+  U -->|FROM| O
+
+  G42 -.->|clone| F42
+  GY -.->|clone| Y
+  GN -.->|clone + make| L
+  GO -.->|clone + npm| O
+  GOC -.->|build:example:master| O
+
+  F42 --> S1[nos3-fortytwo]
+  Y --> S2[nos3-gsw]
+  L --> S3[nos3-fsw + 23 sim/engine services]
+  O --> S4[nos3-openmct]
+
+  classDef moving stroke-dasharray: 5 5
+  class UJ,U,RNB,NB,N64G,G42,GY,GO,GOC moving
 ```
+
+Ignore the below for now
 
 ```mermaid
 graph TD;

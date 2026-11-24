@@ -176,6 +176,13 @@ tasks:
   set-permissions:
     desc: set filesystem permissions, needed for restricted accounts
     cmds:
+      - |
+        if [ ! -d "${HOME}/.nos3/" ]; then
+          echo "${HOME}/.nos3/ does not exist, creating it"
+          mkdir -p "${HOME}/.nos3/"
+        else
+          echo "${HOME}/.nos3/ exists"
+        fi
       - mkdir -p ../cfg/build
       - find . -type f -name '*.sh'               -exec chmod 777 {} \; # Make sure all scripts are world executable
       - find . -type f -name '*.py'               -exec chmod 777 {} \; # Make sure all scripts are world executable
@@ -464,10 +471,19 @@ tasks:
       - env:create
     cmds:
       - |
+        # GNU sed is required (-i without suffix, \s, \< \>). On macOS use gsed from gnu-sed.
+        if sed --version >/dev/null 2>&1; then
+          SED=sed
+        elif command -v gsed >/dev/null 2>&1; then
+          SED=gsed
+        else
+          echo "error: GNU sed is required; on macOS run: brew install gnu-sed" >&2
+          exit 1
+        fi
         source {{.ENVIRO_FILE}} && \
-          sed -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
-          sed -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
-          sed -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
+          ${SED} -Ei 's/(\s*)(\<start\-time\>).*(\<start\-time\>)/\1\2>'${START_TIME}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          ${SED} -Ei 's/(\s*)(\<gsw\>).*(\<gsw\>)/\1\2>'${GSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml && \
+          ${SED} -Ei 's/(\s*)(\<fsw\>).*(\<fsw\>)/\1\2>'${FSW_SOFTWARE}'<\/\3/g' ../cfg/nos3-mission.xml
     silent: true
 
   submodule-update:

@@ -7,7 +7,7 @@ ARG IMAGE_URI=${REGISTRY_HOST}/${IMAGE_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
 
 #------------------------------------------------------------------------------
 ARG GIT_URL=https://github.com/nasa/nos3
-ARG GIT_COMMIT=dev
+ARG GIT_COMMIT=v1_07_06
 
 ARG NOS3_USER=nos3
 ARG FSW_SOFTWARE=cfs 
@@ -65,7 +65,7 @@ ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}
 RUN apt-get update && \
   apt-get install -y sudo git curl vim make cmake tmux tree python3 pip && \
   apt-get install -y iputils-ping dnsutils lsof net-tools tshark jq && \
-  apt-get install -y libgcrypt20-dev && \
+  apt-get install -y libgcrypt20-dev libssl-dev && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 

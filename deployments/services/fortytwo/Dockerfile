@@ -48,6 +48,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# noVNC 1.0.0 has no defaults.json; make "Scaling Mode: Remote Resizing" the default
+# (a ?resize= URL param or the browser's saved setting still overrides it), and
+# serve vnc.html at / so the bare URL works.
+RUN sed -i "s/UI.initSetting('resize', 'off')/UI.initSetting('resize', 'remote')/" /usr/share/novnc/app/ui.js && \
+    grep -q "UI.initSetting('resize', 'remote')" /usr/share/novnc/app/ui.js && \
+    ln -sf vnc.html /usr/share/novnc/index.html
+
 # turbovnc: https://turbovnc.org/
 RUN wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey |  gpg --dearmor >/etc/apt/trusted.gpg.d/TurboVNC.gpg
 RUN wget -P /etc/apt/sources.list.d/ https://raw.githubusercontent.com/TurboVNC/repo/main/TurboVNC.list
